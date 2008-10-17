@@ -1,0 +1,56 @@
+<Type Name="FromBase64TransformMode" FullName="System.Security.Cryptography.FromBase64TransformMode">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public enum FromBase64TransformMode" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Different mode possible when converting data from base64 format.</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="DoNotIgnoreWhiteSpaces">
+      <MemberSignature Language="C#" Value="DoNotIgnoreWhiteSpaces" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.FromBase64TransformMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Treat all whitescape characters as invalid when converting base64 data.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IgnoreWhiteSpaces">
+      <MemberSignature Language="C#" Value="IgnoreWhiteSpaces" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.FromBase64TransformMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Ignore all whitespace character during convertion (Default).</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

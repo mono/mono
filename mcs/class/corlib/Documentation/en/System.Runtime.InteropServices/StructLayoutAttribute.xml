@@ -1,0 +1,303 @@
+<Type Name="StructLayoutAttribute" FullName="System.Runtime.InteropServices.StructLayoutAttribute" FullNameSP="System_Runtime_InteropServices_StructLayoutAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed StructLayoutAttribute extends System.Attribute" />
+  <TypeSignature Language="C#" Value="public sealed class StructLayoutAttribute : Attribute" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct, Inherited=false)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>The <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />
+allows the user to control the physical layout
+of the data members of a class or structure.</para>
+    </summary>
+    <remarks>
+      <para> The target objects for this attribute are classes and structures. By default, the physical layout of the data members of a target object is automatically arranged.
+      When managed objects are passed as arguments to unmanaged code,
+      the system creates their unmanaged representations. These unmanaged representations can
+      be controlled with the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> .
+      Such control is necessary if the unmanaged code expects a specific layout, packing
+      size, or character set.</para>
+      <para>
+        <block subset="none" type="note">See the <see cref="T:System.Runtime.InteropServices.LayoutKind" />
+enumeration for a description of the possible layout schemes, and the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" /> for further information on the layout of exported objects.</block>
+      </para>
+      <para>Compilers are required to not preserve this type
+   in metadata as a custom attribute. Instead, compilers are required to emit it
+   directly in the file format, as described in Partition II of the CLI
+   Specification. Metadata consumers, such as the Reflection API, are required to
+   retrieve this data from the file format and return it as if it were a custom
+   attribute. </para>
+    </remarks>
+    <example>
+      <para>The following example demonstrates the use of the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />, and the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" />.</para>
+      <para>
+        <block subset="none" type="note">The non-standard
+<see langword=" PtInRect" /> 
+function used in this example indicates whether the specified point is
+located inside the specified rectangle. In this example, the layout setting on the
+<see langword="Rect" /> 
+structure can be
+set to <see cref="F:System.Runtime.InteropServices.LayoutKind.Sequential" />
+with no bearing on the end
+result.</block>
+      </para>
+      <code lang="C#">using System;
+using System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Sequential)]
+public struct Point {
+ public int x;
+ public int y;
+}
+
+[StructLayout(LayoutKind.Explicit)]
+public struct Rect {
+ [FieldOffset(0)] public int left;
+ [FieldOffset(4)] public int top;
+ [FieldOffset(8)] public int right;
+ [FieldOffset(12)] public int bottom;
+}
+
+
+class NativeCodeAPI {
+ [DllImport("User32.dll")]
+ public static extern bool PtInRect(ref Rect r, Point p);
+}
+
+public class StructLayoutTest {
+ public static void Main() {
+ Rect r;
+ Point p1, p2;
+ 
+ r.left = 0;
+ r.right = 100;
+ r.top = 0;
+ r.bottom = 100;
+ 
+ p1.x = 20;
+ p1.y = 30;
+ 
+ p2.x = 110;
+ p2.y = 5;
+
+ 
+ bool isInside1 = NativeCodeAPI.PtInRect(ref r, p1);
+ bool isInside2 = NativeCodeAPI.PtInRect(ref r, p2);
+ 
+ if(isInside1)
+ Console.WriteLine("The first point is inside the rectangle.");
+ else
+ Console.WriteLine("The first point is outside the rectangle.");
+ 
+ if(isInside2)
+ Console.WriteLine("The second point is inside the rectangle.");
+ else
+ Console.WriteLine("The second point is outside the rectangle.");
+
+ }
+}
+</code>
+      <para>The output is</para>
+      <c>
+        <para>The first point is inside the rectangle.</para>
+        <para>The second point is outside the rectangle.</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int16 layoutKind)" />
+      <MemberSignature Language="C#" Value="public StructLayoutAttribute (short layoutKind);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="layoutKind" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="layoutKind">A <see cref="T:System.Int16" /> set to a <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value that specifies how the class or structure is arranged in memory.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the 
+   <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> class 
+      with the specified value.</para>
+        </summary>
+        <remarks>
+          <para>If the <paramref name="layoutKind" />
+parameter does not represent a valid <see cref="T:System.Runtime.InteropServices.LayoutKind" />
+value, a
+runtime error occurs.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Runtime.InteropServices.LayoutKind layoutKind)" />
+      <MemberSignature Language="C#" Value="public StructLayoutAttribute (System.Runtime.InteropServices.LayoutKind layoutKind);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="layoutKind" Type="System.Runtime.InteropServices.LayoutKind" />
+      </Parameters>
+      <Docs>
+        <param name="layoutKind">A <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value that specifies how the class or structure is arranged in memory.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> class
+   with the specified <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value.</para>
+        </summary>
+        <remarks>
+          <para> If <paramref name="layoutKind" /> contains an invalid
+<see cref="T:System.Runtime.InteropServices.LayoutKind" /> value, 
+   a runtime error occurs.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CharSet">
+      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>A <see cref="T:System.Runtime.InteropServices.CharSet" /> value that indicates the character set in which strings of an object are
+   marshaled.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">See the <see cref="T:System.Runtime.InteropServices.CharSet" />
+enumeration for a description of different character sets.</block>
+          </para>
+          <para>The default value of this field is
+<see cref="F:System.Runtime.InteropServices.CharSet.Ansi" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pack">
+      <MemberSignature Language="ILASM" Value=".field public int32 Pack" />
+      <MemberSignature Language="C#" Value="public int Pack;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.Int32" /> that indicates the packing alignment used with the
+<see cref="F:System.Runtime.InteropServices.LayoutKind.Sequential" /> layout. </para>
+        </summary>
+        <remarks>
+          <para>The <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> field determines memory
+   alignment of data fields of a target object.</para>
+          <para>Data fields of a target object exported to unmanaged
+   memory are
+   aligned on
+   a byte boundary that is a multiple of <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> bytes, or at
+   some natural alignment for that field type, whichever is smaller.</para>
+          <para>The value of <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> is
+required to be 0, 1, 2, 4, 8, 16, 32, 64, or 128. A value of zero indicates that
+the packing alignment is set to the default for the current platform.
+The default value is implementation-defined.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Size">
+      <MemberSignature Language="ILASM" Value=".field public int32 Size" />
+      <MemberSignature Language="C#" Value="public int Size;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>A <see cref="T:System.Int32" /> that indicates the size of the memory block to be allocated
+   for an instance of the type qualified by the current <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />.</para>
+        </summary>
+        <remarks>
+          <para>
+            <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Size" /> is required to
+   be zero, or greater than or equal to the calculated size of the target object,
+   based on the <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> field indicating the packing
+   alignment. A <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Size" qualify="true" /> of zero
+   indicates that the size is calculated from the field types, their specified offsets, the packing size (default or
+   specified) and natural alignment on the target, runtime platform.</para>
+          <para>
+            <block subset="none" type="note">For additional
+   information on the <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Size" qualify="true" />
+   field, see Partition II of the CLI Specification.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Runtime.InteropServices.LayoutKind Value { public hidebysig specialname instance valuetype System.Runtime.InteropServices.LayoutKind get_Value() }" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.LayoutKind Value { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.LayoutKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value that specifies how
+   the target object is arranged.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value that specifies how
+   the target object is arranged.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

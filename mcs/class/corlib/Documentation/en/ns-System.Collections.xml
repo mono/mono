@@ -1,0 +1,16 @@
+<Namespace Name="System.Collections" FullName="System.Collections" FullNameSP="System.Collections" Maintainer="Mono">
+  <Docs>
+    <summary>
+    	The System.Collections namespace contains classes for storing collections of objects, including lists, hastables, queues, and stacks.
+    </summary>
+    <remarks>
+    	<para>The System.Collections namespace contains useful classes for storing collections of objects.</para>
+    	<para>All collections implement the <see cref="T:System.Collections.ICollection"/> interface, which
+    	provides basic functionality for iterating through the elements of a collection.
+    	Collections that support index-based access into their elements and the ability to add and
+    	remove elements, such as the <see cref="T:System.Collections.ArrayList"/>, implement the <see cref="T:System.Collections.IList"/> interface.
+    	Collections that provide a key/value mapping, such as the <see cref="T:System.Collections.Hashtable"/>,
+    	 implement the <see cref="T:System.Collections.IDictionary"/> interface.</para>
+    </remarks>
+  </Docs>
+</Namespace>

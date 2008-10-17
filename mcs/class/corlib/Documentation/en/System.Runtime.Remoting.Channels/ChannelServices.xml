@@ -1,0 +1,253 @@
+<Type Name="ChannelServices" FullName="System.Runtime.Remoting.Channels.ChannelServices">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ChannelServices" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AsyncDispatchMessage">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Messaging.IMessageCtrl AsyncDispatchMessage (System.Runtime.Remoting.Messaging.IMessage msg, System.Runtime.Remoting.Messaging.IMessageSink replySink);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Messaging.IMessageCtrl</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
+        <Parameter Name="replySink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
+      </Parameters>
+      <Docs>
+        <param name="msg">To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</param>
+        <param name="replySink">To be added: an object of type 'Runtime.Remoting.Messaging.IMessageSink'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessageCtrl'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateServerChannelSinkChain">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Channels.IServerChannelSink CreateServerChannelSinkChain (System.Runtime.Remoting.Channels.IServerChannelSinkProvider provider, System.Runtime.Remoting.Channels.IChannelReceiver channel);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Channels.IServerChannelSink</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.Runtime.Remoting.Channels.IServerChannelSinkProvider" />
+        <Parameter Name="channel" Type="System.Runtime.Remoting.Channels.IChannelReceiver" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added: an object of type 'IServerChannelSinkProvider'</param>
+        <param name="channel">To be added: an object of type 'IChannelReceiver'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'IServerChannelSink'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DispatchMessage">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Channels.ServerProcessing DispatchMessage (System.Runtime.Remoting.Channels.IServerChannelSinkStack sinkStack, System.Runtime.Remoting.Messaging.IMessage msg, out System.Runtime.Remoting.Messaging.IMessage replyMsg);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Channels.ServerProcessing</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sinkStack" Type="System.Runtime.Remoting.Channels.IServerChannelSinkStack" />
+        <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
+        <Parameter Name="replyMsg" Type="System.Runtime.Remoting.Messaging.IMessage&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="sinkStack">To be added: an object of type 'IServerChannelSinkStack'</param>
+        <param name="msg">To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</param>
+        <param name="replyMsg">To be added: an object of type 'Runtime.Remoting.Messaging.IMessage&amp;'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'ServerProcessing'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetChannel">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Channels.IChannel GetChannel (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Channels.IChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'IChannel'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetChannelSinkProperties">
+      <MemberSignature Language="C#" Value="public static System.Collections.IDictionary GetChannelSinkProperties (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionary</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added: an object of type 'object'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'Collections.IDictionary'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetUrlsForObject">
+      <MemberSignature Language="C#" Value="public static string[] GetUrlsForObject (MarshalByRefObject obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.MarshalByRefObject" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added: an object of type 'MarshalByRefObject'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'string []'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterChannel">
+      <MemberSignature Language="C#" Value="public static void RegisterChannel (System.Runtime.Remoting.Channels.IChannel chnl);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chnl" Type="System.Runtime.Remoting.Channels.IChannel" />
+      </Parameters>
+      <Docs>
+        <param name="chnl">To be added: an object of type 'IChannel'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use RegisterChannel(IChannel,Boolean)")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="RegisterChannel">
+      <MemberSignature Language="C#" Value="public static void RegisterChannel (System.Runtime.Remoting.Channels.IChannel chnl, bool ensureSecurity);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chnl" Type="System.Runtime.Remoting.Channels.IChannel" />
+        <Parameter Name="ensureSecurity" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="chnl">To be added.</param>
+        <param name="ensureSecurity">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisteredChannels">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Channels.IChannel[] RegisteredChannels { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Channels.IChannel[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'IChannel []'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SyncDispatchMessage">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Messaging.IMessage SyncDispatchMessage (System.Runtime.Remoting.Messaging.IMessage msg);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Messaging.IMessage</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
+      </Parameters>
+      <Docs>
+        <param name="msg">To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnregisterChannel">
+      <MemberSignature Language="C#" Value="public static void UnregisterChannel (System.Runtime.Remoting.Channels.IChannel chnl);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chnl" Type="System.Runtime.Remoting.Channels.IChannel" />
+      </Parameters>
+      <Docs>
+        <param name="chnl">To be added: an object of type 'IChannel'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

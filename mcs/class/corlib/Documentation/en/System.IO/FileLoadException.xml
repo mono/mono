@@ -1,0 +1,367 @@
+<Type Name="FileLoadException" FullName="System.IO.FileLoadException" FullNameSP="System_IO_FileLoadException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable FileLoadException extends System.IO.IOException" />
+  <TypeSignature Language="C#" Value="public class FileLoadException : System.IO.IOException" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.IO.IOException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Represents the error that occurs when a <see cref="T:System.Reflection.Assembly" /> file is found
+ but cannot be loaded.</para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">The <see cref="T:System.IO.FileNotFoundException" /> exception is thrown when
+ the file fails to load because it cannot be located. If the file is located, but
+ cannot be loaded due to insufficient permissions, a <see cref="T:System.Security.SecurityException" />
+ is
+ thrown.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public FileLoadException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.FileLoadException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.FileLoadException.Message" /> property of the
+ new instance to a system-supplied message that describes the error, such as
+ "Could not load the specified file." This message takes into account the current
+ system culture.</para>
+          <para>The <see cref="!:System.IO.FileLoadException.InnerException" /> property and <see cref="P:System.IO.FileLoadException.FileName" /> property of the new instance are initialized to
+<see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public FileLoadException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.FileLoadException" />
+class with the specified error message.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.FileLoadException.Message" /> property of the
+   new instance using <paramref name="message" />. If <paramref name="message" /> is
+<see langword="null" />, the <see cref="P:System.IO.FileLoadException.Message" /> property is initialized to the 
+   system-supplied message provided by the constructor that takes no
+   arguments. </para>
+          <para> The <see cref="!:System.IO.FileLoadException.InnerException" /> property and <see cref="P:System.IO.FileLoadException.FileName" /> property of the new instance are initialized to
+<see langword="null" />. </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected FileLoadException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public FileLoadException (string message, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is non-null, then the current exception was raised in a catch block handling <paramref name="inner" />.</param>
+        <param name="inner">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.FileLoadException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.FileLoadException.Message" /> property of the new
+   instance using <paramref name="message" /> and the <see cref="!:System.IO.FileLoadException.InnerException" /> property using
+<paramref name="inner" />. If <paramref name="message" /> is <see langword="null" />, 
+   the <see cref="P:System.IO.FileLoadException.Message" /> property is initialized to the system-supplied
+   message provided by the constructor that takes no arguments.</para>
+          <para> The <see cref="P:System.IO.FileLoadException.FileName" /> property of the new 
+instance is initialized to <see langword="null" />. </para>
+          <para>
+            <block subset="none" type="note">For more information on inner
+   exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, string fileName)" />
+      <MemberSignature Language="C#" Value="public FileLoadException (string message, string fileName);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="fileName">A <see cref="T:System.String" /> containing the name of the file that was not loaded.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.FileLoadException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.FileLoadException.Message" /> property of the
+   new instance using <paramref name="message" /> and the <see cref="P:System.IO.FileLoadException.FileName" /> property using
+<paramref name="fileName" />. If <paramref name="message" /> is <see langword="null" />, 
+   the <see cref="P:System.IO.FileLoadException.Message" /> property is initialized to the system-supplied
+   message provided by the constructor that takes no arguments. </para>
+          <para> The <see cref="!:System.IO.FileLoadException.InnerException" /> property of the 
+new instance is initialized to <see langword="null" />.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="P:System.IO.FileLoadException.FileName" /> is not required to be a file stored
+   on disk; it can be any part of a system that supports access via streams. For
+   example, depending on the system, this class might be able to access a physical
+   device.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, string fileName, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public FileLoadException (string message, string fileName, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="fileName">A <see cref="T:System.String" /> containing the name of the file that was not loaded.</param>
+        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is non-null, then the current exception was raised in a catch block handling <paramref name="inner" />.</param>
+        <param name="fileName">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.FileLoadException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.FileLoadException.Message" /> property of the
+   new instance using <paramref name="message" />, the <see cref="!:System.IO.FileLoadException.InnerException" /> property using
+<paramref name="inner" />, and the <see cref="P:System.IO.FileLoadException.FileName" /> property using 
+<paramref name="fileName" />. If <paramref name="message" /> is <see langword="null" />, 
+   the <see cref="P:System.IO.FileLoadException.Message" /> property is initialized to the system-supplied
+   message provided by the constructor that takes no arguments.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="P:System.IO.FileLoadException.FileName" /> is not required to be a file stored
+   on disk; it can be any part of a system that supports access via streams. For
+   example, depending on the system, this class might be able to access a physical
+   device.</para>
+            <para>For more information on inner exceptions, see <see cref="P:System.Exception.InnerException" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FileName">
+      <MemberSignature Language="ILASM" Value=".property string FileName { public hidebysig specialname instance string get_FileName() }" />
+      <MemberSignature Language="C#" Value="public string FileName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the name of the file that caused the current exception.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the name of the file that caused the
+   current exception.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>This property returns the name of the file supplied to the constructor for the
+      current instance, if any. If the file name was not specified or is a null
+      reference, this property returns <see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FusionLog">
+      <MemberSignature Language="C#" Value="public string FusionLog { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="ILASM" Value=".property string Message { public hidebysig virtual specialname string get_Message() }" />
+      <MemberSignature Language="C#" Value="public override string Message { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the error message that describes the current exception.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing a
+   message that describes the error that caused the current exception.</para>
+        </value>
+        <remarks>
+          <para>If the message supplied to the constructor for the current
+      instance was not <see langword="null" /> ,
+      
+      this property returns that message. Otherwise, this property
+      returns a system-supplied message that includes the name of the
+      file that was not loaded, for example, "Unable to load file a
+   <paramref name="FileName" />." (a <paramref name="FileName" /> represents the value returned by <see cref="P:System.IO.FileLoadException.FileName" />.) If <see cref="P:System.IO.FileLoadException.FileName" /> is
+   <see langword="null" />, this is indicated in the system-supplied
+      message as "(null)". The system-supplied message takes into account the current system culture.</para>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">This property
+      overrides <see cref="P:System.Exception.Message" /> .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a string representation of the current exception.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> 
+representation of the current exception.</para>
+        </returns>
+        <remarks>
+          <para>The string representation returned by this method includes the value of the 
+   <see cref="P:System.IO.FileLoadException.Message" /> property, the value 
+      of the <see cref="P:System.IO.FileLoadException.FileName" /> property, the result of calling
+   <see langword="ToString" /> on the exception returned by <see cref="!:System.IO.FileLoadException.InnerException" />, and the result of calling <see cref="P:System.Environment.StackTrace" />. 
+      If any of these members is <see langword="null" />, its value is not included in
+      the returned string.</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Object.ToString" /> .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

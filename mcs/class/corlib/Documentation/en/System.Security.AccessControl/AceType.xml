@@ -1,0 +1,269 @@
+<Type Name="AceType" FullName="System.Security.AccessControl.AceType">
+  <TypeSignature Language="C#" Value="public enum AceType" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="AccessAllowed">
+      <MemberSignature Language="C#" Value="AccessAllowed" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AccessAllowedCallback">
+      <MemberSignature Language="C#" Value="AccessAllowedCallback" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AccessAllowedCallbackObject">
+      <MemberSignature Language="C#" Value="AccessAllowedCallbackObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AccessAllowedCompound">
+      <MemberSignature Language="C#" Value="AccessAllowedCompound" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AccessAllowedObject">
+      <MemberSignature Language="C#" Value="AccessAllowedObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AccessDenied">
+      <MemberSignature Language="C#" Value="AccessDenied" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AccessDeniedCallback">
+      <MemberSignature Language="C#" Value="AccessDeniedCallback" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AccessDeniedCallbackObject">
+      <MemberSignature Language="C#" Value="AccessDeniedCallbackObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AccessDeniedObject">
+      <MemberSignature Language="C#" Value="AccessDeniedObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxDefinedAceType">
+      <MemberSignature Language="C#" Value="MaxDefinedAceType" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemAlarm">
+      <MemberSignature Language="C#" Value="SystemAlarm" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemAlarmCallback">
+      <MemberSignature Language="C#" Value="SystemAlarmCallback" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemAlarmCallbackObject">
+      <MemberSignature Language="C#" Value="SystemAlarmCallbackObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemAlarmObject">
+      <MemberSignature Language="C#" Value="SystemAlarmObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemAudit">
+      <MemberSignature Language="C#" Value="SystemAudit" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemAuditCallback">
+      <MemberSignature Language="C#" Value="SystemAuditCallback" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemAuditCallbackObject">
+      <MemberSignature Language="C#" Value="SystemAuditCallbackObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemAuditObject">
+      <MemberSignature Language="C#" Value="SystemAuditObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

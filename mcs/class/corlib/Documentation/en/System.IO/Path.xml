@@ -1,0 +1,1035 @@
+<Type Name="Path" FullName="System.IO.Path" FullNameSP="System_IO_Path" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed Path extends System.Object" />
+  <TypeSignature Language="C#" Value="public static class Path" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Performs operations on <see cref="T:System.String" /> instances that contain
+   file or directory path information.</para>
+    </summary>
+    <remarks>
+      <para> A path is a string that provides the location of a file
+      or directory. A path does not necessarily point to a location on disk; for
+      example, a path might map to a location in memory or on a device. Paths are
+      composed of the components described below. Component names are shown in
+   <paramref name="italics " />
+   
+   and the following table describes the symbols used in component definitions:</para>
+      <list type="table">
+        <listheader>
+          <term>Symbol</term>
+          <description>Description</description>
+        </listheader>
+        <item>
+          <term> &lt; &gt;</term>
+          <description>Indicates a path component.</description>
+        </item>
+        <item>
+          <term> { } </term>
+          <description>Indicates a grouping; either all components
+         in a grouping are present, or none are permitted to be
+         present.</description>
+        </item>
+        <item>
+          <term> *</term>
+          <description>Indicates that the component or grouping that immediately precedes
+         this symbol can appear zero, one, or multiple times.</description>
+        </item>
+        <item>
+          <term> ?</term>
+          <description>Indicates that the component or grouping that immediately precedes
+         this symbol can appear zero, or one times.</description>
+        </item>
+        <item>
+          <term> +</term>
+          <description>Indicates string concatenation.</description>
+        </item>
+      </list>
+      <para> The components that define a path are as
+   follows:</para>
+      <para>
+        <paramref name="Directory Name" />: A string that
+specifies one or more directory levels in a file system. If a directory name
+contains
+multiple levels, a <paramref name="directory separator character" /> separates the levels; however, a directory name does not begin or
+end with a directory separator character. In the example path <c>C:/foo/bar/bat.txt</c>, the directory
+name is "<c>foo/bar</c>". <see cref="M:System.IO.Path.GetDirectoryName(System.String)" /> returns the directory name component of a path.
+Note that this method does include a beginning separator character if one is
+included
+in the specified
+path. </para>
+      <para>
+        <paramref name="Directory Separator Character" />:
+An implementation-specific constant string containing a single printable
+non-alphanumeric character used to separate levels in a file system. In the
+example path <c>C:/foo/bar/bat.txt</c>, the directory separator character is "<c>/</c>". The <see cref="F:System.IO.Path.DirectorySeparatorChar" /> and <see cref="F:System.IO.Path.AltDirectorySeparatorChar" /> store
+implementation-specific directory separator characters
+.</para>
+      <para>
+        <paramref name="Extension" />: A string that consists of the
+characters at the end of a file name, from and including the last <paramref name="extension separator character" />. The minimum and
+maximum lengths of extension components are implementation-specific. In the example
+path <c>C:/foo/bar/bat.txt</c>
+, the <paramref name="extension" /> is "<c>.txt</c>". The <see cref="M:System.IO.Path.GetExtension(System.String)" /> method returns the
+extension component of a
+path.</para>
+      <para>
+        <paramref name="Extension Separator Character" />:
+An implementation-specific constant string
+composed of a single character that appears after the last character in the
+<paramref name="file base" /> component indicating the beginning of the <paramref name="extension" /> 
+component. If the extension separator character<paramref name=" " />is the first character
+in a <paramref name="file name" />, it is not interpreted as a
+extension separator character<paramref name="." /> If more than one extension separator
+character<paramref name=" " />appears in a file name, only the last occurrence is the
+extension separator character; all other occurrences are part of the file base
+component<paramref name="." /> In the example path <c>C:/foo/bar/bat.txt</c>, the extension separator character
+is "<c>.</c>". </para>
+      <para>
+        <paramref name="File Base" />: A string containing the
+<paramref name="file" /><paramref name="name" /> with the <paramref name="extension " />component removed. In the example path <c>C:/foo/bar/bat.txt</c>, the file base
+is "<c>bat</c>".
+The <see cref="M:System.IO.Path.GetFileNameWithoutExtension(System.String)" /> method returns the
+file base component of a
+path.</para>
+      <para>
+        <paramref name="File Name" />: A string containing all information
+required to uniquely identify a file within a directory. This component is defined
+as follows:</para>
+      <para>
+        <c>&lt;file
+   base&gt;{+&lt;extension&gt;}?</c>
+      </para>
+      <para> The file name component is commonly referred to as a
+   relative file name. In the example path <c>C:/foo/bar/bat.txt</c>, the file name is "<c>bat.txt</c>". The <see cref="M:System.IO.Path.GetFileName(System.String)" />
+method returns the file name component of a
+path.</para>
+      <para>
+        <paramref name="Full Directory Name" />: A string containing all
+information required to uniquely identify a directory within a file
+system. This component is defined as
+follows:</para>
+      <para>
+        <c>&lt;path
+   root&gt;+&lt;directory name&gt;</c>
+      </para>
+      <para> The full directory name component is commonly referred to
+   as the absolute directory name. In the example path <c>C:/foo/bar/bat.txt</c>, the full directory name is "<c>C:/foo/bar</c>
+".</para>
+      <para>
+        <paramref name="Full" />
+        <paramref name="Path" />: A string containing all
+information required to uniquely identify a file within a file system. This
+component is defined as
+follows:</para>
+      <para>
+        <c>&lt;full
+   directory name&gt;+&lt;directory separator character&gt;+&lt;file
+   name&gt;</c>
+      </para>
+      <para> The full path component is commonly referred to as the
+   absolute file name. In the example path <c>C:/foo/bar/bat.txt</c>, the full path is "<c>C:/foo/bar/bat.txt</c>". The <see cref="M:System.IO.Path.GetFullPath(System.String)" /> method returns the full path
+component.</para>
+      <para>
+        <paramref name="Path Root" />: A string containing all information
+required to uniquely identify the highest level in a file
+system. The component is defined as
+follows:</para>
+      <para>
+        <c>{&lt;volume
+   identifier&gt;+&lt;volume separator character&gt;}?+&lt;directory separator
+   character&gt;</c>
+      </para>
+      <para> In the example path <c>C:/foo/bar/bat.txt</c> , the path root is "<c>C:/</c>". The <see cref="M:System.IO.Path.GetPathRoot(System.String)" />
+method returns the <paramref name="path root" />
+component.</para>
+      <para>
+        <paramref name="Volume" />
+        <paramref name="Identifier" />: A string composed of a single alphabetic
+character that uniquely defines a drive or volume in a file system. This
+component is optional; on systems that do not support volume identifiers, this
+component is required to be a zero length string. In the example path <c>C:/foo/bar/bat.txt</c>
+, the path root<paramref name=" " />is "<c>C:</c>". In the example path, <c>\\myserver\myshare\foo\bar\baz.txt</c>
+the path root is "<c>\\myserver\myshare</c>". </para>
+      <para>
+        <paramref name="Volume Separator Character" />: A
+string composed of a single alphabetic character used to separate the
+<paramref name="volume" /><paramref name="identifier" /> from other components in a path. This
+component can appear in a path only if a volume identifier is
+present<paramref name="." /> This component is optional; on systems that do not
+support the volume identifier<paramref name=" " />component, the volume separator character
+component is required to be a zero length
+string.</para>
+      <para>The exact format of a path is determined by the current
+   platform. For example, on Windows systems a path can start with a volume
+   identifier, while this element is not present in Unix system paths. On some
+   systems, paths containing file names can contain extensions. The format of an
+   extension
+   is platform dependent; for example, some systems limit extensions to
+   three characters, while others do not. The current platform and possibly the current
+   file system determine the set of characters used to separate the elements of
+   a path, and the set of characters that cannot be used when specifying paths.
+   Because of these differences, the fields of the <see cref="T:System.IO.Path" /> class as well as the exact behavior
+   of some members of the <see cref="T:System.IO.Path" /> class are determined by the current platform and/or file
+   system.</para>
+      <para>A path contains either absolute or relative location
+   information. Absolute paths fully specify a location: the file or directory can
+   be uniquely identified regardless of the current location. A full path or full
+   directory name component is present in an absolute path. Relative paths specify
+   a partial location: the current working directory is used as the starting point
+   when locating a file specified with a relative path. <block subset="none" type="note">To determine the current working directory, call <see cref="M:System.IO.Directory.GetCurrentDirectory" />
+   .</block></para>
+      <para> Most members of the <see langword="Path" /> class do not interact with the file system
+and do not verify the existence of the file or directory specified by a path
+string. <see cref="T:System.IO.Path" />
+members that modify a path string, such
+as <see cref="M:System.IO.Path.ChangeExtension(System.String,System.String)" />, have no effect on files and directories in the
+file system. <see cref="T:System.IO.Path" />
+members do, however, validate the contents of a specified path string, and
+throw <see cref="T:System.ArgumentException" /> if the string contains
+characters that are not valid in path strings, as defined by the current
+platform and file system. Implementations are
+required to preserve the case of file and directory path strings, and to be case
+sensitive if and only if the current platform is case-sensitive.
+</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AltDirectorySeparatorChar">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.Char AltDirectorySeparatorChar" />
+      <MemberSignature Language="C#" Value="public static readonly char AltDirectorySeparatorChar;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Provides a string containing an alternate single printable 
+      non-alphanumeric character used to separate directory levels in a hierarchical
+      file system.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para> This field can be set to the
+      same value as <see cref="F:System.IO.Path.DirectorySeparatorChar" />.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="F:System.IO.Path.AltDirectorySeparatorChar" /> and <see cref="F:System.IO.Path.DirectorySeparatorChar" /> are
+      both valid for separating directory levels in a path string.</para>
+            <para>The value of this field is a slash ('/') on Windows systems and a backslash
+      ('\') on Unix systems.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ChangeExtension">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ChangeExtension(string path, string extension)" />
+      <MemberSignature Language="C#" Value="public static string ChangeExtension (string path, string extension);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="extension" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the path information to modify.</param>
+        <param name="extension">A <see cref="T:System.String" /> containing the new extension. Specify <see langword="null" /> to remove an existing extension from <paramref name="path" />.</param>
+        <summary>
+          <para> Changes the extension component of the specified path string.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" />
+containing the modified path information.</para>
+          <para>Platforms that do not support this feature
+   return <paramref name="path" /> unmodified.</para>
+        </returns>
+        <remarks>
+          <para>The exact behavior of this
+      method is implementation-specific. This method checks <paramref name="path" /> for invalid
+      characters as defined by the current platform and file system.
+      </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> contains one or more implementation-specific invalid characters.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Combine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Combine(string path1, string path2)" />
+      <MemberSignature Language="C#" Value="public static string Combine (string path1, string path2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path1" Type="System.String" />
+        <Parameter Name="path2" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path1">A <see cref="T:System.String" /> containing the first path.</param>
+        <param name="path2">A <see cref="T:System.String" /> containing the second path.</param>
+        <summary>
+          <para>Concatenates two
+      path strings.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing
+<paramref name="path1" /> followed by <paramref name="path2" />.
+   If one of the specified paths is a zero length string, this method returns the
+   other path. If <paramref name="path2" /> contains an absolute path, this method returns
+<paramref name="path2" />.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="path1" /> does not end with
+   a valid separator character (<see cref="F:System.IO.Path.DirectorySeparatorChar" /> or <see cref="F:System.IO.Path.AltDirectorySeparatorChar" />), <see langword="DirectorySeparatorChar" />
+   is appended to <paramref name="path1" /> prior
+   to the concatenation.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path1" /> or <paramref name="path2" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="path1" /> or <paramref name="path2" /> contains one or more implementation-specific invalid characters.</para>
+        </exception>
+        <example>
+          <para> The following example demonstrates using the
+   <see langword="Combine" /> method on a Windows system.</para>
+          <code lang="C#">using System;
+using System.IO;
+class CombineTest {
+ public static void Main() {
+ string path1, path2;
+ Console.WriteLine("Dir char is {0} Alt dir char is {1}",
+ Path.DirectorySeparatorChar,
+ Path.AltDirectorySeparatorChar
+ );
+ path1 = "foo.txt";
+ path2 = "\\ecmatest\\examples";
+ Console.WriteLine("{0} combined with {1} = {2}",path1, path2 , Path.Combine(path1, 
+
+path2));
+ path1 = "\\ecmatest\\examples";
+ path2 = "foo.txt";
+ Console.WriteLine("{0} combined with {1} = {2}",path1, path2 , Path.Combine(path1, 
+
+path2));
+ }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>Dir char is \ Alt dir char is /</para>
+            <para>foo.txt combined with \ecmatest\examples = \ecmatest\examples</para>
+            <para>\ecmatest\examples combined with foo.txt = 
+         \ecmatest\examples\foo.txt</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DirectorySeparatorChar">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.Char DirectorySeparatorChar" />
+      <MemberSignature Language="C#" Value="public static readonly char DirectorySeparatorChar;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Provides a string containing a single
+      printable non-alphanumeric character used to separate directory levels in a hierarchical file system.
+      </para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="F:System.IO.Path.AltDirectorySeparatorChar" /> and <see cref="F:System.IO.Path.DirectorySeparatorChar" /> are both
+   valid for separating directory levels in a path string.</para>
+            <para>The value of this field is a backslash ('\') on Windows systems and a slash ('/') on Unix systems.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDirectoryName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetDirectoryName(string path)" />
+      <MemberSignature Language="C#" Value="public static string GetDirectoryName (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the path of a file or directory.</param>
+        <summary>
+          <para>Returns the directory name component of the specified path string.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing directory information for <paramref name="path" />, or
+<see langword="null" /> if <paramref name="path" /> denotes a root directory, is 
+   the empty string, or is <see langword="null." /> Returns <see cref="F:System.String.Empty" /> if path
+   does not contain directory information.</para>
+        </returns>
+        <remarks>
+          <para>The string returned by this method consists
+      of all characters between the first and last <see cref="F:System.IO.Path.DirectorySeparatorChar" /> or <see cref="F:System.IO.Path.AltDirectorySeparatorChar" /> character
+      in <paramref name="path" />. The first separator character is included, but the last separator character is not included in
+      the returned string.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="path" /> contains one or more implementation-specific invalid characters.</para>
+        </exception>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.IO.Path.GetDirectoryName(System.String)" /> method on a Windows system.</para>
+          <code lang="C#">using System;
+using System.IO;
+class GetDirectoryTest {
+ public static void Main() {
+   string [] paths = {
+     @"\ecmatest\examples\pathtests.txt",
+     @"\ecmatest\examples\",
+     "pathtests.xyzzy",
+     @"\",
+     @"C:\",
+    @"\\myserver\myshare\foo\bar\baz.txt"
+   };
+   foreach (string pathString in paths) {
+     string s = Path.GetDirectoryName(pathString);
+     Console.WriteLine("Path: {0} directory is {1}",pathString, s== null? "null": s);
+   }
+ }
+}
+</code>
+          <para>The output is </para>
+          <c>
+            <para>Path: \ecmatest\examples\pathtests.txt directory is \ecmatest\examples</para>
+            <para>Path: \ecmatest\examples\ directory is \ecmatest\examples</para>
+            <para> Path: pathtests.xyzzy directory is</para>
+            <para> Path: \ directory is null</para>
+            <para>Path: C:\ directory is null</para>
+            <para>Path: \\myserver\myshare\foo\bar\baz.txt directory is \\myserver\myshare\foo\bar</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetExtension">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetExtension(string path)" />
+      <MemberSignature Language="C#" Value="public static string GetExtension (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the path information from which to get the extension.</param>
+        <summary>
+          <para>Returns the extension component of the specified path string.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the extension of <paramref name="path," /><see langword="null" /> ,
+or <see cref="F:System.String.Empty" />. If <paramref name="path" /> is
+<see langword="null" />, returns <see langword="null" />. If path does not have extension information, 
+returns <see cref="F:System.String.Empty" />.</para>
+          <para>The extension returned by this method includes the
+      implementation-specific extension separator character used to separate the extension
+      from the rest of the path.</para>
+          <para>Platforms that do not
+      support this feature return <paramref name="path" /> unmodified.</para>
+        </returns>
+        <remarks>
+          <para>The exact behavior of this method
+      is implementation-specific. The character used to separate the extension from the rest of the path is
+      implementation-specific.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="path" /> contains one or more implementation-specific invalid characters.</para>
+        </exception>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.IO.Path.GetExtension(System.String)" /> method on a Windows
+   system.</para>
+          <code lang="C#">using System;
+using System.IO;
+class GetDirectoryTest {
+ public static void Main(){
+   string [] paths = {
+     @"\ecmatest\examples\pathtests.txt",
+     @"\ecmatest\examples\",
+     "pathtests.xyzzy",
+     "pathtests.xyzzy.txt",
+     @"\",
+     ""
+   };
+   foreach (string pathString in paths){
+     string s = Path.GetExtension (pathString);
+     if (s == String.Empty) s= "(empty string)";
+     if (s == null) s= "null";
+     Console.WriteLine("{0} is the extension of {1}", s, pathString);
+   }
+ }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>.txt is the extension of \ecmatest\examples\pathtests.txt</para>
+            <para>(empty string) is the extension of \ecmatest\examples\ </para>
+            <para>.xyzzy is the extension of pathtests.xyzzy </para>
+            <para>.txt is the extension of pathtests.xyzzy.txt </para>
+            <para>(empty string) is the extension of \ </para>
+            <para>(empty string) is the extension of </para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetFileName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetFileName(string path)" />
+      <MemberSignature Language="C#" Value="public static string GetFileName (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the path information from which to obtain the filename and extension.</param>
+        <summary>
+          <para>Returns the file name, including the extension if any, of the specified path string.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> consisting of the characters
+   after the last directory character in <paramref name="path" />. If the last character
+   of <paramref name="path" /> is a directory separator character, returns <see cref="F:System.String.Empty" />. If <paramref name="path" /> is <see langword="null" />, returns
+<see langword="null" />.</para>
+          <para>Platforms that do not support this feature
+   return <paramref name="path" /> unmodified.</para>
+        </returns>
+        <remarks>
+          <para> The directory separator characters used to determine the start of
+      the file name are <see cref="F:System.IO.Path.DirectorySeparatorChar" /> and <see cref="F:System.IO.Path.AltDirectorySeparatorChar" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> contains one or more implementation-specific invalid characters.</exception>
+        <example>
+          <para>The following example demonstrates the behavior of the
+      <see cref="M:System.IO.Path.GetFileName(System.String)" /> method on a
+      Windows system.</para>
+          <code lang="C#">using System;
+using System.IO;
+class FileNameTest {
+ public static void Main() {
+   string [] paths = {"pathtests.txt",
+     @"\ecmatest\examples\pathtests.txt",
+     "c:pathtests.txt",
+     @"\ecmatest\examples\",
+     ""
+   };
+   foreach (string p in paths) {
+     Console.WriteLine("Path: {0} filename = {1}",p, Path.GetFileName(p));
+   }
+ }
+}
+      </code>
+          <para>The output is </para>
+          <c>
+            <para>Path: pathtests.txt filename = pathtests.txt </para>
+            <para>Path: \ecmatest\examples\pathtests.txt filename = pathtests.txt </para>
+            <para>Path: c:pathtests.txt filename = pathtests.txt </para>
+            <para>Path: \ecmatest\examples\ filename = </para>
+            <para>Path: filename = </para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetFileNameWithoutExtension">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetFileNameWithoutExtension(string path)" />
+      <MemberSignature Language="C#" Value="public static string GetFileNameWithoutExtension (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the path of the file.</param>
+        <summary>
+          <para>Returns the file base component of the specified path string without the extension.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> consisting of the
+   string returned by <see cref="M:System.IO.Path.GetFileName(System.String)" /> , minus
+   the implementation-specific extension separator character and extension. Platforms that do not support this feature
+   return <paramref name="path" />
+   unmodified.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">For additional details, see <see cref="M:System.IO.Path.GetFileName(System.String)" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> contains one or more implementation-specific invalid characters.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetFullPath">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetFullPath(string path)" />
+      <MemberSignature Language="C#" Value="public static string GetFullPath (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the file or directory for which to obtain absolute path information.</param>
+        <summary>
+          <para>Returns information required to uniquely identify a
+      file within a file system.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing the fully qualified (absolute) location of <paramref name="path" /> .</para>
+        </returns>
+        <remarks>
+          <para> The absolute path includes all information required to locate
+      a file or directory on a system. The file or directory specified by <paramref name="path" /> is not required to exist; however if
+   <paramref name="path" /> does exist, the caller is required to have permission to obtain
+      path information for <paramref name="path" />. Note
+      that unlike most members of the <see cref="T:System.IO.Path" />
+      class, this method accesses the file
+      system.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</para>
+          <para>-or-</para>
+          <para>The system could not retrieve the absolute path.</para>
+        </exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permissions.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" /> .</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to access path information. See <see langword="System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" /> .</permission>
+        <example>
+          <para> The following example demonstrates the <see cref="M:System.IO.Path.GetFullPath(System.String)" /> method on a Windows system. In
+   this example, the absolute path for the current directory is c:\ecmatest\examples.</para>
+          <code lang="C#">using System; 
+using System.IO; 
+class GetDirectoryTest { 
+ public static void Main() { 
+   string [] paths = { 
+     @"\ecmatest\examples\pathtests.txt", 
+     @"\ecmatest\examples\", 
+     "pathtests.xyzzy", 
+     @"\", 
+   }; 
+   foreach (string pathString in paths) 
+     Console.WriteLine("Path: {0} full path is {1}",pathString, 
+
+Path.GetFullPath(pathString));
+ } 
+}
+</code>
+          <para>The output is </para>
+          <c>
+            <para>Path: \ecmatest\examples\pathtests.txt full path is
+      C:\ecmatest\examples\pathtests.txt</para>
+            <para>Path: \ecmatest\examples\ full path is C:\ecmatest\examples\</para>
+            <para>Path: pathtests.xyzzy full path is
+      C:\ecmatest\examples\pathtests.xyzzy</para>
+            <para>Path: \ full path is C:\ </para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetInvalidFileNameChars">
+      <MemberSignature Language="C#" Value="public static char[] GetInvalidFileNameChars ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetInvalidPathChars">
+      <MemberSignature Language="C#" Value="public static char[] GetInvalidPathChars ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetPathRoot">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetPathRoot(string path)" />
+      <MemberSignature Language="C#" Value="public static string GetPathRoot (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the path from which to obtain root directory information</param>
+        <summary>
+          <para>Returns the path root component of the specified path.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the root directory of <paramref name="path" />, or
+<see langword="null" /> if <paramref name="path" /> is 
+<see langword="null" /> . Returns <see cref="F:System.String.Empty" />
+   if the specified path does not contain root information. </para>
+          <para>Platforms that do not support this feature
+   return <paramref name="path" /> unmodified.</para>
+        </returns>
+        <remarks>
+          <para>This method does not verify that the path exists.
+      </para>
+          <para>The exact behavior of this method is implementation-specific.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> contains one or more implementation-specific invalid characters or is equal to <see cref="F:System.String.Empty" /> . </exception>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.IO.Path.GetPathRoot(System.String)" /> 
+method.</para>
+          <code lang="C#">using System;
+using System.IO;
+class GetPathRootTest 
+{
+  public static void Main() {
+    string [] paths = {                                
+
+@"\ecmatest\examples\pathtests.txt",
+      "pathtests.xyzzy",
+      @"\",
+      @"C:\",                                  
+
+@"\\myserver\myshare\foo\bar\baz.txt"
+    };
+    foreach (string pathString in paths) {
+      string s = Path.GetPathRoot(pathString);
+      Console.WriteLine("Path: {0} Path root is {1}",pathString, s== null? "null": s);
+    }
+  }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Path: \ecmatest\examples\pathtests.txt Path root is \</para>
+            <para>Path: pathtests.xyzzy Path root is</para>
+            <para>Path: \ Path root is \</para>
+            <para>Path: C:\ Path root is C:\</para>
+            <para>Path: \\myserver\myshare\foo\bar\baz.txt 
+      Path root is \\myserver\myshare</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRandomFileName">
+      <MemberSignature Language="C#" Value="public static string GetRandomFileName ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTempFileName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetTempFileName()" />
+      <MemberSignature Language="C#" Value="public static string GetTempFileName ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a unique temporary file name and creates a 0-byte file by
+      that name on disk.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing the name of the temporary file.
+   </para>
+          <para>Platforms that do not support this feature
+   return <see cref="F:System.String.Empty" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTempPath">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetTempPath()" />
+      <MemberSignature Language="C#" Value="public static string GetTempPath ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns the path information of a temporary directory.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing the full directory name of a temporary
+   directory.</para>
+          <para>The information returned by this method is
+   implementation-specific. Platforms that do not support this feature return
+<see cref="F:System.String.Empty" />.</para>
+        </returns>
+        <remarks>
+          <para>On platforms that provide a mechanism for users
+      to discover this information, (for example by checking an environment variable),
+      implementations of the CLI return the same information as the implementation-specific
+      mechanism.</para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <permission cref="T:System.Security.Permissions.EnvironmentPermission">Requires unrestricted access to environment variables. See <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasExtension">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool HasExtension(string path)" />
+      <MemberSignature Language="C#" Value="public static bool HasExtension (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the path to search for an extension.</param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> indicating whether the specified path includes an extension component.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if 
+<paramref name="path" /> includes a file extension.</para>
+          <para>Platforms that do not support this feature
+   return <see langword="false" />.</para>
+        </returns>
+        <remarks />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> contains one or more implementation-specific invalid characters. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidPathChars">
+      <MemberSignature Language="C#" Value="public static readonly char[] InvalidPathChars;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Provides a platform-specific array of characters invalid to use in a path.</summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>
+    This property is obsolete as of .NET 2.0. Instead you are encouraged to use the <see cref="T:System.IO.Path.GetInvalidFileNameChars" /> and <see cref="T:System.IO.Path.GetInvalidPathChars" /> methods.
+  </para>
+          </block>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("see GetInvalidPathChars and GetInvalidFileNameChars methods.")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IsPathRooted">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsPathRooted(string path)" />
+      <MemberSignature Language="C#" Value="public static bool IsPathRooted (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the path to test.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Boolean" /> indicating whether the specified path string contains a
+   path root component.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if
+<paramref name="path" /> contains an absolute path; <see langword="false" /> 
+if <paramref name="path" /> contains relative path information.</para>
+          <para>Platforms that do not support this feature
+   return <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method does not access file systems or verify the existence of the specified path. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> contains one or more implementation-specific invalid characters.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PathSeparator">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.Char PathSeparator" />
+      <MemberSignature Language="C#" Value="public static readonly char PathSeparator;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Provides a implementation-specific separator character used to
+      separate path strings in environment variables.
+      </para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VolumeSeparatorChar">
+      <MemberSignature Language="C#" Value="public static readonly char VolumeSeparatorChar;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,202 @@
+<Type Name="MissingFieldException" FullName="System.MissingFieldException" FullNameSP="System_MissingFieldException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable MissingFieldException extends System.MissingMemberException" />
+  <TypeSignature Language="C#" Value="public class MissingFieldException : MissingMemberException" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.MissingMemberException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Represents the error that occurs when there is an attempt to dynamically access a
+      field that does not exist.</para>
+    </summary>
+    <remarks>
+      <para> Normally a compilation error is generated if code attempts to access a
+      nonexistent member of a class. <see cref="T:System.MissingFieldException" /> is designed to handle cases where an attempt is
+      made to dynamically access a renamed or deleted field of an
+      assembly that is not referenced by its strong name. The <see cref="T:System.MissingFieldException" /> is thrown when code in a
+      dependent assembly attempts to access a missing field in an assembly that was
+      modified.</para>
+      <block subset="none" type="note">
+        <para>The following CIL instructions throw <see cref="T:System.MissingFieldException" />:</para>
+        <list type="bullet">
+          <item>
+            <term>
+         ldfld</term>
+          </item>
+          <item>
+            <term>
+         ldflda</term>
+          </item>
+          <item>
+            <term>
+         ldsflda</term>
+          </item>
+          <item>
+            <term>
+         stfld</term>
+          </item>
+          <item>
+            <term>
+         stsfld</term>
+          </item>
+        </list>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public MissingFieldException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes new instance of the <see cref="T:System.MissingFieldException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.MissingFieldException.Message" /> property of the new
+   instance to a system-supplied message that describes the error, such as
+   "Attempted to access a nonexistent field." This message takes into account the
+   current system culture.</para>
+          <para>The <see cref="!:System.MissingFieldException.InnerException" /> property of the new instance is
+initialized to <see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public MissingFieldException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.MissingFieldException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.MissingFieldException.Message" /> property of the new
+   instance using <paramref name="message" />. If <paramref name="message " />is
+<see langword="null" />, the <see cref="P:System.MissingFieldException.Message" /> property is initialized to the 
+   system-supplied message provided by the constructor that takes no
+   arguments. </para>
+          <para> The <see cref="!:System.MissingFieldException.InnerException" /> property of the
+new instance is initialized to <see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MissingFieldException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public MissingFieldException (string message, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is not a <see langword="null" /> reference, the current exception was raised in a catch block handling <paramref name="inner" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.MissingFieldException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.MissingFieldException.Message" /> property of the
+   new instance using <paramref name="message" /> and the <see cref="!:System.MissingFieldException.InnerException" /> property using
+<paramref name="inner" />. If <paramref name="message " />is <see langword="null" />, the 
+<see cref="P:System.MissingFieldException.Message" /> property is initialized to the system-supplied message 
+   provided by the constructor that takes no arguments.</para>
+          <block subset="none" type="note">For more information on inner
+   exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MissingFieldException (string className, string fieldName);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="className" Type="System.String" />
+        <Parameter Name="fieldName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="className">To be added.</param>
+        <param name="fieldName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="public override string Message { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

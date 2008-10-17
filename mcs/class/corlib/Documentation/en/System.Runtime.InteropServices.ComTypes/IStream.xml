@@ -1,0 +1,257 @@
+<Type Name="IStream" FullName="System.Runtime.InteropServices.ComTypes.IStream">
+  <TypeSignature Language="C#" Value="public interface IStream" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.Guid("0000000c-0000-0000-c000-000000000046")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public void Clone (out System.Runtime.InteropServices.ComTypes.IStream ppstm);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ppstm" Type="System.Runtime.InteropServices.ComTypes.IStream&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="ppstm">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Commit">
+      <MemberSignature Language="C#" Value="public void Commit (int grfCommitFlags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="grfCommitFlags" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="grfCommitFlags">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (System.Runtime.InteropServices.ComTypes.IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pstm" Type="System.Runtime.InteropServices.ComTypes.IStream" />
+        <Parameter Name="cb" Type="System.Int64" />
+        <Parameter Name="pcbRead" Type="System.IntPtr" />
+        <Parameter Name="pcbWritten" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="pstm">To be added.</param>
+        <param name="cb">To be added.</param>
+        <param name="pcbRead">To be added.</param>
+        <param name="pcbWritten">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LockRegion">
+      <MemberSignature Language="C#" Value="public void LockRegion (long libOffset, long cb, int dwLockType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="libOffset" Type="System.Int64" />
+        <Parameter Name="cb" Type="System.Int64" />
+        <Parameter Name="dwLockType" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="libOffset">To be added.</param>
+        <param name="cb">To be added.</param>
+        <param name="dwLockType">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public void Read (byte[] pv, int cb, IntPtr pcbRead);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pv" Type="System.Byte[]" />
+        <Parameter Name="cb" Type="System.Int32" />
+        <Parameter Name="pcbRead" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="pv">To be added.</param>
+        <param name="cb">To be added.</param>
+        <param name="pcbRead">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Revert">
+      <MemberSignature Language="C#" Value="public void Revert ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Seek">
+      <MemberSignature Language="C#" Value="public void Seek (long dlibMove, int dwOrigin, IntPtr plibNewPosition);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dlibMove" Type="System.Int64" />
+        <Parameter Name="dwOrigin" Type="System.Int32" />
+        <Parameter Name="plibNewPosition" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dlibMove">To be added.</param>
+        <param name="dwOrigin">To be added.</param>
+        <param name="plibNewPosition">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetSize">
+      <MemberSignature Language="C#" Value="public void SetSize (long libNewSize);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="libNewSize" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="libNewSize">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Stat">
+      <MemberSignature Language="C#" Value="public void Stat (out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, int grfStatFlag);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pstatstg" Type="System.Runtime.InteropServices.ComTypes.STATSTG&amp;" RefType="out" />
+        <Parameter Name="grfStatFlag" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="pstatstg">To be added.</param>
+        <param name="grfStatFlag">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnlockRegion">
+      <MemberSignature Language="C#" Value="public void UnlockRegion (long libOffset, long cb, int dwLockType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="libOffset" Type="System.Int64" />
+        <Parameter Name="cb" Type="System.Int64" />
+        <Parameter Name="dwLockType" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="libOffset">To be added.</param>
+        <param name="cb">To be added.</param>
+        <param name="dwLockType">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public void Write (byte[] pv, int cb, IntPtr pcbWritten);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pv" Type="System.Byte[]" />
+        <Parameter Name="cb" Type="System.Int32" />
+        <Parameter Name="pcbWritten" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="pv">To be added.</param>
+        <param name="cb">To be added.</param>
+        <param name="pcbWritten">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

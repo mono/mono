@@ -1,0 +1,173 @@
+<Type Name="UCOMIRunningObjectTable" FullName="System.Runtime.InteropServices.UCOMIRunningObjectTable">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public interface UCOMIRunningObjectTable" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.Guid("00000010-0000-0000-c000-000000000046")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Obsolete</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="EnumRunning">
+      <MemberSignature Language="C#" Value="public void EnumRunning (out System.Runtime.InteropServices.UCOMIEnumMoniker ppenumMoniker);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ppenumMoniker" Type="System.Runtime.InteropServices.UCOMIEnumMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="ppenumMoniker">To be added: an object of type 'UCOMIEnumMoniker&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObject">
+      <MemberSignature Language="C#" Value="public void GetObject (System.Runtime.InteropServices.UCOMIMoniker pmkObjectName, out object ppunkObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkObjectName" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="ppunkObject" Type="System.Object&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pmkObjectName">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="ppunkObject">To be added: an object of type 'object&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTimeOfLastChange">
+      <MemberSignature Language="C#" Value="public void GetTimeOfLastChange (System.Runtime.InteropServices.UCOMIMoniker pmkObjectName, out System.Runtime.InteropServices.FILETIME pfiletime);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkObjectName" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="pfiletime" Type="System.Runtime.InteropServices.FILETIME&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pmkObjectName">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="pfiletime">To be added: an object of type 'FILETIME&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsRunning">
+      <MemberSignature Language="C#" Value="public void IsRunning (System.Runtime.InteropServices.UCOMIMoniker pmkObjectName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkObjectName" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+      </Parameters>
+      <Docs>
+        <param name="pmkObjectName">To be added: an object of type 'UCOMIMoniker'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoteChangeTime">
+      <MemberSignature Language="C#" Value="public void NoteChangeTime (int dwRegister, ref System.Runtime.InteropServices.FILETIME pfiletime);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dwRegister" Type="System.Int32" />
+        <Parameter Name="pfiletime" Type="System.Runtime.InteropServices.FILETIME&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="dwRegister">To be added: an object of type 'int'</param>
+        <param name="pfiletime">To be added: an object of type 'FILETIME&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Register">
+      <MemberSignature Language="C#" Value="public void Register (int grfFlags, object punkObject, System.Runtime.InteropServices.UCOMIMoniker pmkObjectName, out int pdwRegister);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="grfFlags" Type="System.Int32" />
+        <Parameter Name="punkObject" Type="System.Object" />
+        <Parameter Name="pmkObjectName" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="pdwRegister" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="grfFlags">To be added: an object of type 'int'</param>
+        <param name="punkObject">To be added: an object of type 'object'</param>
+        <param name="pmkObjectName">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="pdwRegister">To be added: an object of type 'int&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Revoke">
+      <MemberSignature Language="C#" Value="public void Revoke (int dwRegister);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dwRegister" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="dwRegister">To be added: an object of type 'int'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Interfaces />
+</Type>

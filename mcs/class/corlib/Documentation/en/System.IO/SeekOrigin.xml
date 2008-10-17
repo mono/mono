@@ -1,0 +1,97 @@
+<Type Name="SeekOrigin" FullName="System.IO.SeekOrigin" FullNameSP="System_IO_SeekOrigin" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable SeekOrigin extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum SeekOrigin" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Defines the seek reference positions.</para>
+    </summary>
+    <remarks>
+      <para> The <see cref="T:System.IO.SeekOrigin" /> enumeration is used by the overrides of the <see cref="M:System.IO.Stream.Seek(System.Int64,System.IO.SeekOrigin)" qualify="true" /> method to set
+   the seek reference point in a stream, which allows you to specify an offset from
+   the reference point.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Begin">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.SeekOrigin Begin = 0" />
+      <MemberSignature Language="C#" Value="Begin" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.SeekOrigin</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Begin</MemberValue>
+      <Docs>
+        <summary>
+          <para> Indicates that the seek reference point is the beginning of a
+      stream.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Current">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.SeekOrigin Current = 1" />
+      <MemberSignature Language="C#" Value="Current" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.SeekOrigin</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Current</MemberValue>
+      <Docs>
+        <summary>
+          <para> Indicates that the seek reference point is the current position
+      within a stream.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="End">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.SeekOrigin End = 2" />
+      <MemberSignature Language="C#" Value="End" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.SeekOrigin</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>End</MemberValue>
+      <Docs>
+        <summary>
+          <para> Indicates that the seek reference point is the first byte beyond the end of a stream.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

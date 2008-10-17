@@ -1,0 +1,78 @@
+<Type Name="NormalizationForm" FullName="System.Text.NormalizationForm">
+  <TypeSignature Language="C#" Value="public enum NormalizationForm" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="FormC">
+      <MemberSignature Language="C#" Value="FormC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.NormalizationForm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FormD">
+      <MemberSignature Language="C#" Value="FormD" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.NormalizationForm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FormKC">
+      <MemberSignature Language="C#" Value="FormKC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.NormalizationForm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FormKD">
+      <MemberSignature Language="C#" Value="FormKD" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.NormalizationForm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

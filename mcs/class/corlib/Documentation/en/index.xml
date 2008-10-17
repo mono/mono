@@ -1,0 +1,1453 @@
+<Overview>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Microsoft.Win32">
+      <Type Name="Registry" Kind="Class" />
+      <Type Name="RegistryHive" Kind="Enumeration" />
+      <Type Name="RegistryKey" Kind="Class" />
+      <Type Name="RegistryKeyPermissionCheck" Kind="Enumeration" />
+      <Type Name="RegistryValueKind" Kind="Enumeration" />
+      <Type Name="RegistryValueOptions" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="Microsoft.Win32.SafeHandles">
+      <Type Name="CriticalHandleMinusOneIsInvalid" Kind="Class" />
+      <Type Name="CriticalHandleZeroOrMinusOneIsInvalid" Kind="Class" />
+      <Type Name="SafeFileHandle" Kind="Class" />
+      <Type Name="SafeHandleMinusOneIsInvalid" Kind="Class" />
+      <Type Name="SafeHandleZeroOrMinusOneIsInvalid" Kind="Class" />
+      <Type Name="SafeWaitHandle" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System">
+      <Type Name="_AppDomain" Kind="Interface" />
+      <Type Name="AccessViolationException" Kind="Class" />
+      <Type Name="Action`1" DisplayName="Action&lt;T&gt;" Kind="Delegate" />
+      <Type Name="ActivationContext" Kind="Class" />
+      <Type Name="ActivationContext+ContextForm" Kind="Enumeration" />
+      <Type Name="Activator" Kind="Class" />
+      <Type Name="AppDomain" Kind="Class" />
+      <Type Name="AppDomainInitializer" Kind="Delegate" />
+      <Type Name="AppDomainManager" Kind="Class" />
+      <Type Name="AppDomainManagerInitializationOptions" Kind="Enumeration" />
+      <Type Name="AppDomainSetup" Kind="Class" />
+      <Type Name="AppDomainUnloadedException" Kind="Class" />
+      <Type Name="ApplicationException" Kind="Class" />
+      <Type Name="ApplicationId" Kind="Class" />
+      <Type Name="ApplicationIdentity" Kind="Class" />
+      <Type Name="ArgIterator" Kind="Structure" />
+      <Type Name="ArgumentException" Kind="Class" />
+      <Type Name="ArgumentNullException" Kind="Class" />
+      <Type Name="ArgumentOutOfRangeException" Kind="Class" />
+      <Type Name="ArithmeticException" Kind="Class" />
+      <Type Name="Array" Kind="Class" />
+      <Type Name="ArraySegment`1" DisplayName="ArraySegment&lt;T&gt;" Kind="Structure" />
+      <Type Name="ArrayTypeMismatchException" Kind="Class" />
+      <Type Name="AssemblyLoadEventArgs" Kind="Class" />
+      <Type Name="AssemblyLoadEventHandler" Kind="Delegate" />
+      <Type Name="AsyncCallback" Kind="Delegate" />
+      <Type Name="Attribute" Kind="Class" />
+      <Type Name="AttributeTargets" Kind="Enumeration" />
+      <Type Name="AttributeUsageAttribute" Kind="Class" />
+      <Type Name="BadImageFormatException" Kind="Class" />
+      <Type Name="Base64FormattingOptions" Kind="Enumeration" />
+      <Type Name="BitConverter" Kind="Class" />
+      <Type Name="Boolean" Kind="Structure" />
+      <Type Name="Buffer" Kind="Class" />
+      <Type Name="Byte" Kind="Structure" />
+      <Type Name="CannotUnloadAppDomainException" Kind="Class" />
+      <Type Name="Char" Kind="Structure" />
+      <Type Name="CharEnumerator" Kind="Class" />
+      <Type Name="CLSCompliantAttribute" Kind="Class" />
+      <Type Name="Comparison`1" DisplayName="Comparison&lt;T&gt;" Kind="Delegate" />
+      <Type Name="Console" Kind="Class" />
+      <Type Name="ConsoleCancelEventArgs" Kind="Class" />
+      <Type Name="ConsoleCancelEventHandler" Kind="Delegate" />
+      <Type Name="ConsoleColor" Kind="Enumeration" />
+      <Type Name="ConsoleKey" Kind="Enumeration" />
+      <Type Name="ConsoleKeyInfo" Kind="Structure" />
+      <Type Name="ConsoleModifiers" Kind="Enumeration" />
+      <Type Name="ConsoleSpecialKey" Kind="Enumeration" />
+      <Type Name="ContextBoundObject" Kind="Class" />
+      <Type Name="ContextMarshalException" Kind="Class" />
+      <Type Name="ContextStaticAttribute" Kind="Class" />
+      <Type Name="Convert" Kind="Class" />
+      <Type Name="Converter`2" DisplayName="Converter&lt;TInput,TOutput&gt;" Kind="Delegate" />
+      <Type Name="CrossAppDomainDelegate" Kind="Delegate" />
+      <Type Name="DataMisalignedException" Kind="Class" />
+      <Type Name="DateTime" Kind="Structure" />
+      <Type Name="DateTimeKind" Kind="Enumeration" />
+      <Type Name="DateTimeOffset" Kind="Structure" />
+      <Type Name="DayOfWeek" Kind="Enumeration" />
+      <Type Name="DBNull" Kind="Class" />
+      <Type Name="Decimal" Kind="Structure" />
+      <Type Name="Delegate" Kind="Class" />
+      <Type Name="DivideByZeroException" Kind="Class" />
+      <Type Name="DllNotFoundException" Kind="Class" />
+      <Type Name="Double" Kind="Structure" />
+      <Type Name="DuplicateWaitObjectException" Kind="Class" />
+      <Type Name="EntryPointNotFoundException" Kind="Class" />
+      <Type Name="Enum" Kind="Class" />
+      <Type Name="Environment" Kind="Class" />
+      <Type Name="Environment+SpecialFolder" Kind="Enumeration" />
+      <Type Name="EnvironmentVariableTarget" Kind="Enumeration" />
+      <Type Name="EventArgs" Kind="Class" />
+      <Type Name="EventHandler" Kind="Delegate" />
+      <Type Name="EventHandler`1" DisplayName="EventHandler&lt;TEventArgs&gt;" Kind="Delegate" />
+      <Type Name="Exception" Kind="Class" />
+      <Type Name="ExecutionEngineException" Kind="Class" />
+      <Type Name="FieldAccessException" Kind="Class" />
+      <Type Name="FlagsAttribute" Kind="Class" />
+      <Type Name="FormatException" Kind="Class" />
+      <Type Name="GC" Kind="Class" />
+      <Type Name="GCCollectionMode" Kind="Enumeration" />
+      <Type Name="Guid" Kind="Structure" />
+      <Type Name="IAppDomainSetup" Kind="Interface" />
+      <Type Name="IAsyncResult" Kind="Interface" />
+      <Type Name="ICloneable" Kind="Interface" />
+      <Type Name="IComparable" Kind="Interface" />
+      <Type Name="IComparable`1" DisplayName="IComparable&lt;T&gt;" Kind="Interface" />
+      <Type Name="IConvertible" Kind="Interface" />
+      <Type Name="ICustomFormatter" Kind="Interface" />
+      <Type Name="IDisposable" Kind="Interface" />
+      <Type Name="IEquatable`1" DisplayName="IEquatable&lt;T&gt;" Kind="Interface" />
+      <Type Name="IFormatProvider" Kind="Interface" />
+      <Type Name="IFormattable" Kind="Interface" />
+      <Type Name="IndexOutOfRangeException" Kind="Class" />
+      <Type Name="InsufficientMemoryException" Kind="Class" />
+      <Type Name="Int16" Kind="Structure" />
+      <Type Name="Int32" Kind="Structure" />
+      <Type Name="Int64" Kind="Structure" />
+      <Type Name="IntPtr" Kind="Structure" />
+      <Type Name="InvalidCastException" Kind="Class" />
+      <Type Name="InvalidOperationException" Kind="Class" />
+      <Type Name="InvalidProgramException" Kind="Class" />
+      <Type Name="IServiceProvider" Kind="Interface" />
+      <Type Name="LoaderOptimization" Kind="Enumeration" />
+      <Type Name="LoaderOptimizationAttribute" Kind="Class" />
+      <Type Name="LocalDataStoreSlot" Kind="Class" />
+      <Type Name="MarshalByRefObject" Kind="Class" />
+      <Type Name="Math" Kind="Class" />
+      <Type Name="MemberAccessException" Kind="Class" />
+      <Type Name="MethodAccessException" Kind="Class" />
+      <Type Name="MidpointRounding" Kind="Enumeration" />
+      <Type Name="MissingFieldException" Kind="Class" />
+      <Type Name="MissingMemberException" Kind="Class" />
+      <Type Name="MissingMethodException" Kind="Class" />
+      <Type Name="ModuleHandle" Kind="Structure" />
+      <Type Name="MTAThreadAttribute" Kind="Class" />
+      <Type Name="MulticastDelegate" Kind="Class" />
+      <Type Name="MulticastNotSupportedException" Kind="Class" />
+      <Type Name="NonSerializedAttribute" Kind="Class" />
+      <Type Name="NotFiniteNumberException" Kind="Class" />
+      <Type Name="NotImplementedException" Kind="Class" />
+      <Type Name="NotSupportedException" Kind="Class" />
+      <Type Name="Nullable" Kind="Class" />
+      <Type Name="Nullable`1" DisplayName="Nullable&lt;T&gt;" Kind="Structure" />
+      <Type Name="NullReferenceException" Kind="Class" />
+      <Type Name="Object" Kind="Class" />
+      <Type Name="ObjectDisposedException" Kind="Class" />
+      <Type Name="ObsoleteAttribute" Kind="Class" />
+      <Type Name="OperatingSystem" Kind="Class" />
+      <Type Name="OperationCanceledException" Kind="Class" />
+      <Type Name="OutOfMemoryException" Kind="Class" />
+      <Type Name="OverflowException" Kind="Class" />
+      <Type Name="ParamArrayAttribute" Kind="Class" />
+      <Type Name="PlatformID" Kind="Enumeration" />
+      <Type Name="PlatformNotSupportedException" Kind="Class" />
+      <Type Name="Predicate`1" DisplayName="Predicate&lt;T&gt;" Kind="Delegate" />
+      <Type Name="Random" Kind="Class" />
+      <Type Name="RankException" Kind="Class" />
+      <Type Name="ResolveEventArgs" Kind="Class" />
+      <Type Name="ResolveEventHandler" Kind="Delegate" />
+      <Type Name="RuntimeArgumentHandle" Kind="Structure" />
+      <Type Name="RuntimeFieldHandle" Kind="Structure" />
+      <Type Name="RuntimeMethodHandle" Kind="Structure" />
+      <Type Name="RuntimeTypeHandle" Kind="Structure" />
+      <Type Name="SByte" Kind="Structure" />
+      <Type Name="SerializableAttribute" Kind="Class" />
+      <Type Name="Single" Kind="Structure" />
+      <Type Name="StackOverflowException" Kind="Class" />
+      <Type Name="STAThreadAttribute" Kind="Class" />
+      <Type Name="String" Kind="Class" />
+      <Type Name="StringComparer" Kind="Class" />
+      <Type Name="StringComparison" Kind="Enumeration" />
+      <Type Name="StringSplitOptions" Kind="Enumeration" />
+      <Type Name="SystemException" Kind="Class" />
+      <Type Name="ThreadStaticAttribute" Kind="Class" />
+      <Type Name="TimeoutException" Kind="Class" />
+      <Type Name="TimeSpan" Kind="Structure" />
+      <Type Name="TimeZone" Kind="Class" />
+      <Type Name="Type" Kind="Class" />
+      <Type Name="TypeCode" Kind="Enumeration" />
+      <Type Name="TypedReference" Kind="Structure" />
+      <Type Name="TypeInitializationException" Kind="Class" />
+      <Type Name="TypeLoadException" Kind="Class" />
+      <Type Name="TypeUnloadedException" Kind="Class" />
+      <Type Name="UInt16" Kind="Structure" />
+      <Type Name="UInt32" Kind="Structure" />
+      <Type Name="UInt64" Kind="Structure" />
+      <Type Name="UIntPtr" Kind="Structure" />
+      <Type Name="UnauthorizedAccessException" Kind="Class" />
+      <Type Name="UnhandledExceptionEventArgs" Kind="Class" />
+      <Type Name="UnhandledExceptionEventHandler" Kind="Delegate" />
+      <Type Name="ValueType" Kind="Class" />
+      <Type Name="Version" Kind="Class" />
+      <Type Name="Void" Kind="Structure" />
+      <Type Name="WeakReference" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Collections">
+      <Type Name="ArrayList" Kind="Class" />
+      <Type Name="BitArray" Kind="Class" />
+      <Type Name="CaseInsensitiveComparer" Kind="Class" />
+      <Type Name="CaseInsensitiveHashCodeProvider" Kind="Class" />
+      <Type Name="CollectionBase" Kind="Class" />
+      <Type Name="Comparer" Kind="Class" />
+      <Type Name="DictionaryBase" Kind="Class" />
+      <Type Name="DictionaryEntry" Kind="Structure" />
+      <Type Name="Hashtable" Kind="Class" />
+      <Type Name="ICollection" Kind="Interface" />
+      <Type Name="IComparer" Kind="Interface" />
+      <Type Name="IDictionary" Kind="Interface" />
+      <Type Name="IDictionaryEnumerator" Kind="Interface" />
+      <Type Name="IEnumerable" Kind="Interface" />
+      <Type Name="IEnumerator" Kind="Interface" />
+      <Type Name="IEqualityComparer" Kind="Interface" />
+      <Type Name="IHashCodeProvider" Kind="Interface" />
+      <Type Name="IList" Kind="Interface" />
+      <Type Name="Queue" Kind="Class" />
+      <Type Name="ReadOnlyCollectionBase" Kind="Class" />
+      <Type Name="SortedList" Kind="Class" />
+      <Type Name="Stack" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Collections.Generic">
+      <Type Name="Comparer`1" DisplayName="Comparer&lt;T&gt;" Kind="Class" />
+      <Type Name="Dictionary`2" DisplayName="Dictionary&lt;TKey,TValue&gt;" Kind="Class" />
+      <Type Name="Dictionary`2+Enumerator" DisplayName="Dictionary&lt;TKey,TValue&gt;+Enumerator" Kind="Structure" />
+      <Type Name="Dictionary`2+KeyCollection" DisplayName="Dictionary&lt;TKey,TValue&gt;+KeyCollection" Kind="Class" />
+      <Type Name="Dictionary`2+KeyCollection+Enumerator" DisplayName="KeyCollection&lt;TKey,TValue&gt;+Enumerator" Kind="Structure" />
+      <Type Name="Dictionary`2+ValueCollection" DisplayName="Dictionary&lt;TKey,TValue&gt;+ValueCollection" Kind="Class" />
+      <Type Name="Dictionary`2+ValueCollection+Enumerator" DisplayName="ValueCollection&lt;TKey,TValue&gt;+Enumerator" Kind="Structure" />
+      <Type Name="EqualityComparer`1" DisplayName="EqualityComparer&lt;T&gt;" Kind="Class" />
+      <Type Name="ICollection`1" DisplayName="ICollection&lt;T&gt;" Kind="Interface" />
+      <Type Name="IComparer`1" DisplayName="IComparer&lt;T&gt;" Kind="Interface" />
+      <Type Name="IDictionary`2" DisplayName="IDictionary&lt;TKey,TValue&gt;" Kind="Interface" />
+      <Type Name="IEnumerable`1" DisplayName="IEnumerable&lt;T&gt;" Kind="Interface" />
+      <Type Name="IEnumerator`1" DisplayName="IEnumerator&lt;T&gt;" Kind="Interface" />
+      <Type Name="IEqualityComparer`1" DisplayName="IEqualityComparer&lt;T&gt;" Kind="Interface" />
+      <Type Name="IList`1" DisplayName="IList&lt;T&gt;" Kind="Interface" />
+      <Type Name="KeyNotFoundException" Kind="Class" />
+      <Type Name="KeyValuePair`2" DisplayName="KeyValuePair&lt;TKey,TValue&gt;" Kind="Structure" />
+      <Type Name="List`1" DisplayName="List&lt;T&gt;" Kind="Class" />
+      <Type Name="List`1+Enumerator" DisplayName="List&lt;T&gt;+Enumerator" Kind="Structure" />
+    </Namespace>
+    <Namespace Name="System.Collections.ObjectModel">
+      <Type Name="Collection`1" DisplayName="Collection&lt;T&gt;" Kind="Class" />
+      <Type Name="KeyedCollection`2" DisplayName="KeyedCollection&lt;TKey,TItem&gt;" Kind="Class" />
+      <Type Name="ReadOnlyCollection`1" DisplayName="ReadOnlyCollection&lt;T&gt;" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Configuration.Assemblies">
+      <Type Name="AssemblyHash" Kind="Structure" />
+      <Type Name="AssemblyHashAlgorithm" Kind="Enumeration" />
+      <Type Name="AssemblyVersionCompatibility" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Deployment.Internal">
+      <Type Name="InternalActivationContextHelper" Kind="Class" />
+      <Type Name="InternalApplicationIdentityHelper" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Diagnostics">
+      <Type Name="ConditionalAttribute" Kind="Class" />
+      <Type Name="DebuggableAttribute" Kind="Class" />
+      <Type Name="DebuggableAttribute+DebuggingModes" Kind="Enumeration" />
+      <Type Name="Debugger" Kind="Class" />
+      <Type Name="DebuggerBrowsableAttribute" Kind="Class" />
+      <Type Name="DebuggerBrowsableState" Kind="Enumeration" />
+      <Type Name="DebuggerDisplayAttribute" Kind="Class" />
+      <Type Name="DebuggerHiddenAttribute" Kind="Class" />
+      <Type Name="DebuggerNonUserCodeAttribute" Kind="Class" />
+      <Type Name="DebuggerStepperBoundaryAttribute" Kind="Class" />
+      <Type Name="DebuggerStepThroughAttribute" Kind="Class" />
+      <Type Name="DebuggerTypeProxyAttribute" Kind="Class" />
+      <Type Name="DebuggerVisualizerAttribute" Kind="Class" />
+      <Type Name="StackFrame" Kind="Class" />
+      <Type Name="StackTrace" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Diagnostics.CodeAnalysis">
+      <Type Name="SuppressMessageAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Diagnostics.SymbolStore">
+      <Type Name="ISymbolBinder" Kind="Interface" />
+      <Type Name="ISymbolBinder1" Kind="Interface" />
+      <Type Name="ISymbolDocument" Kind="Interface" />
+      <Type Name="ISymbolDocumentWriter" Kind="Interface" />
+      <Type Name="ISymbolMethod" Kind="Interface" />
+      <Type Name="ISymbolNamespace" Kind="Interface" />
+      <Type Name="ISymbolReader" Kind="Interface" />
+      <Type Name="ISymbolScope" Kind="Interface" />
+      <Type Name="ISymbolVariable" Kind="Interface" />
+      <Type Name="ISymbolWriter" Kind="Interface" />
+      <Type Name="SymAddressKind" Kind="Enumeration" />
+      <Type Name="SymbolToken" Kind="Structure" />
+      <Type Name="SymDocumentType" Kind="Class" />
+      <Type Name="SymLanguageType" Kind="Class" />
+      <Type Name="SymLanguageVendor" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Globalization">
+      <Type Name="Calendar" Kind="Class" />
+      <Type Name="CalendarAlgorithmType" Kind="Enumeration" />
+      <Type Name="CalendarWeekRule" Kind="Enumeration" />
+      <Type Name="CharUnicodeInfo" Kind="Class" />
+      <Type Name="ChineseLunisolarCalendar" Kind="Class" />
+      <Type Name="CompareInfo" Kind="Class" />
+      <Type Name="CompareOptions" Kind="Enumeration" />
+      <Type Name="CultureInfo" Kind="Class" />
+      <Type Name="CultureTypes" Kind="Enumeration" />
+      <Type Name="DateTimeFormatInfo" Kind="Class" />
+      <Type Name="DateTimeStyles" Kind="Enumeration" />
+      <Type Name="DaylightTime" Kind="Class" />
+      <Type Name="DigitShapes" Kind="Enumeration" />
+      <Type Name="EastAsianLunisolarCalendar" Kind="Class" />
+      <Type Name="GregorianCalendar" Kind="Class" />
+      <Type Name="GregorianCalendarTypes" Kind="Enumeration" />
+      <Type Name="HebrewCalendar" Kind="Class" />
+      <Type Name="HijriCalendar" Kind="Class" />
+      <Type Name="IdnMapping" Kind="Class" />
+      <Type Name="JapaneseCalendar" Kind="Class" />
+      <Type Name="JapaneseLunisolarCalendar" Kind="Class" />
+      <Type Name="JulianCalendar" Kind="Class" />
+      <Type Name="KoreanCalendar" Kind="Class" />
+      <Type Name="KoreanLunisolarCalendar" Kind="Class" />
+      <Type Name="NumberFormatInfo" Kind="Class" />
+      <Type Name="NumberStyles" Kind="Enumeration" />
+      <Type Name="PersianCalendar" Kind="Class" />
+      <Type Name="RegionInfo" Kind="Class" />
+      <Type Name="SortKey" Kind="Class" />
+      <Type Name="StringInfo" Kind="Class" />
+      <Type Name="TaiwanCalendar" Kind="Class" />
+      <Type Name="TaiwanLunisolarCalendar" Kind="Class" />
+      <Type Name="TextElementEnumerator" Kind="Class" />
+      <Type Name="TextInfo" Kind="Class" />
+      <Type Name="ThaiBuddhistCalendar" Kind="Class" />
+      <Type Name="UmAlQuraCalendar" Kind="Class" />
+      <Type Name="UnicodeCategory" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.IO">
+      <Type Name="BinaryReader" Kind="Class" />
+      <Type Name="BinaryWriter" Kind="Class" />
+      <Type Name="BufferedStream" Kind="Class" />
+      <Type Name="Directory" Kind="Class" />
+      <Type Name="DirectoryInfo" Kind="Class" />
+      <Type Name="DirectoryNotFoundException" Kind="Class" />
+      <Type Name="DriveInfo" Kind="Class" />
+      <Type Name="DriveNotFoundException" Kind="Class" />
+      <Type Name="DriveType" Kind="Enumeration" />
+      <Type Name="EndOfStreamException" Kind="Class" />
+      <Type Name="File" Kind="Class" />
+      <Type Name="FileAccess" Kind="Enumeration" />
+      <Type Name="FileAttributes" Kind="Enumeration" />
+      <Type Name="FileInfo" Kind="Class" />
+      <Type Name="FileLoadException" Kind="Class" />
+      <Type Name="FileMode" Kind="Enumeration" />
+      <Type Name="FileNotFoundException" Kind="Class" />
+      <Type Name="FileOptions" Kind="Enumeration" />
+      <Type Name="FileShare" Kind="Enumeration" />
+      <Type Name="FileStream" Kind="Class" />
+      <Type Name="FileSystemInfo" Kind="Class" />
+      <Type Name="IOException" Kind="Class" />
+      <Type Name="MemoryStream" Kind="Class" />
+      <Type Name="Path" Kind="Class" />
+      <Type Name="PathTooLongException" Kind="Class" />
+      <Type Name="SearchOption" Kind="Enumeration" />
+      <Type Name="SeekOrigin" Kind="Enumeration" />
+      <Type Name="Stream" Kind="Class" />
+      <Type Name="StreamReader" Kind="Class" />
+      <Type Name="StreamWriter" Kind="Class" />
+      <Type Name="StringReader" Kind="Class" />
+      <Type Name="StringWriter" Kind="Class" />
+      <Type Name="TextReader" Kind="Class" />
+      <Type Name="TextWriter" Kind="Class" />
+      <Type Name="UnmanagedMemoryStream" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.IO.IsolatedStorage">
+      <Type Name="INormalizeForIsolatedStorage" Kind="Interface" />
+      <Type Name="IsolatedStorage" Kind="Class" />
+      <Type Name="IsolatedStorageException" Kind="Class" />
+      <Type Name="IsolatedStorageFile" Kind="Class" />
+      <Type Name="IsolatedStorageFileStream" Kind="Class" />
+      <Type Name="IsolatedStorageScope" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Reflection">
+      <Type Name="AmbiguousMatchException" Kind="Class" />
+      <Type Name="Assembly" Kind="Class" />
+      <Type Name="AssemblyAlgorithmIdAttribute" Kind="Class" />
+      <Type Name="AssemblyCompanyAttribute" Kind="Class" />
+      <Type Name="AssemblyConfigurationAttribute" Kind="Class" />
+      <Type Name="AssemblyCopyrightAttribute" Kind="Class" />
+      <Type Name="AssemblyCultureAttribute" Kind="Class" />
+      <Type Name="AssemblyDefaultAliasAttribute" Kind="Class" />
+      <Type Name="AssemblyDelaySignAttribute" Kind="Class" />
+      <Type Name="AssemblyDescriptionAttribute" Kind="Class" />
+      <Type Name="AssemblyFileVersionAttribute" Kind="Class" />
+      <Type Name="AssemblyFlagsAttribute" Kind="Class" />
+      <Type Name="AssemblyInformationalVersionAttribute" Kind="Class" />
+      <Type Name="AssemblyKeyFileAttribute" Kind="Class" />
+      <Type Name="AssemblyKeyNameAttribute" Kind="Class" />
+      <Type Name="AssemblyName" Kind="Class" />
+      <Type Name="AssemblyNameFlags" Kind="Enumeration" />
+      <Type Name="AssemblyNameProxy" Kind="Class" />
+      <Type Name="AssemblyProductAttribute" Kind="Class" />
+      <Type Name="AssemblyTitleAttribute" Kind="Class" />
+      <Type Name="AssemblyTrademarkAttribute" Kind="Class" />
+      <Type Name="AssemblyVersionAttribute" Kind="Class" />
+      <Type Name="Binder" Kind="Class" />
+      <Type Name="BindingFlags" Kind="Enumeration" />
+      <Type Name="CallingConventions" Kind="Enumeration" />
+      <Type Name="ConstructorInfo" Kind="Class" />
+      <Type Name="CustomAttributeData" Kind="Class" />
+      <Type Name="CustomAttributeFormatException" Kind="Class" />
+      <Type Name="CustomAttributeNamedArgument" Kind="Structure" />
+      <Type Name="CustomAttributeTypedArgument" Kind="Structure" />
+      <Type Name="DefaultMemberAttribute" Kind="Class" />
+      <Type Name="EventAttributes" Kind="Enumeration" />
+      <Type Name="EventInfo" Kind="Class" />
+      <Type Name="ExceptionHandlingClause" Kind="Class" />
+      <Type Name="ExceptionHandlingClauseOptions" Kind="Enumeration" />
+      <Type Name="FieldAttributes" Kind="Enumeration" />
+      <Type Name="FieldInfo" Kind="Class" />
+      <Type Name="GenericParameterAttributes" Kind="Enumeration" />
+      <Type Name="ICustomAttributeProvider" Kind="Interface" />
+      <Type Name="ImageFileMachine" Kind="Enumeration" />
+      <Type Name="InterfaceMapping" Kind="Structure" />
+      <Type Name="InvalidFilterCriteriaException" Kind="Class" />
+      <Type Name="IReflect" Kind="Interface" />
+      <Type Name="LocalVariableInfo" Kind="Class" />
+      <Type Name="ManifestResourceInfo" Kind="Class" />
+      <Type Name="MemberFilter" Kind="Delegate" />
+      <Type Name="MemberInfo" Kind="Class" />
+      <Type Name="MemberTypes" Kind="Enumeration" />
+      <Type Name="MethodAttributes" Kind="Enumeration" />
+      <Type Name="MethodBase" Kind="Class" />
+      <Type Name="MethodBody" Kind="Class" />
+      <Type Name="MethodImplAttributes" Kind="Enumeration" />
+      <Type Name="MethodInfo" Kind="Class" />
+      <Type Name="Missing" Kind="Class" />
+      <Type Name="Module" Kind="Class" />
+      <Type Name="ModuleResolveEventHandler" Kind="Delegate" />
+      <Type Name="ObfuscateAssemblyAttribute" Kind="Class" />
+      <Type Name="ObfuscationAttribute" Kind="Class" />
+      <Type Name="ParameterAttributes" Kind="Enumeration" />
+      <Type Name="ParameterInfo" Kind="Class" />
+      <Type Name="ParameterModifier" Kind="Structure" />
+      <Type Name="Pointer" Kind="Class" />
+      <Type Name="PortableExecutableKinds" Kind="Enumeration" />
+      <Type Name="ProcessorArchitecture" Kind="Enumeration" />
+      <Type Name="PropertyAttributes" Kind="Enumeration" />
+      <Type Name="PropertyInfo" Kind="Class" />
+      <Type Name="ReflectionTypeLoadException" Kind="Class" />
+      <Type Name="ResourceAttributes" Kind="Enumeration" />
+      <Type Name="ResourceLocation" Kind="Enumeration" />
+      <Type Name="StrongNameKeyPair" Kind="Class" />
+      <Type Name="TargetException" Kind="Class" />
+      <Type Name="TargetInvocationException" Kind="Class" />
+      <Type Name="TargetParameterCountException" Kind="Class" />
+      <Type Name="TypeAttributes" Kind="Enumeration" />
+      <Type Name="TypeDelegator" Kind="Class" />
+      <Type Name="TypeFilter" Kind="Delegate" />
+    </Namespace>
+    <Namespace Name="System.Reflection.Emit">
+      <Type Name="AssemblyBuilder" Kind="Class" />
+      <Type Name="AssemblyBuilderAccess" Kind="Enumeration" />
+      <Type Name="ConstructorBuilder" Kind="Class" />
+      <Type Name="CustomAttributeBuilder" Kind="Class" />
+      <Type Name="DynamicILInfo" Kind="Class" />
+      <Type Name="DynamicMethod" Kind="Class" />
+      <Type Name="EnumBuilder" Kind="Class" />
+      <Type Name="EventBuilder" Kind="Class" />
+      <Type Name="EventToken" Kind="Structure" />
+      <Type Name="FieldBuilder" Kind="Class" />
+      <Type Name="FieldToken" Kind="Structure" />
+      <Type Name="FlowControl" Kind="Enumeration" />
+      <Type Name="GenericTypeParameterBuilder" Kind="Class" />
+      <Type Name="ILGenerator" Kind="Class" />
+      <Type Name="Label" Kind="Structure" />
+      <Type Name="LocalBuilder" Kind="Class" />
+      <Type Name="MethodBuilder" Kind="Class" />
+      <Type Name="MethodRental" Kind="Class" />
+      <Type Name="MethodToken" Kind="Structure" />
+      <Type Name="ModuleBuilder" Kind="Class" />
+      <Type Name="OpCode" Kind="Structure" />
+      <Type Name="OpCodes" Kind="Class" />
+      <Type Name="OpCodeType" Kind="Enumeration" />
+      <Type Name="OperandType" Kind="Enumeration" />
+      <Type Name="PackingSize" Kind="Enumeration" />
+      <Type Name="ParameterBuilder" Kind="Class" />
+      <Type Name="ParameterToken" Kind="Structure" />
+      <Type Name="PEFileKinds" Kind="Enumeration" />
+      <Type Name="PropertyBuilder" Kind="Class" />
+      <Type Name="PropertyToken" Kind="Structure" />
+      <Type Name="SignatureHelper" Kind="Class" />
+      <Type Name="SignatureToken" Kind="Structure" />
+      <Type Name="StackBehaviour" Kind="Enumeration" />
+      <Type Name="StringToken" Kind="Structure" />
+      <Type Name="TypeBuilder" Kind="Class" />
+      <Type Name="TypeToken" Kind="Structure" />
+      <Type Name="UnmanagedMarshal" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Resources">
+      <Type Name="IResourceReader" Kind="Interface" />
+      <Type Name="IResourceWriter" Kind="Interface" />
+      <Type Name="MissingManifestResourceException" Kind="Class" />
+      <Type Name="MissingSatelliteAssemblyException" Kind="Class" />
+      <Type Name="NeutralResourcesLanguageAttribute" Kind="Class" />
+      <Type Name="ResourceManager" Kind="Class" />
+      <Type Name="ResourceReader" Kind="Class" />
+      <Type Name="ResourceSet" Kind="Class" />
+      <Type Name="ResourceWriter" Kind="Class" />
+      <Type Name="SatelliteContractVersionAttribute" Kind="Class" />
+      <Type Name="UltimateResourceFallbackLocation" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Runtime">
+      <Type Name="GCLatencyMode" Kind="Enumeration" />
+      <Type Name="GCSettings" Kind="Class" />
+      <Type Name="MemoryFailPoint" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.CompilerServices">
+      <Type Name="AccessedThroughPropertyAttribute" Kind="Class" />
+      <Type Name="CallConvCdecl" Kind="Class" />
+      <Type Name="CallConvFastcall" Kind="Class" />
+      <Type Name="CallConvStdcall" Kind="Class" />
+      <Type Name="CallConvThiscall" Kind="Class" />
+      <Type Name="CompilationRelaxations" Kind="Enumeration" />
+      <Type Name="CompilationRelaxationsAttribute" Kind="Class" />
+      <Type Name="CompilerGeneratedAttribute" Kind="Class" />
+      <Type Name="CompilerGlobalScopeAttribute" Kind="Class" />
+      <Type Name="CompilerMarshalOverride" Kind="Class" />
+      <Type Name="CustomConstantAttribute" Kind="Class" />
+      <Type Name="DateTimeConstantAttribute" Kind="Class" />
+      <Type Name="DecimalConstantAttribute" Kind="Class" />
+      <Type Name="DefaultDependencyAttribute" Kind="Class" />
+      <Type Name="DependencyAttribute" Kind="Class" />
+      <Type Name="DiscardableAttribute" Kind="Class" />
+      <Type Name="FixedAddressValueTypeAttribute" Kind="Class" />
+      <Type Name="FixedBufferAttribute" Kind="Class" />
+      <Type Name="HasCopySemanticsAttribute" Kind="Class" />
+      <Type Name="IDispatchConstantAttribute" Kind="Class" />
+      <Type Name="IndexerNameAttribute" Kind="Class" />
+      <Type Name="InternalsVisibleToAttribute" Kind="Class" />
+      <Type Name="IsBoxed" Kind="Class" />
+      <Type Name="IsByValue" Kind="Class" />
+      <Type Name="IsConst" Kind="Class" />
+      <Type Name="IsCopyConstructed" Kind="Class" />
+      <Type Name="IsExplicitlyDereferenced" Kind="Class" />
+      <Type Name="IsImplicitlyDereferenced" Kind="Class" />
+      <Type Name="IsJitIntrinsic" Kind="Class" />
+      <Type Name="IsLong" Kind="Class" />
+      <Type Name="IsPinned" Kind="Class" />
+      <Type Name="IsSignUnspecifiedByte" Kind="Class" />
+      <Type Name="IsUdtReturn" Kind="Class" />
+      <Type Name="IsVolatile" Kind="Class" />
+      <Type Name="IUnknownConstantAttribute" Kind="Class" />
+      <Type Name="LoadHint" Kind="Enumeration" />
+      <Type Name="MethodCodeType" Kind="Enumeration" />
+      <Type Name="MethodImplAttribute" Kind="Class" />
+      <Type Name="MethodImplOptions" Kind="Enumeration" />
+      <Type Name="NativeCppClassAttribute" Kind="Class" />
+      <Type Name="RequiredAttributeAttribute" Kind="Class" />
+      <Type Name="RuntimeCompatibilityAttribute" Kind="Class" />
+      <Type Name="RuntimeHelpers" Kind="Class" />
+      <Type Name="RuntimeHelpers+CleanupCode" Kind="Delegate" />
+      <Type Name="RuntimeHelpers+TryCode" Kind="Delegate" />
+      <Type Name="RuntimeWrappedException" Kind="Class" />
+      <Type Name="ScopelessEnumAttribute" Kind="Class" />
+      <Type Name="SpecialNameAttribute" Kind="Class" />
+      <Type Name="StringFreezingAttribute" Kind="Class" />
+      <Type Name="SuppressIldasmAttribute" Kind="Class" />
+      <Type Name="TypeForwardedToAttribute" Kind="Class" />
+      <Type Name="UnsafeValueTypeAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.ConstrainedExecution">
+      <Type Name="Cer" Kind="Enumeration" />
+      <Type Name="Consistency" Kind="Enumeration" />
+      <Type Name="CriticalFinalizerObject" Kind="Class" />
+      <Type Name="PrePrepareMethodAttribute" Kind="Class" />
+      <Type Name="ReliabilityContractAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Hosting">
+      <Type Name="ActivationArguments" Kind="Class" />
+      <Type Name="ApplicationActivator" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.InteropServices">
+      <Type Name="_Activator" Kind="Interface" />
+      <Type Name="_Assembly" Kind="Interface" />
+      <Type Name="_AssemblyBuilder" Kind="Interface" />
+      <Type Name="_AssemblyName" Kind="Interface" />
+      <Type Name="_Attribute" Kind="Interface" />
+      <Type Name="_ConstructorBuilder" Kind="Interface" />
+      <Type Name="_ConstructorInfo" Kind="Interface" />
+      <Type Name="_CustomAttributeBuilder" Kind="Interface" />
+      <Type Name="_EnumBuilder" Kind="Interface" />
+      <Type Name="_EventBuilder" Kind="Interface" />
+      <Type Name="_EventInfo" Kind="Interface" />
+      <Type Name="_Exception" Kind="Interface" />
+      <Type Name="_FieldBuilder" Kind="Interface" />
+      <Type Name="_FieldInfo" Kind="Interface" />
+      <Type Name="_ILGenerator" Kind="Interface" />
+      <Type Name="_LocalBuilder" Kind="Interface" />
+      <Type Name="_MemberInfo" Kind="Interface" />
+      <Type Name="_MethodBase" Kind="Interface" />
+      <Type Name="_MethodBuilder" Kind="Interface" />
+      <Type Name="_MethodInfo" Kind="Interface" />
+      <Type Name="_MethodRental" Kind="Interface" />
+      <Type Name="_Module" Kind="Interface" />
+      <Type Name="_ModuleBuilder" Kind="Interface" />
+      <Type Name="_ParameterBuilder" Kind="Interface" />
+      <Type Name="_ParameterInfo" Kind="Interface" />
+      <Type Name="_PropertyBuilder" Kind="Interface" />
+      <Type Name="_PropertyInfo" Kind="Interface" />
+      <Type Name="_SignatureHelper" Kind="Interface" />
+      <Type Name="_Thread" Kind="Interface" />
+      <Type Name="_Type" Kind="Interface" />
+      <Type Name="_TypeBuilder" Kind="Interface" />
+      <Type Name="ArrayWithOffset" Kind="Structure" />
+      <Type Name="AssemblyRegistrationFlags" Kind="Enumeration" />
+      <Type Name="AutomationProxyAttribute" Kind="Class" />
+      <Type Name="BestFitMappingAttribute" Kind="Class" />
+      <Type Name="BIND_OPTS" Kind="Structure" />
+      <Type Name="BINDPTR" Kind="Structure" />
+      <Type Name="BStrWrapper" Kind="Class" />
+      <Type Name="CALLCONV" Kind="Enumeration" />
+      <Type Name="CallingConvention" Kind="Enumeration" />
+      <Type Name="CharSet" Kind="Enumeration" />
+      <Type Name="ClassInterfaceAttribute" Kind="Class" />
+      <Type Name="ClassInterfaceType" Kind="Enumeration" />
+      <Type Name="CoClassAttribute" Kind="Class" />
+      <Type Name="ComAliasNameAttribute" Kind="Class" />
+      <Type Name="ComCompatibleVersionAttribute" Kind="Class" />
+      <Type Name="ComConversionLossAttribute" Kind="Class" />
+      <Type Name="ComDefaultInterfaceAttribute" Kind="Class" />
+      <Type Name="ComEventInterfaceAttribute" Kind="Class" />
+      <Type Name="COMException" Kind="Class" />
+      <Type Name="ComImportAttribute" Kind="Class" />
+      <Type Name="ComInterfaceType" Kind="Enumeration" />
+      <Type Name="ComMemberType" Kind="Enumeration" />
+      <Type Name="ComRegisterFunctionAttribute" Kind="Class" />
+      <Type Name="ComSourceInterfacesAttribute" Kind="Class" />
+      <Type Name="ComUnregisterFunctionAttribute" Kind="Class" />
+      <Type Name="ComVisibleAttribute" Kind="Class" />
+      <Type Name="CONNECTDATA" Kind="Structure" />
+      <Type Name="CriticalHandle" Kind="Class" />
+      <Type Name="CurrencyWrapper" Kind="Class" />
+      <Type Name="DefaultCharSetAttribute" Kind="Class" />
+      <Type Name="DESCKIND" Kind="Enumeration" />
+      <Type Name="DispatchWrapper" Kind="Class" />
+      <Type Name="DispIdAttribute" Kind="Class" />
+      <Type Name="DISPPARAMS" Kind="Structure" />
+      <Type Name="DllImportAttribute" Kind="Class" />
+      <Type Name="ELEMDESC" Kind="Structure" />
+      <Type Name="ELEMDESC+DESCUNION" Kind="Structure" />
+      <Type Name="ErrorWrapper" Kind="Class" />
+      <Type Name="EXCEPINFO" Kind="Structure" />
+      <Type Name="ExporterEventKind" Kind="Enumeration" />
+      <Type Name="ExtensibleClassFactory" Kind="Class" />
+      <Type Name="ExternalException" Kind="Class" />
+      <Type Name="FieldOffsetAttribute" Kind="Class" />
+      <Type Name="FILETIME" Kind="Structure" />
+      <Type Name="FUNCDESC" Kind="Structure" />
+      <Type Name="FUNCFLAGS" Kind="Enumeration" />
+      <Type Name="FUNCKIND" Kind="Enumeration" />
+      <Type Name="GCHandle" Kind="Structure" />
+      <Type Name="GCHandleType" Kind="Enumeration" />
+      <Type Name="GuidAttribute" Kind="Class" />
+      <Type Name="HandleRef" Kind="Structure" />
+      <Type Name="ICustomAdapter" Kind="Interface" />
+      <Type Name="ICustomFactory" Kind="Interface" />
+      <Type Name="ICustomMarshaler" Kind="Interface" />
+      <Type Name="IDispatchImplAttribute" Kind="Class" />
+      <Type Name="IDispatchImplType" Kind="Enumeration" />
+      <Type Name="IDLDESC" Kind="Structure" />
+      <Type Name="IDLFLAG" Kind="Enumeration" />
+      <Type Name="IMPLTYPEFLAGS" Kind="Enumeration" />
+      <Type Name="ImportedFromTypeLibAttribute" Kind="Class" />
+      <Type Name="ImporterEventKind" Kind="Enumeration" />
+      <Type Name="InAttribute" Kind="Class" />
+      <Type Name="InterfaceTypeAttribute" Kind="Class" />
+      <Type Name="InvalidComObjectException" Kind="Class" />
+      <Type Name="InvalidOleVariantTypeException" Kind="Class" />
+      <Type Name="INVOKEKIND" Kind="Enumeration" />
+      <Type Name="IRegistrationServices" Kind="Interface" />
+      <Type Name="ITypeLibConverter" Kind="Interface" />
+      <Type Name="ITypeLibExporterNameProvider" Kind="Interface" />
+      <Type Name="ITypeLibExporterNotifySink" Kind="Interface" />
+      <Type Name="ITypeLibImporterNotifySink" Kind="Interface" />
+      <Type Name="LayoutKind" Kind="Enumeration" />
+      <Type Name="LCIDConversionAttribute" Kind="Class" />
+      <Type Name="LIBFLAGS" Kind="Enumeration" />
+      <Type Name="Marshal" Kind="Class" />
+      <Type Name="MarshalAsAttribute" Kind="Class" />
+      <Type Name="MarshalDirectiveException" Kind="Class" />
+      <Type Name="ObjectCreationDelegate" Kind="Delegate" />
+      <Type Name="OptionalAttribute" Kind="Class" />
+      <Type Name="OutAttribute" Kind="Class" />
+      <Type Name="PARAMDESC" Kind="Structure" />
+      <Type Name="PARAMFLAG" Kind="Enumeration" />
+      <Type Name="PreserveSigAttribute" Kind="Class" />
+      <Type Name="PrimaryInteropAssemblyAttribute" Kind="Class" />
+      <Type Name="ProgIdAttribute" Kind="Class" />
+      <Type Name="RegistrationClassContext" Kind="Enumeration" />
+      <Type Name="RegistrationConnectionType" Kind="Enumeration" />
+      <Type Name="RegistrationServices" Kind="Class" />
+      <Type Name="RuntimeEnvironment" Kind="Class" />
+      <Type Name="SafeArrayRankMismatchException" Kind="Class" />
+      <Type Name="SafeArrayTypeMismatchException" Kind="Class" />
+      <Type Name="SafeHandle" Kind="Class" />
+      <Type Name="SEHException" Kind="Class" />
+      <Type Name="SetWin32ContextInIDispatchAttribute" Kind="Class" />
+      <Type Name="STATSTG" Kind="Structure" />
+      <Type Name="StructLayoutAttribute" Kind="Class" />
+      <Type Name="SYSKIND" Kind="Enumeration" />
+      <Type Name="TYPEATTR" Kind="Structure" />
+      <Type Name="TYPEDESC" Kind="Structure" />
+      <Type Name="TYPEFLAGS" Kind="Enumeration" />
+      <Type Name="TYPEKIND" Kind="Enumeration" />
+      <Type Name="TYPELIBATTR" Kind="Structure" />
+      <Type Name="TypeLibConverter" Kind="Class" />
+      <Type Name="TypeLibExporterFlags" Kind="Enumeration" />
+      <Type Name="TypeLibFuncAttribute" Kind="Class" />
+      <Type Name="TypeLibFuncFlags" Kind="Enumeration" />
+      <Type Name="TypeLibImportClassAttribute" Kind="Class" />
+      <Type Name="TypeLibImporterFlags" Kind="Enumeration" />
+      <Type Name="TypeLibTypeAttribute" Kind="Class" />
+      <Type Name="TypeLibTypeFlags" Kind="Enumeration" />
+      <Type Name="TypeLibVarAttribute" Kind="Class" />
+      <Type Name="TypeLibVarFlags" Kind="Enumeration" />
+      <Type Name="TypeLibVersionAttribute" Kind="Class" />
+      <Type Name="UCOMIBindCtx" Kind="Interface" />
+      <Type Name="UCOMIConnectionPoint" Kind="Interface" />
+      <Type Name="UCOMIConnectionPointContainer" Kind="Interface" />
+      <Type Name="UCOMIEnumConnectionPoints" Kind="Interface" />
+      <Type Name="UCOMIEnumConnections" Kind="Interface" />
+      <Type Name="UCOMIEnumMoniker" Kind="Interface" />
+      <Type Name="UCOMIEnumString" Kind="Interface" />
+      <Type Name="UCOMIEnumVARIANT" Kind="Interface" />
+      <Type Name="UCOMIMoniker" Kind="Interface" />
+      <Type Name="UCOMIPersistFile" Kind="Interface" />
+      <Type Name="UCOMIRunningObjectTable" Kind="Interface" />
+      <Type Name="UCOMIStream" Kind="Interface" />
+      <Type Name="UCOMITypeComp" Kind="Interface" />
+      <Type Name="UCOMITypeInfo" Kind="Interface" />
+      <Type Name="UCOMITypeLib" Kind="Interface" />
+      <Type Name="UnknownWrapper" Kind="Class" />
+      <Type Name="UnmanagedFunctionPointerAttribute" Kind="Class" />
+      <Type Name="UnmanagedType" Kind="Enumeration" />
+      <Type Name="VARDESC" Kind="Structure" />
+      <Type Name="VARDESC+DESCUNION" Kind="Structure" />
+      <Type Name="VarEnum" Kind="Enumeration" />
+      <Type Name="VARFLAGS" Kind="Enumeration" />
+      <Type Name="VariantWrapper" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.InteropServices.ComTypes">
+      <Type Name="BIND_OPTS" Kind="Structure" />
+      <Type Name="BINDPTR" Kind="Structure" />
+      <Type Name="CALLCONV" Kind="Enumeration" />
+      <Type Name="CONNECTDATA" Kind="Structure" />
+      <Type Name="DESCKIND" Kind="Enumeration" />
+      <Type Name="DISPPARAMS" Kind="Structure" />
+      <Type Name="ELEMDESC" Kind="Structure" />
+      <Type Name="ELEMDESC+DESCUNION" Kind="Structure" />
+      <Type Name="EXCEPINFO" Kind="Structure" />
+      <Type Name="FILETIME" Kind="Structure" />
+      <Type Name="FUNCDESC" Kind="Structure" />
+      <Type Name="FUNCFLAGS" Kind="Enumeration" />
+      <Type Name="FUNCKIND" Kind="Enumeration" />
+      <Type Name="IBindCtx" Kind="Interface" />
+      <Type Name="IConnectionPoint" Kind="Interface" />
+      <Type Name="IConnectionPointContainer" Kind="Interface" />
+      <Type Name="IDLDESC" Kind="Structure" />
+      <Type Name="IDLFLAG" Kind="Enumeration" />
+      <Type Name="IEnumConnectionPoints" Kind="Interface" />
+      <Type Name="IEnumConnections" Kind="Interface" />
+      <Type Name="IEnumMoniker" Kind="Interface" />
+      <Type Name="IEnumString" Kind="Interface" />
+      <Type Name="IEnumVARIANT" Kind="Interface" />
+      <Type Name="IMoniker" Kind="Interface" />
+      <Type Name="IMPLTYPEFLAGS" Kind="Enumeration" />
+      <Type Name="INVOKEKIND" Kind="Enumeration" />
+      <Type Name="IPersistFile" Kind="Interface" />
+      <Type Name="IRunningObjectTable" Kind="Interface" />
+      <Type Name="IStream" Kind="Interface" />
+      <Type Name="ITypeComp" Kind="Interface" />
+      <Type Name="ITypeInfo" Kind="Interface" />
+      <Type Name="ITypeInfo2" Kind="Interface" />
+      <Type Name="ITypeLib" Kind="Interface" />
+      <Type Name="ITypeLib2" Kind="Interface" />
+      <Type Name="LIBFLAGS" Kind="Enumeration" />
+      <Type Name="PARAMDESC" Kind="Structure" />
+      <Type Name="PARAMFLAG" Kind="Enumeration" />
+      <Type Name="STATSTG" Kind="Structure" />
+      <Type Name="SYSKIND" Kind="Enumeration" />
+      <Type Name="TYPEATTR" Kind="Structure" />
+      <Type Name="TYPEDESC" Kind="Structure" />
+      <Type Name="TYPEFLAGS" Kind="Enumeration" />
+      <Type Name="TYPEKIND" Kind="Enumeration" />
+      <Type Name="TYPELIBATTR" Kind="Structure" />
+      <Type Name="VARDESC" Kind="Structure" />
+      <Type Name="VARDESC+DESCUNION" Kind="Structure" />
+      <Type Name="VARFLAGS" Kind="Enumeration" />
+      <Type Name="VARKIND" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Runtime.InteropServices.Expando">
+      <Type Name="IExpando" Kind="Interface" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting">
+      <Type Name="ActivatedClientTypeEntry" Kind="Class" />
+      <Type Name="ActivatedServiceTypeEntry" Kind="Class" />
+      <Type Name="CustomErrorsModes" Kind="Enumeration" />
+      <Type Name="IChannelInfo" Kind="Interface" />
+      <Type Name="IEnvoyInfo" Kind="Interface" />
+      <Type Name="InternalRemotingServices" Kind="Class" />
+      <Type Name="IObjectHandle" Kind="Interface" />
+      <Type Name="IRemotingTypeInfo" Kind="Interface" />
+      <Type Name="ObjectHandle" Kind="Class" />
+      <Type Name="ObjRef" Kind="Class" />
+      <Type Name="RemotingConfiguration" Kind="Class" />
+      <Type Name="RemotingException" Kind="Class" />
+      <Type Name="RemotingServices" Kind="Class" />
+      <Type Name="RemotingTimeoutException" Kind="Class" />
+      <Type Name="ServerException" Kind="Class" />
+      <Type Name="SoapServices" Kind="Class" />
+      <Type Name="TypeEntry" Kind="Class" />
+      <Type Name="WellKnownClientTypeEntry" Kind="Class" />
+      <Type Name="WellKnownObjectMode" Kind="Enumeration" />
+      <Type Name="WellKnownServiceTypeEntry" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Activation">
+      <Type Name="ActivatorLevel" Kind="Enumeration" />
+      <Type Name="IActivator" Kind="Interface" />
+      <Type Name="IConstructionCallMessage" Kind="Interface" />
+      <Type Name="IConstructionReturnMessage" Kind="Interface" />
+      <Type Name="UrlAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Channels">
+      <Type Name="BaseChannelObjectWithProperties" Kind="Class" />
+      <Type Name="BaseChannelSinkWithProperties" Kind="Class" />
+      <Type Name="BaseChannelWithProperties" Kind="Class" />
+      <Type Name="ChannelDataStore" Kind="Class" />
+      <Type Name="ChannelServices" Kind="Class" />
+      <Type Name="ClientChannelSinkStack" Kind="Class" />
+      <Type Name="IChannel" Kind="Interface" />
+      <Type Name="IChannelDataStore" Kind="Interface" />
+      <Type Name="IChannelReceiver" Kind="Interface" />
+      <Type Name="IChannelReceiverHook" Kind="Interface" />
+      <Type Name="IChannelSender" Kind="Interface" />
+      <Type Name="IChannelSinkBase" Kind="Interface" />
+      <Type Name="IClientChannelSink" Kind="Interface" />
+      <Type Name="IClientChannelSinkProvider" Kind="Interface" />
+      <Type Name="IClientChannelSinkStack" Kind="Interface" />
+      <Type Name="IClientFormatterSink" Kind="Interface" />
+      <Type Name="IClientFormatterSinkProvider" Kind="Interface" />
+      <Type Name="IClientResponseChannelSinkStack" Kind="Interface" />
+      <Type Name="ISecurableChannel" Kind="Interface" />
+      <Type Name="IServerChannelSink" Kind="Interface" />
+      <Type Name="IServerChannelSinkProvider" Kind="Interface" />
+      <Type Name="IServerChannelSinkStack" Kind="Interface" />
+      <Type Name="IServerFormatterSinkProvider" Kind="Interface" />
+      <Type Name="IServerResponseChannelSinkStack" Kind="Interface" />
+      <Type Name="ITransportHeaders" Kind="Interface" />
+      <Type Name="ServerChannelSinkStack" Kind="Class" />
+      <Type Name="ServerProcessing" Kind="Enumeration" />
+      <Type Name="SinkProviderData" Kind="Class" />
+      <Type Name="TransportHeaders" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Contexts">
+      <Type Name="Context" Kind="Class" />
+      <Type Name="ContextAttribute" Kind="Class" />
+      <Type Name="ContextProperty" Kind="Class" />
+      <Type Name="CrossContextDelegate" Kind="Delegate" />
+      <Type Name="IContextAttribute" Kind="Interface" />
+      <Type Name="IContextProperty" Kind="Interface" />
+      <Type Name="IContextPropertyActivator" Kind="Interface" />
+      <Type Name="IContributeClientContextSink" Kind="Interface" />
+      <Type Name="IContributeDynamicSink" Kind="Interface" />
+      <Type Name="IContributeEnvoySink" Kind="Interface" />
+      <Type Name="IContributeObjectSink" Kind="Interface" />
+      <Type Name="IContributeServerContextSink" Kind="Interface" />
+      <Type Name="IDynamicMessageSink" Kind="Interface" />
+      <Type Name="IDynamicProperty" Kind="Interface" />
+      <Type Name="SynchronizationAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Lifetime">
+      <Type Name="ClientSponsor" Kind="Class" />
+      <Type Name="ILease" Kind="Interface" />
+      <Type Name="ISponsor" Kind="Interface" />
+      <Type Name="LeaseState" Kind="Enumeration" />
+      <Type Name="LifetimeServices" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Messaging">
+      <Type Name="AsyncResult" Kind="Class" />
+      <Type Name="CallContext" Kind="Class" />
+      <Type Name="ConstructionCall" Kind="Class" />
+      <Type Name="ConstructionResponse" Kind="Class" />
+      <Type Name="Header" Kind="Class" />
+      <Type Name="HeaderHandler" Kind="Delegate" />
+      <Type Name="ILogicalThreadAffinative" Kind="Interface" />
+      <Type Name="IMessage" Kind="Interface" />
+      <Type Name="IMessageCtrl" Kind="Interface" />
+      <Type Name="IMessageSink" Kind="Interface" />
+      <Type Name="IMethodCallMessage" Kind="Interface" />
+      <Type Name="IMethodMessage" Kind="Interface" />
+      <Type Name="IMethodReturnMessage" Kind="Interface" />
+      <Type Name="InternalMessageWrapper" Kind="Class" />
+      <Type Name="IRemotingFormatter" Kind="Interface" />
+      <Type Name="LogicalCallContext" Kind="Class" />
+      <Type Name="MessageSurrogateFilter" Kind="Delegate" />
+      <Type Name="MethodCall" Kind="Class" />
+      <Type Name="MethodCallMessageWrapper" Kind="Class" />
+      <Type Name="MethodResponse" Kind="Class" />
+      <Type Name="MethodReturnMessageWrapper" Kind="Class" />
+      <Type Name="OneWayAttribute" Kind="Class" />
+      <Type Name="RemotingSurrogateSelector" Kind="Class" />
+      <Type Name="ReturnMessage" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Metadata">
+      <Type Name="SoapAttribute" Kind="Class" />
+      <Type Name="SoapFieldAttribute" Kind="Class" />
+      <Type Name="SoapMethodAttribute" Kind="Class" />
+      <Type Name="SoapOption" Kind="Enumeration" />
+      <Type Name="SoapParameterAttribute" Kind="Class" />
+      <Type Name="SoapTypeAttribute" Kind="Class" />
+      <Type Name="XmlFieldOrderOption" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Metadata.W3cXsd2001">
+      <Type Name="ISoapXsd" Kind="Interface" />
+      <Type Name="SoapAnyUri" Kind="Class" />
+      <Type Name="SoapBase64Binary" Kind="Class" />
+      <Type Name="SoapDate" Kind="Class" />
+      <Type Name="SoapDateTime" Kind="Class" />
+      <Type Name="SoapDay" Kind="Class" />
+      <Type Name="SoapDuration" Kind="Class" />
+      <Type Name="SoapEntities" Kind="Class" />
+      <Type Name="SoapEntity" Kind="Class" />
+      <Type Name="SoapHexBinary" Kind="Class" />
+      <Type Name="SoapId" Kind="Class" />
+      <Type Name="SoapIdref" Kind="Class" />
+      <Type Name="SoapIdrefs" Kind="Class" />
+      <Type Name="SoapInteger" Kind="Class" />
+      <Type Name="SoapLanguage" Kind="Class" />
+      <Type Name="SoapMonth" Kind="Class" />
+      <Type Name="SoapMonthDay" Kind="Class" />
+      <Type Name="SoapName" Kind="Class" />
+      <Type Name="SoapNcName" Kind="Class" />
+      <Type Name="SoapNegativeInteger" Kind="Class" />
+      <Type Name="SoapNmtoken" Kind="Class" />
+      <Type Name="SoapNmtokens" Kind="Class" />
+      <Type Name="SoapNonNegativeInteger" Kind="Class" />
+      <Type Name="SoapNonPositiveInteger" Kind="Class" />
+      <Type Name="SoapNormalizedString" Kind="Class" />
+      <Type Name="SoapNotation" Kind="Class" />
+      <Type Name="SoapPositiveInteger" Kind="Class" />
+      <Type Name="SoapQName" Kind="Class" />
+      <Type Name="SoapTime" Kind="Class" />
+      <Type Name="SoapToken" Kind="Class" />
+      <Type Name="SoapYear" Kind="Class" />
+      <Type Name="SoapYearMonth" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Proxies">
+      <Type Name="ProxyAttribute" Kind="Class" />
+      <Type Name="RealProxy" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Services">
+      <Type Name="EnterpriseServicesHelper" Kind="Class" />
+      <Type Name="ITrackingHandler" Kind="Interface" />
+      <Type Name="TrackingServices" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Serialization">
+      <Type Name="Formatter" Kind="Class" />
+      <Type Name="FormatterConverter" Kind="Class" />
+      <Type Name="FormatterServices" Kind="Class" />
+      <Type Name="IDeserializationCallback" Kind="Interface" />
+      <Type Name="IFormatter" Kind="Interface" />
+      <Type Name="IFormatterConverter" Kind="Interface" />
+      <Type Name="IObjectReference" Kind="Interface" />
+      <Type Name="ISerializable" Kind="Interface" />
+      <Type Name="ISerializationSurrogate" Kind="Interface" />
+      <Type Name="ISurrogateSelector" Kind="Interface" />
+      <Type Name="ObjectIDGenerator" Kind="Class" />
+      <Type Name="ObjectManager" Kind="Class" />
+      <Type Name="OnDeserializedAttribute" Kind="Class" />
+      <Type Name="OnDeserializingAttribute" Kind="Class" />
+      <Type Name="OnSerializedAttribute" Kind="Class" />
+      <Type Name="OnSerializingAttribute" Kind="Class" />
+      <Type Name="OptionalFieldAttribute" Kind="Class" />
+      <Type Name="SerializationBinder" Kind="Class" />
+      <Type Name="SerializationEntry" Kind="Structure" />
+      <Type Name="SerializationException" Kind="Class" />
+      <Type Name="SerializationInfo" Kind="Class" />
+      <Type Name="SerializationInfoEnumerator" Kind="Class" />
+      <Type Name="SerializationObjectManager" Kind="Class" />
+      <Type Name="StreamingContext" Kind="Structure" />
+      <Type Name="StreamingContextStates" Kind="Enumeration" />
+      <Type Name="SurrogateSelector" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Serialization.Formatters">
+      <Type Name="FormatterAssemblyStyle" Kind="Enumeration" />
+      <Type Name="FormatterTypeStyle" Kind="Enumeration" />
+      <Type Name="IFieldInfo" Kind="Interface" />
+      <Type Name="InternalRM" Kind="Class" />
+      <Type Name="InternalST" Kind="Class" />
+      <Type Name="ISoapMessage" Kind="Interface" />
+      <Type Name="ServerFault" Kind="Class" />
+      <Type Name="SoapFault" Kind="Class" />
+      <Type Name="SoapMessage" Kind="Class" />
+      <Type Name="TypeFilterLevel" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Serialization.Formatters.Binary">
+      <Type Name="BinaryFormatter" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Versioning">
+      <Type Name="ResourceConsumptionAttribute" Kind="Class" />
+      <Type Name="ResourceExposureAttribute" Kind="Class" />
+      <Type Name="ResourceScope" Kind="Enumeration" />
+      <Type Name="VersioningHelper" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Security">
+      <Type Name="AllowPartiallyTrustedCallersAttribute" Kind="Class" />
+      <Type Name="CodeAccessPermission" Kind="Class" />
+      <Type Name="HostProtectionException" Kind="Class" />
+      <Type Name="HostSecurityManager" Kind="Class" />
+      <Type Name="HostSecurityManagerOptions" Kind="Enumeration" />
+      <Type Name="IEvidenceFactory" Kind="Interface" />
+      <Type Name="IPermission" Kind="Interface" />
+      <Type Name="ISecurityEncodable" Kind="Interface" />
+      <Type Name="ISecurityPolicyEncodable" Kind="Interface" />
+      <Type Name="IStackWalk" Kind="Interface" />
+      <Type Name="NamedPermissionSet" Kind="Class" />
+      <Type Name="PermissionSet" Kind="Class" />
+      <Type Name="PolicyLevelType" Kind="Enumeration" />
+      <Type Name="SecureString" Kind="Class" />
+      <Type Name="SecurityContext" Kind="Class" />
+      <Type Name="SecurityCriticalAttribute" Kind="Class" />
+      <Type Name="SecurityCriticalScope" Kind="Enumeration" />
+      <Type Name="SecurityElement" Kind="Class" />
+      <Type Name="SecurityException" Kind="Class" />
+      <Type Name="SecurityManager" Kind="Class" />
+      <Type Name="SecuritySafeCriticalAttribute" Kind="Class" />
+      <Type Name="SecurityTransparentAttribute" Kind="Class" />
+      <Type Name="SecurityTreatAsSafeAttribute" Kind="Class" />
+      <Type Name="SecurityZone" Kind="Enumeration" />
+      <Type Name="SuppressUnmanagedCodeSecurityAttribute" Kind="Class" />
+      <Type Name="UnverifiableCodeAttribute" Kind="Class" />
+      <Type Name="VerificationException" Kind="Class" />
+      <Type Name="XmlSyntaxException" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Security.AccessControl">
+      <Type Name="AccessControlActions" Kind="Enumeration" />
+      <Type Name="AccessControlModification" Kind="Enumeration" />
+      <Type Name="AccessControlSections" Kind="Enumeration" />
+      <Type Name="AccessControlType" Kind="Enumeration" />
+      <Type Name="AccessRule" Kind="Class" />
+      <Type Name="AceEnumerator" Kind="Class" />
+      <Type Name="AceFlags" Kind="Enumeration" />
+      <Type Name="AceQualifier" Kind="Enumeration" />
+      <Type Name="AceType" Kind="Enumeration" />
+      <Type Name="AuditFlags" Kind="Enumeration" />
+      <Type Name="AuditRule" Kind="Class" />
+      <Type Name="AuthorizationRule" Kind="Class" />
+      <Type Name="AuthorizationRuleCollection" Kind="Class" />
+      <Type Name="CommonAce" Kind="Class" />
+      <Type Name="CommonAcl" Kind="Class" />
+      <Type Name="CommonObjectSecurity" Kind="Class" />
+      <Type Name="CommonSecurityDescriptor" Kind="Class" />
+      <Type Name="CompoundAce" Kind="Class" />
+      <Type Name="CompoundAceType" Kind="Enumeration" />
+      <Type Name="ControlFlags" Kind="Enumeration" />
+      <Type Name="CryptoKeyAccessRule" Kind="Class" />
+      <Type Name="CryptoKeyAuditRule" Kind="Class" />
+      <Type Name="CryptoKeyRights" Kind="Enumeration" />
+      <Type Name="CryptoKeySecurity" Kind="Class" />
+      <Type Name="CustomAce" Kind="Class" />
+      <Type Name="DirectoryObjectSecurity" Kind="Class" />
+      <Type Name="DirectorySecurity" Kind="Class" />
+      <Type Name="DiscretionaryAcl" Kind="Class" />
+      <Type Name="EventWaitHandleAccessRule" Kind="Class" />
+      <Type Name="EventWaitHandleAuditRule" Kind="Class" />
+      <Type Name="EventWaitHandleRights" Kind="Enumeration" />
+      <Type Name="EventWaitHandleSecurity" Kind="Class" />
+      <Type Name="FileSecurity" Kind="Class" />
+      <Type Name="FileSystemAccessRule" Kind="Class" />
+      <Type Name="FileSystemAuditRule" Kind="Class" />
+      <Type Name="FileSystemRights" Kind="Enumeration" />
+      <Type Name="FileSystemSecurity" Kind="Class" />
+      <Type Name="GenericAce" Kind="Class" />
+      <Type Name="GenericAcl" Kind="Class" />
+      <Type Name="GenericSecurityDescriptor" Kind="Class" />
+      <Type Name="InheritanceFlags" Kind="Enumeration" />
+      <Type Name="KnownAce" Kind="Class" />
+      <Type Name="MutexAccessRule" Kind="Class" />
+      <Type Name="MutexAuditRule" Kind="Class" />
+      <Type Name="MutexRights" Kind="Enumeration" />
+      <Type Name="MutexSecurity" Kind="Class" />
+      <Type Name="NativeObjectSecurity" Kind="Class" />
+      <Type Name="ObjectAccessRule" Kind="Class" />
+      <Type Name="ObjectAce" Kind="Class" />
+      <Type Name="ObjectAceFlags" Kind="Enumeration" />
+      <Type Name="ObjectAuditRule" Kind="Class" />
+      <Type Name="ObjectSecurity" Kind="Class" />
+      <Type Name="PrivilegeNotHeldException" Kind="Class" />
+      <Type Name="PropagationFlags" Kind="Enumeration" />
+      <Type Name="QualifiedAce" Kind="Class" />
+      <Type Name="RawAcl" Kind="Class" />
+      <Type Name="RawSecurityDescriptor" Kind="Class" />
+      <Type Name="RegistryAccessRule" Kind="Class" />
+      <Type Name="RegistryAuditRule" Kind="Class" />
+      <Type Name="RegistryRights" Kind="Enumeration" />
+      <Type Name="RegistrySecurity" Kind="Class" />
+      <Type Name="ResourceType" Kind="Enumeration" />
+      <Type Name="SecurityInfos" Kind="Enumeration" />
+      <Type Name="SystemAcl" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Security.Cryptography">
+      <Type Name="AsymmetricAlgorithm" Kind="Class" />
+      <Type Name="AsymmetricKeyExchangeDeformatter" Kind="Class" />
+      <Type Name="AsymmetricKeyExchangeFormatter" Kind="Class" />
+      <Type Name="AsymmetricSignatureDeformatter" Kind="Class" />
+      <Type Name="AsymmetricSignatureFormatter" Kind="Class" />
+      <Type Name="CipherMode" Kind="Enumeration" />
+      <Type Name="CryptoAPITransform" Kind="Class" />
+      <Type Name="CryptoConfig" Kind="Class" />
+      <Type Name="CryptographicException" Kind="Class" />
+      <Type Name="CryptographicUnexpectedOperationException" Kind="Class" />
+      <Type Name="CryptoStream" Kind="Class" />
+      <Type Name="CryptoStreamMode" Kind="Enumeration" />
+      <Type Name="CspKeyContainerInfo" Kind="Class" />
+      <Type Name="CspParameters" Kind="Class" />
+      <Type Name="CspProviderFlags" Kind="Enumeration" />
+      <Type Name="DeriveBytes" Kind="Class" />
+      <Type Name="DES" Kind="Class" />
+      <Type Name="DESCryptoServiceProvider" Kind="Class" />
+      <Type Name="DSA" Kind="Class" />
+      <Type Name="DSACryptoServiceProvider" Kind="Class" />
+      <Type Name="DSAParameters" Kind="Structure" />
+      <Type Name="DSASignatureDeformatter" Kind="Class" />
+      <Type Name="DSASignatureFormatter" Kind="Class" />
+      <Type Name="FromBase64Transform" Kind="Class" />
+      <Type Name="FromBase64TransformMode" Kind="Enumeration" />
+      <Type Name="HashAlgorithm" Kind="Class" />
+      <Type Name="HMAC" Kind="Class" />
+      <Type Name="HMACMD5" Kind="Class" />
+      <Type Name="HMACRIPEMD160" Kind="Class" />
+      <Type Name="HMACSHA1" Kind="Class" />
+      <Type Name="HMACSHA256" Kind="Class" />
+      <Type Name="HMACSHA384" Kind="Class" />
+      <Type Name="HMACSHA512" Kind="Class" />
+      <Type Name="ICryptoTransform" Kind="Interface" />
+      <Type Name="ICspAsymmetricAlgorithm" Kind="Interface" />
+      <Type Name="KeyedHashAlgorithm" Kind="Class" />
+      <Type Name="KeyNumber" Kind="Enumeration" />
+      <Type Name="KeySizes" Kind="Class" />
+      <Type Name="MACTripleDES" Kind="Class" />
+      <Type Name="MaskGenerationMethod" Kind="Class" />
+      <Type Name="MD5" Kind="Class" />
+      <Type Name="MD5CryptoServiceProvider" Kind="Class" />
+      <Type Name="PaddingMode" Kind="Enumeration" />
+      <Type Name="PasswordDeriveBytes" Kind="Class" />
+      <Type Name="PKCS1MaskGenerationMethod" Kind="Class" />
+      <Type Name="RandomNumberGenerator" Kind="Class" />
+      <Type Name="RC2" Kind="Class" />
+      <Type Name="RC2CryptoServiceProvider" Kind="Class" />
+      <Type Name="Rfc2898DeriveBytes" Kind="Class" />
+      <Type Name="Rijndael" Kind="Class" />
+      <Type Name="RijndaelManaged" Kind="Class" />
+      <Type Name="RijndaelManagedTransform" Kind="Class" />
+      <Type Name="RIPEMD160" Kind="Class" />
+      <Type Name="RIPEMD160Managed" Kind="Class" />
+      <Type Name="RNGCryptoServiceProvider" Kind="Class" />
+      <Type Name="RSA" Kind="Class" />
+      <Type Name="RSACryptoServiceProvider" Kind="Class" />
+      <Type Name="RSAOAEPKeyExchangeDeformatter" Kind="Class" />
+      <Type Name="RSAOAEPKeyExchangeFormatter" Kind="Class" />
+      <Type Name="RSAParameters" Kind="Structure" />
+      <Type Name="RSAPKCS1KeyExchangeDeformatter" Kind="Class" />
+      <Type Name="RSAPKCS1KeyExchangeFormatter" Kind="Class" />
+      <Type Name="RSAPKCS1SignatureDeformatter" Kind="Class" />
+      <Type Name="RSAPKCS1SignatureFormatter" Kind="Class" />
+      <Type Name="SHA1" Kind="Class" />
+      <Type Name="SHA1CryptoServiceProvider" Kind="Class" />
+      <Type Name="SHA1Managed" Kind="Class" />
+      <Type Name="SHA256" Kind="Class" />
+      <Type Name="SHA256Managed" Kind="Class" />
+      <Type Name="SHA384" Kind="Class" />
+      <Type Name="SHA384Managed" Kind="Class" />
+      <Type Name="SHA512" Kind="Class" />
+      <Type Name="SHA512Managed" Kind="Class" />
+      <Type Name="SignatureDescription" Kind="Class" />
+      <Type Name="SymmetricAlgorithm" Kind="Class" />
+      <Type Name="ToBase64Transform" Kind="Class" />
+      <Type Name="TripleDES" Kind="Class" />
+      <Type Name="TripleDESCryptoServiceProvider" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Security.Cryptography.X509Certificates">
+      <Type Name="X509Certificate" Kind="Class" />
+      <Type Name="X509ContentType" Kind="Enumeration" />
+      <Type Name="X509KeyStorageFlags" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Security.Permissions">
+      <Type Name="CodeAccessSecurityAttribute" Kind="Class" />
+      <Type Name="EnvironmentPermission" Kind="Class" />
+      <Type Name="EnvironmentPermissionAccess" Kind="Enumeration" />
+      <Type Name="EnvironmentPermissionAttribute" Kind="Class" />
+      <Type Name="FileDialogPermission" Kind="Class" />
+      <Type Name="FileDialogPermissionAccess" Kind="Enumeration" />
+      <Type Name="FileDialogPermissionAttribute" Kind="Class" />
+      <Type Name="FileIOPermission" Kind="Class" />
+      <Type Name="FileIOPermissionAccess" Kind="Enumeration" />
+      <Type Name="FileIOPermissionAttribute" Kind="Class" />
+      <Type Name="GacIdentityPermission" Kind="Class" />
+      <Type Name="GacIdentityPermissionAttribute" Kind="Class" />
+      <Type Name="HostProtectionAttribute" Kind="Class" />
+      <Type Name="HostProtectionResource" Kind="Enumeration" />
+      <Type Name="IsolatedStorageContainment" Kind="Enumeration" />
+      <Type Name="IsolatedStorageFilePermission" Kind="Class" />
+      <Type Name="IsolatedStorageFilePermissionAttribute" Kind="Class" />
+      <Type Name="IsolatedStoragePermission" Kind="Class" />
+      <Type Name="IsolatedStoragePermissionAttribute" Kind="Class" />
+      <Type Name="IUnrestrictedPermission" Kind="Interface" />
+      <Type Name="KeyContainerPermission" Kind="Class" />
+      <Type Name="KeyContainerPermissionAccessEntry" Kind="Class" />
+      <Type Name="KeyContainerPermissionAccessEntryCollection" Kind="Class" />
+      <Type Name="KeyContainerPermissionAccessEntryEnumerator" Kind="Class" />
+      <Type Name="KeyContainerPermissionAttribute" Kind="Class" />
+      <Type Name="KeyContainerPermissionFlags" Kind="Enumeration" />
+      <Type Name="PermissionSetAttribute" Kind="Class" />
+      <Type Name="PermissionState" Kind="Enumeration" />
+      <Type Name="PrincipalPermission" Kind="Class" />
+      <Type Name="PrincipalPermissionAttribute" Kind="Class" />
+      <Type Name="PublisherIdentityPermission" Kind="Class" />
+      <Type Name="PublisherIdentityPermissionAttribute" Kind="Class" />
+      <Type Name="ReflectionPermission" Kind="Class" />
+      <Type Name="ReflectionPermissionAttribute" Kind="Class" />
+      <Type Name="ReflectionPermissionFlag" Kind="Enumeration" />
+      <Type Name="RegistryPermission" Kind="Class" />
+      <Type Name="RegistryPermissionAccess" Kind="Enumeration" />
+      <Type Name="RegistryPermissionAttribute" Kind="Class" />
+      <Type Name="SecurityAction" Kind="Enumeration" />
+      <Type Name="SecurityAttribute" Kind="Class" />
+      <Type Name="SecurityPermission" Kind="Class" />
+      <Type Name="SecurityPermissionAttribute" Kind="Class" />
+      <Type Name="SecurityPermissionFlag" Kind="Enumeration" />
+      <Type Name="SiteIdentityPermission" Kind="Class" />
+      <Type Name="SiteIdentityPermissionAttribute" Kind="Class" />
+      <Type Name="StrongNameIdentityPermission" Kind="Class" />
+      <Type Name="StrongNameIdentityPermissionAttribute" Kind="Class" />
+      <Type Name="StrongNamePublicKeyBlob" Kind="Class" />
+      <Type Name="UIPermission" Kind="Class" />
+      <Type Name="UIPermissionAttribute" Kind="Class" />
+      <Type Name="UIPermissionClipboard" Kind="Enumeration" />
+      <Type Name="UIPermissionWindow" Kind="Enumeration" />
+      <Type Name="UrlIdentityPermission" Kind="Class" />
+      <Type Name="UrlIdentityPermissionAttribute" Kind="Class" />
+      <Type Name="ZoneIdentityPermission" Kind="Class" />
+      <Type Name="ZoneIdentityPermissionAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Security.Policy">
+      <Type Name="AllMembershipCondition" Kind="Class" />
+      <Type Name="ApplicationDirectory" Kind="Class" />
+      <Type Name="ApplicationDirectoryMembershipCondition" Kind="Class" />
+      <Type Name="ApplicationSecurityInfo" Kind="Class" />
+      <Type Name="ApplicationSecurityManager" Kind="Class" />
+      <Type Name="ApplicationTrust" Kind="Class" />
+      <Type Name="ApplicationTrustCollection" Kind="Class" />
+      <Type Name="ApplicationTrustEnumerator" Kind="Class" />
+      <Type Name="ApplicationVersionMatch" Kind="Enumeration" />
+      <Type Name="CodeConnectAccess" Kind="Class" />
+      <Type Name="CodeGroup" Kind="Class" />
+      <Type Name="Evidence" Kind="Class" />
+      <Type Name="FileCodeGroup" Kind="Class" />
+      <Type Name="FirstMatchCodeGroup" Kind="Class" />
+      <Type Name="GacInstalled" Kind="Class" />
+      <Type Name="GacMembershipCondition" Kind="Class" />
+      <Type Name="Hash" Kind="Class" />
+      <Type Name="HashMembershipCondition" Kind="Class" />
+      <Type Name="IApplicationTrustManager" Kind="Interface" />
+      <Type Name="IIdentityPermissionFactory" Kind="Interface" />
+      <Type Name="IMembershipCondition" Kind="Interface" />
+      <Type Name="NetCodeGroup" Kind="Class" />
+      <Type Name="PermissionRequestEvidence" Kind="Class" />
+      <Type Name="PolicyException" Kind="Class" />
+      <Type Name="PolicyLevel" Kind="Class" />
+      <Type Name="PolicyStatement" Kind="Class" />
+      <Type Name="PolicyStatementAttribute" Kind="Enumeration" />
+      <Type Name="Publisher" Kind="Class" />
+      <Type Name="PublisherMembershipCondition" Kind="Class" />
+      <Type Name="Site" Kind="Class" />
+      <Type Name="SiteMembershipCondition" Kind="Class" />
+      <Type Name="StrongName" Kind="Class" />
+      <Type Name="StrongNameMembershipCondition" Kind="Class" />
+      <Type Name="TrustManagerContext" Kind="Class" />
+      <Type Name="TrustManagerUIContext" Kind="Enumeration" />
+      <Type Name="UnionCodeGroup" Kind="Class" />
+      <Type Name="Url" Kind="Class" />
+      <Type Name="UrlMembershipCondition" Kind="Class" />
+      <Type Name="Zone" Kind="Class" />
+      <Type Name="ZoneMembershipCondition" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Security.Principal">
+      <Type Name="GenericIdentity" Kind="Class" />
+      <Type Name="GenericPrincipal" Kind="Class" />
+      <Type Name="IdentityNotMappedException" Kind="Class" />
+      <Type Name="IdentityReference" Kind="Class" />
+      <Type Name="IdentityReferenceCollection" Kind="Class" />
+      <Type Name="IIdentity" Kind="Interface" />
+      <Type Name="IPrincipal" Kind="Interface" />
+      <Type Name="NTAccount" Kind="Class" />
+      <Type Name="PrincipalPolicy" Kind="Enumeration" />
+      <Type Name="SecurityIdentifier" Kind="Class" />
+      <Type Name="TokenAccessLevels" Kind="Enumeration" />
+      <Type Name="TokenImpersonationLevel" Kind="Enumeration" />
+      <Type Name="WellKnownSidType" Kind="Enumeration" />
+      <Type Name="WindowsAccountType" Kind="Enumeration" />
+      <Type Name="WindowsBuiltInRole" Kind="Enumeration" />
+      <Type Name="WindowsIdentity" Kind="Class" />
+      <Type Name="WindowsImpersonationContext" Kind="Class" />
+      <Type Name="WindowsPrincipal" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Text">
+      <Type Name="ASCIIEncoding" Kind="Class" />
+      <Type Name="Decoder" Kind="Class" />
+      <Type Name="DecoderExceptionFallback" Kind="Class" />
+      <Type Name="DecoderExceptionFallbackBuffer" Kind="Class" />
+      <Type Name="DecoderFallback" Kind="Class" />
+      <Type Name="DecoderFallbackBuffer" Kind="Class" />
+      <Type Name="DecoderFallbackException" Kind="Class" />
+      <Type Name="DecoderReplacementFallback" Kind="Class" />
+      <Type Name="DecoderReplacementFallbackBuffer" Kind="Class" />
+      <Type Name="Encoder" Kind="Class" />
+      <Type Name="EncoderExceptionFallback" Kind="Class" />
+      <Type Name="EncoderExceptionFallbackBuffer" Kind="Class" />
+      <Type Name="EncoderFallback" Kind="Class" />
+      <Type Name="EncoderFallbackBuffer" Kind="Class" />
+      <Type Name="EncoderFallbackException" Kind="Class" />
+      <Type Name="EncoderReplacementFallback" Kind="Class" />
+      <Type Name="EncoderReplacementFallbackBuffer" Kind="Class" />
+      <Type Name="Encoding" Kind="Class" />
+      <Type Name="EncodingInfo" Kind="Class" />
+      <Type Name="NormalizationForm" Kind="Enumeration" />
+      <Type Name="StringBuilder" Kind="Class" />
+      <Type Name="UnicodeEncoding" Kind="Class" />
+      <Type Name="UTF32Encoding" Kind="Class" />
+      <Type Name="UTF7Encoding" Kind="Class" />
+      <Type Name="UTF8Encoding" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Threading">
+      <Type Name="AbandonedMutexException" Kind="Class" />
+      <Type Name="ApartmentState" Kind="Enumeration" />
+      <Type Name="AsyncFlowControl" Kind="Structure" />
+      <Type Name="AutoResetEvent" Kind="Class" />
+      <Type Name="CompressedStack" Kind="Class" />
+      <Type Name="ContextCallback" Kind="Delegate" />
+      <Type Name="EventResetMode" Kind="Enumeration" />
+      <Type Name="EventWaitHandle" Kind="Class" />
+      <Type Name="ExecutionContext" Kind="Class" />
+      <Type Name="HostExecutionContext" Kind="Class" />
+      <Type Name="HostExecutionContextManager" Kind="Class" />
+      <Type Name="Interlocked" Kind="Class" />
+      <Type Name="IOCompletionCallback" Kind="Delegate" />
+      <Type Name="LockCookie" Kind="Structure" />
+      <Type Name="ManualResetEvent" Kind="Class" />
+      <Type Name="Monitor" Kind="Class" />
+      <Type Name="Mutex" Kind="Class" />
+      <Type Name="NativeOverlapped" Kind="Structure" />
+      <Type Name="Overlapped" Kind="Class" />
+      <Type Name="ParameterizedThreadStart" Kind="Delegate" />
+      <Type Name="ReaderWriterLock" Kind="Class" />
+      <Type Name="RegisteredWaitHandle" Kind="Class" />
+      <Type Name="SendOrPostCallback" Kind="Delegate" />
+      <Type Name="SynchronizationContext" Kind="Class" />
+      <Type Name="SynchronizationLockException" Kind="Class" />
+      <Type Name="Thread" Kind="Class" />
+      <Type Name="ThreadAbortException" Kind="Class" />
+      <Type Name="ThreadInterruptedException" Kind="Class" />
+      <Type Name="ThreadPool" Kind="Class" />
+      <Type Name="ThreadPriority" Kind="Enumeration" />
+      <Type Name="ThreadStart" Kind="Delegate" />
+      <Type Name="ThreadStartException" Kind="Class" />
+      <Type Name="ThreadState" Kind="Enumeration" />
+      <Type Name="ThreadStateException" Kind="Class" />
+      <Type Name="Timeout" Kind="Class" />
+      <Type Name="Timer" Kind="Class" />
+      <Type Name="TimerCallback" Kind="Delegate" />
+      <Type Name="WaitCallback" Kind="Delegate" />
+      <Type Name="WaitHandle" Kind="Class" />
+      <Type Name="WaitHandleCannotBeOpenedException" Kind="Class" />
+      <Type Name="WaitOrTimerCallback" Kind="Delegate" />
+    </Namespace>
+  </Types>
+  <Title>mscorlib</Title>
+  <Assemblies>
+    <Assembly Name="mscorlib" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.StringFreezing</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.DefaultDependency(System.Runtime.CompilerServices.LoadHint.Always)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.TypeLibVersion(2, 0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.Guid("BED7F4EA-1A96-11D2-8F08-00A0C9A6186D")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComCompatibleVersion(1, 0, 3300, 0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("mscorlib.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("mscorlib.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("mscorlib.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+</Overview>

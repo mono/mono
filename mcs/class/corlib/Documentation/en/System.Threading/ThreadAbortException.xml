@@ -1,0 +1,128 @@
+<Type Name="ThreadAbortException" FullName="System.Threading.ThreadAbortException" FullNameSP="System_Threading_ThreadAbortException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable ThreadAbortException extends System.SystemException" />
+  <TypeSignature Language="C#" Value="public sealed class ThreadAbortException : SystemException" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.SystemException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Thrown by the system when a call is made to
+   <see cref="M:System.Threading.Thread.Abort(System.Object)" />.</para>
+    </summary>
+    <remarks>
+      <para> Instances of this exception type can only
+      be created by the system.</para>
+      <para>When a call is made to <see cref="M:System.Threading.Thread.Abort(System.Object)" />
+to terminate a thread, the system throws a <see cref="T:System.Threading.ThreadAbortException" /> in the target
+thread. <see cref="T:System.Threading.ThreadAbortException" /> is a
+special exception that can
+be caught by application code, but is rethrown at the end of the catch block
+unless <see cref="M:System.Threading.Thread.ResetAbort" /> is called. When the
+<see langword="ThreadAbortException " /> 
+exception is raised, the system executes any <see langword="finally " />blocks for the target thread. The finally blocks are executed even if
+<see cref="M:System.Threading.Thread.ResetAbort" qualify="true" /> is called. If the abort is successful, 
+the target thread is left in the <see cref="F:System.Threading.ThreadState.Stopped" qualify="true" /> and
+<see cref="F:System.Threading.ThreadState.Aborted" qualify="true" /> states.</para>
+    </remarks>
+    <example>
+      <para>The following example demonstrates aborting a thread.
+      The thread that receives the <see cref="T:System.Threading.ThreadAbortException" /> uses the <see cref="M:System.Threading.Thread.ResetAbort" /> method to cancel the abort request and
+      continue executing.</para>
+      <code lang="C#">using System;
+using System.Threading;
+using System.Security.Permissions;
+
+public class ThreadWork {
+  public static void DoWork() {
+    try {
+      for (int i=0; i&lt;100; i++) {
+        Console.WriteLine("Thread - working."); 
+        Thread.Sleep(100);
+      }
+    }
+    catch (ThreadAbortException e) {
+      Console.WriteLine("Thread - caught ThreadAbortException - resetting.");
+      Thread.ResetAbort();
+    }
+    Console.WriteLine("Thread - still alive and working."); 
+    Thread.Sleep(1000);
+    Console.WriteLine("Thread - finished working.");
+  } 
+}
+
+class ThreadAbortTest{
+  public static void Main() {
+    ThreadStart myThreadDelegate = new ThreadStart(ThreadWork.DoWork);
+    Thread myThread = new Thread(myThreadDelegate);
+    myThread.Start();
+    Thread.Sleep(100);
+    Console.WriteLine("Main - aborting my thread.");
+    myThread.Abort();
+    myThread.Join();
+    Console.WriteLine("Main ending."); 
+  }
+}
+   </code>
+      <para>The output is </para>
+      <c>
+        <para>Thread - working.</para>
+        <para>Main - aborting my thread.</para>
+        <para>Thread - caught ThreadAbortException - resetting.</para>
+        <para>Thread - still alive and working.</para>
+        <para>Thread - finished working.</para>
+        <para>Main ending.</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName="ExceptionState">
+      <MemberSignature Language="ILASM" Value=".property object ExceptionState { public hidebysig specialname instance object get_ExceptionState() }" />
+      <MemberSignature Language="C#" Value="public object ExceptionState { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets an object that contains application-specific
+      information related to the thread abort.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Object" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The object returned by this property is specified via the
+   <paramref name="stateInfo" /> parameter of <see cref="M:System.Threading.Thread.Abort(System.Object)" />. This property returns
+   <see langword="null" /> if no
+      object was specified, or the <see cref="M:System.Threading.Thread.Abort(System.Object)" /> method with no parameters was
+      called. The exact content and usage
+      of this object is application-defined; it is typically used to convey
+      information that is meaningful to the thread being aborted.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

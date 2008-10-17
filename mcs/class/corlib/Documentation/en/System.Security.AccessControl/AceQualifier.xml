@@ -1,0 +1,73 @@
+<Type Name="AceQualifier" FullName="System.Security.AccessControl.AceQualifier">
+  <TypeSignature Language="C#" Value="public enum AceQualifier" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="AccessAllowed">
+      <MemberSignature Language="C#" Value="AccessAllowed" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceQualifier</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AccessDenied">
+      <MemberSignature Language="C#" Value="AccessDenied" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceQualifier</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemAlarm">
+      <MemberSignature Language="C#" Value="SystemAlarm" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceQualifier</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemAudit">
+      <MemberSignature Language="C#" Value="SystemAudit" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AceQualifier</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

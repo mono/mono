@@ -1,0 +1,711 @@
+<Type Name="Exception" FullName="System.Exception" FullNameSP="System_Exception" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable Exception extends System.Object" />
+  <TypeSignature Language="C#" Value="public class Exception : System.Runtime.InteropServices._Exception, System.Runtime.Serialization.ISerializable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.InteropServices._Exception</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._Exception))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>Represents errors that occur during application execution. </para>
+    </summary>
+    <remarks>
+      <para> This class is
+      the base class for all Exceptions.</para>
+      <para>When an error occurs, either the system or the currently executing
+      application reports it by throwing an Exception containing information about the
+      error. Once thrown, an Exception is handled by the application or by the default
+      exception handler.</para>
+      <para>
+        <block subset="none" type="note">For a description of the exception handling model,
+      see Partition I of the CLI Specification.</block>
+      </para>
+      <block subset="none" type="note">
+        <para>If an application handles exceptions that occur during the execution of a
+      block of application code, the code is required to be placed within a
+   <see langword="try" /> statement. Application code within a <see langword="try" /> statement is a <paramref name="try       block" />
+      . Application code that handles Exceptions thrown by a
+      try block is placed within a <see langword="catch" /> statement, and is
+      called a <paramref name="catch block" />
+      . Zero or more catch blocks are associated with a try block, and each
+      catch block includes a type filter that determines the types of Exceptions it
+      handles. </para>
+        <para>When an Exception occurs in a try block, the system
+      searches the associated catch blocks in the order they appear in application
+      code, until it locates a catch block that handles the Exception. A catch block
+      handles an exception of type <paramref name="T" />, if the type filter of the catch block
+      specifies <paramref name="T" /> or any type that <paramref name="T" />
+      
+      derives from. The system stops searching after it finds the first catch block
+      that handles the Exception. For this reason, in application code, a catch block
+      that handles a type must be specified before a catch block that handles its base
+      types, as demonstrated in the example that follows this section. A catch block
+      that handles <see cref="T:System.Exception" /> is specified last.</para>
+        <para>If the catch blocks associated with the current try block do not handle the
+      Exception, and the current try block is nested within other try blocks in the
+      current call, the catch blocks associated with the next enclosing try block are
+      searched. If no catch block for the Exception is found, the system searches
+      previous nesting levels in the current call. If no catch block for the Exception
+      is found in the current call, the Exception is passed up the call stack, and the
+      previous stack frame is searched for a catch block that handles the Exception.
+      The search of the call stack continues until the Exception is handled or there
+      are no more frames in the call stack. If the top of the call stack is reached
+      without finding a catch block that handles the Exception, the default exception
+      handler handles it and the application terminates.</para>
+      </block>
+      <para>
+        <see cref="T:System.Exception" /> types support the following features:</para>
+      <list type="bullet">
+        <item>
+          <term>
+      Human-readable text that describes the error. <block subset="none" type="note">See <see cref="P:System.Exception.Message" /> property.</block></term>
+        </item>
+        <item>
+          <term>
+      The state of the call stack when the Exception was thrown. <block subset="none" type="note">See the <see cref="P:System.Exception.StackTrace" /> property.</block></term>
+        </item>
+        <item>
+          <term>
+      When there is a causal relationship between two or more Exceptions, this
+      information is maintained via the <see cref="P:System.Exception.InnerException" /> property.</term>
+        </item>
+      </list>
+      <para>The Base Class Library provides two types that inherit 
+   directly from <see cref="T:System.Exception" />
+   :</para>
+      <list type="bullet">
+        <item>
+          <term>
+            <see cref="T:System.ApplicationException" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="T:System.SystemException" />
+          </term>
+        </item>
+      </list>
+      <para>
+        <block subset="none" type="note">Most user-defined
+   exceptions derive from <see cref="T:System.ApplicationException" />. For more information, see
+<see cref="T:System.ApplicationException" /> 
+and <see cref="T:System.SystemException" />
+.</block>
+      </para>
+    </remarks>
+    <example>
+      <para>The following example demonstrates a catch block that is
+      defined to handle <see cref="T:System.ArithmeticException" /> errors. This catch block also catches <see cref="T:System.DivideByZeroException" />
+      errors because <see cref="T:System.DivideByZeroException" /> derives from <see cref="T:System.ArithmeticException" />, and there is no catch block explicitly
+      defined for <see cref="T:System.DivideByZeroException" /> errors.</para>
+      <code lang="C#">using System;
+class ExceptionTestClass {
+ public static void Main() {
+ int x = 0;
+ try {
+ int y = 100/x;
+ }
+ catch (ArithmeticException e) {
+ Console.WriteLine("ArithmeticException Handler: {0}", e.ToString());
+ }
+ catch (Exception e) {
+ Console.WriteLine("Generic Exception Handler: {0}", e.ToString());
+ }
+ } 
+}
+   </code>
+      <para>The output is</para>
+      <code>
+ArithmeticException Handler: System.DivideByZeroException: Attempted to divide by zero.
+   at ExceptionTestClass.Main()
+ </code>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public Exception ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Exception" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Exception.Message" /> property of the new instance to a 
+   system-supplied message that describes the error and takes into account the
+   current system culture. The <see cref="P:System.Exception.InnerException" /> property is initialized to
+<see langword="null" /> and the <see cref="P:System.Exception.StackTrace" /> property is initialized to <see cref="F:System.String.Empty" />
+.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public Exception (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs a new instance of the <see cref="T:System.Exception" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Exception.Message" />
+property of the new instance using <paramref name="message" />. If <paramref name="message" /> is
+<see langword="null" />, the <see cref="P:System.Exception.Message" /> property is initialized to the 
+system-supplied message provided by the constructor that takes no arguments. The <see cref="P:System.Exception.InnerException" /> property is initialized to
+<see langword="null" /> and the <see cref="P:System.Exception.StackTrace" /> property is initialized to <see cref="F:System.String.Empty" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Exception (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception innerException)" />
+      <MemberSignature Language="C#" Value="public Exception (string message, Exception innerException);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="innerException">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="innerException" /> is non-null, then the current exception was raised in a catch block handling <paramref name="innerException" /> .</param>
+        <summary>
+          <para>Constructs a new instance of the <see cref="T:System.Exception" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Exception.Message" /> property of the new instance using
+<paramref name="message" />, and the <see cref="P:System.Exception.InnerException" /> property using 
+<paramref name="innerException" />. If <paramref name="message" /> is 
+<see langword="null" />, the <see cref="P:System.Exception.Message" /> property is initialized to the 
+   system-supplied message provided by the constructor that takes no arguments.</para>
+          <para> The <see cref="P:System.Exception.StackTrace" /> property is initialized to <see cref="F:System.String.Empty" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Data">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.IDictionary Data { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionary</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBaseException">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Exception GetBaseException()" />
+      <MemberSignature Language="C#" Value="public virtual Exception GetBaseException ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Exception</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns the <see cref="T:System.Exception" /> that is the root cause of one or more subsequent Exceptions.</para>
+        </summary>
+        <returns>
+          <para>Returns the first Exception thrown in a chain of
+      Exceptions. If the <see cref="P:System.Exception.InnerException" /> property
+      of the current Exception is <see langword="null" /> , returns the current Exception.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">A chain of
+      Exceptions consists of a set of Exceptions such that each Exception in the chain
+      was thrown as a direct result of the Exception referenced in its <see cref="P:System.Exception.InnerException" />
+      property. For a given chain, there can be exactly one Exception that is the root
+      cause of all other Exceptions in the chain. This Exception is called the
+      <paramref name="base" /><paramref name="exception" /> and its <see cref="P:System.Exception.InnerException" />
+property always contains a null reference.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">
+   
+   For all Exceptions in a chain of Exceptions, the <see cref="M:System.Exception.GetBaseException" /> method is required to return the same object (the <paramref name="base    exception" />
+   ).</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">
+   The <see cref="M:System.Exception.GetBaseException" /> method is overridden in classes
+   that require control over the exception content or format.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">
+   Use the <see cref="M:System.Exception.GetBaseException" /> method when you want to find the root cause of an
+   Exception but do not need information about Exceptions that might have
+   occurred between the current Exception and the first Exception.
+</block>
+          </para>
+        </remarks>
+        <example>
+          <para>The following example shows an implementation of the
+      <see cref="M:System.Exception.GetBaseException" /> method.</para>
+          <code lang="C#">public virtual Exception GetBaseException() {
+ Exception inner = InnerException;
+ Exception back = this;
+ while (inner != null) {
+ back = inner;
+ inner = inner.InnerException;
+ }
+ return back;
+}
+      </code>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public virtual void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HelpLink">
+      <MemberSignature Language="C#" Value="public virtual string HelpLink { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HResult">
+      <MemberSignature Language="C#" Value="protected int HResult { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InnerException">
+      <MemberSignature Language="ILASM" Value=".property class System.Exception InnerException { public hidebysig specialname instance class System.Exception get_InnerException() }" />
+      <MemberSignature Language="C#" Value="public Exception InnerException { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Exception</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the <see cref="T:System.Exception" /> instance that caused the current Exception.</para>
+        </summary>
+        <value>
+          <para>An instance of <see cref="T:System.Exception" /> that describes the error that caused the current Exception.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">When an Exception
+   <paramref name="X" /> is thrown as a direct result of a previous exception <paramref name=" Y" />
+   , the <see cref="P:System.Exception.InnerException" /> property of
+<paramref name="X" /> should contain a reference to <paramref name="Y" />
+.</block>
+          </para>
+          <para> The <see cref="P:System.Exception.InnerException" /> property returns the same value as was passed 
+into the constructor, or <see langword="null" />
+if the
+inner exception value was not supplied to the constructor.</para>
+          <para>
+            <block subset="none" type="note">Using the <see cref="P:System.Exception.InnerException" />
+property, you can obtain the set of Exceptions that led to the current
+Exception. <see cref="M:System.Exception.GetBaseException" /> includes an
+example that demonstrates this procedure.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates throwing and catching
+      an Exception that references an inner Exception.</para>
+          <code lang="C#">using System;
+public class MyAppException:ApplicationException {
+ public MyAppException (String message) : base (message) {}
+ public MyAppException (String message, Exception inner) : base(message,inner) {} 
+}
+public class ExceptExample {
+ public void ThrowInner () {
+ throw new MyAppException("ExceptExample inner exception");
+ }
+ public void CatchInner() {
+ try {
+ this.ThrowInner();
+ }
+ catch (Exception e) {
+ throw new MyAppException("Error caused by trying ThrowInner.",e);
+ }
+ }
+}
+public class Test {
+ public static void Main() {
+ ExceptExample testInstance = new ExceptExample();
+ try {
+ testInstance.CatchInner();
+ }
+ catch(Exception e) {
+ Console.WriteLine ("In Main catch block. Caught: {0}", e.Message);
+ Console.WriteLine ("Inner Exception is {0}",e.InnerException);
+ }
+}
+}
+   </code>
+          <para>The output is</para>
+          <code>
+In Main catch block. Caught: Error caused by trying ThrowInner.
+Inner Exception is MyAppException: ExceptExample inner exception
+   at ExceptExample.ThrowInner()
+   at ExceptExample.CatchInner()
+ </code>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="ILASM" Value=".property string Message { public hidebysig virtual specialname string get_Message() }" />
+      <MemberSignature Language="C#" Value="public virtual string Message { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.String" /> containing a message that describes the current Exception.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that contains a detailed description of the error, or
+<see cref="F:System.String.Empty" />. 
+ This value is intended to be understood by humans.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para> The text of <see cref="P:System.Exception.Message" />
+ should completely describe the error and should, when
+ possible, explain how to correct it.</para>
+            <para> The value of the <see cref="P:System.Exception.Message" />
+property is included in the information returned by <see cref="M:System.Exception.ToString" />
+.</para>
+          </block>
+          <para> 
+ This property is read-only.</para>
+          <block subset="none" type="behaviors">
+            <para> The <see cref="P:System.Exception.Message" />
+property is set
+only when creating an Exception instance.</para>
+            <para> If no message was supplied to the constructor
+ for the current instance, the system supplies a default message that is
+ formatted using the current system culture.</para>
+          </block>
+          <block subset="none" type="overrides">
+            <para> The <see cref="P:System.Exception.Message" />
+property is overridden in classes that require
+control over message content or format.</para>
+          </block>
+          <block subset="none" type="usage">
+            <para> Application code typically
+ accesses this property when there is a need to display information about
+ an exception that has been caught.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Source">
+      <MemberSignature Language="C#" Value="public virtual string Source { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StackTrace">
+      <MemberSignature Language="ILASM" Value=".property string StackTrace { public hidebysig virtual specialname string get_StackTrace() }" />
+      <MemberSignature Language="C#" Value="public virtual string StackTrace { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.String" /> representation of the frames on the call stack at the time the
+ current Exception was thrown.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that describes the contents of the call stack.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <see cref="P:System.Exception.StackTrace" />
+might not report as many method calls as expected, due to code transformations, such
+as inlining, that occur during optimization.</block>
+          </para>
+          <para> 
+ This property is read-only.</para>
+          <block subset="none" type="behaviors">
+            <para>The format of the information returned by this property
+ is required to be identical to the format of the information returned by <see cref="P:System.Environment.StackTrace" />
+ 
+ .</para>
+          </block>
+          <block subset="none" type="overrides">
+            <para>The <see cref="P:System.Exception.StackTrace" />
+property is overridden in classes that require control over
+the stack trace content or format.</para>
+          </block>
+          <block subset="none" type="usage">
+            <para>Use the <see cref="P:System.Exception.StackTrace" />
+property to obtain a string representation of the contents of the call stack at
+the time the exception was thrown.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TargetSite">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodBase TargetSite { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodBase</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Creates and returns a <see cref="T:System.String" />
+representation of the current
+Exception.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" />
+representation of the current Exception.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>
+              <see cref="M:System.Exception.ToString" /> returns a representation of the current
+      Exception that is intended to be understood by humans. Where the Exception
+      contains culture-sensitive data, the string representation returned by <see cref="M:System.Exception.ToString" /> is
+      required to take into account the current system culture. <block subset="none" type="note"> Although there are no exact requirements for the
+      format of the returned string, it should as much as possible reflect the value
+      of the object as perceived by the user.</block></para>
+            <para>
+              <block subset="none" type="note">This method
+      overrides <see cref="M:System.Object.ToString" />.</block>
+            </para>
+          </block>
+          <block subset="none" type="default">
+            <para> The <see cref="M:System.Exception.ToString" /> implementation obtains the fully
+   qualified name of the current Exception, the message, the result of calling
+<see cref="M:System.Exception.ToString" /> on the inner exception, and the result of calling 
+<see cref="P:System.Environment.StackTrace" />. If any of these 
+   members is <see langword="null" /> or equal to <see cref="F:System.String.Empty" /> , its value is not
+   included in the returned string.</para>
+          </block>
+          <block subset="none" type="overrides">
+            <para> It is recommended, but not required, that <see cref="M:System.Exception.ToString" /> be
+   overridden to return information about members declared in the derived class.
+   For example, the <see cref="T:System.ArgumentException" /> class overrides <see cref="M:System.Exception.ToString" /> so
+   that it returns the value of the <see cref="P:System.ArgumentException.ParamName" /> property, if that value is not
+<see langword="null" /> .</para>
+          </block>
+          <block subset="none" type="usage">
+            <para> Use the <see cref="M:System.Exception.ToString" /> method to obtain a string
+   representation of an Exception.</para>
+          </block>
+        </remarks>
+        <example>
+          <para>The following example causes an Exception and displays
+      the result of calling <see cref="M:System.Exception.ToString" /> on that Exception.</para>
+          <code lang="C#">using System;
+public class MyClass {}
+public class ArgExceptionExample {
+ public static void Main() {
+ MyClass my = new MyClass();
+ string s = "sometext";
+ try {
+ int i = s.CompareTo(my);
+ }
+ catch (Exception e) {
+ Console.WriteLine("Error: {0}",e.ToString());
+ }
+ }
+}
+   </code>
+          <para>The output is</para>
+          <code>
+Error: System.ArgumentException: Object must be of type String.
+   at System.String.CompareTo(Object value)
+   at ArgExceptionExample.Main()
+ </code>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

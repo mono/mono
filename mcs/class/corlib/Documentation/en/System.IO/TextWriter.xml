@@ -1,0 +1,1747 @@
+<Type Name="TextWriter" FullName="System.IO.TextWriter" FullNameSP="System_IO_TextWriter" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable TextWriter extends System.MarshalByRefObject implements System.IDisposable" />
+  <TypeSignature Language="C#" Value="public abstract class TextWriter : MarshalByRefObject, IDisposable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.MarshalByRefObject</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> 
+      Represents a writer that can write a sequential series of characters.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.IO.TextWriter" /> is designed for character output, whereas the
+<see cref="T:System.IO.Stream" /> 
+class is designed for byte input and output.</para>
+      <para>
+        <block subset="none" type="note">By default, a <see cref="T:System.IO.TextWriter" /> is not thread safe. See <see cref="M:System.IO.TextWriter.Synchronized(System.IO.TextWriter)" qualify="true" /> for a
+thread-safe wrapper. </block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected TextWriter ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.TextWriter" /> class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor(class System.IFormatProvider formatProvider)" />
+      <MemberSignature Language="C#" Value="protected TextWriter (IFormatProvider formatProvider);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="formatProvider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="formatProvider">A <see cref="T:System.IFormatProvider" /> object that supplies a formatting object.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.TextWriter" /> class with
+   the specified format provider.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
+      <MemberSignature Language="C#" Value="public virtual void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Closes the current <see cref="T:System.IO.TextWriter" /> instance and releases any system
+   resources associated with it.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>After a call to <see cref="M:System.IO.TextReader.Close" /> , any operation on the current instance 
+      might throw an exception.</para>
+            <para>This version of <see cref="M:System.IO.TextReader.Close" /> is equivalent to <see cref="M:System.IO.TextReader.Dispose(System.Boolean)" />(<see langword="true" />).</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CoreNewLine">
+      <MemberSignature Language="C#" Value="protected char[] CoreNewLine;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool disposing)" />
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">
+          <see langword="true" /> to release both managed and unmanaged resources; <see langword="false" /> to release only unmanaged resources.</param>
+        <summary>
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.TextWriter" /> and 
+   optionally releases the managed resources.</para>
+        </summary>
+        <remarks>
+          <para>When the <paramref name="disposing" /> parameter is <see langword="true" />, this method 
+   releases all resources held by any managed objects that this <see cref="T:System.IO.FileStream" />
+   references. This method invokes the <see langword="Dispose()" /> method of each
+   referenced object.</para>
+          <para>
+            <block subset="none" type="note">
+              <see cref="M:System.IO.FileStream.Dispose(System.Boolean)" /> can be called multiple 
+times by other objects. When overriding <see cref="M:System.IO.FileStream.Dispose(System.Boolean)" />(<see cref="T:System.Boolean" />), be careful not
+to reference objects that have been previously disposed in an earlier call to
+<see cref="M:System.IO.FileStream.Dispose(System.Boolean)" /> .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Encoding">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding Encoding { public hidebysig virtual abstract specialname class System.Text.Encoding get_Encoding() }" />
+      <MemberSignature Language="C#" Value="public abstract System.Text.Encoding Encoding { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the <see cref="T:System.Text.Encoding" /> in which the output is written.</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.Text.Encoding" /> in which the output
+   is written.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">This property is required in some XML scenarios where a
+      header must be written containing the encoding used by the <see cref="T:System.IO.TextWriter" />. This
+      allows XML code to consume an arbitrary <see cref="T:System.IO.TextWriter" /> and generate a
+      correct XML header.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Flush()" />
+      <MemberSignature Language="C#" Value="public virtual void Flush ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Writes any buffered data to the underlying device and
+      clears all buffers for the current <see cref="T:System.IO.TextWriter" /> instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method is not
+      implemented in this abstract class.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FormatProvider">
+      <MemberSignature Language="ILASM" Value=".property class System.IFormatProvider FormatProvider { public hidebysig virtual specialname class System.IFormatProvider get_FormatProvider() }" />
+      <MemberSignature Language="C#" Value="public virtual IFormatProvider FormatProvider { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IFormatProvider</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets an object that provides formatting for the current instance</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.IFormatProvider" /> object for a specific culture, or the formatting of the
+   current culture if no other culture is specified.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NewLine">
+      <MemberSignature Language="ILASM" Value=".property string NewLine { public hidebysig virtual specialname string get_NewLine() public hidebysig virtual specialname void set_NewLine(string value) }" />
+      <MemberSignature Language="C#" Value="public virtual string NewLine { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the line terminator string used by the
+      current <see cref="T:System.IO.TextWriter" /> .</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the line terminator string for the current <see cref="T:System.IO.TextWriter" /> .</para>
+        </value>
+        <remarks>
+          <para>The default line terminator string is <see cref="P:System.Environment.NewLine" qualify="true" />
+.</para>
+          <para>The line terminator string is written to the text stream
+   whenever one of the <see cref="M:System.IO.TextWriter.WriteLine" /> methods is called. In order for text written by the
+<see cref="T:System.IO.TextWriter" /> to be readable by a <see cref="T:System.IO.TextReader" /> , only  <see cref="P:System.Environment.NewLine" qualify="true" /> 
+ should be used as a terminator string. If <see cref="P:System.IO.TextWriter.NewLine" /> is set to
+<see langword="null" />, the default newline character is used instead.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Null">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.IO.TextWriter Null" />
+      <MemberSignature Language="C#" Value="public static readonly System.IO.TextWriter Null;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.TextWriter</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Provides a <see cref="T:System.IO.TextWriter" />
+object without a backing store.</para>
+        </summary>
+        <remarks>
+          <para>Use <see cref="F:System.IO.TextWriter.Null" /> to redirect output to a stream that will not
+   consume any operating system resources.</para>
+          <para>When a <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" /> method is invoked on <see cref="F:System.IO.TextWriter.Null" />, the call simply returns, and no data is actually written
+to any backing store.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Synchronized">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.TextWriter Synchronized(class System.IO.TextWriter writer)" />
+      <MemberSignature Language="C#" Value="public static System.IO.TextWriter Synchronized (System.IO.TextWriter writer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.TextWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">The <see cref="T:System.IO.TextWriter" /> to synchronize.</param>
+        <summary>
+          <para>Creates a thread-safe wrapper around the specified
+   <see cref="T:System.IO.TextWriter" />
+   instance.</para>
+        </summary>
+        <returns>
+          <para> A thread-safe <see cref="T:System.IO.TextWriter" /> .</para>
+        </returns>
+        <remarks>
+          <para> This method returns a class that wraps around the
+      specified <see cref="T:System.IO.TextWriter" /> instance and restricts concurrent
+      access to it by multiple threads.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="writer" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(bool value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (bool value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Boolean" /> value to write.</param>
+        <summary>
+          <para>Writes the text representation of a specified <see cref="T:System.Boolean" />
+value to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />.ToString ()).</para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (char value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Char" /> to write to the text stream.</param>
+        <summary>
+          <para>Writes a character to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method is not
+      implemented in this abstract class.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Char[] buffer)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (char[] buffer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">The <see cref="T:System.Char" /> array to write to the text stream. If <paramref name="buffer" /> is <see langword="null" />, nothing is written.</param>
+        <summary>
+          <para>Writes a character array to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(<paramref name="buffer" />, 0,
+<paramref name="buffer" />.Length ).</para>
+          <para>
+            <block subset="none" type="note">This method does not search the
+   specified array for individual newline characters (hexadecimal 0x000a) and
+   replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(decimal value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> to write.</param>
+        <summary>
+          <para>Writes the text representation of a
+      specified <see cref="T:System.Decimal" /> to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />.ToString ()).</para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(float64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Double" /> to write.</param>
+        <summary>
+          <para>Writes the text representation of a
+      specified <see cref="T:System.Double" /> to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />.ToString()).</para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(int32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int32" /> to write.</param>
+        <summary>
+          <para>Writes the text representation of a
+      specified <see cref="T:System.Int32" /> to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />.<see langword="ToString" /> 
+()).</para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(int64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int64" /> to write.</param>
+        <summary>
+          <para>Writes the text representation of a
+      specified <see cref="T:System.Int64" /> to the text
+      stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />.<see langword="ToString" /> 
+() ).</para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(object value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The object to write. If <paramref name="value" /> is <see langword="null" />, nothing is written.</param>
+        <summary>
+          <para>Writes the text representation of a
+      specified object to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />.ToString()).</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <block subset="none" type="default">The default implementation uses
+   the <see cref="M:System.IO.TextWriter.Write(System.Char)" />(<see cref="T:System.String" />) method.</block>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(float32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (float value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Single" /> to write.</param>
+        <summary>
+          <para>Writes the text representation of a
+      specified <see cref="T:System.Single" /> to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />.ToString()).</para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.String" /> to write. If <paramref name="value" /> is <see langword="null" />, nothing is written.</param>
+        <summary>
+          <para>Writes a specified <see cref="T:System.String" /> to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(<paramref name="value" />.ToByteArray()).</para>
+          <para>
+            <block subset="none" type="note">This method does
+   not search the specified <see cref="T:System.String" /> for individual newline characters (hexadecimal 0x000a)
+   and replace them with <see cref="P:System.IO.TextWriter.NewLine" />
+   .</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (uint value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt32" /> to write.</param>
+        <summary>
+          <para>Writes the text representation of a <see cref="T:System.UInt32" /> to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.IO.TextWriter.Write(System.Char)" />(<see cref="T:System.Int64" />).</para>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />.ToString ()).</para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <altcompliant cref="!:The CLS alternative for the current method is System.IO.TextWriter.Write( System.Int32 )." />
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (ulong value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt64" /> to write.</param>
+        <summary>
+          <para>Writes the text representation of a
+      specified <see cref="T:System.UInt64" /> to the text
+      stream.</para>
+        </summary>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.IO.TextWriter.Write(System.Char)" />(<see cref="T:System.Decimal" />).</para>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />.<see langword="ToString" /> 
+() ).</para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <altcompliant cref="!:The CLS alternative for the current method is System.IO.TextWriter.Write( System.Int64 )." />
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, object arg0)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (string format, object arg0);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg0" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing the format string.</param>
+        <param name="arg0">An object referenced in the format string.</param>
+        <summary>
+          <para>Writes out the format string to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(<see cref="M:System.String.Format(System.String,System.Object)" qualify="true" /> (<paramref name="format" />,
+<paramref name="arg0" />)).</para>
+          <block subset="none" type="note">
+            <para>If the specified object is not referenced in the format string, it is
+      ignored.</para>
+            <para>This method does not search the specified <see cref="T:System.String" /> for individual newline characters
+   (hexadecimal 0x000a) and replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="format" /> is <see langword="null" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.FormatException">
+          <para>The format specification in <paramref name="format" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The number indicating an argument to be formatted is less than zero, or greater than or equal to the number of provided objects to be formatted (1).</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, class System.Object[] arg)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (string format, object[] arg);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing the format string.</param>
+        <param name="arg">The array of objects referenced from the format string.</param>
+        <summary>
+          <para> Writes a formatted string to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(<see cref="M:System.String.Format(System.String,System.Object)" qualify="true" /> (<paramref name="format" />, <paramref name="arg" />)).</para>
+          <block subset="none" type="note">
+            <para>If a specified object is not referenced in the format string, it is
+      ignored.</para>
+            <para>This method does not search the specified <see cref="T:System.String" /> for individual newline characters
+   (hexadecimal 0x000a) and replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="format" /> is <see langword="null" />.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="arg" /> is <see langword="null" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.FormatException">
+          <para>The format specification in <paramref name="format" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The number indicating an argument to be formatted is less than zero, or greater than or equal to <paramref name="arg" /><see langword="." />Length .</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (char[] buffer, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">The character array from which characters are read.</param>
+        <param name="index">Starting index in the buffer.</param>
+        <param name="count">The number of characters to write.</param>
+        <summary>
+          <para>Writes a subarray of characters to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method does not search the
+      specified array for individual newline characters (hexadecimal 0x000a) and
+      replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As
+      described
+      above.</block>
+          </para>
+          <block subset="none" type="default">The default implementation uses
+      the <see cref="M:System.IO.TextWriter.Write(System.Char)" />(<see langword="char" />[]) method.</block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer " /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">(<paramref name="index" /> + <paramref name="count" /> ) &gt; <paramref name="buffer" /><see langword="." />Length.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index &lt; " />0 or <paramref name="count" /> &lt; 0.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, object arg0, object arg1)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (string format, object arg0, object arg1);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg0" Type="System.Object" />
+        <Parameter Name="arg1" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing the format string.</param>
+        <param name="arg0">The first object referenced in the format string.</param>
+        <param name="arg1">The second object referenced in the format string.</param>
+        <summary>
+          <para>Writes out a formatted string to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(<see cref="M:System.String.Format(System.String,System.Object)" qualify="true" /> (<paramref name="format" />,
+<paramref name="arg0" />, <paramref name="arg1" />)).</para>
+          <block subset="none" type="note">
+            <para>If a specified object is not referenced in the format string, it is
+      ignored.</para>
+            <para>This method does not search the specified <see cref="T:System.String" /> for individual newline characters
+   (hexadecimal 0x000a) and replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="format" /> is <see langword="null" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+        <exception cref="T:System.FormatException">
+          <para>The format specification in <paramref name="format" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The number indicating an argument to be formatted is less than zero, or greater than or equal to the number of provided objects to be formatted (2).</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, object arg0, object arg1, object arg2)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (string format, object arg0, object arg1, object arg2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg0" Type="System.Object" />
+        <Parameter Name="arg1" Type="System.Object" />
+        <Parameter Name="arg2" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing the format string.</param>
+        <param name="arg0">The first object referenced in the format string.</param>
+        <param name="arg1">The second object referenced in the format string.</param>
+        <param name="arg2">The third object referenced in the format string.</param>
+        <summary>
+          <para>Writes out a formatted string to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(<see cref="M:System.String.Format(System.String,System.Object)" qualify="true" /> (<paramref name="format" />,
+<paramref name="arg0" />, <paramref name="arg1" />, <paramref name="arg2" />)).</para>
+          <block subset="none" type="note">
+            <para>If a specified object is not referenced in the format string, it is
+      ignored.</para>
+            <para>This method does not search the specified <see cref="T:System.String" /> for individual newline characters
+   (hexadecimal 0x000a) and replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="format" /> is <see langword="null" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+        <exception cref="T:System.FormatException">
+          <para>The format specification in <paramref name="format" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The number indicating an argument to be formatted is less than zero, or greater than or equal to the number of provided objects to be formatted (3).</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine()" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Writes a line terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" />(<see cref="P:System.IO.TextWriter.NewLine" />.ToCharArray()).</para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(bool value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (bool value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Boolean" /> value to write.</param>
+        <summary>
+          <para>Writes the text representation of a <see cref="T:System.Boolean" /> value
+   followed by a line terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />( <paramref name="value" />.ToString ()
+   ).</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (char value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Char" /> to write to the text stream.</param>
+        <summary>
+          <para>Writes a specified character followed by a line terminator to the text
+      stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" /> ) followed by <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />().</para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(class System.Char[] buffer)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (char[] buffer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">The <see cref="T:System.Char" /> array from which data is read. If <paramref name="buffer" /> is <see langword="null" /> , only the line terminator is written.</param>
+        <summary>
+          <para>Writes a specified character array followed by a line terminator to
+      the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="buffer" />) followed by <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />().</para>
+          <para>
+            <block subset="none" type="note">This method does not search the
+   specified array for individual newline characters (hexadecimal 0x000a) and
+   replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(decimal value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to write.</param>
+        <summary>
+          <para>Writes the text representation of a specified <see cref="T:System.Decimal" /> value followed by a line
+   terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" /> (<paramref name="value" />.ToString()).</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(float64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Double" /> value to write.</param>
+        <summary>
+          <para>Writes the text representation of a specified <see cref="T:System.Double" /> value followed by a line
+   terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" /> (<paramref name="value" />.ToString()).</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(int32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int32" /> value to write.</param>
+        <summary>
+          <para>Writes the text representation of a specified <see cref="T:System.Int32" /> value followed by a line
+   terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />(<paramref name="value" />.ToString()).</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(int64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int64" /> value to write.</param>
+        <summary>
+          <para>Writes the text representation of a specified <see cref="T:System.Int64" /> value followed by a
+   line terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />( <paramref name="value" />.<see langword="ToString" /> ()
+   ).</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(object value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The object to write. If <paramref name="value" /> is <see langword="null" /> , only the line terminator is written.</param>
+        <summary>
+          <para>Writes the text representation of a specified object followed by a line
+      terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />( <paramref name="value" />.ToString()
+   ).</para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(float32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (float value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Single" /> value to write.</param>
+        <summary>
+          <para>Writes the text representation of a specified <see cref="T:System.Single" /> value followed by a line
+   terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />(<paramref name="value" />.ToString()).</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.String" /> to write. If <paramref name="value" /> is <see langword="null" /> , only the line terminator is written.</param>
+        <summary>
+          <para>Writes a specified <see cref="T:System.String" /> followed by a line terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.Write(System.Char)" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />.ToByteArray() ).</para>
+          <para>The line terminator string is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property.</para>
+          <para>
+            <block subset="none" type="note">This method does not search the
+   specified <see cref="T:System.String" />
+   for individual newline characters (hexadecimal 0x000a) and replace them with
+<see cref="P:System.IO.TextWriter.NewLine" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (uint value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt32" /> value to write.</param>
+        <summary>
+          <para>Writes the text representation of a specified <see cref="T:System.UInt32" /> value followed by
+   a line terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.IO.TextWriter.WriteLine" />(<see cref="T:System.Int64" />).</para>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />( <paramref name="value" />.ToString ()
+   ).</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <altcompliant cref="!:The CLS alternative for the current method is System.IO.TextWriter.WriteLine( System.Int32 )." />
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (ulong value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt64" /> value to write.</param>
+        <summary>
+          <para>Writes the text representation of a specified <see cref="T:System.UInt64" /> value followed by a
+   line terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.IO.TextWriter.WriteLine" />(<see cref="T:System.Decimal" />).</para>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />( <paramref name="value" />.ToString ()
+   ).</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <altcompliant cref="!:The CLS alternative for the current method is System.IO.TextWriter.WriteLine( System.Int64 )." />
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, object arg0)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object arg0);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg0" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing the format string.</param>
+        <param name="arg0">The object referenced in the format string.</param>
+        <summary>
+          <para>Writes out a formatted string followed by a line
+      terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />(<see cref="M:System.String.Format(System.String,System.Object)" qualify="true" /> (<paramref name="format" />, <paramref name="arg0" />)).</para>
+          <block subset="none" type="note">
+            <para>If the specified object is not referenced in the format string, it is
+      ignored.</para>
+            <para>This method does not search the specified <see cref="T:System.String" /> for individual newline characters
+   (hexadecimal 0x000a) and replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="format" /> is <see langword="null" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.FormatException">
+          <para>The format specification in <paramref name="format" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The number indicating an argument to be formatted is less than zero, or greater than or equal to the number of provided objects to be formatted (1).</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, class System.Object[] arg)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object[] arg);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing the format string.</param>
+        <param name="arg">The array of objects referenced from the format string.</param>
+        <summary>
+          <para>Writes out a formatted string followed by a line
+      terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />(<see cref="M:System.String.Format(System.String,System.Object)" qualify="true" /> (<paramref name="format" />,
+<paramref name="arg" />)).</para>
+          <block subset="none" type="note">
+            <para>If the specified object is not referenced in the format string, it is
+      ignored.</para>
+            <para>This method does not search the specified <see cref="T:System.String" /> for individual newline characters
+   (hexadecimal 0x000a) and replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="format" /> or <paramref name="arg " /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.FormatException">
+          <para>The format specification in <paramref name="format" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The number indicating an argument to be formatted is less than zero, or greater than or equal to <paramref name="arg" /><see langword="." />Length.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (char[] buffer, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">The <see cref="T:System.Char" /> array from which characters are read.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the index in <paramref name="buffer" /> at which to begin reading.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the maximum number of characters to write.</param>
+        <summary>
+          <para>Writes a sub-array of characters from a specified character array, followed by a line terminator to
+      the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />(
+<paramref name="value" />, <paramref name="index" />, <paramref name="count " />) followed by <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />().</para>
+          <para>
+            <block subset="none" type="note">This method does not search the
+   specified array for individual newline characters (hexadecimal 0x000a) and
+   replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer " /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">(<paramref name="index" /> + <paramref name="count" /> ) &gt; <paramref name="buffer" />.Length.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index &lt; " /> 0</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="count" /> &lt; 0.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, object arg0, object arg1)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object arg0, object arg1);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg0" Type="System.Object" />
+        <Parameter Name="arg1" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing the format string.</param>
+        <param name="arg0">The first object referenced in the format string.</param>
+        <param name="arg1">The second object referenced in the format string.</param>
+        <summary>
+          <para>Writes out a formatted string followed by a line
+      terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />(<see cref="M:System.String.Format(System.String,System.Object)" qualify="true" /> (<paramref name="format" />,
+<paramref name="arg0" />, <paramref name="arg1" />)).</para>
+          <block subset="none" type="note">
+            <para>If the specified object is not referenced in the format string, it is
+      ignored.</para>
+            <para>This method does not search the specified <see cref="T:System.String" /> for individual newline characters
+   (hexadecimal 0x000a) and replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="format" /> is <see langword="null" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.FormatException">
+          <para>The format specification in <paramref name="format" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The number indicating an argument to be formatted is less than zero, or greater than or equal to the number of provided objects to be formatted (2).</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, object arg0, object arg1, object arg2)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object arg0, object arg1, object arg2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg0" Type="System.Object" />
+        <Parameter Name="arg1" Type="System.Object" />
+        <Parameter Name="arg2" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing the format string.</param>
+        <param name="arg0">The first object referenced in the format string.</param>
+        <param name="arg1">The second object referenced in the format string.</param>
+        <param name="arg2">The third object referenced in the format string.</param>
+        <summary>
+          <para>Writes out a formatted string followed by a line
+      terminator to the text stream.</para>
+        </summary>
+        <remarks>
+          <para>This version of <see cref="M:System.IO.TextWriter.WriteLine" /> is equivalent to <see cref="M:System.IO.TextWriter.WriteLine" qualify="true" />(<see cref="M:System.String.Format(System.String,System.Object)" qualify="true" /> (<paramref name="format" />,
+<paramref name="arg0" />, <paramref name="arg1" />, <paramref name="arg2" />)).</para>
+          <para>If the value of any object parameter is null, it is treated as an empty string.</para>
+          <block subset="none" type="note">
+            <para>If the specified object is not referenced in the format string, it is
+      ignored.</para>
+            <para>This method does not search the specified <see cref="T:System.String" /> for individual newline characters
+   (hexadecimal 0x000a) and replace them with <see cref="P:System.IO.TextWriter.NewLine" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="format" /> is <see langword="null" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.FormatException">
+          <para>The format specification in <paramref name="format" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The number indicating an argument to be formatted is less than zero, or greater than or equal to the number of provided objects to be formatted (3).</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

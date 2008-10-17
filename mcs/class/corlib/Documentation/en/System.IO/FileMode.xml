@@ -1,0 +1,173 @@
+<Type Name="FileMode" FullName="System.IO.FileMode" FullNameSP="System_IO_FileMode" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable FileMode extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum FileMode" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Specifies how the operating system opens a file.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.IO.FileMode" /> values specify whether a
+   file is created if one does not exist, and determine whether the contents of existing
+   files are retained or overwritten.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Append = 6" />
+      <MemberSignature Language="C#" Value="Append" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Append</MemberValue>
+      <Docs>
+        <summary>
+          <para> Requests a file be opened. If the file exists, its contents
+      are preserved. This value is valid only for <see cref="F:System.IO.FileAccess.Write" qualify="true" />
+      access. Attempts to read from a file opened with <see langword="Append" />
+      cause an
+      exception.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Create = 2" />
+      <MemberSignature Language="C#" Value="Create" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Create</MemberValue>
+      <Docs>
+        <summary>
+          <para> Requests a new file be created if it does not exist. The 
+      file contents are overwritten if it does exist. This value is equivalent to
+      requesting that if the file does not exist, use <see cref="F:System.IO.FileMode.CreateNew" />;
+      otherwise, use <see cref="F:System.IO.FileMode.Truncate" />.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateNew">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode CreateNew = 1" />
+      <MemberSignature Language="C#" Value="CreateNew" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>CreateNew</MemberValue>
+      <Docs>
+        <summary>
+          <para> Requests a new file be created. An exception
+      is thrown if the file already exists.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Open = 3" />
+      <MemberSignature Language="C#" Value="Open" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Open</MemberValue>
+      <Docs>
+        <summary>
+          <para>Requests an existing file be opened. An exception is
+      thrown if the file does not exist.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OpenOrCreate">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode OpenOrCreate = 4" />
+      <MemberSignature Language="C#" Value="OpenOrCreate" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OpenOrCreate</MemberValue>
+      <Docs>
+        <summary>
+          <para> Requests a file be opened. The file is
+      created if it does not exist.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Truncate">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Truncate = 5" />
+      <MemberSignature Language="C#" Value="Truncate" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Truncate</MemberValue>
+      <Docs>
+        <summary>
+          <para> Requests an existing file be opened; existing contents
+      are deleted. This value is valid only for <see cref="F:System.IO.FileAccess.Write" qualify="true" />
+      access. Attempts to read from a file opened with <see langword="Truncate" />
+      cause
+      an exception.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

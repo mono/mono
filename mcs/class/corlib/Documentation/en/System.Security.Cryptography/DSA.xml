@@ -1,0 +1,200 @@
+<Type Name="DSA" FullName="System.Security.Cryptography.DSA">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class DSA : System.Security.Cryptography.AsymmetricAlgorithm" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Security.Cryptography.AsymmetricAlgorithm</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Docs>
+    <summary>Abstract base class for all implementations of the Digital Signature Algorithm (DSA) algorithm. </summary>
+    <remarks>
+      <para>There is a serious bug in version 1.0 and 1.1 of the .NET framework. The constructor for DSA was declared internal (not protected) this makes it impossible to inherit from the DSA class outside the mscorlib.dll assembly (which is quite limiting).</para>
+      <para>More information about DSA can be found in NIST FIPS PUB 186-2: Digital Signature Standard (DSS) available at http://csrc.nist.gov/publications/fips/fips186-2/fips186-2-change1.pdf
+</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected DSA ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DSA Create ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.DSA</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Create an instance of the default DSA implementation.</summary>
+        <returns>To be added: an object of type 'DSA'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DSA Create (string algName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.DSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="algName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="algName">To be added: an object of type 'string'</param>
+        <summary>Create an instance of the specified DSA implementation.</summary>
+        <returns>To be added: an object of type 'DSA'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateSignature">
+      <MemberSignature Language="C#" Value="public abstract byte[] CreateSignature (byte[] rgbHash);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgbHash" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rgbHash">The SHA1 hash to be signed.</param>
+        <summary>Sign the specified hash value using the instance private key.</summary>
+        <returns>An array of 40 bytes containing the DSA signature of the specified hash.</returns>
+        <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the instance doesn't have a private key or if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are).</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExportParameters">
+      <MemberSignature Language="C#" Value="public abstract System.Security.Cryptography.DSAParameters ExportParameters (bool includePrivateParameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.DSAParameters</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="includePrivateParameters" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="includePrivateParameters">True to include private parameters; otherwise, false.</param>
+        <summary>Export the instance key into a <see cref="T:System.Security.Cryptography.DSAParameters" /> structure.</summary>
+        <returns>a DSAParameters structure contaning each parameters of the key.</returns>
+        <remarks>You are responsable to zeroize the private key (<see cref="T:System.Security.Cryptography.DSAParameters" />.<see cref="M:System.Security.Cryptography.DSAParameters.X" />) if you export it from the instance.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromXmlString">
+      <MemberSignature Language="C#" Value="public override void FromXmlString (string xmlString);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="xmlString">An string containing a DSA key in XML.</param>
+        <summary>Import the DSA key from the specified XML string.</summary>
+        <remarks>The schema definition for DSA keys is detailled in section 4.4.2.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ImportParameters">
+      <MemberSignature Language="C#" Value="public abstract void ImportParameters (System.Security.Cryptography.DSAParameters parameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Security.Cryptography.DSAParameters" />
+      </Parameters>
+      <Docs>
+        <param name="parameters">A DSAParameters containing the DSA key parameters.</param>
+        <summary>Import the key from the <see cref="T:System.Security.Cryptography.DSAParameters" /> structure into the current instance.</summary>
+        <remarks>Parameter <see cref="M:System.Security.Cryptography.DSAParameters.X" /> is required if you want to import the DSA private key into the instance. Note that you are responsable to zeroize the private key inside the <see cref="T:System.Security.Cryptography.DSAParameters" /> after it's been imported.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToXmlString">
+      <MemberSignature Language="C#" Value="public override string ToXmlString (bool includePrivateParameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="includePrivateParameters" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="includePrivateParameters">True to include private parameters; otherwise, false.</param>
+        <summary>Convert the current DSA key into an XML string.</summary>
+        <returns>An XML string containing the representation of the DSA key.</returns>
+        <remarks>The schema definition for DSA keys is detailled in section 4.4.2.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VerifySignature">
+      <MemberSignature Language="C#" Value="public abstract bool VerifySignature (byte[] rgbHash, byte[] rgbSignature);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgbHash" Type="System.Byte[]" />
+        <Parameter Name="rgbSignature" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rgbHash">The SHA1 hash to be verified.</param>
+        <param name="rgbSignature">An array of 40 bytes containing the DSA signature of the specified hash.</param>
+        <summary>Verify that signature match the hash value using the instance public key.</summary>
+        <returns>True if the signature can be verified, false otherwise.</returns>
+        <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are) or if the signature length isn't 40 bytes long (as all DSA signatures are).</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

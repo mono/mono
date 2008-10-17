@@ -1,0 +1,78 @@
+<Type Name="LIBFLAGS" FullName="System.Runtime.InteropServices.ComTypes.LIBFLAGS">
+  <TypeSignature Language="C#" Value="public enum LIBFLAGS" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="LIBFLAG_FCONTROL">
+      <MemberSignature Language="C#" Value="LIBFLAG_FCONTROL" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.LIBFLAGS</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LIBFLAG_FHASDISKIMAGE">
+      <MemberSignature Language="C#" Value="LIBFLAG_FHASDISKIMAGE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.LIBFLAGS</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LIBFLAG_FHIDDEN">
+      <MemberSignature Language="C#" Value="LIBFLAG_FHIDDEN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.LIBFLAGS</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LIBFLAG_FRESTRICTED">
+      <MemberSignature Language="C#" Value="LIBFLAG_FRESTRICTED" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.LIBFLAGS</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

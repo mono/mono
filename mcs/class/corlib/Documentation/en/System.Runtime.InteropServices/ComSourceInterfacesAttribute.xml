@@ -1,0 +1,141 @@
+<Type Name="ComSourceInterfacesAttribute" FullName="System.Runtime.InteropServices.ComSourceInterfacesAttribute">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ComSourceInterfacesAttribute : Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple=false, Inherited=true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (string sourceInterfaces);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="sourceInterfaces" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="sourceInterfaces">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="sourceInterface" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="sourceInterface">To be added: an object of type 'Type'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface1, Type sourceInterface2);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="sourceInterface1" Type="System.Type" />
+        <Parameter Name="sourceInterface2" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="sourceInterface1">To be added: an object of type 'Type'</param>
+        <param name="sourceInterface2">To be added: an object of type 'Type'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface1, Type sourceInterface2, Type sourceInterface3);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="sourceInterface1" Type="System.Type" />
+        <Parameter Name="sourceInterface2" Type="System.Type" />
+        <Parameter Name="sourceInterface3" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="sourceInterface1">To be added: an object of type 'Type'</param>
+        <param name="sourceInterface2">To be added: an object of type 'Type'</param>
+        <param name="sourceInterface3">To be added: an object of type 'Type'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface1, Type sourceInterface2, Type sourceInterface3, Type sourceInterface4);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="sourceInterface1" Type="System.Type" />
+        <Parameter Name="sourceInterface2" Type="System.Type" />
+        <Parameter Name="sourceInterface3" Type="System.Type" />
+        <Parameter Name="sourceInterface4" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="sourceInterface1">To be added: an object of type 'Type'</param>
+        <param name="sourceInterface2">To be added: an object of type 'Type'</param>
+        <param name="sourceInterface3">To be added: an object of type 'Type'</param>
+        <param name="sourceInterface4">To be added: an object of type 'Type'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public string Value { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

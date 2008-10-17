@@ -1,0 +1,322 @@
+<Type Name="ArgumentOutOfRangeException" FullName="System.ArgumentOutOfRangeException" FullNameSP="System_ArgumentOutOfRangeException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable ArgumentOutOfRangeException extends System.ArgumentException" />
+  <TypeSignature Language="C#" Value="public class ArgumentOutOfRangeException : ArgumentException" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ArgumentException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Represents the error that occurs when an
+      argument passed to a method is invalid because it is
+      outside the allowable range of values as specified by the method.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.ArgumentOutOfRangeException" /> is thrown when a method is 
+      invoked and at least one of the arguments passed to the method is not
+   <see langword="null" /> 
+   and does not contain a valid value. </para>
+        <para>
+          <see cref="T:System.ArgumentOutOfRangeException" /> behaves identically to <see cref="T:System.ArgumentException" />. It is provided so that 
+application code can differentiate between exceptions caused by invalid
+arguments that are not <see langword="null" />, and exceptions caused by
+<see langword="null" /> arguments. For errors caused by <see langword="null" /> 
+arguments, see <see cref="T:System.ArgumentNullException" />. </para>
+      </block>
+    </remarks>
+    <example>
+      <para>The following example demonstrates an error that causes 
+      the <see cref="T:System.Array" />
+      class to throw a <see cref="T:System.ArgumentOutOfRangeException" /> exception.</para>
+      <code lang="C#">using System;
+class ArgOutOfRangeExample {
+ public static void Main() {
+ int[] array1 = {0,0};
+ int[] array2 = {0,0};
+ try {
+ Array.Copy(array1,array2,-1);
+ }
+ catch (ArgumentOutOfRangeException e) {
+ Console.WriteLine("Error: {0}",e);
+ }
+ }
+}
+   </code>
+      <para>The output is</para>
+      <c>
+        <para>Error: System.ArgumentOutOfRangeException: Non-negative number required.</para>
+        <para>Parameter name: length</para>
+        <para>at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array
+         destinationArray, Int32 destinationIndex, Int32 length)</para>
+        <para>at ArgOutOfRangeExample.Main()</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public ArgumentOutOfRangeException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.ArgumentOutOfRangeException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.ArgumentOutOfRangeException.Message" /> property of the new instance to a system-supplied
+   message that describes the error, such as "Non-negative number required." This
+   message takes into account the current system culture.</para>
+          <para>The <see cref="!:System.ArgumentOutOfRangeException.ParamName" /> and <see cref="P:System.ArgumentOutOfRangeException.ActualValue" /> properties are initialized 
+to <see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string paramName)" />
+      <MemberSignature Language="C#" Value="public ArgumentOutOfRangeException (string paramName);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="paramName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="paramName">A <see cref="T:System.String" /> that contains the name of the parameter that caused the current exception. The content of <paramref name="paramName" /> is intended to be understood by humans.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.ArgumentOutOfRangeException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.ArgumentOutOfRangeException.ParamName" /> property of the new instance
+   using <paramref name="paramName" /> . The <see cref="P:System.ArgumentOutOfRangeException.Message" /> property is
+   initialized to the system-supplied message provided by the
+   constructor that takes no arguments.</para>
+          <para>The <see cref="P:System.ArgumentOutOfRangeException.ActualValue" /> property is initialized to 
+<see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ArgumentOutOfRangeException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ArgumentOutOfRangeException (string message, Exception innerException);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="innerException">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string paramName, string message)" />
+      <MemberSignature Language="C#" Value="public ArgumentOutOfRangeException (string paramName, string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="paramName" Type="System.String" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="paramName">A <see cref="T:System.String" /> that contains the name of the parameter that caused the current exception. The content of <paramref name="paramName" /> is intended to be understood by humans.</param>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.ArgumentOutOfRangeException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.ArgumentOutOfRangeException.ParamName" /> property of the new instance using <paramref name="paramName" />,
+   and the <see cref="P:System.ArgumentOutOfRangeException.Message" /> property using <paramref name="message" />. If <paramref name="message" /> is <see langword="null" />,
+   the <see cref="P:System.ArgumentOutOfRangeException.Message" /> property is initialized to the system-supplied message
+   provided by the constructor that takes no arguments.</para>
+          <para>The <see cref="P:System.ArgumentOutOfRangeException.ActualValue" /> property is initialized to 
+<see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string paramName, object actualValue, string message)" />
+      <MemberSignature Language="C#" Value="public ArgumentOutOfRangeException (string paramName, object actualValue, string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="paramName" Type="System.String" />
+        <Parameter Name="actualValue" Type="System.Object" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="paramName">A <see cref="T:System.String" /> that contains the name of the parameter that caused the current exception. The content of <paramref name="paramName" /> is intended to be understood by humans.</param>
+        <param name="actualValue">The value of the argument that caused the current exception.</param>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.ArgumentOutOfRangeException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.ArgumentOutOfRangeException.ParamName" /> property of the new instance using <paramref name="paramName" />,
+   the <see cref="P:System.ArgumentOutOfRangeException.ActualValue" /> property using <paramref name="actualValue" />, and the <see cref="P:System.ArgumentOutOfRangeException.Message" /> property using <paramref name="message" /> . If <paramref name="message" /> is <see langword="null" />,
+   the <see cref="P:System.ArgumentOutOfRangeException.Message" /> property is initialized to the system-supplied message
+   provided by the constructor that takes no arguments. </para>
+          <para>
+            <block subset="none" type="note"> The <paramref name="actualValue" /> parameter
+contains the invalid argument that was passed to the method. Use
+the <see cref="!:System.ArgumentOutOfRangeException.ParamName" /> property to retrieve the name of the
+parameter used to pass <paramref name="actualValue" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ActualValue">
+      <MemberSignature Language="ILASM" Value=".property object ActualValue { public hidebysig virtual specialname object get_ActualValue() }" />
+      <MemberSignature Language="C#" Value="public virtual object ActualValue { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the value of the parameter that caused the current exception.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Object" /> that contains the 
+   value of the parameter that caused the current exception, or
+<see langword="null" /> if no value was specified to the constructor for the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is
+      read-only.</para>
+          <para>
+            <block subset="none" type="behaviors">
+      
+      The <see cref="P:System.ArgumentOutOfRangeException.ActualValue" /> property returns the same
+      value as
+      was passed into the
+      constructor.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">
+      
+      Override
+      the <see cref="P:System.ArgumentOutOfRangeException.ActualValue" /> property to customize the content or
+      format of the value.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">
+      
+      Use this property to retrieve the invalid argument.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="public override string Message { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets the error message that explains the reason for the exception.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the error message. The error message should describe the expected values of the parameter that causes this exception.</para>
+        </value>
+        <remarks>
+          <para> 
+This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,154 @@
+<Type Name="GenericParameterAttributes" FullName="System.Reflection.GenericParameterAttributes">
+  <TypeSignature Language="C#" Value="public enum GenericParameterAttributes" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Enumerates the attributes on a generic parameter.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Contravariant">
+      <MemberSignature Language="C#" Value="Contravariant" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the generic parameter is contravariant.    </para>
+        </summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Covariant">
+      <MemberSignature Language="C#" Value="Covariant" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the generic parameter is covariant.    </para>
+        </summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefaultConstructorConstraint">
+      <MemberSignature Language="C#" Value="DefaultConstructorConstraint" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the generic parameter has the "<see langword=".ctor" />"   special constraint.</para>
+        </summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the generic parameter is nonvariant and has no special constraints.    </para>
+        </summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NotNullableValueTypeConstraint">
+      <MemberSignature Language="C#" Value="NotNullableValueTypeConstraint" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the generic parameter has the "<see langword="valuetype" />"  special constraint.</para>
+        </summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReferenceTypeConstraint">
+      <MemberSignature Language="C#" Value="ReferenceTypeConstraint" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the generic parameter has the "<see langword="class" />"  special constraint.</para>
+        </summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SpecialConstraintMask">
+      <MemberSignature Language="C#" Value="SpecialConstraintMask" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Specifies a bit-mask that when combined with a generic parameter's flags value yields  the special constraints bits.
+      </para>
+        </summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VarianceMask">
+      <MemberSignature Language="C#" Value="VarianceMask" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Specifies a bit-mask that when combined with a generic parameter's flags value yields  the variance bits.
+      </para>
+        </summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

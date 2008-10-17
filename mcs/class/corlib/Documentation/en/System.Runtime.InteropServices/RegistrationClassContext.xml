@@ -1,0 +1,274 @@
+<Type Name="RegistrationClassContext" FullName="System.Runtime.InteropServices.RegistrationClassContext">
+  <TypeSignature Language="C#" Value="public enum RegistrationClassContext" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="DisableActivateAsActivator">
+      <MemberSignature Language="C#" Value="DisableActivateAsActivator" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EnableActivateAsActivator">
+      <MemberSignature Language="C#" Value="EnableActivateAsActivator" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EnableCodeDownload">
+      <MemberSignature Language="C#" Value="EnableCodeDownload" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromDefaultContext">
+      <MemberSignature Language="C#" Value="FromDefaultContext" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InProcessHandler">
+      <MemberSignature Language="C#" Value="InProcessHandler" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InProcessHandler16">
+      <MemberSignature Language="C#" Value="InProcessHandler16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InProcessServer">
+      <MemberSignature Language="C#" Value="InProcessServer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InProcessServer16">
+      <MemberSignature Language="C#" Value="InProcessServer16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LocalServer">
+      <MemberSignature Language="C#" Value="LocalServer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoCodeDownload">
+      <MemberSignature Language="C#" Value="NoCodeDownload" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoCustomMarshal">
+      <MemberSignature Language="C#" Value="NoCustomMarshal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoFailureLog">
+      <MemberSignature Language="C#" Value="NoFailureLog" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoteServer">
+      <MemberSignature Language="C#" Value="RemoteServer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reserved1">
+      <MemberSignature Language="C#" Value="Reserved1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reserved2">
+      <MemberSignature Language="C#" Value="Reserved2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reserved3">
+      <MemberSignature Language="C#" Value="Reserved3" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reserved4">
+      <MemberSignature Language="C#" Value="Reserved4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reserved5">
+      <MemberSignature Language="C#" Value="Reserved5" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

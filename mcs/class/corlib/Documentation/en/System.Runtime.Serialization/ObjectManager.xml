@@ -1,0 +1,307 @@
+<Type Name="ObjectManager" FullName="System.Runtime.Serialization.ObjectManager">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public class ObjectManager" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ObjectManager (System.Runtime.Serialization.ISurrogateSelector selector, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="selector" Type="System.Runtime.Serialization.ISurrogateSelector" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="selector">To be added: an object of type 'ISurrogateSelector'</param>
+        <param name="context">To be added: an object of type 'StreamingContext'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DoFixups">
+      <MemberSignature Language="C#" Value="public virtual void DoFixups ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObject">
+      <MemberSignature Language="C#" Value="public virtual object GetObject (long objectID);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="objectID" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="objectID">To be added: an object of type 'long'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'object'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RaiseDeserializationEvent">
+      <MemberSignature Language="C#" Value="public virtual void RaiseDeserializationEvent ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RaiseOnDeserializingEvent">
+      <MemberSignature Language="C#" Value="public void RaiseOnDeserializingEvent (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RecordArrayElementFixup">
+      <MemberSignature Language="C#" Value="public virtual void RecordArrayElementFixup (long arrayToBeFixed, int index, long objectRequired);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="arrayToBeFixed" Type="System.Int64" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="objectRequired" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="arrayToBeFixed">To be added: an object of type 'long'</param>
+        <param name="index">To be added: an object of type 'int'</param>
+        <param name="objectRequired">To be added: an object of type 'long'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RecordArrayElementFixup">
+      <MemberSignature Language="C#" Value="public virtual void RecordArrayElementFixup (long arrayToBeFixed, int[] indices, long objectRequired);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="arrayToBeFixed" Type="System.Int64" />
+        <Parameter Name="indices" Type="System.Int32[]" />
+        <Parameter Name="objectRequired" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="arrayToBeFixed">To be added: an object of type 'long'</param>
+        <param name="indices">To be added: an object of type 'int []'</param>
+        <param name="objectRequired">To be added: an object of type 'long'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RecordDelayedFixup">
+      <MemberSignature Language="C#" Value="public virtual void RecordDelayedFixup (long objectToBeFixed, string memberName, long objectRequired);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="objectToBeFixed" Type="System.Int64" />
+        <Parameter Name="memberName" Type="System.String" />
+        <Parameter Name="objectRequired" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="objectToBeFixed">To be added: an object of type 'long'</param>
+        <param name="memberName">To be added: an object of type 'string'</param>
+        <param name="objectRequired">To be added: an object of type 'long'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RecordFixup">
+      <MemberSignature Language="C#" Value="public virtual void RecordFixup (long objectToBeFixed, System.Reflection.MemberInfo member, long objectRequired);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="objectToBeFixed" Type="System.Int64" />
+        <Parameter Name="member" Type="System.Reflection.MemberInfo" />
+        <Parameter Name="objectRequired" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="objectToBeFixed">To be added: an object of type 'long'</param>
+        <param name="member">To be added: an object of type 'Reflection.MemberInfo'</param>
+        <param name="objectRequired">To be added: an object of type 'long'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterObject">
+      <MemberSignature Language="C#" Value="public virtual void RegisterObject (object obj, long objectID);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="objectID" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added: an object of type 'object'</param>
+        <param name="objectID">To be added: an object of type 'long'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterObject">
+      <MemberSignature Language="C#" Value="public void RegisterObject (object obj, long objectID, System.Runtime.Serialization.SerializationInfo info);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="objectID" Type="System.Int64" />
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added: an object of type 'object'</param>
+        <param name="objectID">To be added: an object of type 'long'</param>
+        <param name="info">To be added: an object of type 'SerializationInfo'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterObject">
+      <MemberSignature Language="C#" Value="public void RegisterObject (object obj, long objectID, System.Runtime.Serialization.SerializationInfo info, long idOfContainingObj, System.Reflection.MemberInfo member);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="objectID" Type="System.Int64" />
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="idOfContainingObj" Type="System.Int64" />
+        <Parameter Name="member" Type="System.Reflection.MemberInfo" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added: an object of type 'object'</param>
+        <param name="objectID">To be added: an object of type 'long'</param>
+        <param name="info">To be added: an object of type 'SerializationInfo'</param>
+        <param name="idOfContainingObj">To be added: an object of type 'long'</param>
+        <param name="member">To be added: an object of type 'Reflection.MemberInfo'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterObject">
+      <MemberSignature Language="C#" Value="public void RegisterObject (object obj, long objectID, System.Runtime.Serialization.SerializationInfo info, long idOfContainingObj, System.Reflection.MemberInfo member, int[] arrayIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="objectID" Type="System.Int64" />
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="idOfContainingObj" Type="System.Int64" />
+        <Parameter Name="member" Type="System.Reflection.MemberInfo" />
+        <Parameter Name="arrayIndex" Type="System.Int32[]" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added: an object of type 'object'</param>
+        <param name="objectID">To be added: an object of type 'long'</param>
+        <param name="info">To be added: an object of type 'SerializationInfo'</param>
+        <param name="idOfContainingObj">To be added: an object of type 'long'</param>
+        <param name="member">To be added: an object of type 'Reflection.MemberInfo'</param>
+        <param name="arrayIndex">To be added: an object of type 'int []'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

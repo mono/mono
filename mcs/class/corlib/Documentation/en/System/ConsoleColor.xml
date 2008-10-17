@@ -1,0 +1,241 @@
+<Type Name="ConsoleColor" FullName="System.ConsoleColor">
+  <TypeSignature Language="C#" Value="public enum ConsoleColor" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Black">
+      <MemberSignature Language="C#" Value="Black" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Black color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Blue">
+      <MemberSignature Language="C#" Value="Blue" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Blue color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Cyan">
+      <MemberSignature Language="C#" Value="Cyan" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Cyan color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DarkBlue">
+      <MemberSignature Language="C#" Value="DarkBlue" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Dark Blue color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DarkCyan">
+      <MemberSignature Language="C#" Value="DarkCyan" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Dark Cyan color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DarkGray">
+      <MemberSignature Language="C#" Value="DarkGray" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Dark Gray Color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DarkGreen">
+      <MemberSignature Language="C#" Value="DarkGreen" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Dark Green color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DarkMagenta">
+      <MemberSignature Language="C#" Value="DarkMagenta" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Dark Magenta color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DarkRed">
+      <MemberSignature Language="C#" Value="DarkRed" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Dark Red color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DarkYellow">
+      <MemberSignature Language="C#" Value="DarkYellow" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Dark Yellow color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Gray">
+      <MemberSignature Language="C#" Value="Gray" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gray color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Green">
+      <MemberSignature Language="C#" Value="Green" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Green color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Magenta">
+      <MemberSignature Language="C#" Value="Magenta" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Magenta color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Red">
+      <MemberSignature Language="C#" Value="Red" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Red color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="White">
+      <MemberSignature Language="C#" Value="White" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>White color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Yellow">
+      <MemberSignature Language="C#" Value="Yellow" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Yellow color.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

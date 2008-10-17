@@ -1,0 +1,1478 @@
+<Type Name="Single" FullName="System.Single" FullNameSP="System_Single" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sequential sealed serializable Single extends System.ValueType implements System.IComparable, System.IFormattable" />
+  <TypeSignature Language="C#" Value="public struct Single : IComparable, IComparable&lt;float&gt;, IConvertible, IEquatable&lt;float&gt;, IFormattable" />
+  <MemberOfLibrary>ExtendedNumerics</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IComparable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IComparable&lt;System.Single&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IConvertible</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.Single&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IFormattable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Represents a 32-bit single-precision floating-point number.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.Single" /> is a 32-bit single 
+   precision floating-point type that represents values ranging from approximately
+   1.5E-45 to 3.4E+38 and from approximately -1.5E-45 to -3.4E+38 with a precision of 7 decimal
+   digits. The <see cref="T:System.Single" /> type conforms to standard IEC 60559:1989, Binary
+   Floating-point Arithmetic for Microprocessor Systems. </para>
+      <para>A <see cref="T:System.Single" /> can
+represent the following values:</para>
+      <list type="bullet">
+        <item>
+          <term>
+      
+      The finite set of non-zero values of the form <paramref name="s" /> * <paramref name="m" /> * 2<sup>e</sup>, where s is 1 or -1, and 0 &lt; <paramref name="m" />
+   &lt; 2<sup>24</sup> and -149 &lt;= <paramref name="e" /> &lt;= 104.</term>
+        </item>
+        <item>
+          <term>
+      
+      Positive infinity and negative infinity. Infinities are produced by
+      operations that produce results with a magnitude greater than that which can
+      be represented by a <see cref="T:System.Single" />, such as dividing a non-zero number by zero. For
+      example, using <see cref="T:System.Single" /> operands, <c>1.0 / 0.0</c> yields positive infinity, and <c>-1.0 / 0.0</c> yields negative infinity. Operations
+   include passing parameters and returning values.</term>
+        </item>
+        <item>
+          <term>
+      
+      The <paramref name="Not-a-Number" /> value (NaN). NaN values are produced by invalid
+      floating-point operations, such as dividing zero by zero.</term>
+        </item>
+      </list>
+      <para>When performing binary operations, if one of the
+   operands is a floating-point type (<see cref="T:System.Double" /> or <see cref="T:System.Single" />
+   ), then the other operand is
+   required to be an integral type or a floating-point type and the operation is
+   evaluated as follows:</para>
+      <list type="bullet">
+        <item>
+          <term>
+      
+      If one of the operands is of an integral type, then
+      that operand is converted to the floating-point type of the other operand.</term>
+        </item>
+        <item>
+          <term>
+      
+      Then, if either of the operands is of type <see cref="T:System.Double" />, the other operand is converted to
+   <see cref="T:System.Double" />, and
+      the operation is performed using at least the range and precision of the
+   <see cref="T:System.Double" /> type.
+      For numeric operations, the type of the result is <see cref="T:System.Double" />.</term>
+        </item>
+        <item>
+          <term>
+      
+      Otherwise, the operation is performed using at least the range and
+      precision of the <see cref="T:System.Single" /> type and, for numeric operations, the type of the
+      result is <see cref="T:System.Single" />.</term>
+        </item>
+      </list>
+      <para>The floating-point operators, including the assignment operators, do not
+   throw exceptions. Instead, in exceptional situations, the result of a
+   floating-point operation is zero, infinity, or NaN, as described below:</para>
+      <list type="bullet">
+        <item>
+          <term>
+      
+      If the result of a floating-point operation is too
+      small for the destination format, the result of the operation is zero.</term>
+        </item>
+        <item>
+          <term>
+      
+      If the magnitude of the result of a floating-point
+      operation is too large for the destination format, the result of the operation
+      is positive infinity or negative infinity.</term>
+        </item>
+        <item>
+          <term>
+      
+      If a floating-point operation is invalid, the result
+      of the operation is NaN.</term>
+        </item>
+        <item>
+          <term>
+      
+      If one or both operands of a floating-point operation are NaN, the result
+      of the operation is NaN.</term>
+        </item>
+      </list>
+      <para>Conforming implementations of the CLI are permitted to perform floating-point
+   operations using a precision that is higher than that required by the <see cref="T:System.Single" /> type. For
+   example, hardware architectures that support an "extended" or "long double"
+   floating-point type with greater range and precision than the <see cref="T:System.Single" /> type could implicitly perform all floating-point
+   operations using this higher precision type. Expressions evaluated using a
+   higher precision might cause a finite result to be produced instead of an
+   infinity.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object value)" />
+      <MemberSignature Language="C#" Value="public int CompareTo (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para>Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.Object" /> .</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> Any
+         negative
+         number</term>
+              <description>
+                <para>Current instance &lt; <paramref name="value" />.</para>
+                <para>-or-</para>
+                <para>Current instance is a NaN and <paramref name="value" /> is
+      not a NaN and is not a null reference.</para>
+              </description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>
+                <para>Current instance == <paramref name="value" /> .</para>
+                <para>-or-</para>
+                <para>Current instance and <paramref name="value" /> are both NaN,
+   positive infinity, or negative infinity.</para>
+              </description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>
+                <para>Current instance &gt; <paramref name="value" />.</para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="value" /> is a null reference.</para>
+                <para>-or-</para>
+                <para>Current instance is not a NaN and <paramref name="value" />
+is a NaN.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+      This method is implemented to support the <see cref="T:System.IComparable" /> interface.
+      Note that, although a NaN is not considered to be equal to another NaN (even
+      itself), the <see cref="T:System.IComparable" /> interface requires that
+      A.CompareTo(A)
+      return zero.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="value" /> is not a null reference and is not of type <see cref="T:System.Single" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="C#" Value="public int CompareTo (float value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Single" /> to compare to the current instance.</param>
+        <summary>
+          <para>Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.Single" /> .</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> Any
+         negative
+         number</term>
+              <description>
+                <para>Current instance &lt; <paramref name="value" />.</para>
+                <para>-or-</para>
+                <para>Current instance is a NaN and <paramref name="value" /> is not a NaN.</para>
+              </description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>
+                <para>Current instance == <paramref name="value" /> .</para>
+                <para>-or-</para>
+                <para>Current instance and <paramref name="value" /> are both NaN,
+   positive infinity, or negative infinity.</para>
+              </description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>
+                <para>Current instance &gt; <paramref name="value" />.</para>
+                <para>-or-</para>
+                <para>Current instance is not a NaN and <paramref name="value" />
+is a NaN.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IComparable&lt;Single&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Epsilon">
+      <MemberSignature Language="ILASM" Value=".field public static literal float32 Epsilon = (float)1.401298E-45" />
+      <MemberSignature Language="C#" Value="public const float Epsilon = 1.401298E-45;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Represents the smallest positive <see cref="T:System.Single" /> value
+   greater than zero.</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is 1.401298E-45.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>1.401298E-45</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object obj)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance and the specified
+   <see cref="T:System.Object" /> represent the same type and value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="obj" /> represents the same type and value as the current
+   instance, otherwise <see langword="false" />
+   . If <paramref name="obj" /> is
+   a null reference or is not an instance of <see cref="T:System.Single" />, returns <see langword="false" />. If either <paramref name="obj" /> or the current
+   instance is a NaN and the other is not, returns <see langword="false" />. If
+<paramref name="obj" /> and the current instance are both NaN, positive infinity, or negative 
+   infinity, returns <see langword="true" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+      This method overrides <see cref="M:System.Object.Equals(System.Object)" />.
+   </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (float obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>
+          <para>Determines whether the current instance and the specified
+   <see cref="T:System.Single" /> represent the same value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="obj" /> represents the same value as the current
+   instance, otherwise <see langword="false" />. If either <paramref name="obj" /> or the current
+   instance is a NaN and the other is not, returns <see langword="false" />. If
+<paramref name="obj" /> and the current instance are both NaN, positive infinity, or negative 
+   infinity, returns <see langword="true" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IEquatable&lt;Single&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the hash code for this instance.</para>
+        </returns>
+        <remarks>
+          <para>
+ The algorithm used to generate the hash code is
+ unspecified.
+ </para>
+          <para>
+            <block subset="none" type="note"> 
+This method overrides <see cref="M:System.Object.GetHashCode" />.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTypeCode">
+      <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TypeCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsInfinity">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsInfinity(float32 f)" />
+      <MemberSignature Language="C#" Value="public static bool IsInfinity (float f);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="f" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="f">The <see cref="T:System.Single" /> to be checked.</param>
+        <summary>
+          <para>Determines whether the specified <see cref="T:System.Single" /> represents an infinity,
+ which can be either positive or negative.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="f " />represents a
+ positive or negative infinity value; otherwise <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+ Floating-point operations return positive or negative
+ infinity values to signal an overflow condition.
+ </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsNaN">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsNaN(float32 f)" />
+      <MemberSignature Language="C#" Value="public static bool IsNaN (float f);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="f" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="f">The <see cref="T:System.Single" /> to be checked.</param>
+        <summary>
+          <para>Determines whether the value of the specified <see cref="T:System.Single" />
+is undefined (Not-a-Number).</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="f" /> represents a NaN
+ value; otherwise <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> Floating-point operations return NaN 
+ values to signal that the result of the operation is undefined. For example,
+ dividing (Single) 0.0 by 0.0 results in a NaN value.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IsNegativeInfinity">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsNegativeInfinity(float32 f)" />
+      <MemberSignature Language="C#" Value="public static bool IsNegativeInfinity (float f);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="f" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="f">The <see cref="T:System.Single" /> to be checked.</param>
+        <summary>
+          <para> Determines whether the specified <see cref="T:System.Single" />
+represents a negative infinity value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="f" /> represents a
+ negative infinity value; otherwise <see langword="false" />
+ .</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+ Floating-point operations return negative infinity
+ values to signal an overflow condition.
+ </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPositiveInfinity">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsPositiveInfinity(float32 f)" />
+      <MemberSignature Language="C#" Value="public static bool IsPositiveInfinity (float f);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="f" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="f">The <see cref="T:System.Single" /> to be checked.</param>
+        <summary>
+          <para> Determines whether the specified <see cref="T:System.Single" />
+represents a positive infinity value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="f" /> represents a
+ positive infinity value; otherwise <see langword="false" />
+ .</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+Floating-point operations return positive infinity
+ values to signal an overflow condition.
+ </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxValue">
+      <MemberSignature Language="ILASM" Value=".field public static literal float32 MaxValue = (float)3.402823E+38" />
+      <MemberSignature Language="C#" Value="public const float MaxValue = 3.402823E+38;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Contains the maximum positive value for the <see cref="T:System.Single" /> type.</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is 3.40282346638528859E+38 
+      converted to <see cref="T:System.Single" />
+      .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>3.402823E+38</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MinValue">
+      <MemberSignature Language="ILASM" Value=".field public static literal float32 MinValue = (float)-3.402823E+38" />
+      <MemberSignature Language="C#" Value="public const float MinValue = -3.402823E+38;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Contains the minimum (most negative) value for the
+   <see cref="T:System.Single" />
+   type.</para>
+        </summary>
+        <remarks>
+          <para> The value of this constant is -3.40282346638528859E+38 
+      converted to <see cref="T:System.Single" />
+      .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>-3.402823E+38</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NaN">
+      <MemberSignature Language="ILASM" Value=".field public static literal float32 NaN = (float)0.0 / (float)0.0" />
+      <MemberSignature Language="C#" Value="public const float NaN = NaN;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NaN</MemberValue>
+      <Docs>
+        <summary>
+          <para> Represents an undefined result of operations involving 
+   <see cref="T:System.Single" /> 
+   .</para>
+        </summary>
+        <remarks>
+          <para>Not-a-Number (NaN) values are returned when the result of 
+      a <see cref="T:System.Single" />
+      operation is undefined.</para>
+          <para>A NaN value is not equal to any other value, including another NaN value. </para>
+          <para>The value of this field is obtained by dividing <see cref="T:System.Single" /> zero by zero.</para>
+          <para>
+            <block subset="none" type="note">
+              <see cref="F:System.Single.NaN" /> 
+represents one of many possible NaN values. To test whether a
+<see cref="T:System.Single" /> value is 
+a NaN, use the <see cref="M:System.Single.IsNaN(System.Single)" /> method.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NegativeInfinity">
+      <MemberSignature Language="ILASM" Value=".field public static literal float32 NegativeInfinity = (float)-1.0 / (float)0.0" />
+      <MemberSignature Language="C#" Value="public const float NegativeInfinity = -Infinity;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Represents a negative infinity of type <see cref="T:System.Single" /> .</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant can be obtained by dividing a negative <see cref="T:System.Single" /> by zero.</para>
+          <para>
+            <block subset="none" type="note">
+   To test whether a <see cref="T:System.Single" /> value is a negative infinity value, use the <see cref="M:System.Single.IsNegativeInfinity(System.Single)" /> method.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>-Infinity</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Parse(string s)" />
+      <MemberSignature Language="C#" Value="public static float Parse (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Float" /> and/or <see cref="F:System.Globalization.NumberStyles.AllowThousands" /> style.</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Single" /> value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Single" /> value obtained from <paramref name="s" />.  If <paramref name="s" /> equals
+<see cref="P:System.Globalization.NumberFormatInfo.NaNSymbol" />, this method returns 
+<see cref="F:System.Single.NaN" /> .</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Single.Parse(System.String)" /> is equivalent to <see cref="M:System.Single.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.Float" />|
+<see cref="F:System.Globalization.NumberStyles.AllowThousands" />, <see langword="null" /> ).</para>
+          <para>The string <paramref name="s" /> is parsed using the formatting information in a <see cref="T:System.Globalization.NumberFormatInfo" />
+initialized for the current system culture.
+<block subset="none" type="note">
+   
+   For more information, see <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" />.
+</block></para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct style.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a value that is less than <see cref="F:System.Single.MinValue" /> or greater than <see cref="F:System.Single.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Parse(string s, valuetype System.Globalization.NumberStyles style)" />
+      <MemberSignature Language="C#" Value="public static float Parse (string s, System.Globalization.NumberStyles style);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="style" Type="System.Globalization.NumberStyles" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the style specified by <paramref name="style" /> . </param>
+        <param name="style">Zero or more <see cref="T:System.Globalization.NumberStyles" /> values that specify the style of <paramref name="s" />. Specify multiple values for <paramref name="style" /> using the bitwise OR operator. If <paramref name="style" /> is a null reference, the string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Float" /> and <see cref="F:System.Globalization.NumberStyles.AllowThousands" /> styles. </param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Single" /> value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Single" /> value obtained from <paramref name="s" />. If <paramref name="s" />
+   equals <see cref="P:System.Globalization.NumberFormatInfo.NaNSymbol" />, this method returns
+<see cref="F:System.Single.NaN" /> .</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Single.Parse(System.String)" /> is equivalent to <see cref="M:System.Single.Parse(System.String)" /> (<paramref name="s" />, <paramref name="style" />, null).</para>
+          <para>The string <paramref name="s" /> is parsed using the formatting information in a <see cref="T:System.Globalization.NumberFormatInfo" />
+initialized for the current system culture.
+<block subset="none" type="note">For more information, see <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" />.
+</block></para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct style.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a value that is less than <see cref="F:System.Single.MinValue" /> or greater than <see cref="F:System.Single.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Parse(string s, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public static float Parse (string s, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Float" /> and/or <see cref="F:System.Globalization.NumberStyles.AllowThousands" /> style.</param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.NumberFormatInfo" /> containing culture-specific formatting information about <paramref name="s" />.</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Single" /> value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Single" />
+value obtained from <paramref name="s" />. If <paramref name="s" /> equals <see cref="P:System.Globalization.NumberFormatInfo.NaNSymbol" />, this method returns
+<see cref="F:System.Single.NaN" /> .</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Single.Parse(System.String)" /> is equivalent to <see cref="M:System.Single.Parse(System.String)" /> (<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.Float" /> | <see cref="F:System.Globalization.NumberStyles.AllowThousands" />
+, <paramref name="provider" />).</para>
+          <para>The string <paramref name="s" /> is parsed using the culture-specific formatting
+information from the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />. If <paramref name="provider" /> is
+<see langword="null" /> 
+or a <see cref="T:System.Globalization.NumberFormatInfo" /> cannot be obtained from <paramref name="provider" />, the formatting information
+for the current system culture is used.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct style.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a value that is less than <see cref="F:System.Single.MinValue" /> or greater than <see cref="F:System.Single.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Parse(string s, valuetype System.Globalization.NumberStyles style, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public static float Parse (string s, System.Globalization.NumberStyles style, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="style" Type="System.Globalization.NumberStyles" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the style specified by <paramref name="style" /> .</param>
+        <param name="style">Zero or more <see cref="T:System.Globalization.NumberStyles" /> values that specify the style of <paramref name="s" />. Specify multiple values for <paramref name="style" /> using the bitwise OR operator. If <paramref name="style" /> is a null reference, the string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Float" /> and <see cref="F:System.Globalization.NumberStyles.AllowThousands" /> styles.</param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.NumberFormatInfo" /> containing culture-specific formatting information about <paramref name="s" />. </param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Single" /> value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Single" /> value obtained from <paramref name="s" />. If <paramref name="s" />
+   equals <see cref="P:System.Globalization.NumberFormatInfo.NaNSymbol" />, this method returns NaN.</para>
+        </returns>
+        <remarks>
+          <para>The string <paramref name="s" /> is parsed using the culture-specific formatting
+   information from the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />. If
+<paramref name="provider" /> is 
+<see langword="null" /> or a
+<see cref="T:System.Globalization.NumberFormatInfo" /> cannot be obtained from <paramref name="provider" /> 
+, the formatting information for the current
+system culture is used.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct style.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a value that is less than <see cref="F:System.Single.MinValue" /> or greater than <see cref="F:System.Single.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PositiveInfinity">
+      <MemberSignature Language="ILASM" Value=".field public static literal float32 PositiveInfinity = (float)1.0 / (float)0.0" />
+      <MemberSignature Language="C#" Value="public const float PositiveInfinity = Infinity;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Infinity</MemberValue>
+      <Docs>
+        <summary>
+          <para> Represents a positive infinity of type <see cref="T:System.Single" />.</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant can be obtained by dividing a positive <see cref="T:System.Single" /> by zero.</para>
+          <para>
+            <block subset="none" type="note">
+   To test whether a <see cref="T:System.Single" /> value is a positive infinity value, use the <see cref="M:System.Single.IsPositiveInfinity(System.Single)" /> method.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToBoolean">
+      <MemberSignature Language="C#" Value="bool IConvertible.ToBoolean (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToByte">
+      <MemberSignature Language="C#" Value="byte IConvertible.ToByte (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToChar">
+      <MemberSignature Language="C#" Value="char IConvertible.ToChar (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDateTime">
+      <MemberSignature Language="C#" Value="DateTime IConvertible.ToDateTime (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDecimal">
+      <MemberSignature Language="C#" Value="decimal IConvertible.ToDecimal (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDouble">
+      <MemberSignature Language="C#" Value="double IConvertible.ToDouble (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt16">
+      <MemberSignature Language="C#" Value="short IConvertible.ToInt16 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt32">
+      <MemberSignature Language="C#" Value="int IConvertible.ToInt32 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt64">
+      <MemberSignature Language="C#" Value="long IConvertible.ToInt64 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSByte">
+      <MemberSignature Language="C#" Value="sbyte IConvertible.ToSByte (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSingle">
+      <MemberSignature Language="C#" Value="float IConvertible.ToSingle (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToType">
+      <MemberSignature Language="C#" Value="object IConvertible.ToType (Type type, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt16">
+      <MemberSignature Language="C#" Value="ushort IConvertible.ToUInt16 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt32">
+      <MemberSignature Language="C#" Value="uint IConvertible.ToUInt32 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt64">
+      <MemberSignature Language="C#" Value="ulong IConvertible.ToUInt64 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
+   the general format specifier, ("G"). The string
+   takes into account the current system culture.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Single.ToString" /> is equivalent to <see cref="M:System.Single.ToString" /> (<see langword="null" />, 
+<see langword="null" /> ).</para>
+          <block subset="none" type="note">
+            <para>The general format specifier formats the number in either
+      fixed-point or exponential notation form. For a detailed description of the
+      general format, see the <see cref="T:System.IFormattable" />
+      interface.</para>
+            <para>This method overrides <see cref="M:System.Object.ToString" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.NumberFormatInfo" /> containing culture-specific formatting information.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the
+   current instance. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
+   the general format specifier, ("G"). The string takes into account the
+   formatting information in the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by
+<paramref name="provider" />.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Single.ToString" /> is equivalent to <see cref="M:System.Single.ToString" /> (<see langword="null" /> ,
+<paramref name="provider" /> 
+).</para>
+          <para>If <paramref name="provider" /> is 
+<see langword="null" /> or a <see cref="T:System.Globalization.NumberFormatInfo" /> cannot be obtained from <paramref name="provider" />, the
+formatting information for the current system culture is used.</para>
+          <para>
+            <block subset="none" type="note">
+   
+   The general format specifier formats the number in either
+   fixed-point or exponential notation form. For a detailed description of the
+   general format, see the <see cref="T:System.IFormattable" />
+   interface.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToString(string format)" />
+      <MemberSignature Language="C#" Value="public string ToString (string format);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> that specifies the format of the returned string. <block subset="none" type="note">For a list of valid values, see <see cref="M:System.Single.ToString" /> (<see cref="T:System.String" />, <see cref="T:System.IFormatProvider" /> ).</block></param>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of
+   the current instance formatted as specified by <paramref name="format" />
+   . The string takes into account the current system
+   culture.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Single.ToString" /> is equivalent to <see cref="M:System.Single.ToString" /> (<paramref name="format" />, 
+<see langword="null" /> ).</para>
+          <para>If <paramref name="format" /> is a null reference, the general format specifier "G" is
+used.</para>
+        </remarks>
+        <exception cref="T:System.FormatException">
+          <paramref name="format" /> is invalid.</exception>
+        <example>
+          <para>The following example shows the effects of various
+      formats on the string returned by <see cref="M:System.Single.ToString" />
+      .</para>
+          <code lang="C#">using System;
+class test {
+ public static void Main() {
+   float f = 1234.567f;
+   Console.WriteLine(f);
+   string[] fmts = {"C","E","e5","F","G","N","P","R"};
+   for (int i=0;i&lt;fmts.Length;i++)
+     Console.WriteLine("{0}: {1}", 
+       fmts[i],f.ToString(fmts[i]));
+ }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>1234.567</para>
+            <para>C: $1,234.57</para>
+            <para>E: 1.234567E+003</para>
+            <para>e5: 1.23457e+003</para>
+            <para>F: 1234.57</para>
+            <para>G: 1234.567</para>
+            <para>N: 1,234.57</para>
+            <para>P: 123,456.70 %</para>
+            <para>R: 1234.567</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(string format, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (string format, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing a character that specifies the format of the returned string, optionally followed by a non-negative integer that specifies the precision of the number in the returned <see cref="T:System.String" />.</param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.NumberFormatInfo" /> instance containing culture-specific formatting information.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
+   specified by <paramref name="format" />. The string takes into account the information in
+   the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="provider" /> is 
+<see langword="null" /> or a <see cref="T:System.Globalization.NumberFormatInfo" /> cannot be obtained from
+<paramref name="provider" />, the formatting information for the current system culture is 
+   used.</para>
+          <para>If <paramref name="format" /> is a null reference, the general format specifier "G" is
+used.</para>
+          <para>The following table lists the <paramref name="format" /> characters that are valid
+for the <see cref="T:System.Single" />
+type.</para>
+          <list type="table">
+            <listheader>
+              <term>Format Characters</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> "C", "c"</term>
+              <description>Currency format.</description>
+            </item>
+            <item>
+              <term> "E", "e"</term>
+              <description>Exponential notation format.</description>
+            </item>
+            <item>
+              <term> "F", "f"</term>
+              <description>Fixed-point format.</description>
+            </item>
+            <item>
+              <term> "G", "g"</term>
+              <description>General format.</description>
+            </item>
+            <item>
+              <term> "N", "n"</term>
+              <description>Number format.</description>
+            </item>
+            <item>
+              <term> "P", "p"</term>
+              <description>Percent format.</description>
+            </item>
+            <item>
+              <term> "R", "r"</term>
+              <description>Round-trip format.</description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>For a detailed description of the format strings, see the <see cref="T:System.IFormattable" />
+interface.</para>
+            <para>This method is implemented to support the <see cref="T:System.IFormattable" /> interface.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.FormatException">
+          <paramref name="format" /> is invalid.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string s, out float result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="result" Type="System.Single&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string s, System.Globalization.NumberStyles style, IFormatProvider provider, out float result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="style" Type="System.Globalization.NumberStyles" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+        <Parameter Name="result" Type="System.Single&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="style">To be added.</param>
+        <param name="provider">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

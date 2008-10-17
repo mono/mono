@@ -1,0 +1,109 @@
+<Type Name="GCHandleType" FullName="System.Runtime.InteropServices.GCHandleType" FullNameSP="System_Runtime_InteropServices_GCHandleType" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable GCHandleType extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum GCHandleType" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Represents the types of handles the
+   <see cref="T:System.Runtime.InteropServices.GCHandle" /> class can allocate.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Normal">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.GCHandleType Normal = 2" />
+      <MemberSignature Language="C#" Value="Normal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.GCHandleType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Normal</MemberValue>
+      <Docs>
+        <summary>
+          <para>A <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" /> is an opaque 
+   handle, and the address of the object it references cannot be resolved through
+   it. The <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" /> also prevents the
+   collection of the referenced object by the GC.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pinned">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.GCHandleType Pinned = 3" />
+      <MemberSignature Language="C#" Value="Pinned" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.GCHandleType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Pinned</MemberValue>
+      <Docs>
+        <summary>
+          <para> Similar to <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" />, but allows the
+ address of the object, which the current <see cref="T:System.Runtime.InteropServices.GCHandle" />
+ 
+ represents to be taken.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Weak">
+      <MemberSignature Language="C#" Value="Weak" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.GCHandleType</ReturnType>
+      </ReturnValue>
+      <MemberValue>Weak</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WeakTrackResurrection">
+      <MemberSignature Language="C#" Value="WeakTrackResurrection" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.GCHandleType</ReturnType>
+      </ReturnValue>
+      <MemberValue>WeakTrackResurrection</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

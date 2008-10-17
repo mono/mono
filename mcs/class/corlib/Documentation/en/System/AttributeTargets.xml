@@ -1,0 +1,409 @@
+<Type Name="AttributeTargets" FullName="System.AttributeTargets" FullNameSP="System_AttributeTargets" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable AttributeTargets extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum AttributeTargets" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Enumerates the application elements to which it is valid to attach
+      an attribute.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.AttributeTargets" /> is used as a parameter for <see cref="T:System.AttributeUsageAttribute" /> to enable an attribute to be
+   associated with one or more kinds of application elements.</para>
+    </remarks>
+    <example>
+      <para> The following example demonstrates how <see cref="T:System.AttributeTargets" /> can be
+   used with <see cref="T:System.AttributeUsageAttribute" /> so that a user-defined attribute class, <paramref name="Author" />,
+   can be applied to structures and classes. The <paramref name="Author" /> attribute is then
+   applied to a class.
+   There is no output.</para>
+      <code lang="C#">using System;
+
+[AttributeUsageAttribute(AttributeTargets.Class|
+                         AttributeTargets.Struct)]
+public class Author : Attribute {
+
+   public Author(string Name) {
+ 
+     this.name = Name; }
+     string name;
+   }
+
+[Author("John Q Public")]
+class JohnsClass {
+
+   public static void Main() {
+   }
+}
+</code>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName="All">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets All = Assembly | 0x2 | Class | Struct | Enum | Constructor | Method | Property | Field | Event | Interface | Parameter | Delegate | ReturnValue" />
+      <MemberSignature Language="C#" Value="All" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>All</MemberValue>
+      <Docs>
+        <summary>
+          <para> Attribute can be applied to any element.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Assembly">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Assembly = 0x1" />
+      <MemberSignature Language="C#" Value="Assembly" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Assembly</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to an assembly.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Class">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Class = 0x4" />
+      <MemberSignature Language="C#" Value="Class" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Class</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to a class.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Constructor">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Constructor = 0x20" />
+      <MemberSignature Language="C#" Value="Constructor" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Constructor</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to a constructor.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Delegate">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Delegate = 0x1000" />
+      <MemberSignature Language="C#" Value="Delegate" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Delegate</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to a delegate.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Enum">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Enum = 0x10" />
+      <MemberSignature Language="C#" Value="Enum" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Enum</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to an enumeration.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Event">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Event = 0x200" />
+      <MemberSignature Language="C#" Value="Event" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Event</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to an event.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Field">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Field = 0x100" />
+      <MemberSignature Language="C#" Value="Field" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Field</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to a field.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GenericParameter">
+      <MemberSignature Language="C#" Value="GenericParameter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Attribute can be applied to a generic Parameter.
+      </para>
+        </summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Interface">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Interface = 0x400" />
+      <MemberSignature Language="C#" Value="Interface" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Interface</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to an interface.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Method">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Method = 0x40" />
+      <MemberSignature Language="C#" Value="Method" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Method</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to a method.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Module">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Module = 0x2" />
+      <MemberSignature Language="C#" Value="Module" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Module</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to a module.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parameter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Parameter = 0x800" />
+      <MemberSignature Language="C#" Value="Parameter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Parameter</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to a parameter.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Property">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Property = 0x80" />
+      <MemberSignature Language="C#" Value="Property" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Property</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to a property.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReturnValue">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets ReturnValue = 0x2000" />
+      <MemberSignature Language="C#" Value="ReturnValue" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ReturnValue</MemberValue>
+      <Docs>
+        <summary>
+          <para>Attribute can be applied to a return value.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Struct">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.AttributeTargets Struct = 0x8" />
+      <MemberSignature Language="C#" Value="Struct" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Struct</MemberValue>
+      <Docs>
+        <summary>
+          <para>       Attribute can be applied to a value type.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

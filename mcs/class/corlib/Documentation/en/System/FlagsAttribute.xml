@@ -1,0 +1,109 @@
+<Type Name="FlagsAttribute" FullName="System.FlagsAttribute" FullNameSP="System_FlagsAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable FlagsAttribute extends System.Attribute" />
+  <TypeSignature Language="C#" Value="public class FlagsAttribute : Attribute" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Enum, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Indicates that the <see cref="T:System.Enum" /> targeted by the current attribute is declared as a bit-field.</para>
+    </summary>
+    <remarks>
+      <para> The <see cref="T:System.FlagsAttribute" /> class provides the consumer of a <see cref="T:System.Enum" /> the information that the
+   enumeration is to be used as a bit-field. Additionally, when formatting a <see cref="T:System.Enum" />, using the <see cref="T:System.FlagsAttribute" /> causes a value that is a bitwise OR combination of
+   multiple fields to print correctly.</para>
+      <block subset="none" type="note">
+        <para> Bit-fields are generally used for lists of
+      elements that might occur in combination; whereas enumeration constants are
+      generally used for lists of mutually exclusive elements. Therefore, bit-fields
+      are designed to be combined with the bitwise OR operator to generate unnamed
+      values, whereas enumerated constants are not. Languages
+      vary in their usage of bit-fields compared to enumeration constants.</para>
+        <para>This attribute can only be applied to enumerations.</para>
+      </block>
+    </remarks>
+    <example>
+      <para> The following example demonstrates the use of
+      <see cref="T:System.FlagsAttribute" /> on the formatting of a
+      <see cref="T:System.Enum" />. With this attribute, the <paramref name="Position" /> enumeration is used as a bit-field, and the value 3 (Top
+      | Left) is considered a valid value for the enumeration when formatting. Without this
+      attribute, the enumeration <paramref name="Color" /> is not used as a
+      bit-field, and the value 3 (Red | Blue) is not considered a valid value for the
+      enumeration when formatting.</para>
+      <code lang="C#">
+using System;
+[FlagsAttribute()] 
+public enum Position { 
+
+  Top = 0x1, 
+  Left = 0x2, 
+  Bottom = 0x4, 
+  Right = 0x8 
+} 
+
+//enum Color declared without FlagsAttribute 
+public enum Color { 
+
+  Red = 0x1, 
+  Blue = 0x2, 
+  Yellow = 0x4 
+} 
+
+public class enumFormat { 
+
+  public static void Main() { 
+
+    Position p = Position.Top | Position.Left; 
+    Console.WriteLine("Position: {0}", p); 
+    Color c = Color.Red | Color.Blue; 
+    Console.WriteLine("Color: {0}", c); 
+  } 
+} 
+      </code>
+      <para>The output is</para>
+      <c>
+        <para>Position: Top, Left</para>
+        <para>Color: 3</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public FlagsAttribute ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Constructs a new instance of the <see cref="T:System.FlagsAttribute" /> class.
+ </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

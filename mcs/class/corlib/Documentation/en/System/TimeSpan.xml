@@ -1,0 +1,2049 @@
+<Type Name="TimeSpan" FullName="System.TimeSpan" FullNameSP="System_TimeSpan" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sequential sealed serializable TimeSpan extends System.ValueType implements System.IComparable" />
+  <TypeSignature Language="C#" Value="public struct TimeSpan : IComparable, IComparable&lt;TimeSpan&gt;, IEquatable&lt;TimeSpan&gt;" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IComparable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IComparable&lt;System.TimeSpan&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.TimeSpan&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para>Represents an interval of time.</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.TimeSpan" /> structure represents an interval of time with values
+   ranging from <see cref="F:System.Int64.MinValue" /> to <see cref="F:System.Int64.MaxValue" /> 100-nanosecond <paramref name="ticks" />.</para>
+      <block subset="none" type="note">
+        <para>The value of a <see cref="T:System.TimeSpan" /> is represented internally as a number
+   of 100-nanosecond ticks. Both the specification of a number of ticks and the
+   value of a <see cref="T:System.TimeSpan" /> can be positive or negative.</para>
+        <para>A <see cref="T:System.TimeSpan" /> can be represented as a string in the format
+"[-]d.hh:mm:ss.ff" where "-" is an optional sign for negative <see cref="T:System.TimeSpan" /> values, the "d" component is
+days, "hh" is hours, "mm" is minutes, "ss" is seconds, and "ff" is fractions of
+a second. For example, a <see cref="T:System.TimeSpan" /> initialized with 10<superscript term="13" />
+ticks would
+be represented as "11.13:46:40", which is 11 days, 13 hours, 46 minutes, and 40
+seconds.</para>
+        <para>Due to a varying number of days in months and years, the
+   longest unit of time that is used by this structure is the day.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int64 ticks)" />
+      <MemberSignature Language="C#" Value="public TimeSpan (long ticks);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="ticks" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="ticks">A <see cref="T:System.Int64" /> that specifies the number of ticks with which to initialize the new <see cref="T:System.TimeSpan" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new <see cref="T:System.TimeSpan" /> with the
+   specified number of ticks.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 hours, int32 minutes, int32 seconds)" />
+      <MemberSignature Language="C#" Value="public TimeSpan (int hours, int minutes, int seconds);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="hours" Type="System.Int32" />
+        <Parameter Name="minutes" Type="System.Int32" />
+        <Parameter Name="seconds" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="hours">A <see cref="T:System.Int32" /> that specifies the number of hours with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <param name="minutes">A <see cref="T:System.Int32" /> that specifies the number of minutes with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <param name="seconds">A <see cref="T:System.Int32" /> that specifies the number of seconds with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Constructs and initializes a new <see cref="T:System.TimeSpan" /> with the
+   specified numbers of hours, minutes, and seconds.</para>
+        </summary>
+        <remarks>
+          <para>The specified <paramref name="hours" />, <paramref name="minutes" />, and
+<paramref name="seconds" /> are converted to ticks, and that value is used to initialize 
+   the new <see cref="T:System.TimeSpan" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The parameters specify a <see cref="T:System.TimeSpan" /> value less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 days, int32 hours, int32 minutes, int32 seconds)" />
+      <MemberSignature Language="C#" Value="public TimeSpan (int days, int hours, int minutes, int seconds);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="days" Type="System.Int32" />
+        <Parameter Name="hours" Type="System.Int32" />
+        <Parameter Name="minutes" Type="System.Int32" />
+        <Parameter Name="seconds" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="days">A <see cref="T:System.Int32" /> that specifies the number of days with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <param name="hours">A <see cref="T:System.Int32" /> that specifies the number of hours with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <param name="minutes">A <see cref="T:System.Int32" /> that specifies the number of minutes with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <param name="seconds">A <see cref="T:System.Int32" /> that specifies the number of seconds with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Constructs and initializes a new <see cref="T:System.TimeSpan" /> with the specified numbers of days,
+   hours, minutes, and seconds.</para>
+        </summary>
+        <remarks>
+          <para>The specified <paramref name="days" />, <paramref name="hours" />,
+<paramref name="minutes" />, and <paramref name="seconds" /> are converted to ticks, and that value is 
+   used to initialize the new <see cref="T:System.TimeSpan" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The parameters specify a <see cref="T:System.TimeSpan" /> value less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 days, int32 hours, int32 minutes, int32 seconds, int32 milliseconds)" />
+      <MemberSignature Language="C#" Value="public TimeSpan (int days, int hours, int minutes, int seconds, int milliseconds);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="days" Type="System.Int32" />
+        <Parameter Name="hours" Type="System.Int32" />
+        <Parameter Name="minutes" Type="System.Int32" />
+        <Parameter Name="seconds" Type="System.Int32" />
+        <Parameter Name="milliseconds" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="days">A <see cref="T:System.Int32" /> that specifies the number of days with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <param name="hours">A <see cref="T:System.Int32" /> that specifies the number of hours with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <param name="minutes">A <see cref="T:System.Int32" /> that specifies the number of minutes with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <param name="seconds">A <see cref="T:System.Int32" /> that specifies the number of seconds with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <param name="milliseconds">A <see cref="T:System.Int32" /> that specifies the number of milliseconds with which to initialize the new <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Constructs and initializes a new <see cref="T:System.TimeSpan" /> with the specified numbers of days,
+   hours, minutes, seconds, and milliseconds.</para>
+        </summary>
+        <remarks>
+          <para>The specified <paramref name="days" />, <paramref name="hours" />,
+<paramref name="minutes" />, <paramref name="seconds" />, and <paramref name="milliseconds" /> are converted to 
+   ticks, and that value is used to initialize the new <see cref="T:System.TimeSpan" />.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The parameters specify a <see cref="T:System.TimeSpan" /> value less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Add(valuetype System.TimeSpan ts)" />
+      <MemberSignature Language="C#" Value="public TimeSpan Add (TimeSpan ts);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ts" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="ts">A <see cref="T:System.TimeSpan" /> instance to add to the current instance.</param>
+        <summary>
+          <para>Adds the specified <see cref="T:System.TimeSpan" /> to the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> that represents the value of the current instance plus
+   the value of <paramref name="ts" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The sum of the value of the current instance and the value of <paramref name="ts" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
+        <example>
+          <para>This example demonstrates the <see cref="M:System.TimeSpan.Add(System.TimeSpan)" /> method.</para>
+          <code lang="C#">using System;
+public class TimeSpanAddExample {
+   public static void Main() {
+      TimeSpan ts = new TimeSpan(Int32.MaxValue);
+      Console.WriteLine("The value of the timespan 'ts' is {0}", ts);
+      Console.WriteLine("ts.Add(ts) = {0}", ts.Add(ts));
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>The value of the timespan 'ts' is 00:03:34.7483647</para>
+            <para>ts.Add(ts) = 00:07:09.4967294</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static int Compare (TimeSpan t1, TimeSpan t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.TimeSpan" />
+        <Parameter Name="t2" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.TimeSpan" /> to compare.</param>
+        <param name="t2">The second <see cref="T:System.TimeSpan" /> to compare.</param>
+        <summary>
+          <para>Returns the sort order of two <see cref="T:System.TimeSpan" />
+structures.</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of <paramref name="t1" /> as compared to <paramref name="t2" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Value</term>
+              <description>Condition</description>
+            </listheader>
+            <item>
+              <term> Any
+      negative
+      number</term>
+              <description>
+                <paramref name="t1" /> &lt; <paramref name="t2" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>
+                <paramref name="t1" /> == <paramref name="t2" />.</description>
+            </item>
+            <item>
+              <term> Any
+      positive
+      number</term>
+              <description>
+                <paramref name="t1" /> &gt;
+<paramref name="t2" />.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object value)" />
+      <MemberSignature Language="C#" Value="public int CompareTo (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para>Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Value</term>
+              <description>Condition</description>
+            </listheader>
+            <item>
+              <term> Any
+      negative
+      number</term>
+              <description>Current instance &lt; <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>Current instance == <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Any
+      positive
+      number</term>
+              <description>
+                <para>Current instance &gt; <paramref name="value" />, or
+   <paramref name="value" /> is a null reference.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is
+      implemented to support the <see cref="T:System.IComparable" />
+      interface.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="value" /> is not a <see cref="T:System.TimeSpan" /> and is not a null reference.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="C#" Value="public int CompareTo (TimeSpan value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.TimeSpan" /> to compare to the current instance.</param>
+        <summary>
+          <para>Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Value</term>
+              <description>Condition</description>
+            </listheader>
+            <item>
+              <term> Any
+      negative
+      number</term>
+              <description>Current instance &lt; <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>Current instance == <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Any
+      positive
+      number</term>
+              <description>Current instance &gt; <paramref name="value" />.   </description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IComparable&lt;System.TimeSpan&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Days">
+      <MemberSignature Language="ILASM" Value=".property int32 Days { public hidebysig specialname instance int32 get_Days() }" />
+      <MemberSignature Language="C#" Value="public int Days { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the number days represented by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> represents the days component of the current instance. <block subset="none" type="note">See <see cref="M:System.TimeSpan.ToString" /> for a more detailed description of the days
+   component.</block></para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <see langword="" />
+        </remarks>
+        <example>
+          <para>This example demonstrates using the <see cref="P:System.TimeSpan.Days" /> property.</para>
+          <code lang="C#">using System;
+public class TimeSpanPropertiesExampleOne {
+   public static void Main() {
+      TimeSpan ts = new TimeSpan((Int64)10e12+3456789);
+      Console.WriteLine(ts.ToString());
+      Console.WriteLine("Days: {0}", ts.Days );
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>11.13:46:40.3456789</para>
+            <para>Days: 11</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Duration">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Duration()" />
+      <MemberSignature Language="C#" Value="public TimeSpan Duration ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> whose value is the absolute value of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" />
+whose value is
+the absolute value of the current instance.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The value of the current instance is <see cref="F:System.TimeSpan.MinValue" />.</exception>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.TimeSpan.Duration" /> method.</para>
+          <code lang="C#">using System;
+public class TimeSpanDurationExample {
+   public static void Main() {
+      TimeSpan ts = new TimeSpan(Int32.MinValue);
+      Console.Write("The absolute value of TimeSpan {0} ", ts);
+      Console.WriteLine("is {0}", ts.Duration());
+   }
+}
+</code>
+          <para>The output is</para>
+          <para>
+            <c>The absolute
+   value of TimeSpan -00:03:34.7483648 is 00:03:34.7483648</c>
+          </para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object value)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance and the specified <see cref="T:System.Object" /> represent the
+   same type and value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="value" /> represents the
+   same type and value as the current instance. If <paramref name="value" /> is
+   a null reference or is not a <see cref="T:System.TimeSpan" />, returns <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method
+      overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (TimeSpan obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.TimeSpan" /> to compare to the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance and the specified <see cref="T:System.TimeSpan" /> represent the same value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="obj" /> represents the same value as the current instance; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IEquatable&lt;System.TimeSpan&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Equals(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool Equals (TimeSpan t1, TimeSpan t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.TimeSpan" />
+        <Parameter Name="t2" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first instance of <see cref="T:System.TimeSpan" /> to compare for equality.</param>
+        <param name="t2">The second instance of <see cref="T:System.TimeSpan" /> to compare for equality.</param>
+        <summary>
+          <para>Determines whether two <see cref="T:System.TimeSpan" /> structures represent the same type and value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="t1" /> and <paramref name="t2" />
+represent the same value; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromDays">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromDays(float64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromDays (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> that specifies the number of days with which the new <see cref="T:System.TimeSpan" /> is initialized.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> that represents the specified number of days where the
+   specification is accurate to the nearest millisecond.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> that represents <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <paramref name="value" /> will only be considered accurate to the
+   nearest millisecond. </para>
+          <para>If <paramref name="value" /> is <see cref="F:System.Double.PositiveInfinity" />,
+a <see cref="T:System.TimeSpan" /> with
+the value <see cref="F:System.TimeSpan.MaxValue" /> is returned. If <paramref name="value" /> is <see cref="F:System.Double.NegativeInfinity" />, a <see cref="T:System.TimeSpan" />
+with the value <see cref="F:System.TimeSpan.MinValue" /> is returned. </para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The <see cref="T:System.TimeSpan" /> represented by <paramref name="value" /> is greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromHours">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromHours(float64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromHours (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+          <para>A <see cref="T:System.Double" /> that specifies the number of hours with which the new <see cref="T:System.TimeSpan" /> is initialized.</para>
+        </param>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> that represents the specified number of hours where the
+   specification is accurate to the nearest millisecond.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> that represents <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <paramref name="value" /> will only be considered accurate to the
+   nearest millisecond.</para>
+          <para>If <paramref name="value" /> is <see cref="F:System.Double.PositiveInfinity" />,
+a <see cref="T:System.TimeSpan" /> with
+the value <see cref="F:System.TimeSpan.MaxValue" /> is returned. If <paramref name="value" /> is <see cref="F:System.Double.NegativeInfinity" />, a <see cref="T:System.TimeSpan" />
+with the value <see cref="F:System.TimeSpan.MinValue" /> is returned.</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The <see cref="T:System.TimeSpan" /> represented by <paramref name="value" /> is greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromMilliseconds">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromMilliseconds(float64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromMilliseconds (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+          <para>A <see cref="T:System.Double" /> that specifies the number of milliseconds with which the new <see cref="T:System.TimeSpan" /> is initialized.</para>
+        </param>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> that represents the specified number of milliseconds
+   where the specification is accurate to the nearest millisecond.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> that represents <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <paramref name="value" /> will only be considered accurate to the nearest
+   millisecond.</para>
+          <para>If <paramref name="value" /> is <see cref="F:System.Double.PositiveInfinity" />, a <see cref="T:System.TimeSpan" /> with the value <see cref="F:System.TimeSpan.MaxValue" /> is
+returned. If <paramref name="value" /> is <see cref="F:System.Double.NegativeInfinity" />, a <see cref="T:System.TimeSpan" /> with the value <see cref="F:System.TimeSpan.MinValue" /> is
+returned.</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The <see cref="T:System.TimeSpan" /> represented by <paramref name="value" /> is greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromMinutes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromMinutes(float64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromMinutes (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+          <para>A <see cref="T:System.Double" /> that specifies the number of minutes with which the new <see cref="T:System.TimeSpan" /> is initialized.</para>
+        </param>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> that represents the specified number of
+   minutes where the specification is accurate to the nearest millisecond.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> that represents <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <paramref name="value" /> will only be considered accurate to the nearest
+   millisecond.</para>
+          <para>If <paramref name="value" /> is <see cref="F:System.Double.PositiveInfinity" />, a <see cref="T:System.TimeSpan" /> with the value <see cref="F:System.TimeSpan.MaxValue" /> is
+returned. If <paramref name="value" /> is <see cref="F:System.Double.NegativeInfinity" />, a <see cref="T:System.TimeSpan" /> with the value <see cref="F:System.TimeSpan.MinValue" /> is
+returned.</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The <see cref="T:System.TimeSpan" /> represented by <paramref name="value" /> is greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromSeconds">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromSeconds(float64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromSeconds (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+          <para>A <see cref="T:System.Double" /> that specifies the number of seconds with which the new <see cref="T:System.TimeSpan" /> is initialized.</para>
+        </param>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> that represents the specified number of seconds where
+   the specification is accurate to the nearest millisecond.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> that represents <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <paramref name="value" /> will only be considered accurate to the
+   nearest millisecond.</para>
+          <para>If <paramref name="value" /> is <see cref="F:System.Double.PositiveInfinity" />,
+a <see cref="T:System.TimeSpan" /> with
+the value <see cref="F:System.TimeSpan.MaxValue" /> is returned. If <paramref name="value" /> is <see cref="F:System.Double.NegativeInfinity" />,
+a <see cref="T:System.TimeSpan" /> with
+the value <see cref="F:System.TimeSpan.MinValue" /> is returned.</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The <see cref="T:System.TimeSpan" /> represented by <paramref name="value" /> is greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromTicks">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromTicks(int64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromTicks (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int64" /> that specifies the number of ticks with which the new <see cref="T:System.TimeSpan" /> is initialized.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> that represents the specified number of ticks.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> with a value of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to the <see cref="T:System.TimeSpan" />(<see cref="T:System.Int64" />)
+   constructor.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" />
+value containing a hash code for the current instance.</para>
+        </returns>
+        <remarks>
+          <para> The algorithm used to generate
+      the hash code is unspecified. </para>
+          <para>
+            <block subset="none" type="note">This method
+      overrides <see cref="M:System.Object.GetHashCode" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Hours">
+      <MemberSignature Language="ILASM" Value=".property int32 Hours { public hidebysig specialname instance int32 get_Hours() }" />
+      <MemberSignature Language="C#" Value="public int Hours { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the number of hours represented by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> between 0 and 23 inclusive, that represents
+   the hours component of the current instance. <block subset="none" type="note">See <see cref="M:System.TimeSpan.ToString" /> for a
+   more detailed description of the hours component.</block></para>
+        </value>
+        <remarks>
+          <para> This property is read-only.</para>
+        </remarks>
+        <example>
+          <para>This example demonstrates using the <see cref="P:System.TimeSpan.Hours" /> property.</para>
+          <code lang="C#">using System;
+public class TimeSpanPropertiesExampleOne {
+   public static void Main() {
+      TimeSpan ts = new TimeSpan((Int64)10e12+3456789);
+      Console.WriteLine(ts.ToString());
+      Console.WriteLine("Hours: {0}", ts.Hours );
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>11.13:46:40.3456789</para>
+            <para>Hours: 13</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxValue">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.TimeSpan MaxValue" />
+      <MemberSignature Language="C#" Value="public static readonly TimeSpan MaxValue;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> whose value is the maximum value for the 
+<see cref="T:System.TimeSpan" /> type.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>This field is a <see cref="T:System.TimeSpan" /> containing <see cref="F:System.Int64.MaxValue" /> ticks,
+   the maximum <see cref="T:System.TimeSpan" /> value. The string representation of this value is
+   positive 10675199.02:48:05.4775807.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Milliseconds">
+      <MemberSignature Language="ILASM" Value=".property int32 Milliseconds { public hidebysig specialname instance int32 get_Milliseconds() }" />
+      <MemberSignature Language="C#" Value="public int Milliseconds { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the number of milliseconds represented by the current instance.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Int32" /> between 0 and 999 inclusive, that represents
+   the fractional seconds component of the current instance converted to
+   milliseconds. <block subset="none" type="note">See <see cref="M:System.TimeSpan.ToString" /> for a more
+   detailed description of the fractional seconds component.</block></para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <see langword="" />
+        </remarks>
+        <example>
+          <para>This example demonstrates using the <see cref="P:System.TimeSpan.Milliseconds" /> property.</para>
+          <code lang="C#">using System;
+public class TimeSpanPropertiesExampleOne {
+   public static void Main() {
+      TimeSpan ts = new TimeSpan((Int64)10e12+3456789);
+      Console.WriteLine(ts.ToString());
+      Console.WriteLine("Milliseconds: {0}", ts.Milliseconds );
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>11.13:46:40.3456789</para>
+            <para>Milliseconds: 345</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Minutes">
+      <MemberSignature Language="ILASM" Value=".property int32 Minutes { public hidebysig specialname instance int32 get_Minutes() }" />
+      <MemberSignature Language="C#" Value="public int Minutes { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the number of minutes represented by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> between 0 and 59 inclusive, that represents
+   the minutes component of the current instance. <block subset="none" type="note">See <see cref="M:System.TimeSpan.ToString" /> for
+   a more detailed description of the minutes component.</block></para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <see langword="" />
+        </remarks>
+        <example>
+          <para>This example demonstrates using the <see cref="P:System.TimeSpan.Minutes" /> property.</para>
+          <code lang="C#">using System;
+public class TimeSpanPropertiesExampleOne {
+   public static void Main() {
+      TimeSpan ts = new TimeSpan((Int64)10e12+3456789);
+      Console.WriteLine(ts.ToString());
+      Console.WriteLine("Minutes: {0}", ts.Minutes );
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>11.13:46:40.3456789</para>
+            <para>Minutes: 46</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MinValue">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.TimeSpan MinValue" />
+      <MemberSignature Language="C#" Value="public static readonly TimeSpan MinValue;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> whose value is the minimum value for the 
+<see cref="T:System.TimeSpan" /> type.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>This field is a <see cref="T:System.TimeSpan" /> containing <see cref="F:System.Int64.MinValue" /> ticks,
+   the minimum <see cref="T:System.TimeSpan" /> value. The string representation
+   of this value is negative 10675199.02:48:05.4775808.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Negate">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Negate()" />
+      <MemberSignature Language="C#" Value="public TimeSpan Negate ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> with the same absolute value but opposite sign as the current
+ instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> with the same absolute value but with the opposite sign as the current instance.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The value of the current instance is <see cref="F:System.TimeSpan.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Addition">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_Addition(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan op_Addition (TimeSpan t1, TimeSpan t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.TimeSpan" />
+        <Parameter Name="t2" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.TimeSpan" />.</param>
+        <param name="t2">The second <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Adds the values of two <see cref="T:System.TimeSpan" /> instances.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> whose value is the sum of the values of <paramref name="t1" /> and
+<paramref name="t2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The sum of <paramref name="t1" /> and <paramref name="t2" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Equality(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_Equality (TimeSpan t1, TimeSpan t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.TimeSpan" />
+        <Parameter Name="t2" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.TimeSpan" /></param>
+        <param name="t2">The second <see cref="T:System.TimeSpan" /></param>
+        <param name="t1">To be added.</param>
+        <param name="t2">To be added.</param>
+        <summary>
+          <para>Determines whether the value of one <see cref="T:System.TimeSpan" /> is equal to the
+   value of another <see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the values of <paramref name="t1" /> and
+<paramref name="t2" /> are equal; otherwise, <see langword="false" />.</para>
+          <see langword="" />
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_GreaterThan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThan(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_GreaterThan (TimeSpan t1, TimeSpan t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.TimeSpan" />
+        <Parameter Name="t2" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.TimeSpan" />.</param>
+        <param name="t2">The second <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Determines whether the value one <see cref="T:System.TimeSpan" /> is greater than the value of another
+<see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the value of <paramref name="t1" /> is
+   greater than the value of <paramref name="t2" />; otherwise, <see langword="false" />.</para>
+          <see langword="" />
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_GreaterThanOrEqual">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThanOrEqual(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_GreaterThanOrEqual (TimeSpan t1, TimeSpan t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.TimeSpan" />
+        <Parameter Name="t2" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.TimeSpan" />.</param>
+        <param name="t2">The second <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Determines whether the value of one <see cref="T:System.TimeSpan" /> is greater than or equal to the value
+   of another <see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the value of <paramref name="t1" /> is
+   greater than or equal to the value of <paramref name="t2" />; otherwise,
+<see langword="false" />.</para>
+          <see langword="" />
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Inequality(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (TimeSpan t1, TimeSpan t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.TimeSpan" />
+        <Parameter Name="t2" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.TimeSpan" />.</param>
+        <param name="t2">The second <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Determines whether the value of one <see cref="T:System.TimeSpan" /> is unequal to the value of another
+<see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the values of <paramref name="t1" /> and
+<paramref name="t2" /> are unequal; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_LessThan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThan(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_LessThan (TimeSpan t1, TimeSpan t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.TimeSpan" />
+        <Parameter Name="t2" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.TimeSpan" />.</param>
+        <param name="t2">The second <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Determines whether the value of one <see cref="T:System.TimeSpan" /> is less than the value of another 
+<see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the value of <paramref name="t1" /> is 
+ less than the value of <paramref name="t2" />; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_LessThanOrEqual">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThanOrEqual(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_LessThanOrEqual (TimeSpan t1, TimeSpan t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.TimeSpan" />
+        <Parameter Name="t2" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.TimeSpan" />.</param>
+        <param name="t2">The second <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Determines whether the value of one <see cref="T:System.TimeSpan" /> is less than or equal to the value of 
+ another <see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the value of <paramref name="t1" /> is 
+ less than or equal to the value of <paramref name="t2" />; otherwise,
+<see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Subtraction">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_Subtraction(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan op_Subtraction (TimeSpan t1, TimeSpan t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.TimeSpan" />
+        <Parameter Name="t2" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.TimeSpan" />.</param>
+        <param name="t2">The second <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Subtracts the value of one <see cref="T:System.TimeSpan" /> from the value
+   of another <see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> whose value is the result of the value of <paramref name="t1" />
+minus the value of <paramref name="t2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The value of <paramref name="t2" /> subtracted from <paramref name="t1" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_UnaryNegation">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_UnaryNegation(valuetype System.TimeSpan t)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan op_UnaryNegation (TimeSpan t);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t">A <see cref="T:System.TimeSpan" /> whose value will be negated.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> whose value is the negated value of a
+   specified <see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> with the same absolute value but the opposite sign as
+<paramref name="t" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">
+          <paramref name="t" /> equals <see cref="F:System.TimeSpan.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_UnaryPlus">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_UnaryPlus(valuetype System.TimeSpan t)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan op_UnaryPlus (TimeSpan t);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="t">A <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Returns the specified instance of <see cref="T:System.TimeSpan" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see cref="T:System.TimeSpan" />
+            <paramref name="t" />.</para>
+        </returns>
+        <remarks>
+          <para>This method returns <see cref="T:System.TimeSpan" /><paramref name="t" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan Parse(string s)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan Parse (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">
+          <para>A <see cref="T:System.String" /> containing the value to convert. <paramref name="s" /> contains a time interval in the following form:</para>
+          <para>[ws][-][d.]hh:mm:ss[.ff][ws]</para>
+          <para> Items in square brackets ('[' and']') are optional. Colons and periods (':' and'.') are literal characters. For details on the remaining symbols, see the description section.</para>
+        </param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.TimeSpan" /> value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.TimeSpan" /> value obtained from <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>The symbols used in the parameter description for 
+   <paramref name="s" /> are as follows:</para>
+          <list type="table">
+            <listheader>
+              <term>Item</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> ws</term>
+              <description>White space (zero or more space and/or tab
+            characters).</description>
+            </item>
+            <item>
+              <term> "-"</term>
+              <description>Minus sign, indicating a negative time interval.</description>
+            </item>
+            <item>
+              <term> "d"</term>
+              <description>Days.</description>
+            </item>
+            <item>
+              <term> "hh"</term>
+              <description>Hours, ranging from 0 to 23 inclusive.</description>
+            </item>
+            <item>
+              <term> "mm"</term>
+              <description>Minutes, ranging from 0 to 59 inclusive.</description>
+            </item>
+            <item>
+              <term> "ss"</term>
+              <description>Seconds, ranging from 0 to 59 inclusive.</description>
+            </item>
+            <item>
+              <term> "ff"</term>
+              <description>Fractional seconds, from 1 to 7 decimal digits
+            inclusive.</description>
+            </item>
+          </list>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is in an invalid format.</exception>
+        <exception cref="T:System.OverflowException">
+          <para>
+            <paramref name="s" /> represents a number greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</para>
+          <para>-or-</para>
+          <para>At least one of the hours, minutes, or seconds components is outside its valid range.</para>
+        </exception>
+        <example>
+          <para>This example demonstrates parsing a string to obtain a 
+   <see cref="T:System.TimeSpan" />.</para>
+          <code lang="C#">using System;
+public class TimeSpanParseExample {
+   public static void Main() {
+      String str = "    -5.12:34:56.789     ";
+      TimeSpan ts = TimeSpan.Parse(str);
+      Console.WriteLine(@"The string ""{0}""", str); 
+      Console.WriteLine("parses to TimeSpan {0}", ts);
+   }
+}
+   </code>
+          <para>The output is</para>
+          <code>
+The string "    -5.12:34:56.789     "
+parses to TimeSpan -5.12:34:56.7890000
+ </code>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Seconds">
+      <MemberSignature Language="ILASM" Value=".property int32 Seconds { public hidebysig specialname instance int32 get_Seconds() }" />
+      <MemberSignature Language="C#" Value="public int Seconds { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the number of seconds represented by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> between 0 and 59 inclusive, that represents
+   the seconds component of the current instance. <block subset="none" type="note">See <see cref="M:System.TimeSpan.ToString" /> for
+   a more detailed description of the seconds component.</block></para>
+        </value>
+        <remarks>
+          <para> This property is read-only.</para>
+        </remarks>
+        <example>
+          <para>This example demonstrates using the <see cref="P:System.TimeSpan.Seconds" /> property.</para>
+          <code lang="C#">using System;
+public class TimeSpanPropertiesExampleOne {
+   public static void Main() {
+      TimeSpan ts = new TimeSpan((Int64)10e12+3456789);
+      Console.WriteLine(ts.ToString());
+      Console.WriteLine("Seconds: {0}", ts.Seconds );
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>11.13:46:40.3456789</para>
+            <para>Seconds: 40</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Subtract">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Subtract(valuetype System.TimeSpan ts)" />
+      <MemberSignature Language="C#" Value="public TimeSpan Subtract (TimeSpan ts);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ts" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="ts">A <see cref="T:System.TimeSpan" /> whose value to subtract from the value of the current instance. </param>
+        <summary>
+          <para>Subtracts the value of the specified <see cref="T:System.TimeSpan" /> from the value of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> whose value is equal to the value of the current
+   instance minus the value of <paramref name="ts" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The difference between the value of the current instance and <paramref name="ts" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ticks">
+      <MemberSignature Language="ILASM" Value=".property int64 Ticks { public hidebysig specialname instance int64 get_Ticks() }" />
+      <MemberSignature Language="C#" Value="public long Ticks { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the number of ticks represented by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int64" /> specifying the 
+   number of ticks represented by the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TicksPerDay">
+      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerDay = 864000000000" />
+      <MemberSignature Language="C#" Value="public const long TicksPerDay = 864000000000;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>864000000000</MemberValue>
+      <Docs>
+        <summary>
+          <para> Represents the number of ticks in 1 day.</para>
+        </summary>
+        <remarks>
+          <para> The value of this constant is 864 billion
+      (8.64x10<sup>11</sup> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TicksPerHour">
+      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerHour = 36000000000" />
+      <MemberSignature Language="C#" Value="public const long TicksPerHour = 36000000000;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>36000000000</MemberValue>
+      <Docs>
+        <summary>
+          <para> Represents the number of ticks in 1 hour.</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is 36 billion
+      (3.6x10<sup>10</sup> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TicksPerMillisecond">
+      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerMillisecond = 10000" />
+      <MemberSignature Language="C#" Value="public const long TicksPerMillisecond = 10000;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>10000</MemberValue>
+      <Docs>
+        <summary>
+          <para> Represents the number of ticks in 1
+      millisecond.</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is 10 thousand
+      (10<sup>4</sup> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TicksPerMinute">
+      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerMinute = 600000000" />
+      <MemberSignature Language="C#" Value="public const long TicksPerMinute = 600000000;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>600000000</MemberValue>
+      <Docs>
+        <summary>
+          <para> Represents the number of ticks in 1 minute.</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is 600 million
+      (6x10<sup>8</sup> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TicksPerSecond">
+      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerSecond = 10000000" />
+      <MemberSignature Language="C#" Value="public const long TicksPerSecond = 10000000;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>10000000</MemberValue>
+      <Docs>
+        <summary>
+          <para>Represents the number of ticks in 1 second.</para>
+        </summary>
+        <remarks>
+          <para> The value of this constant is 10 million
+      (10<sup>7</sup> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted as follows:</para>
+          <para>[-][d.]hh:mm:ss[.ff]</para>
+          <para>Items in square brackets ('[' and ']') are included
+   provisionally: '-' is included if and only if the current instance is negative;
+   "d." and ".ff" are included if and only if those components are non-zero. Colons
+   and periods (':' and '.') are literal characters. Other components are as follows.</para>
+          <list type="table">
+            <listheader>
+              <term>Component</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> "-"</term>
+              <description>Minus sign, indicating a negative time
+         interval.</description>
+            </item>
+            <item>
+              <term> "d"</term>
+              <description>Days.</description>
+            </item>
+            <item>
+              <term> "hh"</term>
+              <description>Hours, ranging from 0 to 23 inclusive.</description>
+            </item>
+            <item>
+              <term> "mm"</term>
+              <description>Minutes, ranging from 0 to 59 inclusive.</description>
+            </item>
+            <item>
+              <term> "ss"</term>
+              <description>Seconds, ranging from 0 to 59 inclusive.</description>
+            </item>
+            <item>
+              <term> "ff"</term>
+              <description>Fractional seconds.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method
+      overrides <see cref="M:System.Object.ToString" />.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>This example demonstrates the <see cref="M:System.TimeSpan.ToString" /> method.</para>
+          <code lang="C#">using System;
+public class TimeSpanToStringExample {
+   public static void Main() {
+      TimeSpan tsOne = new TimeSpan(1, 23, 45, 54, 321);
+      TimeSpan tsTwo = new TimeSpan(0, 23, 45, 54, 0);
+      Console.Write("TimeSpan one, with d. and .ff: ");
+      Console.WriteLine("{0}", tsOne.ToString());
+      Console.Write("TimeSpan two, without d. and .ff: ");
+      Console.WriteLine("{0}", tsTwo.ToString());
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>TimeSpan one, with d. and .ff: 1.23:45:54.3210000</para>
+            <para>TimeSpan two, without d. and .ff: 23:45:54</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TotalDays">
+      <MemberSignature Language="ILASM" Value=".property float64 TotalDays { public hidebysig specialname instance float64 get_TotalDays() }" />
+      <MemberSignature Language="C#" Value="public double TotalDays { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the value of the current instance expressed in days.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Double" /> that specifies the total number of days represented by the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">This property converts the value of the
+      current instance from ticks to days. This number can include whole and
+      fractional days.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>This example demonstrates using the <see cref="P:System.TimeSpan.TotalDays" /> property.</para>
+          <code lang="C#">using System;
+public class TimeSpanTotalUnitsProperties{
+   public static void Main() {
+      TimeSpan ts = new TimeSpan((Int64)10e12);
+      Console.WriteLine(ts.ToString());
+      Console.WriteLine("TotalDays: {0}", ts.TotalDays);
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>11.13:46:40</para>
+            <para>TotalDays: 11.5740740740741</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TotalHours">
+      <MemberSignature Language="ILASM" Value=".property float64 TotalHours { public hidebysig specialname instance float64 get_TotalHours() }" />
+      <MemberSignature Language="C#" Value="public double TotalHours { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the value of the current instance expressed in hours.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Double" /> that specifies the total number of hours represented by the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only. </para>
+          <para>
+            <block subset="none" type="note">This property converts the value of the
+      current instance from ticks to hours. This number can include whole and
+      fractional hours.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>This example demonstrates using the <see cref="P:System.TimeSpan.TotalHours" /> property.</para>
+          <code lang="C#">using System;
+public class TimeSpanTotalUnitsProperties{
+   public static void Main() {
+      TimeSpan ts = new TimeSpan((Int64)10e12);
+      Console.WriteLine(ts.ToString());
+      Console.WriteLine("TotalHours: {0}", ts.TotalHours);
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>11.13:46:40</para>
+            <para>TotalHours: 277.777777777778</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TotalMilliseconds">
+      <MemberSignature Language="ILASM" Value=".property float64 TotalMilliseconds { public hidebysig specialname instance float64 get_TotalMilliseconds() }" />
+      <MemberSignature Language="C#" Value="public double TotalMilliseconds { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the value of the current instance expressed in milliseconds.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Double" /> that specifies the total number of milliseconds represented by the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only. </para>
+          <para>
+            <block subset="none" type="note">This property converts the value of the
+      current instance from ticks to milliseconds. This number can include whole and
+      fractional milliseconds.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>This example demonstrates using the <see cref="P:System.TimeSpan.TotalMilliseconds" /> property.</para>
+          <code lang="C#">using System;
+public class TimeSpanTotalUnitsProperties{
+   public static void Main() {
+      TimeSpan ts = new TimeSpan((Int64)10e12);
+      Console.WriteLine(ts.ToString());
+      Console.WriteLine("TotalMilliseconds: {0}", ts.TotalMilliseconds);
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>11.13:46:40</para>
+            <para>TotalMilliseconds: 1000000000</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TotalMinutes">
+      <MemberSignature Language="ILASM" Value=".property float64 TotalMinutes { public hidebysig specialname instance float64 get_TotalMinutes() }" />
+      <MemberSignature Language="C#" Value="public double TotalMinutes { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the value of the current instance expressed in minutes.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Double" /> that specifies the total number of minutes represented by the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only. </para>
+          <para>
+            <block subset="none" type="note">This property converts the value of the
+      current instance from ticks to minutes. This number can include whole and
+      fractional minutes.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>This example demonstrates using the <see cref="P:System.TimeSpan.TotalMinutes" /> property.</para>
+          <code lang="C#">using System;
+public class TimeSpanTotalUnitsProperties{
+   public static void Main() {
+      TimeSpan ts = new TimeSpan((Int64)10e12);
+      Console.WriteLine(ts.ToString());
+      Console.WriteLine("TotalMinutes: {0}", ts.TotalMinutes);
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>11.13:46:40</para>
+            <para>TotalMinutes: 16666.6666666667</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TotalSeconds">
+      <MemberSignature Language="ILASM" Value=".property float64 TotalSeconds { public hidebysig specialname instance float64 get_TotalSeconds() }" />
+      <MemberSignature Language="C#" Value="public double TotalSeconds { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the value of the current instance expressed in seconds.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Double" /> that specifies the total number of seconds represented by the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only. </para>
+          <para>
+            <block subset="none" type="note">This property converts the value of the
+      current instance from ticks to seconds. This number can include whole and
+      fractional seconds.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>This example demonstrates using the <see cref="P:System.TimeSpan.TotalSeconds" /> property.</para>
+          <code lang="C#">using System;
+public class TimeSpanTotalUnitsProperties{
+   public static void Main() {
+      TimeSpan ts = new TimeSpan((Int64)10e12);
+      Console.WriteLine(ts.ToString());
+      Console.WriteLine("TotalSeconds: {0}", ts.TotalSeconds);
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>11.13:46:40</para>
+            <para>TotalSeconds :1000000</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string s, out TimeSpan result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="result" Type="System.TimeSpan&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Zero">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.TimeSpan Zero" />
+      <MemberSignature Language="C#" Value="public static readonly TimeSpan Zero;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.TimeSpan" /> whose value is 0.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>This field is a <see cref="T:System.TimeSpan" /> whose value is 0 ticks. <block subset="none" type="note">This provides a convenient source for 0 in <see cref="T:System.TimeSpan" /> calculations.</block></para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,107 @@
+<Type Name="CipherMode" FullName="System.Security.Cryptography.CipherMode">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public enum CipherMode" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Cryptographic Mode of Operation for Symmetric Block Ciphers.</summary>
+    <remarks>
+      <para>Cipher mode of operation are only applicable to block ciphers. Stream ciphers, like RC4(tm), do not use them.</para>
+      <para>Some modes (OFB and CTS) are defined but are not implemented for any of the algorithms present in the .NET framework.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CBC">
+      <MemberSignature Language="C#" Value="CBC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Cipher Block Chaining (CBC). The first plain text data block is XORed with the initialization vector (IV) before being encrypted by the selected algorithm. Subsequent blocks are XORed with the previous cipher text block before being encrypted. More details are available in NIST FIPS 81 <see cref="http://www.itl.nist.gov/fipspubs/fip81.htm" />.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CFB">
+      <MemberSignature Language="C#" Value="CFB" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Cipher Feedback (CFB). The first plain text data block is encrypted then XORed with the initialization vector (IV). Subsequent blocks are encrypted and then XORed with the previous plain text block. More details are available in NIST FIPS 81 <see cref="http://www.itl.nist.gov/fipspubs/fip81.htm" />.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CTS">
+      <MemberSignature Language="C#" Value="CTS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Cipher Text Stealing (CTS). This cipher mode is defined but is not implemented for any of the algorithms present in the .NET framework. More details are available in Applied Cryptography (Schneier, Bruce, "Applied Cryptography", Second Edition, John Wiley and Sons, New York, 1996).</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ECB">
+      <MemberSignature Language="C#" Value="ECB" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Electronic Codebook (ECB). This is the most basic mode of operation where a plain text data block is encrypted by the selected algorithm. More details are available in NIST FIPS 81 <see cref="http://www.itl.nist.gov/fipspubs/fip81.htm" />.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OFB">
+      <MemberSignature Language="C#" Value="OFB" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Output Feedback (OFB). This cipher mode is defined but is not implemented for any of the algorithms present in the .NET framework. More details are available in NIST FIPS 81 <see cref="http://www.itl.nist.gov/fipspubs/fip81.htm" />.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

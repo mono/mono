@@ -1,0 +1,3373 @@
+<Type Name="Math" FullName="System.Math" FullNameSP="System_Math" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed Math extends System.Object" />
+  <TypeSignature Language="C#" Value="public static class Math" />
+  <MemberOfLibrary>ExtendedNumerics</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Provides constants and static methods for trigonometric, logarithmic,
+ and other common mathematical functions.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Abs(decimal value)" />
+      <MemberSignature Language="C#" Value="public static decimal Abs (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+          <para>A <see cref="T:System.Decimal" />. </para>
+        </param>
+        <summary>
+          <para> Returns the absolute value of the specified <see cref="T:System.Decimal" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" /> containing the absolute value of <paramref name="value" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.Math.Abs(System.SByte)" />(<see cref="T:System.Decimal" />) method.</para>
+          <code lang="C#">
+using System;
+
+public class MathAbsExample
+{
+   public static void Main()
+   {
+      Decimal d1 = Math.Abs( (Decimal)0.00 );
+      Decimal d2 = Math.Abs( (Decimal)(-1.23) );
+      Console.WriteLine("Math.Abs( (Decimal)0.00 ) returns {0}",d1);
+      Console.WriteLine("Math.Abs( (Decimal)(-1.23) ) returns {0}",d2);
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Abs( (Decimal)0.00 ) returns 0</para>
+            <para>Math.Abs( (Decimal)(-1.23) ) returns 1.23</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Abs(float64 value)" />
+      <MemberSignature Language="C#" Value="public static double Abs (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" />.</param>
+        <summary>
+          <para> Returns the absolute value of the specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> containing the absolute value of <paramref name="value" />. If <paramref name="value " />
+is equal to <see cref="F:System.Double.NegativeInfinity" /> or <see cref="F:System.Double.PositiveInfinity" />,
+returns <see cref="F:System.Double.PositiveInfinity" />. If value is equal to <see cref="F:System.Double.NaN" />, returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Abs(int16 value)" />
+      <MemberSignature Language="C#" Value="public static short Abs (short value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int16" />.</param>
+        <summary>
+          <para>Returns the absolute value of the specified <see cref="T:System.Int16" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int16" />
+containing the absolute value of <paramref name="value" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">
+          <paramref name="value" /> equals <see cref="F:System.Int16.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Abs(int32 value)" />
+      <MemberSignature Language="C#" Value="public static int Abs (int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int32" />.</param>
+        <summary>
+          <para>Returns the absolute value of the specified <see cref="T:System.Int32" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the absolute value of <paramref name="value" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">
+          <paramref name="value " /> equals <see cref="F:System.Int32.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Abs(int64 value)" />
+      <MemberSignature Language="C#" Value="public static long Abs (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int64" />.</param>
+        <summary>
+          <para> Returns the absolute value of the specified <see cref="T:System.Int64" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int64" /> containing the absolute value of <paramref name="value" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">
+          <paramref name="value " /> equals <see cref="F:System.Int64.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int8 Abs(int8 value)" />
+      <MemberSignature Language="C#" Value="public static sbyte Abs (sbyte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.SByte" />.</param>
+        <summary>
+          <para> Returns the absolute value of the specified <see cref="T:System.SByte" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.SByte" /> containing the absolute value of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This method is not CLS-compliant. For a CLS-compliant
+      alternative, use <see cref="M:System.Math.Abs(System.SByte)" />(<see cref="T:System.Int16" />).</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">
+          <paramref name="value" /> equals <see cref="F:System.SByte.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Abs(float32 value)" />
+      <MemberSignature Language="C#" Value="public static float Abs (float value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Single" />.</param>
+        <summary>
+          <para> Returns the absolute value of the specified <see cref="T:System.Single" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Single" />
+containing the absolute value of <paramref name="value" />. If <paramref name="value " /> is equal to <see cref="F:System.Single.NegativeInfinity" />
+or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.Single.PositiveInfinity" />. If <paramref name="value" /> is equal to <see cref="F:System.Single.NaN" />, returns
+<see cref="F:System.Single.NaN" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Acos">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Acos(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Acos (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Double" /> representing a cosine, where -1 &lt;= <paramref name="d" /> &lt;= 1.</param>
+        <summary>
+          <para>Returns the angle whose cosine is the specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Double" /> containing the 
+   value of an angle, <theta />, measured in radians, for which <paramref name="d" />
+   is the cosine, such that 0 &lt;= <theta /> &lt;= <pi />. If
+<paramref name="d" /> &lt; -1, <paramref name="d" /> &gt; 1, or <paramref name="d" /> = <see cref="F:System.Double.NaN" />, returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Multiply the return
+      value by 180/<pi /> to convert from radians to degrees.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Asin">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Asin(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Asin (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Double" /> representing a sine, where -1 &lt;= <paramref name="d" /> &lt;= 1.</param>
+        <summary>
+          <para>Returns the angle whose sine is the specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> containing the 
+   value of an angle, <theta />, measured in radians, for which <paramref name="d" /> is the sine, such that -<pi />/2 &lt;= <theta /> &lt;=
+   <pi />/2. If <paramref name="d" /> &lt; -1, <paramref name="d" /> &gt; 1, or <paramref name="d" /> =
+   
+<see cref="F:System.Double.NaN" />, returns
+<see cref="F:System.Double.NaN" />
+.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>A positive return value represents a counterclockwise angle from the positive
+         x-axis; a negative return value represents a clockwise angle.</para>
+            <para>Multiply the return value by 180/<pi /> to convert from radians to degrees.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Atan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Atan(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Atan (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Double" /> that represents a tangent.</param>
+        <summary>
+          <para> Returns the angle whose tangent is the specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> containing the 
+   value of the angle, <theta />, measured in radians, for which <paramref name="d" /> is the tangent, such that -<pi />/2 &lt;=
+   <theta /> &lt;=
+   
+   <pi />/2.</para>
+          <para> The
+   following table specifies the return value if d is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />,
+   or <see cref="F:System.Double.PositiveInfinity" /> .</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Condition</description>
+            </listheader>
+            <item>
+              <term>
+                <see cref="F:System.Double.NaN" />
+              </term>
+              <description>
+                <paramref name="d" /> is equal to <see cref="F:System.Double.NaN" />.</description>
+            </item>
+            <item>
+              <term> -<pi />/2 rounded to double precision (-1.5707963267949)</term>
+              <description>
+                <paramref name="d" /> is equal to <see cref="F:System.Double.NegativeInfinity" />.</description>
+            </item>
+            <item>
+              <term>
+                <pi />/2 rounded to double precision (1.5707963267949)</term>
+              <description>
+                <paramref name="d" /> is equal to <see cref="F:System.Double.PositiveInfinity" />.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para> A positive return value represents a counterclockwise angle from the positive x-axis; a
+         negative return value represents a clockwise angle.</para>
+            <para> Multiply the return value by
+         180/<pi /> to convert from radians to degrees.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Atan2">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Atan2(float64 y, float64 x)" />
+      <MemberSignature Language="C#" Value="public static double Atan2 (double y, double x);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="y" Type="System.Double" />
+        <Parameter Name="x" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="y">A <see cref="T:System.Double" /> representing the y coordinate of a point.</param>
+        <param name="x">A <see cref="T:System.Double" /> representing the x coordinate of a point.</param>
+        <summary>
+          <para> Returns the angle whose tangent is the quotient of two
+      specified <see cref="T:System.Double" />
+      values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> containing the 
+   value of an angle, <theta />, measured in radians, such that -<pi /> &lt;=
+   <theta /> &lt;=
+   
+   <pi /> and tan<theta /> =
+   
+<paramref name="y/x" />, where (<paramref name="x, y" />) is a 
+   point in the Cartesian plane.</para>
+          <para>If both <paramref name="x" /> and <paramref name="y" /> are any combination of <see cref="F:System.Double.NegativeInfinity" /> and <see cref="F:System.Double.PositiveInfinity" />, <see cref="F:System.Double.NaN" /> is
+returned.</para>
+          <para>If either <paramref name="x" /> or <paramref name="y" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NaN" /> is
+returned.</para>
+          <para>The following table specifies the return value if
+<paramref name="x" /> or <paramref name="y" /> 
+is equal to <see cref="F:System.Double.NegativeInfinity" /> or <see cref="F:System.Double.PositiveInfinity" />.</para>
+          <list type="table">
+            <listheader>
+              <term>Condition</term>
+              <description>Return Value</description>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <paramref name="y " /> is equal to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />, and</para>
+                <para>
+                  <paramref name="x " /> is equal to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+              </term>
+              <description>
+                <see cref="F:System.Double.NaN" />.</description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="y " /> is equal to <see cref="F:System.Double.NegativeInfinity" />, and</para>
+                <para>
+                  <paramref name="x " /> is not equal to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+              </term>
+              <description>-<see cref="F:System.Math.PI" />/2.</description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="y " /> is equal to <see cref="F:System.Double.PositiveInfinity" />, and</para>
+                <para>
+                  <paramref name="x " /> is not equal to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+              </term>
+              <description>
+                <see cref="F:System.Math.PI" />/2.</description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="x " /> is equal to <see cref="F:System.Double.PositiveInfinity" />, and</para>
+                <para>
+                  <paramref name="y " /> is not equal to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+              </term>
+              <description>0.</description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="x " /> is equal to <see cref="F:System.Double.NegativeInfinity" />, and </para>
+                <para>
+                  <paramref name="y " /> &gt;= 0 and not equal to <see cref="F:System.Double.PositiveInfinity" />.</para>
+              </term>
+              <description>
+                <see cref="F:System.Math.PI" />.</description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="x " /> is equal to <see cref="F:System.Double.NegativeInfinity" />, and </para>
+                <para>
+                  <paramref name="y " /> &lt; 0 and not equal to <see cref="F:System.Double.NegativeInfinity" />.</para>
+              </term>
+              <description>-<see cref="F:System.Math.PI" />.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>The return value is the angle in the Cartesian plane
+      formed by the x-axis, and a vector starting from the origin, (0,0), and
+      terminating at the point, (<paramref name="x,y" />).</para>
+          <block subset="none" type="note">
+            <list type="bullet">
+              <item>
+                <term>
+            
+            For (<paramref name="x" />, <paramref name="y" />) in quadrant 1, 0 &lt; <theta /> &lt; <pi />/2.</term>
+              </item>
+              <item>
+                <term>
+            
+            For (<paramref name="x" />, <paramref name="y" />) in quadrant 2, <pi />/2 &lt; <theta /> &lt; <pi />.</term>
+              </item>
+              <item>
+                <term>
+            
+            For (<paramref name="x" />, <paramref name="y" />) in quadrant 3, -<pi /> &lt; <theta /> &lt; -<pi />/2.</term>
+              </item>
+              <item>
+                <term>
+            
+            For (<paramref name="x" />, <paramref name="y" />) in quadrant 4, -<pi />/2 &lt; <theta /> &lt; 0.</term>
+              </item>
+            </list>
+          </block>
+        </remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Atan2(System.Double,System.Double)" /> method.</para>
+          <code lang="C#">using System;
+
+public class MathAtan2Example
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Atan2(2,0);
+      Double d2 = Math.Atan2(0,0);
+      Console.WriteLine("Math.Atan2(2,0) returns {0}", d1);
+      Console.WriteLine("Math.Atan2(0,0) returns {0}", d2);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Atan2(2,0) returns 1.5707963267949</para>
+            <para>Math.Atan2(0,0) returns 0</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BigMul">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64  BigMul(int32 a,int32 b)" />
+      <MemberSignature Language="C#" Value="public static long BigMul (int a, int b);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Int32" />
+        <Parameter Name="b" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="a"> The first <see cref="T:System.Int32" /> to multiply.</param>
+        <param name="b"> The second <see cref="T:System.Int32" /> to multiply.</param>
+        <summary>
+          <para>
+        Produces the full product of two 32-bit numbers.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int64" /> containing the product of the specified numbers. 
+      </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ceiling">
+      <MemberSignature Language="C#" Value="public static decimal Ceiling (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ceiling">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Ceiling(float64 a)" />
+      <MemberSignature Language="C#" Value="public static double Ceiling (double a);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="a">A <see cref="T:System.Double" /> .</param>
+        <summary>
+          <para> Returns the smallest integer greater than or equal to the
+      specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> containing the value of the smallest integer greater
+   than or equal to <paramref name="a" />. If <paramref name="a" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />,
+   or <see cref="F:System.Double.PositiveInfinity" />
+   , that value
+   is returned.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Ceiling(System.Double)" /> method.</para>
+          <code lang="C#">using System;
+
+public class MathCeilingExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Ceiling(3.4);
+      Double d2 = Math.Ceiling(-3.4);
+      Console.WriteLine("Math.Ceiling(3.4) returns {0}", d1);
+      Console.WriteLine("Math.Ceiling(-3.4) returns {0}", d2);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Ceiling(3.4) returns 4</para>
+            <para>Math.Ceiling(-3.4) returns -3</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Cos">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Cos(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Cos (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Double" /> that represents an angle measured in radians.</param>
+        <summary>
+          <para> Returns the cosine of the specified <see cref="T:System.Double" /> that represents an angle.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> containing the value of the cosine of <paramref name="d" />. If
+<paramref name="d" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />, 
+   returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Multiply by
+      <pi />/180 to convert degrees to radians.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Cosh">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Cosh(float64 value)" />
+      <MemberSignature Language="C#" Value="public static double Cosh (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> that represents an angle measured in radians.</param>
+        <summary>
+          <para>Returns the hyperbolic cosine of the specified <see cref="T:System.Double" /> that represents an angle.</para>
+        </summary>
+        <returns>
+          <para>The hyperbolic cosine of <paramref name="value" />. If
+<paramref name="value" /> is equal to <see cref="F:System.Double.NegativeInfinity" /> or <see cref="F:System.Double.PositiveInfinity" />, 
+   returns <see cref="F:System.Double.PositiveInfinity" />. If <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />, returns
+<see cref="F:System.Double.NaN" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Multiply by
+      <pi />/180 to convert degrees to radians.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DivRem">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32  DivRem(int32 a,int32 b, [out] int32 &amp;result) " />
+      <MemberSignature Language="C#" Value="public static int DivRem (int a, int b, out int result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Int32" />
+        <Parameter Name="b" Type="System.Int32" />
+        <Parameter Name="result" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="a"> A <see cref="T:System.Int32" /> that contains the dividend.</param>
+        <param name="b"> A <see cref="T:System.Int32" /> that contains the divisor.</param>
+        <param name="result"> A <see cref="T:System.Int32" /> that receives the remainder.</param>
+        <summary>
+          <para>
+    Returns the quotient of two numbers, also passing the remainder as an output parameter.
+     </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing the quotient of the specified numbers.
+      </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DivRem">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64  DivRem(int64 a,int64 b,[out] int64 &amp;result)" />
+      <MemberSignature Language="C#" Value="public static long DivRem (long a, long b, out long result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Int64" />
+        <Parameter Name="b" Type="System.Int64" />
+        <Parameter Name="result" Type="System.Int64&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="a"> A <see cref="T:System.Int64" /> that contains the dividend.</param>
+        <param name="b"> A <see cref="T:System.Int64" /> that contains the divisor.</param>
+        <param name="result"> A <see cref="T:System.Int64" /> that receives the remainder.</param>
+        <summary>
+          <para>
+    Returns the quotient of two numbers, also passing the remainder as an output parameter.
+     </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int64" /> containing the quotient of the specified numbers. 
+      </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="E">
+      <MemberSignature Language="ILASM" Value=".field public static literal float64 E = 2.71828182845905" />
+      <MemberSignature Language="C#" Value="public const double E = 2.71828182845905;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>A constant, <see langword="e" />, which specifies the natural logarithmic base rounded to 
+ double precision.</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is 2.7182818284590452354 converted to <see cref="T:System.Double" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>2.71828182845905</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Exp">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Exp(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Exp (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Double" /> that represents an exponent.</param>
+        <summary>
+          <para>Returns <see langword="e" /> raised to the specified
+<see cref="T:System.Double" /> that represents
+   an exponent.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Double" /> equal to the number <see langword="e" /> raised to the power of
+<paramref name="d" />. If <paramref name="d " />equals <see cref="F:System.Double.NaN" /> or <see cref="F:System.Double.PositiveInfinity" />, 
+   returns that value. If <paramref name="d " />equals <see cref="F:System.Double.NegativeInfinity" />,
+   returns 0.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>Use the <see cref="M:System.Math.Pow(System.Double,System.Double)" /> method to
+      calculate powers of other bases.</para>
+            <para>
+              <see cref="M:System.Math.Exp(System.Double)" /> is the inverse of
+<see cref="M:System.Math.Log(System.Double)" /> 
+.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Floor">
+      <MemberSignature Language="C#" Value="public static decimal Floor (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Floor">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Floor(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Floor (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Double" /> .</param>
+        <summary>
+          <para> Returns the largest integer less than or equal to the
+      specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Double" /> containing the value of the largest integer less than or
+   equal to <paramref name="d" />. If <paramref name="d" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />,
+   or <see cref="F:System.Double.PositiveInfinity" />, that value is returned..</para>
+        </returns>
+        <remarks>
+          <para> The behavior of this method follows IEEE Standard 754, section 4.</para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Floor(System.Double)" /> method.</para>
+          <code lang="C#">using System;
+
+public class MathFloorExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Floor(3.4);
+      Double d2 = Math.Floor(-3.4);
+      Console.WriteLine("Math.Floor(3.4) returns {0}", d1);
+      Console.WriteLine("Math.Floor(-3.4) returns {0}", d2);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Floor(3.4) returns 3</para>
+            <para>Math.Floor(-3.4) returns -4</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IEEERemainder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 IEEERemainder(float64 x, float64 y)" />
+      <MemberSignature Language="C#" Value="public static double IEEERemainder (double x, double y);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x" Type="System.Double" />
+        <Parameter Name="y" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="x">A <see cref="T:System.Double" /> that represents a dividend.</param>
+        <param name="y">A <see cref="T:System.Double" /> that represents a divisor.</param>
+        <summary>
+          <para>Returns the remainder resulting from the division of one
+      specified <see cref="T:System.Double" />
+      by another specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" />
+whose value is as follows:</para>
+          <list type="table">
+            <listheader>
+              <term>Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term>
+                <paramref name="x" /> - (<paramref name="y" />
+      Q),</term>
+              <description>Q is the quotient of <paramref name="x/y" /> rounded to
+   the nearest integer (if <paramref name="x/y" /> is exactly halfway between two
+   integers, the even integer is returned).</description>
+            </item>
+            <item>
+              <term> +0</term>
+              <description>Q is the quotient of <paramref name="x/y" /> rounded to the nearest integer (if
+<paramref name="x/y" /> is exactly halfway between two integers, the even integer is 
+   returned), <paramref name="x" /> - (y Q) is zero, and <paramref name="x" /> is positive.</description>
+            </item>
+            <item>
+              <term> -0</term>
+              <description>Q is the quotient of <paramref name="x/y" /> rounded to the nearest integer (if
+<paramref name="x/y" /> is exactly halfway between two integers, the even integer is 
+   returned), <paramref name="x" /> - (y Q) is zero, and <paramref name="x" /> is negative.</description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Double.NaN" />
+              </term>
+              <description>y = 0.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>This operation complies with the remainder operation defined in Section 5.1
+      of ANSI/IEEE Std 754-1985; IEEE Standard for Binary Floating-Point Arithmetic;
+      Institute of Electrical and Electronics Engineers, Inc; 1985.</para>
+          <para>
+            <block subset="none" type="note">For more
+      information regarding the use of +0 and -0, see Section 3.1
+      of ANSI/IEEE Std 754-1985; IEEE Standard for Binary Floating-Point Arithmetic;
+      Institute of Electrical and Electronics Engineers, Inc; 1985.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.IEEERemainder(System.Double,System.Double)" /> 
+method.</para>
+          <code lang="C#">using System;
+
+public class MathIEEERemainderExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.IEEERemainder(3.54,0);
+      Double d2 = Math.IEEERemainder(9.99,-3.33);
+      Double d3 = Math.IEEERemainder(-9.99,3.33);
+      Double d4 = Math.IEEERemainder(9.5,1.5);
+      Console.WriteLine("Math.IEEERemainder(3.54,0) returns {0}", d1);
+      Console.WriteLine("Math.IEEERemainder(9.99,-3.33) returns {0}", d2);
+      Console.WriteLine("Math.IEEERemainder(-9.99,3.33) returns {0}", d3);
+      Console.WriteLine("Math.IEEERemainder(9.5,1.5) returns {0}", d4);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.IEEERemainder(3.54,0) returns NaN</para>
+            <para>Math.IEEERemainder(9.99,-3.33) returns 0</para>
+            <para>Math.IEEERemainder(-9.99,3.33) returns 0</para>
+            <para>Math.IEEERemainder(9.5,1.5) returns 0.5</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Log">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Log(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Log (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Double" /> whose natural logarithm is to be found. </param>
+        <summary>
+          <para>Returns the natural logarithm of the specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para> Returns a <see cref="T:System.Double" /> whose value is as
+   follows.</para>
+          <list type="table">
+            <listheader>
+              <term>Condition</term>
+              <description>Returns</description>
+            </listheader>
+            <item>
+              <term>
+                <paramref name="d" />
+   
+   &gt;
+   0.</term>
+              <description> The value of the natural logarithm of <paramref name="d" />.</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="d" /> == 0.</term>
+              <description>
+                <see cref="F:System.Double.NegativeInfinity" />.</description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="d " /> &lt;
+      0.</para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="d " /> is equal to <see cref="F:System.Double.NegativeInfinity" />.</para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="d " /> is equal to <see cref="F:System.Double.NaN" />.</para>
+              </term>
+              <description>
+                <see cref="F:System.Double.NaN" />.</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="d" />
+is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>
+            <paramref name="d " />is specified as a base 10 number.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Log">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Log(float64 a, float64 newBase)" />
+      <MemberSignature Language="C#" Value="public static double Log (double a, double newBase);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Double" />
+        <Parameter Name="newBase" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="a">A <see cref="T:System.Double" /> whose logarithm is to be found.</param>
+        <param name="newBase">A <see cref="T:System.Double" /> containing the value of the base of the logarithm.</param>
+        <summary>
+          <para>Returns the logarithm of the specified <see cref="T:System.Double" />
+in the specified base.</para>
+        </summary>
+        <returns>
+          <para>Returns a <see cref="T:System.Double" /> whose value is as follows:</para>
+          <list type="table">
+            <listheader>
+              <term>Condition</term>
+              <description>Returns</description>
+            </listheader>
+            <item>
+              <term>
+                <paramref name="a" /> &gt; 0, <paramref name="newBase" /> &gt; 0, but <paramref name="newBase" /> != 1</term>
+              <description>log<sub><paramref name="newBase" /></sub><paramref name="a" /></description>
+            </item>
+            <item>
+              <term>
+                <paramref name="a " /> &lt; 0</term>
+              <description>
+                <see cref="F:System.Double.NaN" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="newBase" /> &lt; 0</term>
+              <description>
+                <see cref="F:System.Double.NaN" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="newBase" /> == 0, <paramref name="a" />  != 1</term>
+              <description>
+                <see cref="F:System.Double.NaN" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="newBase" /> == 0, <paramref name="a" /> == 1</term>
+              <description>Zero</description>
+            </item>
+            <item>
+              <term>0 &lt; <paramref name="newBase" /> &lt; 1, <paramref name="a" /> == 0</term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>0 &lt; <paramref name="newBase" /> &lt; 1, <paramref name="a" /> == +infinity</term>
+              <description>
+                <see cref="F:System.Double.NegativeInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="newBase" /> == 1</term>
+              <description>
+                <see cref="F:System.Double.NaN" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="newBase" /> &gt; 1, <paramref name="a" /> == 0</term>
+              <description>
+                <see cref="F:System.Double.NegativeInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="newBase" /> &gt; 1, <paramref name="a" /> == +infinity</term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="newBase" /> == +infinity, <paramref name="a" /> != 1</term>
+              <description>
+                <see cref="F:System.Double.NaN" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="newBase" /> == +infinity, <paramref name="a" /> == 1</term>
+              <description>Zero</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="a" /> == NaN or <paramref name="newBase" /> == NaN</term>
+              <description>
+                <see cref="F:System.Double.NaN" />
+              </description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Log10">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Log10(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Log10 (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Double" /> whose logarithm is to be found. </param>
+        <summary>
+          <para>Returns log<sub>10</sub> of the specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para>Returns a <see cref="T:System.Double" /> as indicated by the following table.</para>
+          <list type="table">
+            <listheader>
+              <term>Condition</term>
+              <description>Returns</description>
+            </listheader>
+            <item>
+              <term>
+                <paramref name="d" /> &gt;
+      0.</term>
+              <description>A
+   <see cref="T:System.Double" />
+   containing the value of log<sub>10</sub><paramref name="d" />.</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="d" /> == 0.</term>
+              <description>
+                <see cref="F:System.Double.NegativeInfinity" />.</description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="d " /> &lt;
+      0. </para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="d " />is equal to <see cref="F:System.Double.NegativeInfinity" />.</para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="d " />is equal to <see cref="F:System.Double.NaN" />.</para>
+              </term>
+              <description>
+                <see cref="F:System.Double.NaN" />.</description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="d" /> is equal to
+   <see cref="F:System.Double.PositiveInfinity" />.
+      </para>
+              </term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int8 Max(unsigned int8 val1, unsigned int8 val2)" />
+      <MemberSignature Language="C#" Value="public static byte Max (byte val1, byte val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Byte" />
+        <Parameter Name="val2" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Byte" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Byte" /> values to compare.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.Byte" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Byte" /> that 
+   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value
+   is equal
+   to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Max(decimal val1, decimal val2)" />
+      <MemberSignature Language="C#" Value="public static decimal Max (decimal val1, decimal val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Decimal" />
+        <Parameter Name="val2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Decimal" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Decimal" /> values to compare.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.Decimal" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" /> that is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or 
+   equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Max(float64 val1, float64 val2)" />
+      <MemberSignature Language="C#" Value="public static double Max (double val1, double val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Double" />
+        <Parameter Name="val2" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Double" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Double" /> values to compare.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.Double" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> equal to <paramref name="val1" /> if <paramref name="val1" /> is greater than or equal to
+<paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />. If <paramref name="val1" /> , <paramref name="val2" />, or both 
+   are equal to <see cref="F:System.Double.NaN" /> , <see cref="F:System.Double.NaN" /> is returned.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Max(int16 val1, int16 val2)" />
+      <MemberSignature Language="C#" Value="public static short Max (short val1, short val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Int16" />
+        <Parameter Name="val2" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Int16" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Int16" /> values to compare.</param>
+        <param name="val1">To be added.</param>
+        <param name="val2">To be added.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.Int16" /> values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int16" /> that 
+   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
+   to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Max(int32 val1, int32 val2)" />
+      <MemberSignature Language="C#" Value="public static int Max (int val1, int val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Int32" />
+        <Parameter Name="val2" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Int32" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Int32" /> values to compare.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.Int32" /> values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that 
+   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
+   to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Max(int64 val1, int64 val2)" />
+      <MemberSignature Language="C#" Value="public static long Max (long val1, long val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Int64" />
+        <Parameter Name="val2" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Int64" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Int64" /> values to compare.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.Int64" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int64" /> that 
+   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
+   to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int8 Max(int8 val1, int8 val2)" />
+      <MemberSignature Language="C#" Value="public static sbyte Max (sbyte val1, sbyte val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.SByte" />
+        <Parameter Name="val2" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Byte" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Byte" /> values to compare.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.SByte" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.SByte" /> that
+   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value
+   is equal
+   to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>
+          <para>This method is not CLS-compliant. For a CLS-compliant
+      alternative, use <see cref="M:System.Math.Max(System.SByte,System.SByte)" />(<see cref="T:System.Int16" />, <see cref="T:System.Int16" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Max(float32 val1, float32 val2)" />
+      <MemberSignature Language="C#" Value="public static float Max (float val1, float val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Single" />
+        <Parameter Name="val2" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Single" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Single" /> values to compare.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.Single" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Single" />
+equal to <paramref name="val1" /> if <paramref name="val1" /> is greater than or equal to
+<paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />. If <paramref name="val1" />, <paramref name="val2" />, or 
+both are equal to <see cref="F:System.Single.NaN" />, <see cref="F:System.Single.NaN" /> is
+returned.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int16 Max(unsigned int16 val1, unsigned int16 val2)" />
+      <MemberSignature Language="C#" Value="public static ushort Max (ushort val1, ushort val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.UInt16" />
+        <Parameter Name="val2" Type="System.UInt16" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.UInt16" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.UInt16" /> values to compare.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.UInt16" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.UInt16" /> that
+   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
+   to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>
+          <para>This method is not CLS-compliant. For a CLS-compliant
+      alternative, use <see cref="M:System.Math.Max(System.SByte,System.SByte)" />(<see cref="T:System.Int32" />, <see cref="T:System.Int32" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int32 Max(unsigned int32 val1, unsigned int32 val2)" />
+      <MemberSignature Language="C#" Value="public static uint Max (uint val1, uint val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.UInt32" />
+        <Parameter Name="val2" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.UInt32" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.UInt32" /> values to compare.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.UInt32" /> values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.UInt32" /> that
+   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
+   to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>
+          <para>This method is not CLS-compliant. For a CLS-compliant
+      alternative, use <see cref="M:System.Math.Max(System.SByte,System.SByte)" />(<see cref="T:System.Int64" />, <see cref="T:System.Int64" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int64 Max(unsigned int64 val1, unsigned int64 val2)" />
+      <MemberSignature Language="C#" Value="public static ulong Max (ulong val1, ulong val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.UInt64" />
+        <Parameter Name="val2" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.UInt64" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.UInt64" /> values to compare.</param>
+        <summary>
+          <para>Returns the greater of two specified <see cref="T:System.UInt64" />
+values.</para>
+        </summary>
+        <returns>
+   A <see cref="T:System.UInt64" />
+   equal to <paramref name="val1" /> if <paramref name="val1" /> is greater than or equal to
+<paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.
+</returns>
+        <remarks>
+          <para>This method is not CLS-compliant. For a CLS-compliant alternative, use
+   <see cref="M:System.Math.Max(System.SByte,System.SByte)" />(<see cref="T:System.Decimal" />, <see cref="T:System.Decimal" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int8 Min(unsigned int8 val1, unsigned int8 val2)" />
+      <MemberSignature Language="C#" Value="public static byte Min (byte val1, byte val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Byte" />
+        <Parameter Name="val2" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Byte" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Byte" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.Byte" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Byte" /> equal
+   to
+<paramref name="val1" /> if <paramref name="val1" /> is less than or equal
+   to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Min(decimal val1, decimal val2)" />
+      <MemberSignature Language="C#" Value="public static decimal Min (decimal val1, decimal val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Decimal" />
+        <Parameter Name="val2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Decimal" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Decimal" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.Decimal" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" /> equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to
+<paramref name="val2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Min(float64 val1, float64 val2)" />
+      <MemberSignature Language="C#" Value="public static double Min (double val1, double val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Double" />
+        <Parameter Name="val2" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Double" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Double" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.Double" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" />
+equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to
+<paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />. If <paramref name="val1" />, 
+<paramref name="val2" />, or both 
+are equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NaN" /> is
+returned.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Min(int16 val1, int16 val2)" />
+      <MemberSignature Language="C#" Value="public static short Min (short val1, short val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Int16" />
+        <Parameter Name="val2" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Int16" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Int16" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.Int16" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int16" /> that 
+   is equal to <paramref name="val1 " />if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal
+   to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Min(int32 val1, int32 val2)" />
+      <MemberSignature Language="C#" Value="public static int Min (int val1, int val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Int32" />
+        <Parameter Name="val2" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Int32" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Int32" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.Int32" /> 
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> 
+equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Min(int64 val1, int64 val2)" />
+      <MemberSignature Language="C#" Value="public static long Min (long val1, long val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Int64" />
+        <Parameter Name="val2" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Int64" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Int64" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.Int64" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int64" /> 
+equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int8 Min(int8 val1, int8 val2)" />
+      <MemberSignature Language="C#" Value="public static sbyte Min (sbyte val1, sbyte val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.SByte" />
+        <Parameter Name="val2" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.SByte" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.SByte" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.SByte" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.SByte" />
+equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>
+          <para>This method is not CLS-compliant. For a CLS-compliant
+      alternative, use <see cref="M:System.Math.Min(System.SByte,System.SByte)" />(<see cref="T:System.Int16" />, <see cref="T:System.Int16" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Min(float32 val1, float32 val2)" />
+      <MemberSignature Language="C#" Value="public static float Min (float val1, float val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.Single" />
+        <Parameter Name="val2" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.Single" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.Single" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.Single" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Single" />
+equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to
+<paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />. If <paramref name="val1" />, <paramref name="val2" />, or both 
+are equal to <see cref="F:System.Single.NaN" />, <see cref="F:System.Single.NaN" /> is
+returned.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int16 Min(unsigned int16 val1, unsigned int16 val2)" />
+      <MemberSignature Language="C#" Value="public static ushort Min (ushort val1, ushort val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.UInt16" />
+        <Parameter Name="val2" Type="System.UInt16" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.UInt16" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.UInt16" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.UInt16" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.UInt16" /> equal to <paramref name="val1" /> if <paramref name="val1" /> is less
+   than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" /> .</para>
+        </returns>
+        <remarks>
+          <para>This method is not CLS-compliant. For a CLS-compliant
+      alternative, use <see cref="M:System.Math.Min(System.SByte,System.SByte)" />(<see cref="T:System.Int32" />, <see cref="T:System.Int32" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int32 Min(unsigned int32 val1, unsigned int32 val2)" />
+      <MemberSignature Language="C#" Value="public static uint Min (uint val1, uint val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.UInt32" />
+        <Parameter Name="val2" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.UInt32" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.UInt32" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.UInt32" />
+values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.UInt32" />
+equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>
+          <para>This method is not CLS-compliant. For a CLS-compliant
+      alternative, use <see cref="M:System.Math.Min(System.SByte,System.SByte)" />(<see cref="T:System.Int64" />, <see cref="T:System.Int64" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int64 Min(unsigned int64 val1, unsigned int64 val2)" />
+      <MemberSignature Language="C#" Value="public static ulong Min (ulong val1, ulong val2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val1" Type="System.UInt64" />
+        <Parameter Name="val2" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="val1">The first of two specified <see cref="T:System.UInt64" /> values to compare.</param>
+        <param name="val2">The second of two specified <see cref="T:System.UInt64" /> values to compare.</param>
+        <summary>
+          <para>Returns the lesser of two specified <see cref="T:System.UInt64" /> values.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.UInt64" />
+equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
+        </returns>
+        <remarks>
+          <para>This method is not CLS-compliant. For a CLS-compliant
+      alternative, use <see cref="M:System.Math.Min(System.SByte,System.SByte)" />(<see cref="T:System.Decimal" />, <see cref="T:System.Decimal" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="PI">
+      <MemberSignature Language="ILASM" Value=".field public static literal float64 PI = 3.14159265358979" />
+      <MemberSignature Language="C#" Value="public const double PI = 3.14159265358979;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> A constant, <pi />, which specifies the ratio of the circumference of a circle to
+      its diameter rounded to double precision.</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is 3.14159265358979323846 converted to <see cref="T:System.Double" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>3.14159265358979</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pow">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Pow(float64 x, float64 y)" />
+      <MemberSignature Language="C#" Value="public static double Pow (double x, double y);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x" Type="System.Double" />
+        <Parameter Name="y" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="x">A <see cref="T:System.Double" /> to be raised to a power.</param>
+        <param name="y">A <see cref="T:System.Double" /> that specifies that power.</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.Double" /> raised to the specified power.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Double" /> equal to <paramref name="x" /> raised to the power <paramref name="y" />.
+   The following table specifies the results if <paramref name="x" /> or <paramref name="y" />
+   is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />.</para>
+          <list type="table">
+            <listheader>
+              <term>Parameter Values</term>
+              <description>Returns</description>
+            </listheader>
+            <item>
+              <term>
+                <paramref name="x" /> or <paramref name="y" /> == NaN
+   </term>
+              <description>
+                <see cref="F:System.Double.NaN" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> == any value except NaN, <paramref name="y" /> == 0
+   </term>
+              <description>1</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> == -infinity, <paramref name="y" /> &lt; 0
+   </term>
+              <description>0</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> == -infinity, <paramref name="y" /> is a positive odd integer
+   </term>
+              <description>
+                <see cref="F:System.Double.NegativeInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> == -infinity, <paramref name="y" /> is not 0 or a positive odd integer
+   </term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> &lt; 0, (-1 &lt; <paramref name="y" /> &lt; 0) or (0 &lt; <paramref name="y" /> &lt; 1) </term>
+              <description>
+                <see cref="F:System.Double.NaN" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> &lt; -1, <paramref name="y" /> == -infinity   </term>
+              <description>0</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> &lt; -1, <paramref name="y" /> == +infinity   </term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> == -1, <paramref name="y" /> == -infinity or +infinity </term>
+              <description>
+                <see cref="F:System.Double.NaN" />
+              </description>
+            </item>
+            <item>
+              <term>(-1 &lt; <paramref name="x" /> &lt;= 0), <paramref name="y" /> == -infinity   </term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>(-1 &lt; <paramref name="x" /> &lt;= 0), <paramref name="y" /> == +infinity   </term>
+              <description>0</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> == 0, <paramref name="y" /> &lt; 0
+   </term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> == 0, <paramref name="y" /> &gt; 0
+   </term>
+              <description>0</description>
+            </item>
+            <item>
+              <term>(0 &lt; <paramref name="x" /> &lt; 1), <paramref name="y" /> == -infinity   </term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>(0 &lt; <paramref name="x" /> &lt; 1), <paramref name="y" /> == +infinity   </term>
+              <description>0</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> == 1 <paramref name="y" /> == any value except NaN 
+   </term>
+              <description>1</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> &gt; 1, <paramref name="y" /> == -infinity   </term>
+              <description>0</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> &gt; 1, <paramref name="y" /> == +infinity   </term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> == +infinity <paramref name="y" />   &lt; 0</term>
+              <description>0</description>
+            </item>
+            <item>
+              <term>
+                <paramref name="x" /> == +infinity <paramref name="y" />   &gt; 0</term>
+              <description>
+                <see cref="F:System.Double.PositiveInfinity" />
+              </description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Round(decimal d)" />
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Decimal" /> to be rounded.</param>
+        <summary>
+          <para> Returns the integer nearest the specified <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Decimal" /> containing the value of the integer nearest <paramref name="d" />. If <paramref name="d" />
+is exactly halfway between two integers, one of which is even and the other odd, then the even integer is returned.</para>
+        </returns>
+        <remarks>
+          <para>The behavior of this method follows IEEE Standard 754, section 4.1.</para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Round(System.Double)" />(<see cref="T:System.Decimal" />) method.</para>
+          <code lang="C#">using System;
+
+public class MathRoundExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Round(4.4);
+      Double d2 = Math.Round(4.5);
+      Double d3 = Math.Round(4.6);
+      Console.WriteLine("Math.Round(4.4) returns {0}", d1);
+      Console.WriteLine("Math.Round(4.5) returns {0}", d2);
+      Console.WriteLine("Math.Round(4.6) returns {0}", d3);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Round(4.4) returns 4</para>
+            <para>Math.Round(4.5) returns 4</para>
+            <para>Math.Round(4.6) returns 5</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Round(float64 a)" />
+      <MemberSignature Language="C#" Value="public static double Round (double a);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="a">A <see cref="T:System.Double" /> to be rounded.</param>
+        <summary>
+          <para> Returns the integer nearest the specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Double" /> containing the value of the integer nearest <paramref name="a" />.
+   If <paramref name="a" /> is exactly halfway between two integers, one of which is even and the other odd, then the even integer is returned.</para>
+        </returns>
+        <remarks>
+          <para> The behavior of this method follows IEEE Standard 754, section 4.1.</para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Round(System.Double)" />(<see cref="T:System.Double" />) method.</para>
+          <code lang="C#">using System;
+
+public class MathRoundExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Round(4.4);
+      Double d2 = Math.Round(4.5);
+      Double d3 = Math.Round(4.6);
+      Console.WriteLine("Math.Round(4.4) returns {0}", d1);
+      Console.WriteLine("Math.Round(4.5) returns {0}", d2);
+      Console.WriteLine("Math.Round(4.6) returns {0}", d3);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Round(4.4) returns 4</para>
+            <para>Math.Round(4.5) returns 4</para>
+            <para>Math.Round(4.6) returns 5</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d, int decimals);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+        <Parameter Name="decimals" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <param name="decimals">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d, MidpointRounding mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+        <Parameter Name="mode" Type="System.MidpointRounding" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Round(float64 value, int32 digits)" />
+      <MemberSignature Language="C#" Value="public static double Round (double value, int digits);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+        <Parameter Name="digits" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> to be rounded.</param>
+        <param name="digits">A <see cref="T:System.Int32" /> containing the value of the number of significant fractional digits (precision) in the return value. This number is required to be greater than or equal to 0 and less than or equal to 15.</param>
+        <param name="digits">To be added.</param>
+        <summary>
+          <para> Returns the number nearest the specified <see cref="T:System.Double" /> within the
+   specified precision.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Double" /> containing the value of the number
+   nearest <paramref name="value" /> with a precision
+   equal to <paramref name="digits" /> . If the digit
+   in <paramref name="value" /> that is in the 10<sup>-(<paramref name="digits " /> + 1)</sup> place is equal
+to 5 and there are no non-zero numbers in any less significant place, then the
+digit in the 10<sup>-<paramref name="digits" /></sup> place will be unchanged if it is even, else it
+will be set to the closest even integer value in the direction of the digit in
+the 10<sup>-(<paramref name="digits" /> + 1)</sup> place. If the precision of <paramref name="value" /> is less
+than <paramref name="digits" />, then <paramref name="value" /> is returned unchanged. If
+<paramref name="digits" /> is zero, this method behaves in the same manner as <see cref="M:System.Math.Round(System.Double)" /> 
+(<paramref name="value" /> ).</para>
+        </returns>
+        <remarks>
+          <para>The behavior of this method follows IEEE Standard 754, section 4.1.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="digits" /> &lt; 0</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="digits" /> &gt; 15</para>
+        </exception>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Round(System.Double)" />(<see cref="T:System.Double" />, <see cref="T:System.Int32" />) method.</para>
+          <code lang="C#">using System;
+
+public class MathRoundExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Round(3.44,1);
+      Double d2 = Math.Round(3.45,1);
+      Double d3 = Math.Round(3.55,1);
+      Console.WriteLine("Math.Round(3.44, 1) returns {0}", d1);
+      Console.WriteLine("Math.Round(3.45, 1) returns {0}", d2);
+      Console.WriteLine("Math.Round(3.55, 1) returns {0}", d3);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Round(3.44, 1) returns 3.4</para>
+            <para>Math.Round(3.45, 1) returns 3.4</para>
+            <para>Math.Round(3.55, 1) returns 3.6</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static double Round (double value, MidpointRounding mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+        <Parameter Name="mode" Type="System.MidpointRounding" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d, int decimals, MidpointRounding mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+        <Parameter Name="decimals" Type="System.Int32" />
+        <Parameter Name="mode" Type="System.MidpointRounding" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <param name="decimals">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static double Round (double value, int digits, MidpointRounding mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+        <Parameter Name="digits" Type="System.Int32" />
+        <Parameter Name="mode" Type="System.MidpointRounding" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="digits">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(decimal value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Decimal" /> number whose sign is to be determined.</param>
+        <summary>
+          <para>Returns a value indicating the sign of the specified <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> indicating the sign of <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <term>Number</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> -1</term>
+              <description>
+                <paramref name="value" /> &lt;
+      0.</description>
+            </item>
+            <item>
+              <term> 0</term>
+              <description>
+                <paramref name="value" /> == 0.</description>
+            </item>
+            <item>
+              <term> 1</term>
+              <description>
+                <paramref name="value" /> &gt; 0.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(float64 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> whose sign is to be determined.</param>
+        <summary>
+          <para> Returns a value indicating the sign of the specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" />
+indicating the sign of <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <term>Number</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> -1</term>
+              <description>
+                <paramref name="value" /> &lt;
+      0.</description>
+            </item>
+            <item>
+              <term> 0</term>
+              <description>
+                <paramref name="value" /> == 0.</description>
+            </item>
+            <item>
+              <term> 1</term>
+              <description>
+                <paramref name="value" /> &gt; 0.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArithmeticException">
+          <paramref name="value " />is equal to <see cref="F:System.Double.NaN" />.</exception>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Sign(System.SByte)" />(<see cref="T:System.Double" />) method.</para>
+          <code lang="C#">using System;
+
+public class MathSignExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Sign(4.4);
+      Double d2 = Math.Sign(0.0);
+      Double d3 = Math.Sign(-4.5);
+      Console.WriteLine("Math.Sign(4.4) returns {0}", d1);
+      Console.WriteLine("Math.Sign(0.0) returns {0}", d2);
+      Console.WriteLine("Math.Sign(-4.5) returns {0}", d3);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Sign(4.4) returns 1 </para>
+            <para>Math.Sign(0.0) returns 0 </para>
+            <para>Math.Sign(-4.5) returns -1</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int16 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (short value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int16" /> whose sign is to be determined.</param>
+        <summary>
+          <para>Returns a value indicating the sign of the specified <see cref="T:System.Int16" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> indicating the sign of <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <term>Number</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> -1</term>
+              <description>
+                <paramref name="value" /> &lt;
+      0.</description>
+            </item>
+            <item>
+              <term> 0</term>
+              <description>
+                <paramref name="value" /> == 0.</description>
+            </item>
+            <item>
+              <term> 1</term>
+              <description>
+                <paramref name="value" /> &gt; 0.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int32 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int32" /> whose sign is to be determined.</param>
+        <summary>
+          <para>Returns a value indicating the sign of the specified <see cref="T:System.Int32" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> indicating the sign of <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <term>Number</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> -1</term>
+              <description>
+                <paramref name="value" /> &lt;
+      0.</description>
+            </item>
+            <item>
+              <term> 0</term>
+              <description>
+                <paramref name="value" /> == 0.</description>
+            </item>
+            <item>
+              <term> 1</term>
+              <description>
+                <paramref name="value" /> &gt; 0.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int64 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int64" /> whose sign is to be determined.</param>
+        <summary>
+          <para>Returns a value indicating the sign of the specified <see cref="T:System.Int64" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> indicating the sign of <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <term>Number</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> -1</term>
+              <description>
+                <paramref name="value" /> &lt;
+      0.</description>
+            </item>
+            <item>
+              <term> 0</term>
+              <description>
+                <paramref name="value" /> == 0.</description>
+            </item>
+            <item>
+              <term> 1</term>
+              <description>
+                <paramref name="value" /> &gt; 0.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int8 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (sbyte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.SByte" /> whose sign is to be determined.</param>
+        <summary>
+          <para> Returns a value indicating the sign of the specified <see cref="T:System.SByte" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> indicating the
+   sign of <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <term>Number</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> -1</term>
+              <description>
+                <paramref name="value" /> &lt;
+      0.</description>
+            </item>
+            <item>
+              <term> 0</term>
+              <description>
+                <paramref name="value" /> == 0.</description>
+            </item>
+            <item>
+              <term> 1</term>
+              <description>
+                <paramref name="value" /> &gt; 0.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>This method is not CLS-compliant. For a CLS-compliant alternative, use
+   <see cref="M:System.Math.Sign(System.SByte)" />(<see cref="T:System.Int16" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(float32 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (float value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Single" /> whose sign is to be determined.</param>
+        <summary>
+          <para> Returns a value indicating the sign of the specified <see cref="T:System.Single" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> indicating the sign of value.</para>
+          <list type="table">
+            <listheader>
+              <term>Number</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> -1</term>
+              <description>
+                <paramref name="value" /> &lt;
+      0.</description>
+            </item>
+            <item>
+              <term> 0</term>
+              <description>
+                <paramref name="value" /> == 0.</description>
+            </item>
+            <item>
+              <term> 1</term>
+              <description>
+                <paramref name="value" /> &gt; 0.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArithmeticException">
+          <paramref name="value" /> is equal to <see cref="F:System.Single.NaN" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sin">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Sin(float64 a)" />
+      <MemberSignature Language="C#" Value="public static double Sin (double a);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="a">A <see cref="T:System.Double" /> containing the value of an angle measured in radians.</param>
+        <summary>
+          <para> Returns the sine of the specified <see cref="T:System.Double" /> that represents an angle.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> containing the value of the sine of <paramref name="a" />. If
+<paramref name="a" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />, 
+   returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Multiply by
+      <pi />/180 to convert degrees to radians.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Sin(System.Double)" /> method.</para>
+          <code lang="C#">using System;
+
+public class MathSinExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Sin(0);
+      Double d2 = Math.Sin(Math.PI/2.0);
+      Console.WriteLine("Math.Sin(0) returns {0}", d1);
+      Console.WriteLine("Math.Sin(Math.PI/2.0) returns {0}", d2);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Sin(0) returns 0</para>
+            <para>Math.Sin(Math.PI/2.0) returns 1</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sinh">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Sinh(float64 value)" />
+      <MemberSignature Language="C#" Value="public static double Sinh (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> containing the value of an angle measured in radians.</param>
+        <summary>
+          <para>Returns the hyperbolic sine of the specified <see cref="T:System.Double" /> that represents an angle.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> containing the value of the hyperbolic sine of
+<paramref name="value" />. If <paramref name="value" /> is equal to <see cref="F:System.Double.NegativeInfinity" />, 
+<see cref="F:System.Double.PositiveInfinity" />, or <see cref="F:System.Double.NaN" />, returns a <see cref="T:System.Double" /> equal to <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Multiply by <pi />/180 to convert degrees
+      to radians.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Sinh(System.Double)" /> method.</para>
+          <code lang="C#">using System;
+
+public class MathSinhExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Sinh(0);
+      Double d2 = Math.Sinh(Math.PI);
+      Console.WriteLine("Math.Sinh(0) returns {0}", d1);
+      Console.WriteLine("Math.Sinh(Math.PI) returns {0}", d2);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Sinh(0) returns 0</para>
+            <para>Math.Sinh(Math.PI) returns 11.5487393572577</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sqrt">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Sqrt(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Sqrt (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Double" /> .</param>
+        <summary>
+          <para>Returns the square root of the specified <see cref="T:System.Double" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> whose value is indicated as
+   follows:</para>
+          <list type="table">
+            <listheader>
+              <term>Condition</term>
+              <description>Returns</description>
+            </listheader>
+            <item>
+              <term>
+                <paramref name="d" /> &gt;=
+      0</term>
+              <description>A
+   <see cref="T:System.Double" />
+   containing the positive square root of <paramref name="d" />.</description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="d" /> &lt;
+      0</para>
+                <para>
+                  <paramref name="d " />is equal to <see cref="F:System.Double.NegativeInfinity" />.</para>
+                <para>
+                  <paramref name="d " />is equal to <see cref="F:System.Double.NaN" />.</para>
+              </term>
+              <description>
+                <see cref="F:System.Double.NaN" />.</description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="d " />is equal to <see cref="F:System.Double.PositiveInfinity" /></para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.PositiveInfinity" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Sqrt(System.Double)" /> method.</para>
+          <code lang="C#">using System;
+
+public class MathSqrtExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Sqrt(16.0);
+      Double d2 = Math.Sqrt(0.0);
+      Double d3 = Math.Sqrt(-10.0);
+      Console.WriteLine("Math.Sqrt(16.0) returns {0}", d1);
+      Console.WriteLine("Math.Sqrt(0.0) returns {0}", d2);
+      Console.WriteLine("Math.Sqrt(-10.0) returns {0}", d3);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Sqrt(16.0) returns 4</para>
+            <para>Math.Sqrt(0.0) returns 0</para>
+            <para>Math.Sqrt(-10.0) returns NaN</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Tan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Tan(float64 a)" />
+      <MemberSignature Language="C#" Value="public static double Tan (double a);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="a">A <see cref="T:System.Double" /> that represents an angle measured in radians.</param>
+        <summary>
+          <para> Returns the tangent of the specified <see cref="T:System.Double" /> that represents an angle.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> containing the value of the tangent of <paramref name="a" />. If a
+   is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />,
+   returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Multiply by <pi />/180 to convert degrees
+      to radians.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Tan(System.Double)" /> method.</para>
+          <code lang="C#">using System;
+
+public class MathTanExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Tan(0);
+      Double d2 = Math.Tan(Math.PI/2.0);
+      Console.WriteLine("Math.Tan(0) returns {0}", d1);
+      Console.WriteLine("Math.Tan(Math.PI/2.0) returns {0}", d2);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Tan(0) returns 0</para>
+            <para>Math.Tan(Math.PI/2.0) returns 1.63317787283838E+16</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Tanh">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Tanh(float64 value)" />
+      <MemberSignature Language="C#" Value="public static double Tanh (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> that represents an angle measured in radians.</param>
+        <summary>
+          <para>Returns the hyperbolic tangent of the specified <see cref="T:System.Double" /> that represents an angle.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> containing the value of the hyperbolic tangent of
+<paramref name="value" />. If <paramref name="value" /> is equal to <see cref="F:System.Double.NegativeInfinity" />, returns -1. If value is equal to <see cref="F:System.Double.PositiveInfinity" />,
+   returns 1. If value is equal to <see cref="F:System.Double.NaN" />, returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Multiply by <pi />/180 to convert degrees to radians.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Math.Tanh(System.Double)" /> method.</para>
+          <code lang="C#">using System;
+
+public class MathTanhExample
+{
+
+   public static void Main()
+   {
+
+      Double d1 = Math.Tanh(0);
+      Double d2 = Math.Tanh(Math.PI);
+      Console.WriteLine("Math.Tanh(0) returns {0}", d1);
+      Console.WriteLine("Math.Tanh(Math.PI) returns {0}", d2);
+
+   }
+
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Math.Tanh(0) returns 0 </para>
+            <para>Math.Tanh(Math.PI) returns 0.99627207622075</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Truncate">
+      <MemberSignature Language="C#" Value="public static decimal Truncate (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Truncate">
+      <MemberSignature Language="C#" Value="public static double Truncate (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

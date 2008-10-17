@@ -1,0 +1,41 @@
+<Type Name="Converter&lt;TInput,TOutput&gt;" FullName="System.Converter&lt;TInput,TOutput&gt;">
+  <TypeSignature Language="C#" Value="public delegate TOutput Converter&lt;TInput,TOutput&gt;(TInput input);" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TInput" />
+    <TypeParameter Name="TOutput" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="input" Type="TInput" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>TOutput</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <typeparam name="TInput">To be added.</typeparam>
+    <typeparam name="TOutput">To be added.</typeparam>
+    <param name="input">To be added.</param>
+    <summary>
+      <para>Represents the method that converts an object from one type to another.</para>
+    </summary>
+    <value>
+      <para>The object converted to the target type.</para>
+    </value>
+    <value>
+      <para>The object converted to the target type.</para>
+    </value>
+    <value>To be added.</value>
+    <remarks>
+      <block subset="none" type="note">
+        <para>This delegate is used by the method <see cref="M:System.Array.ConvertAll" /><see langword="(T[], Converter&lt;T,U&gt;)" />, and in <see cref="T:System.Collections.Generic.List&lt;T&gt; " /> to convert each elements of the collection from one type to another.</para>
+      </block>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

@@ -1,0 +1,322 @@
+<Type Name="SystemAcl" FullName="System.Security.AccessControl.SystemAcl">
+  <TypeSignature Language="C#" Value="public sealed class SystemAcl : System.Security.AccessControl.CommonAcl" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Security.AccessControl.CommonAcl</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SystemAcl (bool isContainer, bool isDS, int capacity);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="isContainer" Type="System.Boolean" />
+        <Parameter Name="isDS" Type="System.Boolean" />
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="isContainer">To be added.</param>
+        <param name="isDS">To be added.</param>
+        <param name="capacity">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SystemAcl (bool isContainer, bool isDS, System.Security.AccessControl.RawAcl rawAcl);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="isContainer" Type="System.Boolean" />
+        <Parameter Name="isDS" Type="System.Boolean" />
+        <Parameter Name="rawAcl" Type="System.Security.AccessControl.RawAcl" />
+      </Parameters>
+      <Docs>
+        <param name="isContainer">To be added.</param>
+        <param name="isDS">To be added.</param>
+        <param name="rawAcl">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SystemAcl (bool isContainer, bool isDS, byte revision, int capacity);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="isContainer" Type="System.Boolean" />
+        <Parameter Name="isDS" Type="System.Boolean" />
+        <Parameter Name="revision" Type="System.Byte" />
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="isContainer">To be added.</param>
+        <param name="isDS">To be added.</param>
+        <param name="revision">To be added.</param>
+        <param name="capacity">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddAudit">
+      <MemberSignature Language="C#" Value="public void AddAudit (System.Security.AccessControl.AuditFlags auditFlags, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="auditFlags" Type="System.Security.AccessControl.AuditFlags" />
+        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+      </Parameters>
+      <Docs>
+        <param name="auditFlags">To be added.</param>
+        <param name="sid">To be added.</param>
+        <param name="accessMask">To be added.</param>
+        <param name="inheritanceFlags">To be added.</param>
+        <param name="propagationFlags">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddAudit">
+      <MemberSignature Language="C#" Value="public void AddAudit (System.Security.AccessControl.AuditFlags auditFlags, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.ObjectAceFlags objectFlags, Guid objectType, Guid inheritedObjectType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="auditFlags" Type="System.Security.AccessControl.AuditFlags" />
+        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+        <Parameter Name="objectFlags" Type="System.Security.AccessControl.ObjectAceFlags" />
+        <Parameter Name="objectType" Type="System.Guid" />
+        <Parameter Name="inheritedObjectType" Type="System.Guid" />
+      </Parameters>
+      <Docs>
+        <param name="auditFlags">To be added.</param>
+        <param name="sid">To be added.</param>
+        <param name="accessMask">To be added.</param>
+        <param name="inheritanceFlags">To be added.</param>
+        <param name="propagationFlags">To be added.</param>
+        <param name="objectFlags">To be added.</param>
+        <param name="objectType">To be added.</param>
+        <param name="inheritedObjectType">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveAudit">
+      <MemberSignature Language="C#" Value="public bool RemoveAudit (System.Security.AccessControl.AuditFlags auditFlags, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="auditFlags" Type="System.Security.AccessControl.AuditFlags" />
+        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+      </Parameters>
+      <Docs>
+        <param name="auditFlags">To be added.</param>
+        <param name="sid">To be added.</param>
+        <param name="accessMask">To be added.</param>
+        <param name="inheritanceFlags">To be added.</param>
+        <param name="propagationFlags">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveAudit">
+      <MemberSignature Language="C#" Value="public bool RemoveAudit (System.Security.AccessControl.AuditFlags auditFlags, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.ObjectAceFlags objectFlags, Guid objectType, Guid inheritedObjectType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="auditFlags" Type="System.Security.AccessControl.AuditFlags" />
+        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+        <Parameter Name="objectFlags" Type="System.Security.AccessControl.ObjectAceFlags" />
+        <Parameter Name="objectType" Type="System.Guid" />
+        <Parameter Name="inheritedObjectType" Type="System.Guid" />
+      </Parameters>
+      <Docs>
+        <param name="auditFlags">To be added.</param>
+        <param name="sid">To be added.</param>
+        <param name="accessMask">To be added.</param>
+        <param name="inheritanceFlags">To be added.</param>
+        <param name="propagationFlags">To be added.</param>
+        <param name="objectFlags">To be added.</param>
+        <param name="objectType">To be added.</param>
+        <param name="inheritedObjectType">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveAuditSpecific">
+      <MemberSignature Language="C#" Value="public void RemoveAuditSpecific (System.Security.AccessControl.AuditFlags auditFlags, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="auditFlags" Type="System.Security.AccessControl.AuditFlags" />
+        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+      </Parameters>
+      <Docs>
+        <param name="auditFlags">To be added.</param>
+        <param name="sid">To be added.</param>
+        <param name="accessMask">To be added.</param>
+        <param name="inheritanceFlags">To be added.</param>
+        <param name="propagationFlags">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveAuditSpecific">
+      <MemberSignature Language="C#" Value="public void RemoveAuditSpecific (System.Security.AccessControl.AuditFlags auditFlags, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.ObjectAceFlags objectFlags, Guid objectType, Guid inheritedObjectType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="auditFlags" Type="System.Security.AccessControl.AuditFlags" />
+        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+        <Parameter Name="objectFlags" Type="System.Security.AccessControl.ObjectAceFlags" />
+        <Parameter Name="objectType" Type="System.Guid" />
+        <Parameter Name="inheritedObjectType" Type="System.Guid" />
+      </Parameters>
+      <Docs>
+        <param name="auditFlags">To be added.</param>
+        <param name="sid">To be added.</param>
+        <param name="accessMask">To be added.</param>
+        <param name="inheritanceFlags">To be added.</param>
+        <param name="propagationFlags">To be added.</param>
+        <param name="objectFlags">To be added.</param>
+        <param name="objectType">To be added.</param>
+        <param name="inheritedObjectType">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetAudit">
+      <MemberSignature Language="C#" Value="public void SetAudit (System.Security.AccessControl.AuditFlags auditFlags, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="auditFlags" Type="System.Security.AccessControl.AuditFlags" />
+        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+      </Parameters>
+      <Docs>
+        <param name="auditFlags">To be added.</param>
+        <param name="sid">To be added.</param>
+        <param name="accessMask">To be added.</param>
+        <param name="inheritanceFlags">To be added.</param>
+        <param name="propagationFlags">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetAudit">
+      <MemberSignature Language="C#" Value="public void SetAudit (System.Security.AccessControl.AuditFlags auditFlags, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.ObjectAceFlags objectFlags, Guid objectType, Guid inheritedObjectType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="auditFlags" Type="System.Security.AccessControl.AuditFlags" />
+        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+        <Parameter Name="objectFlags" Type="System.Security.AccessControl.ObjectAceFlags" />
+        <Parameter Name="objectType" Type="System.Guid" />
+        <Parameter Name="inheritedObjectType" Type="System.Guid" />
+      </Parameters>
+      <Docs>
+        <param name="auditFlags">To be added.</param>
+        <param name="sid">To be added.</param>
+        <param name="accessMask">To be added.</param>
+        <param name="inheritanceFlags">To be added.</param>
+        <param name="propagationFlags">To be added.</param>
+        <param name="objectFlags">To be added.</param>
+        <param name="objectType">To be added.</param>
+        <param name="inheritedObjectType">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

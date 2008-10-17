@@ -1,0 +1,64 @@
+<Type Name="DebuggerBrowsableState" FullName="System.Diagnostics.DebuggerBrowsableState">
+  <TypeSignature Language="C#" Value="public enum DebuggerBrowsableState" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Collapsed">
+      <MemberSignature Language="C#" Value="Collapsed" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.DebuggerBrowsableState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Never">
+      <MemberSignature Language="C#" Value="Never" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.DebuggerBrowsableState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RootHidden">
+      <MemberSignature Language="C#" Value="RootHidden" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.DebuggerBrowsableState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

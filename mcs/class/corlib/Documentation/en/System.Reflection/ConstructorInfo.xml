@@ -1,0 +1,470 @@
+<Type Name="ConstructorInfo" FullName="System.Reflection.ConstructorInfo" FullNameSP="System_Reflection_ConstructorInfo" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable ConstructorInfo extends System.Reflection.MethodBase" />
+  <TypeSignature Language="C#" Value="public abstract class ConstructorInfo : System.Reflection.MethodBase, System.Runtime.InteropServices._ConstructorInfo" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations. </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Reflection.MethodBase</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.InteropServices._ConstructorInfo</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._ConstructorInfo))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Provides access to constructor metadata.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+    <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected ConstructorInfo ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs a new instance of the <see cref="T:System.Reflection.ConstructorInfo" />
+class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConstructorName">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string ConstructorName" />
+      <MemberSignature Language="C#" Value="public static readonly string ConstructorName;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> A string containing the name of an object constructor
+      as it is stored in metadata. </para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>This field is a <see cref="T:System.String" /> that contains the value ".ctor". An object
+   constructor will be named with this field if and only if it is not a type initializer.</para>
+          <block subset="none" type="note">
+            <para>For more information on type
+      initializers, see <see cref="F:System.Reflection.ConstructorInfo.TypeConstructorName" />.</para>
+            <para>For more information on object constructors, see Partition II of the CLI
+      Specification.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>.ctor</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance object Invoke(class System.Object[] parameters)" />
+      <MemberSignature Language="C#" Value="public object Invoke (object[] parameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="parameters">An array of objects that match the number, order and type of the parameters for the constructor reflected by the current instance. If the constructor reflected by the current instance takes no parameters, specify either an array with zero elements or <see langword="null" />. <block subset="none" type="note">Any object in this array that is not explicitly initialized with a value will contain the default value for that object type. For reference-type elements, this value is <see langword="null" />. For value-type elements, this value is 0, 0.0, or <see langword="false" /> , depending on the specific element type.</block></param>
+        <summary>
+          <para> Invokes the constructor reflected by the current instance using the specified
+      parameters.</para>
+        </summary>
+        <returns>
+          <para>An
+      instance of the class that declared the constructor reflected by the
+      current instance.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>The types of the elements of <paramref name="parameters" /> do not match the types of the parameters accepted by the constructor reflected by the current instance, under the constraints of the default binder.</para>
+        </exception>
+        <exception cref="T:System.MethodAccessException">The caller does not have the required permissions.</exception>
+        <exception cref="T:System.Reflection.TargetInvocationException">The constructor reflected by the current instance threw an exception.</exception>
+        <exception cref="T:System.Reflection.TargetParameterCountException">
+          <paramref name="parameters" />.Length does not equal the number of parameters required by the contract of the constructor reflected by the current instance.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to invoke non-public members of loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract object Invoke(valuetype System.Reflection.BindingFlags invokeAttr, class System.Reflection.Binder binder, class System.Object[] parameters, class System.Globalization.CultureInfo culture)" />
+      <MemberSignature Language="C#" Value="public abstract object Invoke (System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="invokeAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="binder" Type="System.Reflection.Binder" />
+        <Parameter Name="parameters" Type="System.Object[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="invokeAttr">A <see cref="T:System.Reflection.BindingFlags" /> value that controls the binding process.</param>
+        <param name="binder">A <see cref="T:System.Reflection.Binder" /> that defines a set of properties and enables the binding, coercion of argument types, and invocation of members using reflection. If <paramref name="binder " />is <see langword="null" />, then the default binder is used.</param>
+        <param name="parameters">An array of objects that match the number, order and type of the parameters for the constructor reflected by the current instance. If the constructor reflected by the current instance takes no parameters, specify either an array with zero elements or <see langword="null" /> . <block subset="none" type="note">Any object in this array that is not explicitly initialized with a value will contain the default value for that object type. For reference-type elements, this value is <see langword="null" />. For value-type elements, this value is 0, 0.0, or <see langword="false" />, depending on the specific element type.</block></param>
+        <param name="culture">
+          <para>The only defined value for this parameter is <see langword="null" /> .</para>
+        </param>
+        <param name="binder">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <param name="culture">To be added.</param>
+        <summary>
+          <para> Invokes the constructor reflected by the current
+      instance using the specified arguments, under the constraints of the specified <see cref="T:System.Reflection.Binder" />
+      .</para>
+        </summary>
+        <returns>
+          <para>An instance of the class that declared the constructor reflected by the current instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">Before calling
+      the constructor, this method ensures that the caller has access permission and
+      that the parameters are of the correct number, order and type.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The types of the elements of <paramref name="parameters" /> do not match the types of the parameters accepted by the constructor reflected by the current instance, under the constraints of <paramref name="binder" />.</exception>
+        <exception cref="T:System.MethodAccessException">The caller does not have the required permissions.</exception>
+        <exception cref="T:System.Reflection.TargetInvocationException">The constructor reflected by the current instance threw an exception.</exception>
+        <exception cref="T:System.Reflection.TargetParameterCountException">
+          <paramref name="parameters" />.Length does not equal the number of parameters required by the contract of the constructor reflected by the current instance.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to invoke non-public members of loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MemberType">
+      <MemberSignature Language="C#" Value="public override System.Reflection.MemberTypes MemberType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MemberTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ConstructorInfo.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _ConstructorInfo.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="rgszNames" Type="System.IntPtr" />
+        <Parameter Name="cNames" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="rgDispId" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="riid">To be added.</param>
+        <param name="rgszNames">To be added.</param>
+        <param name="cNames">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="rgDispId">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ConstructorInfo.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _ConstructorInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="iTInfo" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="ppTInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="iTInfo">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="ppTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ConstructorInfo.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _ConstructorInfo.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcTInfo" Type="System.UInt32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pcTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ConstructorInfo.Invoke">
+      <MemberSignature Language="C#" Value="void _ConstructorInfo.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dispIdMember" Type="System.UInt32" />
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="wFlags" Type="System.Int16" />
+        <Parameter Name="pDispParams" Type="System.IntPtr" />
+        <Parameter Name="pVarResult" Type="System.IntPtr" />
+        <Parameter Name="pExcepInfo" Type="System.IntPtr" />
+        <Parameter Name="puArgErr" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dispIdMember">To be added.</param>
+        <param name="riid">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="wFlags">To be added.</param>
+        <param name="pDispParams">To be added.</param>
+        <param name="pVarResult">To be added.</param>
+        <param name="pExcepInfo">To be added.</param>
+        <param name="puArgErr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ConstructorInfo.Invoke_2">
+      <MemberSignature Language="C#" Value="object _ConstructorInfo.Invoke_2 (object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="invokeAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="binder" Type="System.Reflection.Binder" />
+        <Parameter Name="parameters" Type="System.Object[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <param name="invokeAttr">To be added.</param>
+        <param name="binder">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <param name="culture">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ConstructorInfo.Invoke_3">
+      <MemberSignature Language="C#" Value="object _ConstructorInfo.Invoke_3 (object obj, object[] parameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="parameters" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ConstructorInfo.Invoke_4">
+      <MemberSignature Language="C#" Value="object _ConstructorInfo.Invoke_4 (System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="invokeAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="binder" Type="System.Reflection.Binder" />
+        <Parameter Name="parameters" Type="System.Object[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="invokeAttr">To be added.</param>
+        <param name="binder">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <param name="culture">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ConstructorInfo.Invoke_5">
+      <MemberSignature Language="C#" Value="object _ConstructorInfo.Invoke_5 (object[] parameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TypeConstructorName">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string TypeConstructorName" />
+      <MemberSignature Language="C#" Value="public static readonly string TypeConstructorName;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> A string containing the name of a type initializer as it is stored in
+      metadata. </para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>This field is a <see cref="T:System.String" /> that contains the value ".cctor".</para>
+          <block subset="none" type="note">
+            <para> A type initializer can be applied to all types. It
+      allows the type to perform any initialization required before any members
+      declared within the type are accessed. Type initializers accept no parameters
+      and always have a return type of void. A type constructor only has access to a
+      type's static fields and its usual purpose is to initialize those fields. A
+      type's constructor is guaranteed to run before any instance of the type is
+      created and before any static field or method of the type is referenced. </para>
+            <para>Many languages (including C#) automatically generate type constructors for
+      all implementer-defined types. However, some languages require that type
+      constructors be explicitly implemented.</para>
+            <para>For more information on type initializers, see Partition II of the CLI
+      Specification.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>.cctor</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

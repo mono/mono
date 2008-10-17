@@ -1,0 +1,250 @@
+<Type Name="MissingMemberException" FullName="System.MissingMemberException" FullNameSP="System_MissingMemberException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable MissingMemberException extends System.MemberAccessException" />
+  <TypeSignature Language="C#" Value="public class MissingMemberException : MemberAccessException" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.MemberAccessException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Represents the error that occurs when there is an attempt to dynamically access a class member that
+      does not exist.</para>
+    </summary>
+    <remarks>
+      <para> Normally a compilation error is generated if code
+      attempts to access a nonexistent member of a class.
+      <see cref="T:System.MissingMemberException" /> is
+      designed to handle cases where an attempt is made to dynamically access a
+      renamed or deleted member of an assembly that is not referenced by its strong
+      name. The <see cref="T:System.MissingMemberException" />
+      is thrown when code in a dependent assembly attempts to access a missing member in
+      an assembly that was modified.</para>
+      <block subset="none" type="note">
+        <para>The Base Class Library includes the following derived types:
+         <list type="bullet"><item><term><see cref="T:System.MissingFieldException" /></term></item><item><term><see cref="T:System.MissingMethodException" /></term></item></list></para>
+        <para>When appropriate, use these types instead of <see cref="T:System.MissingMemberException" />.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public MissingMemberException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.MissingMemberException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.MissingMemberException.Message" /> property of the new instance to a
+   system-supplied message that describes the error, such as "Attempted to access a
+   missing member." This message takes into account the current system culture.</para>
+          <para>The <see cref="!:System.MissingMemberException.InnerException" /> property of the new
+instance is initialized to <see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public MissingMemberException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.MissingMemberException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.MissingMemberException.Message" /> property of the new instance
+   using <paramref name="message" />. If <paramref name="message" /> is
+<see langword="null" />, the <see cref="P:System.MissingMemberException.Message" /> property is initialized to the 
+   system-supplied message provided by the constructor that takes no
+   arguments. </para>
+          <para> The <see cref="!:System.MissingMemberException.InnerException" /> property of the new
+instance is initialized to <see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MissingMemberException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public MissingMemberException (string message, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is not a <see langword="null" /> reference, the current exception was raised in a catch block handling <paramref name="inner" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.MissingMemberException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.MissingMemberException.Message" /> property of the
+   new instance using <paramref name="message" /> and the <see cref="!:System.MissingMemberException.InnerException" /> property using
+<paramref name="inner" />. If <paramref name="message" /> is <see langword="null" />, the 
+<see cref="P:System.MissingMemberException.Message" /> property is initialized to the system-supplied message 
+   provided by the constructor that takes no arguments.</para>
+          <block subset="none" type="note">For more information on inner
+   exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MissingMemberException (string className, string memberName);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="className" Type="System.String" />
+        <Parameter Name="memberName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="className">To be added.</param>
+        <param name="memberName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ClassName">
+      <MemberSignature Language="C#" Value="protected string ClassName;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MemberName">
+      <MemberSignature Language="C#" Value="protected string MemberName;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="public override string Message { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Signature">
+      <MemberSignature Language="C#" Value="protected byte[] Signature;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

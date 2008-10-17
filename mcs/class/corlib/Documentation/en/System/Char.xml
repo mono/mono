@@ -1,0 +1,2148 @@
+<Type Name="Char" FullName="System.Char" FullNameSP="System_Char" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sequential sealed serializable Char extends System.ValueType implements System.IComparable" />
+  <TypeSignature Language="C#" Value="public struct Char : IComparable, IComparable&lt;char&gt;, IConvertible, IEquatable&lt;char&gt;" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations. </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IComparable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IComparable&lt;System.Char&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IConvertible</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.Char&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Represents a Unicode character.
+      </para>
+    </summary>
+    <remarks>
+      <para> The <see cref="T:System.Char" /> value
+   type represents Unicode characters, with
+   code points ranging from 0 to 65,535.
+   </para>
+      <para>
+        <block subset="none" type="note"> The <paramref name="code point" /> of a Unicode
+character is that character's 2-byte, encoded value.</block>
+      </para>
+      <para>
+        <block subset="none" type="note">The <see cref="T:System.Globalization.UnicodeCategory" /> enumeration describes the categories that
+a Unicode character can be mapped to. For information on mapping specific Unicode
+characters to Unicode categories, see the UnicodeData.txt file in the
+Unicode Character Database at http://www.unicode.org/Public/UNIDATA/UnicodeCharacterDatabase.html. The
+UnicodeData.txt file format is described at http://www.unicode.org/Public/3.1-Update/UnicodeData-3.1.0.html.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="C#" Value="public int CompareTo (char value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+          <para>Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.Char" />
+      .</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> A negative number</term>
+              <description>Current instance &lt; <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>Current instance == <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>Current instance &gt; <paramref name="value" />.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>The comparison performed by this method is based on the
+      code points of the current instance and <paramref name="value" />, not necessarily their
+      lexicographical characteristics.</para>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IComparable&lt;Char&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object value)" />
+      <MemberSignature Language="C#" Value="public int CompareTo (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para>Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.Object" />
+      .</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> A negative number</term>
+              <description>Current instance &lt; <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>Current instance == <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>
+                <para>Current instance &gt; <paramref name="value" />, or
+<paramref name="value" /> is a null reference.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>The comparison performed by this method is based on the
+      code points of the current instance and <paramref name="value" />, not necessarily their
+      lexicographical characteristics.</para>
+          <para>
+            <block subset="none" type="note"> This method is
+      implemented to support the <see cref="T:System.IComparable" /> interface.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="value" /> is not a <see cref="T:System.Char" /> and is not a null reference.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertFromUtf32">
+      <MemberSignature Language="C#" Value="public static string ConvertFromUtf32 (int utf32);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="utf32" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="utf32">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertToUtf32">
+      <MemberSignature Language="C#" Value="public static int ConvertToUtf32 (char highSurrogate, char lowSurrogate);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="highSurrogate" Type="System.Char" />
+        <Parameter Name="lowSurrogate" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="highSurrogate">To be added.</param>
+        <param name="lowSurrogate">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertToUtf32">
+      <MemberSignature Language="C#" Value="public static int ConvertToUtf32 (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (char obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>
+          <para>Determines whether the current instance and the 
+ specified <see cref="T:System.Char" /> represent the same value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="obj" /> represents the 
+ same value as the current instance; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>The comparison performed by this method is based on the 
+ code points of the current instance and <paramref name="obj" />, not necessarily their
+ lexicographical characteristics.</para>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IEquatable&lt;Char&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object obj)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance and the 
+ specified <see cref="T:System.Object" /> represent the same type and
+ value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="obj" /> represents the 
+ same type and value as the current instance. If <paramref name="obj" /> is a null reference
+ or is not an instance of <see cref="T:System.Char" />, returns <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>The comparison performed by this method is based on the 
+ code points of the current instance and <paramref name="obj" />, not necessarily their
+ lexicographical characteristics.</para>
+          <para>
+            <block subset="none" type="note"> This method 
+ overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> value containing a hash code for the current instance.</para>
+        </returns>
+        <remarks>
+          <para> The algorithm used to
+      generate the hash code is unspecified.</para>
+          <para>
+            <block subset="none" type="note"> This method
+      overrides <see cref="M:System.Object.GetHashCode" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetNumericValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 GetNumericValue(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static double GetNumericValue (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character.</param>
+        <summary>
+          <para> Returns the numeric value associated with the specified
+      Unicode character.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> representing the numeric value associated with
+<paramref name="c" /> if and only if <paramref name="c" /> has an associated numeric value;
+   otherwise, -1.0.</para>
+        </returns>
+        <remarks>
+          <para>A character has an associated numeric value if and only
+      if it is a member of one of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />, <see cref="F:System.Globalization.UnicodeCategory.LetterNumber" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherNumber" />.</para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.Char.GetNumericValue(System.Char)" /> 
+method.</para>
+          <code lang="C#">using System;
+public class GetNumericValueExample {
+public static void Main() {
+   Char[] cAry = {'8', 'V', Convert.ToChar(0X00BC)};
+   //Unicode U+00BC is the code point for the character 
+   //representation of 1/4
+   foreach(Char c in cAry) {
+      Console.Write("Numeric value of Unicode " +
+                    "character {0} ", c);
+      Console.WriteLine(" is {0}",
+                        Char.GetNumericValue(c));
+   }
+}
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Numeric value of Unicode character 8 is 8</para>
+            <para>Numeric value of Unicode character V is -1</para>
+            <para>Numeric value of Unicode character <onequarter /> is 0.25</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetNumericValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 GetNumericValue(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static double GetNumericValue (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the position of a character in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Returns the numeric value associated with the Unicode
+      character at the specified position in the specified <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Double" /> representing the numeric value associated with the
+<see cref="T:System.Char" /> at position 
+<paramref name="index" /> in <paramref name="s" /> if and only if that <see cref="T:System.Char" />
+has an associated numeric value; otherwise, -1.0.</para>
+        </returns>
+        <remarks>
+          <para>A character has an associated numeric value if and only
+      if it is a member of one of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />, <see cref="F:System.Globalization.UnicodeCategory.LetterNumber" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherNumber" /> .</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTypeCode">
+      <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TypeCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetUnicodeCategory">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Globalization.UnicodeCategory GetUnicodeCategory(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static System.Globalization.UnicodeCategory GetUnicodeCategory (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character.</param>
+        <summary>
+          <para> Determines the <see cref="T:System.Globalization.UnicodeCategory" /> of the specified Unicode character.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Globalization.UnicodeCategory" /> of <paramref name="c" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> For more
+      information regarding Unicode categories, see <see cref="T:System.Globalization.UnicodeCategory" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetUnicodeCategory">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Globalization.UnicodeCategory GetUnicodeCategory(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static System.Globalization.UnicodeCategory GetUnicodeCategory (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the position of a character in <paramref name="s" />.</param>
+        <summary>
+          <para>Determines the <see cref="T:System.Globalization.UnicodeCategory" /> of the character at the specified
+   position in the specified <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Globalization.UnicodeCategory" /> of the <see cref="T:System.Char" /> at position index in <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> For more
+      information regarding Unicode categories, see <see cref="T:System.Globalization.UnicodeCategory" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsControl">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsControl(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsControl (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character.</param>
+        <summary>
+          <para> Determines whether the specified Unicode character
+      is a control character.</para>
+        </summary>
+        <returns>
+          <para>true if <paramref name="c" /> is a member of the following category
+   in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.Control" />; otherwise,
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsControl">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsControl(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsControl (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is a control character.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> is a member of the following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.Control" />; otherwise, 
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsDigit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDigit(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsDigit (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para> Determines whether a Unicode character is a
+      decimal digit.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> is a member of the
+   following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <see cref="M:System.Char.IsDigit(System.Char)" /> determines
+      if a Char is a radix-10 digit. This contrasts with <see cref="M:System.Char.IsNumber(System.Char)" />, which
+      determines if a <see cref="T:System.Char" /> is of any numeric Unicode category.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsDigit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDigit(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsDigit (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is a decimal digit.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> is a member of the following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />; otherwise, 
+<see langword="false" />. </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <see cref="M:System.Char.IsDigit(System.Char)" /> determines
+      if a <see cref="T:System.Char" /> is a
+      radix-10 digit. This contrasts with <see cref="M:System.Char.IsNumber(System.Char)" />, which determines if a <see cref="T:System.Char" /> is of any numeric Unicode category.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsHighSurrogate">
+      <MemberSignature Language="C#" Value="public static bool IsHighSurrogate (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsHighSurrogate">
+      <MemberSignature Language="C#" Value="public static bool IsHighSurrogate (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsLetter">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLetter(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsLetter (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para> Determines whether the specified Unicode character is
+      a letter.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> is a member of one
+   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.TitlecaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierLetter" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherLetter" />; otherwise,
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsLetter">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLetter(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsLetter (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is a letter.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> is a member of one of the following categories in 
+<see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.TitlecaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierLetter" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherLetter" />; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsLetterOrDigit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLetterOrDigit(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsLetterOrDigit (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para>Determines whether the specified Unicode character is either a letter or a decimal digit.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> is a member of one
+   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.TitlecaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierLetter" />, <see cref="F:System.Globalization.UnicodeCategory.OtherLetter" />, or <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsLetterOrDigit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLetterOrDigit(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsLetterOrDigit (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is either a letter or a decimal digit.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> is a member of one of the following categories in 
+<see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.TitlecaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierLetter" />, <see cref="F:System.Globalization.UnicodeCategory.OtherLetter" />, or <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />; otherwise, 
+<see langword="false" />. </para>
+          <para>
+            <see langword="" />
+          </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsLower">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLower(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsLower (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para> Determines whether the specified Unicode character is a lowercase letter.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> is a member of the
+   following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />; otherwise, <see langword="false" />.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsLower">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLower(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsLower (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is a lowercase letter.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> is a member of the following category 
+   in <see cref="T:System.Globalization.UnicodeCategory" />:<see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />;
+   otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsLowSurrogate">
+      <MemberSignature Language="C#" Value="public static bool IsLowSurrogate (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsLowSurrogate">
+      <MemberSignature Language="C#" Value="public static bool IsLowSurrogate (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsNumber">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsNumber(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsNumber (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para> Determines whether the specified
+      Unicode character is a number.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> is a member of one
+   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />, <see cref="F:System.Globalization.UnicodeCategory.LetterNumber" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherNumber" />; otherwise,
+<see langword="false" />. </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <see cref="M:System.Char.IsNumber(System.Char)" /> determines
+      if a <see cref="T:System.Char" /> is of
+      any numeric Unicode category. This contrasts with <see cref="M:System.Char.IsDigit(System.Char)" />, which
+      determines if a <see cref="T:System.Char" /> is a radix-10 digit.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsNumber">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsNumber(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsNumber (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is a number.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the
+   character at position <paramref name="index" /> in <paramref name="s" /> is a member of one of the
+   following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />, <see cref="F:System.Globalization.UnicodeCategory.LetterNumber" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherNumber" />; otherwise, <see langword="false" />
+   . </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <see cref="M:System.Char.IsNumber(System.Char)" /> determines
+      if a <see cref="T:System.Char" /> is of
+      any numeric Unicode category. This contrasts with <see cref="M:System.Char.IsDigit(System.Char)" />, which
+      determines if a <see cref="T:System.Char" />
+      is a radix-10 digit.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPunctuation">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsPunctuation(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsPunctuation (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para> Determines whether the specified Unicode character is a punctuation mark.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> is a member of one
+   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.ConnectorPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.DashPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.OpenPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.ClosePunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.InitialQuotePunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.FinalQuotePunctuation" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherPunctuation" />;
+   otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPunctuation">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsPunctuation(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsPunctuation (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is a punctuation mark.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> is a
+   member of one of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.ConnectorPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.DashPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.OpenPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.ClosePunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.InitialQuotePunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.FinalQuotePunctuation" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherPunctuation" />;
+   otherwise, <see langword="false" />.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSeparator">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsSeparator(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsSeparator (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para> Determines whether the specified Unicode character is a
+      separator character.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> is a member of one
+   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.SpaceSeparator" />, <see cref="F:System.Globalization.UnicodeCategory.LineSeparator" />, or <see cref="F:System.Globalization.UnicodeCategory.ParagraphSeparator" />;
+   otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSeparator">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsSeparator(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsSeparator (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is a separator character.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> is a member of one of the following categories in 
+<see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.SpaceSeparator" />, <see cref="F:System.Globalization.UnicodeCategory.LineSeparator" />, or <see cref="F:System.Globalization.UnicodeCategory.ParagraphSeparator" />; 
+   otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSurrogate">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsSurrogate(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsSurrogate (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para> Determines whether the specified Unicode character is a
+      surrogate character.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> is a member of the
+   following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.Surrogate" />; otherwise,
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSurrogate">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsSurrogate(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsSurrogate (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is a surrogate character.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> is a member of the following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.Surrogate" />; otherwise, 
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSurrogatePair">
+      <MemberSignature Language="C#" Value="public static bool IsSurrogatePair (char highSurrogate, char lowSurrogate);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="highSurrogate" Type="System.Char" />
+        <Parameter Name="lowSurrogate" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="highSurrogate">To be added.</param>
+        <param name="lowSurrogate">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSurrogatePair">
+      <MemberSignature Language="C#" Value="public static bool IsSurrogatePair (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSymbol">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsSymbol(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsSymbol (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para> Determines whether the specified Unicode character is a
+      symbol character.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> is a member of one
+   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.MathSymbol" />, <see cref="F:System.Globalization.UnicodeCategory.CurrencySymbol" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierSymbol" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherSymbol" />; otherwise, <see langword="false" />.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSymbol">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsSymbol(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsSymbol (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is a symbol character.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> is a member of one of the following categories in 
+<see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.MathSymbol" />, <see cref="F:System.Globalization.UnicodeCategory.CurrencySymbol" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierSymbol" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherSymbol" />; otherwise, <see langword="false" />.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsUpper">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsUpper(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsUpper (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para> Determines whether the specified Unicode character is an uppercase letter.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> is a member of the
+   following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />;
+   otherwise, <see langword="false" />.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsUpper">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsUpper(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsUpper (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in s.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is an uppercase letter.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> is a member of the following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />; otherwise, 
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsWhiteSpace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsWhiteSpace(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static bool IsWhiteSpace (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para> Determines whether the specified Unicode character is a whitespace character.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="c" /> either has a code
+   point of 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x0085, 0x2028, or 0x2029; or
+   is a member of the following category in <see cref="T:System.Globalization.UnicodeCategory" />:
+<see cref="F:System.Globalization.UnicodeCategory.SpaceSeparator" />; otherwise,
+<see langword="false" />.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsWhiteSpace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsWhiteSpace(string s, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsWhiteSpace (string s, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" />.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies a character position in <paramref name="s" />.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Determines whether the character at the specified
+      position in the specified <see cref="T:System.String" /> is a whitespace character.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the character at position
+<paramref name="index" /> in <paramref name="s" /> either has a code point of 0x0009, 0x000a, 0x000b, 
+   0x000c, 0x000d, 0x0085, 0x2028, or 0x2029; or is a member of the following
+   category in <see cref="T:System.Globalization.UnicodeCategory" />:
+<see cref="F:System.Globalization.UnicodeCategory.SpaceSeparator" />;
+   otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="s " />is a null reference.</para>
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxValue">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Char MaxValue = (char)0xFFFF" />
+      <MemberSignature Language="C#" Value="public const char MaxValue;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Contains the maximum code point for the <see cref="T:System.Char" /> type.</para>
+        </summary>
+        <remarks>
+          <para> The numeric value of this constant is 65,535.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>(char)0xFFFF</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MinValue">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Char MinValue = (char)0x0" />
+      <MemberSignature Language="C#" Value="public const char MinValue;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Contains the minimum code point for the <see cref="T:System.Char" /> type.</para>
+        </summary>
+        <remarks>
+          <para>The numeric value of this constant is 0.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>(char)0x0</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Char Parse(string s)" />
+      <MemberSignature Language="C#" Value="public static char Parse (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing a single Unicode character.</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Char" />
+value.</para>
+        </summary>
+        <returns>
+          <para> The <see cref="T:System.Char" /> value obtained from <paramref name="s" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> does not contain exactly one character.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToBoolean">
+      <MemberSignature Language="C#" Value="bool IConvertible.ToBoolean (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToByte">
+      <MemberSignature Language="C#" Value="byte IConvertible.ToByte (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToChar">
+      <MemberSignature Language="C#" Value="char IConvertible.ToChar (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDateTime">
+      <MemberSignature Language="C#" Value="DateTime IConvertible.ToDateTime (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDecimal">
+      <MemberSignature Language="C#" Value="decimal IConvertible.ToDecimal (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDouble">
+      <MemberSignature Language="C#" Value="double IConvertible.ToDouble (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt16">
+      <MemberSignature Language="C#" Value="short IConvertible.ToInt16 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt32">
+      <MemberSignature Language="C#" Value="int IConvertible.ToInt32 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt64">
+      <MemberSignature Language="C#" Value="long IConvertible.ToInt64 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSByte">
+      <MemberSignature Language="C#" Value="sbyte IConvertible.ToSByte (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSingle">
+      <MemberSignature Language="C#" Value="float IConvertible.ToSingle (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToType">
+      <MemberSignature Language="C#" Value="object IConvertible.ToType (Type type, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt16">
+      <MemberSignature Language="C#" Value="ushort IConvertible.ToUInt16 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt32">
+      <MemberSignature Language="C#" Value="uint IConvertible.ToUInt32 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt64">
+      <MemberSignature Language="C#" Value="ulong IConvertible.ToUInt64 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToLower">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Char ToLower(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static char ToLower (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para>Converts a <see cref="T:System.Char" />
+to its lowercase equivalent.</para>
+        </summary>
+        <returns>
+          <para>The lowercase equivalent of <paramref name="c" />, or the value of
+<paramref name="c" /> if and only if <paramref name="c" /> is already lowercase or does not have a 
+   lowercase equivalent.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.Char.ToLower(System.Char,System.Globalization.CultureInfo)" /> method.</para>
+          <code lang="C#">using System;
+public class CharToLower {
+   public static void Main() {
+      Char[] cAry = {'A', 'c', '*'};
+      foreach (Char c in cAry) {
+         Console.Write("Char '{0}' ToLower is ", c);
+         Console.WriteLine("{0}", Char.ToLower(c));
+      }
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Char 'A' ToLower is a</para>
+            <para>Char 'c' ToLower is c</para>
+            <para>Char '*' ToLower is *</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToLower">
+      <MemberSignature Language="C#" Value="public static char ToLower (char c, System.Globalization.CultureInfo culture);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="c">To be added.</param>
+        <param name="culture">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToLowerInvariant">
+      <MemberSignature Language="C#" Value="public static char ToLowerInvariant (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current
+   instance. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" />
+representation of the current instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> This method
+      overrides <see cref="M:System.Object.ToString" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public static string ToString (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">(Reserved) An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
+        <summary>
+          <para> Converts the value of this instance to its equivalent
+      <see langword="String" /> representation using the specified culture-specific
+      format information. </para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of the value of this instance as
+   specified by <paramref name="provider" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <paramref name="provider" /> is ignored; it does not participate in this operation.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToUpper">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Char ToUpper(valuetype System.Char c)" />
+      <MemberSignature Language="C#" Value="public static char ToUpper (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">A Unicode character. </param>
+        <summary>
+          <para>Converts a <see cref="T:System.Char" />
+to its uppercase equivalent.</para>
+        </summary>
+        <returns>
+          <para>The uppercase equivalent of <paramref name="c" />, or the value of <paramref name="c" /> if and
+   only if <paramref name="c" /> is already uppercase or does not have an uppercase
+   equivalent.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.Char.ToUpper(System.Char,System.Globalization.CultureInfo)" /> method.</para>
+          <code lang="C#">using System;
+public class CharToUpper {
+   public static void Main() {
+      Char[] cAry = {'A', 'c', '*'};
+      foreach (Char c in cAry) {
+         Console.Write("Char '{0}' ToUpper is {1}",
+                       c, Char.ToUpper(c));
+         Console.WriteLine();
+      }
+   }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Char 'A' ToUpper is A</para>
+            <para>Char 'c' ToUpper is C</para>
+            <para>Char '*' ToUpper is *</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToUpper">
+      <MemberSignature Language="C#" Value="public static char ToUpper (char c, System.Globalization.CultureInfo culture);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="c">To be added.</param>
+        <param name="culture">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToUpperInvariant">
+      <MemberSignature Language="C#" Value="public static char ToUpperInvariant (char c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="c">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string s, out char result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="result" Type="System.Char&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

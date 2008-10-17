@@ -1,0 +1,53 @@
+<Type Name="AssemblyLoadEventHandler" FullName="System.AssemblyLoadEventHandler" FullNameSP="System_AssemblyLoadEventHandler" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable AssemblyLoadEventHandler extends System.Delegate" />
+  <TypeSignature Language="C#" Value="public delegate void AssemblyLoadEventHandler(object sender, AssemblyLoadEventArgs args);" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Docs>
+    <param name="sender">The <see cref="T:System.AppDomain" /> that is the source of the event.</param>
+    <param name="args">
+      <para>A <see cref="T:System.AssemblyLoadEventArgs" /> that contains the event data.</para>
+    </param>
+    <summary>
+      <para>
+        <SPAN>Defines
+      the methods that are called in response to </SPAN>
+        <see cref="F:System.AppDomain.AssemblyLoad" /> events.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para> A <see cref="T:System.AssemblyLoadEventHandler" /> instance is used to specify the methods that are invoked
+      in response to a <see cref="F:System.AppDomain.AssemblyLoad" /> event. To associate an instance of
+   <see langword="AssemblyLoadEventHandler " />with an event, add the instance to the event. 
+      The methods referenced by the <see langword="AssemblyLoadEventHandler " />instance are
+      invoked whenever an assembly is loaded, until the <see langword="AssemblyLoadEventHandler " />instance is removed from the event. </para>
+        <para>For additional information about events, see Partitions I and II of the CLI Specification.</para>
+      </block>
+    </remarks>
+    <example>
+      <para>For an example that demonstrates creating a <see cref="T:System.AssemblyLoadEventHandler" />, see <see cref="F:System.AppDomain.AssemblyLoad" />.</para>
+    </example>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="args" Type="System.AssemblyLoadEventArgs" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

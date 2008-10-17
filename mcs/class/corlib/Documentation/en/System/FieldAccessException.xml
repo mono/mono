@@ -1,0 +1,206 @@
+<Type Name="FieldAccessException" FullName="System.FieldAccessException" FullNameSP="System_FieldAccessException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable FieldAccessException extends System.MemberAccessException" />
+  <TypeSignature Language="C#" Value="public class FieldAccessException : MemberAccessException" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.MemberAccessException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Represents the error that occurs when there is an attempt to access a field outside
+      the scope in which access is permitted.</para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">This exception is typically thrown when the access
+      level of a field in a class library is changed, and
+      one or more assemblies referencing the library have not been recompiled.</block>
+      </para>
+    </remarks>
+    <example>
+      <para>The following example demonstrates a scenario under
+      which <see cref="T:System.FieldAccessException" />
+      is thrown.</para>
+      <para>The following code contains a class with a public field (myField). This class
+      is compiled into a class library.</para>
+      <code lang="C#">using System;
+namespace TestNameSpace 
+{
+ public class Class1
+ {
+   public Class1()
+   { 
+     Console.WriteLine ("Constructing with public field");
+   }
+   public int myField = -1;
+ }
+}
+   </code>
+      <para>The following code references the class library above, and accesses
+      TestNameSpace.Class1.myField. This code is compiled into an application.</para>
+      <code lang="C#">using System;
+using TestNameSpace;
+class AppTest
+{
+  public static void Main()
+  {
+    Class1 test = new Class1();
+    Console.WriteLine("Accessing member {0}.", test.myField);
+  }
+}
+   </code>
+      <para>The output of the application is</para>
+      <c>
+        <para> Constructing with public field</para>
+        <para>Accessing member -1.</para>
+      </c>
+      <para>The code for the class library is changed and recompiled so that TestNameSpace.Class1.myField is no longer public. The following code changes
+      myField from public to private. </para>
+      <code lang="C#">using System;
+namespace TestNameSpace 
+{
+ public class Class1
+ {
+   public Class1()
+   {
+     Console.WriteLine ("Constructing with private field");
+   }
+   private int myField = -1;
+ }
+}
+   </code>
+      <para>When the application is executed again without being recompiled, the output
+      is</para>
+      <c>
+        <para> Unhandled Exception: System.FieldAccessException:
+         TestNameSpace.Class1.myField</para>
+        <para> at
+         AppTest.Main()</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public FieldAccessException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the
+   <see cref="T:System.FieldAccessException" />
+   class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.FieldAccessException.Message" />
+property of the new instance to a system-supplied message that describes the
+error, such as "Attempted to access a private or protected field inside a type."
+This message takes into account the current system culture.</para>
+          <para>The <see cref="!:System.FieldAccessException.InnerException" /> property of the new instance
+is initialized to <see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public FieldAccessException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the
+   <see cref="T:System.FieldAccessException" />
+   class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.FieldAccessException.Message" />
+property of the new instance using <paramref name="message" />. If <paramref name="message" /> is
+<see langword="null" />, the <see cref="!:System.FieldAccessException.Message" /> property is initialized to the 
+system-supplied message provided by the constructor that takes no
+arguments. </para>
+          <para> The <see cref="!:System.FieldAccessException.InnerException" /> property of
+the new instance is initialized to <see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected FieldAccessException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public FieldAccessException (string message, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is not a <see langword="null" /> reference, the current exception was raised in a catch block handling <paramref name="inner" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the
+   <see cref="T:System.FieldAccessException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.FieldAccessException.Message" /> property of the new instance
+   using <paramref name="message" /> and the <see cref="!:System.FieldAccessException.InnerException" /> property using
+<paramref name="inner" />. If <paramref name="message" /> is <see langword="null" />, 
+   the <see cref="!:System.FieldAccessException.Message" /> property is initialized to the system-supplied message
+   provided by the constructor that takes no arguments. </para>
+          <block subset="none" type="note">For more information on inner
+   exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

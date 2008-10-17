@@ -1,0 +1,134 @@
+<Type Name="LoaderOptimization" FullName="System.LoaderOptimization">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public enum LoaderOptimization" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>These values are used in <see cref="T:System.AppDomainSetup" /> to control the way code is JITed.
+
+<para>
+   As of Mono 1.1.9 the values are not used.
+</para></summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="DisallowBindings">
+      <MemberSignature Language="C#" Value="DisallowBindings" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.LoaderOptimization</ReturnType>
+      </ReturnValue>
+      <MemberValue>DisallowBindings</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="DomainMask">
+      <MemberSignature Language="C#" Value="DomainMask" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.LoaderOptimization</ReturnType>
+      </ReturnValue>
+      <MemberValue>DomainMask</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="MultiDomain">
+      <MemberSignature Language="C#" Value="MultiDomain" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.LoaderOptimization</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The code should be optimized for used across multiple domains.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MultiDomainHost">
+      <MemberSignature Language="C#" Value="MultiDomainHost" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.LoaderOptimization</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NotSpecified">
+      <MemberSignature Language="C#" Value="NotSpecified" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.LoaderOptimization</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SingleDomain">
+      <MemberSignature Language="C#" Value="SingleDomain" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.LoaderOptimization</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The code should be optimized for single domain use.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,174 @@
+<Type Name="ConditionalAttribute" FullName="System.Diagnostics.ConditionalAttribute" FullNameSP="System_Diagnostics_ConditionalAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable ConditionalAttribute extends System.Attribute" />
+  <TypeSignature Language="C#" Value="public sealed class ConditionalAttribute : Attribute" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Method, AllowMultiple=true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>Indicates to compilers that a method is callable if and only if a specified
+      pre-processing identifier has been defined on the method.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>A <see cref="T:System.Diagnostics.ConditionalAttribute" />, which has an
+      associated condition <see cref="P:System.Diagnostics.ConditionalAttribute.ConditionString" />, can be attached to the
+      definition of a method, creating a <paramref name="conditional" /><paramref name="method" />
+   . Thereafter, when a compiler encounters
+   a call to that method, it might choose to ignore the call unless a compilation
+   variable is defined at the site of the call, with a value that matches
+   in a case-sensitive manner the <see cref="P:System.Diagnostics.ConditionalAttribute.ConditionString" /> supplied to the <see cref="T:System.Diagnostics.ConditionalAttribute" />
+   
+   .</para>
+        <para>Note that compilers might provide several techniques to define such compilation variables, such
+   as:</para>
+        <list type="bullet">
+          <item>
+            <term>
+              <para>compiler command-line switches (for
+         example, <c>/define:DEBUG</c> )</para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>environment variables in the operating system shell
+            (for example, <c>SET
+            DEBUG=1</c>)</para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>as pragmas in the source code (for example, <c>#define DEBUG</c>, to define the
+            compilation variable, or <c>#undef DEBUG</c> to
+         undefine it)</para>
+            </term>
+          </item>
+        </list>
+        <para> CLS-Compliant compilers are permitted to ignore uses of the <see cref="T:System.Diagnostics.ConditionalAttribute" />
+.</para>
+      </block>
+    </remarks>
+    <example>
+      <para> The following example demonstrates the use of
+   <see cref="T:System.Diagnostics.ConditionalAttribute" /> with a
+      particular compiler that supports the use of this
+      attribute. The <see cref="P:System.Diagnostics.ConditionalAttribute.ConditionString" /> property of the current
+      attribute is initialized as "DEBUG".</para>
+      <c>
+        <code lang="C#">using System;
+using System.Diagnostics;
+
+public class MyClass { 
+
+  [ConditionalAttribute("DEBUG")] 
+  public static void Display() { 
+
+    Console.WriteLine("Compiled with DEBUG"); 
+  }
+}
+
+public class TestCondition { 
+
+  public static void Main() { 
+
+    Console.WriteLine("How was this compiled?"); 
+    MyClass.Display(); 
+    Console.WriteLine("&lt;eop&gt;"); 
+  }
+}
+      </code>
+      </c>
+      <para> When this code is compiled with the
+      compilation-variable DEBUG defined at the callsite, the
+      output when run is </para>
+      <c>
+        <para>
+How was this compiled?</para>
+        <para>Compiled with DEBUG</para>
+        <para>&lt;eop&gt;
+   </para>
+      </c>
+      <para> When this code is
+      compiled without the compilation-variable DEBUG defined at the callsite, the
+      output when run is</para>
+      <c>
+        <para>
+How was this compiled?</para>
+        <para>&lt;eop&gt;
+   </para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string conditionString)" />
+      <MemberSignature Language="C#" Value="public ConditionalAttribute (string conditionString);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="conditionString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="conditionString">A <see cref="T:System.String" /> that contains the pre-processing identifier that makes callable the target method of the current instance.</param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Diagnostics.ConditionalAttribute" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Diagnostics.ConditionalAttribute.ConditionString" /> property of the current instance using 
+<paramref name="conditionString" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConditionString">
+      <MemberSignature Language="ILASM" Value=".property string ConditionString { public hidebysig specialname instance string get_ConditionString() }" />
+      <MemberSignature Language="C#" Value="public string ConditionString { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the <see cref="T:System.String" /> that contains
+   the pre-processing identifier that makes callable the target method of the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" />
+that contains the pre-processing identifier that makes callable the target
+method of the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

@@ -1,0 +1,2318 @@
+<Type Name="AppDomain" FullName="System.AppDomain" FullNameSP="System_AppDomain" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed AppDomain extends System.MarshalByRefObject" />
+  <TypeSignature Language="C#" Value="public sealed class AppDomain : MarshalByRefObject, _AppDomain, System.Security.IEvidenceFactory" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.MarshalByRefObject</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System._AppDomain</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Security.IEvidenceFactory</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System._AppDomain))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>Represents an application domain, which is an isolated
+      environment where applications execute.</para>
+    </summary>
+    <remarks>
+      <para> Application domains, which are represented by <see cref="T:System.AppDomain" /> objects, provide isolation,
+   unloading, and security boundaries for executing managed
+   code. </para>
+      <para>Multiple application domains can run in a single
+   process; however, there is not a one-to-one correlation between application
+   domains and threads. Several threads can belong to a single application domain,
+   and while a given thread is not confined to a single application domain, at any
+   given time, a thread executes in a single application
+   domain.</para>
+      <para>Application domains are created using 
+   the <see langword="CreateDomain" /> method.
+<see cref="T:System.AppDomain" /> 
+instances are used to load and execute assemblies (<see cref="T:System.Reflection.Assembly" />).
+When a <see cref="T:System.AppDomain" /> is no longer in use, it can
+be unloaded.</para>
+      <para>The <see cref="T:System.AppDomain" /> class implements a set of
+events to enable applications to respond to the following conditions:</para>
+      <list type="table">
+        <listheader>
+          <term>Condition</term>
+          <description>Event</description>
+        </listheader>
+        <item>
+          <term>
+            <para>An assembly was loaded. </para>
+          </term>
+          <description>
+            <see cref="F:System.AppDomain.AssemblyLoad" />
+          </description>
+        </item>
+        <item>
+          <term> An
+         application
+         domain will be unloaded. </term>
+          <description>
+            <see cref="F:System.AppDomain.DomainUnload" />
+          </description>
+        </item>
+        <item>
+          <term> An unhandled exception was thrown. </term>
+          <description>
+            <see cref="F:System.AppDomain.UnhandledException" />
+          </description>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ActivationContext">
+      <MemberSignature Language="C#" Value="public ActivationContext ActivationContext { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ActivationContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendPrivatePath">
+      <MemberSignature Language="C#" Value="public void AppendPrivatePath (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("AppDomain.AppendPrivatePath has been deprecated. Please investigate the use of AppDomainSetup.PrivateBinPath instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ApplicationIdentity">
+      <MemberSignature Language="C#" Value="public ApplicationIdentity ApplicationIdentity { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ApplicationIdentity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ApplicationTrust">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrust ApplicationTrust { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Policy.ApplicationTrust</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplyPolicy">
+      <MemberSignature Language="C#" Value="public string ApplyPolicy (string assemblyName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="AssemblyLoad">
+      <MemberSignature Language="ILASM" Value=".event public event AssemblyLoad" />
+      <MemberSignature Language="C#" Value="public event AssemblyLoadEventHandler AssemblyLoad;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AssemblyLoadEventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Raised when an assembly is loaded.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para> This event is handled by a <see cref="T:System.AssemblyLoadEventHandler" /> delegate. Information about the event
+      is passed to the delegate in a <see cref="T:System.AssemblyLoadEventArgs" /> instance.</para>
+            <para>For additional information about events, see Partitions I and II of the CLI Specification.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AssemblyResolve">
+      <MemberSignature Language="C#" Value="public event ResolveEventHandler AssemblyResolve;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ResolveEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BaseDirectory">
+      <MemberSignature Language="C#" Value="public string BaseDirectory { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ClearPrivatePath">
+      <MemberSignature Language="C#" Value="public void ClearPrivatePath ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("AppDomain.ClearPrivatePath has been deprecated. Please investigate the use of AppDomainSetup.PrivateBinPath instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ClearShadowCopyPath">
+      <MemberSignature Language="C#" Value="public void ClearShadowCopyPath ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use AppDomainSetup.ShadowCopyDirectories")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="CreateComInstanceFrom">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateComInstanceFrom">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.ObjectHandle CreateComInstanceFrom (string assemblyFile, string typeName, byte[] hashValue, System.Configuration.Assemblies.AssemblyHashAlgorithm hashAlgorithm);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyFile" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="hashValue" Type="System.Byte[]" />
+        <Parameter Name="hashAlgorithm" Type="System.Configuration.Assemblies.AssemblyHashAlgorithm" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyFile">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <param name="hashValue">To be added.</param>
+        <param name="hashAlgorithm">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDomain">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.AppDomain CreateDomain(string friendlyName)" />
+      <MemberSignature Language="C#" Value="public static AppDomain CreateDomain (string friendlyName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AppDomain</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="friendlyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="friendlyName">A <see cref="T:System.String" /> containing the friendly name of the domain. </param>
+        <summary>
+          <para> Creates and returns a new application domain with the specified name.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.AppDomain" /> representing the newly created application domain.
+   </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">The <paramref name="friendlyName" /> parameter is intended to identify the domain
+   in a manner that is meaningful to humans. This string should be suitable for
+   display in user interfaces. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="friendlyName" /> is <see langword="null" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDomain">
+      <MemberSignature Language="C#" Value="public static AppDomain CreateDomain (string friendlyName, System.Security.Policy.Evidence securityInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AppDomain</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="friendlyName" Type="System.String" />
+        <Parameter Name="securityInfo" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="friendlyName">To be added.</param>
+        <param name="securityInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDomain">
+      <MemberSignature Language="C#" Value="public static AppDomain CreateDomain (string friendlyName, System.Security.Policy.Evidence securityInfo, AppDomainSetup info);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AppDomain</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="friendlyName" Type="System.String" />
+        <Parameter Name="securityInfo" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="info" Type="System.AppDomainSetup" />
+      </Parameters>
+      <Docs>
+        <param name="friendlyName">To be added.</param>
+        <param name="securityInfo">To be added.</param>
+        <param name="info">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDomain">
+      <MemberSignature Language="C#" Value="public static AppDomain CreateDomain (string friendlyName, System.Security.Policy.Evidence securityInfo, AppDomainSetup info, System.Security.PermissionSet grantSet, System.Security.Policy.StrongName[] fullTrustAssemblies);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.AppDomain</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="friendlyName" Type="System.String" />
+        <Parameter Name="securityInfo" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="info" Type="System.AppDomainSetup" />
+        <Parameter Name="grantSet" Type="System.Security.PermissionSet" />
+        <Parameter Name="fullTrustAssemblies" Type="System.Security.Policy.StrongName[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="friendlyName">To be added.</param>
+        <param name="securityInfo">To be added.</param>
+        <param name="info">To be added.</param>
+        <param name="grantSet">To be added.</param>
+        <param name="fullTrustAssemblies">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateDomain">
+      <MemberSignature Language="C#" Value="public static AppDomain CreateDomain (string friendlyName, System.Security.Policy.Evidence securityInfo, string appBasePath, string appRelativeSearchPath, bool shadowCopyFiles);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AppDomain</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="friendlyName" Type="System.String" />
+        <Parameter Name="securityInfo" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="appBasePath" Type="System.String" />
+        <Parameter Name="appRelativeSearchPath" Type="System.String" />
+        <Parameter Name="shadowCopyFiles" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="friendlyName">To be added.</param>
+        <param name="securityInfo">To be added.</param>
+        <param name="appBasePath">To be added.</param>
+        <param name="appRelativeSearchPath">To be added.</param>
+        <param name="shadowCopyFiles">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDomain">
+      <MemberSignature Language="C#" Value="public static AppDomain CreateDomain (string friendlyName, System.Security.Policy.Evidence securityInfo, string appBasePath, string appRelativeSearchPath, bool shadowCopyFiles, AppDomainInitializer adInit, string[] adInitArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AppDomain</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="friendlyName" Type="System.String" />
+        <Parameter Name="securityInfo" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="appBasePath" Type="System.String" />
+        <Parameter Name="appRelativeSearchPath" Type="System.String" />
+        <Parameter Name="shadowCopyFiles" Type="System.Boolean" />
+        <Parameter Name="adInit" Type="System.AppDomainInitializer" />
+        <Parameter Name="adInitArgs" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="friendlyName">To be added.</param>
+        <param name="securityInfo">To be added.</param>
+        <param name="appBasePath">To be added.</param>
+        <param name="appRelativeSearchPath">To be added.</param>
+        <param name="shadowCopyFiles">To be added.</param>
+        <param name="adInit">To be added.</param>
+        <param name="adInitArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.ObjectHandle CreateInstance (string assemblyName, string typeName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.ObjectHandle CreateInstance (string assemblyName, string typeName, object[] activationAttributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="activationAttributes" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <param name="activationAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes, System.Security.Policy.Evidence securityAttributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="ignoreCase" Type="System.Boolean" />
+        <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="binder" Type="System.Reflection.Binder" />
+        <Parameter Name="args" Type="System.Object[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+        <Parameter Name="activationAttributes" Type="System.Object[]" />
+        <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <param name="ignoreCase">To be added.</param>
+        <param name="bindingAttr">To be added.</param>
+        <param name="binder">To be added.</param>
+        <param name="args">To be added.</param>
+        <param name="culture">To be added.</param>
+        <param name="activationAttributes">To be added.</param>
+        <param name="securityAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstanceAndUnwrap">
+      <MemberSignature Language="C#" Value="public object CreateInstanceAndUnwrap (string assemblyName, string typeName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstanceAndUnwrap">
+      <MemberSignature Language="C#" Value="public object CreateInstanceAndUnwrap (string assemblyName, string typeName, object[] activationAttributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="activationAttributes" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <param name="activationAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstanceAndUnwrap">
+      <MemberSignature Language="C#" Value="public object CreateInstanceAndUnwrap (string assemblyName, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes, System.Security.Policy.Evidence securityAttributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="ignoreCase" Type="System.Boolean" />
+        <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="binder" Type="System.Reflection.Binder" />
+        <Parameter Name="args" Type="System.Object[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+        <Parameter Name="activationAttributes" Type="System.Object[]" />
+        <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <param name="ignoreCase">To be added.</param>
+        <param name="bindingAttr">To be added.</param>
+        <param name="binder">To be added.</param>
+        <param name="args">To be added.</param>
+        <param name="culture">To be added.</param>
+        <param name="activationAttributes">To be added.</param>
+        <param name="securityAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstanceFrom">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyFile" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyFile">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstanceFrom">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, object[] activationAttributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyFile" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="activationAttributes" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyFile">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <param name="activationAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstanceFrom">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes, System.Security.Policy.Evidence securityAttributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyFile" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="ignoreCase" Type="System.Boolean" />
+        <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="binder" Type="System.Reflection.Binder" />
+        <Parameter Name="args" Type="System.Object[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+        <Parameter Name="activationAttributes" Type="System.Object[]" />
+        <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyFile">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <param name="ignoreCase">To be added.</param>
+        <param name="bindingAttr">To be added.</param>
+        <param name="binder">To be added.</param>
+        <param name="args">To be added.</param>
+        <param name="culture">To be added.</param>
+        <param name="activationAttributes">To be added.</param>
+        <param name="securityAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstanceFromAndUnwrap">
+      <MemberSignature Language="C#" Value="public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstanceFromAndUnwrap">
+      <MemberSignature Language="C#" Value="public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName, object[] activationAttributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="activationAttributes" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <param name="activationAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateInstanceFromAndUnwrap">
+      <MemberSignature Language="C#" Value="public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes, System.Security.Policy.Evidence securityAttributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="ignoreCase" Type="System.Boolean" />
+        <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="binder" Type="System.Reflection.Binder" />
+        <Parameter Name="args" Type="System.Object[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+        <Parameter Name="activationAttributes" Type="System.Object[]" />
+        <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="typeName">To be added.</param>
+        <param name="ignoreCase">To be added.</param>
+        <param name="bindingAttr">To be added.</param>
+        <param name="binder">To be added.</param>
+        <param name="args">To be added.</param>
+        <param name="culture">To be added.</param>
+        <param name="activationAttributes">To be added.</param>
+        <param name="securityAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CurrentDomain">
+      <MemberSignature Language="C#" Value="public static AppDomain CurrentDomain { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AppDomain</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access, System.Collections.Generic.IEnumerable&lt;System.Reflection.Emit.CustomAttributeBuilder&gt; assemblyAttributes);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+        <Parameter Name="assemblyAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.Reflection.Emit.CustomAttributeBuilder&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="assemblyAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access, System.Security.Policy.Evidence evidence);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+        <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="evidence">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access, string dir);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+        <Parameter Name="dir" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="dir">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access, string dir, System.Security.Policy.Evidence evidence);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+        <Parameter Name="dir" Type="System.String" />
+        <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="dir">To be added.</param>
+        <param name="evidence">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access, System.Security.PermissionSet requiredPermissions, System.Security.PermissionSet optionalPermissions, System.Security.PermissionSet refusedPermissions);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+        <Parameter Name="requiredPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="optionalPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="requiredPermissions">To be added.</param>
+        <param name="optionalPermissions">To be added.</param>
+        <param name="refusedPermissions">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access, System.Security.Policy.Evidence evidence, System.Security.PermissionSet requiredPermissions, System.Security.PermissionSet optionalPermissions, System.Security.PermissionSet refusedPermissions);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+        <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="requiredPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="optionalPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="evidence">To be added.</param>
+        <param name="requiredPermissions">To be added.</param>
+        <param name="optionalPermissions">To be added.</param>
+        <param name="refusedPermissions">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access, string dir, System.Security.PermissionSet requiredPermissions, System.Security.PermissionSet optionalPermissions, System.Security.PermissionSet refusedPermissions);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+        <Parameter Name="dir" Type="System.String" />
+        <Parameter Name="requiredPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="optionalPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="dir">To be added.</param>
+        <param name="requiredPermissions">To be added.</param>
+        <param name="optionalPermissions">To be added.</param>
+        <param name="refusedPermissions">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access, string dir, System.Security.Policy.Evidence evidence, System.Security.PermissionSet requiredPermissions, System.Security.PermissionSet optionalPermissions, System.Security.PermissionSet refusedPermissions);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+        <Parameter Name="dir" Type="System.String" />
+        <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="requiredPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="optionalPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="dir">To be added.</param>
+        <param name="evidence">To be added.</param>
+        <param name="requiredPermissions">To be added.</param>
+        <param name="optionalPermissions">To be added.</param>
+        <param name="refusedPermissions">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access, string dir, System.Security.Policy.Evidence evidence, System.Security.PermissionSet requiredPermissions, System.Security.PermissionSet optionalPermissions, System.Security.PermissionSet refusedPermissions, bool isSynchronized);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+        <Parameter Name="dir" Type="System.String" />
+        <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="requiredPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="optionalPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="isSynchronized" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="dir">To be added.</param>
+        <param name="evidence">To be added.</param>
+        <param name="requiredPermissions">To be added.</param>
+        <param name="optionalPermissions">To be added.</param>
+        <param name="refusedPermissions">To be added.</param>
+        <param name="isSynchronized">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineDynamicAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly (System.Reflection.AssemblyName name, System.Reflection.Emit.AssemblyBuilderAccess access, string dir, System.Security.Policy.Evidence evidence, System.Security.PermissionSet requiredPermissions, System.Security.PermissionSet optionalPermissions, System.Security.PermissionSet refusedPermissions, bool isSynchronized, System.Collections.Generic.IEnumerable&lt;System.Reflection.Emit.CustomAttributeBuilder&gt; assemblyAttributes);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
+        <Parameter Name="dir" Type="System.String" />
+        <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="requiredPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="optionalPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
+        <Parameter Name="isSynchronized" Type="System.Boolean" />
+        <Parameter Name="assemblyAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.Reflection.Emit.CustomAttributeBuilder&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="dir">To be added.</param>
+        <param name="evidence">To be added.</param>
+        <param name="requiredPermissions">To be added.</param>
+        <param name="optionalPermissions">To be added.</param>
+        <param name="refusedPermissions">To be added.</param>
+        <param name="isSynchronized">To be added.</param>
+        <param name="assemblyAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DoCallBack">
+      <MemberSignature Language="C#" Value="public void DoCallBack (CrossAppDomainDelegate callBackDelegate);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callBackDelegate" Type="System.CrossAppDomainDelegate" />
+      </Parameters>
+      <Docs>
+        <param name="callBackDelegate">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DomainManager">
+      <MemberSignature Language="C#" Value="public AppDomainManager DomainManager { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AppDomainManager</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DomainUnload">
+      <MemberSignature Language="ILASM" Value=".event public event DomainUnload" />
+      <MemberSignature Language="C#" Value="public event EventHandler DomainUnload;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Raised when a <see cref="T:System.AppDomain" /> is about to be unloaded.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This event is handled by a <see cref="T:System.EventHandler" /> delegate. Information about the event is passed to the
+      delegate in a <see cref="T:System.EventArgs" /> instance. The delegate for
+      this event can perform any termination activities before the application domain
+      is unloaded.</para>
+            <para> For additional information about events, see Partitions I and II of
+      the CLI Specification.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DynamicDirectory">
+      <MemberSignature Language="C#" Value="public string DynamicDirectory { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Evidence">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.Evidence Evidence { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Policy.Evidence</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExecuteAssembly">
+      <MemberSignature Language="C#" Value="public int ExecuteAssembly (string assemblyFile);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyFile" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyFile">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExecuteAssembly">
+      <MemberSignature Language="C#" Value="public int ExecuteAssembly (string assemblyFile, System.Security.Policy.Evidence assemblySecurity);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyFile" Type="System.String" />
+        <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyFile">To be added.</param>
+        <param name="assemblySecurity">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExecuteAssembly">
+      <MemberSignature Language="C#" Value="public int ExecuteAssembly (string assemblyFile, System.Security.Policy.Evidence assemblySecurity, string[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyFile" Type="System.String" />
+        <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="args" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyFile">To be added.</param>
+        <param name="assemblySecurity">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExecuteAssembly">
+      <MemberSignature Language="C#" Value="public int ExecuteAssembly (string assemblyFile, System.Security.Policy.Evidence assemblySecurity, string[] args, byte[] hashValue, System.Configuration.Assemblies.AssemblyHashAlgorithm hashAlgorithm);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyFile" Type="System.String" />
+        <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="args" Type="System.String[]" />
+        <Parameter Name="hashValue" Type="System.Byte[]" />
+        <Parameter Name="hashAlgorithm" Type="System.Configuration.Assemblies.AssemblyHashAlgorithm" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyFile">To be added.</param>
+        <param name="assemblySecurity">To be added.</param>
+        <param name="args">To be added.</param>
+        <param name="hashValue">To be added.</param>
+        <param name="hashAlgorithm">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExecuteAssemblyByName">
+      <MemberSignature Language="C#" Value="public int ExecuteAssemblyByName (string assemblyName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExecuteAssemblyByName">
+      <MemberSignature Language="C#" Value="public int ExecuteAssemblyByName (string assemblyName, System.Security.Policy.Evidence assemblySecurity);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="assemblySecurity">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExecuteAssemblyByName">
+      <MemberSignature Language="C#" Value="public int ExecuteAssemblyByName (System.Reflection.AssemblyName assemblyName, System.Security.Policy.Evidence assemblySecurity, string[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="args" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="assemblySecurity">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExecuteAssemblyByName">
+      <MemberSignature Language="C#" Value="public int ExecuteAssemblyByName (string assemblyName, System.Security.Policy.Evidence assemblySecurity, string[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
+        <Parameter Name="args" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="assemblySecurity">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FriendlyName">
+      <MemberSignature Language="ILASM" Value=".property string FriendlyName { public final hidebysig virtual specialname string get_FriendlyName() }" />
+      <MemberSignature Language="C#" Value="public string FriendlyName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the friendly name of the current instance.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the friendly name of the current application domain.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para> The friendly name of a <see cref="T:System.AppDomain" /> instance created by an application is
+   specified to the constructor. The friendly name of the default
+<see cref="T:System.AppDomain" /> is the name
+   of the assembly file loaded in the application domain. The friendly name is
+   formed by stripping the directory information from the assembly's file
+   name. For example, if the loaded assembly has the name <c>"\MyAppDirectory\MyAssembly.exe"</c> , the friendly name
+of the default application domain is <c>"MyAssembly.exe"</c> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAssemblies">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly[] GetAssemblies ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCurrentThreadId">
+      <MemberSignature Language="C#" Value="public static int GetCurrentThreadId ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("AppDomain.GetCurrentThreadId has been deprecated because it does not provide a stable Id when managed threads are running on fibers (aka lightweight threads). To get a stable identifier for a managed thread, use the ManagedThreadId property on Thread.'")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetData">
+      <MemberSignature Language="C#" Value="public object GetData (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Id">
+      <MemberSignature Language="C#" Value="public int Id { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InitializeLifetimeService">
+      <MemberSignature Language="C#" Value="public override object InitializeLifetimeService ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsDefaultAppDomain">
+      <MemberSignature Language="C#" Value="public bool IsDefaultAppDomain ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsFinalizingForUnload">
+      <MemberSignature Language="C#" Value="public bool IsFinalizingForUnload ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly Load (byte[] rawAssembly);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rawAssembly" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rawAssembly">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly Load (System.Reflection.AssemblyName assemblyRef);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyRef" Type="System.Reflection.AssemblyName" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyRef">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly Load (string assemblyString);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyString">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rawAssembly" Type="System.Byte[]" />
+        <Parameter Name="rawSymbolStore" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rawAssembly">To be added.</param>
+        <param name="rawSymbolStore">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly Load (System.Reflection.AssemblyName assemblyRef, System.Security.Policy.Evidence assemblySecurity);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyRef" Type="System.Reflection.AssemblyName" />
+        <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyRef">To be added.</param>
+        <param name="assemblySecurity">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly Load (string assemblyString, System.Security.Policy.Evidence assemblySecurity);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyString" Type="System.String" />
+        <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyString">To be added.</param>
+        <param name="assemblySecurity">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, System.Security.Policy.Evidence securityEvidence);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rawAssembly" Type="System.Byte[]" />
+        <Parameter Name="rawSymbolStore" Type="System.Byte[]" />
+        <Parameter Name="securityEvidence" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="rawAssembly">To be added.</param>
+        <param name="rawSymbolStore">To be added.</param>
+        <param name="securityEvidence">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProcessExit">
+      <MemberSignature Language="C#" Value="public event EventHandler ProcessExit;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReflectionOnlyAssemblyResolve">
+      <MemberSignature Language="C#" Value="public event ResolveEventHandler ReflectionOnlyAssemblyResolve;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ResolveEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReflectionOnlyGetAssemblies">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly[] ReflectionOnlyGetAssemblies ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RelativeSearchPath">
+      <MemberSignature Language="C#" Value="public string RelativeSearchPath { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResourceResolve">
+      <MemberSignature Language="C#" Value="public event ResolveEventHandler ResourceResolve;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ResolveEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetAppDomainPolicy">
+      <MemberSignature Language="C#" Value="public void SetAppDomainPolicy (System.Security.Policy.PolicyLevel domainPolicy);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="domainPolicy" Type="System.Security.Policy.PolicyLevel" />
+      </Parameters>
+      <Docs>
+        <param name="domainPolicy">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetCachePath">
+      <MemberSignature Language="C#" Value="public void SetCachePath (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use AppDomainSetup.SetCachePath")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="SetData">
+      <MemberSignature Language="C#" Value="public void SetData (string name, object data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetData">
+      <MemberSignature Language="C#" Value="public void SetData (string name, object data, System.Security.IPermission permission);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="data" Type="System.Object" />
+        <Parameter Name="permission" Type="System.Security.IPermission" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="data">To be added.</param>
+        <param name="permission">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetDynamicBase">
+      <MemberSignature Language="C#" Value="public void SetDynamicBase (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use AppDomainSetup.DynamicBase")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="SetPrincipalPolicy">
+      <MemberSignature Language="C#" Value="public void SetPrincipalPolicy (System.Security.Principal.PrincipalPolicy policy);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="policy" Type="System.Security.Principal.PrincipalPolicy" />
+      </Parameters>
+      <Docs>
+        <param name="policy">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetShadowCopyFiles">
+      <MemberSignature Language="C#" Value="public void SetShadowCopyFiles ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use AppDomainSetup.ShadowCopyFiles")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="SetShadowCopyPath">
+      <MemberSignature Language="C#" Value="public void SetShadowCopyPath (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use AppDomainSetup.ShadowCopyDirectories")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="SetThreadPrincipal">
+      <MemberSignature Language="C#" Value="public void SetThreadPrincipal (System.Security.Principal.IPrincipal principal);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="principal" Type="System.Security.Principal.IPrincipal" />
+      </Parameters>
+      <Docs>
+        <param name="principal">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetupInformation">
+      <MemberSignature Language="C#" Value="public AppDomainSetup SetupInformation { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AppDomainSetup</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ShadowCopyFiles">
+      <MemberSignature Language="C#" Value="public bool ShadowCopyFiles { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System._AppDomain.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _AppDomain.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="rgszNames" Type="System.IntPtr" />
+        <Parameter Name="cNames" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="rgDispId" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="riid">To be added.</param>
+        <param name="rgszNames">To be added.</param>
+        <param name="cNames">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="rgDispId">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System._AppDomain.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _AppDomain.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="iTInfo" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="ppTInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="iTInfo">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="ppTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System._AppDomain.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _AppDomain.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcTInfo" Type="System.UInt32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pcTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System._AppDomain.Invoke">
+      <MemberSignature Language="C#" Value="void _AppDomain.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dispIdMember" Type="System.UInt32" />
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="wFlags" Type="System.Int16" />
+        <Parameter Name="pDispParams" Type="System.IntPtr" />
+        <Parameter Name="pVarResult" Type="System.IntPtr" />
+        <Parameter Name="pExcepInfo" Type="System.IntPtr" />
+        <Parameter Name="puArgErr" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dispIdMember">To be added.</param>
+        <param name="riid">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="wFlags">To be added.</param>
+        <param name="pDispParams">To be added.</param>
+        <param name="pVarResult">To be added.</param>
+        <param name="pExcepInfo">To be added.</param>
+        <param name="puArgErr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a <see cref="T:System.String" /> representation of the current instance.
+ </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing
+ information about the current <see cref="T:System.AppDomain" />
+ instance.</para>
+        </returns>
+        <remarks>
+          <para> The string returned by this method includes the friendly name of the
+ application domain.
+ </para>
+          <para>
+            <block subset="none" type="note">This method
+ overrides <see cref="M:System.Object.ToString" />
+ .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TypeResolve">
+      <MemberSignature Language="C#" Value="public event ResolveEventHandler TypeResolve;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ResolveEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnhandledException">
+      <MemberSignature Language="ILASM" Value=".event public event UnhandledException" />
+      <MemberSignature Language="C#" Value="public event UnhandledExceptionEventHandler UnhandledException;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UnhandledExceptionEventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Raised when an exception is
+      not caught by the default application domain.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+      This event is handled by a <see cref="T:System.UnhandledExceptionEventHandler" /> delegate. Information about the event is passed to the
+      delegate in a <see cref="T:System.UnhandledExceptionEventArgs" /> instance. The delegate
+      provides default handling for uncaught exceptions. When this event is not
+      handled, the system default handler reports the exception to the user and
+      might terminate the application. For additional information, see
+   <see cref="P:System.UnhandledExceptionEventArgs.IsTerminating" />.   
+</block>
+          </para>
+          <para>This event is raised only for the application domain that is created by the
+   system when an application is started. If an application creates additional
+   application domains, specifying a delegate for this event in those applications
+   domains has no effect.</para>
+          <para>
+            <block subset="none" type="note">For additional
+   information about events, see Partitions I and II of the CLI
+   Specification.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unload">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Unload(class System.AppDomain domain)" />
+      <MemberSignature Language="C#" Value="public static void Unload (AppDomain domain);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="domain" Type="System.AppDomain" />
+      </Parameters>
+      <Docs>
+        <param name="domain">A <see cref="T:System.AppDomain" /> representing the application domain to be unloaded. </param>
+        <summary>
+          <para> Unloads the specified application domain.
+      </para>
+        </summary>
+        <remarks>
+          <para>If the thread that invoked <see cref="M:System.AppDomain.Unload(System.AppDomain)" />
+is running in <paramref name="domain" />, another thread is started to perform the unload
+operation. If <paramref name="domain" /> cannot be unloaded, a <see cref="T:System.CannotUnloadAppDomainException" /> is thrown in that thread, not the original thread that invoked
+<see cref="M:System.AppDomain.Unload(System.AppDomain)" />. However, if the thread that invoked <see cref="M:System.AppDomain.Unload(System.AppDomain)" /> is 
+running outside <paramref name="domain" />, that is the thread that receives the exception.</para>
+          <para>The threads in <paramref name="domain" />
+are terminated using
+the <see cref="M:System.Threading.Thread.Abort(System.Object)" /> method, which throws the thread an instance of
+<see cref="T:System.Threading.ThreadAbortException" />. <block subset="none" type="note">Although 
+the thread should terminate promptly, it can continue executing for an
+unbounded amount of time in its <see langword="finally" /> clause.</block></para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="domain" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.CannotUnloadAppDomainException">
+          <paramref name="domain" /> could not be unloaded.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptAppDomain, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

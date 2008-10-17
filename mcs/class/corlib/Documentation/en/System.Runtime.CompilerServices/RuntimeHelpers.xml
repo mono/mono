@@ -1,0 +1,366 @@
+<Type Name="RuntimeHelpers" FullName="System.Runtime.CompilerServices.RuntimeHelpers" FullNameSP="System_Runtime_CompilerServices_RuntimeHelpers" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable RuntimeHelpers extends System.Object" />
+  <TypeSignature Language="C#" Value="public static class RuntimeHelpers" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Implements static methods and properties that provide special support for
+      compilers. </para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">The types in 
+   <see langword="System.Runtime.CompilerServices" />
+   are intended primarily for use by compilers, not application
+   programmers. They allow compilers to easily implement certain language
+   features that are not directly visible to programmers.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public static bool Equals (object o1, object o2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="o1" Type="System.Object" />
+        <Parameter Name="o2" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="o1">To be added.</param>
+        <param name="o2">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExecuteCodeWithGuaranteedCleanup">
+      <MemberSignature Language="C#" Value="public static void ExecuteCodeWithGuaranteedCleanup (System.Runtime.CompilerServices.RuntimeHelpers.TryCode code, System.Runtime.CompilerServices.RuntimeHelpers.CleanupCode backoutCode, object userData);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="code" Type="System.Runtime.CompilerServices.RuntimeHelpers+TryCode" />
+        <Parameter Name="backoutCode" Type="System.Runtime.CompilerServices.RuntimeHelpers+CleanupCode" />
+        <Parameter Name="userData" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="code">To be added.</param>
+        <param name="backoutCode">To be added.</param>
+        <param name="userData">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public static int GetHashCode (object o);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="o" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="o">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectValue">
+      <MemberSignature Language="C#" Value="public static object GetObjectValue (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InitializeArray">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void InitializeArray(class System.Array array, valuetype System.RuntimeFieldHandle fldHandle)" />
+      <MemberSignature Language="C#" Value="public static void InitializeArray (Array array, RuntimeFieldHandle fldHandle);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Array" />
+        <Parameter Name="fldHandle" Type="System.RuntimeFieldHandle" />
+      </Parameters>
+      <Docs>
+        <param name="array">The <see cref="T:System.Array" /> to be initialized.</param>
+        <param name="fldHandle">A <see cref="T:System.RuntimeFieldHandle" /> specifying the location of the data used to initialize <paramref name="array" /> .</param>
+        <summary>
+          <para>Provides a fast way to initialize a <see cref="T:System.Array" /> from data
+ stored in a module.</para>
+        </summary>
+        <remarks>
+          <para> This method is for compiler use only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OffsetToStringData">
+      <MemberSignature Language="ILASM" Value=".property int32 OffsetToStringData { public hidebysig static specialname int32 get_OffsetToStringData() }" />
+      <MemberSignature Language="C#" Value="public static int OffsetToStringData { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>12</MemberValue>
+      <Docs>
+        <summary>
+          <para> Gets the number of bytes between the start of a <see cref="T:System.String" /> and the first <see cref="T:System.Char" />
+in the string.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Int32" /> containing the number of bytes between the start of a <see cref="T:System.String" /> and the first <see cref="T:System.Char" />
+in the string.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>This property is deprecated; its design is considered unnecessarily inflexible. It is expected that an improved design can be incorporated into the next revision of this Standard.
+         </para>
+            <para>Compilers use this property for unsafe, but efficient, pointer operations on
+         the characters in a managed string. Compilers should pin the string against
+         movement by the garbage collector prior to use. Note that strings are immutable:
+         their contents can be read but not changed.</para>
+            <para>The contents of these offset bytes are implementation-defined.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrepareConstrainedRegions">
+      <MemberSignature Language="C#" Value="public static void PrepareConstrainedRegions ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="PrepareConstrainedRegionsNoOP">
+      <MemberSignature Language="C#" Value="public static void PrepareConstrainedRegionsNoOP ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="PrepareDelegate">
+      <MemberSignature Language="C#" Value="public static void PrepareDelegate (Delegate d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Delegate" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrepareMethod">
+      <MemberSignature Language="C#" Value="public static void PrepareMethod (RuntimeMethodHandle method);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.RuntimeMethodHandle" />
+      </Parameters>
+      <Docs>
+        <param name="method">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrepareMethod">
+      <MemberSignature Language="C#" Value="public static void PrepareMethod (RuntimeMethodHandle method, RuntimeTypeHandle[] instantiation);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.RuntimeMethodHandle" />
+        <Parameter Name="instantiation" Type="System.RuntimeTypeHandle[]" />
+      </Parameters>
+      <Docs>
+        <param name="method">To be added.</param>
+        <param name="instantiation">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProbeForSufficientStack">
+      <MemberSignature Language="C#" Value="public static void ProbeForSufficientStack ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="RunClassConstructor">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void RunClassConstructor(valuetype System.RuntimeTypeHandle type)" />
+      <MemberSignature Language="C#" Value="public static void RunClassConstructor (RuntimeTypeHandle type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.RuntimeTypeHandle" />
+      </Parameters>
+      <Docs>
+        <param name="type">A <see cref="T:System.RuntimeTypeHandle" /> specifying the class constructor method to run.</param>
+        <summary>
+          <para>Runs a specified class constructor method.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RunModuleConstructor">
+      <MemberSignature Language="C#" Value="public static void RunModuleConstructor (IntPtr module);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="module" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="module">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RunModuleConstructor">
+      <MemberSignature Language="C#" Value="public static void RunModuleConstructor (ModuleHandle module);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="module" Type="System.ModuleHandle" />
+      </Parameters>
+      <Docs>
+        <param name="module">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

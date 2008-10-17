@@ -1,0 +1,114 @@
+<Type Name="KeyNotFoundException" FullName="System.Collections.Generic.KeyNotFoundException">
+  <TypeSignature Language="C#" Value="public class KeyNotFoundException : SystemException" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.SystemException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>The exception that is thrown when the key specified for accessing an element in a collection does not match any key in the collection.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public KeyNotFoundException ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.KeyNotFoundException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.KeyNotFoundException.Message" /> property of the new instance to a system-supplied message that describes the error, such as "An application error has occurred." This message takes into account the current system culture.</para>
+          <para>The <see cref="!:System.KeyNotFoundException.InnerException" /> property is initialized to <see langword="null" /> 
+.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public KeyNotFoundException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message that describes the error. The content of <paramref name="message" /> is intended to be understandable to the user. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.KeyNotFoundException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.KeyNotFoundException.Message" /> property of the new instance using <paramref name="message" />. If <paramref name="message" /> is 
+<see langword="null" />, the <see cref="!:System.KeyNotFoundException.Message" /> property is initialized to an implementation-specific message. The <see cref="!:System.KeyNotFoundException.InnerException" /> property is initialized to <see langword="null" />.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected KeyNotFoundException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public KeyNotFoundException (string message, Exception innerException);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message that describes the error. The content of <paramref name="message" /> is intended to be understandable to the user. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="innerException">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.KeyNotFoundException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.KeyNotFoundException.Message" /> property of the new instance using <paramref name="message" />, and
+   the <see cref="!:System.KeyNotFoundException.InnerException" /> property using <paramref name="innerException" />. If <paramref name="message" /> is
+<see langword="null" />, the <see cref="!:System.KeyNotFoundException.Message" /> property is initialized to an implementation-specific message. </para>
+          <para>
+            <block subset="none" type="note"> For information on inner exceptions,
+   see <see cref="P:System.Exception.InnerException" />.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

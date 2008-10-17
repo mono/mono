@@ -1,0 +1,84 @@
+<Type Name="GenericPrincipal" FullName="System.Security.Principal.GenericPrincipal">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public class GenericPrincipal : System.Security.Principal.IPrincipal" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Security.Principal.IPrincipal</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>A generic purpose IPrincipal implementation.</summary>
+    <remarks>The generic principal isn't related to the current operating system user and it's rights.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public GenericPrincipal (System.Security.Principal.IIdentity identity, string[] roles);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="identity" Type="System.Security.Principal.IIdentity" />
+        <Parameter Name="roles" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="identity">The identity that this principal represents.</param>
+        <param name="roles">An array of strings containing every roles associated with the identity.</param>
+        <summary>Create a generic principal instance with the specified identity and roles.</summary>
+        <remarks>The roles array can be null if the identity isn't part of any role.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Identity">
+      <MemberSignature Language="C#" Value="public virtual System.Security.Principal.IIdentity Identity { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.IIdentity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The identity of the current principal represents.</summary>
+        <value>The current identity of the principal.</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsInRole">
+      <MemberSignature Language="C#" Value="public virtual bool IsInRole (string role);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="role" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="role">A string representing the role name to check for membership.</param>
+        <summary>Return the membership of the current principal in the specified role.</summary>
+        <returns>True if the identity is part of the specified role, false otherwise.</returns>
+        <remarks>Roles are case sensitive.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

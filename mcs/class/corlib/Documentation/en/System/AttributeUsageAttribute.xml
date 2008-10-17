@@ -1,0 +1,216 @@
+<Type Name="AttributeUsageAttribute" FullName="System.AttributeUsageAttribute" FullNameSP="System_AttributeUsageAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable AttributeUsageAttribute extends System.Attribute" />
+  <TypeSignature Language="C#" Value="public sealed class AttributeUsageAttribute : Attribute" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Specifies the behavior of
+      a custom attribute when that attribute is defined.</para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note"> Custom attributes
+      can be applied to various application ("target") elements, such as classes,
+      parameters, and structures (see <see cref="T:System.AttributeTargets" /> for the full list). The <see cref="T:System.AttributeUsageAttribute" />
+      class contains three properties that govern custom attribute behavior: the kinds
+      of application elements the attribute can be associated with; whether the
+      attribute can or cannot be inherited by derived elements; and whether multiple
+      instances of the attribute can or cannot be allowed on the
+      same target element. </block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.AttributeTargets validOn)" />
+      <MemberSignature Language="C#" Value="public AttributeUsageAttribute (AttributeTargets validOn);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="validOn" Type="System.AttributeTargets" />
+      </Parameters>
+      <Docs>
+        <param name="validOn">The set of application elements to which the attribute will be applied. When indicating multiple application elements, <paramref name="validOn" /> is a bitwise OR combination of <see cref="T:System.AttributeTargets" /> enumeration values.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.AttributeUsageAttribute" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>The new instance will be constructed with the specified
+      value of <paramref name="validOn" /> and the properties <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> and <see cref="P:System.AttributeUsageAttribute.Inherited" /> set to their default values (<see langword="false" /> and
+   <see langword="true" />
+   respectively).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AllowMultiple">
+      <MemberSignature Language="ILASM" Value=".property bool AllowMultiple { public hidebysig specialname instance bool get_AllowMultiple() public hidebysig specialname instance void set_AllowMultiple(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool AllowMultiple { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets a value indicating whether more than one instance of a specified attribute is permitted to be applied
+      to any given program element.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates more than one instance of the
+   attribute is permitted to be applied; otherwise, <see langword="false" />. The
+   default is <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> It is expected that compilers will
+      validate this property; this property is not validated during execution.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>
+            <see langword="Example #1:" />
+          </para>
+          <para> The following example demonstrates the use of <see cref="P:System.AttributeUsageAttribute.AllowMultiple" />. If
+<see langword="AllowMultiple" /> for an attribute is set to <see langword="true" />, more
+than one of those attributes can be assigned to any given program element.</para>
+          <code lang="C#">using System;
+
+[AttributeUsageAttribute( AttributeTargets.Class |
+                          AttributeTargets.Struct,
+                          AllowMultiple = true )]
+public class Author : Attribute {
+
+  public Author(string name) { this.name = name; }
+  public string name;
+}
+
+[Author( "John Doe" )]
+[Author( "John Q Public" )]
+class JohnsClass {
+
+  public static void Main() {}
+}
+</code>
+          <para>
+            <see langword="Example #2:" />
+          </para>
+          <para> The following example demonstrates an error that is expected to be
+   caught by compilers: the sample attempts to assign multiple instances of
+   an attribute for which <see langword="AllowMultiple" />
+   was set to <see langword="false" />.</para>
+          <code lang="C#">using System;
+
+[AttributeUsageAttribute( AttributeTargets.Class |
+                          AttributeTargets.Struct,
+                          AllowMultiple = false )]
+public class Author : Attribute {
+
+  public Author(string name) { this.name = name; }
+  public string name;
+}
+
+[Author( "John Doe" )]
+[Author( "John Q Public" )]
+class JohnsClass {
+
+  public static void Main() {}
+}
+</code>
+          <para>This should throw an error similar to:</para>
+          <para>error CS0579: Duplicate 'Author' attribute</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Inherited">
+      <MemberSignature Language="ILASM" Value=".property bool Inherited { public hidebysig specialname instance bool get_Inherited() public hidebysig specialname instance void set_Inherited(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool Inherited { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets a <see cref="T:System.Boolean" qualify="true" /> value indicating whether the attribute can be inherited by
+   subclasses of the class to which the attribute is applied.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> indicates the attribute is inherited by subclasses;
+   otherwise, <see langword="false" />. The default is <see langword="true" />.</para>
+        </value>
+        <remarks>
+          <para>Information on an inherited attribute will be included in the metadata for
+      the class on which it is applied, but will not be included in the metadata for
+      classes that derive from it. A metadata consumer (such as reflection) is
+      required therefore to traverse up the inheritance chain of a class if that
+      consumer is interested in <see cref="T:System.Attribute" /> data that is marked inherited, but applied to an
+      ancestor class. There is nothing for the compiler to validate at compile
+      time.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ValidOn">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.AttributeTargets ValidOn { public hidebysig specialname instance valuetype System.AttributeTargets get_ValidOn() }" />
+      <MemberSignature Language="C#" Value="public AttributeTargets ValidOn { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.AttributeTargets</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the set of values sent to the <see cref="T:System.AttributeUsageAttribute" /> constructor that indicate to which targets the custom attribute can be applied.</para>
+        </summary>
+        <value>
+          <para> One or more of the <see cref="T:System.AttributeTargets" /> 
+values sent to the constructor, combined by a bitwise OR operation.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

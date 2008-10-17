@@ -1,0 +1,223 @@
+<Type Name="IDictionary&lt;TKey,TValue&gt;" FullName="System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;">
+  <TypeSignature Language="C#" Value="public interface IDictionary&lt;TKey,TValue&gt; : System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TKey" />
+    <TypeParameter Name="TValue" />
+  </TypeParameters>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="TKey">To be added.</typeparam>
+    <typeparam name="TValue">To be added.</typeparam>
+    <summary>
+      <para>Represents a generic collection of key/value pairs.</para>
+    </summary>
+    <remarks>
+      <para>This interface class is the base interface for generic collections of key/value pairs. The implementing class must have a method for comparing keys.</para>
+      <para>Each element is a key/value pair stored in a key value pair object.</para>
+      <para>Each pair must have a non-<see langword="null" /> key unique according to the comparison method of the class implementing this interface. The value can be <see langword="null" /> and need not be unique. The <see cref="T:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;" /> interface allows the contained keys and values to be enumerated, but it does not imply any particular sort order.</para>
+      <para>Some implementations of this interface  might permit null keys, and some might not.  A dictionary implementation  that prohibits null keys shall throw <see cref="T:System.ArgumentNullException" /> whenever a method or indexer is called with a null key.</para>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (TKey key, TValue value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="TKey" />
+        <Parameter Name="value" Type="TValue" />
+      </Parameters>
+      <Docs>
+        <param name="key">The <see langword="TKey" /> to use as the key of the entry to add.</param>
+        <param name="value">The <see langword="TValue" />  to use as the value of the entry to add.</param>
+        <summary>
+          <para>Adds an entry with the provided key and value to the current instance.</para>
+        </summary>
+        <remarks>
+          <para>You can also use the <see cref="P:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Item(TKey)" /><see langword="(TKey)" /> property to add new elements by setting the value of a key that does not exist in the dictionary. However, if the specified key already exists in the dictionary, setting the  <see cref="P:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Item(TKey)" /><see langword="(TKey)" /> property overwrites the old value. In contrast, the <see cref="M:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Add(TKey,TValue)" /><see langword="(TKey,TValue)" /> method does not modify existing elements.</para>
+          <para>Implementations can vary in how they determine equality of objects.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentException">
+          <para>An entry with the same key already exists in the current instance.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContainsKey">
+      <MemberSignature Language="C#" Value="public bool ContainsKey (TKey key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="TKey" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key to locate in the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance contains an entry with the specified key.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the current instance contains an entry with the key; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>Implementations can vary in how they determine equality of objects.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public TValue this[TKey key] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>TValue</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="TKey" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key of the element to get or set.</param>
+        <summary>
+          <para>Gets or sets the element in the current instance that is associated with the specified key.</para>
+        </summary>
+        <value>
+          <para>The value associated with the given key.</para>
+        </value>
+        <remarks>
+          <para>This property provides the ability to access a specific element in the collection.</para>
+          <para>You can also use the <see cref="P:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Item(TKey)" /><see langword="(TKey)" /> property to add new elements by setting the value of a key that does not exist in the dictionary. However, if the specified key already exists in the dictionary, setting the  <see cref="P:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Item(TKey)" /><see langword="(TKey)" /> property overwrites the old value. In contrast, the <see cref="M:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Add(TKey,TValue)" /><see langword="(TKey,TValue)" /> method does not modify existing elements.</para>
+          <para>Implementations can vary in how they determine equality of objects.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentException">
+          <para>The property is read but <paramref name="key" /> is not found.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The property is set and the current instance is read-only.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Keys">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.ICollection&lt;TKey&gt; Keys { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.ICollection&lt;TKey&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a collection containing the keys of the current instance.</para>
+        </summary>
+        <value>
+          <para>A collection containing the keys of the current instance. </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The order of the keys in the returned <see cref="P:System.Collections.Generic.ICollection&lt;TKey&gt;" /> is unspecified, but it is guaranteed to be the same order as the corresponding values in the collection returned by the <see cref="P:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Values" /> property.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public bool Remove (TKey key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="TKey" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key of the entry to remove.</param>
+        <summary>
+          <para>Removes the entry with the specified key from the current instance.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" />  if the element is successfully removed; otherwise, <see langword="false" />.<block subset="none" type="note"><para>This method also returns <see langword="false" /> if <paramref name="key" /> was not found.</para></block></para>
+        </returns>
+        <remarks>
+          <para>Implementations can vary in how they determine equality of objects.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryGetValue">
+      <MemberSignature Language="C#" Value="public bool TryGetValue (TKey key, out TValue value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="TKey" />
+        <Parameter Name="value" Type="TValue&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="key">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Values">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.ICollection&lt;TValue&gt; Values { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.ICollection&lt;TValue&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a collection containing the values in the current instance.</para>
+        </summary>
+        <value>
+          <para>A collection containing the values in the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The order of the values in the returned <see cref="P:System.Collections.Generic.ICollection&lt;TKey&gt;" /> is unspecified, but it is guaranteed to be the same order as the corresponding keys in the collection returned by the <see cref="P:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Keys" /> property.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

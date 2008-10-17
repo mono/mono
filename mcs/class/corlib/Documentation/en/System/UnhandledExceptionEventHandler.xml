@@ -1,0 +1,53 @@
+<Type Name="UnhandledExceptionEventHandler" FullName="System.UnhandledExceptionEventHandler" FullNameSP="System_UnhandledExceptionEventHandler" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable UnhandledExceptionEventHandler extends System.Delegate" />
+  <TypeSignature Language="C#" Value="public delegate void UnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs e);" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Docs>
+    <param name="sender">The application domain that handled the <see cref="F:System.AppDomain.UnhandledException" /> event.</param>
+    <param name="e">A <see cref="T:System.UnhandledExceptionEventArgs" /> that contains the event data.</param>
+    <summary>
+      <para>Defines the shape of methods that handle the event that
+ is raised by the system for uncaught exceptions.</para>
+    </summary>
+    <remarks>
+      <para>A <see cref="T:System.UnhandledExceptionEventHandler" /> instance can only be specified for the default application
+ domain that is created by the system to execute an application. Specifying a
+<see cref="T:System.UnhandledExceptionEventHandler" /> for a <see cref="T:System.AppDomain" /> created by an application has no effect.</para>
+      <para>
+        <block subset="none" type="note">A <see cref="T:System.UnhandledExceptionEventHandler" /> instance is used to specify methods that are invoked
+in response to exceptions that are not caught. To associate an
+instance of <see langword="UnhandledExceptionEventHandler " />with an application domain,
+add the <see langword="UnhandledExceptionEventHandler " />to the <see cref="F:System.AppDomain.UnhandledException" /> event. The methods referenced by the
+<see langword="UnhandledExceptionEventHandler " />instance are 
+invoked whenever an object, typically a
+<see cref="T:System.Exception" />, is thrown and is not caught.</block>
+      </para>
+      <para>
+        <block subset="none" type="note">For additional information about events, see Partitions I and II of the CLI Specification.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="e" Type="System.UnhandledExceptionEventArgs" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

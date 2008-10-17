@@ -1,0 +1,662 @@
+<Type Name="EventInfo" FullName="System.Reflection.EventInfo" FullNameSP="System_Reflection_EventInfo" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract EventInfo extends System.Reflection.MemberInfo" />
+  <TypeSignature Language="C#" Value="public abstract class EventInfo : System.Reflection.MemberInfo, System.Runtime.InteropServices._EventInfo" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations. </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Reflection.MemberInfo</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.InteropServices._EventInfo</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._EventInfo))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Provides access to event metadata.</para>
+    </summary>
+    <remarks>
+      <para> Events are handled by delegates. An event listener supplies an event-handler
+      delegate that is invoked whenever the event is raised by an event source. In order
+      to connect to the event source, the event listener adds this delegate to the
+      invocation list of the source. When the event is raised, the event-handler delegate
+      invokes the methods in its invocation list. The <see cref="M:System.Reflection.EventInfo.GetAddMethod" />,
+   <see cref="M:System.Reflection.EventInfo.AddEventHandler(System.Object,System.Delegate)" />
+   , <see cref="M:System.Reflection.EventInfo.GetRemoveMethod" />, and <see cref="M:System.Reflection.EventInfo.RemoveEventHandler(System.Object,System.Delegate)" /> methods,
+   and the
+   delegate type of the event-handler associated
+   with an event, are required to be marked in the metadata.</para>
+      <para>
+        <block subset="none" type="note">For information on
+   delegates, see the <see cref="T:System.Delegate" />
+   
+   class
+   overview.</block>
+      </para>
+      <para>
+        <block subset="none" type="note">For
+   information on events, see Partitions I and II of the CLI
+   specification.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected EventInfo ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Constructs a new instance of the <see cref="T:System.Reflection.EventInfo" />
+class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddEventHandler">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void AddEventHandler(object target, class System.Delegate handler)" />
+      <MemberSignature Language="C#" Value="public void AddEventHandler (object target, Delegate handler);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="System.Object" />
+        <Parameter Name="handler" Type="System.Delegate" />
+      </Parameters>
+      <Docs>
+        <param name="target">An object that represents an event source. </param>
+        <param name="handler">
+          <para>A <see cref="T:System.Delegate" /> instance to be added to <paramref name="target" /> that references methods to be invoked when the event reflected by the current instance is raised by <paramref name="target" />. </para>
+        </param>
+        <summary>
+          <para> Adds the specified event handler delegate to the specified event source.
+      </para>
+        </summary>
+        <remarks>
+          <para> Each time the event reflected by the current instance is raised by <paramref name="target" />, the methods
+   in the invocation list of <paramref name="handler" /> are invoked.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="handler " />is not the same <see cref="T:System.Type" /> as the event handler delegate declared for the event reflected by the current instance.</para>
+        </exception>
+        <exception cref="T:System.Reflection.TargetException">The event reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the event reflected by the current instance.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Attributes">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Reflection.EventAttributes Attributes { public hidebysig virtual abstract specialname valuetype System.Reflection.EventAttributes get_Attributes() }" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.EventAttributes Attributes { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.EventAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the attributes of the event reflected by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Reflection.EventAttributes" /> value that specifies the attributes in the metadata of the
+   event reflected by the current
+   instance.</para>
+        </value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EventHandlerType">
+      <MemberSignature Language="ILASM" Value=".property class System.Type EventHandlerType { public hidebysig specialname instance class System.Type get_EventHandlerType() }" />
+      <MemberSignature Language="C#" Value="public Type EventHandlerType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the <see cref="T:System.Type" /> of the
+   event-handler <see cref="T:System.Delegate" />
+   associated with the event reflected by the current instance.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Type" /> that represents
+   the type of the
+   event-handler <see cref="T:System.Delegate" /> associated with the event reflected by the current
+   instance. Returns <see langword="null" /> if the method used to add a delegate to
+   the event is not public and is in a loaded assembly, and the caller does not have the required permission.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAddMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetAddMethod()" />
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetAddMethod ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns the public method used to add an event
+      handler delegate to an event source for the event reflected by the current
+      instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> 
+instance that reflects
+the public method used to add an event handler delegate to an event
+source for the event reflected by the current instance, if found; otherwise,
+returns <see langword="null" />
+. </para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Reflection.EventInfo.GetAddMethod" />(<see langword="false" />).</para>
+          <block subset="none" type="note">
+            <para>The returned method is used to add an event-handler delegate to the 
+      invocation list of an event source. Typically, the method has the following
+      signature format:</para>
+            <para>
+              <c>add_&lt;EventName&gt;(&lt;EventHandlerType&gt; handler)</c>
+            </para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAddMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetAddMethod(bool nonPublic)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetAddMethod (bool nonPublic);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nonPublic" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="nonPublic">A <see cref="T:System.Boolean" /> value that specifies whether non-public methods can be returned by this method. Specify <see langword="true" /> to return non-public methods; otherwise, specify <see langword="false" /> . </param>
+        <summary>
+          <para> Returns the method used to add an event handler delegate to an event source for the event reflected by the current
+      instance, specifying whether or not to return non-public methods.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Reflection.MethodInfo" />
+instance that
+reflects the method used to add an event handler delegate to an event source
+for the event reflected by the current instance, if found; otherwise, returns
+<see langword="null" /> 
+.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The returned method is used to add an event-handler
+         delegate to the invocation list of an event source. Typically, the method has
+         the following signature format:</para>
+            <para>
+              <c>add_&lt;EventName&gt;(&lt;EventHandlerType&gt; handler)</c>
+            </para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.MethodAccessException">
+          <paramref name="nonPublic" /> is <see langword="true" />, the method used to add an event handler delegate is non-public, and the caller does not have permission to reflect on non-public methods.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />. </permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetOtherMethods">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo[] GetOtherMethods ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetOtherMethods">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodInfo[] GetOtherMethods (bool nonPublic);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nonPublic" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="nonPublic">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRaiseMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetRaiseMethod()" />
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetRaiseMethod ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns the public method that is called when the event reflected by the
+      current instance is raised.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the public method that
+   is called when the event reflected by the current instance is raised, if
+   found; otherwise, returns <see langword="null" /> . </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRaiseMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetRaiseMethod(bool nonPublic)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetRaiseMethod (bool nonPublic);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nonPublic" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="nonPublic">A <see cref="T:System.Boolean" /> value that specifies whether non-public methods can be returned by this method. Specify <see langword="true" /> to return non-public methods; otherwise, specify <see langword="false" /> . </param>
+        <summary>
+          <para> Returns the method that is called when the event reflected by the current instance is raised, specifying whether the method to
+      be returned is public or non-public.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the method that is
+   called when the event reflected by the current instance is raised, if found;
+   otherwise, returns <see langword="null" />
+   
+   . </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.MethodAccessException">
+          <paramref name="nonPublic" /> is <see langword="true" />, the method used to raise the event is non-public, and the caller does not have permission to reflect on non-public methods.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />. </permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRemoveMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetRemoveMethod()" />
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetRemoveMethod ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns the public method used to remove an event-handler delegate from the event reflected by the
+      current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodInfo" />
+instance that reflects the public method used to remove an event handler
+delegate from the event reflected by the current instance, if found; otherwise,
+returns <see langword="null" />
+.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Reflection.EventInfo.GetRemoveMethod" />(<see langword="false" />).</para>
+          <block subset="none" type="note">
+            <para>Typically, the method has the following signature 
+      format:</para>
+            <para>
+              <c>remove_&lt;EventName&gt;(&lt;EventHandlerType&gt; 
+      handler)</c>
+            </para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRemoveMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetRemoveMethod(bool nonPublic)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetRemoveMethod (bool nonPublic);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nonPublic" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="nonPublic">A <see cref="T:System.Boolean" /> value that specifies whether non-public methods can be returned by this method. Specify <see langword="true" /> to return non-public methods; otherwise, specify <see langword="false" /> . </param>
+        <summary>
+          <para> Returns the method used to remove an event-handler delegate from the event
+      reflected by the current
+      instance, specifying whether or not to return non-public methods.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodInfo" />
+instance that reflects the method used to remove an event handler delegate from
+the event reflected by the current instance, if found; otherwise, returns
+<see langword="null" /> 
+.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>Typically, the method has the
+         following signature format:</para>
+            <para>
+              <c>remove_&lt;EventName&gt;(&lt;EventHandlerType&gt; handler)</c>
+            </para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.MethodAccessException">
+          <paramref name="nonPublic" /> is <see langword="true" />, the method used to remove an event handler delegate is non-public, and the caller does not have permission to reflect on non-public methods.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />. </permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsMulticast">
+      <MemberSignature Language="C#" Value="public bool IsMulticast { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSpecialName">
+      <MemberSignature Language="C#" Value="public bool IsSpecialName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MemberType">
+      <MemberSignature Language="C#" Value="public override System.Reflection.MemberTypes MemberType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MemberTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveEventHandler">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void RemoveEventHandler(object target, class System.Delegate handler)" />
+      <MemberSignature Language="C#" Value="public void RemoveEventHandler (object target, Delegate handler);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="System.Object" />
+        <Parameter Name="handler" Type="System.Delegate" />
+      </Parameters>
+      <Docs>
+        <param name="target">An object that represents an event source.</param>
+        <param name="handler">
+          <para>A <see cref="T:System.Delegate" /> instance to be disassociated from the events reflected by the current instance that are raised by <paramref name="target" />.</para>
+        </param>
+        <summary>
+          <para>Removes the specified event handler delegate from the specified event source.</para>
+        </summary>
+        <remarks>
+          <para>After this method is invoked, subsequent events 
+      reflected by the current instance that are raised by <paramref name="target" /> will
+      no longer cause <paramref name="handler" /> to
+      
+      invoke its methods.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="handler " />is not the same type <see cref="T:System.Type" /> as the event handler delegate declared for the event reflected by the current instance.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._EventInfo.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _EventInfo.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="rgszNames" Type="System.IntPtr" />
+        <Parameter Name="cNames" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="rgDispId" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="riid">To be added.</param>
+        <param name="rgszNames">To be added.</param>
+        <param name="cNames">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="rgDispId">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._EventInfo.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _EventInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="iTInfo" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="ppTInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="iTInfo">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="ppTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._EventInfo.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _EventInfo.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcTInfo" Type="System.UInt32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pcTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._EventInfo.Invoke">
+      <MemberSignature Language="C#" Value="void _EventInfo.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dispIdMember" Type="System.UInt32" />
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="wFlags" Type="System.Int16" />
+        <Parameter Name="pDispParams" Type="System.IntPtr" />
+        <Parameter Name="pVarResult" Type="System.IntPtr" />
+        <Parameter Name="pExcepInfo" Type="System.IntPtr" />
+        <Parameter Name="puArgErr" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dispIdMember">To be added.</param>
+        <param name="riid">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="wFlags">To be added.</param>
+        <param name="pDispParams">To be added.</param>
+        <param name="pVarResult">To be added.</param>
+        <param name="pExcepInfo">To be added.</param>
+        <param name="puArgErr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

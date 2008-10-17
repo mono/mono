@@ -1,0 +1,209 @@
+<Type Name="IEnumerator" FullName="System.Collections.IEnumerator" FullNameSP="System_Collections_IEnumerator" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class interface public abstract IEnumerator" />
+  <TypeSignature Language="C#" Value="public interface IEnumerator" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.Guid("496B0ABF-CDEE-11D3-88E8-00902754C43A")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Implemented by classes that support a simple iteration over a collection.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Collections.IEnumerator" /> contains the <see cref="M:System.Collections.IEnumerator.MoveNext" /> and <see cref="M:System.Collections.IEnumerator.Reset" /> methods and the <see cref="P:System.Collections.IEnumerator.Current" /> property. The consumer of an
+      object should call these methods or use this property when iterating over or
+      reading the elements of a collection.</para>
+        <para>When an enumerator is instantiated or a call is made to
+   <see cref="M:System.Collections.IEnumerator.Reset" />, the enumerator is positioned immediately
+      before the first element of the collection and a snapshot of the collection is
+      taken. When the enumerator is in this position, a
+      call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> is necessary before
+      reading <see cref="P:System.Collections.IEnumerator.Current" />
+      from the collection. If changes are made to the collection (such as adding, repositioning, or deleting elements) the snapshot can get out of sync, causing the enumerator to throw a <see cref="T:System.InvalidOperationException" /> if <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> are invoked. Two enumerators instantiated from the same collection
+      at the same time can have different snapshots of the collection.</para>
+        <para> Enumerators are intended to
+      be used only to read data in the collection.</para>
+        <para>An enumerator does not have exclusive access to the collection for which it was instantiated.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Current">
+      <MemberSignature Language="ILASM" Value=".property object Current { public hidebysig virtual abstract specialname object get_Current() }" />
+      <MemberSignature Language="C#" Value="public object Current { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the element in the collection over which the current instance is positioned.</para>
+        </summary>
+        <value>
+          <para> The element in the collection over which the current instance is positioned.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">When the current instance is constructed
+      or after <see cref="M:System.Collections.IEnumerator.Reset" /> is called, use <see cref="M:System.Collections.IEnumerator.MoveNext" /> to position the current instance
+      over the first element of the collection. </block>
+          </para>
+          <block subset="none" type="behaviors">
+            <para>It is required that <see cref="P:System.Collections.IEnumerator.Current" /> return the element in the collection over which the current
+      instance is positioned unless it is positioned before the first or after
+      the last element of the collection. If the current instance is
+      positioned before the first element or after the last element of the
+      collection, <see cref="P:System.Collections.IEnumerator.Current" /> returns an unspecified value or throws an unspecified exception. If elements were added, removed, or repositioned in the collection after the current
+      instance was instantiated, <see cref="P:System.Collections.IEnumerator.Current" /> returns the value it would have returned before the collection was modified.</para>
+            <para>It is also required that <see cref="P:System.Collections.IEnumerator.Current" /> not change the position of
+   the current instance: consecutive calls to <see cref="P:System.Collections.IEnumerator.Current" /> are required to return the same object until
+   either <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is called.</para>
+            <para>This property is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="usage">Use <see cref="P:System.Collections.IEnumerator.Current" /> to get the element in
+the collection over which the current instance is positioned, provided that the current
+instance is not positioned before the first element
+or after the last element of the collection.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <para> The current instance is positioned before the first element or after the last element of the collection.</para>
+          <para>The collection was modified after the current instance was instantiated.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MoveNext">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool MoveNext()" />
+      <MemberSignature Language="C#" Value="public bool MoveNext ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Advances the current instance to the next element of the collection.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the current instance was successfully advanced to the next element;
+<see langword="false" /> if the current instance has passed the end of the collection.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">When the current
+      instance is constructed or after <see cref="M:System.Collections.IEnumerator.Reset" /> is
+      called, the current instance
+      is positioned immediately before the first element of the collection. Use <see cref="M:System.Collections.IEnumerator.MoveNext" /> to position it over the first
+      element of the collection.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">A call to
+   <see cref="M:System.Collections.IEnumerator.MoveNext" /> is required to position the
+      current instance over the next element in the collection and return
+   <see langword="true" /> if the current instance was not
+      positioned beyond the last element of the collection when <see cref="M:System.Collections.IEnumerator.MoveNext" /> was
+      called.
+      If the current instance is already positioned immediately after the last
+      element of the collection, a call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> is required to
+      return <see langword="false" />, and the current instance
+      is required to remain in the same
+      position. If elements are added, removed, or repositioned in the
+      collection after the current instance was instantiated, it is required that a call
+      to <see cref="M:System.Collections.IEnumerator.MoveNext" />
+      throw <see cref="T:System.InvalidOperationException" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method to check if the current
+instance is positioned immediately after the last element of the collection, and
+to position it over the next element if it is not already past the last element
+of the collection. This allows the use of a conditional loop to iterate over the
+entire collection.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The collection was modified after the current instance was instantiated.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Reset()" />
+      <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Positions the enumerator immediately before
+      the first element in the collection.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">When the current instance is constructed
+      or after <see cref="M:System.Collections.IEnumerator.Reset" /> is called, the current instance
+      is positioned immediately before the first element of the collection, use <see cref="M:System.Collections.IEnumerator.MoveNext" /> to position the current instance
+      over the first element of the collection. </block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">A call to
+      <see cref="M:System.Collections.IEnumerator.Reset" /> is required to position
+      the current instance immediately before the first element of the collection.
+      If elements are added, removed, or repositioned in the collection
+      after the current instance was instantiated, it is required that
+      a call to <see cref="M:System.Collections.IEnumerator.Reset" /> throw a <see cref="T:System.InvalidOperationException" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">A call to <see cref="M:System.Collections.IEnumerator.Reset" /> can involve taking a new snapshot of the
+collection or simply moving to the beginning of the collection. The preferred
+implementation is to simply move the current instance to
+the beginning of the collection, before the first
+element. This invalidates the current instance
+if the collection has been modified since the current instance was
+constructed, which is consistent with <see cref="M:System.Collections.IEnumerator.MoveNext" /> and <see cref="P:System.Collections.IEnumerator.Current" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method to check if the current
+instance is positioned immediately past the last element of the collection, and
+to position it over the next element if it is not already past the last element
+of the collection.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was instantiated.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Interfaces />
+</Type>

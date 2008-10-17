@@ -1,0 +1,633 @@
+<Type Name="Monitor" FullName="System.Threading.Monitor" FullNameSP="System_Threading_Monitor" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed Monitor extends System.Object" />
+  <TypeSignature Language="C#" Value="public static class Monitor" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Provides
+      a mechanism that synchronizes access to objects.</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.Threading.Monitor" /> class
+   controls access to objects by granting a single thread a lock for an object.
+   Object locks provide the
+   ability to restrict access to a block of code, commonly called a critical section.
+   While a thread owns the lock for an object no other thread can acquire the lock
+   for the object. Additionally, the <see cref="T:System.Threading.Monitor" />
+   
+   class can be used to ensure that no other thread can access a section of
+   application code being executed by the lock owner, unless the other thread is
+   executing the code using a different locked object. </para>
+      <para> The following information is
+   maintained for each synchronized object:</para>
+      <list type="bullet">
+        <item>
+          <term>
+      
+      A reference to the thread that currently holds the
+      lock.</term>
+        </item>
+        <item>
+          <term>
+      
+      A reference to a "ready queue", which contains the
+      threads that are ready to obtain the lock.</term>
+        </item>
+        <item>
+          <term>
+      
+      A reference to a "waiting queue", which contains the threads that are
+      waiting for notification of a change in the state of the locked
+      object.</term>
+        </item>
+      </list>
+      <para> The following table describes the actions taken by
+   threads that access synchronized objects:<list type="table"><listheader><term>Action</term><description>Description</description></listheader><item><term> Enter</term><description> Acquires a lock for an
+         object. Also marks the beginning of a critical section. No other
+         thread can enter the critical section unless they are executing the instructions in the critical
+         section using a different locked object. <block subset="none" type="note">See the <see cref="M:System.Threading.Monitor.Enter(System.Object)" /> and <see cref="M:System.Threading.Monitor.TryEnter(System.Object)" />
+         methods.</block></description></item><item><term> Wait</term><description> Releases the lock on an object in order to permit
+         other threads to lock and access the object. The calling thread waits
+         while another thread accesses the object. Pulse signals (see below) are
+         used to notify waiting threads about changes to an object's state.
+      <block subset="none" type="note">See <see cref="M:System.Threading.Monitor.Wait(System.Object,System.Int32,System.Boolean)" />
+      
+      .</block></description></item><item><term> Pulse
+      (signal)</term><description>Sends a signal to one or more waiting threads. The
+      signal notifies a waiting thread that the state of the locked object has
+      changed, and the owner of the lock is ready to release the lock. The
+      waiting thread is placed in the object's ready queue so that it can
+      eventually receive the lock for the object. Once the thread has the lock,
+      it can check the new state of the object to see if the required state has
+      been reached. <block subset="none" type="note">See <see cref="M:System.Threading.Monitor.Pulse(System.Object)" /> and <see cref="M:System.Threading.Monitor.PulseAll(System.Object)" />
+      
+      .</block></description></item><item><term> Exit</term><description> Releases the lock on an object. Also marks the end
+      of a critical section protected by the locked object.
+   <block subset="none" type="note">See <see cref="M:System.Threading.Monitor.Exit(System.Object)" />
+   .</block></description></item></list></para>
+      <para> The
+<see cref="M:System.Threading.Monitor.Enter(System.Object)" /> and <see cref="M:System.Threading.Monitor.Exit(System.Object)" /> methods 
+   are used to
+   mark the beginning and end of a critical section. If the critical section is
+   a set of contiguous instructions, then the lock acquired by the <see cref="M:System.Threading.Monitor.Enter(System.Object)" />
+   method guarantees
+   that only a single thread can execute the enclosed code with the locked
+   object. This facility is typically used to synchronize access to a static or
+   instance method of a class. If an instance method requires synchronized
+   thread access, the instance method invokes the <see cref="M:System.Threading.Monitor.Enter(System.Object)" />
+   and corresponding <see cref="M:System.Threading.Monitor.Exit(System.Object)" /> methods using itself (the current
+   instance) as the object to lock. Since only one thread can hold the lock on the
+   current instance, the method can only be executed by one thread at a time.
+   Static methods are protected in a similar fashion using the <see cref="T:System.Type" />
+   
+   object of the current instance as the locked object.</para>
+      <block subset="none" type="note">
+        <para>The functionality provided by the <see cref="M:System.Threading.Monitor.Enter(System.Object)" />
+and <see cref="M:System.Threading.Monitor.Exit(System.Object)" />
+methods is identical to that provided by the C#
+lock statement.</para>
+        <para>If a critical section spans an entire method, the locking
+   facility described above can be achieved by placing the <see cref="T:System.Runtime.CompilerServices.MethodImplAttribute" /> on the method, and specifying
+   the <see cref="F:System.Runtime.CompilerServices.MethodImplOptions.Synchronized" /> option. Using this attribute,
+   the <see cref="M:System.Threading.Monitor.Enter(System.Object)" /> and <see cref="M:System.Threading.Monitor.Exit(System.Object)" /> statements are not needed.
+   Note that the attribute causes the current thread to hold the lock until
+   the method returns; if the lock can be released sooner, use the <see cref="T:System.Threading.Monitor" /> class
+   (or C# <see langword="lock" />
+   statement) instead of
+   the attribute.</para>
+        <para>While it is possible for the <see cref="M:System.Threading.Monitor.Enter(System.Object)" /> and
+<see cref="M:System.Threading.Monitor.Exit(System.Object)" /> statements that lock and release a 
+given object to cross member and/or class boundaries, this practice is strongly discouraged.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Enter">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Enter(object obj)" />
+      <MemberSignature Language="C#" Value="public static void Enter (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> on which to acquire the lock.</param>
+        <summary>
+          <para> Acquires an
+      exclusive lock on the specified object. </para>
+        </summary>
+        <remarks>
+          <para> This method acquires an exclusive
+      lock on <paramref name="obj" />
+      .</para>
+          <para> A caller of this method is required to invoke <see cref="M:System.Threading.Monitor.Exit(System.Object)" /> once 
+   for each <see cref="M:System.Threading.Monitor.Enter(System.Object)" /> invoked.</para>
+          <para>The caller of this method is blocked if another thread
+   has obtained the lock by calling <see cref="M:System.Threading.Monitor.Enter(System.Object)" />
+   and specifying the same object. The caller
+   is not blocked if the current thread holds the lock. The same thread can
+   invoke <see cref="M:System.Threading.Monitor.Enter(System.Object)" /> more than once (and it will not block); however, an equal number of <see cref="M:System.Threading.Monitor.Exit(System.Object)" /> calls are required to be invoked before other
+   threads waiting on the object will
+   unblock.</para>
+          <para>
+            <block subset="none" type="note">Invoking this member is identical to
+   using the C# <see langword="lock" /> statement.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj " />is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Exit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Exit(object obj)" />
+      <MemberSignature Language="C#" Value="public static void Exit (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> on which to release the lock.</param>
+        <summary>
+          <para>Releases an exclusive lock on the specified <see cref="T:System.Object" /> . </para>
+        </summary>
+        <remarks>
+          <para>This method releases an exclusive lock on <paramref name="obj" />. The caller is required to own the lock on
+<paramref name="obj" /> 
+.</para>
+          <para> If the caller owns the
+   lock on the specified object, and has made an equal number
+   of <see cref="M:System.Threading.Monitor.Exit(System.Object)" /> and <see cref="M:System.Threading.Monitor.Enter(System.Object)" /> calls for
+   the object, then the lock is released. If the caller has not
+   invoked <see cref="M:System.Threading.Monitor.Exit(System.Object)" /> as many times as <see cref="M:System.Threading.Monitor.Enter(System.Object)" />
+   , the lock is not released.</para>
+          <para>
+            <block subset="none" type="note">If the lock is released and there are
+   other threads in the ready queue for the object, one of the threads will
+   acquire the lock. If there are other threads in the waiting queue
+   waiting to acquire the lock, they are not automatically moved to the ready
+   queue when the owner of the lock calls <see cref="M:System.Threading.Monitor.Exit(System.Object)" />. To move one or more waiting
+   threads into the ready queue, call <see cref="M:System.Threading.Monitor.Pulse(System.Object)" /> or <see cref="M:System.Threading.Monitor.PulseAll(System.Object)" /> prior to invoking <see cref="M:System.Threading.Monitor.Exit(System.Object)" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj " />is <see langword="null" />.</exception>
+        <exception cref="T:System.Threading.SynchronizationLockException">
+          <para>The current thread does not own the lock for the specified object.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Pulse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Pulse(object obj)" />
+      <MemberSignature Language="C#" Value="public static void Pulse (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> a thread might be waiting for.</param>
+        <summary>
+          <para> Notifies the next waiting thread (if any) of a change in the specified locked object's state.</para>
+        </summary>
+        <remarks>
+          <para>The thread that currently owns the lock on the specified object
+      invokes this method to signal the next thread in line for the lock (in the
+      queue of threads waiting to acquire the lock on the object). Upon receiving the pulse, the
+      waiting thread is moved to the ready queue. When the thread that invoked <see langword="Pulse" /> releases the lock, the
+      next thread
+      in the ready queue (which is not necessarily
+      the thread that was pulsed) acquires the lock.</para>
+          <block subset="none" type="note">
+            <para> To signal a waiting object using <see langword="Pulse" /> , you must be the current owner of
+      the lock.</para>
+            <para> To signal multiple threads, use the
+   <see cref="M:System.Threading.Monitor.PulseAll(System.Object)" /> method.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj " />is <see langword="null" />.</exception>
+        <exception cref="T:System.Threading.SynchronizationLockException">The calling thread does not own the lock for the specified object.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PulseAll">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void PulseAll(object obj)" />
+      <MemberSignature Language="C#" Value="public static void PulseAll (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> that one or more threads might be waiting for.</param>
+        <summary>
+          <para> Notifies all waiting threads (if any) of a change in the specified locked object's
+      state.</para>
+        </summary>
+        <remarks>
+          <para> The thread that currently owns the lock on the specified object invokes this method
+      to signal all threads waiting to acquire the lock on the object. After the
+      signal is sent, the waiting threads are moved to the ready queue. When the
+      thread that invoked <see langword="PulseAll" /> releases the lock,
+      the next thread in the ready queue acquires the lock.</para>
+          <block subset="none" type="note">
+            <para>To signal waiting objects using <see langword="PulseAll" />, you must be the current owner of the
+      lock.</para>
+            <para>To signal a single thread, use the
+   <see cref="M:System.Threading.Monitor.Pulse(System.Object)" /> method.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj " />is <see langword="null" />.</exception>
+        <exception cref="T:System.Threading.SynchronizationLockException">The calling thread does not own the lock for the specified object.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryEnter">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool TryEnter(object obj)" />
+      <MemberSignature Language="C#" Value="public static bool TryEnter (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> on which to acquire the lock.</param>
+        <summary>
+          <para> Attempts to acquire an exclusive lock on the specified object.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " /> if the current thread acquired
+   the lock; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para> If successful, this method acquires an exclusive lock
+      on <paramref name="obj" />. This method returns immediately, whether or not the lock is available.</para>
+          <para>This method is equivalent to <see cref="M:System.Threading.Monitor.TryEnter(System.Object)" />
+(<paramref name="obj" />, 0). </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj " />is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryEnter">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool TryEnter(object obj, int32 millisecondsTimeout)" />
+      <MemberSignature Language="C#" Value="public static bool TryEnter (object obj, int millisecondsTimeout);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> on which to acquire the lock.</param>
+        <param name="millisecondsTimeout">A <see cref="T:System.Int32" /> containing the maximum number of milliseconds to wait for the lock.</param>
+        <param name="millisecondsTimeout">To be added.</param>
+        <summary>
+          <para> Attempts, for the specified number
+      of milliseconds, to acquire an exclusive
+      lock on the specified object.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " />if the current thread acquired the lock; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>If successful, this method acquires an exclusive lock on <paramref name="obj" />. </para>
+          <para>If <paramref name="millisecondsTimeout " />equals <see cref="F:System.Threading.Timeout.Infinite" />, this
+method is equivalent to <see cref="M:System.Threading.Monitor.Enter(System.Object)" />
+(<paramref name="obj" />). If
+<paramref name="millisecondsTimeout " />equals zero, this method is 
+equivalent to <see cref="M:System.Threading.Monitor.TryEnter(System.Object)" />
+(<paramref name="obj" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj " />is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="millisecondsTimeout " />is negative, and not equal to <see cref="F:System.Threading.Timeout.Infinite" /> . </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryEnter">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool TryEnter(object obj, valuetype System.TimeSpan timeout)" />
+      <MemberSignature Language="C#" Value="public static bool TryEnter (object obj, TimeSpan timeout);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> on which to acquire the lock.</param>
+        <param name="timeout">A <see cref="T:System.TimeSpan" /> set to the maximum amount of time to wait for the lock.</param>
+        <param name="timeout">To be added.</param>
+        <summary>
+          <para> Attempts, for the specified amount of time, to acquire an exclusive lock
+      on the specified object.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " />if the current thread acquires the lock; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>If successful, this method acquires an exclusive lock on <paramref name="obj" />. </para>
+          <para>If the value of <paramref name="timeout " /> converted to milliseconds equals <see cref="F:System.Threading.Timeout.Infinite" />, this method is equivalent to <see cref="M:System.Threading.Monitor.Enter(System.Object)" />
+(<paramref name="obj" />). If the value of <paramref name="timeout " />equals zero, this method is equivalent to
+<see cref="M:System.Threading.Monitor.TryEnter(System.Object)" /> 
+(<paramref name="obj" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj " />is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="timeout " />in milliseconds is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> , or is greater than <see cref="F:System.Int32.MaxValue" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Wait">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Wait(object obj)" />
+      <MemberSignature Language="C#" Value="public static bool Wait (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> on which to wait.</param>
+        <summary>
+          <para>Releases the lock on an object and blocks the current
+      thread until it reacquires the lock.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " /> if the
+   call returned because the caller reacquired the lock for the specified object.
+   This method does not return if the lock is not reacquired. </para>
+        </returns>
+        <remarks>
+          <para>This method reacquires an exclusive lock on <paramref name="obj" />. </para>
+          <para> The thread that currently owns the
+   lock on the specified object invokes this method in order to release the object
+   so that another thread can access it. The caller is blocked while waiting to reacquire the lock. This method is called when the caller is
+   waiting for a change in the state of the object, which occurs as a result of another
+   thread's operations on the object.</para>
+          <para>When a thread calls <see langword="Wait" />, it releases the lock on the object
+and enters the object's waiting queue. The next thread in the object's ready
+queue (if there is one) acquires the lock and has exclusive use of the object.
+All threads that call <see langword="Wait " /> remain in the waiting queue until
+they receive a signal via <see cref="M:System.Threading.Monitor.Pulse(System.Object)" /> or <see cref="M:System.Threading.Monitor.PulseAll(System.Object)" /> sent by the
+owner of the lock. If <see langword="Pulse" /> is sent, only the thread at the
+head of the waiting queue is affected. If <see langword="PulseAll" /> is sent, all threads that are waiting for
+the object are affected. When the signal is received, one or more threads leave
+the waiting queue and enter the ready queue. A thread in the ready queue
+is permitted to reacquire the lock.</para>
+          <para>This method returns when the calling thread reacquires the lock on the object. Note that this method blocks indefinitely if
+   the holder of the lock does not call <see cref="M:System.Threading.Monitor.Pulse(System.Object)" /> or <see cref="M:System.Threading.Monitor.PulseAll(System.Object)" />.</para>
+          <para>The caller executes <see cref="M:System.Threading.Monitor.Wait(System.Object,System.Int32,System.Boolean)" /> once, regardless of the number of times
+<see cref="M:System.Threading.Monitor.Enter(System.Object)" /> has been 
+invoked for the specified object. Conceptually,
+the <see cref="M:System.Threading.Monitor.Wait(System.Object,System.Int32,System.Boolean)" /> method stores the number of times
+the caller invoked <see cref="M:System.Threading.Monitor.Enter(System.Object)" /> on the object
+and invokes <see cref="M:System.Threading.Monitor.Exit(System.Object)" />
+as many times as necessary to fully release the locked object. The caller then
+blocks while waiting to reacquire the object. When the caller reacquires the lock, the system calls <see cref="M:System.Threading.Monitor.Enter(System.Object)" />
+as many times as necessary to restore the saved <see langword="Enter" />
+count for the caller.</para>
+          <para>Calling <see cref="M:System.Threading.Monitor.Wait(System.Object,System.Int32,System.Boolean)" /> releases the lock for the specified object
+only; if the caller is the owner of locks on other objects, these locks are not
+released.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj " />is <see langword="null" />.</exception>
+        <exception cref="T:System.Threading.SynchronizationLockException">The calling thread does not own the lock for the specified object.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Wait">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Wait(object obj, int32 millisecondsTimeout)" />
+      <MemberSignature Language="C#" Value="public static bool Wait (object obj, int millisecondsTimeout);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> on which to wait.</param>
+        <param name="millisecondsTimeout">A <see cref="T:System.Int32" /> containing the maximum number of milliseconds to wait before this method returns.</param>
+        <summary>
+          <para>Releases the lock on an object and blocks the current thread
+      until it reacquires the lock
+      or until a specified amount of time elapses.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the lock was reacquired before the specified time elapsed; otherwise,
+<see langword="false" />. </para>
+        </returns>
+        <remarks>
+          <para>If successful, this method reacquires an exclusive lock on <paramref name="obj" />. </para>
+          <para>This method behaves identically to <see cref="M:System.Threading.Monitor.Wait(System.Object,System.Int32,System.Boolean)" /> (<paramref name="obj" />), except that it does not block indefinitely unless
+<see cref="F:System.Threading.Timeout.Infinite" /> is 
+specified for <paramref name="millisecondsTimeout" /> . Once the specified time has elapsed, this
+method returns a value that indicates whether the lock has been reacquired by the
+caller. If <paramref name="millisecondsTimeout" /> equals 0, this method returns
+immediately.</para>
+          <para>
+            <block subset="none" type="note">This method is
+   called when the caller is waiting for a change in the state of the object, which
+   occurs as a result of another thread's operations on the object. For additional
+   details, see <see cref="M:System.Threading.Monitor.Wait(System.Object,System.Int32,System.Boolean)" />
+   
+   (<paramref name="obj" />).</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj " />is <see langword="null" />.</exception>
+        <exception cref="T:System.Threading.SynchronizationLockException">The calling thread does not own the lock for the specified object.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="millisecondsTimeout " /> is negative, and not equal to <see cref="F:System.Threading.Timeout.Infinite" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Wait">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Wait(object obj, valuetype System.TimeSpan timeout)" />
+      <MemberSignature Language="C#" Value="public static bool Wait (object obj, TimeSpan timeout);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> on which to wait.</param>
+        <param name="timeout">A <see cref="T:System.TimeSpan" /> set to the maximum amount of time to wait before this method returns.</param>
+        <summary>
+          <para>Releases the lock on an object and blocks the current thread
+      until it reacquires the lock
+      or until a specified amount of time elapses.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the lock was reacquired before
+   the specified time elapsed; otherwise, <see langword="false" />. </para>
+        </returns>
+        <remarks>
+          <para>If successful, this method reacquires an exclusive lock on <paramref name="obj" />. </para>
+          <para>This method behaves identically to <see cref="M:System.Threading.Monitor.Wait(System.Object,System.Int32,System.Boolean)" /> (<paramref name="obj" />), except that it does not block indefinitely unless
+<see cref="F:System.Threading.Timeout.Infinite" /> 
+milliseconds is
+specified for <paramref name="timeout" /> . Once the specified time has elapsed, this
+method returns a value that indicates whether the lock has been reacquired by the
+caller. If <paramref name="timeout" /> equals 0, this method returns immediately.</para>
+          <para>
+            <block subset="none" type="note">This method is
+   called when the caller is waiting for a change in the state of the object, which
+   occurs as a result of another thread's operations on the object. For additional
+   details, see <see cref="M:System.Threading.Monitor.Wait(System.Object,System.Int32,System.Boolean)" />
+   
+   (<paramref name="obj" />
+   ).</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj " />is <see langword="null" />.</exception>
+        <exception cref="T:System.Threading.SynchronizationLockException">The calling thread does not own the lock for the specified object.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">If <paramref name="timeout " />is negative, and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> , or is greater than <see cref="F:System.Int32.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Wait">
+      <MemberSignature Language="C#" Value="public static bool Wait (object obj, int millisecondsTimeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <param name="millisecondsTimeout">To be added.</param>
+        <param name="exitContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Wait">
+      <MemberSignature Language="C#" Value="public static bool Wait (object obj, TimeSpan timeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <param name="timeout">To be added.</param>
+        <param name="exitContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,58 @@
+<Type Name="SafeHandleZeroOrMinusOneIsInvalid" FullName="Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid">
+  <TypeSignature Language="C#" Value="public abstract class SafeHandleZeroOrMinusOneIsInvalid : System.Runtime.InteropServices.SafeHandle" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Runtime.InteropServices.SafeHandle</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>A utility base class for developers to use.</summary>
+    <remarks>
+      <para>This class is a utility base class that can be used by developers.</para>
+      <para>This can be used by developers when the -1 or zero represent an invalid handle.   This is merely a helper class.</para>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SafeHandleZeroOrMinusOneIsInvalid (bool ownsHandle);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="ownsHandle" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="ownsHandle">Whether the handle is owned by the class;   If so, it will call the virtual ReleaseHandle method at Finalization time.</param>
+        <summary>To be added.</summary>
+        <remarks>If <paramref name="ownsHandle" /> is set to true, the handle will be disposed at finalization time.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsInvalid">
+      <MemberSignature Language="C#" Value="public override bool IsInvalid { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

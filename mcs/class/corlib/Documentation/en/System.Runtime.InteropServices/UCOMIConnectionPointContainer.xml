@@ -1,0 +1,68 @@
+<Type Name="UCOMIConnectionPointContainer" FullName="System.Runtime.InteropServices.UCOMIConnectionPointContainer">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public interface UCOMIConnectionPointContainer" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.Guid("b196b284-bab4-101a-b69c-00aa00341d07")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Obsolete</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="EnumConnectionPoints">
+      <MemberSignature Language="C#" Value="public void EnumConnectionPoints (out System.Runtime.InteropServices.UCOMIEnumConnectionPoints ppEnum);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ppEnum" Type="System.Runtime.InteropServices.UCOMIEnumConnectionPoints&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="ppEnum">To be added: an object of type 'UCOMIEnumConnectionPoints&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FindConnectionPoint">
+      <MemberSignature Language="C#" Value="public void FindConnectionPoint (ref Guid riid, out System.Runtime.InteropServices.UCOMIConnectionPoint ppCP);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="ppCP" Type="System.Runtime.InteropServices.UCOMIConnectionPoint&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="riid">To be added: an object of type 'Guid&amp;'</param>
+        <param name="ppCP">To be added: an object of type 'UCOMIConnectionPoint&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Interfaces />
+</Type>

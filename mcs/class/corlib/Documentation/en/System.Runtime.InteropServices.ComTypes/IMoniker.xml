@@ -1,0 +1,454 @@
+<Type Name="IMoniker" FullName="System.Runtime.InteropServices.ComTypes.IMoniker">
+  <TypeSignature Language="C#" Value="public interface IMoniker" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.Guid("0000000f-0000-0000-c000-000000000046")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="BindToObject">
+      <MemberSignature Language="C#" Value="public void BindToObject (System.Runtime.InteropServices.ComTypes.IBindCtx pbc, System.Runtime.InteropServices.ComTypes.IMoniker pmkToLeft, ref Guid riidResult, out object ppvResult);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.ComTypes.IBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+        <Parameter Name="riidResult" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="ppvResult" Type="System.Object&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added.</param>
+        <param name="pmkToLeft">To be added.</param>
+        <param name="riidResult">To be added.</param>
+        <param name="ppvResult">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BindToStorage">
+      <MemberSignature Language="C#" Value="public void BindToStorage (System.Runtime.InteropServices.ComTypes.IBindCtx pbc, System.Runtime.InteropServices.ComTypes.IMoniker pmkToLeft, ref Guid riid, out object ppvObj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.ComTypes.IBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="ppvObj" Type="System.Object&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added.</param>
+        <param name="pmkToLeft">To be added.</param>
+        <param name="riid">To be added.</param>
+        <param name="ppvObj">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CommonPrefixWith">
+      <MemberSignature Language="C#" Value="public void CommonPrefixWith (System.Runtime.InteropServices.ComTypes.IMoniker pmkOther, out System.Runtime.InteropServices.ComTypes.IMoniker ppmkPrefix);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkOther" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+        <Parameter Name="ppmkPrefix" Type="System.Runtime.InteropServices.ComTypes.IMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pmkOther">To be added.</param>
+        <param name="ppmkPrefix">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ComposeWith">
+      <MemberSignature Language="C#" Value="public void ComposeWith (System.Runtime.InteropServices.ComTypes.IMoniker pmkRight, bool fOnlyIfNotGeneric, out System.Runtime.InteropServices.ComTypes.IMoniker ppmkComposite);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkRight" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+        <Parameter Name="fOnlyIfNotGeneric" Type="System.Boolean" />
+        <Parameter Name="ppmkComposite" Type="System.Runtime.InteropServices.ComTypes.IMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pmkRight">To be added.</param>
+        <param name="fOnlyIfNotGeneric">To be added.</param>
+        <param name="ppmkComposite">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Enum">
+      <MemberSignature Language="C#" Value="public void Enum (bool fForward, out System.Runtime.InteropServices.ComTypes.IEnumMoniker ppenumMoniker);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fForward" Type="System.Boolean" />
+        <Parameter Name="ppenumMoniker" Type="System.Runtime.InteropServices.ComTypes.IEnumMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="fForward">To be added.</param>
+        <param name="ppenumMoniker">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetClassID">
+      <MemberSignature Language="C#" Value="public void GetClassID (out Guid pClassID);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pClassID" Type="System.Guid&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pClassID">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDisplayName">
+      <MemberSignature Language="C#" Value="public void GetDisplayName (System.Runtime.InteropServices.ComTypes.IBindCtx pbc, System.Runtime.InteropServices.ComTypes.IMoniker pmkToLeft, out string ppszDisplayName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.ComTypes.IBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+        <Parameter Name="ppszDisplayName" Type="System.String&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added.</param>
+        <param name="pmkToLeft">To be added.</param>
+        <param name="ppszDisplayName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSizeMax">
+      <MemberSignature Language="C#" Value="public void GetSizeMax (out long pcbSize);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcbSize" Type="System.Int64&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pcbSize">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTimeOfLastChange">
+      <MemberSignature Language="C#" Value="public void GetTimeOfLastChange (System.Runtime.InteropServices.ComTypes.IBindCtx pbc, System.Runtime.InteropServices.ComTypes.IMoniker pmkToLeft, out System.Runtime.InteropServices.ComTypes.FILETIME pFileTime);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.ComTypes.IBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+        <Parameter Name="pFileTime" Type="System.Runtime.InteropServices.ComTypes.FILETIME&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added.</param>
+        <param name="pmkToLeft">To be added.</param>
+        <param name="pFileTime">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Hash">
+      <MemberSignature Language="C#" Value="public void Hash (out int pdwHash);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pdwHash" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pdwHash">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Inverse">
+      <MemberSignature Language="C#" Value="public void Inverse (out System.Runtime.InteropServices.ComTypes.IMoniker ppmk);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ppmk" Type="System.Runtime.InteropServices.ComTypes.IMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="ppmk">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsDirty">
+      <MemberSignature Language="C#" Value="public int IsDirty ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsEqual">
+      <MemberSignature Language="C#" Value="public int IsEqual (System.Runtime.InteropServices.ComTypes.IMoniker pmkOtherMoniker);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkOtherMoniker" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+      </Parameters>
+      <Docs>
+        <param name="pmkOtherMoniker">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsRunning">
+      <MemberSignature Language="C#" Value="public int IsRunning (System.Runtime.InteropServices.ComTypes.IBindCtx pbc, System.Runtime.InteropServices.ComTypes.IMoniker pmkToLeft, System.Runtime.InteropServices.ComTypes.IMoniker pmkNewlyRunning);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.ComTypes.IBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+        <Parameter Name="pmkNewlyRunning" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added.</param>
+        <param name="pmkToLeft">To be added.</param>
+        <param name="pmkNewlyRunning">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSystemMoniker">
+      <MemberSignature Language="C#" Value="public int IsSystemMoniker (out int pdwMksys);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pdwMksys" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pdwMksys">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Runtime.InteropServices.ComTypes.IStream pStm);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pStm" Type="System.Runtime.InteropServices.ComTypes.IStream" />
+      </Parameters>
+      <Docs>
+        <param name="pStm">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ParseDisplayName">
+      <MemberSignature Language="C#" Value="public void ParseDisplayName (System.Runtime.InteropServices.ComTypes.IBindCtx pbc, System.Runtime.InteropServices.ComTypes.IMoniker pmkToLeft, string pszDisplayName, out int pchEaten, out System.Runtime.InteropServices.ComTypes.IMoniker ppmkOut);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.ComTypes.IBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+        <Parameter Name="pszDisplayName" Type="System.String" />
+        <Parameter Name="pchEaten" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="ppmkOut" Type="System.Runtime.InteropServices.ComTypes.IMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added.</param>
+        <param name="pmkToLeft">To be added.</param>
+        <param name="pszDisplayName">To be added.</param>
+        <param name="pchEaten">To be added.</param>
+        <param name="ppmkOut">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reduce">
+      <MemberSignature Language="C#" Value="public void Reduce (System.Runtime.InteropServices.ComTypes.IBindCtx pbc, int dwReduceHowFar, ref System.Runtime.InteropServices.ComTypes.IMoniker ppmkToLeft, out System.Runtime.InteropServices.ComTypes.IMoniker ppmkReduced);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.ComTypes.IBindCtx" />
+        <Parameter Name="dwReduceHowFar" Type="System.Int32" />
+        <Parameter Name="ppmkToLeft" Type="System.Runtime.InteropServices.ComTypes.IMoniker&amp;" RefType="ref" />
+        <Parameter Name="ppmkReduced" Type="System.Runtime.InteropServices.ComTypes.IMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added.</param>
+        <param name="dwReduceHowFar">To be added.</param>
+        <param name="ppmkToLeft">To be added.</param>
+        <param name="ppmkReduced">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RelativePathTo">
+      <MemberSignature Language="C#" Value="public void RelativePathTo (System.Runtime.InteropServices.ComTypes.IMoniker pmkOther, out System.Runtime.InteropServices.ComTypes.IMoniker ppmkRelPath);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkOther" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
+        <Parameter Name="ppmkRelPath" Type="System.Runtime.InteropServices.ComTypes.IMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pmkOther">To be added.</param>
+        <param name="ppmkRelPath">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.Runtime.InteropServices.ComTypes.IStream pStm, bool fClearDirty);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pStm" Type="System.Runtime.InteropServices.ComTypes.IStream" />
+        <Parameter Name="fClearDirty" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="pStm">To be added.</param>
+        <param name="fClearDirty">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

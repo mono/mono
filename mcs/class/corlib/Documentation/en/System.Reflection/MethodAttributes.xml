@@ -1,0 +1,559 @@
+<Type Name="MethodAttributes" FullName="System.Reflection.MethodAttributes" FullNameSP="System_Reflection_MethodAttributes" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable MethodAttributes extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum MethodAttributes" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para>Specifies flags for method attributes.</para>
+    </summary>
+    <remarks>
+      <para>This enumeration is used by the <see cref="P:System.Reflection.MethodBase.Attributes" /> property.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Abstract">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes Abstract = 1024" />
+      <MemberSignature Language="C#" Value="Abstract" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Abstract</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the type that declares the method does not provide
+      an implementation.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Assembly">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes Assembly = 3" />
+      <MemberSignature Language="C#" Value="Assembly" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Assembly</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the method is accessible throughout the
+      assembly.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CheckAccessOnOverride">
+      <MemberSignature Language="C#" Value="CheckAccessOnOverride" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ReuseSlot, CheckAccessOnOverride</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FamANDAssem">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes FamANDAssem = 2" />
+      <MemberSignature Language="C#" Value="FamANDAssem" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>FamANDAssem</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the method is accessible only to members of the type that defines the method and its subclasses in the assembly that
+      contains the defining type.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Family">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes Family = 4" />
+      <MemberSignature Language="C#" Value="Family" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Family</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the method is accessible only to the members of the type
+      that defines it and its subclasses.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FamORAssem">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes FamORAssem = 5" />
+      <MemberSignature Language="C#" Value="FamORAssem" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>FamORAssem</MemberValue>
+      <Docs>
+        <summary>
+   Specifies that the method is accessible to members of
+   the type that defines the method and its subclasses, and throughout the
+   assembly.
+</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Final">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes Final = 32" />
+      <MemberSignature Language="C#" Value="Final" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Final</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the method cannot be overridden.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasSecurity">
+      <MemberSignature Language="C#" Value="HasSecurity" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ReuseSlot, HasSecurity</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HideBySig">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes HideBySig = 128" />
+      <MemberSignature Language="C#" Value="HideBySig" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>HideBySig</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the method is hidden
+      by name and signature.
+      </para>
+          <para>
+            <block subset="none" type="note">A method that is not hidden by name 
+      and signature is hidden by name only. </block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MemberAccessMask">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes MemberAccessMask = 7" />
+      <MemberSignature Language="C#" Value="MemberAccessMask" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>MemberAccessMask</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a bit-mask that, when combined with 
+      the attributes of a method using the logical AND operator, yields
+      the bits that specify the accessibility of a method.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NewSlot">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes NewSlot = 256" />
+      <MemberSignature Language="C#" Value="NewSlot" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>VtableLayoutMask</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the method always gets a new slot in the
+      v-table.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PinvokeImpl">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes PinvokeImpl = 8192" />
+      <MemberSignature Language="C#" Value="PinvokeImpl" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>PinvokeImpl</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the method implementation is forwarded
+      through PInvoke (Platform Invocation
+      Services).
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Private">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes Private = 1" />
+      <MemberSignature Language="C#" Value="Private" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Private</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the method is accessible only to
+      members in the defining type.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrivateScope">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes PrivateScope = 0" />
+      <MemberSignature Language="C#" Value="PrivateScope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ReuseSlot</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the member cannot be referenced.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Public">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes Public = 6" />
+      <MemberSignature Language="C#" Value="Public" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Public</MemberValue>
+      <Docs>
+        <summary>
+   Specifies that the method is accessible to members of any
+   type.
+</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RequireSecObject">
+      <MemberSignature Language="C#" Value="RequireSecObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ReuseSlot, RequireSecObject</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReservedMask">
+      <MemberSignature Language="C#" Value="ReservedMask" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ReuseSlot, ReservedMask</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReuseSlot">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes ReuseSlot = 0" />
+      <MemberSignature Language="C#" Value="ReuseSlot" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ReuseSlot</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the method will
+      reuse an existing slot
+      in the v-table.
+      </para>
+          <para>
+            <block subset="none" type="note">This is the default behavior. 
+   </block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RTSpecialName">
+      <MemberSignature Language="C#" Value="RTSpecialName" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ReuseSlot, RTSpecialName</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SpecialName">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes SpecialName = 2048" />
+      <MemberSignature Language="C#" Value="SpecialName" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SpecialName</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the method is treated in a special way by some tools. </para>
+          <block subset="none" type="note">
+            <para>For more information on special names, see Partition I of the CLI 
+         Specification.</para>
+            <para>For more information on <see langword="SpecialName " />in metadata, see 
+      Partition II of the CLI Specification.</para>
+          </block>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Static">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes Static = 16" />
+      <MemberSignature Language="C#" Value="Static" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Static</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the method is invoked on the defining type.</para>
+          <para>
+            <block subset="none" type="note">For method 
+      invocation, the target of a static method is a <see cref="T:System.Type" />
+      object that represents the type where the method is defined.</block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnmanagedExport">
+      <MemberSignature Language="C#" Value="UnmanagedExport" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ReuseSlot, UnmanagedExport</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Virtual">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes Virtual = 64" />
+      <MemberSignature Language="C#" Value="Virtual" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Virtual</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the method is virtual.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VtableLayoutMask">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.MethodAttributes VtableLayoutMask = 256" />
+      <MemberSignature Language="C#" Value="VtableLayoutMask" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>VtableLayoutMask</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies a bit-mask that, when combined with 
+      the attributes of a method using the logical AND operator,
+      yields the v-table attributes of a
+      method.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

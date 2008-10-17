@@ -1,0 +1,1022 @@
+<Type Name="Stream" FullName="System.IO.Stream" FullNameSP="System_IO_Stream" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable Stream extends System.MarshalByRefObject implements System.IDisposable" />
+  <TypeSignature Language="C#" Value="public abstract class Stream : MarshalByRefObject, IDisposable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.MarshalByRefObject</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para>Abstract base class for all stream implementations.</para>
+    </summary>
+    <remarks>
+      <para>Streams involve three fundamental operations: </para>
+      <list type="bullet">
+        <item>
+          <term>
+         
+         You can read from streams. Reading is the transfer of
+         data from a stream into a data structure, such as an array of bytes.</term>
+        </item>
+        <item>
+          <term>
+         
+         You can write to streams. Writing is the transfer of
+         data from a data structure into a stream.</term>
+        </item>
+        <item>
+          <term>
+         
+         Streams can support seeking. Seeking is the querying and modifying of the
+         current position within a stream. Seek capability depends on the kind of
+         backing store a stream has. For example, network streams have no unified
+         concept of a current position, and therefore typically do not support seeking.</term>
+        </item>
+      </list>
+      <para>All classes that represent streams inherit from the
+<see cref="T:System.IO.Stream" /> class.
+   The <see cref="T:System.IO.Stream" />
+   class and its subclasses provide a generic view of
+   data sources and repositories, isolating the programmer from
+   the specific details of the operating system and underlying devices.</para>
+      <para>Subclasses are required to provide implementations only 
+   for the synchronous read and write methods. The asynchronous read and write
+   methods are implemented via the synchronous ones. <block subset="none" type="note"> The <see cref="T:System.IO.Stream" /> synchronous read and write methods
+   are <see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)" /> and <see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)" />. The asynchronous read and write methods are
+<see cref="M:System.IO.Stream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />, <see cref="M:System.IO.Stream.EndRead(System.IAsyncResult)" />, <see cref="M:System.IO.Stream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />, 
+   and <see cref="M:System.IO.Stream.EndWrite(System.IAsyncResult)" />.</block></para>
+      <para>Depending on the underlying data source or repository, streams might support
+   only some of these capabilities. An application can query a stream for its
+   capabilities by using the <see cref="P:System.IO.Stream.CanRead" />, <see cref="P:System.IO.Stream.CanWrite" />, and <see cref="P:System.IO.Stream.CanSeek" />
+   properties.</para>
+      <para>The <see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)" /> and <see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)" /> methods read and write data
+in a variety of formats. For streams that support seeking, the <see cref="M:System.IO.Stream.Seek(System.Int64,System.IO.SeekOrigin)" /> and
+<see cref="M:System.IO.Stream.SetLength(System.Int64)" /> methods, and the <see cref="P:System.IO.Stream.Position" /> and
+<see cref="P:System.IO.Stream.Length" /> properties can be used to query and modify the
+current position and length of a stream.</para>
+      <para>Some stream implementations perform local buffering of the underlying data to
+   improve performance. For such streams, the <see cref="M:System.IO.Stream.Flush" /> method can be used to clear
+   any internal buffers and ensure that all data has been written to the underlying
+   data source or repository.</para>
+      <para>Calling <see cref="M:System.IO.Stream.Close" /> on a <see cref="T:System.IO.Stream" /> flushes any
+buffered data, essentially calling <see cref="M:System.IO.Stream.Flush" /> for you. <see cref="M:System.IO.Stream.Close" /> also releases operating system resources such as file handles, network
+connections, or memory used for any internal buffering.</para>
+      <para>If you need a <see cref="T:System.IO.Stream" /> with no backing store (i.e., a bit bucket), use
+<see cref="F:System.IO.Stream.Null" /> 
+. </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected Stream ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Constructs a new instance of the <see cref="T:System.IO.Stream" /> class.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BeginRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginRead(class System.Byte[] buffer, int32 offset, int32 count, class System.AsyncCallback callback, object state)" />
+      <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback callback, object state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">The <see cref="T:System.Byte" /> array to read the data into.</param>
+        <param name="offset">A <see cref="T:System.Int32" /> that specifies the byte offset in <paramref name="buffer" /> at which to begin writing data read from the stream.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the maximum number of bytes to read from the stream.</param>
+        <param name="callback">A <see cref="T:System.AsyncCallback" /> delegate to be called when the read is complete, or <see langword="null" />.</param>
+        <param name="state">An application-defined object, or <see langword="null" />.</param>
+        <summary>
+          <para>Begins an asynchronous read operation.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IAsyncResult" /> that contains
+   information about the asynchronous read operation, which could still
+   be pending.</para>
+        </returns>
+        <remarks>
+          <para> This method starts an asynchronous read operation. To
+      determine how many bytes were read and release resources allocated by this
+      method, call the <see cref="M:System.IO.Stream.EndRead(System.IAsyncResult)" /> method and specify the <see cref="T:System.IAsyncResult" /> object
+      returned by this method. <block subset="none" type="note"> The <see cref="M:System.IO.Stream.EndRead(System.IAsyncResult)" /> method
+      should be called exactly once for each call to <see cref="M:System.IO.Stream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</block></para>
+          <para>If the
+   <paramref name="callback" /> parameter is not <see langword="null" />, the method referenced by <paramref name="callback" /> is invoked when the asynchronous operation
+      completes. The <see cref="T:System.IAsyncResult" />
+      object returned by this method
+      is passed as the argument to the method referenced by <paramref name="callback" />.</para>
+          <para> The current position in the stream is updated when the
+      asynchronous read or write is issued, not
+      when the I/O operation completes.</para>
+          <para> Multiple simultaneous asynchronous requests render the request completion order unspecified.</para>
+          <para>The <paramref name="state" /> parameter can be any object that the caller wishes to have
+   available for the duration of the asynchronous operation. This object is
+   available via the <see cref="P:System.IAsyncResult.AsyncState" /> property of the object returned by this
+   method. </para>
+          <para>
+            <block subset="none" type="note"> Use the <see cref="P:System.IO.Stream.CanRead" />
+property to determine whether the current instance supports
+reading.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.NotSupportedException">The current <see cref="T:System.IO.Stream" /> does not support reading.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BeginWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginWrite(class System.Byte[] buffer, int32 offset, int32 count, class System.AsyncCallback callback, object state)" />
+      <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback callback, object state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">The <see cref="T:System.Byte" /> array to be written to the current stream.</param>
+        <param name="offset">A <see cref="T:System.Int32" /> that specifies the byte offset in <paramref name="buffer" /> at which to begin copying bytes to the current stream.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the maximum number of bytes to be written to the current stream.</param>
+        <param name="callback">A <see cref="T:System.AsyncCallback" /> delegate to be called when the write is complete, or <see langword="null" />.</param>
+        <param name="state">An application-defined object, or <see langword="null" />.</param>
+        <summary>
+          <para>Begins an asynchronous write operation.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IAsyncResult" />
+that represents the asynchronous write, which could still be pending.</para>
+        </returns>
+        <remarks>
+          <para>Pass the <see cref="T:System.IAsyncResult" /> returned by this method to <see cref="M:System.IO.Stream.EndWrite(System.IAsyncResult)" /> to ensure that the write completes and frees
+   resources appropriately. If an error occurs during an asynchronous
+   write, an exception will not be thrown until <see cref="M:System.IO.Stream.EndWrite(System.IAsyncResult)" /> is
+   called with the <see cref="T:System.IAsyncResult" /> returned by this method. <block subset="none" type="note"> If a failure is detected from the underlying OS (such as if a floppy
+   is ejected in the middle of the operation), the results of the write operation are undefined.</block></para>
+          <para>If the <paramref name="callback" /> parameter is not <see langword="null" />, the method
+referenced by <paramref name="callback" /> is invoked when the asynchronous operation
+completes. The <see cref="T:System.IAsyncResult" /> object returned by this method is passed as the argument
+to the method referenced by <paramref name="callback" />.</para>
+          <para>The <paramref name="state" /> parameter can be any object that the caller wishes to have
+available for the duration of the asynchronous operation. This object is
+available via the <see cref="P:System.IAsyncResult.AsyncState" /> property of the object returned by this
+method. </para>
+          <para> If a stream is writable, writing at the end of
+   it expands the stream.</para>
+          <para>The current position in the stream is updated when you issue the asynchronous
+   read or write, not when the I/O operation completes. Multiple simultaneous
+   asynchronous requests render the request completion order
+   uncertain.</para>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="buffer" /> should generally be greater than 64
+   KB.</para>
+            <para>Use the <see cref="P:System.IO.Stream.CanWrite" /> property to
+determine whether the current instance supports writing.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The current <see cref="T:System.IO.Stream" /> does not support writing.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanRead">
+      <MemberSignature Language="ILASM" Value=".property bool CanRead { public hidebysig virtual abstract specialname bool get_CanRead() }" />
+      <MemberSignature Language="C#" Value="public abstract bool CanRead { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current stream supports reading.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the stream supports reading;
+   otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>If a class derived from <see cref="T:System.IO.Stream" /> does not support reading, the following methods
+   throw a <see cref="T:System.NotSupportedException" /> : <see cref="M:System.IO.Stream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> ,
+<see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)" /> and <see cref="M:System.IO.Stream.ReadByte" /> .</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanSeek">
+      <MemberSignature Language="ILASM" Value=".property bool CanSeek { public hidebysig virtual abstract specialname bool get_CanSeek() }" />
+      <MemberSignature Language="C#" Value="public abstract bool CanSeek { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current stream supports seeking.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the stream supports seeking;
+   otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>If a class derived from <see cref="T:System.IO.Stream" /> does not support seeking, the following methods throw a <see cref="T:System.NotSupportedException" />: <see cref="P:System.IO.Stream.Length" />,
+<see cref="M:System.IO.Stream.SetLength(System.Int64)" />,
+<see cref="P:System.IO.Stream.Position" />, or <see cref="M:System.IO.Stream.Seek(System.Int64,System.IO.SeekOrigin)" />.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanTimeout">
+      <MemberSignature Language="C#" Value="public virtual bool CanTimeout { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanWrite">
+      <MemberSignature Language="ILASM" Value=".property bool CanWrite { public hidebysig virtual abstract specialname bool get_CanWrite() }" />
+      <MemberSignature Language="C#" Value="public abstract bool CanWrite { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current stream supports writing.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the stream supports writing;
+   otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>If a class derived from <see cref="T:System.IO.Stream" /> does not support writing, the following methods
+   throw a <see cref="T:System.NotSupportedException" />: <see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)" />, <see cref="M:System.IO.Stream.WriteByte(System.Byte)" />, and <see cref="M:System.IO.Stream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
+      <MemberSignature Language="C#" Value="public virtual void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Closes the current stream
+      and releases any resources associated with the current stream.</para>
+        </summary>
+        <remarks>
+          <para>Following a call to this method, a call to another operation on the same stream might result in an exception (such as <see cref="T:System.ObjectDisposedException" />, for example). However, if the stream is already closed, a call  to <see cref="M:System.IO.Stream.Close" /> throws no exceptions.</para>
+          <para>
+            <block subset="none" type="note">If this method
+      
+      is called while an asynchronous read or write is pending for a stream, the
+      behavior of the stream is undefined.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateWaitHandle">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual class System.Threading.WaitHandle CreateWaitHandle()" />
+      <MemberSignature Language="C#" Value="protected virtual System.Threading.WaitHandle CreateWaitHandle ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.WaitHandle</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Allocates a <see cref="T:System.Threading.WaitHandle" /> object.</para>
+        </summary>
+        <returns>
+          <para>A reference to the allocated <see cref="T:System.Threading.WaitHandle" />.</para>
+        </returns>
+        <remarks>
+          <para> When called for the first time this method
+      creates a <see cref="T:System.Threading.WaitHandle" /> object and returns it. On subsequent
+      calls, the <see cref="M:System.IO.Stream.CreateWaitHandle" /> method returns a reference to the same wait
+      handle.</para>
+          <para>
+            <block subset="none" type="note">
+              <see cref="M:System.IO.Stream.CreateWaitHandle" /> is useful if you implement the
+      asynchronous methods and require a way of blocking in <see cref="M:System.IO.Stream.EndRead(System.IAsyncResult)" /> or
+   <see cref="M:System.IO.Stream.EndWrite(System.IAsyncResult)" /> until the asynchronous operation is
+      complete.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("CreateWaitHandle is due for removal.  Use "new ManualResetEvent(false)" instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 EndRead(class System.IAsyncResult asyncResult)" />
+      <MemberSignature Language="C#" Value="public virtual int EndRead (IAsyncResult asyncResult);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">The <see cref="T:System.IAsyncResult" /> object that references the pending asynchronous read request.</param>
+        <summary>
+          <para>Ends a pending asynchronous read request.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> that indicates the number of bytes read from the stream, 
+   between 0 and the number of bytes specified via the <see cref="M:System.IO.Stream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> parameter <paramref name="count" />. Streams only return
+0 at the end of the stream, otherwise, they block until at
+least 1 byte is available.</para>
+        </returns>
+        <remarks>
+          <para>
+            <see cref="M:System.IO.Stream.EndRead(System.IAsyncResult)" /> blocks until the I/O operation has completed.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="asyncResult" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="asyncResult " />did not originate from a <see cref="M:System.IO.Stream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method on the current stream.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void EndWrite(class System.IAsyncResult asyncResult)" />
+      <MemberSignature Language="C#" Value="public virtual void EndWrite (IAsyncResult asyncResult);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">A <see cref="T:System.IAsyncResult" /> that references the outstanding asynchronous I/O request.</param>
+        <summary>
+          <para>Ends an asynchronous write operation.</para>
+        </summary>
+        <remarks>
+          <para>
+            <see cref="M:System.IO.Stream.EndWrite(System.IAsyncResult)" /> is required to be called exactly once for every <see cref="M:System.IO.Stream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />. <see cref="M:System.IO.Stream.EndWrite(System.IAsyncResult)" /> blocks until the write I/O operation has completed.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The <paramref name="asyncResult" /> parameter is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="asyncResult " />did not originate from a <see cref="M:System.IO.Stream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method on the current stream.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Flush()" />
+      <MemberSignature Language="C#" Value="public abstract void Flush ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Flushes the internal buffer.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Implementers should use this method to move any information from an underlying buffer
+      to its destination. The <see cref="M:System.IO.Stream.Flush" /> method should clear the buffer, but the stream
+      should not be closed. Depending upon the state of the object, the current
+      position within the stream might need to be modified (for example, if the
+      underlying stream supports seeking). For additional information see <see cref="P:System.IO.Stream.CanSeek" />
+      .</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override <see cref="M:System.IO.Stream.Flush" /> on
+   streams that implement a buffer.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurs.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="ILASM" Value=".property int64 Length { public hidebysig virtual abstract specialname int64 get_Length() }" />
+      <MemberSignature Language="C#" Value="public abstract long Length { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the length in bytes of the stream.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int64" /> value representing the length of the stream in
+   bytes.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Use the <see cref="P:System.IO.Stream.CanSeek" />
+property to determine whether the current instance supports
+seeking.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">This property is
+   read-only.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The stream does not support seeking.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Null">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.IO.Stream Null" />
+      <MemberSignature Language="C#" Value="public static readonly System.IO.Stream Null;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.IO.Stream" /> with no backing store.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <see cref="F:System.IO.Stream.Null" /> is used to redirect output to a stream
+   that does not consume any operating system resources. When the methods of <see cref="T:System.IO.Stream" /> that provide writing are invoked on <see cref="F:System.IO.Stream.Null" />
+   , they simply return, and no data is written. <see cref="F:System.IO.Stream.Null" /> also implements a <see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)" /> method that returns zero without reading data.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Position">
+      <MemberSignature Language="ILASM" Value=".property int64 Position { public hidebysig virtual abstract specialname int64 get_Position() public hidebysig virtual abstract specialname void set_Position(int64 value) }" />
+      <MemberSignature Language="C#" Value="public abstract long Position { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the position within the current stream.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int64" /> that specifies the current position within the stream.</para>
+        </value>
+        <remarks>
+          <para>The stream is required to support seeking to get or set the
+      position. <block subset="none" type="note">Use the <see cref="P:System.IO.Stream.CanSeek" />
+      property to determine whether the current instance supports seeking.</block></para>
+          <para>Classes that derive from <see cref="T:System.IO.Stream" /> are required to provide an implementation of
+   this property. </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
+        <exception cref="T:System.NotSupportedException">The stream does not support seeking.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 Read(class System.Byte[] buffer, int32 offset, int32 count)" />
+      <MemberSignature Language="C#" Value="public abstract int Read (byte[] buffer, int offset, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Byte" /> array. When this method returns, the elements between <paramref name="offset" /> and <paramref name="(offset + count - 1)" /> are replaced by the bytes read from the current source.</param>
+        <param name="offset">A <see cref="T:System.Int32" /> that specifies the zero based byte offset in <paramref name="buffer " /> at which to begin storing the data read from the current stream.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the maximum number of bytes to be read from the current stream.</param>
+        <summary>
+          <para> Reads a sequence of bytes from the current stream and advances the position
+      within the stream by the number of bytes read.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> that specifies the total number of bytes read into the
+   buffer, or zero if the end of the stream has been
+   reached before any data can be read.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Use the <see cref="P:System.IO.Stream.CanRead" />
+property to determine whether the current instance supports
+reading.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">(<paramref name="offset" /> + <paramref name="count" /> - 1) is greater than the length of <paramref name="buffer" />.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="offset" /> or <paramref name="count" /> is less than zero.</exception>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+        <exception cref="T:System.NotSupportedException">The current stream does not support reading.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadByte">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 ReadByte()" />
+      <MemberSignature Language="C#" Value="public virtual int ReadByte ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Reads a byte from the stream and advances the position
+      within the stream by one byte.</para>
+        </summary>
+        <returns>
+          <para>The unsigned byte cast to a <see cref="T:System.Int32" /> , or -1 if at the end
+   of the stream.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">Use the <see cref="P:System.IO.Stream.CanRead" /> property to determine whether
+   the current instance supports reading.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
+        <exception cref="T:System.NotSupportedException">The stream does not support reading.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadTimeout">
+      <MemberSignature Language="C#" Value="public virtual int ReadTimeout { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Seek">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int64 Seek(int64 offset, valuetype System.IO.SeekOrigin origin)" />
+      <MemberSignature Language="C#" Value="public abstract long Seek (long offset, System.IO.SeekOrigin origin);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="origin" Type="System.IO.SeekOrigin" />
+      </Parameters>
+      <Docs>
+        <param name="offset">A <see cref="T:System.Int64" /> that specifies the byte offset relative to origin.</param>
+        <param name="origin">A <see cref="T:System.IO.SeekOrigin" /> value indicating the reference point used to obtain the new position.</param>
+        <summary>
+          <para>Changes the position within the current stream by the given offset, which is relative to the stated origin.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int64" /> that specifies the new position within the current stream.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Use the <see cref="P:System.IO.Stream.CanSeek" /> property to determine whether
+   the current instance supports seeking.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">If <paramref name="offset " />is negative,
+the new position is required to precede the position specified by <paramref name="origin " />by the number of bytes specified by <paramref name="offset" />. If <paramref name="offset " />is zero,
+the new position is required to be the position specified by <paramref name="origin" />. If
+<paramref name="offset " />is positive, the new position is required to follow the position 
+specified by <paramref name="origin " />by the number of bytes specified by <paramref name="offset" />.</block>
+          </para>
+          <block subset="none" type="overrides">
+            <para>Classes derived from <see cref="T:System.IO.Stream" /> that
+   support seeking are required to override this method. </para>
+          </block>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The stream does not support seeking, such as if the stream is constructed from a pipe or console output.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetLength">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void SetLength(int64 value)" />
+      <MemberSignature Language="C#" Value="public abstract void SetLength (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int64" /> that specifies the desired length of the current stream in bytes.</param>
+        <summary>
+          <para>Sets the length of the current stream.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Use the <see cref="P:System.IO.Stream.CanWrite" />
+property to determine whether the current instance supports writing, and the
+<see cref="P:System.IO.Stream.CanSeek" /> property
+to determine whether seeking is supported. </block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">If the specified value is less than
+   the current length of the stream, the stream is truncated. If the specified
+   value is larger than the current length of the stream, the stream is expanded.
+   If the stream is expanded, the contents of the stream between the old and the
+   new length are initialized to zeros.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">There is no default
+   implementation.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Classes derived from <see cref="T:System.IO.Stream" /> are required to
+support both writing and seeking for <see cref="M:System.IO.Stream.SetLength(System.Int64)" />
+to work.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The stream does not support both writing and seeking, such as if the stream is constructed from a pipe or console output.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Synchronized">
+      <MemberSignature Language="C#" Value="public static System.IO.Stream Synchronized (System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.IDisposable" /> interface. [Note: For more information, see <see cref="M:System.IDisposable.Dispose" />.]</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Write(class System.Byte[] buffer, int32 offset, int32 count)" />
+      <MemberSignature Language="C#" Value="public abstract void Write (byte[] buffer, int offset, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Byte" /> array containing the data to write.</param>
+        <param name="offset">A <see cref="T:System.Int32" /> that specifies the zero based byte offset in <paramref name="buffer " /> at which to begin copying bytes to the current stream.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of bytes to be written to the current stream.</param>
+        <summary>
+          <para>Writes a
+      sequence of bytes to the current stream and advances the current position within
+      the current stream by the number of bytes written.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Use the <see cref="P:System.IO.Stream.CanWrite" /> property to determine whether
+   the current instance supports writing.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">If the write operation is
+   successful, the position within the stream advances by the number of bytes
+   written. If an exception occurs, the position within the stream remains
+   unchanged.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">(<paramref name="offset" /> + <paramref name="count" /> ) is greater than the length of <paramref name="buffer" />.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="offset " />or <paramref name="count" /> is negative.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.NotSupportedException">The stream does not support writing.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteByte">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteByte(unsigned int8 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteByte (byte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Byte" /> to write to the stream.</param>
+        <summary>
+          <para>Writes a <see cref="T:System.Byte" /> to the current position in the stream and advances the position within the stream by one byte.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Use the <see cref="P:System.IO.Stream.CanWrite" /> property to determine whether
+   the current instance supports writing.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
+        <exception cref="T:System.NotSupportedException">The stream does not support writing.</exception>
+        <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteTimeout">
+      <MemberSignature Language="C#" Value="public virtual int WriteTimeout { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

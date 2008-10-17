@@ -1,0 +1,99 @@
+<Type Name="CompilationRelaxationsAttribute" FullName="System.Runtime.CompilerServices.CompilationRelaxationsAttribute">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public class CompilationRelaxationsAttribute : Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Module | System.AttributeTargets.Class | System.AttributeTargets.Method)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>This attribute allows the user to specify whether the ordering of instruction checking is strict or relaxed. It also allows the user to specify whether or not strings are interned.</para>
+    </summary>
+    <remarks>
+      <para>Optimizers are granted additional latitude for relaxed exceptions.  A method is relaxed for certain kinds of exceptions if the innermost custom attribute <see cref="T:System.Runtime.CompilerServices.CompilationRelaxationAttribute" /> pertaining to that kind of exception is present and specifies to relax those kinds of exceptions. (Here, "innermost" means inspecting the method, its class, and its assembly, in that order.)</para>
+      <para>
+        <block subset="none" type="note">For background and implementation information for relaxed exception handling, plus examples, see Annex F of Partition VI.</block>
+      </para>
+      <para>
+        <block subset="none" type="note">See the <see cref="T:System.Runtime.CompilerServices.CompilationRelaxations" /> enumeration for a description of the kinds of exceptions that can be relaxed or made strict.</block>
+      </para>
+      <para>The runtime can create one string object for each unique string literal, rather than making multiple copies. This is called string interning, which internally requires building auxiliary tables that consume memory resources. String interning can be enabled or disabled at the assembly level via this attribute.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CompilationRelaxationsAttribute (int relaxations);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="relaxations" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="relaxations">A bitwise OR combination of enumeration values from <see cref="T:System.Runtime.CompilerServices.CompilationRelaxations" /> that specifies the desired ordering of instruction checking and string interning.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.CompilationRelaxationsAttribute" /> class with the specified <see cref="T:System.Runtime.CompilerServices.CompilationRelaxations" /> value.</para>
+        </summary>
+        <remarks>
+          <para>The <paramref name="relaxations" /> flags describe whether to change exception strictness, or string interning.  For exceptions of kind xxx, setting Strictxxx makes those exceptions have strict ordering, and setting Relaxedxxx makes those exceptions have relaxed ordering.  Setting neither flag for xxx causes no change for exceptions of kind xxx; i.e., the strictness/relaxation for xxx defaults to what it would be if the attribute were not present.  See <see cref="T:System.Runtime.CompilerServices.CompilationRelaxations" />  for a list of the xxx choices.)</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">For some xxx, <paramref name="relaxations" />  has both Strictxxx and Relaxedxx set, or has both StringInterning and NoStringInterning set.</exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CompilationRelaxationsAttribute (System.Runtime.CompilerServices.CompilationRelaxations relaxations);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="relaxations" Type="System.Runtime.CompilerServices.CompilationRelaxations" />
+      </Parameters>
+      <Docs>
+        <param name="relaxations">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompilationRelaxations">
+      <MemberSignature Language="C#" Value="public int CompilationRelaxations { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets the set of values sent to the <see cref="T:System.Runtime.CompilerServices.CompilationRelaxationsAttribute" /> constructor that specifies the desired ordering of instruction checking and string interning.</para>
+        </summary>
+        <value>
+          <para>The current set of values that specifies the desired ordering of instruction checking and string interning.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

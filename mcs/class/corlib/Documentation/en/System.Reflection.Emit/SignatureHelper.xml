@@ -1,0 +1,532 @@
+<Type Name="SignatureHelper" FullName="System.Reflection.Emit.SignatureHelper">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SignatureHelper : System.Runtime.InteropServices._SignatureHelper" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.InteropServices._SignatureHelper</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AddArgument">
+      <MemberSignature Language="C#" Value="public void AddArgument (Type clsArgument);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="clsArgument" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="clsArgument">To be added: an object of type 'Type'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddArgument">
+      <MemberSignature Language="C#" Value="public void AddArgument (Type argument, bool pinned);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="argument" Type="System.Type" />
+        <Parameter Name="pinned" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="argument">To be added.</param>
+        <param name="pinned">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddArgument">
+      <MemberSignature Language="C#" Value="public void AddArgument (Type argument, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="argument" Type="System.Type" />
+        <Parameter Name="requiredCustomModifiers" Type="System.Type[]" />
+        <Parameter Name="optionalCustomModifiers" Type="System.Type[]" />
+      </Parameters>
+      <Docs>
+        <param name="argument">To be added.</param>
+        <param name="requiredCustomModifiers">To be added.</param>
+        <param name="optionalCustomModifiers">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddArguments">
+      <MemberSignature Language="C#" Value="public void AddArguments (Type[] arguments, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="arguments" Type="System.Type[]" />
+        <Parameter Name="requiredCustomModifiers" Type="System.Type[][]" />
+        <Parameter Name="optionalCustomModifiers" Type="System.Type[][]" />
+      </Parameters>
+      <Docs>
+        <param name="arguments">To be added.</param>
+        <param name="requiredCustomModifiers">To be added.</param>
+        <param name="optionalCustomModifiers">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddSentinel">
+      <MemberSignature Language="C#" Value="public void AddSentinel ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetFieldSigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetFieldSigHelper (System.Reflection.Module mod);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mod" Type="System.Reflection.Module" />
+      </Parameters>
+      <Docs>
+        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'SignatureHelper'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetLocalVarSigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetLocalVarSigHelper ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetLocalVarSigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetLocalVarSigHelper (System.Reflection.Module mod);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mod" Type="System.Reflection.Module" />
+      </Parameters>
+      <Docs>
+        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'SignatureHelper'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMethodSigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Reflection.CallingConventions callingConvention, Type returnType);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callingConvention" Type="System.Reflection.CallingConventions" />
+        <Parameter Name="returnType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="callingConvention">To be added.</param>
+        <param name="returnType">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMethodSigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Runtime.InteropServices.CallingConvention unmanagedCallingConvention, Type returnType);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="unmanagedCallingConvention" Type="System.Runtime.InteropServices.CallingConvention" />
+        <Parameter Name="returnType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="unmanagedCallingConvention">To be added.</param>
+        <param name="returnType">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMethodSigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Reflection.Module mod, System.Reflection.CallingConventions callingConvention, Type returnType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mod" Type="System.Reflection.Module" />
+        <Parameter Name="callingConvention" Type="System.Reflection.CallingConventions" />
+        <Parameter Name="returnType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
+        <param name="callingConvention">To be added: an object of type 'Reflection.CallingConventions'</param>
+        <param name="returnType">To be added: an object of type 'Type'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'SignatureHelper'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMethodSigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Reflection.Module mod, System.Runtime.InteropServices.CallingConvention unmanagedCallConv, Type returnType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mod" Type="System.Reflection.Module" />
+        <Parameter Name="unmanagedCallConv" Type="System.Runtime.InteropServices.CallingConvention" />
+        <Parameter Name="returnType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
+        <param name="unmanagedCallConv">To be added.</param>
+        <param name="returnType">To be added: an object of type 'Type'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'SignatureHelper'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMethodSigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Reflection.Module mod, Type returnType, Type[] parameterTypes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mod" Type="System.Reflection.Module" />
+        <Parameter Name="returnType" Type="System.Type" />
+        <Parameter Name="parameterTypes" Type="System.Type[]" />
+      </Parameters>
+      <Docs>
+        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
+        <param name="returnType">To be added: an object of type 'Type'</param>
+        <param name="parameterTypes">To be added: an object of type 'Type []'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'SignatureHelper'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetPropertySigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetPropertySigHelper (System.Reflection.Module mod, Type returnType, Type[] parameterTypes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mod" Type="System.Reflection.Module" />
+        <Parameter Name="returnType" Type="System.Type" />
+        <Parameter Name="parameterTypes" Type="System.Type[]" />
+      </Parameters>
+      <Docs>
+        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
+        <param name="returnType">To be added: an object of type 'Type'</param>
+        <param name="parameterTypes">To be added: an object of type 'Type []'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'SignatureHelper'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetPropertySigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetPropertySigHelper (System.Reflection.Module mod, Type returnType, Type[] requiredReturnTypeCustomModifiers, Type[] optionalReturnTypeCustomModifiers, Type[] parameterTypes, Type[][] requiredParameterTypeCustomModifiers, Type[][] optionalParameterTypeCustomModifiers);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mod" Type="System.Reflection.Module" />
+        <Parameter Name="returnType" Type="System.Type" />
+        <Parameter Name="requiredReturnTypeCustomModifiers" Type="System.Type[]" />
+        <Parameter Name="optionalReturnTypeCustomModifiers" Type="System.Type[]" />
+        <Parameter Name="parameterTypes" Type="System.Type[]" />
+        <Parameter Name="requiredParameterTypeCustomModifiers" Type="System.Type[][]" />
+        <Parameter Name="optionalParameterTypeCustomModifiers" Type="System.Type[][]" />
+      </Parameters>
+      <Docs>
+        <param name="mod">To be added.</param>
+        <param name="returnType">To be added.</param>
+        <param name="requiredReturnTypeCustomModifiers">To be added.</param>
+        <param name="optionalReturnTypeCustomModifiers">To be added.</param>
+        <param name="parameterTypes">To be added.</param>
+        <param name="requiredParameterTypeCustomModifiers">To be added.</param>
+        <param name="optionalParameterTypeCustomModifiers">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSignature">
+      <MemberSignature Language="C#" Value="public byte[] GetSignature ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'byte []'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._SignatureHelper.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _SignatureHelper.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="rgszNames" Type="System.IntPtr" />
+        <Parameter Name="cNames" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="rgDispId" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="riid">To be added.</param>
+        <param name="rgszNames">To be added.</param>
+        <param name="cNames">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="rgDispId">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._SignatureHelper.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _SignatureHelper.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="iTInfo" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="ppTInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="iTInfo">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="ppTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._SignatureHelper.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _SignatureHelper.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcTInfo" Type="System.UInt32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pcTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._SignatureHelper.Invoke">
+      <MemberSignature Language="C#" Value="void _SignatureHelper.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dispIdMember" Type="System.UInt32" />
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="wFlags" Type="System.Int16" />
+        <Parameter Name="pDispParams" Type="System.IntPtr" />
+        <Parameter Name="pVarResult" Type="System.IntPtr" />
+        <Parameter Name="pExcepInfo" Type="System.IntPtr" />
+        <Parameter Name="puArgErr" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dispIdMember">To be added.</param>
+        <param name="riid">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="wFlags">To be added.</param>
+        <param name="pDispParams">To be added.</param>
+        <param name="pVarResult">To be added.</param>
+        <param name="pExcepInfo">To be added.</param>
+        <param name="puArgErr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._SignatureHelper))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

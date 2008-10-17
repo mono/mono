@@ -1,0 +1,3657 @@
+<Type Name="Decimal" FullName="System.Decimal" FullNameSP="System_Decimal" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sequential sealed serializable Decimal extends System.ValueType implements System.IComparable, System.IFormattable" />
+  <TypeSignature Language="C#" Value="public struct Decimal : IComparable, IComparable&lt;decimal&gt;, IConvertible, IEquatable&lt;decimal&gt;, IFormattable" />
+  <MemberOfLibrary>ExtendedNumerics</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations. </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IComparable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IComparable&lt;System.Decimal&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IConvertible</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.Decimal&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IFormattable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para>Represents a floating-point decimal data type with at least 28 significant
+      digits, suitable for financial and commercial calculations.</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.Decimal" /> type can represent values with at least 28 significant digits. The <see cref="T:System.Decimal" /> data type is ideally suited
+to financial calculations that require a large number of significant digits and
+no round-off errors.</para>
+      <para>The <see cref="T:System.Decimal" /> type shall represent values in at least the range -79228162514264337593543950335 to 79228162514264337593543950335, and having scale f such that 0 &lt;= <paramref name="f" /> &lt;= at least 28.</para>
+      <para>A <see cref="T:System.Decimal" /> value occupies 128 bits; however, its representation is unspecified (see note below).</para>
+      <para>The result of an operation on values of type <see cref="T:System.Decimal" /> is that which would result
+from calculating an exact result
+(preserving scale, as defined for each operator) and then rounding to fit the representation. That is, results
+are exact to at least 28 digits, but not necessarily to more than
+28 decimal places. A zero result has a sign of 0.</para>
+      <para> Results are rounded to the nearest representable
+   value, and, when a result is equally close to two representable values,
+   to the value that has an even number in the least significant digit
+   position (banker's rounding).</para>
+      <para>The default initial value of an instance of type <see cref="T:System.Decimal" /> is zero with a scale of zero.</para>
+      <block subset="none" type="note">
+        <para> Unlike the <see cref="T:System.Single" /> and <see cref="T:System.Double" /> data types,
+   decimal fractional numbers such as 0.1 can be represented exactly in the <see cref="T:System.Decimal" /> representation.
+   In the <see cref="T:System.Single" /> and <see cref="T:System.Double" />
+   representations, such numbers are often infinite fractions, making
+   those representations prone to round-off errors.</para>
+        <para>Further, the <see cref="T:System.Decimal" /> representation preserves scale, so that 1.23 + 1.27 will give the answer 2.50, not 2.5. </para>
+      </block>
+      <para>If a <see cref="T:System.Decimal" /> arithmetic operation produces a value that is too small
+for the <see cref="T:System.Decimal" />
+format after rounding, the result of the operation is zero. If a <see cref="T:System.Decimal" /> arithmetic
+operation produces a result that is too large for the <see cref="T:System.Decimal" /> format, a
+<see cref="T:System.OverflowException" /> is thrown.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Decimal" /> class implements implicit conversions from the <see cref="T:System.SByte" />, <see cref="T:System.Byte" />, <see cref="T:System.Int16" />, <see cref="T:System.UInt16" />, <see cref="T:System.Int32" />, <see cref="T:System.UInt32" />, <see cref="T:System.Int64" />, and <see cref="T:System.UInt64" /> types to <see cref="T:System.Decimal" />. These implicit
+   conversions never lose information and never throw exceptions. The <see cref="T:System.Decimal" /> class also
+   implements explicit conversions from <see cref="T:System.Decimal" /> to <see cref="T:System.Byte" />, <see cref="T:System.SByte" />, <see cref="T:System.Int16" />, <see cref="T:System.UInt16" />, <see cref="T:System.Int32" />, <see cref="T:System.UInt32" />, <see cref="T:System.Int64" />, and <see cref="T:System.UInt64" />. These explicit conversions round the
+<see cref="T:System.Decimal" /> value 
+   towards zero to the nearest integer, and then convert that integer to the
+   destination type. A <see cref="T:System.OverflowException" /> is thrown if the result is not within the range of the
+   destination type.</para>
+        <para>The <see cref="T:System.Decimal" /> class provides narrowing conversions to and from the
+<see cref="T:System.Single" /> and 
+<see cref="T:System.Double" /> types. A 
+conversion from <see cref="T:System.Decimal" /> to <see cref="T:System.Single" /> or <see cref="T:System.Double" /> can lose precision. If the value being converted is not within the range of the destination type, a <see cref="T:System.OverflowException" /> is thrown. A conversion from <see cref="T:System.Single" /> or <see cref="T:System.Double" /> to <see cref="T:System.Decimal" /> throws a <see cref="T:System.OverflowException" /> if the value is not within the range of
+the <see cref="T:System.Decimal" />
+type.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>Although different implementations of <see cref="T:System.Decimal" /> can have different representations, interchange of a decimal value within the range of the internal format can still be achieved by converting it to a string, exporting it, and then converting it back to internal format.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>In Version 1 of this standard, the representation of <see cref="T:System.Decimal" /> was well-defined, as follows.</para>
+        <para>When considered as an array of four <see cref="T:System.Int32" />s, it contains the following four elements:</para>
+        <para>Index 0 (bits 0-31) contains the low-order 32 bits of the decimal's coefficient.</para>
+        <para>Index 1 (bits 32-63) contains the middle 32 bits of the decimal's coefficient.</para>
+        <para>Index 2 (bits 64-95) contains the high-order 32 bits of the decimal's coefficient.</para>
+        <para>Index 3 (bits 96-127) contains the sign bit and scale, as follows:</para>
+        <list type="table">
+          <listheader>
+            <term>Bit Positions</term>
+            <description>Name</description>
+            <description>Description</description>
+          </listheader>
+          <item>
+            <term> 0-15</term>
+            <description>(None.)</description>
+            <description>Zero.</description>
+          </item>
+          <item>
+            <term> 16-23 </term>
+            <description> Scale</description>
+            <description>Contains a value between 0 and 28.</description>
+          </item>
+          <item>
+            <term> 24-30 </term>
+            <description>(None.)</description>
+            <description>Zero.</description>
+          </item>
+          <item>
+            <term> 31 </term>
+            <description>Sign</description>
+            <description>0 (positive) or 1 (negative).</description>
+          </item>
+        </list>
+        <para>In order to allow alternate representations (such as in the update to the IEC floating-point standard, IEC-60559, currently in preparation), the representation has been made unspecified.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(float64 value)" />
+      <MemberSignature Language="C#" Value="public Decimal (double value);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Double" /> value used to initialize the new <see cref="T:System.Decimal" />. </param>
+        <summary>
+          <para> Constructs and initializes a new <see cref="T:System.Decimal" />
+value.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the new <see cref="T:System.Decimal" /> to the value
+   specified by <paramref name="value" />. This constructor rounds <paramref name="value" /> to 15 significant digits using banker's rounding. The scale of the new <see cref="T:System.Decimal" /> is the same as that produced by <see cref="M:System.Decimal.Parse" /><see langword="(" /><paramref name="value" /><see langword=".ToString())" />.</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">
+          <para>
+            <paramref name="value" /> is one of the following:</para>
+          <para>greater than <see cref="F:System.Decimal.MaxValue" /></para>
+          <para>less than <see cref="F:System.Decimal.MinValue" /></para>
+          <para>equal to <see cref="F:System.Double.NaN" />, but the Decimal representation does not support NaNs.</para>
+          <para>equal to <see cref="F:System.Double.PositiveInfinity" />, but the Decimal representation does not support infinities.</para>
+          <para>equal to <see cref="F:System.Double.NegativeInfinity" />, but the Decimal representation does not support infinities.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 value)" />
+      <MemberSignature Language="C#" Value="public Decimal (int value);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int32" /> value used to initialize the new <see cref="T:System.Decimal" />. </param>
+        <summary>
+          <para> Constructs and initializes a new <see cref="T:System.Decimal" />
+value.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the new <see cref="T:System.Decimal" /> to the value
+   specified by <paramref name="value" />. The scale of the new <see cref="T:System.Decimal" /> is 0.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Int32[] bits)" />
+      <MemberSignature Language="C#" Value="public Decimal (int[] bits);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="bits" Type="System.Int32[]" />
+      </Parameters>
+      <Docs>
+        <param name="bits">
+          <para>An array of four  <see cref="T:System.Int32" /> containing an unspecified 128-bit representation of a <see cref="T:System.Decimal" /> in its raw form. </para>
+        </param>
+        <summary>
+          <para> Constructs and initializes a new <see cref="T:System.Decimal" /> value. </para>
+        </summary>
+        <remarks>
+          <para> This constructor initializes the new <see cref="T:System.Decimal" /> to the value represented by the elements of
+<paramref name="bits" />
+. </para>
+          <para>
+            <block subset="none" type="note"> A numeric
+   value can have several possible binary representations; they are numerically equal
+   but have different scales. Also, the bit representation differentiates between
+   -0, 0.00, and 0; these are all treated as 0 in operations, and any zero result will
+   have a sign of 0.</block>
+          </para>
+          <para>The format of <paramref name="bits" /> is the same as that returned by <see cref="M:System.Decimal.GetBits" /><see langword="(System.Decimal)" />
+. </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="bits" /> is a null reference. </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="bits" /> does not contain four elements. </para>
+        </exception>
+        <example>
+          <para>The following example demonstrates using the <see cref="T:System.Decimal" /> (Int32 [])
+   constructor.</para>
+          <code lang="C#">using System;
+class ConstructDecimal {
+ public static void Main() {
+ int negativeBitValue = unchecked ((int)0x80000000);
+ int [] parts0 = {0,0,0,0}; //Positive Zero.
+ int [] parts1 = {1,0,0,0};
+ int [] parts2 = {0,1,0,0};
+ int [] parts3 = {0,0,1,0};
+ int [] parts4 = {0,0,0,negativeBitValue}; // Negative zero.
+ int [] parts5 = {1,1,1,0};
+ int [] partsMaxValue = {-1,-1,-1,0};
+ int [] partsMinValue = {-1,-1,-1,negativeBitValue};
+
+ decimal d = new Decimal(parts0);
+ Console.WriteLine("{{0,0,0,0}} = {0}",d);
+ d = new Decimal(parts1);
+ Console.WriteLine("{{1,0,0,0}} = {0}",d);
+ d = new Decimal(parts2);
+ Console.WriteLine("{{0,1,0,0}} = {0}",d);
+ d = new Decimal(parts3);
+ Console.WriteLine("{{0,0,1,0}} = {0}",d);
+ d = new Decimal(parts4);
+ Console.WriteLine("{{0,0,0,{0}}} = {1}",parts4[3],d);
+ d = new Decimal(parts5);
+ Console.WriteLine("{{1,1,1,0}} = {0}",d);
+ d = new Decimal(partsMaxValue );
+ Console.WriteLine("{{-1,-1,-1,0}} = {0}",d);
+ d = new Decimal(partsMinValue);
+ Console.WriteLine("{{-1,-1,-1,{0}}} = {1}",partsMinValue [3],d);
+ }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>{0,0,0,0} = 0</para>
+            <para>{1,0,0,0} = 1</para>
+            <para>{0,1,0,0} = 4294967296</para>
+            <para>{0,0,1,0} = 18446744073709551616</para>
+            <para>{0,0,0,-2147483648} = 0</para>
+            <para>{1,1,1,0} = 18446744078004518913</para>
+            <para>{-1,-1,-1,0} = 79228162514264337593543950335</para>
+            <para>{-1,-1,-1,-2147483648} = -79228162514264337593543950335</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int64 value)" />
+      <MemberSignature Language="C#" Value="public Decimal (long value);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int64" /> value used to initialize the new <see cref="T:System.Decimal" />.</param>
+        <summary>
+          <para> Constructs and initializes a new <see cref="T:System.Decimal" />
+value.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the new <see cref="T:System.Decimal" /> to the value
+   specified by <paramref name="value" />. The scale of the new <see cref="T:System.Decimal" /> is 0.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(float32 value)" />
+      <MemberSignature Language="C#" Value="public Decimal (float value);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Single" /> value used to initialize the new <see cref="T:System.Decimal" />. </param>
+        <summary>
+          <para> Constructs and initializes a new <see cref="T:System.Decimal" />
+value.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the new <see cref="T:System.Decimal" /> to the value
+   specified by <paramref name="value" />. This constructor rounds <paramref name="value" /> to 7 significant digits using banker's rounding. The scale of the new <see cref="T:System.Decimal" /> is the same as that produced by <see cref="M:System.Decimal.Parse" /><see langword="(" /><paramref name="value" /><see langword=".ToString())" />.</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">
+          <para>
+            <paramref name="value" /> is one of the following:</para>
+          <para>greater than <see cref="F:System.Decimal.MaxValue" /></para>
+          <para>less than <see cref="F:System.Decimal.MinValue" /></para>
+          <para>equal to <see cref="F:System.Single.NaN" />, but the Decimal representation does not support NaNs.</para>
+          <para>equal to <see cref="F:System.Single.PositiveInfinity" />, but the Decimal representation does not support infinities.</para>
+          <para>equal to <see cref="F:System.Single.NegativeInfinity" />, but the Decimal representation does not support infinities.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public Decimal (uint value);" />
+      <MemberType>Constructor</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt32" /> value used to initialize the new <see cref="T:System.Decimal" />. </param>
+        <summary>
+          <para> Constructs and initializes a new <see cref="T:System.Decimal" />
+value.</para>
+        </summary>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use the 
+   <see cref="T:System.Decimal" />(<see cref="T:System.Int64" />) constructor.</para>
+          <para>This constructor initializes the new <see cref="T:System.Decimal" /> to the value
+   specified by <paramref name="value" />. The scale of the new <see cref="T:System.Decimal" /> is 0.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public Decimal (ulong value);" />
+      <MemberType>Constructor</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt64" /> value used to initialize the new <see cref="T:System.Decimal" />. </param>
+        <summary>
+          <para> Constructs and initializes a new <see cref="T:System.Decimal" />
+value.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the new <see cref="T:System.Decimal" /> to the value
+   specified by <paramref name="value" />. The scale of the new <see cref="T:System.Decimal" /> is 0.</para>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use the 
+<see cref="T:System.Decimal" />(<see cref="T:System.Int64" />) constructor.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Decimal (int lo, int mid, int hi, bool isNegative, byte scale);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="lo" Type="System.Int32" />
+        <Parameter Name="mid" Type="System.Int32" />
+        <Parameter Name="hi" Type="System.Int32" />
+        <Parameter Name="isNegative" Type="System.Boolean" />
+        <Parameter Name="scale" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="lo">To be added.</param>
+        <param name="mid">To be added.</param>
+        <param name="hi">To be added.</param>
+        <param name="isNegative">To be added.</param>
+        <param name="scale">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Add(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static decimal Add (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first addend.</param>
+        <param name="d2">The second addend.</param>
+        <summary>
+          <para>Adds two <see cref="T:System.Decimal" /> values
+   together.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" /> containing the sum of <paramref name="d1" /> and <paramref name="d2" />. The 
+   scale of the result, before any rounding, is the larger of the scales of d1 and
+   d2. For example, 1.1 + 2.22 gives 3.32, and 2.50 + 1 gives 3.50.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The sum of <paramref name="d1" /> and <paramref name="d2" /> is less than <see cref="F:System.Decimal.MinValue" /> or greater than <see cref="F:System.Decimal.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ceiling">
+      <MemberSignature Language="C#" Value="public static decimal Ceiling (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static int Compare (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first value to compare. </param>
+        <param name="d2">The second value to compare. </param>
+        <summary>
+          <para> Compares the values of two <see cref="T:System.Decimal" /> values and returns
+   sort order information.</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of <paramref name="d1" /> as compared to <paramref name="d2" />.  Trailing zero digits in the fractional part of  are ignored.  For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value. Each comparison compares the numerical values of <paramref name="d1" /> and <paramref name="d2" />.</para>
+          <list type="table">
+            <listheader>
+              <term> Return Value</term>
+              <description> Meaning</description>
+            </listheader>
+            <item>
+              <term> Any
+         negative
+         number</term>
+              <description>
+                <paramref name="d1" />&lt; <paramref name="d2" /></description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>
+                <paramref name="d1" /> == <paramref name="d2" /></description>
+            </item>
+            <item>
+              <term> A positive
+      number</term>
+              <description>
+                <paramref name="d1" />&gt;<paramref name="d2" /></description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="C#" Value="public int CompareTo (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> to compare to the current instance. </param>
+        <summary>
+          <para> Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.Decimal" />.      </para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. Trailing zero digits in the fractional part of the current instance and <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> A negative number</term>
+              <description>Current instance &lt; <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>Current instance == <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>current instance &gt; <paramref name="value" />.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para />
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IComparable&lt;Decimal&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object value)" />
+      <MemberSignature Language="C#" Value="public int CompareTo (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to compare to the current instance. </param>
+        <summary>
+          <para> Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.Object" />
+      .
+      </para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. Trailing zero digits in the fractional part of the current instance and <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> A negative number</term>
+              <description>Current instance &lt; <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>Current instance == <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>current instance &gt; <paramref name="value" />, or <paramref name="value" /> is
+   a null reference.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> This method is
+      implemented to support the <see cref="T:System.IComparable" /> interface.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="value" /> is not a <see cref="T:System.Decimal" /> and is not a null reference. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Divide">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Divide(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static decimal Divide (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The dividend. </param>
+        <param name="d2">The divisor. </param>
+        <summary>
+          <para> Divides the value of one <see cref="T:System.Decimal" /> by
+   another.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Decimal" /> containing the result of dividing <paramref name="d1" /> by
+<paramref name="d2" />. The scale of the result, before any rounding, is 
+   the closest scale to the preferred scale which will preserve a result equal to the exact result. The preferred scale is the scale of <paramref name="d1" />  less the scale of <paramref name="d2" />. For example, 2.20 / 2 gives 1.10.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.DivideByZeroException">
+          <paramref name="d2" /> is zero. </exception>
+        <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> to compare to the current instance. </param>
+        <summary>
+          <para>Determines whether the current instance and the
+      specified <see cref="T:System.Decimal" /> have the same value. Trailing zero digits in the fractional part are ignored.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="value" /> is numerically equal to (has the same value as) the current instance; otherwise, <see langword="false" />. </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IEquatable&lt;Decimal&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object value)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to compare to the current instance. </param>
+        <summary>
+          <para>Determines whether the current instance and the
+      specified <see cref="T:System.Object" />
+      have the same type and value. Trailing zero digits in the fractional part are ignored.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="value" /> has the same type and is numerically equal to
+   (has the same value as) the current instance. If <paramref name="value" /> is a null
+   reference or is not an instance of <see cref="T:System.Decimal" />, returns
+<see langword="false" />. </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> This method
+      overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Equals(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static bool Equals (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first <see cref="T:System.Decimal" /> to compare. </param>
+        <param name="d2">The second <see cref="T:System.Decimal" /> to compare. </param>
+        <summary>
+          <para>Determines whether two <see cref="T:System.Decimal" /> values have the same value. Trailing zero digits in the fractional part are ignored.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="d1" /> and <paramref name="d2" /> are numerically
+   equal
+   (have the same value), otherwise <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Floor">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Floor(decimal d)" />
+      <MemberSignature Language="C#" Value="public static decimal Floor (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">The <see cref="T:System.Decimal" /> to round downward. </param>
+        <summary>
+          <para> Rounds a <see cref="T:System.Decimal" /> value to the closest integer towards negative infinity.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Decimal" /> value <paramref name="v" /> such that <paramref name="v" /> is an integer and <paramref name="d" />
+   - 1 &lt; <paramref name="v" />
+   &lt;=
+   
+<paramref name="d" /> . The scale of the result will be zero.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.Decimal.Floor(System.Decimal)" /> method.</para>
+          <code lang="C#">using System;
+class DecimalTest {
+ public static void Main() {
+   Console.WriteLine("floor {0} is {1}", 3.14159m, Decimal.Floor(3.14159m));
+   Console.WriteLine("floor {0} is {1}", -3.9m, Decimal.Floor(-3.9m));
+   Console.WriteLine("floor {0} is {1}", 3.0m, Decimal.Floor(3.0m));
+ }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>floor 3.14159 is 3</para>
+            <para>floor -3.9 is -4</para>
+            <para>floor 3.0 is 3</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromOACurrency">
+      <MemberSignature Language="C#" Value="public static decimal FromOACurrency (long cy);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cy" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="cy">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBits">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Int32[] GetBits(decimal d)" />
+      <MemberSignature Language="C#" Value="public static int[] GetBits (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">The <see cref="T:System.Decimal" /> value for which a binary representation is returned. </param>
+        <summary>
+          <para>Returns a binary representation of the specified <see cref="T:System.Decimal" />
+value.</para>
+        </summary>
+        <returns>
+          <para>An array of four <see cref="T:System.Int32" /> containing an unspecified 128-bit representation of a    <see cref="T:System.Decimal" /> in its raw form.
+   </para>
+        </returns>
+        <remarks>
+          <para>The format of the bits in the 4-element array returned is the same as that used by the <paramref name="bits" /> parameter to <see cref="M:System.Decimal.Decimal" /><see langword="(System.Int32)" />
+. </para>
+          <para> A numeric value can have several possible binary
+   representations; they are numerically equal but have different scales. Also, the
+   bit representation differentiates between -0, 0.00, and 0; these are all
+   treated as 0 in operations, and any zero result will have a
+   sign of 0.</para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates the different
+      representations of 1.00 and 1.</para>
+          <code lang="C#">using System;
+public class Class1  {
+    public static void Print (int [] bs) {
+        foreach (int b in bs) {
+            Console.Write (b+" ");
+        }
+    }
+public static void Main () {
+   decimal d = 1.00m;
+    decimal d1 = 1;
+    Console.Write (d);
+    Console.Write (" - bits: "); 
+    Print (decimal.GetBits(d));
+    Console.WriteLine();
+    Console.Write (d1);
+    Console.Write (" - bits: "); 
+    Print (decimal.GetBits(d1));
+    Console.WriteLine();
+    Console.WriteLine ("d1.CompareTo(d) == {0}", d1.CompareTo(d));
+    Console.WriteLine ("d1 == d {0}", d1 == d);
+}
+}
+   </code>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance. Trailing zero digits in the fractional part are ignored.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the hash code for this instance.</para>
+        </returns>
+        <remarks>
+          <para>The algorithm used to
+      generate the hash code value is unspecified.</para>
+          <para>
+            <block subset="none" type="note">This method
+      overrides <see cref="M:System.Object.GetHashCode" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTypeCode">
+      <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TypeCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxValue">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly decimal MaxValue" />
+      <MemberSignature Language="C#" Value="public static readonly decimal MaxValue = 79228162514264337593543950335;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>79228162514264337593543950335</MemberValue>
+      <Docs>
+        <summary>
+          <para>Contains the maximum positive value for the <see cref="T:System.Decimal" /> type.</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is implementation-specific, but shall be greater than or equal to 79228162514264337593543950335. The scale shall be 0.</para>
+          <para> This field is
+ read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MinusOne">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly decimal MinusOne" />
+      <MemberSignature Language="C#" Value="public static readonly decimal MinusOne = -1;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Contains negative one (-1).</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is -1. The scale shall be 0.</para>
+          <para>This field is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>-1</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MinValue">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly decimal MinValue" />
+      <MemberSignature Language="C#" Value="public static readonly decimal MinValue = -79228162514264337593543950335;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Contains the minimum (most negative) value for the
+ <see cref="T:System.Decimal" /> type.</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is implementation-specific, but shall be less than or equal to -79228162514264337593543950335. The scale shall be 0.</para>
+          <para> This field
+ is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>-79228162514264337593543950335</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Multiply">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Multiply(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static decimal Multiply (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The multiplier. </param>
+        <param name="d2">The multiplicand. </param>
+        <summary>
+          <para> Returns the result of multiplying two <see cref="T:System.Decimal" />
+values.</para>
+        </summary>
+        <returns>
+          <para> The result of multiplying <paramref name="d1" /> and
+<paramref name="d2" /> . The scale of the result, before any 
+   rounding, is the sum of the scales of d1 and
+   d2.</para>
+          <para>For example, 123 x 3 gives 369, and 2.2 x 1.35 gives 2.970.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Negate">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Negate(decimal d)" />
+      <MemberSignature Language="C#" Value="public static decimal Negate (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">The value to negate. </param>
+        <summary>
+          <para> Returns the result of multiplying a <see cref="T:System.Decimal" /> value by
+   negative
+   one.
+   </para>
+        </summary>
+        <returns>
+          <para> The negated value of <paramref name="d" />. If <paramref name="d" /> is zero then zero is returned (with 0 sign); otherwise the scale of the result is the same as the scale of
+<paramref name="d" />
+.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="One">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly decimal One" />
+      <MemberSignature Language="C#" Value="public static readonly decimal One = 1;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>1</MemberValue>
+      <Docs>
+        <summary>
+          <para> Contains one (1).</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is 1. The scale shall be 0.</para>
+          <para>This field is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Addition">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Addition(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Addition (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first addend. </param>
+        <param name="d2">The second addend. </param>
+        <summary>
+          <para> Adds two <see cref="T:System.Decimal" /> values together. </para>
+        </summary>
+        <returns>
+          <para>The value returned by <see cref="M:System.Decimal.Add(System.Decimal,System.Decimal)" />
+(<paramref name="d1" />,<paramref name="d2" />).</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The sum of <paramref name="d1" /> and <paramref name="d2" /> is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Decrement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Decrement(decimal d)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Decrement (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Decimal" /> value.</param>
+        <summary>
+          <para>Returns the specified value decremented by
+      one.</para>
+        </summary>
+        <returns>
+          <para>The value returned by <see cref="M:System.Decimal.Subtract(System.Decimal,System.Decimal)" /> (<paramref name="d" /> , <see cref="F:System.Decimal.One" /> ).</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Division">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Division(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Division (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The dividend. </param>
+        <param name="d2">The divisor. </param>
+        <summary>
+          <para> Divides one <see cref="T:System.Decimal" /> value by another <see cref="T:System.Decimal" /> . </para>
+        </summary>
+        <returns>
+          <para> The value returned by <see cref="M:System.Decimal.Divide(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
+<paramref name="d2" />). </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.DivideByZeroException">The divisor is zero. </exception>
+        <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Equality(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static bool op_Equality (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first <see cref="T:System.Decimal" /> to compare. </param>
+        <param name="d2">The second <see cref="T:System.Decimal" /> to compare.</param>
+        <summary>
+          <para>Determines whether two decimals have the
+      same value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" />
+(<paramref name="d1" />, <paramref name="d2" /> ) returns
+zero; otherwise <see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname unsigned int8 op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static byte op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.Byte" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.Double" /> .</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Double" /> with the specified value. </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> This operation can
+      produce round-off errors due to the fact that <see cref="T:System.Double" /> has fewer significant digits than, and has a different radix than,    <see cref="T:System.Decimal" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The resulting integer value is greater than <see cref="F:System.Byte.MaxValue" /> or less than <see cref="F:System.Byte.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.Char op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static char op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.Char" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.Char" /> .</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Char" /> containing
+<paramref name="value" /> rounded towards zero to the nearest
+   integer. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The resulting integer value is greater than <see cref="F:System.Char.MaxValue" /> or less than <see cref="F:System.Char.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname float64 op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static double op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.Double" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.Double" /> .</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Double" /> with the specified value. </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> This operation can
+      produce round-off errors due to the fact that <see cref="T:System.Double" /> has fewer significant digits than
+   <see cref="T:System.Decimal" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname int16 op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static short op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.Int16" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.Int16" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int16" /> containing
+<paramref name="value" /> rounded towards zero to the nearest
+   integer. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The resulting integer value is greater than <see cref="F:System.Int16.MaxValue" /> or less than <see cref="F:System.Int16.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname int32 op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static int op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.Int32" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.Int32" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing
+<paramref name="value" /> rounded towards zero to the nearest
+   integer. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The resulting integer value is greater than <see cref="F:System.Int32.MaxValue" /> or less than <see cref="F:System.Int32.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname int64 op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static long op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.Int64" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.Int64" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int64" /> containing
+<paramref name="value" /> rounded towards zero to the nearest
+   integer. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The resulting integer value is greater than <see cref="F:System.Int64.MaxValue" /> or less than <see cref="F:System.Int64.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname int8 op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static sbyte op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.SByte" />.</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.SByte" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.SByte" /> containing
+<paramref name="value" /> rounded towards zero to the nearest
+   integer. </para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant 
+      alternative to <see cref="T:System.SByte" />, use <see cref="T:System.Int16" /> .</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The resulting integer value is greater than <see cref="F:System.SByte.MaxValue" /> or less than <see cref="F:System.SByte.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname float32 op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static float op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.Single" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.Int16" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int16" /> containing
+<paramref name="value" /> rounded towards zero to the nearest
+   integer. </para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant 
+      alternative to <see cref="T:System.UInt16" />, use <see cref="T:System.Int32" /> .</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The resulting integer value is greater than <see cref="F:System.Int16.MaxValue" /> or less than <see cref="F:System.Int16.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname unsigned int16 op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static ushort op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.UInt16" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.UInt16" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.UInt16" /> containing
+<paramref name="value" /> rounded towards zero to the nearest
+   integer. </para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant 
+      alternative to <see cref="T:System.UInt16" />, use <see cref="T:System.Int32" /> .</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The resulting integer value is greater than <see cref="F:System.UInt16.MaxValue" /> or less than <see cref="F:System.UInt16.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname unsigned int32 op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static uint op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.UInt32" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.UInt32" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.UInt32" /> containing <paramref name="value" /> rounded towards zero to the
+   nearest integer. </para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant 
+      alternative to <see cref="T:System.UInt32" />, use <see cref="T:System.Int64" /> ). </para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The resulting integer value is greater than <see cref="F:System.UInt32.MaxValue" /> or less than <see cref="F:System.UInt32.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname unsigned int64 op_Explicit(decimal value)" />
+      <MemberSignature Language="C#" Value="public static ulong op_Explicit (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> value to convert to <see cref="T:System.UInt64" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Decimal" /> value to <see cref="T:System.UInt64" /> .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.UInt64" /> containing
+<paramref name="value" /> rounded towards zero to the nearest
+   integer. </para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant
+      alternative to <see cref="T:System.UInt64" />, use <see cref="T:System.Int64" /> .</para>
+        </remarks>
+        <exception cref="T:System.OverflowException">The resulting integer value is greater than <see cref="F:System.UInt64.MaxValue" /> or less than <see cref="F:System.UInt64.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Explicit(float64 value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Explicit (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Double" /> value to convert to <see cref="T:System.Decimal" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Double" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">
+          <para>
+            <paramref name="value" /> is one of the following:</para>
+          <para>greater than <see cref="F:System.Decimal.MaxValue" /></para>
+          <para>less than <see cref="F:System.Decimal.MinValue" /></para>
+          <para>equal to <see cref="F:System.Double.NaN" />, but the Decimal representation does not support NaNs.</para>
+          <para>equal to <see cref="F:System.Double.PositiveInfinity" />, but the Decimal representation does not support infinities.</para>
+          <para>equal to <see cref="F:System.Double.NegativeInfinity" />, but the Decimal representation does not support infinities.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Explicit(float32 value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Explicit (float value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Single" /> value to convert to <see cref="T:System.Decimal" /> .</param>
+        <summary>
+          <para>Perform an explicit conversion of a <see cref="T:System.Single" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">
+          <para>
+            <paramref name="value" /> is one of the following:</para>
+          <para>greater than <see cref="F:System.Decimal.MaxValue" /></para>
+          <para>less than <see cref="F:System.Decimal.MinValue" /></para>
+          <para>equal to <see cref="F:System.Single.NaN" />, but the Decimal representation does not support NaNs.</para>
+          <para>equal to <see cref="F:System.Single.PositiveInfinity" />, but the Decimal representation does not support infinities.</para>
+          <para>equal to <see cref="F:System.Single.NegativeInfinity" />, but the Decimal representation does not support infinities.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_GreaterThan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThan(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static bool op_GreaterThan (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first <see cref="T:System.Decimal" /> to compare. </param>
+        <param name="d2">The second <see cref="T:System.Decimal" /> to compare. </param>
+        <summary>
+          <para> Determines whether one <see cref="T:System.Decimal" /> value is greater than another
+<see cref="T:System.Decimal" /> value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
+<paramref name="d2" />) returns a value that is greater than zero; otherwise 
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_GreaterThanOrEqual">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThanOrEqual(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static bool op_GreaterThanOrEqual (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first <see cref="T:System.Decimal" /> to compare. </param>
+        <param name="d2">The second <see cref="T:System.Decimal" /> to compare. </param>
+        <summary>
+          <para> Determines whether one <see cref="T:System.Decimal" /> value is greater than or equal to
+   another <see cref="T:System.Decimal" />
+   value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
+<paramref name="d2" />) returns a value that is greater than or equal to zero; otherwise 
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Implicit(unsigned int8 value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Implicit (byte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Byte" /> value to convert to <see cref="T:System.Decimal" /> .</param>
+        <summary>
+          <para>Perform an implicit conversion of a <see cref="T:System.Byte" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Implicit(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Implicit (char value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Char" /> value to convert to <see cref="T:System.Decimal" /> .</param>
+        <summary>
+          <para>Perform an implicit conversion of a <see cref="T:System.Char" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Implicit(int16 value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Implicit (short value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int16" /> value to convert to <see cref="T:System.Decimal" />.</param>
+        <summary>
+          <para>Perform an implicit conversion of a <see cref="T:System.Int16" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Implicit(int32 value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Implicit (int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int32" /> value to convert to <see cref="T:System.Decimal" /> .</param>
+        <summary>
+          <para>Perform an implicit conversion of a <see cref="T:System.Int32" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Implicit(int64 value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Implicit (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int64" /> value to convert to <see cref="T:System.Decimal" /> .</param>
+        <summary>
+          <para>Perform an implicit conversion of a <see cref="T:System.Int64" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Implicit(int8 value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Implicit (sbyte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.SByte" /> value to convert to <see cref="T:System.Decimal" /> .</param>
+        <summary>
+          <para>Perform an implicit conversion of a <see cref="T:System.SByte" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>
+          <para>
+   This member is not CLS-compliant. </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Implicit(unsigned int16 value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Implicit (ushort value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt16" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt16" /> value to convert to <see cref="T:System.Decimal" /> .</param>
+        <summary>
+          <para>Perform an implicit conversion of a <see cref="T:System.UInt16" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>
+          <para> This member is not CLS-compliant.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Implicit(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Implicit (uint value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt32" /> value to convert to <see cref="T:System.Decimal" /> .</param>
+        <summary>
+          <para>Perform an implicit conversion of a <see cref="T:System.UInt32" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>
+          <para>
+   This member is not CLS-compliant. </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Implicit(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Implicit (ulong value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt64" /> value to convert to <see cref="T:System.Decimal" /> .</param>
+        <summary>
+          <para>Perform an implicit conversion of a <see cref="T:System.UInt64" /> value to <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Decimal" />
+with the
+specified value.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Increment">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Increment(decimal d)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Increment (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Decimal" /> value.</param>
+        <summary>
+          <para>Returns the specified value incremented by one.</para>
+        </summary>
+        <returns>
+          <para>The value returned by <see cref="M:System.Decimal.Add(System.Decimal,System.Decimal)" /> (<paramref name="d" /> ,
+<see cref="F:System.Decimal.One" /> ).</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Inequality(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first <see cref="T:System.Decimal" /> to compare. </param>
+        <param name="d2">The second <see cref="T:System.Decimal" /> to compare. </param>
+        <summary>
+          <para>Determines whether two decimals do not have
+      the same value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
+<paramref name="d2" />) does not return zero; otherwise <see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_LessThan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThan(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static bool op_LessThan (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first <see cref="T:System.Decimal" /> to compare. </param>
+        <param name="d2">The first <see cref="T:System.Decimal" /> to compare.</param>
+        <summary>
+          <para> Determines whether one <see cref="T:System.Decimal" /> value is less than another
+<see cref="T:System.Decimal" /> 
+value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
+<paramref name="d2" />) returns a value that is less than zero; otherwise 
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_LessThanOrEqual">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThanOrEqual(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static bool op_LessThanOrEqual (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first <see cref="T:System.Decimal" /> to compare. </param>
+        <param name="d2">The second <see cref="T:System.Decimal" /> to compare. </param>
+        <summary>
+          <para> Determines whether one <see cref="T:System.Decimal" /> value is less than or equal to another
+<see cref="T:System.Decimal" /> 
+value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
+<paramref name="d2" />) returns a value that is less than or equal to zero; otherwise 
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Modulus">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Modulus(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Modulus (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The dividend. </param>
+        <param name="d2">The divisor. </param>
+        <summary>
+          <para> Divides one <see cref="T:System.Decimal" /> value by another <see cref="T:System.Decimal" /> and returns the
+   remainder.</para>
+        </summary>
+        <returns>
+          <para>The value returned by <see cref="M:System.Decimal.Remainder(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
+<paramref name="d2" />).</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.DivideByZeroException">
+          <paramref name="d2" /> is zero. </exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="d1" /> divided by <paramref name="d2" /> is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Multiply">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Multiply(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Multiply (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The multiplier. </param>
+        <param name="d2">The multiplicand. </param>
+        <summary>
+          <para> Returns the result of multiplying two <see cref="T:System.Decimal" />
+values.</para>
+        </summary>
+        <returns>
+          <para> The value returned by <see cref="M:System.Decimal.Multiply(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
+<paramref name="d2" />). </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Subtraction">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_Subtraction(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static decimal op_Subtraction (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The minuend. </param>
+        <param name="d2">The subtrahend. </param>
+        <summary>
+          <para> Subtracts one <see cref="T:System.Decimal" /> value from
+   another.</para>
+        </summary>
+        <returns>
+          <para> The value returned by <see cref="M:System.Decimal.Subtract(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
+<paramref name="d2" />
+).</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_UnaryNegation">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_UnaryNegation(decimal d)" />
+      <MemberSignature Language="C#" Value="public static decimal op_UnaryNegation (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Decimal" /> value.</param>
+        <summary>
+          <para>Returns the specified value multiplied by negative one
+      (-1).</para>
+        </summary>
+        <returns>
+          <para>The value returned by <see cref="M:System.Decimal.Negate(System.Decimal)" /> (<paramref name="d" />).</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_UnaryPlus">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname decimal op_UnaryPlus(decimal d)" />
+      <MemberSignature Language="C#" Value="public static decimal op_UnaryPlus (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.Decimal" /> value.</param>
+        <summary>
+          <para>
+ Returns the specified value.</para>
+        </summary>
+        <returns>
+          <para>Returns <paramref name="d" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Parse(string s)" />
+      <MemberSignature Language="C#" Value="public static decimal Parse (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Number" /> style, preserving scale.</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Decimal" /> value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Decimal" /> value obtained from <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Decimal.Parse(System.String)" /> is equivalent to <see cref="M:System.Decimal.Parse(System.String)" />
+(<paramref name="s" /> , <see cref="F:System.Globalization.NumberStyles.Number" /> , <see langword="null" /> ).</para>
+          <para>The string <paramref name="s" /> is parsed using the formatting information
+in a <see cref="T:System.Globalization.NumberFormatInfo" /> initialized for the current system
+culture. <block subset="none" type="note"> For more information, see <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" /> .</block></para>
+          <para>If necessary, the value of s is rounded using banker's 
+   rounding. Any scale apparent in the string s is preserved unless the value
+   is rounded. If the value is zero, the sign will be
+   0. Hence the string "2.900" will be parsed to form the decimal with sign
+   0, coefficient 2900, and scale 3.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s " />is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.Decimal.Parse(System.String)" /> method.</para>
+          <code lang="C#">using System;
+using System.Globalization;
+class DecimalParseClass {
+  public static void Main() {
+    string s1 = " -1.001  ";
+    string s2 = "+1,000,111.99";     
+    string s3 = "2.900";
+    Console.WriteLine("String: {0} (decimal) {1}",s1,Decimal.Parse(s1));
+    Console.WriteLine("String: {0} (decimal) {1}",s2,Decimal.Parse(s2));
+    Console.WriteLine("String: {0} (decimal) {1}",s3,Decimal.Parse(s3));
+  }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>String: -1.001 (decimal) -1.001</para>
+            <para>String: +1,000,111.99 (decimal) 1000111.99</para>
+            <para>String: 2.900 (decimal) 2.900</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Parse(string s, valuetype System.Globalization.NumberStyles style)" />
+      <MemberSignature Language="C#" Value="public static decimal Parse (string s, System.Globalization.NumberStyles style);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="style" Type="System.Globalization.NumberStyles" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the style specified by <paramref name="style" /> , preserving scale.</param>
+        <param name="style">Zero or more <see cref="T:System.Globalization.NumberStyles" /> values that specify the style of <paramref name="s" />. Specify multiple values for <paramref name="style" /> using the bitwise OR operator. If <paramref name="style" /> is a null reference, the string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Number" /> style.</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Decimal" /> value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Decimal" /> value obtained from <paramref name="s" />
+.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Decimal.Parse(System.String)" /> is equivalent to <see cref="M:System.Decimal.Parse(System.String)" />
+(<paramref name="s" />, <paramref name="style" /> , <see langword="null" /> ).</para>
+          <para>The string <paramref name="s" /> is parsed using the formatting
+information in a <see cref="T:System.Globalization.NumberFormatInfo" /> initialized for the current system
+culture. <block subset="none" type="note"> For more information, see <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" /> .</block></para>
+          <para>If necessary, the value of <paramref name="s" /> is rounded using banker's rounding.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct style.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
+        <example>
+          <para>The following example demonstrates supplying <see cref="T:System.Globalization.NumberStyles" /> values to the <see cref="M:System.Decimal.Parse(System.String)" />
+method to allow for a symbol separating groups
+of digits, and a decimal separator. This example uses the symbols from the U.S.
+English culture, namely a comma and a decimal point.</para>
+          <code lang="C#">using System;
+using System.Globalization;
+class DecimalParseClass {
+public static void Main() {
+ string s = "1,000,111.99"; 
+ NumberStyles ns = NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint;
+ decimal d = Decimal.Parse(s,ns);
+ Console.WriteLine("{0} parsed to decimal {1}",s,d);
+}
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>1,000,111.99 parsed to decimal 1000111.99</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Parse(string s, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public static decimal Parse (string s, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The <see cref="T:System.String" /> is interpreted using the <see cref="F:System.Globalization.NumberStyles.Number" /> style, preserving scale.</param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.NumberFormatInfo" /> containing culture-specific formatting information about <paramref name="s" />.</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Decimal" /> value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Decimal" /> value obtained from <paramref name="s" />
+.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Decimal.Parse(System.String)" /> is equivalent to <see cref="M:System.Decimal.Parse(System.String)" />
+(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.Number" /> , <paramref name="provider" /> ).</para>
+          <para>The string <paramref name="s" /> is parsed using the
+culture-specific formatting information from the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />. If
+<paramref name="provider" /> is 
+<see langword="null" /> or a <see cref="T:System.Globalization.NumberFormatInfo" /> cannot be obtained from 
+<paramref name="provider" />, the formatting information for the current system culture is 
+used.</para>
+          <para>If necessary, the value of s is rounded using banker's
+   rounding. Any scale apparent in the string s is preserved unless the value
+   is rounded. If the value is zero, the sign scale will be
+   0. Hence the string "2.900" will be parsed to form the decimal with sign
+   0, coefficient 2900, and
+   scale 3.</para>
+        </remarks>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct style.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <example>
+          <para>The following example demonstrates supplying a <see cref="T:System.IFormatProvider" /> to the
+<see cref="M:System.Decimal.Parse(System.String)" /> 
+method to allow a decimal point, and commas separating groups of digits.</para>
+          <code lang="C#">using System;
+using System.Globalization;
+class DecimalParseClass {
+public static void Main() {
+ string s = "1,000,111.99"; 
+ //Get the default formatting symbols.
+ NumberFormatInfo nfi = new NumberFormatInfo();
+ // Default group separator is ','
+ // Default decimal separator is '.'
+ decimal d = Decimal.Parse(s,nfi);
+ Console.WriteLine("{0} parsed to decimal {1}",s,d);
+}
+}
+</code>
+          <para>The output is</para>
+          <para>
+            <c>1,000,111.99
+   parsed to decimal 1000111.99</c>
+          </para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Parse(string s, valuetype System.Globalization.NumberStyles style, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public static decimal Parse (string s, System.Globalization.NumberStyles style, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="style" Type="System.Globalization.NumberStyles" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the style specified by <paramref name="style" /> , preserving scale.</param>
+        <param name="style">Zero or more <see cref="T:System.Globalization.NumberStyles" /> values that specify the style of <paramref name="s" />. Specify multiple values for <paramref name="style" /> using the bitwise OR operator. If <paramref name="style" /> is a null reference, the string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Number" /> style.</param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.NumberFormatInfo" /> containing culture-specific formatting information about <paramref name="s" />.</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Decimal" /> value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Decimal" /> value obtained from <paramref name="s" />
+.</para>
+        </returns>
+        <remarks>
+          <para>The string <paramref name="s" /> is parsed using the
+   culture-specific formatting information from the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />. If
+<paramref name="provider" /> is 
+<see langword="null" /> or if a <see cref="T:System.Globalization.NumberFormatInfo" /> cannot be obtained from 
+<paramref name="provider" />, the formatting information for the current system culture is used.</para>
+          <para>If necessary, the value of <paramref name="s" /> is rounded using banker's rounding.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="s" /> is a null reference. </para>
+        </exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct style.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
+        <example>
+          <para>The following example demonstrates supplying <see cref="T:System.Globalization.NumberStyles" /> values and a <see cref="T:System.IFormatProvider" /> to the
+<see cref="M:System.Decimal.Parse(System.String)" /> 
+method to allow colons separating
+groups of digits, and a decimal point.</para>
+          <code lang="C#">using System;
+using System.Globalization;
+class DecimalParseClass {
+public static void Main() {
+ string s = "1:000:111.99"; 
+ NumberStyles ns = NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint;
+ NumberFormatInfo nfi = new NumberFormatInfo();
+ //Change the format info to separate digit groups using a colon.
+ nfi.NumberGroupSeparator = ":";
+ decimal d = Decimal.Parse(s,ns,nfi);
+ Console.WriteLine("{0} parsed to decimal {1}",s,d);
+}
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>1:000:111.99 parsed to decimal 1000111.99</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Remainder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Remainder(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static decimal Remainder (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The dividend.</param>
+        <param name="d2">The divisor.</param>
+        <param name="d2">To be added.</param>
+        <summary>
+          <para>Computes the remainder after dividing two <see cref="T:System.Decimal" /> values.</para>
+        </summary>
+        <returns>
+          <para>The remainder after dividing d1 by d2 to give an integer
+      result. The sign of the result, if non-zero, is the same as the sign of d1, and
+      the scale of the result is the larger of the scales of d1 and d2.</para>
+          <para>For example, -10 % 3 gives -1, and 3.6 % 1.3 gives 1.0 (where % indicates the
+      remainder operation).</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.DivideByZeroException">
+          <paramref name="d2" /> is zero.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="d1" /> divided by <paramref name="d2" /> is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Round(decimal d, int32 decimals)" />
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d, int decimals);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+        <Parameter Name="decimals" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="d">The <see cref="T:System.Decimal" /> to round. </param>
+        <param name="decimals">The number of decimal places to round to. 0 &lt;= <paramref name="decimals" /> &lt;= 28. </param>
+        <summary>
+          <para> Rounds a <see cref="T:System.Decimal" /> value
+   to a specified number of decimal places.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Decimal" /> result of rounding <paramref name="d" /> to <paramref name="decimals" />
+decimal places.</para>
+        </returns>
+        <remarks>
+          <para>When <paramref name="d" /> is exactly half way
+   between two rounded values, the result is the rounded value that has an even
+   digit in the rightmost decimal position. For example, when rounded to two
+   decimals, the value 2.345 becomes 2.34 and the value 2.355 becomes 2.36.
+   <block subset="none" type="note">This process is known as rounding half towards even, or banker's
+      rounding.</block></para>
+          <para>The scale of the result will be the smaller of 
+   <paramref name="decimals" /> and the scale of
+      d.</para>
+          <para>
+            <block subset="none" type="note">The scale of <paramref name="d" /> is never
+   increased, so <see cref="M:System.Decimal.Round(System.Decimal,System.Int32)" /> cannot cause overflow.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="decimals" /> is not between 0 and 28, inclusive. </exception>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.Decimal.Round(System.Decimal,System.Int32)" /> method.</para>
+          <code lang="C#">using System;
+class MyClass {
+public static void Main() {
+ decimal d1 = 2.5m;
+ decimal d2 = 3.5m;
+ decimal d3 = 2.98765432m;
+ decimal d4 = 2.18765432m;
+ Console.WriteLine("Rounding to 0 places...");
+ Console.WriteLine("round {0} = {1}",d1, Decimal.Round(d1,0));
+ Console.WriteLine("round {0} = {1}",d2, Decimal.Round(d2,0));
+ Console.WriteLine("round {0} = {1}",d3, Decimal.Round(d3,0));
+ Console.WriteLine("round {0} = {1}",d4, Decimal.Round(d4,0));
+ Console.WriteLine("Rounding to 2 places...");
+ Console.WriteLine("round {0} = {1}",d1, Decimal.Round(d1,2));
+ Console.WriteLine("round {0} = {1}",d2, Decimal.Round(d2,2));
+ Console.WriteLine("round {0} = {1}",d3, Decimal.Round(d3,2));
+ Console.WriteLine("round {0} = {1}",d4, Decimal.Round(d4,2));
+}
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Rounding to 0 places...</para>
+            <para>round 2.5 = 2</para>
+            <para>round 3.5 = 4</para>
+            <para>round 2.98765432 = 3</para>
+            <para>round 2.18765432 = 2</para>
+            <para>Rounding to 2 places...</para>
+            <para>round 2.5 = 2.5</para>
+            <para>round 3.5 = 3.5</para>
+            <para>round 2.98765432 = 2.99</para>
+            <para>round 2.18765432 = 2.19</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d, MidpointRounding mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+        <Parameter Name="mode" Type="System.MidpointRounding" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d, int decimals, MidpointRounding mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+        <Parameter Name="decimals" Type="System.Int32" />
+        <Parameter Name="mode" Type="System.MidpointRounding" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <param name="decimals">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Subtract">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Subtract(decimal d1, decimal d2)" />
+      <MemberSignature Language="C#" Value="public static decimal Subtract (decimal d1, decimal d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.Decimal" />
+        <Parameter Name="d2" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The left-side operand. </param>
+        <param name="d2">The right-side operand. </param>
+        <summary>
+          <para> Subtracts one <see cref="T:System.Decimal" /> value from
+   another.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Decimal" /> containing the result of subtracting <paramref name="d2" /> from
+<paramref name="d1" /> . The scale of the result, before any rounding, is 
+   the larger of the scales of d1 and
+   d2.</para>
+          <para>For example, 1.1 - 2.22 gives -1.12, and 2.50 - 1 gives 1.50.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToBoolean">
+      <MemberSignature Language="C#" Value="bool IConvertible.ToBoolean (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToByte">
+      <MemberSignature Language="C#" Value="byte IConvertible.ToByte (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToChar">
+      <MemberSignature Language="C#" Value="char IConvertible.ToChar (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDateTime">
+      <MemberSignature Language="C#" Value="DateTime IConvertible.ToDateTime (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDecimal">
+      <MemberSignature Language="C#" Value="decimal IConvertible.ToDecimal (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDouble">
+      <MemberSignature Language="C#" Value="double IConvertible.ToDouble (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt16">
+      <MemberSignature Language="C#" Value="short IConvertible.ToInt16 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt32">
+      <MemberSignature Language="C#" Value="int IConvertible.ToInt32 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt64">
+      <MemberSignature Language="C#" Value="long IConvertible.ToInt64 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSByte">
+      <MemberSignature Language="C#" Value="sbyte IConvertible.ToSByte (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSingle">
+      <MemberSignature Language="C#" Value="float IConvertible.ToSingle (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToType">
+      <MemberSignature Language="C#" Value="object IConvertible.ToType (Type type, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt16">
+      <MemberSignature Language="C#" Value="ushort IConvertible.ToUInt16 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt32">
+      <MemberSignature Language="C#" Value="uint IConvertible.ToUInt32 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt64">
+      <MemberSignature Language="C#" Value="ulong IConvertible.ToUInt64 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToByte">
+      <MemberSignature Language="C#" Value="public static byte ToByte (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToDouble">
+      <MemberSignature Language="C#" Value="public static double ToDouble (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToInt16">
+      <MemberSignature Language="C#" Value="public static short ToInt16 (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToInt32">
+      <MemberSignature Language="C#" Value="public static int ToInt32 (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToInt64">
+      <MemberSignature Language="C#" Value="public static long ToInt64 (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToOACurrency">
+      <MemberSignature Language="C#" Value="public static long ToOACurrency (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToSByte">
+      <MemberSignature Language="C#" Value="public static sbyte ToSByte (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToSingle">
+      <MemberSignature Language="C#" Value="public static float ToSingle (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a canonical <see cref="T:System.String" /> representation of the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of
+   the current instance formatted using the general format specifier, ("G"). The string
+   takes into account the current system culture and
+   preserves the scale of the number.</para>
+        </returns>
+        <remarks>
+          <para> This version of <see cref="M:System.Decimal.ToString" /> is equivalent to <see cref="M:System.Decimal.ToString" /> (<see langword="null" />,
+<see langword="null" />
+).</para>
+          <block subset="none" type="note">
+            <para> The general format specifier formats the number in either fixed-point or exponential notation form, preserving
+      the scale of the number. For a detailed description of the
+      general format, see the <see cref="T:System.IFormattable" />
+      interface.</para>
+            <para> This method overrides <see cref="M:System.Object.ToString" />
+.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.NumberFormatInfo" /> containing culture-specific formatting information. </param>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
+   the general format specifier, ("G"). The string takes into account the
+   formatting information in the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Decimal.ToString" /> is equivalent to <see cref="M:System.Decimal.ToString" /> (<see langword="null" />
+, <paramref name="provider" /> ).</para>
+          <para>If <paramref name="provider" /> is 
+<see langword="null" /> or if a <see cref="T:System.Globalization.NumberFormatInfo" /> cannot
+be obtained from <paramref name="provider" />, the formatting information for the current
+system culture is used.</para>
+          <para>
+            <block subset="none" type="note"> The general format
+   specifier formats the number in either fixed-point or exponential notation form.
+   For a detailed description of the general format, see the <see cref="T:System.IFormattable" /> interface.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToString(string format)" />
+      <MemberSignature Language="C#" Value="public string ToString (string format);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> that specifies the format of the returned string. <block subset="none" type="note"> For a list of valid values, see <see cref="M:System.Decimal.ToString" /> (<see cref="T:System.String" />, <see cref="T:System.IFormatProvider" /> ).</block></param>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
+   specified by <paramref name="format" />. The string takes into account the current system
+   culture.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Decimal.ToString" /> is equivalent to <see cref="M:System.Decimal.ToString" />
+(<paramref name="format" /> ,
+<see langword="null" />
+).</para>
+          <para>If <paramref name="format" />
+is a null reference, the general format specifier "G" is used. </para>
+        </remarks>
+        <exception cref="T:System.FormatException">
+          <paramref name="format" /> is invalid.</exception>
+        <example>
+          <para>The following example shows the effects of various
+      formats on the string returned by <see cref="M:System.Decimal.ToString" />.</para>
+          <code lang="C#">using System;
+class test {
+ public static void Main() {
+ decimal d = 1234.56789m;
+ Console.WriteLine(d);
+ string[] fmts = {"C","E","F","G","N","P"};
+ for (int i=0;i&lt;fmts.Length;i++)
+ Console.WriteLine("{0}: {1}", 
+ fmts[i],d.ToString(fmts[i]));
+ }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>1234.56789</para>
+            <para>C: $1,234.57</para>
+            <para>E: 1.234568E+003</para>
+            <para>F: 1234.57</para>
+            <para>G: 1234.56789</para>
+            <para>N: 1,234.57</para>
+            <para>P: 123,456.79 %</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(string format, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (string format, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing a character that specifies the format of the returned string, optionally followed by a non-negative integer that specifies the precision of the number in the returned <see cref="T:System.String" /> .</param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.NumberFormatInfo" /> instance containing culture-specific formatting information. </param>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
+   specified by <paramref name="format" />. The string takes into account the information in
+   the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="provider" /> is
+<see langword="null" /> or if a <see cref="T:System.Globalization.NumberFormatInfo" /> cannot
+   be obtained from <paramref name="provider" /> , the formatting information for the current system culture is used.</para>
+          <para>The following table lists the characters that are valid for the
+<paramref name="format" /> parameter.</para>
+          <list type="table">
+            <listheader>
+              <term>Format Characters</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> "C", "c"</term>
+              <description>Currency format.</description>
+            </item>
+            <item>
+              <term> "E", "e"</term>
+              <description>Exponential notation format.</description>
+            </item>
+            <item>
+              <term> "F", "f"</term>
+              <description>Fixed-point format.</description>
+            </item>
+            <item>
+              <term> "G", "g"</term>
+              <description>General format.</description>
+            </item>
+            <item>
+              <term> "N", "n"</term>
+              <description>Number format.</description>
+            </item>
+            <item>
+              <term> "P", "p"</term>
+              <description>Percent format.</description>
+            </item>
+          </list>
+          <para>If <paramref name="format" /> is a null reference, the general format specifier "G" is used.</para>
+          <block subset="none" type="note">
+            <para>For a detailed description of formatting, see the <see cref="T:System.IFormattable" /> interface.</para>
+            <para>This method is implemented to support the <see cref="T:System.IFormattable" /> interface.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.FormatException">
+          <paramref name="format" /> is invalid.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToUInt16">
+      <MemberSignature Language="C#" Value="public static ushort ToUInt16 (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToUInt32">
+      <MemberSignature Language="C#" Value="public static uint ToUInt32 (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToUInt64">
+      <MemberSignature Language="C#" Value="public static ulong ToUInt64 (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Truncate">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Truncate(decimal d)" />
+      <MemberSignature Language="C#" Value="public static decimal Truncate (decimal d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="d">The <see cref="T:System.Decimal" /> to truncate.</param>
+        <summary>
+          <para>Rounds a <see cref="T:System.Decimal" /> value towards zero, to the closest integer value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Decimal" /> result of truncating <paramref name="d" /> . the scale of the result is 
+   0.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="M:System.Decimal.Truncate(System.Decimal)" /> method.</para>
+          <code lang="C#">using System;
+class MyClass {
+public static void Main() {
+ decimal d1 = 1234.56789m;
+ decimal d2 = -1234.56789m;
+ Console.WriteLine("{0} truncated is {1}", d1, Decimal.Truncate(d1));
+ Console.WriteLine("{0} truncated is {1}", d2, Decimal.Truncate(d2));
+}
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>1234.56789 truncated is 1234</para>
+            <para>-1234.56789 truncated is -1234</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string s, out decimal result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="result" Type="System.Decimal&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string s, System.Globalization.NumberStyles style, IFormatProvider provider, out decimal result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="style" Type="System.Globalization.NumberStyles" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+        <Parameter Name="result" Type="System.Decimal&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="style">To be added.</param>
+        <param name="provider">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Zero">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly decimal Zero" />
+      <MemberSignature Language="C#" Value="public static readonly decimal Zero = 0;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>0</MemberValue>
+      <Docs>
+        <summary>
+          <para> Contains zero (0).</para>
+        </summary>
+        <remarks>
+          <para>The value of this constant is 0. The scale shall be 0.</para>
+          <para>This field is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

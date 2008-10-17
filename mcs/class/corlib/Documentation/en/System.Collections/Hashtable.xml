@@ -1,0 +1,1454 @@
+<Type Name="Hashtable" FullName="System.Collections.Hashtable" FullNameSP="System_Collections_Hashtable" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable Hashtable extends System.Object implements System.ICloneable, System.Collections.ICollection, System.Collections.IDictionary, System.Collections.IEnumerable" />
+  <TypeSignature Language="C#" Value="public class Hashtable : ICloneable, System.Collections.IDictionary, System.Runtime.Serialization.IDeserializationCallback, System.Runtime.Serialization.ISerializable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This class is safe for multiple readers and a single writer.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IDictionary</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.IDeserializationCallback</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Represents a hash table.</para>
+    </summary>
+    <remarks>
+      <para> A <see cref="T:System.Collections.Hashtable" /> represents a
+   dictionary with a constant lookup time that contains entries of associated keys
+   and values. The type of each entry in a <see cref="T:System.Collections.Hashtable" /> is <see cref="T:System.Collections.DictionaryEntry" />. A statement that exposes each element in the
+   collection is required to iterate over this type. <block subset="none" type="note">See
+   example.</block></para>
+      <para>Objects used as keys in a <see cref="T:System.Collections.Hashtable" /> are required
+to either implement both <see cref="M:System.Object.GetHashCode" /> and <see cref="M:System.Object.Equals(System.Object)" /> or neither. Furthermore, for a particular key, these methods are required to produce the same results when called with
+the same parameters while that key exists in a particular <see cref="T:System.Collections.Hashtable" /> . Keys cannot be mutated while they are
+used in the table.</para>
+      <para> Every key in a <see cref="T:System.Collections.Hashtable" /> is required to be unique compared to every other key
+in the table. An object that implements <see cref="T:System.Collections.IComparer" /> can determine whether two keys are unequal.
+The default comparer for a key is the key's implementation of
+<see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</para>
+      <para>Each value in a <see cref="T:System.Collections.Hashtable" /> is required to provide its own hash function, which
+can be accessed by calling <see cref="M:System.Collections.Hashtable.GetHash(System.Object)" />. Alternatively, if an object that implements
+<see cref="T:System.Collections.IHashCodeProvider" /> is 
+passed to a <see cref="T:System.Collections.Hashtable" /> constructor, the custom hash
+function provided by that object is used for every value in the table.</para>
+      <block subset="none" type="note">
+        <para> The default capacity (i.e. the default number of entries that can be contained) of a <see cref="T:System.Collections.Hashtable" /> is
+   zero.</para>
+        <para> When an entry is added to the <see cref="T:System.Collections.Hashtable" />, the entry is placed
+into a bucket based on the hash code obtained from the <see cref="T:System.Collections.IHashCodeProvider" /> implementation of the table, or
+the <see cref="M:System.Object.GetHashCode" /> if no
+specific <see cref="T:System.Collections.IHashCodeProvider" />
+was provided. Subsequent lookups of
+the key use the hash code of the key to search in only one particular bucket,
+substantially reducing the number of key comparisons required to find an entry.</para>
+        <para>As entries are added to a <see cref="T:System.Collections.Hashtable" />, and the maximum capacity of the table is
+reached, the number of buckets in the table is automatically increased to the
+smallest prime number that is larger than twice the current number of
+buckets.</para>
+        <para>A <see cref="T:System.Collections.Hashtable" /> can
+safely support
+one writer and multiple readers concurrently. To support multiple writers,
+all operations
+are required to be done through the wrapper returned by the <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Hashtable)" /> method.</para>
+      </block>
+    </remarks>
+    <example>
+      <para> The following example shows
+      how to iterate over the elements of a <see cref="T:System.Collections.Hashtable" />.</para>
+      <c>
+        <para>[C#]</para>
+        <para>foreach (DictionaryEntry myEntry in
+         myHashtable)</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public Hashtable ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>The new instance is initialized with the default
+ capacity, <see cref="T:System.Collections.IHashCodeProvider" />, and <see cref="T:System.Collections.IComparer" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Collections.IDictionary d)" />
+      <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="d" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="d">The <see cref="T:System.Collections.IDictionary" /> used to initialize the elements of the new instance.</param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class using
+   the values of the specified <see cref="T:System.Collections.IDictionary" />.</para>
+        </summary>
+        <remarks>
+          <para>The initial capacity of the new instance is set to the
+      number of entries in <paramref name="d" />. The new instance is initialized with the default
+   <see cref="T:System.Collections.IHashCodeProvider" /> and <see cref="T:System.Collections.IComparer" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="d" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
+      </Parameters>
+      <Docs>
+        <param name="equalityComparer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity)" />
+      <MemberSignature Language="C#" Value="public Hashtable (int capacity);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">A <see cref="T:System.Int32" /> that specifies the minimum number of entries that the new <see cref="T:System.Collections.Hashtable" /> instance can initially contain. </param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" />
+class with the specified initial capacity.</para>
+        </summary>
+        <remarks>
+          <para>The new instance is initialized with the default <see cref="T:System.Collections.IHashCodeProvider" /> and <see cref="T:System.Collections.IComparer" />.</para>
+          <para>The number of entries that the new instance can contain can be greater than <paramref name="capacity" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="capacity" /> &lt; 0. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d, System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="d" Type="System.Collections.IDictionary" />
+        <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <param name="equalityComparer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d, float loadFactor);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="d" Type="System.Collections.IDictionary" />
+        <Parameter Name="loadFactor" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <param name="loadFactor">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="hcp">
+          <para>The <see cref="T:System.Collections.IHashCodeProvider" /> that supplies the hash codes for all keys in the <see cref="T:System.Collections.Hashtable" />; or, <see langword="null" /> to use the default hash code provider.</para>
+        </param>
+        <param name="comparer">
+          <para>The <see cref="T:System.Collections.IComparer" /> to use to determine whether two keys are equal; or, <see langword="null" /> to use the default comparer.</para>
+        </param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class with the specified <see cref="T:System.Collections.IHashCodeProvider" /> and the specified <see cref="T:System.Collections.IComparer" />.</para>
+        </summary>
+        <remarks>
+          <para>The new instance is initialized with the default capacity.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Please use Hashtable(IEqualityComparer) instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (int capacity, System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">To be added.</param>
+        <param name="equalityComparer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (int capacity, float loadFactor);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="loadFactor" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">To be added.</param>
+        <param name="loadFactor">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Hashtable (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Collections.IDictionary d, class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d, System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="d" Type="System.Collections.IDictionary" />
+        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="d">The <see cref="T:System.Collections.IDictionary" /> used to initialize the elements of the new instance.</param>
+        <param name="hcp">
+          <para>The <see cref="T:System.Collections.IHashCodeProvider" /> that supplies the hash codes for all keys in the new instance; or, <see langword="null" /> to use the default hash code provider.</para>
+        </param>
+        <param name="comparer">
+          <para>The <see cref="T:System.Collections.IComparer" /> to use to determine whether two keys are equal in the new instance, or <see langword="null" /> to use the default comparer.</para>
+        </param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class
+   using the values of the specified <see cref="T:System.Collections.IDictionary" />, the specified <see cref="T:System.Collections.IHashCodeProvider" />, and the specified <see cref="T:System.Collections.IComparer" />.</para>
+        </summary>
+        <remarks>
+          <para>The initial capacity of the new
+      instance is set to the number of entries in <paramref name="d" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="d" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Please use Hashtable(IDictionary, IEqualityComparer) instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d, float loadFactor, System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="d" Type="System.Collections.IDictionary" />
+        <Parameter Name="loadFactor" Type="System.Single" />
+        <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <param name="loadFactor">To be added.</param>
+        <param name="equalityComparer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity, class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public Hashtable (int capacity, System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">A <see cref="T:System.Int32" /> that specifies the minimum number of entries that the new <see cref="T:System.Collections.Hashtable" /> instance can initially contain. </param>
+        <param name="hcp">
+          <para>The <see cref="T:System.Collections.IHashCodeProvider" /> that supplies the hash codes for all keys in the <see cref="T:System.Collections.Hashtable" />; or, <see langword="null" /> to use the default hash code provider.</para>
+        </param>
+        <param name="comparer">
+          <para>The <see cref="T:System.Collections.IComparer" /> to use to determine whether two keys are equal, or <see langword="null" /> to use the default comparer.</para>
+        </param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class with the specified initial capacity, the specified
+<see cref="T:System.Collections.IHashCodeProvider" />, and the specified <see cref="T:System.Collections.IComparer" />.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Please use Hashtable(int, IEqualityComparer) instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (int capacity, float loadFactor, System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="loadFactor" Type="System.Single" />
+        <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">To be added.</param>
+        <param name="loadFactor">To be added.</param>
+        <param name="equalityComparer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d, float loadFactor, System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="d" Type="System.Collections.IDictionary" />
+        <Parameter Name="loadFactor" Type="System.Single" />
+        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <param name="loadFactor">To be added.</param>
+        <param name="hcp">To be added.</param>
+        <param name="comparer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Please use Hashtable(IDictionary, float, IEqualityComparer) instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (int capacity, float loadFactor, System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="loadFactor" Type="System.Single" />
+        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">To be added.</param>
+        <param name="loadFactor">To be added.</param>
+        <param name="hcp">To be added.</param>
+        <param name="comparer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Please use Hashtable(int, float, IEqualityComparer) instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Add(object key, object value)" />
+      <MemberSignature Language="C#" Value="public virtual void Add (object key, object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key of the entry to add.</param>
+        <param name="value">The value of the entry to add.</param>
+        <summary>
+          <para>Adds an entry with the specified key and value into the
+      current instance.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="key" /> is <see langword="null" />.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>An entry with the same key already exists in the current instance.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Clear()" />
+      <MemberSignature Language="C#" Value="public virtual void Clear ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Removes all entries from the current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support
+      the <see cref="T:System.Collections.IDictionary" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para>The value of each key and value in the current instance is set to
+      <see langword="null" />. The <see cref="P:System.Collections.Hashtable.Count" /> property of the current instance 
+         is set to zero. The capacity of the current instance remains
+         unchanged.</para>
+            <para>If the current instance is empty, it remains unchanged and no exception is
+         thrown.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual object Clone()" />
+      <MemberSignature Language="C#" Value="public virtual object Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Creates a <see cref="T:System.Object" />
+that is a copy of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Object" />
+that is a copy of the current instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.ICloneable" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method creates a new <see cref="T:System.Collections.Hashtable" /> instance is initialized with the same count,
+<see cref="T:System.Collections.IHashCodeProvider" /> implementation, and <see cref="T:System.Collections.IComparer" /> implementation 
+as the current instance. The references to the objects contained by the current
+instance are copied to the new instance.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="comparer">
+      <MemberSignature Language="C#" Value="protected System.Collections.IComparer comparer { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Please use EqualityComparer property.")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Contains(object key)" />
+      <MemberSignature Language="C#" Value="public virtual bool Contains (object key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key to locate in the current instance.</param>
+        <summary>
+          <para> Determines whether the current instance contains the specified key.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" />
+if the current instance contains <paramref name="key" />; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.Collections.IDictionary" /> 
+interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">
+ This method is equivalent to <see cref="M:System.Collections.Hashtable.ContainsKey(System.Object)" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="note"> 
+ For the default implementation, this method has a constant (O(1)) lookup time.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="key" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContainsKey">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool ContainsKey(object key)" />
+      <MemberSignature Language="C#" Value="public virtual bool ContainsKey (object key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key of the entry to locate in the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance contains an entry with the specified key.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if
+ the current instance contains an entry with <paramref name="key" />; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">
+ This method uses <see cref="M:System.Collections.Hashtable.KeyEquals(System.Object,System.Object)" /> to compare <paramref name="key" /> to the keys in the current instance.
+ </block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method has a constant (O(1)) lookup
+ time.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="key" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContainsValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool ContainsValue(object value)" />
+      <MemberSignature Language="C#" Value="public virtual bool ContainsValue (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The value to locate in the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance contains an entry with the specified value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" />
+if the current instance contains an
+entry with <paramref name="value" />; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support 
+ the <see cref="T:System.Collections.IDictionary" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method is equivalent to <see cref="M:System.Collections.Hashtable.ContainsKey(System.Object)" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method has a constant (O(1)) lookup 
+ time.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void CopyTo(class System.Array array, int32 arrayIndex)" />
+      <MemberSignature Language="C#" Value="public virtual void CopyTo (Array array, int arrayIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Array" />
+        <Parameter Name="arrayIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">The one-dimensional, zero-indexed <see cref="T:System.Array" /> that is the destination of the objects copied from the current instance.</param>
+        <param name="arrayIndex">A <see cref="T:System.Int32" /> that specifies the zero-based index in <paramref name="array" /> at which copying begins. This value is between 0 and <paramref name="array" />.Length minus the <see cref="P:System.Collections.Hashtable.Count" /> of the current instance, inclusive.</param>
+        <summary>
+          <para>Copies the entries of the current instance to a
+      one-dimensional <see cref="T:System.Array" /> starting at the specified index.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The <see cref="T:System.Collections.DictionaryEntry" /> elements in the current instance are copied to the <see cref="T:System.Array" /> in the same order in which they are contained the
+   current instance. If <see cref="T:System.Collections.DictionaryEntry" /> is not
+   assignment-compatible with the type of <paramref name="array" />, a <see cref="T:System.InvalidCastException" />
+   is thrown. If an exception is thrown
+   while copying, the state of the current instance is undefined.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="arrayIndex" /> &lt; 0.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="array" /> has more than one dimension.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="arrayIndex" /> &gt; <paramref name="array" />.Length - The <see cref="P:System.Collections.Hashtable.Count" /> of the current instance.</para>
+        </exception>
+        <exception cref="T:System.InvalidCastException">The type of the current instance is not assignment-compatible with the type of <paramref name="array" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="ILASM" Value=".property int32 Count { public hidebysig virtual specialname int32 get_Count() }" />
+      <MemberSignature Language="C#" Value="public virtual int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the number of key-and-value pairs contained in the
+      current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> that specifies the number of key-and-value pairs contained in the
+   current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EqualityComparer">
+      <MemberSignature Language="C#" Value="protected System.Collections.IEqualityComparer EqualityComparer { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEqualityComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Collections.IDictionaryEnumerator GetEnumerator()" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.IDictionaryEnumerator GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionaryEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a <see cref="T:System.Collections.IDictionaryEnumerator" /> for the
+   current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Collections.IDictionaryEnumerator" /> for the current
+   instance.</para>
+        </returns>
+        <remarks>
+          <para>If the current instance is modified
+      while an enumeration is in progress, a call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="P:System.Collections.IEnumerator.Reset" /> throws <see cref="T:System.InvalidOperationException" />. </para>
+          <block subset="none" type="note">
+            <para>For detailed information regarding the use of an enumerator, see <see cref="T:System.Collections.IEnumerator" />.</para>
+            <para>This property is implemented to support the <see cref="T:System.Collections.IList" /> interface.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHash">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual int32 GetHash(object key)" />
+      <MemberSignature Language="C#" Value="protected virtual int GetHash (object key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="key">The <see cref="T:System.Object" /> whose hash code is to be generated.</param>
+        <summary>
+          <para>Generates a hash code for the specified key in the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the hash code for <paramref name="key" />.</para>
+        </returns>
+        <remarks>
+          <para>This method is accessible only through this class or a derived class.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">If the current instance was instantiated with a specific <see cref="T:System.Collections.IHashCodeProvider" /> implementation, this method uses that hash
+   code provider; otherwise, it uses the <see cref="M:System.Object.GetHashCode" qualify="true" /> implementation of
+<paramref name="key" />
+.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="key" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public virtual void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="hcp">
+      <MemberSignature Language="C#" Value="protected System.Collections.IHashCodeProvider hcp { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IHashCodeProvider</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Please use EqualityComparer property.")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IsFixedSize">
+      <MemberSignature Language="ILASM" Value=".property bool IsFixedSize { public hidebysig virtual specialname bool get_IsFixedSize() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsFixedSize { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.Collections.IDictionary" /> interface. [Note: For more information, see <see cref="M:System.Collections.IDictionary.IsFixedSize" />.]</summary>
+        <value>
+          <para>
+            <see langword="true" /> if the
+   current instance has a fixed size; otherwise,
+<see langword="false" />. </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">Elements can be modified in, but not
+      added to or removed from a <see cref="T:System.Collections.Hashtable" /> with a fixed size.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default
+      value of this property is <see langword="false" /> .</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override
+      this property, setting it to <see langword=" true" />
+      , to prevent addition or removal of entries in the current instance.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig virtual specialname bool get_IsReadOnly() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsReadOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.Collections.IDictionary" /> interface. [Note: For more information, see <see cref="M:System.Collections.IDictionary.IsReadOnly" />.]</summary>
+        <value>
+          <para>
+            <see langword="true" /> if the
+   current instance is read-only; otherwise,
+<see langword="false" />. </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">Elements cannot be modified in, added
+      to, or removed from a <see cref="T:System.Collections.Hashtable" /> that is read-only.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default
+      value of this property is <see langword=" false" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override
+      this property, setting it to <see langword=" true" /> , in
+      order to prevent the addition, removal, or modification of
+      entries in the current instance.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSynchronized">
+      <MemberSignature Language="ILASM" Value=".property bool IsSynchronized { public hidebysig virtual specialname bool get_IsSynchronized() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsSynchronized { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.Collections.ICollection" /> interface. [Note: For more information, see <see cref="M:System.Collections.ICollection.IsSynchronized" />.]</summary>
+        <value>
+          <para>
+            <see langword="true" /> if access to
+   the current instance is synchronized
+   (thread-safe); otherwise, <see langword="false" />. </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>This property is implemented to support the <see cref="T:System.Collections.ICollection" />
+   interface.</para>
+            <para>For more information regarding synchronization of access to a <see cref="T:System.Collections.Hashtable" /> ,
+see <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Hashtable)" /> .</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default
+   value of this property is <see langword=" false" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override
+   this property, setting it to <see langword=" true" />
+   , if thread-safety can be guaranteed for
+   the current instance. In order to obtain this safety, use <see cref="P:System.Collections.Hashtable.SyncRoot" /> or <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Hashtable)" />
+   .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="ILASM" Value=".property object Item[object key] { public hidebysig virtual specialname object get_Item(object key) public hidebysig virtual specialname void set_Item(object key, object value) }" />
+      <MemberSignature Language="C#" Value="public virtual object this[object key] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key whose value to get or set.</param>
+        <summary>
+          <para>Gets or sets the value in the current instance that is associated with the specified key.</para>
+        </summary>
+        <value>
+          <para> The value in the current instance that is associated
+      with <paramref name="key" />. If <paramref name="key" /> is
+      not contained in the current instance, attempting to get it returns
+   <see langword="null" />, and attempting to set it creates a new entry
+      using <paramref name="key" />
+      
+      .</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This property provides the ability to
+      access a specific element in the current instance using the following notation:
+      <c>myCollection[key]</c>
+      .</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">If this property is being set and <paramref name="key" /> is already contained
+   in the current instance, the value associated with the old key is
+   replaced.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="key" /> is <see langword="null" />. </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The property is being set and the current instance is read-only.</para>
+          <para>The property is being set, <paramref name="key" /> is not contained in the current instance, and the current instance has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="KeyEquals">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual bool KeyEquals(object item, object key)" />
+      <MemberSignature Language="C#" Value="protected virtual bool KeyEquals (object item, object key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="System.Object" />
+        <Parameter Name="key" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="item">The <see cref="T:System.Object" /> to compare with <paramref name="key" />.</param>
+        <param name="key">The key in the current instance to compare with <paramref name="item" />.</param>
+        <summary>
+          <para>Determines whether the specified <see cref="T:System.Object" /> and the specified key in the
+   current instance represent the same value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="item" /> and <paramref name="key" /> represent the
+   same value; otherwise,
+<see langword="false" />. </para>
+        </returns>
+        <remarks>
+          <para>This method is accessible only through this class or a derived class.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">If the
+      current instance was initialized with a specified <see cref="T:System.Collections.IComparer" /> implementation, this method uses that
+      implementation to perform the comparison; otherwise, the <see cref="M:System.Object.Equals(System.Object)" /> implementation of <paramref name="item" /> is used.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="item" /> is <see langword="null" />. </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="key" /> is <see langword="null" />. </para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Keys">
+      <MemberSignature Language="ILASM" Value=".property class System.Collections.ICollection Keys { public hidebysig virtual specialname class System.Collections.ICollection get_Keys() }" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.ICollection Keys { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ICollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.Collections.IDictionary" /> interface. [Note: For more information, see <see cref="M:System.Collections.IDictionary.Keys" />.]</summary>
+        <value>
+          <para>A <see cref="T:System.Collections.ICollection" /> containing the keys of the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para>The order of the keys in the <see cref="T:System.Collections.ICollection" /> is unspecified, but it is
+      the same order as the associated values in the <see cref="T:System.Collections.ICollection" />
+      returned by the <see cref="P:System.Collections.Hashtable.Values" /> method.</para>
+            <para> The returned <see cref="T:System.Collections.ICollection" /> is a reference to the current instance, not
+   a static copy. Therefore, changes to the current instance continue to be
+   reflected in the <see cref="T:System.Collections.ICollection" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnDeserialization">
+      <MemberSignature Language="C#" Value="public virtual void OnDeserialization (object sender);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Remove(object key)" />
+      <MemberSignature Language="C#" Value="public virtual void Remove (object key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key of the entry to remove.</param>
+        <summary>
+          <para>Removes the entry with the specified key from the
+      current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support
+      the <see cref="T:System.Collections.IDictionary" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses the <see cref="M:System.Object.Equals(System.Object)" /> implementation of
+<paramref name="key" /> to locate it in the current instance. If <paramref name="key" /> is 
+found in the current instance, the values of both <paramref name="key" /> and its
+associated value are set to <see langword="null" />. If <paramref name="key" /> is not
+found in the
+current instance, no exception is thrown and the current
+instance remains unchanged.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="key" /> is <see langword="null" />. </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Synchronized">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Collections.Hashtable Synchronized(class System.Collections.Hashtable table)" />
+      <MemberSignature Language="C#" Value="public static System.Collections.Hashtable Synchronized (System.Collections.Hashtable table);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Hashtable</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="System.Collections.Hashtable" />
+      </Parameters>
+      <Docs>
+        <param name="table">The <see cref="T:System.Collections.Hashtable" /> to synchronize.</param>
+        <summary>
+          <para>Returns a synchronized (thread-safe) wrapper for the specified <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+        <returns>
+          <para>A synchronized (thread-safe) wrapper for <paramref name="table" />.</para>
+        </returns>
+        <remarks>
+          <para>This method returns a new <see cref="T:System.Collections.Hashtable" /> instance that contains values equal to the
+   values of <paramref name="table" /> , and provides synchronized access to those values.</para>
+          <para>If more than one thread is to write to a <see cref="T:System.Collections.Hashtable" /> concurrently, all
+write
+operations are required to be done through this wrapper.</para>
+          <para>
+            <block subset="none" type="note">A <see cref="T:System.Collections.Hashtable" /> can safely support one
+writer and multiple readers concurrently.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="table" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SyncRoot">
+      <MemberSignature Language="ILASM" Value=".property object SyncRoot { public hidebysig virtual specialname object get_SyncRoot() }" />
+      <MemberSignature Language="C#" Value="public virtual object SyncRoot { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Object" /> that can be used to synchronize access to
+   the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Object" /> that can be used to synchronize access to the
+   current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>A thread is required to perform synchronized operations only on the <see cref="P:System.Collections.Hashtable.SyncRoot" /> of a <see cref="T:System.Collections.Hashtable" />, not directly on
+   the table itself. This maintains proper synchronization with any other threads
+   concurrently modifying the table.</para>
+          <para>
+            <block subset="none" type="note">This property is implemented to support
+   the <see cref="T:System.Collections.ICollection" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method returns a reference to
+   the current instance.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this property to return an object on which to lock when
+   implementing a collection that wraps another collection (using a subset of it, for
+   example). This is useful when providing synchronized access through two or more
+   wrapper collections to the same underlying collection. Typically, this property returns a
+   reference to the current instance.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this property to obtain a <see cref="T:System.Object" /> that can be used to synchronize access to the current
+instance.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.Collections.IEnumerable" /> interface. [Note: For more information, see <see cref="M:System.Collections.IEnumerable.GetEnumerator" />.]</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Values">
+      <MemberSignature Language="ILASM" Value=".property class System.Collections.ICollection Values { public hidebysig virtual specialname class System.Collections.ICollection get_Values() }" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.ICollection Values { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ICollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Collections.ICollection" /> containing the values of the current
+   instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Collections.ICollection" /> containing the values of the current
+   instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para>The order of the values in the <see cref="T:System.Collections.ICollection" /> is unspecified, but it is
+      the same order as the associated keys in the <see cref="T:System.Collections.ICollection" /> returned by the <see cref="P:System.Collections.Hashtable.Keys" /> method.</para>
+            <para> The returned <see cref="T:System.Collections.ICollection" /> is a reference to the current instance, not
+   a static copy. Therefore, changes to the current instance continue to be
+   reflected in the <see cref="T:System.Collections.ICollection" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

@@ -1,0 +1,49 @@
+<Type Name="ThreadStart" FullName="System.Threading.ThreadStart" FullNameSP="System_Threading_ThreadStart" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable ThreadStart extends System.Delegate" />
+  <TypeSignature Language="C#" Value="public delegate void ThreadStart();" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Defines the shape of methods that are called when
+      a <see cref="T:System.Threading.Thread" /> is started.
+      </para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">A new instance of
+      the <see cref="T:System.Threading.Thread" /> class is created using a constructor that
+      takes a <see cref="T:System.Threading.ThreadStart" /> delegate as its only parameter. When <see cref="M:System.Threading.Thread.Start" /> is invoked and the thread begins
+      executing, all of the methods in the invocation list of the specified delegate
+      are invoked in the execution
+      context of the thread. If a method in the invocation list receives an unhandled
+      exception, the thread is terminated, but not the process that contains the thread.</block>
+      </para>
+      <para>
+        <block subset="none" type="note">For an example that
+   demonstrates creating a <see langword=" ThreadStart" />
+   delegate, see <see cref="M:System.Threading.Thread.Start" qualify="true" />.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
+  <Parameters>
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

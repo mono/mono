@@ -1,0 +1,22 @@
+<Type Name="RuntimeHelpers+TryCode" FullName="System.Runtime.CompilerServices.RuntimeHelpers+TryCode">
+  <TypeSignature Language="C#" Value="public delegate void RuntimeHelpers.TryCode(object userData);" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="userData" Type="System.Object" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="userData">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

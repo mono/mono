@@ -1,0 +1,88 @@
+<Type Name="IEnumerator&lt;T&gt;" FullName="System.Collections.Generic.IEnumerator&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public interface IEnumerator&lt;T&gt; : IDisposable, System.Collections.IEnumerator" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerator</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>
+      <para>Implemented by generic classes that support a simple iteration over a collection.</para>
+    </summary>
+    <remarks>
+      <para>Enumerators can be used to read the data in the collection, but they cannot be used to modify the underlying collection.</para>
+      <para>Initially, the enumerator is positioned before the first element in the collection. At this position, calling<see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" />  is unspecified. Therefore, you must call <see cref="M:System.Collections.IEnumerator.MoveNext" />   to advance the enumerator to the first element of the collection before reading the value of <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" />.</para>
+      <para>
+        <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" /> returns the same object until <see cref="M:System.Collections.IEnumerator.MoveNext" />  is called. <see cref="M:System.Collections.IEnumerator.MoveNext" /> sets <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" /> to the next element.</para>
+      <para> If <see cref="M:System.Collections.IEnumerator.MoveNext" /> passes the end of the collection, the enumerator is positioned after the last element in the collection and  <see cref="P:System.Collections.IEnumerator.MoveNext" /> returns false. When the enumerator is at this position, subsequent calls to <see cref="M:System.Collections.IEnumerator.MoveNext" /> also return false. If the last call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> returned false, calling <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" /> is unspecified. You cannot set <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" /> to the first element of the collection again; you must create a new enumerator instance instead.</para>
+      <para>An enumerator remains valid as long as the collection remains unchanged and the enumerator is not disposed. If changes are made to the collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated and its behavior is unspecified.   </para>
+      <para>The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is intrinsically not a thread-safe procedure. To guarantee thread safety during enumeration, you can lock the collection during the entire enumeration. To allow the collection to be accessed by multiple threads for reading and writing, you must implement your own synchronization.</para>
+      <para>Default implementations of collections in  <see cref="N:System.Collections.Generic" /> are not synchronized.   </para>
+      <para>[Note: Implementing this interface requires implementing the non-generic interface <see cref="T:System.Collections.IEnumerator" />.  The methods <see langword="MoveNext" />, <see langword="Reset" /> and <see langword="Dispose" /> do not depend on the type parameter <see langword="T " />, and appear only on the non-generic interface <see cref="T:System.Collections.IEnumerator" />.  The property <see langword="Current " /> appears on both interfaces, but with different return types.  Implementations should provide the non-generic <see langword="Current " /> property as an explicit interface member implementation.  This allows any consumer of the non-generic interface to consume the generic interface.]</para>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Current">
+      <MemberSignature Language="C#" Value="public T Current { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para> Gets the element in the collection over which the current instance is positioned.</para>
+        </summary>
+        <value>
+          <para> The element in the collection over which the current instance is positioned.</para>
+        </value>
+        <remarks>
+          <para>
+            <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" /> is unspecified after any of the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <term>
+                <para>The enumerator is positioned before the first element in the collection, immediately after the enumerator is created. <see cref="M:System.Collections.IEnumerator.MoveNext" /> must be called to advance the enumerator to the first element of the collection before reading the value of <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" />.</para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>The last call to <see cref="M:System.Collections.IEnumerator.MoveNext" />  returned <see langword="false" />, which indicates the end of the collection.</para>
+              </term>
+            </item>
+            <item>
+              <term>The enumerator is invalidated due to changes made in the collection, such as adding, repositioning, or deleting elements. </term>
+            </item>
+            <item>
+              <term>If it has been disposed.</term>
+            </item>
+          </list>
+          <para>If <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" /> is accessed when its value is unspecified, an exception of unspecified type can be, but need not be, thrown.</para>
+          <para>
+            <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" /> returns the same object until <see cref="M:System.Collections.IEnumerator.MoveNext" />  is called. <see cref="M:System.Collections.IEnumerator.MoveNext" /> sets <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" />  to the next element.</para>
+          <para>This property is read-only.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="An unspecified exception type">
+          <para>If <see cref="M:System.Collections.IEnumerator.MoveNext" />  is not called before the first call to <see cref="P:System.Collections.Generic.IEnumerator&lt;T&gt;.Current" />.</para>
+          <para>-or-</para>
+          <para>If the previous call to <see cref="M:System.Collections.IEnumerator.MoveNext" />  returned <see langword="false" />  , indicating the end of the collection.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

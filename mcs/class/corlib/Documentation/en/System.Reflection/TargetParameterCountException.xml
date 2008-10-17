@@ -1,0 +1,125 @@
+<Type Name="TargetParameterCountException" FullName="System.Reflection.TargetParameterCountException" FullNameSP="System_Reflection_TargetParameterCountException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable TargetParameterCountException extends System.ApplicationException" />
+  <TypeSignature Language="C#" Value="public sealed class TargetParameterCountException : ApplicationException" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ApplicationException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Represents the error that occurs when the number of 
+      parameters passed in the invocation of a member does not match the number of parameters required by the contract
+      of that member.</para>
+    </summary>
+    <remarks>
+      <para>This exception is thrown by types in the Reflection 
+      Library, when attempting to dynamically invoke members.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public TargetParameterCountException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the
+   <see cref="T:System.Reflection.TargetParameterCountException" /> 
+   class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.Reflection.TargetParameterCountException.Message" /> 
+property of the new instance to a system-supplied message
+that describes the error, such as "Parameter count mismatch." This message takes into
+account the current system culture.</para>
+          <para>The <see cref="!:System.Reflection.TargetParameterCountException.InnerException" /> property of the 
+new instance is initialized to <see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public TargetParameterCountException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Reflection.TargetParameterCountException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.Reflection.TargetParameterCountException.Message" /> property of the
+   new instance using <paramref name="message" />. If <paramref name="message" /> is
+<see langword="null" />, the <see cref="!:System.Reflection.TargetParameterCountException.Message" /> property is initialized to the 
+   system-supplied message provided by the constructor that takes no
+   arguments. </para>
+          <para> The <see cref="!:System.Reflection.TargetParameterCountException.InnerException" /> property is
+initialized to <see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public TargetParameterCountException (string message, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current Exception. If <paramref name="innerException" /> is non-null, then the current Exception was raised in a catch block handling <paramref name="innerException" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Reflection.TargetParameterCountException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.Reflection.TargetParameterCountException.Message" /> property of
+   the new instance using <paramref name="message" />, and the <see cref="!:System.Reflection.TargetParameterCountException.InnerException" /> property using
+<paramref name="inner" />. If <paramref name="message" /> is 
+<see langword="null" />, the <see cref="!:System.Reflection.TargetParameterCountException.Message" /> property is initialized to the 
+   system-supplied message provided by the constructor that takes no
+   arguments. </para>
+          <para>
+            <block subset="none" type="note"> For information on inner exceptions,
+   see <see cref="P:System.Exception.InnerException" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

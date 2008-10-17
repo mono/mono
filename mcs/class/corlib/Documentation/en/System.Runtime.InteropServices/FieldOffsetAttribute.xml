@@ -1,0 +1,125 @@
+<Type Name="FieldOffsetAttribute" FullName="System.Runtime.InteropServices.FieldOffsetAttribute" FullNameSP="System_Runtime_InteropServices_FieldOffsetAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed FieldOffsetAttribute extends System.Attribute" />
+  <TypeSignature Language="C#" Value="public sealed class FieldOffsetAttribute : Attribute" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Field, Inherited=false)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Indicates the physical position of a field within the unmanaged representation of a class or structure.</para>
+    </summary>
+    <remarks>
+      <para> The target objects for this attribute are non-static
+      fields of classes and structures qualified with the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" qualify="true" /> set to <see cref="F:System.Runtime.InteropServices.LayoutKind.Explicit" qualify="true" /> .
+      All non-static fields within an object with an explicit layout are required to
+      have this attribute. No static or constant fields within an object with explicit
+      layout are allowed
+      to have this attribute. </para>
+      <para> The physical layout of the data members of a class
+      or structure is automatically arranged in managed memory. When a managed
+      object is passed as an argument to unmanaged code, the system
+      creates its unmanaged representation. <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />
+      provides explicit control over this unmanaged representation. <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" />
+      indicates the offset of a target data member within the
+      unmanaged representation of
+      a class
+      or structure.</para>
+      <para> If <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" qualify="true" />
+instances on target fields of an exported
+object are set to overlap each other, one field is overwritten by another
+field. For example, if an integer field has the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" qualify="true" />
+set to 4, and another integer
+field has the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" qualify="true" />
+set to 6, the last two bytes of the unmanaged representation of
+the first integer overlap the first two bytes of the second integer. In such a situation writing
+to one of the fields might corrupt the data in the other.</para>
+      <para>
+        <block subset="none" type="note">See the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> class overview for
+an example that uses <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" />.</block>
+      </para>
+      <para>Compilers are required to not preserve this type
+   in metadata as a custom attribute. Instead, compilers are required to emit it
+   directly in the file format, as described in Partition II of the CLI
+   Specification. Metadata consumers, such as the Reflection API, are required to
+   retrieve this data from the file format and return it as if it were a custom
+   attribute. </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 offset)" />
+      <MemberSignature Language="C#" Value="public FieldOffsetAttribute (int offset);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="offset">A <see cref="T:System.Int32" /> that specifies the offset in bytes from the beginning of the structure to the beginning of the field.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" /> 
+class with the specified field offset in the class or structure.</para>
+        </summary>
+        <remarks>
+          <para> If <paramref name="offset" /> is
+   negative, its value is interpreted as an unsigned <see cref="T:System.Int64" /> value, and
+   the system behavior is implementation-defined.</para>
+          <para> 
+   The <see cref="P:System.Runtime.InteropServices.FieldOffsetAttribute.Value" /> property of
+   the new instance is initialized to <paramref name="offset" />
+   .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="ILASM" Value=".property int32 Value { public hidebysig specialname instance int32 get_Value() }" />
+      <MemberSignature Language="C#" Value="public int Value { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the offset from the beginning of the exported data object to the beginning of the
+      target field.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Int32" /> containing the offset from the beginning of the exported data
+   object to the beginning of the target field.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

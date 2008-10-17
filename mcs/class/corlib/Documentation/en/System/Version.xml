@@ -1,0 +1,1146 @@
+<Type Name="Version" FullName="System.Version" FullNameSP="System_Version" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable Version extends System.Object implements System.ICloneable, System.IComparable" />
+  <TypeSignature Language="C#" Value="public sealed class Version : ICloneable, IComparable, IComparable&lt;Version&gt;, IEquatable&lt;Version&gt;" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IComparable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IComparable&lt;System.Version&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.Version&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Represents the version number of an assembly.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.Version" /> numbers for an 
+   assembly consist of two to four components: <paramref name="major" />, <paramref name="minor" />,
+<paramref name="build" />, and <paramref name="revision" />. Components <paramref name="major" /> and <paramref name="minor" /> must 
+   be defined. <paramref name="Build" /> and <paramref name="revision" /> components are optional. Component
+<paramref name="revision" /> can be 
+   used if and only if build is defined. All defined components must be
+   a <see cref="T:System.Int32" qualify="true" />
+   greater than or equal to zero.</para>
+      <block subset="none" type="note">
+        <para>By convention, the components are used as follows:</para>
+        <list type="bullet">
+          <item>
+            <term>
+         
+         Major: Assemblies with the same name but different
+         major versions are not interchangeable. This would be appropriate, for
+         example, for a major rewrite of a product where backwards compatibility cannot
+         be assumed.</term>
+          </item>
+          <item>
+            <term>
+         
+         Minor: If the name and major number on two assemblies
+         are the same, but the minor number is different, this indicates significant
+         enhancement with the intention of backwards compatibility. This would be
+         appropriate, for example, on a "point release" of a product or a fully
+         backward compatible new version of a product.</term>
+          </item>
+          <item>
+            <term>
+         
+         Assemblies with the same name, major, and minor
+         version numbers but different revisions are intended to be fully
+         interchangeable. This would be appropriate, for example, to fix a security
+         hole in a previously released assembly.</term>
+          </item>
+          <item>
+            <term>
+         
+         A difference in build number is intended to represent a recompilation of
+         the same source. This would be appropriate, for example, because of processor,
+         platform, or compiler changes.</term>
+          </item>
+        </list>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public Version ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of
+      the <see cref="T:System.Version" /> class.</para>
+        </summary>
+        <remarks>
+          <para>
+            <see cref="P:System.Version.Major" /> and <see cref="P:System.Version.Minor" /> are set to zero. <see cref="P:System.Version.Build" />
+and <see cref="P:System.Version.Revision" /> are unspecified.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string version)" />
+      <MemberSignature Language="C#" Value="public Version (string version);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="version">
+          <para>A <see cref="T:System.String" qualify="true" /> that represents 2 to 4 <see cref="T:System.Int32" qualify="true" /> integers separated by period characters ('.'). Each component delineated by a period character will be parsed to a <see cref="T:System.Int32" /> with <see cref="M:System.Int32.Parse(System.String)" />(<see cref="T:System.String" qualify="true" />). The numbers will be processed in the following order: <paramref name="major" />, <paramref name="minor" />, <paramref name="build" />, <paramref name="revision" />. If the <paramref name="revision" /> or the <paramref name="revision" /> and the <paramref name="build" /> components are not represented by <paramref name="version" />, their values will be undefined.</para>
+          <block subset="none" type="note">
+            <para>The formatting of <paramref name="version" /> must be as follows, with optional components shown in square brackets ('[' and']'): <paramref name="major" />.<paramref name="minor" />[.<paramref name="build" />[.<paramref name="revision" />]], where each component returns a <see cref="T:System.Int32" qualify="true" /> with <see cref="M:System.Int32.Parse(System.String)" /> (<see cref="T:System.String" qualify="true" />).</para>
+          </block>
+        </param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Version" /> class using
+   the values represented by the specified <see cref="T:System.String" />.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="version" /> has fewer than 2 components or more than 4 components (i.e. fewer than 1 or more than 3 period characters).</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="version" /> is a null reference.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="major" />, <paramref name="minor" />, <paramref name="build" />, or <paramref name="revision " /> is less than zero.</exception>
+        <exception cref="T:System.FormatException">At least one component of <paramref name="version" /> does not parse to a <see cref="T:System.Int32" /> with <see cref="M:System.Int32.Parse(System.String)" /> (<see cref="T:System.String" />).</exception>
+        <example>
+          <para>The following example sets the version to "6.1.2.4" and writes the result to the console.</para>
+          <code lang="C#">
+using System;
+
+public class Vers {
+  public static void Main() {
+
+    Version vers = new Version( "6.1.2.4" );
+    Console.WriteLine( "Version is {0}", vers.ToString() );
+  }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+Version is 6.1.2.4</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 major, int32 minor)" />
+      <MemberSignature Language="C#" Value="public Version (int major, int minor);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="major" Type="System.Int32" />
+        <Parameter Name="minor" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="major">A <see cref="T:System.Int32" qualify="true" /> specifying the major component.</param>
+        <param name="minor">A <see cref="T:System.Int32" qualify="true" /> specifying the minor component.</param>
+        <param name="major">To be added.</param>
+        <param name="minor">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Version" /> class using the
+   specified major and minor values.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="major" /> or <paramref name="minor" /> is less than zero. </exception>
+        <example>
+          <para>The following example sets the version to "6.1" and writes the result to the console.</para>
+          <code lang="C#">
+using System;
+
+public class Vers {
+  public static void Main() {
+
+    Version vers = new Version( 6, 1 );
+    Console.WriteLine( "Version is {0}", vers.ToString() );
+  }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+Version is 6.1</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 major, int32 minor, int32 build)" />
+      <MemberSignature Language="C#" Value="public Version (int major, int minor, int build);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="major" Type="System.Int32" />
+        <Parameter Name="minor" Type="System.Int32" />
+        <Parameter Name="build" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="major">A <see cref="T:System.Int32" qualify="true" /> specifying the major component.</param>
+        <param name="minor">A <see cref="T:System.Int32" qualify="true" /> specifying the minor component.</param>
+        <param name="build">A <see cref="T:System.Int32" qualify="true" /> specifying the build component.</param>
+        <param name="major">To be added.</param>
+        <param name="minor">To be added.</param>
+        <param name="build">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Version" /> class using the
+   specified major, minor, and build values.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="major" />, <paramref name="minor" />, or <paramref name="build" /> is less than zero. </exception>
+        <example>
+          <para>The following example sets the version to "6.1.2" and writes the result to the console.</para>
+          <code lang="C#">
+using System;
+
+public class Vers {
+  public static void Main() {
+
+    Version vers = new Version( 6, 1, 2 );
+    Console.WriteLine( "Version is {0}", vers.ToString() );
+  }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+Version is 6.1.2</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 major, int32 minor, int32 build, int32 revision)" />
+      <MemberSignature Language="C#" Value="public Version (int major, int minor, int build, int revision);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="major" Type="System.Int32" />
+        <Parameter Name="minor" Type="System.Int32" />
+        <Parameter Name="build" Type="System.Int32" />
+        <Parameter Name="revision" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="major">A <see cref="T:System.Int32" qualify="true" /> specifying the major component.</param>
+        <param name="minor">A <see cref="T:System.Int32" qualify="true" /> specifying the minor component.</param>
+        <param name="build">A <see cref="T:System.Int32" qualify="true" /> specifying the build component.</param>
+        <param name="revision">A <see cref="T:System.Int32" qualify="true" /> specifying the revision component.</param>
+        <param name="major">To be added.</param>
+        <param name="minor">To be added.</param>
+        <param name="build">To be added.</param>
+        <param name="revision">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Version" /> class with the
+   specified major, minor, build, and revision numbers.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="major" />, <paramref name="minor" />, <paramref name="build" />, or <paramref name="revision" /> is less than zero. </exception>
+        <example>
+          <para>The following example sets the version to "6.1.2.4" and writes the result to the console.</para>
+          <code lang="C#">
+using System;
+
+public class Vers {
+  public static void Main() {
+
+    Version vers = new Version( 6, 1, 2, 4 );
+    Console.WriteLine( "Version is {0}", vers.ToString() );
+  }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+Version is 6.1.2.4</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Build">
+      <MemberSignature Language="ILASM" Value=".property int32 Build { public hidebysig specialname instance int32 get_Build() }" />
+      <MemberSignature Language="C#" Value="public int Build { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the value of the build component of the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" qualify="true" /> specifying the build component, or -1 if the build component is undefined.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">If the version
+      number is 6.1.2.4, the build component is 2. If the version number is 6.1, the build
+      component is -1, which is considered to be undefined.</block>
+          </para>
+        </remarks>
+        <example>
+          <code lang="C#">using System;
+class VersionBuildExample {
+   public static void Main() {
+      Version vers = new Version("6.1.2.4");
+      Console.Write("The build component of ");
+      Console.WriteLine("version vers = {0}.", vers.Build);
+   }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+            <c>The build
+      component of version vers = 2.</c>
+          </para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object Clone()" />
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a new <see cref="T:System.Object" /> with values equal to the property values of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.Object" />
+whose values are equal to the property values of the current instance.</para>
+        </returns>
+        <remarks>
+          <para>The <see cref="T:System.Object" /> returned by this method must be explicitly cast to a
+<see cref="T:System.Version" /> before it can be used as 
+   one.</para>
+          <para>
+            <block subset="none" type="note">This method is
+   implemented to support the <see cref="T:System.ICloneable" /> interface.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>The following example clones the version number and
+      writes the result to the console.</para>
+          <code lang="C#">using System;
+class VersionCloneExample {
+  public static void Main() {
+    Version vers = new Version("6.1.2.4");
+    Console.WriteLine("The string representation of the" +
+                      " version is {0}.",
+                      vers.ToString());
+    Version clone = (Version) vers.Clone();
+    Console.WriteLine("The original version was" +
+                      " successfully cloned.");
+    Console.Write("The string representation of the" +
+                  " cloned version is {0}.",
+                  clone.ToString());
+  }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para> The string representation of the version is 6.1.2.4.</para>
+            <para> The original version was successfully cloned.</para>
+            <para>The string representation of the cloned version is 6.1.2.4.</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object version)" />
+      <MemberSignature Language="C#" Value="public int CompareTo (object version);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="version" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="version">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para> Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="version" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> A negative number</term>
+              <description> Current instance &lt; <paramref name="version" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>Current instance ==
+   <paramref name="version" />.</description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>
+                <para> Current instance &gt;
+      <paramref name="version" />, or <paramref name="version" /> is a null
+         reference.</para>
+              </description>
+            </item>
+          </list>
+          <list type="table" />
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para> The components of <see cref="T:System.Version" /> in decreasing order of importance are: <paramref name="major" />,
+   <paramref name="minor" />, <paramref name="build" />, and <paramref name="revision" />. An undefined component
+      is assumed to be older than any defined component.
+      </para>
+            <para> This method is implemented to support the <see cref="T:System.IComparable" />
+interface.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="version" /> is not a <see cref="T:System.Version" /> and is not a null reference</exception>
+        <example>
+          <code lang="C#">using System;
+class VersionTest {
+   static string Test ( Version v1, Version v2 ) {
+      int i = v1.CompareTo(v2);
+      if ( i &lt; 0 )
+         return "older than";
+      else if ( i == 0 )
+         return "the same as";
+      else
+         return "newer than";
+   }
+   public static void Main() {
+      Version vers1 = new Version( "6.1.2.4" );
+      Version vers2 = new Version( 6, 1 );
+      Version vers3 = new Version( 6, 1, 3 );
+      Console.Write("Version {0} is {1} ",
+                    vers1, Test(vers1, vers2));
+      Console.WriteLine("version {0}", vers2); 
+      Console.Write("Version {0} is {1} ",
+                    vers1, Test(vers1, vers3));
+      Console.WriteLine("version {0}", vers3); 
+      Console.Write("Version {0} is {1} ",
+                    vers3, Test(vers3, vers3));
+      Console.WriteLine("version {0}", vers3); 
+      Console.Write("Version {0} is {1} ",
+                    vers2, Test(vers2, vers1));
+      Console.WriteLine("version {0}", vers1);
+   }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>Version 6.1.2.4 is newer than version 6.1</para>
+            <para>Version 6.1.2.4 is older than version 6.1.3</para>
+            <para>Version 6.1.3 is the same as version 6.1.3</para>
+            <para>Version 6.1 is older than version 6.1.2.4</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="C#" Value="public int CompareTo (Version value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+          <para> Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.Version" />.</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="version" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> A negative number</term>
+              <description> Current instance &lt; <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>Current instance ==
+   <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>
+                <para> Current instance &gt;
+      <paramref name="value" />, or <paramref name="value" /> is a null
+         reference.</para>
+              </description>
+            </item>
+          </list>
+          <list type="table" />
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para> The components of <see cref="T:System.Version" /> in decreasing order of importance are: <paramref name="major" />,
+   <paramref name="minor" />, <paramref name="build" />, and <paramref name="revision" />. An undefined component
+      is assumed to be older than any defined component.
+      </para>
+          </block>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IComparable&lt;System.Version&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object obj)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" qualify="true" /> to compare to the current instance.</param>
+        <param name="obj">To be added.</param>
+        <summary>
+          <para>Determines whether the current instance and the
+      specified <see cref="T:System.Object" /> represent the same type and
+      value.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" />
+indicates <paramref name="obj" /> is
+the same type as the current instance and has equal <see cref="P:System.Version.Major" />, <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties as the current
+instance. If <paramref name="obj" /> is a null reference or is not an instance of <see cref="T:System.Version" />, returns <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method
+      overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
+          </para>
+        </remarks>
+        <example>
+          <code lang="C#">using System;
+class VersionEqualsExample {
+   static void testEquals(Version v1, Version v2) {
+      Console.Write("It is {0} that version ",
+                    v1.Equals(v2));
+      Console.WriteLine("{0} is equal to {1}.",
+                    v1, v2);
+   }
+   public static void Main() {
+      Version vers1 = new Version( "6.1.2.4" );
+      Version vers2 = new Version( 6, 1 );
+      testEquals( vers1, vers1 );
+      testEquals( vers1, vers2 );
+   }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>It is True that version 6.1.2.4 is equal to 6.1.2.4.</para>
+            <para>It is False that version 6.1.2.4 is equal to 6.1.</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (Version obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>
+          <para>Determines whether the current instance and the
+      specified <see cref="T:System.Version" /> represent the same  value.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" />
+indicates <paramref name="obj" /> has equal <see cref="P:System.Version.Major" />, <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties as the current
+instance. If <paramref name="obj" /> is a null reference, returns <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IEquatable&lt;System.Version&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> 
+containing the hash code for the current instance.</para>
+        </returns>
+        <remarks>
+          <para>The algorithm used to generate the hash code is
+      unspecified.</para>
+          <para>
+            <block subset="none" type="note">This method
+   overrides <see cref="M:System.Object.GetHashCode" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Major">
+      <MemberSignature Language="ILASM" Value=".property int32 Major { public hidebysig specialname instance int32 get_Major() }" />
+      <MemberSignature Language="C#" Value="public int Major { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the value of the major component of the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" qualify="true" />
+specifying the major component. </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="example">If the version number is 6.1, the major version is 6.</block>
+          </para>
+        </remarks>
+        <example>
+          <code lang="C#">using System;
+class VersionMajorExample {
+   public static void Main() {
+      Version vers = new Version("6.1.2.4");
+      Console.Write("The major component ");
+      Console.WriteLine("of version vers = {0}.",
+                        vers.Major);
+   }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>The major component of version vers = 6.</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MajorRevision">
+      <MemberSignature Language="C#" Value="public short MajorRevision { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Minor">
+      <MemberSignature Language="ILASM" Value=".property int32 Minor { public hidebysig specialname instance int32 get_Minor() }" />
+      <MemberSignature Language="C#" Value="public int Minor { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the value of the minor component of the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" qualify="true" />
+specifying the minor component. </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="example">If the version number is 6.1, the minor component is 1.</block>
+          </para>
+        </remarks>
+        <example>
+          <code lang="C#">using System;
+class VersionMinorExample {
+   public static void Main() {
+      Version vers = new Version("6.1.2.4");
+      Console.Write("The minor component ");
+      Console.WriteLine("of version vers = {0}.",
+                        vers.Minor);
+   }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+            <c>The minor
+      component of version vers = 1.</c>
+          </para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MinorRevision">
+      <MemberSignature Language="C#" Value="public short MinorRevision { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Equality(class System.Version v1, class System.Version v2)" />
+      <MemberSignature Language="C#" Value="public static bool op_Equality (Version v1, Version v2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v1" Type="System.Version" />
+        <Parameter Name="v2" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="v1">An instance of the <see cref="T:System.Version" /> class. </param>
+        <param name="v2">An instance of the <see cref="T:System.Version" /> class. </param>
+        <summary>
+          <para> Determines whether two instances of <see cref="T:System.Version" />
+are equal.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where
+<see langword="true" /> 
+indicates <paramref name="v1" /> and <paramref name="v2" /> have equal <see cref="P:System.Version.Major" />, <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties, or both <paramref name="v1" /> and
+<paramref name="v2" /> are <see langword="null" />; otherwise <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>The parts of the version number are compared 
+      independently starting with the <see cref="P:System.Version.Major" /> property and then the <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties, in order. This method returns
+      as soon as one of the properties is determined not to be equal.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_GreaterThan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThan(class System.Version v1, class System.Version v2)" />
+      <MemberSignature Language="C#" Value="public static bool op_GreaterThan (Version v1, Version v2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v1" Type="System.Version" />
+        <Parameter Name="v2" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="v1">An instance of the <see cref="T:System.Version" /> class. </param>
+        <param name="v2">An instance of the <see cref="T:System.Version" /> class. </param>
+        <summary>
+          <para> Determines whether the first instance of 
+   <see cref="T:System.Version" /> is greater than 
+      the second instance of <see cref="T:System.Version" />.
+      </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="v1 " />is greater
+   than <paramref name="v2" />; otherwise <see langword="false" />. If <paramref name="v1" /> is
+<see langword="null" />, <see langword="false" /> is returned.</para>
+        </returns>
+        <remarks>
+          <para>The parts of the version number are compared independently starting with the 
+   <see cref="P:System.Version.Major" /> 
+   property and then the <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties, in order. This
+   method returns as soon as one of the properties is determined not to be
+   equal.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="v2" /> is a <see langword="null" /> reference.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_GreaterThanOrEqual">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThanOrEqual(class System.Version v1, class System.Version v2)" />
+      <MemberSignature Language="C#" Value="public static bool op_GreaterThanOrEqual (Version v1, Version v2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v1" Type="System.Version" />
+        <Parameter Name="v2" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="v1">An instance of the <see cref="T:System.Version" /> class. </param>
+        <param name="v2">An instance of the <see cref="T:System.Version" /> class. </param>
+        <summary>
+          <para> Determines whether the first instance of 
+   <see cref="T:System.Version" /> is greater than or 
+      equal to the second instance of <see cref="T:System.Version" />.
+      </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="v1 " />is greater
+   than or equal to <paramref name="v2" />; otherwise <see langword="false" />. If <paramref name="v1" />
+   is <see langword="null" />, <see langword="false" /> is returned.</para>
+          <see langword="" />
+        </returns>
+        <remarks>
+          <para>The parts of the version number are compared independently starting with the 
+   <see cref="P:System.Version.Major" /> 
+   property and then the <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties, in order. This
+   method returns as soon as one of the properties is determined not to be
+   equal.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="v2" /> is a <see langword="null" /> reference.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Inequality(class System.Version v1, class System.Version v2)" />
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (Version v1, Version v2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v1" Type="System.Version" />
+        <Parameter Name="v2" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="v1">An instance of the <see cref="T:System.Version" /> class. </param>
+        <param name="v2">An instance of the <see cref="T:System.Version" /> class. </param>
+        <summary>
+          <para> Determines whether two instances of <see cref="T:System.Version" /> are
+   not equal. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" />
+where <see langword="true" /> indicates <paramref name="v1" /> and <paramref name="v2" /> have at least
+one unequal property; otherwise
+<see langword="false" />. If 
+<paramref name="v1" /> and <paramref name="v2" /> are 
+both <see langword="null" />, returns false; if one is
+<see langword="null" /> 
+but not the other, returns <see langword="true" />.</para>
+        </returns>
+        <remarks>
+          <para>The parts of the version number are compared independently starting with the 
+   <see cref="P:System.Version.Major" /> 
+   property and then the <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties, in order. This
+   method returns as soon as one of the properties is determined not to be
+   equal.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_LessThan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThan(class System.Version v1, class System.Version v2)" />
+      <MemberSignature Language="C#" Value="public static bool op_LessThan (Version v1, Version v2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v1" Type="System.Version" />
+        <Parameter Name="v2" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="v1">An instance of the <see cref="T:System.Version" /> class. </param>
+        <param name="v2">An instance of the <see cref="T:System.Version" /> class. </param>
+        <summary>
+          <para> Determines whether the first instance of 
+   <see cref="T:System.Version" /> is less than the 
+      second instance of <see cref="T:System.Version" />.
+      </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="v1 " />is less than
+<paramref name="v2" />; otherwise <see langword="false" />. If <paramref name="v2" /> is <see langword="null" />, 
+<see langword="false" /> is returned.</para>
+        </returns>
+        <remarks>
+          <para>The parts of the version number are compared independently starting with the 
+   <see cref="P:System.Version.Major" /> 
+   property and then the <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties, in order. This
+   method returns as soon as one of the properties is determined not to be
+   equal.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="v1" /> is a <see langword="null" /> reference.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_LessThanOrEqual">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThanOrEqual(class System.Version v1, class System.Version v2)" />
+      <MemberSignature Language="C#" Value="public static bool op_LessThanOrEqual (Version v1, Version v2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v1" Type="System.Version" />
+        <Parameter Name="v2" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="v1">An instance of the <see cref="T:System.Version" /> class. </param>
+        <param name="v2">An instance of the <see cref="T:System.Version" /> class. </param>
+        <summary>
+          <para> Determines whether the first instance of 
+   <see cref="T:System.Version" /> is less than or 
+      equal to the second instance of <see cref="T:System.Version" />.
+      </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="v1 " />is less than or
+   equal to <paramref name="v2" />; otherwise <see langword="false" />. If <paramref name="v2" /> is
+<see langword="null" />, <see langword="false" /> is returned.</para>
+          <see langword="" />
+        </returns>
+        <remarks>
+          <para>The parts of the version number are compared independently starting with the 
+   <see cref="P:System.Version.Major" /> 
+   property and then the <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties, in order. This
+   method returns as soon as one of the properties is determined not to be
+   equal.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="v1" /> is a <see langword="null" /> reference.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Revision">
+      <MemberSignature Language="ILASM" Value=".property int32 Revision { public hidebysig specialname instance int32 get_Revision() }" />
+      <MemberSignature Language="C#" Value="public int Revision { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the value of the revision component of the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" qualify="true" />
+specifying the revision component, or -1 if the revision component is
+undefined.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="example">If the version number is 6.1.2.4, the revision component is 4. If the version number
+      is 6.1, the revision component is considered to be undefined.</block>
+          </para>
+        </remarks>
+        <example>
+          <code lang="C#">using System;
+class VersionRevisionExample {
+   public static void Main() {
+      Version vers = new Version("6.1.2.4");
+      Console.Write("The revision component of ");
+      Console.WriteLine("version vers = {0}.",
+                        vers.Revision);
+   }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>The revision component of version vers = 4.</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public string ToString (int fieldCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fieldCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="fieldCount">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

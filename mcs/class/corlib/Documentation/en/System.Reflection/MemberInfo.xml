@@ -1,0 +1,496 @@
+<Type Name="MemberInfo" FullName="System.Reflection.MemberInfo" FullNameSP="System_Reflection_MemberInfo" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable MemberInfo extends System.Object" />
+  <TypeSignature Language="C#" Value="public abstract class MemberInfo : System.Reflection.ICustomAttributeProvider, System.Runtime.InteropServices._MemberInfo" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations. </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Reflection.ICustomAttributeProvider</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Runtime.InteropServices._MemberInfo</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._MemberInfo))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Provides access
+      to member metadata.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Reflection.MemberInfo" /> is used
+      to represent all members of a type: nested types, fields, events, properties,
+      methods, and constructors. The Base Class Library includes the following derived
+      types:</para>
+        <list type="bullet">
+          <item>
+            <term>
+              <see cref="T:System.Reflection.FieldInfo" />
+            </term>
+          </item>
+          <item>
+            <term>
+              <see cref="T:System.Reflection.EventInfo" />
+            </term>
+          </item>
+          <item>
+            <term>
+              <see cref="T:System.Reflection.PropertyInfo" />
+            </term>
+          </item>
+          <item>
+            <term>
+              <see cref="T:System.Type" />
+            </term>
+          </item>
+        </list>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected MemberInfo ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs a new instance of the <see cref="T:System.Reflection.MemberInfo" />
+class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DeclaringType">
+      <MemberSignature Language="ILASM" Value=".property class System.Type DeclaringType { public hidebysig virtual abstract specialname class System.Type get_DeclaringType() }" />
+      <MemberSignature Language="C#" Value="public abstract Type DeclaringType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the type that declares the member reflected by the current instance.</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.Type" /><see langword=" " />object of the class that declares the member
+reflected by the current instance; or, <see langword="null" /> if the
+member reflected by the current instance is a global member.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para> A member of a class (or interface) is either declared on
+         that type or inherited from a base class (or interface). The <see cref="P:System.Reflection.MemberInfo.DeclaringType" /> property value cannot be the same
+         as the <see cref="T:System.Type" />
+         object used to obtain the current instance. These values will differ if
+         either of the following conditions
+         is true.</para>
+            <list type="bullet">
+              <item>
+                <term>
+                  <para>If the <see cref="T:System.Type" /> object from which the current instance was obtained
+            did not declare the member reflected by the current instance, the <see cref="P:System.Reflection.MemberInfo.DeclaringType" /> will represent the base type that
+            is closest to that object in its hierarchy chain and declares the member reflected by the current instance.</para>
+                </term>
+              </item>
+              <item>
+                <term>
+                  <para>If the current instance reflects a global member, (that is,
+               it was obtained from <see cref="M:System.Reflection.Module.GetMethods" qualify="true" /> , which returns global methods on a
+               module), then the <see cref="P:System.Reflection.MemberInfo.DeclaringType" /> property
+               value is
+            <see langword="null" /> .</para>
+                </term>
+              </item>
+            </list>
+          </block>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+            <para> This property is required to return the
+      <see cref="T:System.Type" /> object for the type that
+         declares the member reflected by the current instance. This property value is
+         required to be equal to the <see cref="P:System.Reflection.MemberInfo.ReflectedType" /> property value of
+         the current instance if and only if the reflected
+         type also contains a declaration for the member reflected by the current instance.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides">Override this
+      property to get the <see cref="T:System.Type" />
+      of the class that declared the member that is reflected by
+      the current instance.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this property
+      to determine the <see cref="T:System.Type" />
+      of the class that declared the member that is reflected by the
+      current instance.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates the difference 
+      between the <see cref="P:System.Reflection.MemberInfo.DeclaringType" /><see langword=" " /> and
+   <see cref="P:System.Reflection.MemberInfo.ReflectedType" /> of a member.</para>
+          <code lang="C#">using System;
+using System.Reflection;
+
+public class BaseClass {
+   public void ReflectedMethod() {}
+}
+
+public class DerivedClass: BaseClass {}
+
+public class DeclaringTypeExample {
+   public static void Main() {
+    Type t = typeof(DerivedClass);
+    MemberInfo [] memInfo = t.GetMember("ReflectedMethod");
+    Console.WriteLine("Reflected type is {0}.", memInfo[0].ReflectedType);
+    Console.WriteLine("Declaring type is {0}.", memInfo[0].DeclaringType);    
+   }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>Reflected type is DerivedClass.</para>
+            <para>Declaring type is BaseClass.</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public abstract object[] GetCustomAttributes (bool inherit);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="inherit">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public abstract object[] GetCustomAttributes (Type attributeType, bool inherit);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="attributeType">To be added.</param>
+        <param name="inherit">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public abstract bool IsDefined (Type attributeType, bool inherit);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="attributeType">To be added.</param>
+        <param name="inherit">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MemberType">
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MemberTypes MemberType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MemberTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MetadataToken">
+      <MemberSignature Language="C#" Value="public virtual int MetadataToken { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Module">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Module Module { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Module</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="ILASM" Value=".property string Name { public hidebysig virtual abstract specialname string get_Name() }" />
+      <MemberSignature Language="C#" Value="public abstract string Name { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the name of the member reflected by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the
+   name of the
+   member reflected by the current instance.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+            <para>Only the
+         simple name, not the fully qualified name, of
+         the member reflected by the current instance is returned.</para>
+            <para>
+              <block subset="none" type="note">For example, if the current instance reflects the member <c>Print</c>
+      in <c>System.MyClass</c>, the <see cref="P:System.Reflection.MemberInfo.Name" />
+   property would be "Print".</block>
+            </para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReflectedType">
+      <MemberSignature Language="ILASM" Value=".property class System.Type ReflectedType { public hidebysig virtual abstract specialname class System.Type get_ReflectedType() }" />
+      <MemberSignature Language="C#" Value="public abstract Type ReflectedType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the type of the class through which the current instance was
+      obtained.</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.Type" /><see langword="" />object for the class through which the current instance was
+obtained.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+            <para>
+              <see langword="ReflectedType" /> is required to get the type of
+      the object that was used to obtain the current instance. This property
+      value is required to be equal to the <see cref="P:System.Reflection.MemberInfo.DeclaringType" /> property value of the current instance if and
+      only if the reflected type also contains a declaration for the member reflected by the current
+      instance.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MemberInfo.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _MemberInfo.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="rgszNames" Type="System.IntPtr" />
+        <Parameter Name="cNames" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="rgDispId" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="riid">To be added.</param>
+        <param name="rgszNames">To be added.</param>
+        <param name="cNames">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="rgDispId">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MemberInfo.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _MemberInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="iTInfo" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="ppTInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="iTInfo">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="ppTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MemberInfo.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _MemberInfo.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcTInfo" Type="System.UInt32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pcTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MemberInfo.Invoke">
+      <MemberSignature Language="C#" Value="void _MemberInfo.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dispIdMember" Type="System.UInt32" />
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="wFlags" Type="System.Int16" />
+        <Parameter Name="pDispParams" Type="System.IntPtr" />
+        <Parameter Name="pVarResult" Type="System.IntPtr" />
+        <Parameter Name="pExcepInfo" Type="System.IntPtr" />
+        <Parameter Name="puArgErr" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dispIdMember">To be added.</param>
+        <param name="riid">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="wFlags">To be added.</param>
+        <param name="pDispParams">To be added.</param>
+        <param name="pVarResult">To be added.</param>
+        <param name="pExcepInfo">To be added.</param>
+        <param name="puArgErr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

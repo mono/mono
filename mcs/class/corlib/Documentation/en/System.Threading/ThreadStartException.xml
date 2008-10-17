@@ -1,0 +1,17 @@
+<Type Name="ThreadStartException" FullName="System.Threading.ThreadStartException">
+  <TypeSignature Language="C#" Value="public sealed class ThreadStartException : SystemException" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.SystemException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members />
+</Type>

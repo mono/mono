@@ -1,0 +1,43 @@
+<Type Name="CompilationRelaxations" FullName="System.Runtime.CompilerServices.CompilationRelaxations">
+  <TypeSignature Language="C#" Value="public enum CompilationRelaxations" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>Indicates whether instruction checking is strictly ordered or relaxed, and whether strings are interned.  The flags come in complementary pairs.  Setting neither flag of a pair indicates that the corresponding characteristic should be left unchanged.  Setting both bits is an error that is detected by the constructor for <see cref="T:System.Runtime.CompilerServices.CompilationRelaxationsAttribute" />.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="NoStringInterning">
+      <MemberSignature Language="C#" Value="NoStringInterning" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CompilationRelaxations</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Indicates that literal strings are not interned; currently only noticed when set for Assemblies.      </para>
+        </summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

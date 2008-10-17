@@ -1,0 +1,2619 @@
+<Type Name="ArrayList" FullName="System.Collections.ArrayList" FullNameSP="System_Collections_ArrayList" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable ArrayList extends System.Object implements System.ICloneable, System.Collections.ICollection, System.Collections.IEnumerable, System.Collections.IList" />
+  <TypeSignature Language="C#" Value="public class ArrayList : ICloneable, System.Collections.IList" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This class is safe for multiple readers and no concurrent writers.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IList</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Implements a variable-size <see cref="T:System.Collections.IList" /> that uses an array of objects to store its elements.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.Collections.ArrayList" /> implements a variable-size <see cref="T:System.Collections.IList" /> that uses an array of
+   objects to store the elements. A <see cref="T:System.Collections.ArrayList" /> has a <see cref="P:System.Collections.ArrayList.Capacity" />,
+   which is the allocated length of the internal array. The total number of
+   elements contained by a list is its <see cref="P:System.Collections.ArrayList.Count" />. As elements are added to a list, its capacity
+   
+   is automatically increased as required
+   by reallocating the internal array.</para>
+    </remarks>
+    <example>
+      <para> The following example shows how to create, initialize, and display the values of a <see cref="T:System.Collections.ArrayList" />.</para>
+      <code lang="C#">using System; 
+using System.Collections; 
+
+public class SamplesArrayList { 
+
+  public static void Main() { 
+
+  // Create and initialize a new ArrayList. 
+  ArrayList myAL = new ArrayList(); 
+  myAL.Add("Hello"); 
+  myAL.Add("World"); 
+  myAL.Add("!"); 
+
+  // Display the properties and values of the ArrayList. 
+  Console.WriteLine( "myAL" ); 
+  Console.WriteLine( "Count: {0}", myAL.Count ); 
+  Console.WriteLine( "Capacity: {0}", myAL.Capacity ); 
+  Console.Write( "Values:" ); 
+  PrintValues( myAL ); 
+  } 
+
+public static void PrintValues( IEnumerable myList ) { 
+
+  IEnumerator myEnumerator = myList.GetEnumerator(); 
+  while ( myEnumerator.MoveNext() ) 
+    Console.Write( " {0}", myEnumerator.Current ); 
+    Console.WriteLine(); 
+  } 
+}
+</code>
+      <para>The output is </para>
+      <para>
+        <c>
+   myAL</c>
+      </para>
+      <para>
+        <c>Count: 3 </c>
+      </para>
+      <para>
+        <c>Capacity: 16 </c>
+      </para>
+      <para>
+        <c>Values: Hello World !</c>
+      </para>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public ArrayList ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.ArrayList" /> class that is
+   empty and has the default initial <see cref="P:System.Collections.ArrayList.Capacity" />
+   .</para>
+        </summary>
+        <remarks>
+          <para> The default initial <see cref="P:System.Collections.ArrayList.Capacity" /> of a <see cref="T:System.Collections.ArrayList" />
+is 16.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Collections.ICollection c)" />
+      <MemberSignature Language="C#" Value="public ArrayList (System.Collections.ICollection c);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="c" Type="System.Collections.ICollection" />
+      </Parameters>
+      <Docs>
+        <param name="c">The <see cref="T:System.Collections.ICollection" /> whose elements are copied to the new list.</param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.ArrayList" /> class with the
+   elements from the specified <see cref="T:System.Collections.ICollection" />. The initial <see cref="P:System.Collections.ArrayList.Count" /> and <see cref="P:System.Collections.ArrayList.Capacity" /> of the new
+   list are
+   both equal to the number of elements in the specified collection.</para>
+        </summary>
+        <remarks>
+          <para>The elements in the new <see cref="T:System.Collections.ArrayList" /> instance are in the same order as
+   contained in
+<paramref name="c" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="c" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity)" />
+      <MemberSignature Language="C#" Value="public ArrayList (int capacity);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">A <see cref="T:System.Int32" /> that specifies the number of elements that the new instance is initially capable of storing.</param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.ArrayList" /> class that is
+   empty and has the specified initial <see cref="P:System.Collections.ArrayList.Capacity" />
+   .</para>
+        </summary>
+        <remarks>
+          <para> If
+   <paramref name="capacity" /> is zero,
+      the <see cref="P:System.Collections.ArrayList.Capacity" />
+      of the current
+      instance is set to 16 when the first
+      element is added.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="capacity" /> &lt; 0.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Adapter">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Collections.ArrayList Adapter(class System.Collections.IList list)" />
+      <MemberSignature Language="C#" Value="public static System.Collections.ArrayList Adapter (System.Collections.IList list);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ArrayList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="list" Type="System.Collections.IList" />
+      </Parameters>
+      <Docs>
+        <param name="list">The <see cref="T:System.Collections.IList" /> to wrap. </param>
+        <summary>
+          <para>Creates a <see cref="T:System.Collections.ArrayList" /> that is a wrapper for the specified <see cref="T:System.Collections.IList" />.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Collections.ArrayList" /> wrapper for <paramref name="list" />.</para>
+        </returns>
+        <remarks>
+          <para>This method returns a <see cref="T:System.Collections.ArrayList" /> that contains a reference to
+   the <see cref="T:System.Collections.IList" /><paramref name="list" /> . Any modifications to the elements in either
+   the returned list or <paramref name="list" /> are reflected in the other.</para>
+          <para>
+            <block subset="none" type="note">The <see cref="T:System.Collections.ArrayList" /> class provides generic
+<see cref="M:System.Collections.ArrayList.Reverse" />, <see cref="M:System.Collections.ArrayList.BinarySearch(System.Int32,System.Int32,System.Object,System.Collections.IComparer)" /> and <see cref="M:System.Collections.ArrayList.Sort" /> 
+methods. This wrapper provides a means
+to use those methods on <see cref="T:System.Collections.IList" /><paramref name="list" /> without implementing the methods for
+the list. Performing these operations through the wrapper might be less
+efficient than operations applied directly to the list.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="list" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Add(object value)" />
+      <MemberSignature Language="C#" Value="public virtual int Add (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to be added to the end of the current instance.</param>
+        <summary>
+          <para>Adds the specified <see cref="T:System.Object" /> to the end of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that specifies the index of the current instance at which <paramref name="value" /> has
+   been added.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void AddRange(class System.Collections.ICollection c)" />
+      <MemberSignature Language="C#" Value="public virtual void AddRange (System.Collections.ICollection c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Collections.ICollection" />
+      </Parameters>
+      <Docs>
+        <param name="c">The <see cref="T:System.Collections.ICollection" /> whose elements are added to the end of the current instance.</param>
+        <summary>
+          <para>Adds the elements of the specified <see cref="T:System.Collections.ICollection" /> to the end of the current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default"> If the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance plus the size of the collection being added is greater
+   than the <see cref="P:System.Collections.ArrayList.Capacity" /> of the current instance, the
+   capacity of the current instance is either doubled or increased
+   to the new <see cref="P:System.Collections.ArrayList.Count" />,
+   whichever is greater. The internal array is reallocated to accommodate the new
+   elements and the existing elements are copied to the new array before the new
+   elements are added.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, if the current
+   instance can accommodate the new elements
+   without increasing the <see cref="P:System.Collections.ArrayList.Capacity" />, this method is an
+   O(<paramref name="n" />) operation, where <paramref name="n" /> is the number of elements to be added.
+   If the capacity needs to be increased to accommodate the new elements, this
+   method becomes an O(<paramref name="n" />+<paramref name="m" />) operation, where <paramref name="n" /> is the
+   number of elements to be added and <paramref name="m" /> is <see cref="P:System.Collections.ArrayList.Count" />
+   .</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="c" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BinarySearch">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 BinarySearch(object value)" />
+      <MemberSignature Language="C#" Value="public virtual int BinarySearch (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> for which to search.</param>
+        <summary>
+          <para>Searches the current instance for the specified <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that
+   specifies the results of the search as follows:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> The index of <paramref name="value" /> in the current
+      instance.</term>
+              <description>
+                <paramref name="value" /> was found.</description>
+            </item>
+            <item>
+              <term> The
+      bitwise complement
+      of the index of the first element
+      that is greater than <paramref name="value" />.</term>
+              <description>
+                <paramref name="value" /> was not found, and at least one
+   element in the current instance is greater than
+<paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> The bitwise complement of the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</term>
+              <description>
+                <paramref name="value" /> was not found, and <paramref name="value" />
+is greater than all elements in the current
+instance.</description>
+            </item>
+          </list>
+          <para>
+            <block subset="none" type="note">If <paramref name="value" /> is not found and the current instance is already sorted, the
+bitwise complement of the return value indicates the index in the current instance
+where <paramref name="value" /> would be
+found.</block>
+          </para>
+        </returns>
+        <remarks>
+          <para>This method performs a binary search.</para>
+          <para>
+            <block subset="none" type="note">A null reference can be compared with
+      any type; therefore, comparisons with a null reference do not generate
+      exceptions. A null reference evaluates to less than any non-null object, or
+      equal to another null reference, when the two are compared.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para>This method uses <see cref="M:System.Array.BinarySearch(System.Array,System.Object)" qualify="true" /> to
+      search for <paramref name="value" />.</para>
+            <para>
+              <paramref name="value" /> is compared to elements in a binary search of the current instance until an
+   element with a value greater than or equal to <paramref name="value" /> is found. The
+<see cref="T:System.IComparable" /> implementation of the element being compared 
+   -- or of <paramref name="value" /> if the element being compared does not implement the
+   interface -- is used to make the comparison. If <paramref name="value" /> does not implement
+   the <see cref="T:System.IComparable" /> interface and is compared to an element
+   that does not implement the interface, <see cref="T:System.InvalidOperationException" /> is thrown. If the
+   current instance is not already sorted, correct results are not guaranteed.</para>
+          </block>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method is an
+   O(log<subscript term="2" /><paramref name="n" />) operation where <paramref name="n" /> is equal to the <see cref="P:System.Collections.ArrayList.Count" /> of the
+   current instance.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="value" /> is not assignment-compatible with at least one element in the current instance.</para>
+        </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para> Both <paramref name="value" /> and at least one element involved in the search of the current instance do not implement the <see cref="T:System.IComparable" /> interface.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BinarySearch">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 BinarySearch(object value, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public virtual int BinarySearch (object value, System.Collections.IComparer comparer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> for which to search.</param>
+        <param name="comparer">
+          <para>The <see cref="T:System.Collections.IComparer" /> implementation to use when comparing elements. Specify <see langword="null" /> to use the <see cref="T:System.IComparable" /> implementation of each element.</para>
+        </param>
+        <summary>
+          <para>Searches the current instance for the specified <see cref="T:System.Object" /> using the
+   specified <see cref="T:System.Collections.IComparer" />
+   implementation.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that
+   specifies the results of the search as follows:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> The index of <paramref name="value" /> in the current
+      instance.</term>
+              <description>
+                <paramref name="value" /> was found.</description>
+            </item>
+            <item>
+              <term> The
+      bitwise
+      complement of the index of the first element
+      that is greater than <paramref name="value" />.</term>
+              <description>
+                <paramref name="value" /> was not found, and at least one
+   element in the current instance is greater than <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> The bitwise complement of the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</term>
+              <description>
+                <paramref name="value" /> was not found, and <paramref name="value" />
+is greater than all elements in the current
+instance.</description>
+            </item>
+          </list>
+          <para>
+            <block subset="none" type="note">If <paramref name="value" /> is not found and the current instance is already sorted, the
+bitwise complement of the return value indicates the index in the current instance
+where <paramref name="value" /> would be
+found.</block>
+          </para>
+        </returns>
+        <remarks>
+          <para>This method performs a binary search.</para>
+          <para>
+            <block subset="none" type="note">A null reference can be compared with
+      any type; therefore, comparisons with a null reference do not generate
+      exceptions. A null reference evaluates to less than any non-null object, or
+      equal to another null reference, when the two are compared.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para>This method uses <see cref="M:System.Array.BinarySearch(System.Array,System.Object)" qualify="true" /> to
+      search for <paramref name="value" />.</para>
+            <para>
+              <paramref name="value" /> is compared to elements in a binary search of the current instance until an
+   element with a value greater than or equal to <paramref name="value" /> is found. If
+<paramref name="comparer" /> is <see langword="null" />, the <see cref="T:System.IComparable" /> implementation of the element being compared 
+   -- or of <paramref name="value" /> if the element being compared does not implement the
+   interface -- is used to make the comparison. If <paramref name="value" /> does not implement
+   the <see cref="T:System.IComparable" /> interface and is compared to an element
+   that does not implement the interface, <see cref="T:System.InvalidOperationException" />
+   is thrown. If the current instance is not already sorted, correct
+   results are not guaranteed.</para>
+          </block>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method is an
+   O(log<subscript term="2" /><paramref name="n" />) operation where <paramref name="n" /> is equal to the <see cref="P:System.Collections.ArrayList.Count" /> of the
+   current instance.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="comparer" /> is <see langword="null" />, and <paramref name="value" /> is not assignment-compatible with at least one element in the current instance.</para>
+        </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>
+            <paramref name="comparer" /> is <see langword="null" />, and both <paramref name="value" /> and at least one element involved in the search in the current instance do not implement the <see cref="T:System.IComparable" /> interface.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BinarySearch">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 BinarySearch(int32 index, int32 count, object value, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public virtual int BinarySearch (int index, int count, object value, System.Collections.IComparer comparer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="index">
+          <para>A <see cref="T:System.Int32" /> that specifies the index at which searching starts. This value is greater than or equal to zero, and less than the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
+        </param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of elements to search, beginning with <paramref name="index" /> . This value is greater than or equal to zero, and less than or equal to the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="index" />.</param>
+        <param name="value">The <see cref="T:System.Object" /> for which to search.</param>
+        <param name="comparer">The <see cref="T:System.Collections.IComparer" /> implementation to use when comparing elements. Specify <see langword="null" /> to use the <see cref="T:System.IComparable" /> implementation of each element.</param>
+        <summary>
+          <para>Searches the specified range in the current instance
+      for the specified <see cref="T:System.Object" /> using the specified <see cref="T:System.Collections.IComparer" />
+      implementation.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that
+   specifies the results of the search as follows:</para>
+          <list type="table">
+            <listheader>
+              <term>Return Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> The index of <paramref name="value" /> in the current
+      instance.</term>
+              <description>
+                <paramref name="value" /> was found.</description>
+            </item>
+            <item>
+              <term> The
+      bitwise complement
+      of the index of the first element that is
+      greater than <paramref name="value" />.</term>
+              <description>
+                <paramref name="value" /> was not found, and at
+   least one element in the range of <paramref name="index" /> to <paramref name="index" /> +
+<paramref name="count" /> - 1 in the current instance is greater than
+<paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> The bitwise complement of (<paramref name="index" /> +
+<paramref name="count" />)</term>
+              <description>
+                <paramref name="value" /> was not found, and
+<paramref name="value" /> is greater than all elements in the range of 
+<paramref name="index" /> to <paramref name="index" /> + <paramref name="count" /> - 1 in the current 
+instance.</description>
+            </item>
+          </list>
+          <para>
+            <block subset="none" type="note">If <paramref name="value" /> is not found and the current instance is already sorted, the
+bitwise complement of the return value indicates the index in the current instance
+where <paramref name="value" /> would be found in the range of <paramref name="index" /> to
+<paramref name="index" /> + <paramref name="count" /> - 1.</block>
+          </para>
+        </returns>
+        <remarks>
+          <para>This method performs a binary search.</para>
+          <para>
+            <block subset="none" type="note">A null reference can be compared with
+      any type; therefore, comparisons with a null reference do not generate
+      exceptions. A null reference evaluates to less than any non-null object, or
+      equal to another null reference, when the two are compared.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para>This method uses <see cref="M:System.Array.BinarySearch(System.Array,System.Object)" qualify="true" /> to
+      search for <paramref name="value" />
+      .</para>
+            <para>
+              <paramref name="value" /> is compared to elements in a binary search of the range of <paramref name="index" /> to
+<paramref name="index" /> + <paramref name="count " /> - 1 in the current instance until an element 
+   with a value greater than or equal to <paramref name="value" /> is found or the end of the
+   range is reached. If <paramref name="comparer" /> is <see langword="null" /> , the <see cref="T:System.IComparable" />
+   implementation of the element being compared -- or of <paramref name="value" /> if the element being compared does
+   not implement the interface -- is used to make the comparison. If
+<paramref name="value" /> does not implement the <see cref="T:System.IComparable" /> interface and is compared to an element 
+   that does not implement the interface, <see cref="T:System.InvalidOperationException" />
+   is thrown. If the current instance is not already sorted,
+   correct results are not guaranteed.</para>
+          </block>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method is an
+   O(log<subscript term="2" /><paramref name="count" />) operation.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <see cref="P:System.Collections.ArrayList.Count" /> of the current instance - <paramref name="index" /> &lt; <paramref name="count" />.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="comparer" /> is <see langword="null" />, and <paramref name="value" /> is not assignment-compatible with at least one element in the current instance.</para>
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para>-or-</para>
+          <paramref name="count" /> &lt; 0.</exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>
+            <paramref name="comparer" /> is <see langword="null" />, and both <paramref name="value" /> and at least one element involved in the search of the current instance do not implement the <see cref="T:System.IComparable" /> interface.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Capacity">
+      <MemberSignature Language="ILASM" Value=".property int32 Capacity { public hidebysig virtual specialname int32 get_Capacity() public hidebysig virtual specialname void set_Capacity(int32 value) }" />
+      <MemberSignature Language="C#" Value="public virtual int Capacity { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the number of elements that the current instance is
+      capable of storing.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Int32" /> that specifies the number of elements that the current instance
+   is capable of storing.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">The <see cref="P:System.Collections.ArrayList.Capacity" /> of a <see cref="T:System.Collections.ArrayList" /> is the size of
+   the internal array used to hold the elements of that list. When it is set, the
+   internal array is reallocated to the specified value.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As
+   described above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para>If an attempt is made to set <see cref="P:System.Collections.ArrayList.Capacity" /> to a value less or equal to 0, it
+   is set
+   to the default capacity of 16.</para>
+            <para>If the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance exceeds the <see cref="P:System.Collections.ArrayList.Capacity" /> of the current instance while
+adding elements to the current instance, the capacity of the list is doubled by
+automatically reallocating the internal array before copying the old elements
+and adding the new elements.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <see cref="P:System.Collections.ArrayList.Capacity" /> is set to a value that is less than the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Clear()" />
+      <MemberSignature Language="C#" Value="public virtual void Clear ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Sets the elements in the current instance to zero, 
+   <see langword="false" />, or <see langword="null" />, depending upon the element type.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+      This method is implemented to support the <see cref="T:System.Collections.IList" /> interface.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">
+      Reference-type elements are set to <see langword="null" />. Value-type elements
+      are set to zero, except for <see cref="T:System.Boolean" /> elements, which are set to <see langword="false" />.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="default">
+      
+      This method uses <see cref="M:System.Array.Clear(System.Array,System.Int32,System.Int32)" qualify="true" /> to reset the values of the current instance. <see cref="P:System.Collections.ArrayList.Count" /> is set to zero. <see cref="P:System.Collections.ArrayList.Capacity" />
+      is not changed.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="usage">
+      
+      To reset the <see cref="P:System.Collections.ArrayList.Capacity" /> of the current instance, call <see cref="M:System.Collections.ArrayList.TrimToSize" /> or set the <see cref="P:System.Collections.ArrayList.Capacity" /> property directly.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual object Clone()" />
+      <MemberSignature Language="C#" Value="public virtual object Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.Object" /> that is a copy of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Object" /> that is a copy of the current
+   instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.ICloneable" />
+interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <block subset="none" type="default">This method uses
+<see cref="M:System.Array.Copy(System.Array,System.Array,System.Int32)" qualify="true" /> to clone the current
+   instance.</block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Contains(object item)" />
+      <MemberSignature Language="C#" Value="public virtual bool Contains (object item);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="item">The <see cref="T:System.Object" /> to locate in the current instance.</param>
+        <summary>
+          <para>Determines whether the specified <see cref="T:System.Object" /> is contained in the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="item" /> is contained in the current instance;
+   otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support
+      the <see cref="T:System.Collections.IList" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method determines equality
+      by calling the <see cref="M:System.Object.Equals(System.Object)" qualify="true" /> implementation of the
+      type of <paramref name="item" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method is an O(<paramref name="n" />)
+   operation where <paramref name="n" /> is equal to the <see cref="P:System.Collections.ArrayList.Count" /> of the
+   current instance. If the current instance is sorted, it is more efficient
+   to call <see cref="M:System.Collections.ArrayList.BinarySearch(System.Int32,System.Int32,System.Object,System.Collections.IComparer)" /> method.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void CopyTo(class System.Array array)" />
+      <MemberSignature Language="C#" Value="public virtual void CopyTo (Array array);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Array" />
+      </Parameters>
+      <Docs>
+        <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from the current instance. The <see cref="P:System.Array.Length" qualify="true" /> of this array is greater than or equal to the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</param>
+        <summary>
+          <para> Copies the elements from the current instance to the specified <see cref="T:System.Array" />.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses <see cref="M:System.Array.Copy(System.Array,System.Array,System.Int32)" qualify="true" /> to copy the
+   current instance to <paramref name="array" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="array" /> has more than one dimension.</para>
+          <para>-or-</para>
+          <para>
+            <see cref="P:System.Collections.ArrayList.Count" /> of the current instance &gt; <paramref name="array" />.Length.</para>
+        </exception>
+        <exception cref="T:System.InvalidCastException">At least one element in the current instance is not assignment-compatible with the type of <paramref name="array" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void CopyTo(class System.Array array, int32 arrayIndex)" />
+      <MemberSignature Language="C#" Value="public virtual void CopyTo (Array array, int arrayIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Array" />
+        <Parameter Name="arrayIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from the current instance. The <see cref="P:System.Array.Length" qualify="true" /> of this array is greater than or equal to the sum of <paramref name="arrayIndex" /> and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance. </param>
+        <param name="arrayIndex">A <see cref="T:System.Int32" /> that specifies the first index of <paramref name="array" /> to which the elements of the current instance are copied. This value is greater than or equal to zero, and less than <paramref name="array" />.Length. </param>
+        <summary>
+          <para> Copies the elements from the current instance to the
+      specified <see cref="T:System.Array" />
+      , starting at the specified index of the array.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support
+      the <see cref="T:System.Collections.IList" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses <see cref="M:System.Array.Copy(System.Array,System.Array,System.Int32)" qualify="true" /> to copy the
+   current instance to <paramref name="array" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="arrayIndex" /> &lt; 0.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="array" /> has more than one dimension.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="arrayIndex" /> &gt;= <paramref name="array" />.Length.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="arrayIndex" /> + <see cref="P:System.Collections.ArrayList.Count" /> of the current instance &gt; <paramref name="array" />.Length.</para>
+        </exception>
+        <exception cref="T:System.InvalidCastException">At least one element in the current instance is not assignment-compatible with the type of <paramref name="array" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void CopyTo(int32 index, class System.Array array, int32 arrayIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual void CopyTo (int index, Array array, int arrayIndex, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="array" Type="System.Array" />
+        <Parameter Name="arrayIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the index in the current instance at which copying begins. This value is greater than or equal to 0, and less than the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</param>
+        <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from the current instance. </param>
+        <param name="arrayIndex">A <see cref="T:System.Int32" /> that specifies the first index of <paramref name="array" /> to which the elements of the current instance are copied. This value is greater than or equal to zero, and less than <paramref name="array" />.Length minus <paramref name="count" />. </param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of elements to copy. This value is greater than or equal to 0, and less than both the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="index" /> and <paramref name="array" />.Length minus <paramref name="arrayIndex" />.</param>
+        <summary>
+          <para> Copies the specified range of elements from the current instance to the specified <see cref="T:System.Array" />, starting at the specified index of the array.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses <see cref="M:System.Array.Copy(System.Array,System.Array,System.Int32)" qualify="true" /> to copy the
+   current instance to <paramref name=" array" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0. </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="arrayIndex" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> &lt; 0. </para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="array" /> has more than one dimension.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> &gt;= <see cref="P:System.Collections.ArrayList.Count" /> of the current instance .</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> &gt;= <see cref="P:System.Collections.ArrayList.Count" /> of the current instance - <paramref name="index" />.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> &gt;= <paramref name="array" />.Length - <paramref name="arrayIndex" />.</para>
+        </exception>
+        <exception cref="T:System.InvalidCastException">At least one element of the current instance is not assignment-compatible with the type of <paramref name="array" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="ILASM" Value=".property int32 Count { public hidebysig virtual specialname int32 get_Count() }" />
+      <MemberSignature Language="C#" Value="public virtual int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.Collections.ICollection" /> interface. [Note: For more information, see <see cref="M:System.Collections.ICollection.Count" />.]</summary>
+        <value>
+          <para> A <see cref="T:System.Int32" /> that specifies the number of elements contained in the current
+   instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <see cref="P:System.Collections.ArrayList.Count" /> is the number of elements that are
+   contained by the <see cref="T:System.Collections.ArrayList" />. The count of a list is always less than or
+   equal to <see cref="P:System.Collections.ArrayList.Capacity" /> of that list. </para>
+          <para>
+            <block subset="none" type="note">This property is implemented to support
+   the <see cref="T:System.Collections.IList" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <block subset="none" type="default">If the <see cref="P:System.Collections.ArrayList.Count" /> exceeds the <see cref="P:System.Collections.ArrayList.Capacity" /> of the current instance while
+adding elements to the current instance, the capacity of the list is doubled by
+automatically reallocating the internal array before copying the old elements
+and adding the new elements.</block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FixedSize">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Collections.ArrayList FixedSize(class System.Collections.ArrayList list)" />
+      <MemberSignature Language="C#" Value="public static System.Collections.ArrayList FixedSize (System.Collections.ArrayList list);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ArrayList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="list" Type="System.Collections.ArrayList" />
+      </Parameters>
+      <Docs>
+        <param name="list">The <see cref="T:System.Collections.ArrayList" /> to wrap.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Collections.ArrayList" />
+wrapper with a fixed size.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Collections.ArrayList" />
+wrapper with a fixed size.</para>
+        </returns>
+        <remarks>
+          <para>This method returns a fixed-size <see cref="T:System.Collections.ArrayList" /> that contains a reference to <paramref name="list" />. Operations that attempt to add to or delete from 
+ this new list will throw <see cref="T:System.NotSupportedException" />. Any modifications of
+ the elements in either the returned list or <paramref name="list" /> will be reflected in
+ the other. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Collections.ArrayList.IsFixedSize" /> property of the new list is 
+<see langword="true" />. Every other property value of the new list 
+ references the same property value of <paramref name="list" />. </para>
+            <para>Adding to or removing from <paramref name="list" /> will not throw an exception and is reflected in the returned list.</para>
+            <para>By performing operations on the new list, this wrapper can be used to prevent 
+ additions to and deletions from the <see cref="T:System.Collections.ArrayList" /><paramref name="list" />. The elements 
+ of the list can still be modified by operations
+ on the returned list.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="list" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FixedSize">
+      <MemberSignature Language="C#" Value="public static System.Collections.IList FixedSize (System.Collections.IList list);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="list" Type="System.Collections.IList" />
+      </Parameters>
+      <Docs>
+        <param name="list">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Collections.IEnumerator GetEnumerator()" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.Collections.IEnumerator" /> for the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Collections.IEnumerator" /> for the current instance.</para>
+        </returns>
+        <remarks>
+          <para> If the the current instance is modified while an enumeration is in progress, a call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="P:System.Collections.IEnumerator.Reset" /> throws <see cref="T:System.InvalidOperationException" /> . </para>
+          <block subset="none" type="note">
+            <para> For detailed information regarding the use of an enumerator, see
+      <see cref="T:System.Collections.IEnumerator" />.</para>
+            <para>This property is implemented to support the <see cref="T:System.Collections.IList" /> interface.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Collections.IEnumerator GetEnumerator(int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.IEnumerator GetEnumerator (int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the index of the current instance before which the enumerator is initially placed. This value is greater than or equal to 0, and less than the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of elements, beginning with <paramref name="index" /> , in the current instance over which the enumerator can iterate. This value is greater than or equal to 0, and less than or equal to the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="index" /> .</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Collections.IEnumerator" /> for the specified section of the
+   current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Collections.IEnumerator" /> that can iterate over the range
+   of <paramref name="index" /> to <paramref name="index" /> + <paramref name="count" /> - 1 in the current
+   instance.</para>
+        </returns>
+        <remarks>
+          <para> The enumerator
+      only enumerates over the range of the current instance from <paramref name="index" /> to
+   <paramref name="index" /> + <paramref name="count" /> - 1. If the current instance is modified while an enumeration is in progress, a call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="P:System.Collections.IEnumerator.Reset" /> will throw <see cref="T:System.InvalidOperationException" /> . </para>
+          <para>
+            <block subset="none" type="note">For detailed information regarding the
+      use of an enumerator, see <see cref="T:System.Collections.IEnumerator" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para>The enumerator is initially placed just before the
+      element at position <paramref name="index" /> in the current instance. A call to
+   <see cref="M:System.Collections.IEnumerator.Reset" /> returns the enumerator to this position.
+      </para>
+            <para>If the elements of the current instance have not been modified while the
+      enumeration was in progress, a call to <see cref="M:System.Collections.IEnumerator.MoveNext" />
+      either returns <see langword="true" /> and advances the enumerator one element in
+      the current instance, or returns <see langword="false" /> indicating the enumerator is at the end of the specified range.      </para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="count" /> &lt; 0.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="index" /> + <paramref name="count" /> &gt; <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Collections.ArrayList GetRange(int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.ArrayList GetRange (int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ArrayList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index in the current instance at which the range starts. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="count" /> , inclusive.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of elements in the range. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="index" /> , inclusive.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Collections.ArrayList" /> that represents the specified range of the
+   current instance.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Collections.ArrayList" /> that
+   represents the range in the current instance from <paramref name="index" /> to
+<paramref name="index" /> + <paramref name="count" /> - 1.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method does not create copies of the
+      elements: the new <see cref="T:System.Collections.ArrayList" /> instance is a
+      view window into the source list. Therefore, all subsequent changes to the
+      source list must be done through this
+      view window <see cref="T:System.Collections.ArrayList" /> . If changes are made directly to
+      the source list, the view window list is invalidated
+      and any operations on it throw <see cref="T:System.InvalidOperationException" />
+      .</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> &lt; 0.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <see cref="P:System.Collections.ArrayList.Count" /> of the current instance - <paramref name="index" /> &lt; <paramref name="count" />. </para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 IndexOf(object value)" />
+      <MemberSignature Language="C#" Value="public virtual int IndexOf (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to locate in the current instance.</param>
+        <summary>
+          <para>Searches the current instance, returning the index of
+      the first occurrence of the specified <see cref="T:System.Object" />.
+      </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that specifies the index of the first occurrence of <paramref name="    value" /> in the current instance, if found;
+   otherwise, -1.</para>
+          <para>
+            <block subset="none" type="note">This provides the caller with a standard
+   code for a failed search.</block>
+          </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support
+      the <see cref="T:System.Collections.IList" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses
+   <see cref="M:System.Array.IndexOf(System.Array,System.Object)" qualify="true" />
+   to search the current instance for <paramref name="value" /> .</block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method performs a linear search. On average,
+   this is an O(<paramref name="n" />/2) operation, where <paramref name="n" /> is <paramref name="count" />. The longest
+   search is an O(<paramref name="n" />) operation.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 IndexOf(object value, int32 startIndex)" />
+      <MemberSignature Language="C#" Value="public virtual int IndexOf (object value, int startIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to locate in current instance.</param>
+        <param name="startIndex">A <see cref="T:System.Int32" /> that specifies the index at which searching begins. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus 1, inclusive.</param>
+        <summary>
+          <para>Searches the current instance, returning the index of
+      the first occurrence of the specified <see cref="T:System.Object" />
+      in the specified range.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that specifies the index of the first occurrence of <paramref name="value" /> in the current
+   instance, if found within the range <paramref name="    startIndex" />
+   to the end of the current instance; otherwise, -1.</para>
+          <para>
+            <block subset="none" type="note">This provides the caller with a standard
+   code for a failed search.</block>
+          </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses
+   <see cref="M:System.Array.IndexOf(System.Array,System.Object)" qualify="true" />
+   to search the current instance for <paramref name="value" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="note"> For the default implementation, this method performs a linear search. On average,
+   this is an O(<paramref name="n" />/2) operation, where <paramref name="n" /> is <paramref name="count" />. The longest
+   search is an O(<paramref name="n" />) operation.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="startIndex" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="startIndex" /> &gt;= <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 IndexOf(object value, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual int IndexOf (object value, int startIndex, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to locate in current instance.</param>
+        <param name="startIndex">A <see cref="T:System.Int32" /> that specifies the index at which to begin searching. This value is greater than or equal to zero, and less than the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of elements to search. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="startIndex" /> , inclusive.</param>
+        <summary>
+          <para>Searches the current instance, returning the index of
+      the first occurrence of the specified <see cref="T:System.Object" />
+      in the specified range.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that specifies the index of the first occurrence of <paramref name="value" /> in
+   the current instance, within the range <paramref name="startIndex " />to
+<paramref name="startIndex" /> + <paramref name=" count" /> - 1, if found; otherwise, -1.</para>
+          <para>
+            <block subset="none" type="note">This provides the caller with a standard
+   code for a failed search.</block>
+          </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses
+   <see cref="M:System.Array.IndexOf(System.Array,System.Object)" qualify="true" />
+   to search the current instance for <paramref name="value" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method performs a linear search. On average, this is an O(<paramref name="n" />/2) operation, where <paramref name="n" /> is <paramref name="count" />.
+The longest search is an O(<paramref name="n" />) operation.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="startIndex" />&gt;= <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> &lt; 0.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="count" /> &gt;<see cref="P:System.Collections.ArrayList.Count" /> of the current instance - <paramref name="startIndex" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Insert(int32 index, object value)" />
+      <MemberSignature Language="C#" Value="public virtual void Insert (int index, object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the index in the current instance at which <paramref name="value" /> is inserted. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance, inclusive.</param>
+        <param name="value">
+          <para>The <see cref="T:System.Object" /> to insert.</para>
+        </param>
+        <summary>
+          <para>Inserts the specified <see cref="T:System.Object" /> into the current
+   instance
+   at the specified index.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support
+      the <see cref="T:System.Collections.IList" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">If the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance is equal to the <see cref="P:System.Collections.ArrayList.Capacity" /> of the current instance, the
+   capacity of the list is doubled by automatically reallocating the internal array
+   before the new element is inserted. If <paramref name="index" />
+   is equal to the <see cref="P:System.Collections.ArrayList.Count" /> of the
+   current instance, <paramref name="value" /> is added to the end of the
+   current instance.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> &gt; <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InsertRange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void InsertRange(int32 index, class System.Collections.ICollection c)" />
+      <MemberSignature Language="C#" Value="public virtual void InsertRange (int index, System.Collections.ICollection c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="c" Type="System.Collections.ICollection" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the index in the current instance at which the new elements are inserted. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance, inclusive.</param>
+        <param name="c">The <see cref="T:System.Collections.ICollection" /> whose elements are inserted into the current instance.</param>
+        <summary>
+          <para>Inserts the elements of the specified <see cref="T:System.Collections.ICollection" /> at the specified
+   index of the current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para> If the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance plus the
+      size of <see cref="T:System.Collections.ICollection" /><paramref name="c " /> is greater
+      than the <see cref="P:System.Collections.ArrayList.Capacity" /> of
+      the current instance, the capacity of the current instance is either
+      doubled or increased to the new count, whichever yields a greater capacity. The internal array
+      is reallocated to accommodate the new elements. If <paramref name="index" /> is equal to the <see cref="P:System.Collections.ArrayList.Count" /> of the current
+      instance, the elements of <paramref name="c" /> are added to the end of the current
+      instance.</para>
+            <para>The order of the elements in the <see cref="T:System.Collections.ICollection" /><paramref name="c" /> is preserved in the current
+instance.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="c" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para>
+            <paramref name="index" /> &gt; <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsFixedSize">
+      <MemberSignature Language="ILASM" Value=".property bool IsFixedSize { public hidebysig virtual specialname bool get_IsFixedSize() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsFixedSize { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> indicating whether the <see cref="P:System.Collections.ArrayList.Capacity" /> of the current instance cannot be changed.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the
+<see cref="P:System.Collections.ArrayList.Capacity" /> of the current instance cannot be changed;
+   otherwise, <see langword="false" />. </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>Elements cannot be added or removed from a <see cref="T:System.Collections.ArrayList" /> with a fixed size, while
+      existing elements can be modified.</para>
+            <para>An attempt to add to or remove from a fixed size ArrayList will throw <see cref="T:System.NotSupportedException" />. However, the size of a fixed size ArrayList will change to reflect the additions or removals from the ArrayList that was used to create the fixed size ArrayList.</para>
+            <para>This property is implemented to support the <see cref="T:System.Collections.IList" /> interface.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default value for this
+   property is <see langword="false" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig virtual specialname bool get_IsReadOnly() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsReadOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a value indicating whether the current instance is read-only.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the
+   current instance is read-only; otherwise,
+<see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>The elements of a <see cref="T:System.Collections.ArrayList" /> that is read-only cannot be modified, nor
+      can elements be added to or removed from that list.</para>
+            <para>An attempt to add to, remove from, or modify a read-only ArrayList will throw <see cref="T:System.NotSupportedException" />. However, changes to the ArrayList that was used to create the read-only ArrayList are reflected in the read-only ArrayList.</para>
+            <para>This property is implemented to support the <see cref="T:System.Collections.IList" /> interface.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default value of this
+   property is <see langword="false" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSynchronized">
+      <MemberSignature Language="ILASM" Value=".property bool IsSynchronized { public hidebysig virtual specialname bool get_IsSynchronized() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsSynchronized { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a value indicating whether access to the current
+      instance is synchronized (thread-safe).</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if access to
+   the current instance is synchronized
+   (thread-safe); otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>To guarantee the thread safety of the <see cref="T:System.Collections.ArrayList" />, all operations must be
+   done through the wrapper returned by the <see cref="M:System.Collections.ArrayList.Synchronized(System.Collections.IList)" /> method.</para>
+          <para>
+            <block subset="none" type="note">This property is implemented to support
+   the <see cref="T:System.Collections.IList" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default value of this
+   property is <see langword="false" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="ILASM" Value=".property object Item[int32 index] { public hidebysig virtual specialname object get_Item(int32 index) public hidebysig virtual specialname void set_Item(int32 index, object value) }" />
+      <MemberSignature Language="C#" Value="public virtual object this[int index] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index of the element in the current instance to get or set. This value is greater than or equal to 0, and less than the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</param>
+        <summary>
+          <para> Gets or sets the element at the specified index of the current instance.</para>
+        </summary>
+        <value>
+          <para>The element at the specified index of the current instance.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This property provides the ability to access a specific element in the
+         collection by using the following syntax: <c>myCollection[index]</c> .</para>
+            <para>This property is implemented to support the <see cref="T:System.Collections.IList" /> interface.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> &gt;= <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 LastIndexOf(object value)" />
+      <MemberSignature Language="C#" Value="public virtual int LastIndexOf (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to locate in the current instance.</param>
+        <summary>
+          <para>Searches the current instance, returning the index of
+      the last occurrence of the specified <see cref="T:System.Object" />.
+      </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that specifies the index of the last occurrence of <paramref name="    value" /> in the current
+   instance, if found; otherwise, -1.</para>
+          <para>
+            <block subset="none" type="note">This provides the caller with a standard
+   code for a failed search.</block>
+          </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">
+              <para>The ArrayList is searched backward starting at the last element and ending at the first element.</para>
+              <para>This method uses
+   <see cref="M:System.Array.LastIndexOf(System.Array,System.Object)" qualify="true" /> to search the current instance for
+   <paramref name="value" />.</para>
+            </block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method performs a linear search. On average, this is an
+      O(<paramref name="n" />/2) operation, where <paramref name="n" /> is <see cref="P:System.Collections.ArrayList.Count" /> of the current instance. The longest search is
+      an O(<paramref name="n" />)
+      operation.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 LastIndexOf(object value, int32 startIndex)" />
+      <MemberSignature Language="C#" Value="public virtual int LastIndexOf (object value, int startIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to locate in the current instance.</param>
+        <param name="startIndex">A <see cref="T:System.Int32" /> that specifies the index at which searching starts. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance - 1, inclusive.</param>
+        <summary>
+          <para>Searches the current instance, returning the index of
+      the last occurrence of the specified <see cref="T:System.Object" /> in
+      the specified range of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that specifies the index of the last occurrence of <paramref name="value" /> in
+   the range of <paramref name="startIndex" />
+   through the first element of the current
+   instance, if found; otherwise, -1.</para>
+          <para>
+            <block subset="none" type="note">This provides the caller with a standard
+   code for a failed search.</block>
+          </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">
+              <para>The ArrayList is searched backward starting at <paramref name="startIndex" />.</para>
+              <para>This method uses
+   <see cref="M:System.Array.LastIndexOf(System.Array,System.Object)" qualify="true" /> to search the current instance for
+   <paramref name="value" />.</para>
+            </block>
+          </para>
+          <para>
+            <block subset="none" type="note"> For the default implementation, this method performs a linear search. On average, this is an
+      O(<paramref name="count" />/2)
+      operation. The longest search is
+      an O(<paramref name="count" />) operation.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="startIndex" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="startIndex" /> &gt;= <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 LastIndexOf(object value, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual int LastIndexOf (object value, int startIndex, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to locate in the current instance.</param>
+        <param name="startIndex">A <see cref="T:System.Int32" /> that specifies the index at which searching starts.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of elements to search, beginning with <paramref name="startIndex" /> .</param>
+        <summary>
+          <para> Searches the current instance, returning the index of
+      the last occurrence of the specified <see cref="T:System.Object" /> in the specified range.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> that specifies the index of the last occurrence of value in the current
+   instance, within the range <paramref name="startIndex" /> through
+<paramref name="startIndex" /> - <paramref name="count" /> + 1, if found; otherwise, -1. </para>
+          <para>
+            <block subset="none" type="note">This provides the caller with a standard
+   code for a failed search.</block>
+          </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">
+              <para>The ArrayList is searched backward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> - <paramref name="count" /> + 1.</para>
+              <para>This method uses
+   <see cref="M:System.Array.LastIndexOf(System.Array,System.Object)" qualify="true" /> to search the current instance for
+   <paramref name="value" />.</para>
+            </block>
+          </para>
+          <para>
+            <block subset="none" type="note"> For the default implementation, this method
+      performs a linear search. On average, this is an O(<paramref name="count" />/2)
+      operation. The longest search is an O(<paramref name="count" />) operation.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="startIndex" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="startIndex" /> &gt;= <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> &gt;= <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> &gt; <paramref name="startIndex" /> + 1.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadOnly">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Collections.ArrayList ReadOnly(class System.Collections.ArrayList list)" />
+      <MemberSignature Language="C#" Value="public static System.Collections.ArrayList ReadOnly (System.Collections.ArrayList list);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ArrayList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="list" Type="System.Collections.ArrayList" />
+      </Parameters>
+      <Docs>
+        <param name="list">The <see cref="T:System.Collections.ArrayList" /> to wrap.</param>
+        <summary>
+          <para>Returns a read-only <see cref="T:System.Collections.ArrayList" />
+wrapper.</para>
+        </summary>
+        <returns>
+          <para>A read-only <see cref="T:System.Collections.ArrayList" />
+wrapper around <paramref name="list" />.</para>
+        </returns>
+        <remarks>
+          <para>This method returns a read-only <see cref="T:System.Collections.ArrayList" /> that contains a reference to <paramref name="list" />. Operations that attempt add to, delete from, or 
+ modify the elements of this new list will throw <see cref="T:System.NotSupportedException" />. Any modifications of the
+ elements <paramref name="list" /> will be reflected in the new list.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Collections.ArrayList.IsReadOnly" /> and <see cref="P:System.Collections.ArrayList.IsFixedSize" /> properties of the new list are <see langword="true" />. Every other property value of the new list 
+ references the same property value of <paramref name="list" />. </para>
+            <para>By performing operations on the new list, this wrapper can be used to prevent 
+ additions to, deletions from, and modifications of the <see cref="T:System.Collections.ArrayList" /><paramref name="list" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="list" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadOnly">
+      <MemberSignature Language="C#" Value="public static System.Collections.IList ReadOnly (System.Collections.IList list);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="list" Type="System.Collections.IList" />
+      </Parameters>
+      <Docs>
+        <param name="list">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Remove(object obj)" />
+      <MemberSignature Language="C#" Value="public virtual void Remove (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> to remove from the current instance.</param>
+        <summary>
+          <para>Removes the first occurrence of the
+      specified <see cref="T:System.Object" /> from
+      the current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support
+      the <see cref="T:System.Collections.IList" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para>This method determines equality by calling <see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</para>
+            <para>If <paramref name="obj" /> is found in the current
+   instance, <paramref name="obj" /> is removed from the current instance, the rest of the
+   elements are shifted down to fill the position vacated by <paramref name="obj" />, the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance is
+   decreased by one, and the position that was previously the last element in the
+   current instance is set to <see langword="null" />. If <paramref name="obj" /> is not found in the
+   current instance, the current instance remains
+   unchanged.</para>
+          </block>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method performs a linear search.
+   On average, this is an O(<paramref name="n" />/2) operation, where <paramref name="n" /> is <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.
+   The longest search is an O(<paramref name="n" />) operation.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveAt">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void RemoveAt(int32 index)" />
+      <MemberSignature Language="C#" Value="public virtual void RemoveAt (int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index of the element to remove from the current instance. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance, inclusive.</param>
+        <summary>
+          <para>Removes the element at the specified index from the
+      current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support
+      the <see cref="T:System.Collections.IList" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default"> The element at position <paramref name="index" /> is removed from
+   the current instance, the rest of the elements are shifted down to fill the
+   position vacated by that element, the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance is
+   decreased by one, and the position that was previously the last element in the current instance is set to <see langword="null" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> &gt;= <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveRange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void RemoveRange(int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual void RemoveRange (int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index of the first element of the range of elements in the current instance to remove. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="count" /> , inclusive.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of elements to remove. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="index" /> , inclusive.</param>
+        <summary>
+          <para>Removes the specified range of elements from the current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The elements in the range of <paramref name="index" /> to <paramref name="index" /> +
+<paramref name="count " /> - 1 are removed from the current instance, the rest of the
+   elements are shifted down to fill the position vacated by those elements, the
+<see cref="P:System.Collections.ArrayList.Count" /> of the current instance is
+   decreased by <paramref name="count" />, and the <paramref name="count" /> positions that were
+   previously the last elements in the current instance are set to
+<see langword="null" />
+.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> &lt; 0.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <see cref="P:System.Collections.ArrayList.Count" /> of the current instance - <paramref name="index" /> &lt; <paramref name="count" />.</exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Repeat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Collections.ArrayList Repeat(object value, int32 count)" />
+      <MemberSignature Language="C#" Value="public static System.Collections.ArrayList Repeat (object value, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ArrayList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+          <para>The <see cref="T:System.Object" /> used to initialize the new <see cref="T:System.Collections.ArrayList" /> instance.</para>
+        </param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of times <paramref name="value" /> is copied into the new <see cref="T:System.Collections.ArrayList" /> instance.</param>
+        <summary>
+          <para>Returns a new <see cref="T:System.Collections.ArrayList" /> whose elements are copies of the specified
+<see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.Collections.ArrayList" />
+with <paramref name="count" /> number of elements, all of which are copies of
+<paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="count" /> is less than the default initial capacity, 16,
+   the <see cref="P:System.Collections.ArrayList.Capacity" /> of the new <see cref="T:System.Collections.ArrayList" /> instance is set to the default initial
+   capacity. Otherwise, the capacity is set to <paramref name="count" />
+   . The <see cref="P:System.Collections.ArrayList.Count" /> of the new instance is set
+   to <paramref name="count" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="count" /> &lt; 0.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reverse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Reverse()" />
+      <MemberSignature Language="C#" Value="public virtual void Reverse ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Reverses the sequence of the elements in the current
+      instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses <see cref="M:System.Array.Reverse(System.Array)" /> to modify the ordering of
+   the elements in the current instance.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reverse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Reverse(int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual void Reverse (int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index in the current instance at which reversing starts. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="count" /> , inclusive.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of elements to reverse. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="index" /> , inclusive.</param>
+        <summary>
+          <para>Reverses the sequence of the elements in the specified range of the
+      current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses <see cref="M:System.Array.Reverse(System.Array)" qualify="true" /> to modify
+   the ordering of the current instance.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="count" /> &lt; 0.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <see cref="P:System.Collections.ArrayList.Count" /> of the current instance - <paramref name="index" /> &lt; <paramref name="count" />.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetRange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void SetRange(int32 index, class System.Collections.ICollection c)" />
+      <MemberSignature Language="C#" Value="public virtual void SetRange (int index, System.Collections.ICollection c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="c" Type="System.Collections.ICollection" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index in the current instance at which to start copying the elements of <paramref name="c" />. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="c" />.Count, inclusive.</param>
+        <param name="c">The <see cref="T:System.Collections.ICollection" /> whose elements to copy to the current instance.</param>
+        <summary>
+          <para>Copies the elements of the specified <see cref="T:System.Collections.ICollection" /> to a
+   range in the current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses
+      the <see cref="M:System.Collections.ICollection.CopyTo(System.Array,System.Int32)" qualify="true" /> implementation of <see cref="T:System.Collections.ICollection" /><paramref name="c" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para> -or-</para>
+          <para>
+            <see cref="P:System.Collections.ArrayList.Count" /> of the current instance - <paramref name="index" /> &lt; <paramref name="c" />.Count.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="c" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Sort()" />
+      <MemberSignature Language="C#" Value="public virtual void Sort ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Sorts the elements of the current instance.</para>
+        </summary>
+        <remarks>
+          <para>The <see cref="T:System.IComparable" /> implementation of each element in the current instance is used to make the sorting comparisons.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">If the sort is not successfully completed, the results are unspecified.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method uses <see cref="M:System.Array.Sort(System.Array)" qualify="true" />, which uses the Quicksort algorithm. This is
+an O(<paramref name="n" /> log<subscript term="2" /><paramref name="n" />) operation, where <paramref name="n" /> is the number of elements to sort.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidCastException">One or more elements in the current instance do not implement the <see cref="T:System.IComparable" /> interface.</exception>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Sort(class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public virtual void Sort (System.Collections.IComparer comparer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="comparer">
+          <para>The <see cref="T:System.Collections.IComparer" /> implementation to use when comparing elements. Specify <see langword="null" /> to use the <see cref="T:System.IComparable" /> implementation of each element in the current instance.</para>
+        </param>
+        <summary>
+          <para>Sorts the elements of current instance using the specified <see cref="T:System.Collections.IComparer" />.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">If <paramref name="comparer" /> is <see langword="null" />, the <see cref="T:System.IComparable" /> implementation of
+   each element in the current instance is used to make the sorting comparisons. If
+   the sort is not successfully completed, the results are unspecified.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method uses <see cref="M:System.Array.Sort(System.Array)" qualify="true" />, which
+uses the Quicksort algorithm. This is an O(<paramref name="n" /> log<subscript term="2" /><paramref name="n" />)
+operation, where <paramref name="n" /> is the number of elements to sort.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidCastException">
+          <paramref name="comparer" /> is <see langword="null" />, and one or more elements in the current instance do not implement the <see cref="T:System.IComparable" /> interface.</exception>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+        <exception cref="T:System.InvalidOperationException">
+          <paramref name="comparer" /> is <see langword="null" />, and one or more elements in the current instance do not implement the <see cref="T:System.IComparable" /> interface.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Sort(int32 index, int32 count, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public virtual void Sort (int index, int count, System.Collections.IComparer comparer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index at which sorting starts. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="count" /> , inclusive.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of elements to sort. This value is between 0 and the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance minus <paramref name="index" /> , inclusive.</param>
+        <param name="comparer">
+          <para>The <see cref="T:System.Collections.IComparer" /> implementation to use when comparing elements. Specify <see langword="null" /> to use the <see cref="T:System.IComparable" /> implementation of each element in the current instance.</para>
+        </param>
+        <summary>
+          <para> Sorts the elements in the specified range of the current instance
+      using the specified <see cref="T:System.Collections.IComparer" /> implementation.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">If <paramref name="comparer" /> is <see langword="null" />, the <see cref="T:System.IComparable" /> implementation of
+   each element in the current instance is used to make the sorting comparisons. If
+   the sort is not successfully completed, the results are unspecified.</block>
+          </para>
+          <para>
+            <block subset="none" type="note"> For the default implementation, this method uses <see cref="M:System.Array.Sort(System.Array)" qualify="true" />, which
+uses the Quicksort algorithm. This is an O(<paramref name="n" /> log<subscript term="2" /><paramref name="n" />)
+operation, where <paramref name="n" /> is the number of elements to sort.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> &lt; 0.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <see cref="P:System.Collections.ArrayList.Count" /> of the current instance - <paramref name="index" /> &lt; <paramref name="count" />.</para>
+        </exception>
+        <exception cref="T:System.InvalidCastException">
+          <paramref name="comparer" /> is <see langword="null" />, and one or more elements in the current instance do not implement the <see cref="T:System.IComparable" /> interface.</exception>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+        <exception cref="T:System.InvalidOperationException">
+          <paramref name="comparer" /> is <see langword="null" />, and one or more elements in the current instance do not implement the <see cref="T:System.IComparable" /> interface.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Synchronized">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Collections.ArrayList Synchronized(class System.Collections.ArrayList list)" />
+      <MemberSignature Language="C#" Value="public static System.Collections.ArrayList Synchronized (System.Collections.ArrayList list);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ArrayList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="list" Type="System.Collections.ArrayList" />
+      </Parameters>
+      <Docs>
+        <param name="list">The <see cref="T:System.Collections.ArrayList" /> to synchronize.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Collections.ArrayList" /> wrapper around the specified <see cref="T:System.Collections.ArrayList" />
+that is synchronized (thread-safe).</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Collections.ArrayList" /> wrapper that is
+   synchronized (thread-safe).</para>
+        </returns>
+        <remarks>
+          <para>This method returns a thread-safe <see cref="T:System.Collections.ArrayList" /> that contains a reference to <paramref name="list" />. Any modifications of the elements in either
+   the returned list or <paramref name="list" /> will be reflected in the other. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Collections.ArrayList.IsSynchronized" /> property of the new list is
+<see langword="true" />. Every other property value of the new list 
+   references the same property value of <paramref name="list" />. </para>
+            <para>By performing operations on the new list, this wrapper can be used to
+   guarantee thread-safe access to the <see cref="T:System.Collections.ArrayList" /><paramref name="list" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="list" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Synchronized">
+      <MemberSignature Language="C#" Value="public static System.Collections.IList Synchronized (System.Collections.IList list);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="list" Type="System.Collections.IList" />
+      </Parameters>
+      <Docs>
+        <param name="list">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SyncRoot">
+      <MemberSignature Language="ILASM" Value=".property object SyncRoot { public hidebysig virtual specialname object get_SyncRoot() }" />
+      <MemberSignature Language="C#" Value="public virtual object SyncRoot { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets an object that can be used to synchronize access to
+      the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Object" /> that can be used to synchronize access to the
+   current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para> Program code must perform synchronized operations
+      on the <see cref="P:System.Collections.ArrayList.SyncRoot" /> of
+      the current instance, not directly on the current instance. This ensures proper
+      operation of collections that are derived from other objects. Specifically, it
+      maintains proper synchronization with other threads that might be simultaneously
+      modifying the current instance.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method
+      returns a reference to the current
+      instance.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">This property is implemented to support the <see cref="T:System.Collections.IList" />
+interface.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToArray">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Object[] ToArray()" />
+      <MemberSignature Language="C#" Value="public virtual object[] ToArray ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Copies the elements of the current instance
+      to a new <see cref="T:System.Object" /> array.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Object" /> array containing
+   copies of the elements of the current instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The elements are copied using <see cref="M:System.Array.Copy(System.Array,System.Array,System.Int32)" qualify="true" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method is an O(<paramref name="n" />) operation, where
+<paramref name="n" /> is 
+the <see cref="P:System.Collections.ArrayList.Count" /> of the
+current instance.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToArray">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Array ToArray(class System.Type type)" />
+      <MemberSignature Language="C#" Value="public virtual Array ToArray (Type type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Array</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="type">The <see cref="T:System.Type" /> of the <see cref="T:System.Array" /> to create and copy the elements of the current instance.</param>
+        <summary>
+          <para>Copies the elements of the current instance to a new
+      array
+      of the specified <see cref="T:System.Type" />.</para>
+        </summary>
+        <returns>
+          <para>An array of <see cref="T:System.Type" /><paramref name="type" /> containing copies of the elements of the current
+instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The elements are copied using <see cref="M:System.Array.Copy(System.Array,System.Array,System.Int32)" qualify="true" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">For the default implementation, this method is
+   an O(<paramref name="n" />) operation, where <paramref name="n" /> is
+   the <see cref="P:System.Collections.ArrayList.Count" /> of the
+   current instance.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="type" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.InvalidCastException">At least one element of the current instance cannot be cast to the <see cref="T:System.Type" /><paramref name="type" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TrimToSize">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void TrimToSize()" />
+      <MemberSignature Language="C#" Value="public virtual void TrimToSize ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Sets the <see cref="P:System.Collections.ArrayList.Capacity" /> of the current instance to
+   the <see cref="P:System.Collections.ArrayList.Count" /> of
+   the current instance.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method can be used to minimize the memory overhead of the current
+         instance if no new elements will be added to it.</para>
+            <para>To completely clear all elements from the current instance, call the <see cref="M:System.Collections.ArrayList.Clear" /> method before calling <see cref="M:System.Collections.ArrayList.TrimToSize" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described
+   above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">If the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance is
+zero, the <see cref="P:System.Collections.ArrayList.Capacity" /> of the
+current instance is set to the default initial
+capacity of 16.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

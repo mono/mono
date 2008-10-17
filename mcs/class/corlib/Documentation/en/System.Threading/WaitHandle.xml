@@ -1,0 +1,647 @@
+<Type Name="WaitHandle" FullName="System.Threading.WaitHandle" FullNameSP="System_Threading_WaitHandle" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract WaitHandle extends System.MarshalByRefObject implements System.IDisposable" />
+  <TypeSignature Language="C#" Value="public abstract class WaitHandle : MarshalByRefObject, IDisposable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.MarshalByRefObject</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Encapsulates operating-system 
+ specific objects that wait for exclusive access
+ to shared resources.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para> This class is typically used as a base class for
+ synchronization objects. Classes derived from <see cref="T:System.Threading.WaitHandle" /> define a signaling mechanism to indicate
+ taking or releasing exclusive access to a shared
+ resource, but use the inherited <see cref="T:System.Threading.WaitHandle" />
+ 
+ methods to block while waiting for access to shared
+ resources.
+ </para>
+        <para> The static methods of this class are used to block a
+ <see cref="T:System.Threading.Thread" />
+ until one or more synchronization objects receive a
+ signal.
+ </para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected WaitHandle ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Threading.WaitHandle" />
+class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
+      <MemberSignature Language="C#" Value="public virtual void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Releases all resources held by the current instance.</para>
+        </summary>
+        <remarks>
+          <para>This method is the public version of the <see cref="M:System.IDisposable.Dispose" /> method implemented to 
+ support the <see cref="T:System.IDisposable" /> interface.</para>
+          <para>
+            <block subset="none" type="behaviors">
+ This method releases any unmanaged resources held by the current instance. This method can, but is not required to,
+ suppress finalization during garbage collection by calling the <see cref="M:System.GC.SuppressFinalize(System.Object)" qualify="true" /> method. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this property to release resources allocated in subclasses.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+ release all resources held by an instance of <see langword=" WaitHandle" />. Once this method is called, references
+ to the current instance cause undefined behavior. </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool explicitDisposing)" />
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool explicitDisposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="explicitDisposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="explicitDisposing">
+          <see langword="true" /> to release both managed and unmanaged resources; <see langword="false" /> to release only unmanaged resources.</param>
+        <summary>
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Threading.WaitHandle" /> and
+   optionally releases the managed resources.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method
+      releases all unmanaged resources held by the current instance. When the <paramref name="explicitDisposing" /> parameter is <see langword="true" />, this method releases all resources held by
+      any managed objects referenced by the current
+      instance. This method invokes the <see langword="Dispose()" /> method of each referenced
+      object.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this method to dispose of resources allocated by
+      types derived from <see cref="T:System.Threading.WaitHandle" />. When overriding
+      <see langword="Dispose" />(<see cref="T:System.Boolean" />), be careful not to
+      reference objects that have been previously disposed in an earlier call to
+      <see langword="Dispose" /> or <see langword="Close" /> . <see langword="Dispose" /> can be called multiple
+      times by other objects. </block>
+          </para>
+          <para>
+            <block subset="none" type="usage">This method is called by the public <see cref="M:System.Threading.WaitHandle.Dispose(System.Boolean)" /> method and the <see cref="M:System.Object.Finalize" /> method.
+<see langword="Dispose()" /> invokes this method with the 
+<paramref name="explicitDisposing" /> parameter 
+set to <see langword="true" />. <see cref="M:System.Object.Finalize" /> invokes <see langword="Dispose" /> with
+<paramref name="explicitDisposing" /> set to <see langword="false" /> 
+.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Finalize()" />
+      <MemberSignature Language="C#" Value="~WaitHandle ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Releases the resources held by the current instance.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para> Application code does not call this method; it
+         is automatically invoked during garbage collection unless finalization by the
+         garbage collector has been disabled. For more information, see <see cref="M:System.GC.SuppressFinalize(System.Object)" qualify="true" />,
+         and <see cref="M:System.Object.Finalize" qualify="true" />.</para>
+            <para> This method overrides <see cref="M:System.Object.Finalize" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Handle">
+      <MemberSignature Language="C#" Value="public virtual IntPtr Handle { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("In the profiles &gt; 2.x, use SafeHandle instead of Handle")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="InvalidHandle">
+      <MemberSignature Language="C#" Value="protected static readonly IntPtr InvalidHandle;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SafeWaitHandle">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.SafeHandles.SafeWaitHandle SafeWaitHandle { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.SafeHandles.SafeWaitHandle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SignalAndWait">
+      <MemberSignature Language="C#" Value="public static bool SignalAndWait (System.Threading.WaitHandle toSignal, System.Threading.WaitHandle toWaitOn);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="toSignal" Type="System.Threading.WaitHandle" />
+        <Parameter Name="toWaitOn" Type="System.Threading.WaitHandle" />
+      </Parameters>
+      <Docs>
+        <param name="toSignal">To be added.</param>
+        <param name="toWaitOn">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SignalAndWait">
+      <MemberSignature Language="C#" Value="public static bool SignalAndWait (System.Threading.WaitHandle toSignal, System.Threading.WaitHandle toWaitOn, int millisecondsTimeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="toSignal" Type="System.Threading.WaitHandle" />
+        <Parameter Name="toWaitOn" Type="System.Threading.WaitHandle" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="toSignal">To be added.</param>
+        <param name="toWaitOn">To be added.</param>
+        <param name="millisecondsTimeout">To be added.</param>
+        <param name="exitContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SignalAndWait">
+      <MemberSignature Language="C#" Value="public static bool SignalAndWait (System.Threading.WaitHandle toSignal, System.Threading.WaitHandle toWaitOn, TimeSpan timeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="toSignal" Type="System.Threading.WaitHandle" />
+        <Parameter Name="toWaitOn" Type="System.Threading.WaitHandle" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="toSignal">To be added.</param>
+        <param name="toWaitOn">To be added.</param>
+        <param name="timeout">To be added.</param>
+        <param name="exitContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.IDisposable" /> interface. [Note: For more information, see <see cref="M:System.IDisposable.Dispose" />.]</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WaitAll">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool WaitAll(class System.Threading.WaitHandle[] waitHandles)" />
+      <MemberSignature Language="C#" Value="public static bool WaitAll (System.Threading.WaitHandle[] waitHandles);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">A <see cref="T:System.Threading.WaitHandle" /> array containing the objects for which the current instance will wait. This array cannot contain multiple references to the same object (duplicates).</param>
+        <summary>
+          <para> Waits for all of the
+      elements in the specified array to receive a signal.</para>
+        </summary>
+        <returns>
+          <para>Returns <see langword="true" /> when
+   every element in <paramref name="waitHandles" /> has received a
+   signal. If the current
+   thread receives a request to abort before the signals are received, this method
+   returns <see langword="false" />. </para>
+        </returns>
+        <remarks>
+          <para>
+            <SPAN>The maximum number of objects specified in the
+   <paramref name="waitHandles" /> array is system defined.</SPAN>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="waitHandles " />is <see langword="null" /> or one or more elements in the <paramref name="waitHandles " /> array is <see langword="null" />.</exception>
+        <exception cref="T:System.DuplicateWaitObjectException">
+          <paramref name="waitHandles " />contains elements that are duplicates.</exception>
+        <exception cref="T:System.NotSupportedException">The number of objects in <paramref name="waitHandles " />is greater than the system permits.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WaitAll">
+      <MemberSignature Language="C#" Value="public static bool WaitAll (System.Threading.WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">To be added.</param>
+        <param name="millisecondsTimeout">To be added.</param>
+        <param name="exitContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WaitAll">
+      <MemberSignature Language="C#" Value="public static bool WaitAll (System.Threading.WaitHandle[] waitHandles, TimeSpan timeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">To be added.</param>
+        <param name="timeout">To be added.</param>
+        <param name="exitContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 WaitAny(class System.Threading.WaitHandle[] waitHandles)" />
+      <MemberSignature Language="C#" Value="public static int WaitAny (System.Threading.WaitHandle[] waitHandles);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">A <see cref="T:System.Threading.WaitHandle" /> array containing the objects for which the current instance will wait. This array cannot contain multiple references to the same object (duplicates).</param>
+        <summary>
+          <para> Waits for any of the
+      elements in the specified array to receive a signal.</para>
+        </summary>
+        <returns>
+          <para>Returns a <see cref="T:System.Int32" /> set to the index of
+   the element in <paramref name="waitHandles" /> that received a signal.</para>
+        </returns>
+        <remarks>
+          <para>
+            <SPAN>The maximum number of objects specified in the
+   <paramref name="waitHandles" /> array is system defined.</SPAN>
+          </para>
+          <para>
+            <SPAN>
+              <SPAN />
+            </SPAN>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="waitHandles " />is <see langword="null" /> or one or more elements in the <paramref name="waitHandles " /> array is <see langword="null" />.</exception>
+        <exception cref="T:System.DuplicateWaitObjectException">
+          <paramref name="waitHandles " />contains elements that are duplicates.</exception>
+        <exception cref="T:System.NotSupportedException">The number of objects in <paramref name="waitHandles " />is greater than the system permits.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="C#" Value="public static int WaitAny (System.Threading.WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">To be added.</param>
+        <param name="millisecondsTimeout">To be added.</param>
+        <param name="exitContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="C#" Value="public static int WaitAny (System.Threading.WaitHandle[] waitHandles, TimeSpan timeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">To be added.</param>
+        <param name="timeout">To be added.</param>
+        <param name="exitContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool WaitOne()" />
+      <MemberSignature Language="C#" Value="public virtual bool WaitOne ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Blocks the current thread until the current instance receives a signal.</para>
+        </summary>
+        <returns>
+          <para>Returns <see langword="true" />
+when the
+current instance receives a signal.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">The caller
+      of this method blocks indefinitely until a signal is received by the current
+      instance. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override
+      this method to customize the behavior of types derived from <see cref="T:System.Threading.WaitHandle" /> .</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+      block until a <see langword=" WaitHandle" />
+      receives a signal from another thread, such as is
+      generated when an asynchronous operation completes. For more information, see
+      the <see cref="T:System.IAsyncResult" /> interface.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has already been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public virtual bool WaitOne (int millisecondsTimeout);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="millisecondsTimeout">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public virtual bool WaitOne (int millisecondsTimeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="millisecondsTimeout">To be added.</param>
+        <param name="exitContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public virtual bool WaitOne (TimeSpan timeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">To be added.</param>
+        <param name="exitContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WaitTimeout">
+      <MemberSignature Language="C#" Value="public const int WaitTimeout = 258;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>258</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

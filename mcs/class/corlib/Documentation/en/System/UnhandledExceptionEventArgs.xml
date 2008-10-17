@@ -1,0 +1,125 @@
+<Type Name="UnhandledExceptionEventArgs" FullName="System.UnhandledExceptionEventArgs" FullNameSP="System_UnhandledExceptionEventArgs" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable UnhandledExceptionEventArgs extends System.EventArgs" />
+  <TypeSignature Language="C#" Value="public class UnhandledExceptionEventArgs : EventArgs" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.EventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Provides data for the event that is raised when an exception is not caught by the program code executing in an application
+      domain.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.UnhandledExceptionEventArgs" /> provides access to the
+   uncaught <see cref="T:System.Exception" /> and a property indicating whether the system will terminate the current
+   process. </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(object exception, bool isTerminating)" />
+      <MemberSignature Language="C#" Value="public UnhandledExceptionEventArgs (object exception, bool isTerminating);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="exception" Type="System.Object" />
+        <Parameter Name="isTerminating" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="exception">The exception that was not caught.</param>
+        <param name="isTerminating">
+          <see langword="true" /> if the system will terminate the current process; otherwise, <see langword="false" />.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.UnhandledExceptionEventArgs" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.UnhandledExceptionEventArgs.ExceptionObject" /> property using <paramref name="exception" />, and the <see cref="P:System.UnhandledExceptionEventArgs.IsTerminating" /> property using <paramref name="isTerminating" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExceptionObject">
+      <MemberSignature Language="ILASM" Value=".property object ExceptionObject { public hidebysig specialname instance object get_ExceptionObject() }" />
+      <MemberSignature Language="C#" Value="public object ExceptionObject { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the uncaught exception.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Object" />, typically a <see cref="T:System.Exception" />, that is the cause of the current event.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsTerminating">
+      <MemberSignature Language="ILASM" Value=".property bool IsTerminating { public hidebysig specialname instance bool get_IsTerminating() }" />
+      <MemberSignature Language="C#" Value="public bool IsTerminating { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Boolean" /> value indicating whether the system is terminating the current process.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the
+   system will end the current process as a result
+   of the
+   current unhandled exception; otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">This property returns
+   <see langword="true" />
+   when an exception is received in, but not handled by, an application's
+   main thread. This property also returns <see langword="true" />
+   if an unmanaged thread is executing managed code and receives an unhandled
+   exception. <see cref="P:System.UnhandledExceptionEventArgs.IsTerminating" />
+   returns <see langword="false" /> for managed threads created
+   by an application, and for unhandled exceptions thrown
+   during object finalization.</block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,76 @@
+<Type Name="IFormatProvider" FullName="System.IFormatProvider" FullNameSP="System_IFormatProvider" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class interface public abstract IFormatProvider" />
+  <TypeSignature Language="C#" Value="public interface IFormatProvider" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Docs>
+    <summary>
+      <para>Implemented by classes that supply objects that provide formatting
+      services.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>When a <paramref name="format specifier" /> includes symbols that
+      vary by culture, such as the currency symbol included by the "C" and "c"
+      formats, a <paramref name="formatting object" />
+      supplies the actual characters used in a string representation of a numeric
+      value. For example, a formatting object might supply "$" for the currency symbol.
+      The formatting object for system-supplied numeric types is a <see cref="T:System.Globalization.NumberFormatInfo" />
+      instance. For <see cref="T:System.DateTime" /> instances, a <see cref="T:System.Globalization.DateTimeFormatInfo" /> is used.</para>
+        <para>
+          <see cref="T:System.IFormatProvider" /> contains the <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method. The consumer of an object
+   should call this method to obtain a formatting object.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="GetFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract object GetFormat(class System.Type formatType)" />
+      <MemberSignature Language="C#" Value="public object GetFormat (Type formatType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="formatType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="formatType">The <see cref="T:System.Type" /> of the formatting object to be returned.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Object" /> that provides formatting services.</para>
+        </summary>
+        <returns>
+          <para>The current instance, if <paramref name="formatType" /> is the same type as the current instance; otherwise, a <see langword="null" /> reference.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Implement in 
+      classes that provide formatting objects for use in methods that generate or
+      parse string representations of objects, such as <see langword="ToString" /> and
+   <see langword="Parse" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,298 @@
+<Type Name="ThreadState" FullName="System.Threading.ThreadState" FullNameSP="System_Threading_ThreadState" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable ThreadState extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum ThreadState" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Specifies the execution states of a <see cref="T:System.Threading.Thread" />.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.Threading.ThreadState" />
+defines the set of possible execution states for threads. Once a thread is
+created, it is in one or more of these states until it terminates. Not all
+combinations of <see langword="ThreadState" /> values are valid; for example,
+a thread cannot be in both the <see cref="F:System.Threading.ThreadState.Stopped" /> and <see cref="F:System.Threading.ThreadState.Unstarted" />
+states.</para>
+      <para>The following table shows the actions that cause a thread to
+   change state.</para>
+      <list type="table">
+        <listheader>
+          <term>Action</term>
+          <description>ThreadState after Action</description>
+        </listheader>
+        <item>
+          <term> The
+      thread is created</term>
+          <description>Unstarted</description>
+        </item>
+        <item>
+          <term>
+            <see cref="M:System.Threading.Thread.Start" /> is invoked on the thread</term>
+          <description>Running</description>
+        </item>
+        <item>
+          <term> The thread calls <see cref="M:System.Threading.Thread.Sleep(System.Int32)" /></term>
+          <description>WaitSleepJoin</description>
+        </item>
+        <item>
+          <term> The thread calls <see cref="M:System.Threading.Monitor.Wait(System.Object,System.Int32,System.Boolean)" /> to wait
+   on an object</term>
+          <description>WaitSleepJoin</description>
+        </item>
+        <item>
+          <term> The thread calls <see cref="M:System.Threading.Thread.Join" /> to wait for
+   another thread to terminate</term>
+          <description>WaitSleepJoin</description>
+        </item>
+        <item>
+          <term> The
+      <see cref="T:System.Threading.ThreadStart" />
+   delegate methods finish executing</term>
+          <description>Stopped</description>
+        </item>
+        <item>
+          <term> Another thread requests
+      the thread to <see cref="M:System.Threading.Thread.Abort(System.Object)" /></term>
+          <description>AbortRequested</description>
+        </item>
+        <item>
+          <term> The thread accepts a <see cref="M:System.Threading.Thread.Abort(System.Object)" /> request</term>
+          <description>Aborted</description>
+        </item>
+      </list>
+      <para>In addition to the states noted above, there is also the <see cref="F:System.Threading.ThreadState.Background" /> state, which indicates whether the thread is
+running in the background or foreground.</para>
+      <para>The current state of a thread can be retrieved from the <see cref="P:System.Threading.Thread.ThreadState" /> property,
+whose value is a combination of the <see cref="T:System.Threading.ThreadState" />
+values. Once a thread has reached the <see cref="F:System.Threading.ThreadState.Stopped" /> state, it cannot change to any other state. </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Aborted">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadState Aborted = 0x100" />
+      <MemberSignature Language="C#" Value="Aborted" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Aborted</MemberValue>
+      <Docs>
+        <summary>
+          <para>The thread represented by an instance of <see cref="T:System.Threading.Thread" /> has terminated as a result of a call to <see cref="M:System.Threading.Thread.Abort(System.Object)" />. A thread in this
+   state is also in the <see cref="F:System.Threading.ThreadState.Stopped" /> state.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AbortRequested">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadState AbortRequested = 0x80" />
+      <MemberSignature Language="C#" Value="AbortRequested" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>AbortRequested</MemberValue>
+      <Docs>
+        <summary>
+          <para>The <see cref="M:System.Threading.Thread.Abort(System.Object)" /> method has been invoked on the thread, but the thread
+ has not yet received the pending <see cref="T:System.Threading.ThreadAbortException" /> that will attempt to terminate it.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Background">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadState Background = 0x4" />
+      <MemberSignature Language="C#" Value="Background" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Background</MemberValue>
+      <Docs>
+        <summary>
+          <para>The thread represented by an instance of <see cref="T:System.Threading.Thread" /> is being
+ executed as a background thread, as opposed to a foreground thread. <block subset="none" type="note">This state is controlled by setting the <see cref="P:System.Threading.Thread.IsBackground" />
+ 
+ property.</block></para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Running">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadState Running = 0x0" />
+      <MemberSignature Language="C#" Value="Running" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Running</MemberValue>
+      <Docs>
+        <summary>
+          <para>The thread represented by an instance of <see cref="T:System.Threading.Thread" /> has been started and has not terminated.</para>
+          <para>To determine if a thread 
+   is running, check that its state does not include <see cref="F:System.Threading.ThreadState.Unstarted" /> and does not include <see cref="F:System.Threading.ThreadState.Stopped" />.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Stopped">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadState Stopped = 0x10" />
+      <MemberSignature Language="C#" Value="Stopped" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Stopped</MemberValue>
+      <Docs>
+        <summary>
+          <para>The thread represented by an instance of <see cref="T:System.Threading.Thread" />
+has terminated.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StopRequested">
+      <MemberSignature Language="C#" Value="StopRequested" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadState</ReturnType>
+      </ReturnValue>
+      <MemberValue>StopRequested</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Suspended">
+      <MemberSignature Language="C#" Value="Suspended" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadState</ReturnType>
+      </ReturnValue>
+      <MemberValue>Suspended</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SuspendRequested">
+      <MemberSignature Language="C#" Value="SuspendRequested" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadState</ReturnType>
+      </ReturnValue>
+      <MemberValue>SuspendRequested</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unstarted">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadState Unstarted = 0x8" />
+      <MemberSignature Language="C#" Value="Unstarted" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Unstarted</MemberValue>
+      <Docs>
+        <summary>
+          <para>The <see cref="M:System.Threading.Thread.Start" qualify="true" /> method 
+has not been invoked on the thread.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WaitSleepJoin">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadState WaitSleepJoin = 0x20" />
+      <MemberSignature Language="C#" Value="WaitSleepJoin" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>WaitSleepJoin</MemberValue>
+      <Docs>
+        <summary>
+          <para>The thread represented by an instance of <see cref="T:System.Threading.Thread" /> is
+ blocked as
+ a result of
+ a call to <see cref="M:System.Threading.Monitor.Wait(System.Object,System.Int32,System.Boolean)" />, <see cref="M:System.Threading.Thread.Sleep(System.Int32)" />, or <see cref="M:System.Threading.Thread.Join" />.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

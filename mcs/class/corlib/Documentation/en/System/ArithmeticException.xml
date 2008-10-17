@@ -1,0 +1,181 @@
+<Type Name="ArithmeticException" FullName="System.ArithmeticException" FullNameSP="System_ArithmeticException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable ArithmeticException extends System.SystemException" />
+  <TypeSignature Language="C#" Value="public class ArithmeticException : SystemException" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.SystemException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Represents an error caused by an arithmetic operation.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>The Base Class Library includes two types derived from <see cref="T:System.ArithmeticException" />: </para>
+        <list type="bullet">
+          <item>
+            <term>
+              <see cref="T:System.DivideByZeroException" />
+            </term>
+          </item>
+          <item>
+            <term>
+              <see cref="T:System.OverflowException" />
+            </term>
+          </item>
+        </list>
+        <para>When appropriate, use these types instead of <see cref="T:System.ArithmeticException" />. </para>
+      </block>
+      <block subset="none" type="note">
+        <para>The following CIL instructions throw <see cref="T:System.ArithmeticException" />:</para>
+        <list type="bullet">
+          <item>
+            <term>
+      ckfinite</term>
+          </item>
+          <item>
+            <term>
+      div</term>
+          </item>
+        </list>
+      </block>
+    </remarks>
+    <example>
+      <para>The following example demonstrates an error that causes the system to throw
+      a <see cref="T:System.ArithmeticException" /> error.</para>
+      <code lang="C#">using System;
+class testNan {
+ public static void Main() {
+   double myNan = Double.NaN;
+   try {
+     Math.Sign(myNan);
+   }
+   catch (ArithmeticException e) {
+     Console.WriteLine("Error: {0}",e);
+   }
+ }
+}
+   </code>
+      <para>The output is</para>
+      <c>
+        <para>Error: System.ArithmeticException: Function does not accept floating point
+         Not-a-Number values.</para>
+        <para>at System.Math.Sign(Double value)</para>
+        <para>at testNan.Main()</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public ArithmeticException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.ArithmeticException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.ArithmeticException.Message" /> property of the new instance to a system-supplied
+   message that describes the error, such as "The arithmetic operation is not
+   allowed." This message takes into account the current system culture.</para>
+          <para>The <see cref="!:System.ArithmeticException.InnerException" /> property is initialized to 
+<see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public ArithmeticException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.ArithmeticException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.ArithmeticException.Message" /> property of the new instance using <paramref name="message" />. If <paramref name="message" /> is 
+<see langword="null" />, the <see cref="!:System.ArithmeticException.Message" /> property is initialized to a system-supplied message. The <see cref="!:System.ArithmeticException.InnerException" /> property is initialized to <see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ArithmeticException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception innerException)" />
+      <MemberSignature Language="C#" Value="public ArithmeticException (string message, Exception innerException);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="innerException">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="innerException" /> is non-null, then the current exception was raised in a catch block handling <paramref name="innerException" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.ArithmeticException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.ArithmeticException.Message" /> property of the new instance using <paramref name="message" />, and
+   the <see cref="P:System.Exception.InnerException" /> property using <paramref name="innerException" />. If <paramref name="message" /> is
+<see langword="null" />, the <see cref="!:System.ArithmeticException.Message" /> property is initialized to a system-supplied message. </para>
+          <para>
+            <block subset="none" type="note"> For information on inner exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

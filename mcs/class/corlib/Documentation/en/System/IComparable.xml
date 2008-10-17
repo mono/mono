@@ -1,0 +1,106 @@
+<Type Name="IComparable" FullName="System.IComparable" FullNameSP="System_IComparable" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class interface public abstract IComparable" />
+  <TypeSignature Language="C#" Value="public interface IComparable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Docs>
+    <summary>
+      <para> Implemented by classes that support an ordering of instances of the class.</para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">
+          <see cref="T:System.IComparable" /> contains the
+<see cref="M:System.IComparable.CompareTo(System.Object)" /> method. The consumer of an object should call this 
+ method when sorting instances of a class.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 CompareTo(object obj)" />
+      <MemberSignature Language="C#" Value="public int CompareTo (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para> Returns the sort order of the current instance compared 
+      to the specified
+      object.</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="obj" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Returned Value </term>
+              <description>Description </description>
+            </listheader>
+            <item>
+              <term> A negative value </term>
+              <description> The current instance is &lt; <paramref name="obj" />. </description>
+            </item>
+            <item>
+              <term> Zero </term>
+              <description>The current instance is ==
+   <paramref name="obj" />. </description>
+            </item>
+            <item>
+              <term> A positive value </term>
+              <description> The current instance is &gt; than <paramref name="obj" /> or <paramref name="obj" /> is a null
+   reference. </description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>For any objects A, B and C, the following are required to be true:</para>
+            <para>A.CompareTo(A) is required to return zero. </para>
+            <para>If A.CompareTo(B) returns zero then B.CompareTo(A) is required to return zero.</para>
+            <para>If A.CompareTo(B) returns zero and B.CompareTo(C) 
+         returns zero then A.CompareTo(C) is required to return zero.</para>
+            <para>If A.CompareTo(B) returns a value other than zero then 
+         B.CompareTo(A) is required to return a value of the opposite
+         sign.</para>
+            <para>If A.CompareTo(B) returns a value <paramref name="x" /> not equal 
+      to zero, and B.CompareTo(C) returns a value <paramref name="y" /> of the same sign as
+   <paramref name="x" />, then A.CompareTo(C) is required to a value of the same sign as 
+   <paramref name="x" /> and <paramref name="y" /> 
+   .</para>
+            <para>The exact behavior of this method is unspecified. The intent of this method is
+   to provide a mechanism that orders instances of a class in a manner that is
+   consistent with the mathematical definitions of the relational operators (&lt;,
+   &gt;, and ==), without regard for class-specific definitions of the
+   operators.</para>
+          </block>
+          <para>
+            <block subset="none" type="usage">Use the <see cref="M:System.IComparable.CompareTo(System.Object)" /> method to determine the ordering of instances of a
+class.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

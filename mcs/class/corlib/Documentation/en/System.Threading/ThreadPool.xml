@@ -1,0 +1,495 @@
+<Type Name="ThreadPool" FullName="System.Threading.ThreadPool">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public static class ThreadPool" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Provides access to the pool of threads created dynamically by the runtime environment.</summary>
+    <remarks>Via ThreadPool, currently unused threads can be ordered to execute a function or procedure.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="BindHandle">
+      <MemberSignature Language="C#" Value="public static bool BindHandle (IntPtr osHandle);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="osHandle" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="osHandle">To be added: an object of type 'IntPtr'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'bool'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("This method is obsolete, use BindHandle(SafeHandle) instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="BindHandle">
+      <MemberSignature Language="C#" Value="public static bool BindHandle (System.Runtime.InteropServices.SafeHandle osHandle);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="osHandle" Type="System.Runtime.InteropServices.SafeHandle" />
+      </Parameters>
+      <Docs>
+        <param name="osHandle">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAvailableThreads">
+      <MemberSignature Language="C#" Value="public static void GetAvailableThreads (out int workerThreads, out int completionPortThreads);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workerThreads" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="completionPortThreads" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="workerThreads">To be added: an object of type 'int&amp;'</param>
+        <param name="completionPortThreads">To be added: an object of type 'int&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMaxThreads">
+      <MemberSignature Language="C#" Value="public static void GetMaxThreads (out int workerThreads, out int completionPortThreads);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workerThreads" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="completionPortThreads" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="workerThreads">To be added: an object of type 'int&amp;'</param>
+        <param name="completionPortThreads">To be added: an object of type 'int&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMinThreads">
+      <MemberSignature Language="C#" Value="public static void GetMinThreads (out int workerThreads, out int completionPortThreads);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workerThreads" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="completionPortThreads" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="workerThreads">To be added.</param>
+        <param name="completionPortThreads">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="QueueUserWorkItem">
+      <MemberSignature Language="C#" Value="public static bool QueueUserWorkItem (System.Threading.WaitCallback callBack);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callBack" Type="System.Threading.WaitCallback" />
+      </Parameters>
+      <Docs>
+        <param name="callBack">To be added.</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'bool'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="QueueUserWorkItem">
+      <MemberSignature Language="C#" Value="public static bool QueueUserWorkItem (System.Threading.WaitCallback callBack, object state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callBack" Type="System.Threading.WaitCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callBack">To be added.</param>
+        <param name="state">To be added: an object of type 'object'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'bool'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterWaitForSingleObject">
+      <MemberSignature Language="C#" Value="public static System.Threading.RegisteredWaitHandle RegisterWaitForSingleObject (System.Threading.WaitHandle waitObject, System.Threading.WaitOrTimerCallback callBack, object state, int millisecondsTimeOutInterval, bool executeOnlyOnce);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.RegisteredWaitHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitObject" Type="System.Threading.WaitHandle" />
+        <Parameter Name="callBack" Type="System.Threading.WaitOrTimerCallback" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="millisecondsTimeOutInterval" Type="System.Int32" />
+        <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitObject">To be added: an object of type 'WaitHandle'</param>
+        <param name="callBack">To be added: an object of type 'WaitOrTimerCallback'</param>
+        <param name="state">To be added: an object of type 'object'</param>
+        <param name="millisecondsTimeOutInterval">To be added: an object of type 'int'</param>
+        <param name="executeOnlyOnce">To be added: an object of type 'bool'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'RegisteredWaitHandle'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterWaitForSingleObject">
+      <MemberSignature Language="C#" Value="public static System.Threading.RegisteredWaitHandle RegisterWaitForSingleObject (System.Threading.WaitHandle waitObject, System.Threading.WaitOrTimerCallback callBack, object state, long millisecondsTimeOutInterval, bool executeOnlyOnce);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.RegisteredWaitHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitObject" Type="System.Threading.WaitHandle" />
+        <Parameter Name="callBack" Type="System.Threading.WaitOrTimerCallback" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="millisecondsTimeOutInterval" Type="System.Int64" />
+        <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitObject">To be added: an object of type 'WaitHandle'</param>
+        <param name="callBack">To be added: an object of type 'WaitOrTimerCallback'</param>
+        <param name="state">To be added: an object of type 'object'</param>
+        <param name="millisecondsTimeOutInterval">To be added: an object of type 'long'</param>
+        <param name="executeOnlyOnce">To be added: an object of type 'bool'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'RegisteredWaitHandle'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterWaitForSingleObject">
+      <MemberSignature Language="C#" Value="public static System.Threading.RegisteredWaitHandle RegisterWaitForSingleObject (System.Threading.WaitHandle waitObject, System.Threading.WaitOrTimerCallback callBack, object state, TimeSpan timeout, bool executeOnlyOnce);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.RegisteredWaitHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitObject" Type="System.Threading.WaitHandle" />
+        <Parameter Name="callBack" Type="System.Threading.WaitOrTimerCallback" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitObject">To be added: an object of type 'WaitHandle'</param>
+        <param name="callBack">To be added: an object of type 'WaitOrTimerCallback'</param>
+        <param name="state">To be added: an object of type 'object'</param>
+        <param name="timeout">To be added: an object of type 'TimeSpan'</param>
+        <param name="executeOnlyOnce">To be added: an object of type 'bool'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'RegisteredWaitHandle'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterWaitForSingleObject">
+      <MemberSignature Language="C#" Value="public static System.Threading.RegisteredWaitHandle RegisterWaitForSingleObject (System.Threading.WaitHandle waitObject, System.Threading.WaitOrTimerCallback callBack, object state, uint millisecondsTimeOutInterval, bool executeOnlyOnce);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.RegisteredWaitHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitObject" Type="System.Threading.WaitHandle" />
+        <Parameter Name="callBack" Type="System.Threading.WaitOrTimerCallback" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="millisecondsTimeOutInterval" Type="System.UInt32" />
+        <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitObject">To be added: an object of type 'WaitHandle'</param>
+        <param name="callBack">To be added: an object of type 'WaitOrTimerCallback'</param>
+        <param name="state">To be added: an object of type 'object'</param>
+        <param name="millisecondsTimeOutInterval">To be added: an object of type 'uint'</param>
+        <param name="executeOnlyOnce">To be added: an object of type 'bool'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'RegisteredWaitHandle'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="SetMaxThreads">
+      <MemberSignature Language="C#" Value="public static bool SetMaxThreads (int workerThreads, int completionPortThreads);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workerThreads" Type="System.Int32" />
+        <Parameter Name="completionPortThreads" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="workerThreads">To be added.</param>
+        <param name="completionPortThreads">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetMinThreads">
+      <MemberSignature Language="C#" Value="public static bool SetMinThreads (int workerThreads, int completionPortThreads);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workerThreads" Type="System.Int32" />
+        <Parameter Name="completionPortThreads" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="workerThreads">To be added.</param>
+        <param name="completionPortThreads">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnsafeQueueNativeOverlapped">
+      <MemberSignature Language="C#" Value="public static bool UnsafeQueueNativeOverlapped (System.Threading.NativeOverlapped* overlapped);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="overlapped" Type="System.Threading.NativeOverlapped*" />
+      </Parameters>
+      <Docs>
+        <param name="overlapped">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="UnsafeQueueUserWorkItem">
+      <MemberSignature Language="C#" Value="public static bool UnsafeQueueUserWorkItem (System.Threading.WaitCallback callBack, object state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callBack" Type="System.Threading.WaitCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callBack">To be added.</param>
+        <param name="state">To be added: an object of type 'object'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'bool'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnsafeRegisterWaitForSingleObject">
+      <MemberSignature Language="C#" Value="public static System.Threading.RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (System.Threading.WaitHandle waitObject, System.Threading.WaitOrTimerCallback callBack, object state, int millisecondsTimeOutInterval, bool executeOnlyOnce);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.RegisteredWaitHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitObject" Type="System.Threading.WaitHandle" />
+        <Parameter Name="callBack" Type="System.Threading.WaitOrTimerCallback" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="millisecondsTimeOutInterval" Type="System.Int32" />
+        <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitObject">To be added.</param>
+        <param name="callBack">To be added.</param>
+        <param name="state">To be added.</param>
+        <param name="millisecondsTimeOutInterval">To be added.</param>
+        <param name="executeOnlyOnce">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnsafeRegisterWaitForSingleObject">
+      <MemberSignature Language="C#" Value="public static System.Threading.RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (System.Threading.WaitHandle waitObject, System.Threading.WaitOrTimerCallback callBack, object state, long millisecondsTimeOutInterval, bool executeOnlyOnce);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.RegisteredWaitHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitObject" Type="System.Threading.WaitHandle" />
+        <Parameter Name="callBack" Type="System.Threading.WaitOrTimerCallback" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="millisecondsTimeOutInterval" Type="System.Int64" />
+        <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitObject">To be added.</param>
+        <param name="callBack">To be added.</param>
+        <param name="state">To be added.</param>
+        <param name="millisecondsTimeOutInterval">To be added.</param>
+        <param name="executeOnlyOnce">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnsafeRegisterWaitForSingleObject">
+      <MemberSignature Language="C#" Value="public static System.Threading.RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (System.Threading.WaitHandle waitObject, System.Threading.WaitOrTimerCallback callBack, object state, TimeSpan timeout, bool executeOnlyOnce);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.RegisteredWaitHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitObject" Type="System.Threading.WaitHandle" />
+        <Parameter Name="callBack" Type="System.Threading.WaitOrTimerCallback" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitObject">To be added.</param>
+        <param name="callBack">To be added.</param>
+        <param name="state">To be added.</param>
+        <param name="timeout">To be added.</param>
+        <param name="executeOnlyOnce">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnsafeRegisterWaitForSingleObject">
+      <MemberSignature Language="C#" Value="public static System.Threading.RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (System.Threading.WaitHandle waitObject, System.Threading.WaitOrTimerCallback callBack, object state, uint millisecondsTimeOutInterval, bool executeOnlyOnce);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.RegisteredWaitHandle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitObject" Type="System.Threading.WaitHandle" />
+        <Parameter Name="callBack" Type="System.Threading.WaitOrTimerCallback" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="millisecondsTimeOutInterval" Type="System.UInt32" />
+        <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="waitObject">To be added.</param>
+        <param name="callBack">To be added.</param>
+        <param name="state">To be added.</param>
+        <param name="millisecondsTimeOutInterval">To be added.</param>
+        <param name="executeOnlyOnce">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+</Type>

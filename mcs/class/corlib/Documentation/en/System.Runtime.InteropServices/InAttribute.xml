@@ -1,0 +1,75 @@
+<Type Name="InAttribute" FullName="System.Runtime.InteropServices.InAttribute" FullNameSP="System_Runtime_InteropServices_InAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed InAttribute extends System.Attribute" />
+  <TypeSignature Language="C#" Value="public sealed class InAttribute : Attribute" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Parameter, Inherited=false)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Indicates that a parameter will be marshaled from the caller to
+      the callee.</para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">The
+   <see cref="T:System.Runtime.InteropServices.InAttribute" /> and <see cref="T:System.Runtime.InteropServices.OutAttribute" />
+   are not
+   required. In the absence of explicit settings, the system assumes that all
+   arguments passed by reference are passed
+<see langword="in" />/<see langword="out" /> and that all non-reference 
+   parameters are <see langword="in" />. The only exception is the <see cref="T:System.Text.StringBuilder" />
+   class, which is always assumed to be
+<see langword="in" />/<see langword="out" />. The <see cref="T:System.Runtime.InteropServices.InAttribute" /> and <see cref="T:System.Runtime.InteropServices.OutAttribute" /> are 
+   particularly useful when applied to formatted types that cannot be block-copied.
+   Since these types require copying during marshaling, you can use <see cref="T:System.Runtime.InteropServices.InAttribute" />
+   and <see cref="T:System.Runtime.InteropServices.OutAttribute" /> to eliminate the generation of unnecessary
+   copies.</block>
+      </para>
+      <para>Compilers are required to not preserve this type
+   in metadata as a custom attribute. Instead, compilers are required to emit it
+   directly in the file format, as described in Partition II of the CLI
+   Specification. Metadata consumers, such as the Reflection API, are required to
+   retrieve this data from the file format and return it as if it were a custom
+   attribute. </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public InAttribute ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Runtime.InteropServices.InAttribute" />
+class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

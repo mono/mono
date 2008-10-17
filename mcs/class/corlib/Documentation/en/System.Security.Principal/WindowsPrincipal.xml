@@ -1,0 +1,226 @@
+<Type Name="WindowsPrincipal" FullName="System.Security.Principal.WindowsPrincipal">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public class WindowsPrincipal : System.Security.Principal.IPrincipal" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Security.Principal.IPrincipal</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>This class represents the group membership of an operating system user.</summary>
+    <remarks>
+      <para>The WindowsPrincipal class can also be used on POSIX compliant operating system.</para>
+      <example>
+        <code lang="C#">
+using System;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
+
+class WinPrincipal {
+
+     [DllImport ("advapi32.dll", CallingConvention=CallingConvention.StdCall)]
+     public static extern bool LogonUser (string lpszUsername, 
+          string lpszDomain, string lpszPassword, int dwLogonType,
+          int dwLogonProvider, ref IntPtr phToken);
+
+     static void Principal (WindowsIdentity user) 
+     {
+          WindowsPrincipal wp = new WindowsPrincipal (user);
+          while (true) {
+               Console.Write ("Enter group name: ");
+               string group = Console.ReadLine ();
+               if (group == String.Empty)
+                    break;
+
+               Console.WriteLine ("\t{0} is {1}a member of {2}{3}", 
+                    user.Name,
+                    (wp.IsInRole (group) ? String.Empty : "NOT "),
+                    group,
+                    Environment.NewLine);
+          }
+     }
+
+     [STAThread]
+     static void Main (string[] args)
+     {
+          bool posix = ((int) Environment.OSVersion.Platform == 128);
+          while (true) {
+               Console.Write ("Enter username:\t");
+               string username = Console.ReadLine ();
+               if (username == String.Empty)
+                    break;
+
+               WindowsIdentity user = null;
+               // check for Posix versus Windows
+               if (posix) {
+                    user = new WindowsIdentity (username);
+               }
+               else {
+                    Console.Write ("Enter domain:\t");
+                    string domain = Console.ReadLine ();
+                    Console.Write ("Enter password:\t");
+                    string password = Console.ReadLine ();
+
+                    IntPtr token = IntPtr.Zero;
+                    // note: we should close that handle
+                    LogonUser (username, domain, password, 2, 0, ref token);
+                    if (token == IntPtr.Zero) {
+                         Console.WriteLine ("Invalid username/domain/password");
+                         continue;
+                    }
+
+                    user = new WindowsIdentity (token);
+               }
+
+               Principal (user);
+          }
+     }
+}  </code>
+      </example>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public WindowsPrincipal (System.Security.Principal.WindowsIdentity ntIdentity);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="ntIdentity" Type="System.Security.Principal.WindowsIdentity" />
+      </Parameters>
+      <Docs>
+        <param name="ntIdentity">The identity for which the principal will be created.</param>
+        <summary>Creates the corresponding principal of a WindowsIdentity instance.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Identity">
+      <MemberSignature Language="C#" Value="public virtual System.Security.Principal.IIdentity Identity { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.IIdentity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The operating system identity associated with the current principal.</summary>
+        <value>The current identity of the principal. </value>
+        <remarks>The returned identity will always be a <see cref="T:System.Security.Principal.WindowsIdentity" /> instance.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsInRole">
+      <MemberSignature Language="C#" Value="public virtual bool IsInRole (int rid);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rid" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="rid">An integer representing the group.</param>
+        <summary>Return the membership of the current principal in the specified role.</summary>
+        <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
+        <remarks>The role id, is mapped like this:
+
+<list type="table"><listheader><term>Role ID</term><description>Description</description></listheader><item><term>544</term><description>BUILTIN\\Administrators</description></item><item><term>545</term><description>BUILTIN\\Users</description></item><item><term>546</term><description>BUILTIN\\Guests</description></item><item><term>547</term><description>BUILTIN\\Power Users</description></item><item><term>548</term><description>BUILTIN\\Account Operators</description></item><item><term>549</term><description>BUILTIN\\System Operators</description></item><item><term>550</term><description>BUILTIN\\Print Operators</description></item><item><term>551</term><description>BUILTIN\\Backup Operators</description></item><item><term>552</term><description>BUILTIN\\Replicator</description></item></list></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsInRole">
+      <MemberSignature Language="C#" Value="public virtual bool IsInRole (System.Security.Principal.SecurityIdentifier sid);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
+      </Parameters>
+      <Docs>
+        <param name="sid">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IsInRole">
+      <MemberSignature Language="C#" Value="public virtual bool IsInRole (System.Security.Principal.WindowsBuiltInRole role);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="role" Type="System.Security.Principal.WindowsBuiltInRole" />
+      </Parameters>
+      <Docs>
+        <param name="role">A member of the <see cref="T:System.Security.Principal.WindowsBuiltInRole" /> enumeration.</param>
+        <summary>Return the membership of the current principal in the specified role.</summary>
+        <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
+        <remarks>On POSIX compliant systems the <see cref="M:System.Security.Principal.WindowsBuiltInRole.Administrators" /> group is mapped to the "root" group. All other groups will return false.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsInRole">
+      <MemberSignature Language="C#" Value="public virtual bool IsInRole (string role);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="role" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="role">The group name.</param>
+        <summary>Return the membership of the current principal in the specified role.</summary>
+        <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
+        <remarks>On Unix systems, the role is mapped to Unix groups.   For users to be considered to have a certain role, the role must be listed in the Unix groups (the /etc/group file) and it must contain a list of users that belong to that group.
+
+<para>
+For example, if you want to check that the user is in role "USAGNT\\UGR_RBP" the file /etc/group should contain a line like this:
+</para><example><code lang="/etc/group">
+USAGNT\UGR_RBP:x:300:miguel,don,jon,julia
+  </code></example><para>
+In this particular example, the users miguel, don, jon and julia belong to the "USAGNT\UGR_RBP" role.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

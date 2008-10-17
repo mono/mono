@@ -1,0 +1,9 @@
+<Namespace Name="System.Text" FullName="System.Text" FullNameSP="System.Text" Maintainer="Mono">
+  <Docs>
+    <summary>
+        The System.Text namespace contains types for converting text between encodings, such as ASCII and UTF-8.  The namespace also contains the StringBuilder class which can be used to create and modify string values more efficiently than by concatenating String objects.
+    </summary>
+    <remarks>
+    </remarks>
+  </Docs>
+</Namespace>

@@ -1,0 +1,2086 @@
+<Type Name="Encoding" FullName="System.Text.Encoding" FullNameSP="System_Text_Encoding" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable Encoding extends System.Object" />
+  <TypeSignature Language="C#" Value="public abstract class Encoding : ICloneable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations. </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Represents a character
+      encoding.</para>
+    </summary>
+    <remarks>
+      <para> Characters are abstract entities that can be represented using
+      many different character schemes or codepages. For example, Unicode UTF-16 encoding
+      represents, or encodes, characters as sequences of 16-bit integers while
+      Unicode UTF-8 represents the same characters as sequences of 8-bit bytes.</para>
+      <para>The BCL includes the following types derived
+      from <see cref="T:System.Text.Encoding" />:</para>
+      <list type="bullet">
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Text.ASCIIEncoding" /> - encodes Unicode characters as
+         7-bit ASCII characters. This encoding only supports code points between U+0000
+         and U+007F inclusive.</para>
+          </term>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Text.UnicodeEncoding" /> - encodes each
+         Unicode character as two consecutive bytes. Both little-endian and big-endian byte
+         orders are supported.</para>
+          </term>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Text.UTF8Encoding" /> - encodes Unicode characters using
+         the UTF-8 (UCS Transformation Format, 8-bit form) encoding. This encoding
+         supports all Unicode character values.</para>
+          </term>
+        </item>
+      </list>
+      <para> An application can use the
+   properties of this class such as <see cref="P:System.Text.Encoding.ASCII" />, <see cref="P:System.Text.Encoding.Default" />, <see cref="P:System.Text.Encoding.Unicode" />,
+   and <see cref="P:System.Text.Encoding.UTF8" /> to obtain encodings. Applications can
+   initialize new instances of <see cref="T:System.Text.Encoding" /> objects through the
+<see cref="T:System.Text.ASCIIEncoding" />, <see cref="T:System.Text.UnicodeEncoding" />, and <see cref="T:System.Text.UTF8Encoding" /> 
+classes.</para>
+      <para>Through an encoding, the <see cref="M:System.Text.Encoding.GetBytes(System.Char[])" /> method is used to convert
+arrays of Unicode characters to arrays of bytes, and the <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" /> method is used to convert arrays of bytes
+to arrays of Unicode characters. The <see cref="M:System.Text.Encoding.GetBytes(System.Char[])" /> and <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" /> methods maintain no state between
+conversions. When the data to be converted is only available in sequential
+blocks (such as data read from a stream) or when the amount of data is so large
+that it needs to be divided into smaller blocks, an application can choose to
+use a <see cref="T:System.Text.Decoder" /> or a
+<see cref="T:System.Text.Encoder" /> to perform 
+the conversion. Decoders and encoders allow sequential blocks of data to be
+converted and they maintain the state required to support conversions of data
+that spans adjacent blocks. Decoders and encoders are obtained using
+the <see cref="M:System.Text.Encoding.GetDecoder" /> and <see cref="M:System.Text.Encoding.GetEncoder" /> methods.</para>
+      <para>The core <see cref="M:System.Text.Encoding.GetBytes(System.Char[])" /> and <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" /> methods require the caller to provide the 
+destination buffer and ensure that the buffer is large enough to hold the entire
+result of the conversion. When using these methods, either directly on a
+<see cref="T:System.Text.Encoding" /> object or on an associated <see cref="T:System.Text.Decoder" /> or 
+<see cref="T:System.Text.Encoder" />, an
+application can use one of two methods to allocate destination buffers.</para>
+      <list type="number">
+        <item>
+          <term>
+            <para>The <see cref="M:System.Text.Encoding.GetByteCount(System.Char[])" /> and <see cref="M:System.Text.Encoding.GetCharCount(System.Byte[])" /> methods can be used to
+      compute the exact size of the result of a particular conversion, and an
+      appropriately sized buffer for that conversion can then be allocated.</para>
+          </term>
+        </item>
+        <item>
+          <term>
+            <para>The <see cref="M:System.Text.Encoding.GetMaxByteCount(System.Int32)" /> and <see cref="M:System.Text.Encoding.GetMaxCharCount(System.Int32)" /> methods can 
+      be used to compute the maximum possible size of a conversion of a given
+      number of characters or bytes, regardless of the actual character or byte values, and a
+      buffer of that size can then be reused for multiple conversions. </para>
+          </term>
+        </item>
+      </list>
+      <para>The first method generally uses less memory, whereas the second method
+   generally executes faster. </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected Encoding ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Constructs a new instance of the <see cref="T:System.Text.Encoding" /> class.
+   </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Encoding (int codePage);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="codePage" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="codePage">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ASCII">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding ASCII { public hidebysig static specialname class System.Text.Encoding get_ASCII() }" />
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding ASCII { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets an encoding for the ASCII (7-bit) character set.
+      </para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>ASCII characters can represent Unicode characters from U+0000 to U+007f, 
+         inclusive.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BigEndianUnicode">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding BigEndianUnicode { public hidebysig static specialname class System.Text.Encoding get_BigEndianUnicode() }" />
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding BigEndianUnicode { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets an encoding for the Unicode format in big-endian
+      byte order.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Text.Encoding" /> for the Unicode format in big-endian byte order. </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>Unicode characters can be stored in two different byte orders, big-endian and little-endian. On little-endian platforms such as those
+         implemented on Intel processors, it is generally more efficient to
+         store Unicode characters in little-endian byte order. However, many other
+         platforms can store Unicode characters in big-endian byte order. Unicode files
+         can be distinguished by the presence of the byte order mark (U+FEFF), which will
+         be written as either 0xfe 0xff or 0xff 0xfe. </para>
+            <para> This encoding automatically detects a byte order mark and, if necessary,
+         switches byte orders.
+         </para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BodyName">
+      <MemberSignature Language="C#" Value="public virtual string BodyName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public virtual object Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="CodePage">
+      <MemberSignature Language="C#" Value="public virtual int CodePage { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Convert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Byte[] Convert(class System.Text.Encoding srcEncoding, class System.Text.Encoding dstEncoding, class System.Byte[] bytes)" />
+      <MemberSignature Language="C#" Value="public static byte[] Convert (System.Text.Encoding srcEncoding, System.Text.Encoding dstEncoding, byte[] bytes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="srcEncoding" Type="System.Text.Encoding" />
+        <Parameter Name="dstEncoding" Type="System.Text.Encoding" />
+        <Parameter Name="bytes" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="srcEncoding">The <see cref="T:System.Text.Encoding" /> that <paramref name="bytes" /> is in. </param>
+        <param name="dstEncoding">The <see cref="T:System.Text.Encoding" /> desired for the returned <see cref="T:System.Byte" /> array. </param>
+        <param name="bytes">The <see cref="T:System.Byte" /> array containing the values to convert. </param>
+        <summary>
+          <para> Converts the specified <see cref="T:System.Byte" /> array from one specified encoding to another specified encoding.
+   </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Byte" /> array containing the result
+   of the conversion.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="srcEncoding" />, <paramref name="dstEncoding" /> or <paramref name="bytes" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Convert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Byte[] Convert(class System.Text.Encoding srcEncoding, class System.Text.Encoding dstEncoding, class System.Byte[] bytes, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public static byte[] Convert (System.Text.Encoding srcEncoding, System.Text.Encoding dstEncoding, byte[] bytes, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="srcEncoding" Type="System.Text.Encoding" />
+        <Parameter Name="dstEncoding" Type="System.Text.Encoding" />
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="srcEncoding">The <see cref="T:System.Text.Encoding" /> that <paramref name="bytes" /> is in. </param>
+        <param name="dstEncoding">The <see cref="T:System.Text.Encoding" /> desired for the returned <see cref="T:System.Byte" /> array. </param>
+        <param name="bytes">The <see cref="T:System.Byte" /> array containing the values to convert. </param>
+        <param name="index">A <see cref="T:System.Int32" /> containing the first index of <paramref name="bytes" /> from which to convert. </param>
+        <param name="count">A <see cref="T:System.Int32" /> containing the number of bytes to convert. </param>
+        <summary>
+          <para> Converts the specified range of the specified <see cref="T:System.Byte" /> array from one specified encoding to another specified
+   encoding.
+   </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Byte" /> array
+   containing the result of the conversion. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="srcEncoding" />, <paramref name="dstEncoding " />, or <paramref name="bytes" /> is <see langword="null" />. </para>
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> and <paramref name="count" /> do not denote a valid range in <paramref name="bytes" /> . </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DecoderFallback">
+      <MemberSignature Language="C#" Value="public System.Text.DecoderFallback DecoderFallback { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Text.DecoderFallback</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Default">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding Default { public hidebysig static specialname class System.Text.Encoding get_Default() }" />
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding Default { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets an encoding for the ANSI code page of the current system.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Text.Encoding" /> for the ANSI code page of the current system.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EncoderFallback">
+      <MemberSignature Language="C#" Value="public System.Text.EncoderFallback EncoderFallback { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Text.EncoderFallback</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EncodingName">
+      <MemberSignature Language="C#" Value="public virtual string EncodingName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object value)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance and the specified
+   <see cref="T:System.Object" /> represent the same
+      type and value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="obj" /> represents the same type and value as
+   the current instance. If <paramref name="obj" /> is a null reference or is not an
+   instance of <see cref="T:System.Text.Encoding" />, returns <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetByteCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetByteCount(class System.Char[] chars)" />
+      <MemberSignature Language="C#" Value="public virtual int GetByteCount (char[] chars);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chars" Type="System.Char[]" />
+      </Parameters>
+      <Docs>
+        <param name="chars">The <see cref="T:System.Char" /> array to encode. </param>
+        <summary>
+          <para> Returns the number of bytes required to encode the
+      specified <see cref="T:System.Char" />
+      array.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing the number of bytes needed to encode
+<paramref name="chars" />.
+   </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This
+      method is overridden by types derived from <see cref="T:System.Text.Encoding" /> to return the
+      appropriate number of bytes for the particular encoding.
+   </block>
+          </para>
+          <block subset="none" type="usage">
+            <para>
+              <see cref="M:System.Text.Encoding.GetByteCount(System.Char[])" /> can be used to determine the
+      exact number of bytes that will be produced from encoding the given array of
+      characters. An appropriately sized buffer for that conversion can then be
+      allocated. </para>
+            <para> Alternatively, <see cref="M:System.Text.Encoding.GetMaxByteCount(System.Int32)" /> can be used to determine the maximum number of bytes that will
+   be produced from converting a given number of characters, regardless of the actual character
+   values. A buffer of that size can then be reused for multiple conversions. </para>
+            <para>
+              <see cref="M:System.Text.Encoding.GetByteCount(System.Char[])" /> generally uses less memory and
+<see cref="M:System.Text.Encoding.GetMaxByteCount(System.Int32)" /> generally executes faster. </para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="chars " />is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetByteCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetByteCount(string s)" />
+      <MemberSignature Language="C#" Value="public virtual int GetByteCount (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to decode.</param>
+        <summary>
+          <para>Returns the number of bytes required to encode the specified <see cref="T:System.String" />. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the number of bytes needed to encode <paramref name="s" />. </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This
+      method is overridden by types derived from <see cref="T:System.Text.Encoding" /> to return the
+      appropriate number of bytes for the particular encoding.
+   </block>
+          </para>
+          <block subset="none" type="usage">
+            <para>
+              <see cref="M:System.Text.Encoding.GetByteCount(System.Char[])" /> can
+      be used to determine the exact number of bytes that will be produced from
+      encoding the given <see cref="T:System.String" />
+      . An appropriately sized buffer for that conversion can then be
+      allocated. </para>
+            <para> Alternatively, <see cref="M:System.Text.Encoding.GetMaxByteCount(System.Int32)" /> can be used to determine the maximum number of bytes that will
+   be produced from converting a given number of characters, regardless of the actual character
+   values. A buffer of that size can then be reused for multiple conversions. </para>
+            <para>
+              <see cref="M:System.Text.Encoding.GetByteCount(System.Char[])" /> generally uses less memory and
+<see cref="M:System.Text.Encoding.GetMaxByteCount(System.Int32)" /> generally executes faster. </para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetByteCount">
+      <MemberSignature Language="C#" Value="public virtual int GetByteCount (char* chars, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chars" Type="System.Char*" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="chars">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetByteCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetByteCount(class System.Char[] chars, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public abstract int GetByteCount (char[] chars, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chars" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="chars">The <see cref="T:System.Char" /> array to encode. </param>
+        <param name="index">A <see cref="T:System.Int32" /> containing the first index of <paramref name="chars" /> to encode. </param>
+        <param name="count">A <see cref="T:System.Int32" /> containing the number of characters to encode. </param>
+        <summary>
+          <para>Returns the number of bytes required to encode the specified range of
+      characters in the specified Unicode character array. </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing the number of bytes required to encode the range
+   in <paramref name="chars" /> from <paramref name="index" /> to <paramref name="index" /> +
+<paramref name="count" /> - 1.
+   </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">
+      As described above.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This
+      method is overridden by types derived from <see cref="T:System.Text.Encoding" /> to return the
+      appropriate number of bytes for the particular encoding.
+   </block>
+          </para>
+          <block subset="none" type="usage">
+            <para>
+              <see cref="M:System.Text.Encoding.GetByteCount(System.Char[])" /> can be used to determine the exact
+      the number of bytes that will be produced from encoding a given range of
+      characters. An appropriately sized buffer for that conversion can
+      then be allocated.
+      </para>
+            <para> Alternatively, <see cref="M:System.Text.Encoding.GetMaxByteCount(System.Int32)" /> can be used to determine the maximum number of bytes that will
+   be produced from converting a given number of characters, regardless of the actual character
+   values. A buffer of that size can then be reused
+   for multiple conversions.</para>
+            <para>
+              <see cref="M:System.Text.Encoding.GetByteCount(System.Char[])" />
+generally uses less memory and <see cref="M:System.Text.Encoding.GetMaxByteCount(System.Int32)" />
+generally executes faster.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="chars " />is <see langword="null" /> . </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>The number of bytes required to encode the specified elements in <paramref name="chars" /> is greater than <see cref="F:System.Int32.MaxValue" />. </para>
+          <para>-or- </para>
+          <para>
+            <paramref name="index" /> or <paramref name="count" /> is less than zero. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="index" /> and <paramref name="count" /> do not specify a valid range in <paramref name="chars" /> (i.e. (<paramref name="index" /> + <paramref name="count" />) &gt; <paramref name="chars" />.Length).</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetBytes(class System.Char[] chars)" />
+      <MemberSignature Language="C#" Value="public virtual byte[] GetBytes (char[] chars);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chars" Type="System.Char[]" />
+      </Parameters>
+      <Docs>
+        <param name="chars">The <see cref="T:System.Char" /> array to encode. </param>
+        <summary>
+          <para> Encodes the specified <see cref="T:System.Char" />
+array.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Byte" /> array containing
+   the encoded representation of <paramref name="chars" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method is overridden by 
+      types derived from <see cref="T:System.Text.Encoding" /> to perform the encoding.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="chars" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetBytes(string s)" />
+      <MemberSignature Language="C#" Value="public virtual byte[] GetBytes (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to encode. </param>
+        <summary>
+          <para> Encodes the specified <see cref="T:System.String" />.
+   </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Byte" /> array
+   containing the encoded representation of <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This 
+      method is overridden by types derived from <see cref="T:System.Text.Encoding" />
+      to perform the encoding.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetBytes(class System.Char[] chars, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual byte[] GetBytes (char[] chars, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chars" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="chars">The <see cref="T:System.Char" /> array to encode. </param>
+        <param name="index">A <see cref="T:System.Int32" /> containing the first index of <paramref name="chars" /> to encode. </param>
+        <param name="count">A <see cref="T:System.Int32" /> containing the number of characters to encode. </param>
+        <summary>
+          <para> Encodes the specified range of the
+      specified <see cref="T:System.Char" />
+      array.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Byte" /> array containing
+   the encoded representation of the range in <paramref name="chars" />
+   from <paramref name="index" /> to <paramref name="index" /> + <paramref name="count" /> - 1.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method is overridden by 
+      types derived from <see cref="T:System.Text.Encoding" /> to perform the encoding. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="chars" /> is <see langword="null" />. </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> and <paramref name="count" /> do not denote a valid range in <paramref name="chars" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public virtual int GetBytes (char* chars, int charCount, byte* bytes, int byteCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chars" Type="System.Char*" />
+        <Parameter Name="charCount" Type="System.Int32" />
+        <Parameter Name="bytes" Type="System.Byte*" />
+        <Parameter Name="byteCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="chars">To be added.</param>
+        <param name="charCount">To be added.</param>
+        <param name="bytes">To be added.</param>
+        <param name="byteCount">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetBytes(class System.Char[] chars, int32 charIndex, int32 charCount, class System.Byte[] bytes, int32 byteIndex)" />
+      <MemberSignature Language="C#" Value="public abstract int GetBytes (char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chars" Type="System.Char[]" />
+        <Parameter Name="charIndex" Type="System.Int32" />
+        <Parameter Name="charCount" Type="System.Int32" />
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="byteIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="chars">A <see cref="T:System.Char" /> array to encode. </param>
+        <param name="charIndex">A <see cref="T:System.Int32" /> containing the first index of <paramref name="chars" /> to encode. </param>
+        <param name="charCount">A <see cref="T:System.Int32" /> containing the number of characters to encode. </param>
+        <param name="bytes">A <see cref="T:System.Byte" /> array to encode into. </param>
+        <param name="byteIndex">A <see cref="T:System.Int32" /> containing the first index of <paramref name="bytes" /> to encode into. </param>
+        <summary>
+          <para> Encodes the specified range of the
+      specified <see cref="T:System.Char" /> array into the specified range of the
+      specified <see cref="T:System.Byte" />
+      array.
+      </para>
+        </summary>
+        <returns>
+          <para> The number of bytes encoded into <paramref name="bytes" /> .
+   </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This
+   method is overridden by types derived from <see cref="T:System.Text.Encoding" />
+   to perform the encoding.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">
+              <see cref="M:System.Text.Encoding.GetByteCount(System.Char[])" /> can be used to determine the exact number of bytes
+   that will be produced for a given range of characters. Alternatively, <see cref="M:System.Text.Encoding.GetMaxByteCount(System.Int32)" /> can be used to
+   determine the maximum number of bytes that will be produced for a given number
+   of characters, regardless of the actual character values.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="bytes" /> does not contain sufficient space to store the encoded characters.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="chars " />is <see langword="null" />. </para>
+          <para>-or- </para>
+          <para>
+            <paramref name="bytes " />is <see langword="null" />. </para>
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="charIndex" /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="charCount " /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="byteIndex " /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>(<paramref name="chars" />.Length - <paramref name="charIndex" />) &lt; <paramref name="charCount" />.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="byteIndex" /> &gt; <paramref name="bytes" />.Length.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetBytes(string s, int32 charIndex, int32 charCount, class System.Byte[] bytes, int32 byteIndex)" />
+      <MemberSignature Language="C#" Value="public virtual int GetBytes (string s, int charIndex, int charCount, byte[] bytes, int byteIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="charIndex" Type="System.Int32" />
+        <Parameter Name="charCount" Type="System.Int32" />
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="byteIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> to encode.</param>
+        <param name="charIndex">A <see cref="T:System.Int32" /> containing the first index of <paramref name="s" /> from which to encode.</param>
+        <param name="charCount">A <see cref="T:System.Int32" /> containing the number of characters of <paramref name="s" /> to encode.</param>
+        <param name="bytes">The <see cref="T:System.Byte" /> array to encode into.</param>
+        <param name="byteIndex">A <see cref="T:System.Int32" /> containing the first index of <paramref name="bytes" /> to encode into.</param>
+        <param name="s">To be added.</param>
+        <param name="charIndex">To be added.</param>
+        <param name="bytes">To be added.</param>
+        <param name="byteIndex">To be added.</param>
+        <summary>
+          <para>Encodes the specified range of the
+      specified <see cref="T:System.String" /> into the specified range of the specified <see cref="T:System.Byte" />
+      array.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the number of bytes encoded into <paramref name="bytes" />. </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This
+      method is overridden by types derived from <see cref="T:System.Text.Encoding" />
+      to perform the encoding.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="bytes" /> does not contain sufficient space to store the encoded characters.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="s " />is <see langword="null" />. </para>
+          <para>-or- </para>
+          <para>
+            <paramref name="bytes " />is <see langword="null" />. </para>
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="charIndex" /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="charCount " /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="byteIndex " /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>(<paramref name="s" />.Length - <paramref name="charIndex" />) &lt; <paramref name="charCount" />.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="byteIndex" /> &gt;= <paramref name="bytes" />.Length.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCharCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetCharCount(class System.Byte[] bytes)" />
+      <MemberSignature Language="C#" Value="public virtual int GetCharCount (byte[] bytes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The <see cref="T:System.Byte" /> array to decode. </param>
+        <summary>
+          <para> Determines the exact number of characters that will
+      be produced by decoding the specified <see cref="T:System.Byte" /> array. </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing the number of characters produced by decoding
+<paramref name="bytes" />.
+   </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This
+      method is overridden by types derived from <see cref="T:System.Text.Encoding" /> to return the appropriate number of bytes for
+      the particular encoding.</block>
+          </para>
+          <block subset="none" type="usage">
+            <para>Use <see cref="M:System.Text.Encoding.GetCharCount(System.Byte[])" /> to determine the exact number
+      of characters that will be produced from converting a given byte array. An
+      appropriately sized buffer for that conversion can then be allocated. </para>
+            <para>Alternatively, use <see cref="M:System.Text.Encoding.GetMaxCharCount(System.Int32)" /> to determine the maximum number of 
+   characters that will be produced for
+   a given number of bytes, regardless of the actual byte values. A buffer of that
+   size can then be reused for multiple conversions. </para>
+            <para>
+              <see cref="M:System.Text.Encoding.GetCharCount(System.Byte[])" /> generally uses less memory and <see cref="M:System.Text.Encoding.GetMaxCharCount(System.Int32)" /> generally executes faster.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="bytes" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCharCount">
+      <MemberSignature Language="C#" Value="public virtual int GetCharCount (byte* bytes, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte*" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetCharCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetCharCount(class System.Byte[] bytes, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public abstract int GetCharCount (byte[] bytes, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The <see cref="T:System.Byte" /> array to decode. </param>
+        <param name="index">The first index in <paramref name="bytes" /> to decode. </param>
+        <param name="count">The number of bytes to decode. </param>
+        <summary>
+          <para>Determines the exact number of characters that will be produced by decoding
+      the specified range of the specified <see cref="T:System.Byte" /> array. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the number of characters the next call to <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> will produce if presented with the 
+   specified range of <paramref name="bytes" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This
+   method is overridden by types derived from <see cref="T:System.Text.Encoding" /> to return the appropriate number of bytes for
+   the particular encoding.</block>
+          </para>
+          <block subset="none" type="usage">
+            <para> Use <see cref="M:System.Text.Encoding.GetCharCount(System.Byte[])" /> to determine the exact number
+   of characters that will be produced from converting a given range of bytes. An
+   appropriately sized buffer for that conversion can
+   then be
+   allocated.
+   </para>
+            <para> Alternatively, use <see cref="M:System.Text.Encoding.GetMaxCharCount(System.Int32)" /> to determine the maximum number of 
+characters that will be produced for
+a given number of bytes, regardless of the actual byte values. A buffer of that size
+can then be reused
+for multiple
+conversions.</para>
+            <para>
+              <see cref="M:System.Text.Encoding.GetCharCount(System.Byte[])" /> generally uses less memory and <see cref="M:System.Text.Encoding.GetMaxCharCount(System.Int32)" />
+generally executes
+faster.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="bytes" /> is <see langword="null" />. </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index " />and <paramref name="count " />do not specify a valid range in <paramref name="bytes" /> (i.e. (<paramref name="index" /> + <paramref name="count" />) &gt; <paramref name="bytes" />.Length).</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetChars">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Char[] GetChars(class System.Byte[] bytes)" />
+      <MemberSignature Language="C#" Value="public virtual char[] GetChars (byte[] bytes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The <see cref="T:System.Byte" /> array to decode. </param>
+        <summary>
+          <para> Decodes a <see cref="T:System.Byte" /> array.
+ </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Char" /> array produced by
+ decoding <paramref name="bytes" />
+ 
+ .</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="bytes" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetChars">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Char[] GetChars(class System.Byte[] bytes, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual char[] GetChars (byte[] bytes, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The <see cref="T:System.Byte" /> array to decode. </param>
+        <param name="index">A <see cref="T:System.Int32" /> containing the first index of <paramref name="bytes " /> to decode. </param>
+        <param name="count">A <see cref="T:System.Int32" /> containing the number of bytes to decode. </param>
+        <summary>
+          <para> Decodes the specified range of the
+      specified <see cref="T:System.Byte" /> array.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Char" /> array containing the
+   decoded representation of the range in <paramref name="bytes " />between <paramref name="index " />to
+<paramref name="index " />+ <paramref name="count" />
+.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="bytes " />is <see langword="null" /> . </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index " />and <paramref name="count " />do not denote a valid range in the byte array. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetChars">
+      <MemberSignature Language="C#" Value="public virtual int GetChars (byte* bytes, int byteCount, char* chars, int charCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte*" />
+        <Parameter Name="byteCount" Type="System.Int32" />
+        <Parameter Name="chars" Type="System.Char*" />
+        <Parameter Name="charCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">To be added.</param>
+        <param name="byteCount">To be added.</param>
+        <param name="chars">To be added.</param>
+        <param name="charCount">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetChars">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetChars(class System.Byte[] bytes, int32 byteIndex, int32 byteCount, class System.Char[] chars, int32 charIndex)" />
+      <MemberSignature Language="C#" Value="public abstract int GetChars (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="byteIndex" Type="System.Int32" />
+        <Parameter Name="byteCount" Type="System.Int32" />
+        <Parameter Name="chars" Type="System.Char[]" />
+        <Parameter Name="charIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The <see cref="T:System.Byte" /> array to decode. </param>
+        <param name="byteIndex">A <see cref="T:System.Int32" /> containing the first index of <paramref name="bytes" /> to decode. </param>
+        <param name="byteCount">A <see cref="T:System.Int32" /> containing the number of bytes to decode. </param>
+        <param name="chars">The <see cref="T:System.Char" /> array to decode into. </param>
+        <param name="charIndex">A <see cref="T:System.Int32" /> containing the first index of <paramref name="chars" /> to decode into. </param>
+        <summary>
+          <para>Decodes the specified range of the specified <see cref="T:System.Byte" /> array into the specified range of the specified <see cref="T:System.Char" /> array. </para>
+        </summary>
+        <returns>
+          <para> The number of characters stored in <paramref name="chars" />.
+   </para>
+        </returns>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This method requires the caller to provide the destination
+         buffer and ensure that the buffer is large enough to hold the entire result of
+         the conversion.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides">This
+      method is overridden by types derived from <see cref="T:System.Text.Encoding" /> to perform the particular decoding.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">When using this method directly on a <see cref="T:System.Text.Encoding" /> object or on an associated <see cref="T:System.Text.Decoder" /> or <see cref="T:System.Text.Encoder" />, use
+<see cref="M:System.Text.Encoding.GetCharCount(System.Byte[])" /> or <see cref="M:System.Text.Encoding.GetMaxCharCount(System.Int32)" /> to allocate destination 
+   buffers.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="chars" /> does not contain sufficient space to store the decoded characters.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="bytes " />is <see langword="null" /> . </para>
+          <para>-or- </para>
+          <para>
+            <paramref name="chars " />is <see langword="null" /> . </para>
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="byteIndex" /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="byteCount " /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="charIndex " /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="byteIndex" /> and <paramref name="byteCount" /> do not specify a valid range in <paramref name="bytes" /> (i.e. (<paramref name="byteIndex " />+ <paramref name="byteCount " /> ) &gt; <paramref name="bytes" />.Length). </para>
+          <para>-or- </para>
+          <para>
+            <paramref name="charIndex" /> &gt; <paramref name="chars" />.Length.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDecoder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Text.Decoder GetDecoder()" />
+      <MemberSignature Language="C#" Value="public virtual System.Text.Decoder GetDecoder ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Decoder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a <see cref="T:System.Text.Decoder" /> for the current instance.
+   </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Text.Decoder" /> for
+   the current
+   instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default implementation returns a <see cref="T:System.Text.Decoder" /> that
+   forwards calls made to the <see cref="M:System.Text.Encoding.GetCharCount(System.Byte[])" /> and <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" /> methods to the corresponding methods of the
+   current instance.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Encoding that requires
+   state to be maintained between successive conversions should override this
+   method and return an instance of an appropriate <see cref="T:System.Text.Decoder" /> implementation.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">
+   
+   Unlike the <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" /> methods, a <see cref="T:System.Text.Decoder" /> can convert partial
+   sequences of bytes into partial sequences of characters by maintaining the
+   appropriate state between the conversions.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEncoder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Text.Encoder GetEncoder()" />
+      <MemberSignature Language="C#" Value="public virtual System.Text.Encoder GetEncoder ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a <see cref="T:System.Text.Encoder" />
+for the current instance.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Text.Encoder" /> for
+   the current
+   encoding.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default implementation returns a <see cref="T:System.Text.Encoder" /> that 
+forwards calls made to the <see cref="M:System.Text.Encoding.GetByteCount(System.Char[])" /> and <see cref="M:System.Text.Encoding.GetBytes(System.Char[])" /> methods to the
+corresponding methods of the
+current instance.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Types derived from <see cref="T:System.Text.Encoding" /> override this method to
+return an instance of an appropriate <see cref="T:System.Text.Encoder" /> .</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">
+   
+   Unlike the <see cref="M:System.Text.Encoding.GetBytes(System.Char[])" /> method, a <see cref="T:System.Text.Encoder" /> can convert partial
+   sequences of characters into partial sequences of bytes by maintaining the
+   appropriate state between the conversions.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEncoding">
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding GetEncoding (int codepage);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="codepage" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="codepage">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEncoding">
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding GetEncoding (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEncoding">
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding GetEncoding (int codepage, System.Text.EncoderFallback encoderFallback, System.Text.DecoderFallback decoderFallback);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="codepage" Type="System.Int32" />
+        <Parameter Name="encoderFallback" Type="System.Text.EncoderFallback" />
+        <Parameter Name="decoderFallback" Type="System.Text.DecoderFallback" />
+      </Parameters>
+      <Docs>
+        <param name="codepage">To be added.</param>
+        <param name="encoderFallback">To be added.</param>
+        <param name="decoderFallback">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEncoding">
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding GetEncoding (string name, System.Text.EncoderFallback encoderFallback, System.Text.DecoderFallback decoderFallback);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="encoderFallback" Type="System.Text.EncoderFallback" />
+        <Parameter Name="decoderFallback" Type="System.Text.DecoderFallback" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="encoderFallback">To be added.</param>
+        <param name="decoderFallback">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEncodings">
+      <MemberSignature Language="C#" Value="public static System.Text.EncodingInfo[] GetEncodings ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.EncodingInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
+        </returns>
+        <remarks>
+          <para>The algorithm used to
+      generate the hash code is unspecified.</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Object.GetHashCode" qualify="true" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMaxByteCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetMaxByteCount(int32 charCount)" />
+      <MemberSignature Language="C#" Value="public abstract int GetMaxByteCount (int charCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="charCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="charCount">A <see cref="T:System.Int32" /> containing the number of characters to encode. </param>
+        <summary>
+          <para> Returns the maximum number of bytes required to encode the specified number of characters, regardless of
+      the actual character values.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing the maximum number of bytes required to encode
+<paramref name="charCount" />
+characters.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">
+      As described above.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This
+      method is overridden by types derived from <see cref="T:System.Text.Encoding" /> to return the appropriate number of bytes for
+      the particular encoding.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">
+              <see cref="M:System.Text.Encoding.GetMaxByteCount(System.Int32)" /> can be used to determine the
+      minimum buffer size for byte arrays passed to the <see cref="M:System.Text.Encoding.GetBytes(System.Char[])" /> of the
+      current encoding. Using this minimum buffer size ensures that no buffer overflow
+      exceptions occur.
+   </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMaxCharCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetMaxCharCount(int32 byteCount)" />
+      <MemberSignature Language="C#" Value="public abstract int GetMaxCharCount (int byteCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="byteCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="byteCount">A <see cref="T:System.Int32" /> containing the number of bytes to decode. </param>
+        <summary>
+          <para> Returns the maximum number of characters produced by decoding the specified number of bytes,
+      regardless of the actual byte values.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing the maximum number of characters that would be produced
+   by decoding <paramref name="byteCount" />
+   bytes.
+   </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This
+      method is overridden by types derived from <see cref="T:System.Text.Encoding" /> to return the appropriate number of bytes for
+      the particular encoding.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">
+              <see cref="M:System.Text.Encoding.GetMaxCharCount(System.Int32)" /> can be used to determine the minimum
+      buffer size for byte arrays passed to the <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" /> of the current encoding.
+      Using this minimum buffer size ensures that no buffer overflow exceptions will
+      occur.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetPreamble">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetPreamble()" />
+      <MemberSignature Language="C#" Value="public virtual byte[] GetPreamble ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns the bytes used at the beginning of a <see cref="T:System.IO.Stream" /> to determine
+   which <see cref="T:System.Text.Encoding" />
+   the stream was created with. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Byte" />
+array that identifies the encoding used on a stream. </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">The preamble can be the Unicode
+      byte order mark (U+FEFF written in the appropriate encoding) or any other type
+      of identifying marks. This method can return an empty array.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default
+      implementation returns an empty <see cref="T:System.Byte" />
+      array.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this 
+      method to return a <see cref="T:System.Byte" />
+      array containing the preamble appropriate for the
+      type derived from <see cref="T:System.Text.Encoding" />
+      .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string GetString(class System.Byte[] bytes)" />
+      <MemberSignature Language="C#" Value="public virtual string GetString (byte[] bytes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The <see cref="T:System.Byte" /> array to decode. </param>
+        <summary>
+          <para> Decodes the specified <see cref="T:System.Byte" /> array.
+   </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing the decoded representation of <paramref name="bytes" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This method is overridden by
+      particular character encodings.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="bytes" /> is <see langword="null" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string GetString(class System.Byte[] bytes, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual string GetString (byte[] bytes, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The <see cref="T:System.Byte" /> array to decode. </param>
+        <param name="index">A <see cref="T:System.Int32" /> containing the starting index of <paramref name="bytes" /> to decode. </param>
+        <param name="count">A <see cref="T:System.Int32" /> containing the number of bytes to decode. </param>
+        <summary>
+          <para>Decodes the specified range of the specified <see cref="T:System.Byte" /> array. </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing the decoded representation of the range
+   of <paramref name="bytes" /> from <paramref name="index" /> to <paramref name="index" /> + <paramref name="count" />.
+   </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">This method is overridden by
+      particular character encodings.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="bytes " /> is <see langword="null" />. </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index " />and <paramref name="count " />do not denote a valid range in <paramref name="bytes" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HeaderName">
+      <MemberSignature Language="C#" Value="public virtual string HeaderName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsAlwaysNormalized">
+      <MemberSignature Language="C#" Value="public bool IsAlwaysNormalized ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IsAlwaysNormalized">
+      <MemberSignature Language="C#" Value="public virtual bool IsAlwaysNormalized (System.Text.NormalizationForm form);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="form" Type="System.Text.NormalizationForm" />
+      </Parameters>
+      <Docs>
+        <param name="form">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IsBrowserDisplay">
+      <MemberSignature Language="C#" Value="public virtual bool IsBrowserDisplay { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsBrowserSave">
+      <MemberSignature Language="C#" Value="public virtual bool IsBrowserSave { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsMailNewsDisplay">
+      <MemberSignature Language="C#" Value="public virtual bool IsMailNewsDisplay { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsMailNewsSave">
+      <MemberSignature Language="C#" Value="public virtual bool IsMailNewsSave { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSingleByte">
+      <MemberSignature Language="C#" Value="public virtual bool IsSingleByte { get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unicode">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding Unicode { public hidebysig static specialname class System.Text.Encoding get_Unicode() }" />
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding Unicode { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets an encoding for the Unicode format in little-endian
+      byte order.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Text.Encoding" /> for the Unicode format in little-endian byte
+   order. </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>Unicode characters can be stored in two different byte orders, big-endian and little-endian. On little-endian platforms such as those
+         implemented on Intel processors, it is generally more efficient to
+         store Unicode characters in little-endian byte order. However, many other
+         platforms can store Unicode characters in big-endian byte order. Unicode files
+         can be distinguished by the presence of the byte order mark (U+FEFF), which will
+         be written as either 0xfe 0xff or 0xff 0xfe. </para>
+            <para> This encoding automatically detects a byte order mark and, if
+         necessary, switches byte orders.
+         </para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UTF32">
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding UTF32 { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UTF7">
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding UTF7 { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UTF8">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding UTF8 { public hidebysig static specialname class System.Text.Encoding get_UTF8() }" />
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding UTF8 { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets an encoding for the UTF-8 format.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Text.Encoding" /> for the UTF-8 format.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>For detailed information regarding UTF-8 encoding, see <see cref="T:System.Text.UTF8Encoding" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WebName">
+      <MemberSignature Language="C#" Value="public virtual string WebName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The name of the encoding, in a web-standard form (IANA).</summary>
+        <value>The name of the encoding in web form.</value>
+        <remarks>This is the IANA-compliant name for this encoding.   It is used when working with the HTTP protocol.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WindowsCodePage">
+      <MemberSignature Language="C#" Value="public virtual int WindowsCodePage { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

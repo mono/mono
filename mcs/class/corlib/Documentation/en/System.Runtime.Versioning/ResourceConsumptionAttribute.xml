@@ -1,0 +1,92 @@
+<Type Name="ResourceConsumptionAttribute" FullName="System.Runtime.Versioning.ResourceConsumptionAttribute">
+  <TypeSignature Language="C#" Value="public sealed class ResourceConsumptionAttribute : Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.Conditional("RESOURCE_ANNOTATION_WORK")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ResourceConsumptionAttribute (System.Runtime.Versioning.ResourceScope resourceScope);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="resourceScope" Type="System.Runtime.Versioning.ResourceScope" />
+      </Parameters>
+      <Docs>
+        <param name="resourceScope">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ResourceConsumptionAttribute (System.Runtime.Versioning.ResourceScope resourceScope, System.Runtime.Versioning.ResourceScope consumptionScope);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="resourceScope" Type="System.Runtime.Versioning.ResourceScope" />
+        <Parameter Name="consumptionScope" Type="System.Runtime.Versioning.ResourceScope" />
+      </Parameters>
+      <Docs>
+        <param name="resourceScope">To be added.</param>
+        <param name="consumptionScope">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConsumptionScope">
+      <MemberSignature Language="C#" Value="public System.Runtime.Versioning.ResourceScope ConsumptionScope { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResourceScope">
+      <MemberSignature Language="C#" Value="public System.Runtime.Versioning.ResourceScope ResourceScope { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

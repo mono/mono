@@ -1,0 +1,217 @@
+<Type Name="ICollection&lt;T&gt;" FullName="System.Collections.Generic.ICollection&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public interface ICollection&lt;T&gt; : System.Collections.Generic.IEnumerable&lt;T&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;T&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>
+      <para>Defines size and copying methods for all generic collections.</para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">
+          <para>This interface is the base interface for classes in the <see cref="N:System.Collections.Generic" /> namespace.</para>
+          <para>This interface extends <see cref="T:System.Collections.Generic.IEnumerable&lt;T&gt;" />; <see cref="T:System.Collections.Generic.IDictionary&lt;T,U&gt;" /> and <see cref="T:System.Collections.Generic.IList&lt;T&gt;" /> are more specialized interfaces that extend <see cref="T:System.Collections.Generic.ICollection&lt;T&gt;" />.</para>
+          <para>Some collections that limit access to their elements, like the <see cref="T:System.Collections.Generic.Queue&lt;T&gt;" />class and the <see cref="T:System.Collections.Generic.Stack&lt;T&gt;" /> class, directly implement the <see cref="T:System.Collections.Generic.ICollection&lt;T&gt;" /> interface.</para>
+        </block>
+      </para>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (T item);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="item">The item to add to the current collection.</param>
+        <summary>
+          <para>Adds an item to the current collection.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <exception cref="System.NotSupportedException">The current collection is read-only.</exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Removes all items from the current collection.</para>
+        </summary>
+        <remarks>
+          <para>
+            <see cref="P:System.Collections.Generic.ICollection&lt;T&gt;.Count" /> is set to zero.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="System.NotSupportedException">The current collection is read-only.</exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="C#" Value="public bool Contains (T item);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="item">The object to locate in the current collection.</param>
+        <summary>
+          <para>Determines whether the current collection contains a specific value.</para>
+        </summary>
+        <returns>
+          <see langword="true" />, if item is found in the current collection; otherwise, <see langword="false" />.</returns>
+        <remarks>
+          <para>Implementations of this interface can vary in how they determine equality of objects; for example, some types use the default comparer, while others allow the user to specify the comparer to be used.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (T[] array, int arrayIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="T[]" />
+        <Parameter Name="arrayIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">A one-dimensional, zero-based <see cref="T:System.Array" /> that is the destination of the elements copied from the current instance.</param>
+        <param name="arrayIndex">To be added.</param>
+        <summary>
+          <para>Copies the elements of the current collection to a <see cref="T:System.Array" />, starting at the specified index.</para>
+        </summary>
+        <remarks>
+          <para>This operation overwrites the current contents of the array.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> &lt; 0.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="array" /> has more than one dimension.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is greater than or equal to <paramref name="array" />.Length.</para>
+          <para>-or-</para>
+          <para> The sum of <paramref name="index" /> and the <see cref="P:System.Collections.ICollection.Count" /> of the current instance is greater than <paramref name="array" />.Length.</para>
+          <para>-or-</para>
+          <para>Type <see langword="T" /> is not assignable to the element type of the destination array.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para> Gets the number of elements contained in the current
+      instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> that indicates the number of elements contained in the current
+   instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Indicates whether the current collection is read-only.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" />, if the current collection is read-only; otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>A collection that is read-only does not allow the addition, removal, or modification of elements after the collection is created.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public bool Remove (T item);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="item">The item to remove from the current collection.</param>
+        <summary>
+          <para>Removes the first occurrence of an item from the current collection.</para>
+        </summary>
+        <returns>
+          <see langword="true" />, if <paramref name="item" /> was removed from the current collection; <see langword="false" /> if <paramref name="item" /> was not found in the current collection.</returns>
+        <remarks>
+          <para>If <paramref name="item" /> was found, but cannot be removed for some reason, some unspecified exception is thrown.</para>
+          <para>Implementations of this interface can vary in how they determine equality of objects; for example, some types use the default comparer, while others allow the user to specify the comparer to be used.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="System.NotSupportedException">The current collection is read-only.</exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

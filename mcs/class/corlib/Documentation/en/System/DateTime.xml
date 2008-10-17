@@ -1,0 +1,3348 @@
+<Type Name="DateTime" FullName="System.DateTime" FullNameSP="System_DateTime" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable DateTime extends System.ValueType implements System.IComparable, System.IFormattable" />
+  <TypeSignature Language="C#" Value="public struct DateTime : IComparable, IComparable&lt;DateTime&gt;, IConvertible, IEquatable&lt;DateTime&gt;, IFormattable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IComparable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IComparable&lt;System.DateTime&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IConvertible</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.DateTime&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IFormattable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Represents an instant in time, expressed
+      as a date and time of day.</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.DateTime" /> value
+   type represents dates and times with values ranging from 00:00:00, 1/1/0001 (Common Era)
+   to 23:59:59 PM, 12/31/9999.</para>
+      <block subset="none" type="note">
+        <para>Time values are measured in 100-nanosecond units,
+   <paramref name="ticks" />, and a particular date is the number of ticks since 12:00
+      Midnight, January 1, 1 in the Gregorian
+      calendar. For example, a ticks value of 31241376000000000L represents the date, Friday, January
+      01, 0100 12:00:00 AM.</para>
+        <para>Time values can be added to, or subtracted from, an
+      instance of <see cref="T:System.DateTime" />. Time values can be negative or positive, and expressed
+      in units such as ticks, seconds, or instances of <see cref="T:System.TimeSpan" />. Methods and properties in this value
+      type take into account details such as leap years and the number of
+      days in a month.</para>
+        <para> 12:00:00 AM is Midnight.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int64 ticks)" />
+      <MemberSignature Language="C#" Value="public DateTime (long ticks);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="ticks" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="ticks">A <see cref="T:System.Int64" />containing the date and time expressed in 100-nanosecond units.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.DateTime" /> structure with
+   the date and time expressed in 100-nanosecond units.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The date and time represented by <paramref name="ticks" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DateTime (long ticks, DateTimeKind kind);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="ticks" Type="System.Int64" />
+        <Parameter Name="kind" Type="System.DateTimeKind" />
+      </Parameters>
+      <Docs>
+        <param name="ticks">To be added.</param>
+        <param name="kind">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 year, int32 month, int32 day)" />
+      <MemberSignature Language="C#" Value="public DateTime (int year, int month, int day);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+        <Parameter Name="month" Type="System.Int32" />
+        <Parameter Name="day" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="year">A <see cref="T:System.Int32" /> containing the year (1 through 9999).</param>
+        <param name="month">A <see cref="T:System.Int32" /> containing the month (1 through 12).</param>
+        <param name="day">A <see cref="T:System.Int32" /> containing the day (1 through the number of days in <paramref name="month" />).</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.DateTime" /> structure with a specified year, month, and day.</para>
+        </summary>
+        <remarks>
+          <para> The time of day for the resulting <see cref="T:System.DateTime" /> is midnight (00:00:00).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="year" /> is less than 1 or greater than 9999</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="month" /> is less than 1 or greater than 12</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="day" /> is less than 1 or greater than the number of days in <paramref name="month" /></para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DateTime (int year, int month, int day, System.Globalization.Calendar calendar);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+        <Parameter Name="month" Type="System.Int32" />
+        <Parameter Name="day" Type="System.Int32" />
+        <Parameter Name="calendar" Type="System.Globalization.Calendar" />
+      </Parameters>
+      <Docs>
+        <param name="year">To be added.</param>
+        <param name="month">To be added.</param>
+        <param name="day">To be added.</param>
+        <param name="calendar">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 year, int32 month, int32 day, int32 hour, int32 minute, int32 second)" />
+      <MemberSignature Language="C#" Value="public DateTime (int year, int month, int day, int hour, int minute, int second);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+        <Parameter Name="month" Type="System.Int32" />
+        <Parameter Name="day" Type="System.Int32" />
+        <Parameter Name="hour" Type="System.Int32" />
+        <Parameter Name="minute" Type="System.Int32" />
+        <Parameter Name="second" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="year">A <see cref="T:System.Int32" /> containing the year (1 through 9999).</param>
+        <param name="month">A <see cref="T:System.Int32" /> containing the month (1 through 12).</param>
+        <param name="day">A <see cref="T:System.Int32" /> containing the day (1 through the number of days in <paramref name="month" />).</param>
+        <param name="hour">A <see cref="T:System.Int32" /> containing the hours (0 through 23).</param>
+        <param name="minute">A <see cref="T:System.Int32" /> containing the minutes (0 through 59).</param>
+        <param name="second">A <see cref="T:System.Int32" /> containing the seconds (0 through 59).</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.DateTime" /> structure with a
+   specified year, month, day, hour, minute, and second.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="year " />is less than 1 or greater than 9999 <para>-or-</para><para><paramref name="month" /> is less than 1 or greater than 12</para><para>-or-</para><para><paramref name="day" /> is less than 1 or greater than the number of days in <paramref name="month" /></para><para>-or-</para><para><paramref name="hour " /> is less than 0 or greater than 23</para><para>-or-</para><para><paramref name="minute " /> is less than 0 or greater than 59</para><para>-or-</para><para><paramref name="second " /> is less than 0 or greater than 59</para></exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DateTime (int year, int month, int day, int hour, int minute, int second, DateTimeKind kind);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+        <Parameter Name="month" Type="System.Int32" />
+        <Parameter Name="day" Type="System.Int32" />
+        <Parameter Name="hour" Type="System.Int32" />
+        <Parameter Name="minute" Type="System.Int32" />
+        <Parameter Name="second" Type="System.Int32" />
+        <Parameter Name="kind" Type="System.DateTimeKind" />
+      </Parameters>
+      <Docs>
+        <param name="year">To be added.</param>
+        <param name="month">To be added.</param>
+        <param name="day">To be added.</param>
+        <param name="hour">To be added.</param>
+        <param name="minute">To be added.</param>
+        <param name="second">To be added.</param>
+        <param name="kind">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DateTime (int year, int month, int day, int hour, int minute, int second, System.Globalization.Calendar calendar);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+        <Parameter Name="month" Type="System.Int32" />
+        <Parameter Name="day" Type="System.Int32" />
+        <Parameter Name="hour" Type="System.Int32" />
+        <Parameter Name="minute" Type="System.Int32" />
+        <Parameter Name="second" Type="System.Int32" />
+        <Parameter Name="calendar" Type="System.Globalization.Calendar" />
+      </Parameters>
+      <Docs>
+        <param name="year">To be added.</param>
+        <param name="month">To be added.</param>
+        <param name="day">To be added.</param>
+        <param name="hour">To be added.</param>
+        <param name="minute">To be added.</param>
+        <param name="second">To be added.</param>
+        <param name="calendar">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 year, int32 month, int32 day, int32 hour, int32 minute, int32 second, int32 millisecond)" />
+      <MemberSignature Language="C#" Value="public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+        <Parameter Name="month" Type="System.Int32" />
+        <Parameter Name="day" Type="System.Int32" />
+        <Parameter Name="hour" Type="System.Int32" />
+        <Parameter Name="minute" Type="System.Int32" />
+        <Parameter Name="second" Type="System.Int32" />
+        <Parameter Name="millisecond" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="year">A <see cref="T:System.Int32" /> containing the year (1 through 9999).</param>
+        <param name="month">A <see cref="T:System.Int32" /> containing the month (1 through 12).</param>
+        <param name="day">A <see cref="T:System.Int32" /> containing the day (1 through the number of days in <paramref name="month" />).</param>
+        <param name="hour">A <see cref="T:System.Int32" /> containing the hours (0 through 23).</param>
+        <param name="minute">A <see cref="T:System.Int32" /> containing the minutes (0 through 59).</param>
+        <param name="second">A <see cref="T:System.Int32" /> containing the seconds (0 through 59).</param>
+        <param name="millisecond">A <see cref="T:System.Int32" /> containing the milliseconds.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.DateTime" /> structure with a
+   specified year, month, day, hour, minute, second, and millisecond.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="year " />is less than 1 or greater than 9999 <para>-or-</para><para><paramref name="month" /> is less than 1 or greater than 12</para><para>-or-</para><para><paramref name="day" /> is less than 1 or greater than the number of days in <paramref name="month" /></para><para>-or-</para><para><paramref name="hour " />is less than 0 or greater than 23</para><para>-or-</para><para><paramref name="minute " />is less than 0 or greater than 59</para><para>-or-</para><para><paramref name="second " />is less than 0 or greater than 59</para><para> -or-</para><para><paramref name="millisecond" /> is less than 0 or greater than 999</para></exception>
+        <exception cref="T:System.ArgumentException">The specified parameters evaluate to a date less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, DateTimeKind kind);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+        <Parameter Name="month" Type="System.Int32" />
+        <Parameter Name="day" Type="System.Int32" />
+        <Parameter Name="hour" Type="System.Int32" />
+        <Parameter Name="minute" Type="System.Int32" />
+        <Parameter Name="second" Type="System.Int32" />
+        <Parameter Name="millisecond" Type="System.Int32" />
+        <Parameter Name="kind" Type="System.DateTimeKind" />
+      </Parameters>
+      <Docs>
+        <param name="year">To be added.</param>
+        <param name="month">To be added.</param>
+        <param name="day">To be added.</param>
+        <param name="hour">To be added.</param>
+        <param name="minute">To be added.</param>
+        <param name="second">To be added.</param>
+        <param name="millisecond">To be added.</param>
+        <param name="kind">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, System.Globalization.Calendar calendar);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+        <Parameter Name="month" Type="System.Int32" />
+        <Parameter Name="day" Type="System.Int32" />
+        <Parameter Name="hour" Type="System.Int32" />
+        <Parameter Name="minute" Type="System.Int32" />
+        <Parameter Name="second" Type="System.Int32" />
+        <Parameter Name="millisecond" Type="System.Int32" />
+        <Parameter Name="calendar" Type="System.Globalization.Calendar" />
+      </Parameters>
+      <Docs>
+        <param name="year">To be added.</param>
+        <param name="month">To be added.</param>
+        <param name="day">To be added.</param>
+        <param name="hour">To be added.</param>
+        <param name="minute">To be added.</param>
+        <param name="second">To be added.</param>
+        <param name="millisecond">To be added.</param>
+        <param name="calendar">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, System.Globalization.Calendar calendar, DateTimeKind kind);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+        <Parameter Name="month" Type="System.Int32" />
+        <Parameter Name="day" Type="System.Int32" />
+        <Parameter Name="hour" Type="System.Int32" />
+        <Parameter Name="minute" Type="System.Int32" />
+        <Parameter Name="second" Type="System.Int32" />
+        <Parameter Name="millisecond" Type="System.Int32" />
+        <Parameter Name="calendar" Type="System.Globalization.Calendar" />
+        <Parameter Name="kind" Type="System.DateTimeKind" />
+      </Parameters>
+      <Docs>
+        <param name="year">To be added.</param>
+        <param name="month">To be added.</param>
+        <param name="day">To be added.</param>
+        <param name="hour">To be added.</param>
+        <param name="minute">To be added.</param>
+        <param name="second">To be added.</param>
+        <param name="millisecond">To be added.</param>
+        <param name="calendar">To be added.</param>
+        <param name="kind">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime Add(valuetype System.TimeSpan value)" />
+      <MemberSignature Language="C#" Value="public DateTime Add (TimeSpan value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.TimeSpan" /> instance.</param>
+        <summary>
+          <para> Adds the value of a specified <see cref="T:System.TimeSpan" /> instance to the current instance.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.DateTime" /> instance set to the sum of the date and time of the
+   current instance and the time interval represented by <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>A specified <see cref="T:System.TimeSpan" /> is added to the current instance of
+<see cref="T:System.DateTime" />, and 
+   the result is returned as a new <see cref="T:System.DateTime" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddDays">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime AddDays(float64 value)" />
+      <MemberSignature Language="C#" Value="public DateTime AddDays (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> containing the number of whole and fractional days. For example, 4.5 is equivalent to 4 days, 12 hours, 0 minutes, 0 seconds, 0 milliseconds, and 0 ticks. <paramref name="value" /> can be negative or positive.</param>
+        <summary>
+          <para>Adds a specified number of days to the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
+   by the current instance and the number of days represented by
+<paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <paramref name="value" /> is rounded to the nearest tick.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddHours">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime AddHours(float64 value)" />
+      <MemberSignature Language="C#" Value="public DateTime AddHours (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> containing the number of whole and fractional hours. For example, 4.5 is equivalent to 4 hours, 30 minutes, 0 seconds, 0 milliseconds, and 0 ticks. <paramref name="value" /> can be negative or positive.</param>
+        <summary>
+          <para>Adds a specified number of hours to the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
+   by the current instance and the number of hours represented by
+<paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <paramref name="value" /> is rounded to the nearest tick.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddMilliseconds">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime AddMilliseconds(float64 value)" />
+      <MemberSignature Language="C#" Value="public DateTime AddMilliseconds (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> containing the number of whole and fractional milliseconds. For example, 4.5 is equivalent to 4 milliseconds and 5,000 ticks. <paramref name="value" /> can be negative or positive.</param>
+        <summary>
+          <para>Adds a specified number of milliseconds to the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
+   by the current instance and the number of milliseconds represented by
+<paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <paramref name="value" /> is rounded to the nearest tick.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddMinutes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime AddMinutes(float64 value)" />
+      <MemberSignature Language="C#" Value="public DateTime AddMinutes (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> containing the number of whole and fractional minutes. For example, 4.5 is equivalent to 4 minutes, 30 seconds, 0 milliseconds, and 0 ticks. <paramref name="value" /> can be negative or positive.</param>
+        <summary>
+          <para>Adds a specified number of minutes to the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
+   by the current instance and the number of minutes represented by
+<paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <paramref name="value" /> is rounded to the nearest tick.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddMonths">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime AddMonths(int32 months)" />
+      <MemberSignature Language="C#" Value="public DateTime AddMonths (int months);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="months" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="months">A <see cref="T:System.Int32" /> containing the number of months. <paramref name="months" /> can be positive or negative, and may be greater than the number of months in a year.</param>
+        <summary>
+          <para>Adds a specified number of months to the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
+   by the current instance and <paramref name="months" />.</para>
+        </returns>
+        <remarks>
+          <para>This method does not change the value of the current <see langword="DateTime" /> instance. Instead, a new <see langword="DateTime" /> instance is returned whose value is the result of this operation.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</para>
+          <para>-or-</para>
+          <para>The <paramref name="months" /> parameter is less than -120,000 or greater than 120,000</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddSeconds">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime AddSeconds(float64 value)" />
+      <MemberSignature Language="C#" Value="public DateTime AddSeconds (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Double" /> containing the number of whole and fractional seconds. For example, 4.5 is equivalent to 4 seconds, 500 milliseconds, and 0 ticks. <paramref name="value" /> can be positive or negative.</param>
+        <summary>
+          <para>Adds a specified number of seconds to the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
+   by the current instance and the number of seconds represented by
+<paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <paramref name=" value" /> is rounded to the nearest tick.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddTicks">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime AddTicks(int64 value)" />
+      <MemberSignature Language="C#" Value="public DateTime AddTicks (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int64" /> containing the number of 100-nanosecond ticks. <paramref name="value" /> can be positive or negative.</param>
+        <summary>
+          <para> Adds a specified number of ticks to the value of the current
+      instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
+   by the current instance and the time represented by <paramref name="value" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddYears">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime AddYears(int32 value)" />
+      <MemberSignature Language="C#" Value="public DateTime AddYears (int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int32" /> containing the number of years. <paramref name="value" /> can be positive or negative.</param>
+        <summary>
+          <para>Adds a specified number of years to the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
+   by the current instance and the number of years represented by
+<paramref name="value" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(valuetype System.DateTime t1, valuetype System.DateTime t2)" />
+      <MemberSignature Language="C#" Value="public static int Compare (DateTime t1, DateTime t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.DateTime" />
+        <Parameter Name="t2" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.DateTime" />.</param>
+        <param name="t2">The second <see cref="T:System.DateTime" />.</param>
+        <summary>
+          <para>Returns the sort order of the two specified instances of
+   <see cref="T:System.DateTime" />
+   .</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the two specified instances of <see cref="T:System.DateTime" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Value Type</term>
+              <description>Condition</description>
+            </listheader>
+            <item>
+              <term> Any
+         negative
+         number</term>
+              <description>
+                <paramref name="t1" /> &lt; <paramref name="t2" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>
+                <paramref name="t1" /> == <paramref name="t2" />.</description>
+            </item>
+            <item>
+              <term> Any
+      positive
+      number</term>
+              <description>
+                <paramref name="t1" /> &gt;
+<paramref name="t2" />
+.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="C#" Value="public int CompareTo (DateTime value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+          <para>Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.DateTime" />
+      .</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> A negative number</term>
+              <description>Current instance &lt; <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>Current instance == <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>Current instance &gt; <paramref name="value" />.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IComparable&lt;System.DateTime&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object value)" />
+      <MemberSignature Language="C#" Value="public int CompareTo (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para>Returns the sort order of the current instance compared
+      to the specified <see cref="T:System.Object" />
+      .</para>
+        </summary>
+        <returns>
+          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <list type="table">
+            <listheader>
+              <term>Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> A negative number</term>
+              <description>Current instance &lt; <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>Current instance == <paramref name="value" />.</description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>Current instance &gt; <paramref name="value" />, or value is a
+   null reference.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>Any instance of <see cref="T:System.DateTime" />, regardless of its value, is considered
+   greater than a null reference.</para>
+          <para>
+            <block subset="none" type="note"> This method is
+   implemented to support the <see cref="T:System.IComparable" /> interface.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="value" /> is not a <see cref="T:System.DateTime" /> and is not a null reference.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Date">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.DateTime Date { public hidebysig specialname instance valuetype System.DateTime get_Date() }" />
+      <MemberSignature Language="C#" Value="public DateTime Date { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the date component of the current instance.</para>
+        </summary>
+        <value>
+          <para>A new <see cref="T:System.DateTime" /> instance with the same date as the current instance,
+ and the time value set to midnight (00:00:00).</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Day">
+      <MemberSignature Language="ILASM" Value=".property int32 Day { public hidebysig specialname instance int32 get_Day() }" />
+      <MemberSignature Language="C#" Value="public int Day { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the day of the month represented by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> between 1 and 31 set to the day of the month component of the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DayOfWeek">
+      <MemberSignature Language="C#" Value="public DayOfWeek DayOfWeek { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DayOfWeek</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets the day of the week represented by the current instance.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DayOfYear">
+      <MemberSignature Language="ILASM" Value=".property int32 DayOfYear { public hidebysig specialname instance int32 get_DayOfYear() }" />
+      <MemberSignature Language="C#" Value="public int DayOfYear { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the day of the year represented by the current instance.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Int32" /> between 1 and 366 set to the day of the year component of the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DaysInMonth">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 DaysInMonth(int32 year, int32 month)" />
+      <MemberSignature Language="C#" Value="public static int DaysInMonth (int year, int month);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+        <Parameter Name="month" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="year">A <see cref="T:System.Int32" /> containing the year.</param>
+        <param name="month">The month (a <see cref="T:System.Int32" /> between 1 and 12).</param>
+        <summary>
+          <para> Returns the number of days in a specified month
+      of a specified year.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> set to the number of days in the specified month for the
+   specified year. If the specified month is February, the return value is 28 or 29
+   depending upon whether the specified year is a leap year.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="month" /> is less than 1 or greater than 12.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (DateTime value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Boolean" /> indicating whether the current instance is equal to the specified
+   DateTime.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="value" /> is equal to the current instance; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IEquatable&lt;System.DateTime&gt;" /> interface.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object value)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Object" /> to compare with the current instance.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Boolean" /> indicating whether the current instance is equal to a specified
+   object.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="value" /> is a specified
+<see cref="T:System.DateTime" /> 
+instance is equal to the current instance; otherwise,
+<see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> This method overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Equals(valuetype System.DateTime t1, valuetype System.DateTime t2)" />
+      <MemberSignature Language="C#" Value="public static bool Equals (DateTime t1, DateTime t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.DateTime" />
+        <Parameter Name="t2" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="t1">The first <see cref="T:System.DateTime" />.</param>
+        <param name="t2">The second <see cref="T:System.DateTime" />.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Boolean" /> indicating whether two specified
+   instances of <see cref="T:System.DateTime" /> are equal.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the two
+<see cref="T:System.DateTime" /> values are
+   equal; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromBinary">
+      <MemberSignature Language="C#" Value="public static DateTime FromBinary (long dateData);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dateData" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="dateData">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromFileTime">
+      <MemberSignature Language="C#" Value="public static DateTime FromFileTime (long fileTime);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileTime" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="fileTime">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromFileTimeUtc">
+      <MemberSignature Language="C#" Value="public static DateTime FromFileTimeUtc (long fileTime);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileTime" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="fileTime">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromOADate">
+      <MemberSignature Language="C#" Value="public static DateTime FromOADate (double d);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDateTimeFormats">
+      <MemberSignature Language="C#" Value="public string[] GetDateTimeFormats ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDateTimeFormats">
+      <MemberSignature Language="C#" Value="public string[] GetDateTimeFormats (char format);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="format">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDateTimeFormats">
+      <MemberSignature Language="C#" Value="public string[] GetDateTimeFormats (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDateTimeFormats">
+      <MemberSignature Language="C#" Value="public string[] GetDateTimeFormats (char format, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.Char" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="format">To be added.</param>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the hash code
+   for this instance.</para>
+        </returns>
+        <remarks>
+          <para> The algorithm used to
+      generate the hash code is unspecified.</para>
+          <para>
+            <block subset="none" type="note"> This method
+      overrides <see cref="M:System.Object.GetHashCode" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTypeCode">
+      <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TypeCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Hour">
+      <MemberSignature Language="ILASM" Value=".property int32 Hour { public hidebysig specialname instance int32 get_Hour() }" />
+      <MemberSignature Language="C#" Value="public int Hour { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the hour represented by the current instance.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Int32" /> between 0 and 23 set to the hour component
+   of the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsDaylightSavingTime">
+      <MemberSignature Language="C#" Value="public bool IsDaylightSavingTime ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsLeapYear">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLeapYear(int32 year)" />
+      <MemberSignature Language="C#" Value="public static bool IsLeapYear (int year);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="year" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="year">A <see cref="T:System.Int32" /> representing the year. <paramref name="year" /> can be positive or negative.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Boolean" /> value indicating whether a specified year is a leap year.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the specified year is a leap
+   year; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Kind">
+      <MemberSignature Language="C#" Value="public DateTimeKind Kind { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTimeKind</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxValue">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.DateTime MaxValue" />
+      <MemberSignature Language="C#" Value="public static readonly DateTime MaxValue = 12/31/9999 11:59:59 PM;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>A constant representing the largest possible value of
+   <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>The value of this field is equivalent to
+      23:59:59.9999999, 12/31/9999, exactly one 100-nanosecond tick before 00:00:00,
+      01/01/10000.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>12/31/9999 11:59:59 PM</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Millisecond">
+      <MemberSignature Language="ILASM" Value=".property int32 Millisecond { public hidebysig specialname instance int32 get_Millisecond() }" />
+      <MemberSignature Language="C#" Value="public int Millisecond { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the milliseconds component of the date represented by the current instance.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Int32" /> between 0 and 999 set to the milliseconds component of
+   the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Minute">
+      <MemberSignature Language="ILASM" Value=".property int32 Minute { public hidebysig specialname instance int32 get_Minute() }" />
+      <MemberSignature Language="C#" Value="public int Minute { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the minute component of the date represented by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> between 0 and 59 set to the minute component of the
+   current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MinValue">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.DateTime MinValue" />
+      <MemberSignature Language="C#" Value="public static readonly DateTime MinValue = 1/1/0001 12:00:00 AM;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>A constant representing the smallest possible value of
+   <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>The value of this field is equivalent to 00:00:00.0000000, 1/1/0001. </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>1/1/0001 12:00:00 AM</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Month">
+      <MemberSignature Language="ILASM" Value=".property int32 Month { public hidebysig specialname instance int32 get_Month() }" />
+      <MemberSignature Language="C#" Value="public int Month { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the month component of the date represented by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> between 1 and 12 set to the month component of the
+   current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Now">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.DateTime Now { public hidebysig static specialname valuetype System.DateTime get_Now() }" />
+      <MemberSignature Language="C#" Value="public static DateTime Now { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.DateTime" /> representing the current local date and time.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>
+          <para>The resolution of this property depends on the system timer.</para>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Addition">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.DateTime op_Addition(valuetype System.DateTime d, valuetype System.TimeSpan t)" />
+      <MemberSignature Language="C#" Value="public static DateTime op_Addition (DateTime d, TimeSpan t);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.DateTime" />
+        <Parameter Name="t" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.DateTime" /> value. </param>
+        <param name="t">A <see cref="T:System.TimeSpan" /> value. </param>
+        <summary>
+          <para> Adds a specified <see cref="T:System.TimeSpan" /> value to a specified <see cref="T:System.DateTime" />
+value.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> instance that is the sum of the values of <paramref name="d" /> and
+<paramref name="t" /> .</para>
+        </returns>
+        <remarks>
+          <para>The returned value is equivalent to
+   <see langword="DateTime" />( <paramref name="d" />.Ticks + <paramref name="t" />.Ticks ).</para>
+        </remarks>
+        <altmember cref="M:System.DateTime.Add(System.TimeSpan)" />
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting date and time is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Equality(valuetype System.DateTime d1, valuetype System.DateTime d2)" />
+      <MemberSignature Language="C#" Value="public static bool op_Equality (DateTime d1, DateTime d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.DateTime" />
+        <Parameter Name="d2" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="d1">The first <see cref="T:System.DateTime" /> to compare. </param>
+        <param name="d2">The second <see cref="T:System.DateTime" /> to compare. </param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value indicating whether the two
+   specified instances of <see cref="T:System.DateTime" />
+   are equal.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if
+<paramref name="d1" />.Ticks value is equal to the 
+<paramref name="d2" />.Ticks value; otherwise, 
+<see langword="false" />. </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <altmember cref="M:System.DateTime.Equals(System.Object)" />
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_GreaterThan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThan(valuetype System.DateTime t1, valuetype System.DateTime t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_GreaterThan (DateTime t1, DateTime t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.DateTime" />
+        <Parameter Name="t2" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="t1">
+          <para>A <see cref="T:System.DateTime" />. </para>
+        </param>
+        <param name="t2">A <see cref="T:System.DateTime" />.</param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value indicating whether one specified
+<see cref="T:System.DateTime" /> is 
+   greater than another specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if
+<paramref name="t1" />.Ticks value is greater than the 
+<paramref name="t2" />.Ticks value; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <altmember cref="M:System.DateTime.Compare(System.DateTime,System.DateTime)" />
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_GreaterThanOrEqual">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThanOrEqual(valuetype System.DateTime t1, valuetype System.DateTime t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_GreaterThanOrEqual (DateTime t1, DateTime t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.DateTime" />
+        <Parameter Name="t2" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="t1">
+          <para>A <see cref="T:System.DateTime" />. </para>
+        </param>
+        <param name="t2">A <see cref="T:System.DateTime" />.</param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value indicating whether one specified
+<see cref="T:System.DateTime" /> is 
+   greater than or equal to another specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if
+<paramref name="t1" />.Ticks value is greater than or equal to 
+<paramref name="t2" />.Ticks value; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Inequality(valuetype System.DateTime d1, valuetype System.DateTime d2)" />
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (DateTime d1, DateTime d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.DateTime" />
+        <Parameter Name="d2" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="d1">A <see cref="T:System.DateTime" />. </param>
+        <param name="d2">A <see cref="T:System.DateTime" />. </param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value indicating whether two specified
+   instances of <see cref="T:System.DateTime" />
+   are not equal.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if
+<paramref name="d1" />.Ticks value is not equal to 
+<paramref name="d2" />.Ticks value; otherwise, <see langword="false" />.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_LessThan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThan(valuetype System.DateTime t1, valuetype System.DateTime t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_LessThan (DateTime t1, DateTime t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.DateTime" />
+        <Parameter Name="t2" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="t1">
+          <para>A <see cref="T:System.DateTime" />. </para>
+        </param>
+        <param name="t2">A <see cref="T:System.DateTime" />.</param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value indicating whether one specified
+<see cref="T:System.DateTime" /> is less 
+   than another specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if
+<paramref name="t1" />.Ticks value is less than 
+<paramref name="t2" />.Ticks value; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <altmember cref="M:System.DateTime.Compare(System.DateTime,System.DateTime)" />
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_LessThanOrEqual">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThanOrEqual(valuetype System.DateTime t1, valuetype System.DateTime t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_LessThanOrEqual (DateTime t1, DateTime t2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t1" Type="System.DateTime" />
+        <Parameter Name="t2" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="t1">
+          <para>A <see cref="T:System.DateTime" />. </para>
+        </param>
+        <param name="t2">A <see cref="T:System.DateTime" />.</param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value indicating whether one specified
+<see cref="T:System.DateTime" /> is less 
+   than or equal to another specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if
+<paramref name="t1" />.Ticks value is less than or equal to 
+<paramref name="t2" />.Ticks value; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <altmember cref="M:System.DateTime.Compare(System.DateTime,System.DateTime)" />
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Subtraction">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_Subtraction(valuetype System.DateTime d1, valuetype System.DateTime d2)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan op_Subtraction (DateTime d1, DateTime d2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d1" Type="System.DateTime" />
+        <Parameter Name="d2" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="d1">A <see cref="T:System.DateTime" /> (the minuend). </param>
+        <param name="d2">A <see cref="T:System.DateTime" /> (the subtrahend). </param>
+        <summary>
+          <para> Subtracts a specified <see cref="T:System.DateTime" /> from another specified <see cref="T:System.DateTime" />
+value, producing a time interval.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> that is the time interval between <paramref name="d1" /> and
+<paramref name="d2" />.</para>
+        </returns>
+        <remarks>
+          <para>The returned value is equivalent to <see cref="T:System.TimeSpan" />( <paramref name="d1" />.Ticks -
+<paramref name="d2" />.Ticks).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting date and time is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Subtraction">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.DateTime op_Subtraction(valuetype System.DateTime d, valuetype System.TimeSpan t)" />
+      <MemberSignature Language="C#" Value="public static DateTime op_Subtraction (DateTime d, TimeSpan t);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="d" Type="System.DateTime" />
+        <Parameter Name="t" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="d">A <see cref="T:System.DateTime" />. </param>
+        <param name="t">A <see cref="T:System.TimeSpan" />. </param>
+        <summary>
+          <para> Subtracts a specified <see cref="T:System.TimeSpan" /> from a specified <see cref="T:System.DateTime" />
+.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.DateTime" /> whose value is the value of <paramref name="d" /> minus the value
+   of <paramref name="t" />
+   .</para>
+        </returns>
+        <remarks>
+          <para> The returned value is equivalent to <see cref="T:System.DateTime" />( <paramref name="d" />.Ticks -
+<paramref name="t" />.Ticks 
+   ).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting date and time is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime Parse(string s)" />
+      <MemberSignature Language="C#" Value="public static DateTime Parse (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing a value to convert. The string is interpreted using the <see cref="F:System.Globalization.DateTimeStyles.None" /> style.</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.DateTime" /> value.</para>
+        </summary>
+        <returns>
+          <para> The <see cref="T:System.DateTime" /> value obtained from <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.DateTime.Parse(System.String)" /> is equivalent to <see cref="M:System.DateTime.Parse(System.String)" />(<paramref name="s" />, <see langword="null" />, <see cref="F:System.Globalization.DateTimeStyles.None" />
+).</para>
+          <para>The string <paramref name="s" /> is parsed using the formatting
+information in a <see cref="T:System.Globalization.DateTimeFormatInfo" />
+initialized for the current
+system culture.</para>
+          <para>In order for the string to be successfully parsed, it is
+   required to represent a date and time value in one of the standard <see cref="T:System.DateTime" /> patterns
+   described in <see cref="T:System.Globalization.DateTimeFormatInfo" />
+   .</para>
+          <para>If the string contains only a time, and no date, then the
+   current date (<see cref="P:System.DateTime.Now" /> ) is
+   used. If the string contains only a date and no time, this method assumes
+   12 a.m.</para>
+          <para> Any leading, trailing, and inner white space characters
+   are ignored.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> does not contain a valid string representation of a time or date and time.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime Parse(string s, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public static DateTime Parse (string s, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the <see cref="F:System.Globalization.DateTimeStyles.None" /> style.</param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.DateTimeFormatInfo" /> object containing culture-specific format information about <paramref name="s" /> .</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.DateTime" />
+value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.DateTime" /> value obtained from <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.DateTime.Parse(System.String)" /> is equivalent to <see cref="M:System.DateTime.Parse(System.String)" />(<paramref name="s" />, <paramref name="provider" />, <see cref="F:System.Globalization.DateTimeStyles.None" />
+).</para>
+          <para>The string <paramref name="s" /> is parsed using the
+culture-specific formatting information from the <see cref="T:System.Globalization.DateTimeFormatInfo" />
+instance supplied by <paramref name="provider" />. If <paramref name="provider" />
+is <see langword="null" /> or a <see cref="T:System.Globalization.DateTimeFormatInfo" /> cannot be
+obtained from <paramref name="provider" />, the formatting information for the current
+system culture is used.</para>
+          <para>In order for the string to be successfully parsed, it is
+   required to represent a date and time value in one of the standard <see cref="T:System.DateTime" /> patterns
+   described in <see cref="T:System.Globalization.DateTimeFormatInfo" />
+   .</para>
+          <para>If the string contains only a time, and no date, then the
+   current date (<see cref="P:System.DateTime.Now" /> ) is used. If the string
+   contains only a date and no time, this method assumes 12 a.m.</para>
+          <para> Any leading, trailing, and inner white space characters are ignored.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> does not contain a valid string representation of a time or date and time.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime Parse(string s, class System.IFormatProvider provider, valuetype System.Globalization.DateTimeStyles styles)" />
+      <MemberSignature Language="C#" Value="public static DateTime Parse (string s, IFormatProvider provider, System.Globalization.DateTimeStyles styles);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+        <Parameter Name="styles" Type="System.Globalization.DateTimeStyles" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing the value to convert.</param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.DateTimeFormatInfo" /> object containing culture-specific format information about <paramref name="s" /> .</param>
+        <param name="styles">One or more <see cref="T:System.Globalization.DateTimeStyles" /> values that specify the style of <paramref name="s" />. Specify multiple values for <paramref name="styles" /> using the bitwise OR operator.</param>
+        <param name="styles">To be added.</param>
+        <summary>
+          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.DateTime" />
+value.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.DateTime" /> value obtained from <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>The string <paramref name="s" /> is parsed using the culture-specific 
+   formatting information from the <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance supplied by
+<paramref name="provider" />. If <paramref name="provider" /> is <see langword="null" /> or a <see cref="T:System.Globalization.DateTimeFormatInfo" /> cannot be obtained from <paramref name="provider" />, 
+   the formatting information for the current system culture is
+   used.</para>
+          <para>In order for the string to be successfully parsed, it is
+   required to represent a date and time value in one of the standard <see cref="T:System.DateTime" /> patterns
+   described in <see cref="T:System.Globalization.DateTimeFormatInfo" />
+   .</para>
+          <para>If the string contains only a time, and no date, and if
+   the <paramref name="styles" /> parameter is set to <see cref="F:System.Globalization.DateTimeStyles.NoCurrentDateDefault" /> the Gregorian year 1, month 1, day 1 are used. In all
+   other cases where a date is not specified, the current date (<see cref="P:System.DateTime.Now" />
+   ) is used.</para>
+          <para> If the string
+   contains only a date and no time, this method assumes 12 a.m.</para>
+          <para>For all settings of the <paramref name="styles" />
+parameter, any leading, trailing, and inner white space characters are ignored.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> does not contain a valid string representation of a time or date and time.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ParseExact">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime ParseExact(string s, string format, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public static DateTime ParseExact (string s, string format, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing a date and time to convert. The format of the string is required to match the specified format exactly. </param>
+        <param name="format">A <see cref="T:System.String" /> containing the expected format of <paramref name="s" />. <block subset="none" type="note">For a list of valid <paramref name="format" /> values, see <see cref="T:System.Globalization.DateTimeFormatInfo" /> .</block></param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.DateTimeFormatInfo" /> object containing culture-specific format information about <paramref name="s" /> . </param>
+        <summary>
+          <para>Converts the specified <see cref="T:System.String" /> representation of a date and time to
+   its <see cref="T:System.DateTime" />
+   equivalent using a specified format and <see cref="T:System.IFormatProvider" />
+   .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> equivalent to the date and time contained in
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> constructs a <see cref="T:System.DateTime" /> from the string <paramref name="s" />. The string is required to specify a date and,
+   optionally, a time in the specified format.</para>
+          <para>The string <paramref name="s" /> is parsed using the culture-specific
+formatting information from the <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance supplied by
+<paramref name="provider" />. If <paramref name="provider" /> is <see langword="null" /> or a <see cref="T:System.Globalization.DateTimeFormatInfo" /> cannot be obtained from <paramref name="provider" />, the formatting information 
+for the current system culture is
+used.</para>
+          <para>If the <paramref name="s " /> string contains only a time, and no date, then
+the current date (<see cref="P:System.DateTime.Now" /> ) is used. If the string contains only a date and
+no time, this method assumes 12
+a.m.</para>
+          <para>Leading, trailing, and inner white space characters are
+   not
+   allowed.</para>
+          <para>
+            <block subset="none" type="note"> For information on formatting system-supplied
+   data types, see the <see cref="T:System.IFormattable" />
+   interface.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />or <paramref name="format" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <para>
+            <paramref name="s" /> or <paramref name="format" /> is an empty string.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="s" /> does not contain a date and time that were recognized as the pattern specified in <paramref name="format" /> . </para>
+        </exception>
+        <example>
+          <para>This example demonstrates the <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> method.</para>
+          <code lang="C#">using System;
+using System.Globalization;
+
+public class DateTimeTest {
+ public static void Main() {
+     DateTimeFormatInfo dtfi = new DateTimeFormatInfo();
+
+     DateTime dt = DateTime.ParseExact("January 22", dtfi.MonthDayPattern, null);
+     Console.WriteLine(dt);
+ }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+            <c>1/22/2001
+      12:00:00 AM</c>
+          </para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ParseExact">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime ParseExact(string s, string format, class System.IFormatProvider provider, valuetype System.Globalization.DateTimeStyles style)" />
+      <MemberSignature Language="C#" Value="public static DateTime ParseExact (string s, string format, IFormatProvider provider, System.Globalization.DateTimeStyles style);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+        <Parameter Name="style" Type="System.Globalization.DateTimeStyles" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing a date and time to convert. The format of the string is required to match the specified format exactly. </param>
+        <param name="format">A <see cref="T:System.String" /> containing the expected format of <paramref name="s" />. <block subset="none" type="note">For a list of valid <paramref name="format" /> values, see <see cref="T:System.Globalization.DateTimeFormatInfo" /> .</block></param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.DateTimeFormatInfo" /> object containing culture-specific format information about <paramref name="s" /> . </param>
+        <param name="style">
+          <para>One or more <see cref="T:System.Globalization.DateTimeStyles" /> values that specify the style of <paramref name="s" />. Specify multiple values for <paramref name="styles" /> using the bitwise OR operator.</para>
+        </param>
+        <summary>
+          <para>Converts the <see cref="T:System.String" /> representation of a date and time to
+   its <see cref="T:System.DateTime" />
+   equivalent using a specified style, the expected format, and
+   culture-specific format information.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> equivalent to the date and time contained in
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> constructs a <see cref="T:System.DateTime" /> from the string <paramref name="s" />. The string is required to specify a date and,
+   optionally, a time in the provided format.</para>
+          <para>The string <paramref name="s" /> is parsed using the culture-specific
+formatting information from the <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance supplied by
+<paramref name="provider" />. If <paramref name="provider" /> is <see langword="null" /> or a <see cref="T:System.Globalization.DateTimeFormatInfo" /> cannot be obtained from <paramref name="provider" />, the formatting information 
+for the current system culture is used.</para>
+          <para>If the <paramref name="s" /> string contains only a time, and no date, and if
+the <paramref name="styles" /> parameter is set to <see cref="F:System.Globalization.DateTimeStyles.NoCurrentDateDefault" /> the Gregorian year 1, month 1, day 1 are used, and no
+leading, trailing, or inner white space characters are allowed. In all other
+cases where a date is not specified, the current date (<see cref="P:System.DateTime.Now" />) is
+used.</para>
+          <para>If the <paramref name="s" /> string contains only a date and no time,
+this method assumes 12 a.m.</para>
+          <para>
+            <block subset="none" type="note"> For information
+   on formatting system-supplied data types, see the <see cref="T:System.IFormattable" />
+   interface.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />or <paramref name="format" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <para>
+            <paramref name="s" /> or format is an empty string.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="s" /> does not contain a date and time that were recognized as one of the patterns specified in <paramref name="format." /></para>
+        </exception>
+        <example>
+          <para>This example demonstrates the <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> method.</para>
+          <code lang="C#">using System;
+using System.Globalization;
+
+public class DateTimeTest {
+ public static void Main() {
+     DateTimeFormatInfo dtfi = new DateTimeFormatInfo();
+
+     DateTime dt = DateTime.ParseExact(" January 22 ", dtfi.MonthDayPattern, null, DateTimeStyles.AllowWhiteSpaces);
+     Console.WriteLine(dt);
+ }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>1/22/2001
+         12:00:00 AM</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ParseExact">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime ParseExact(string s, class System.String[] formats, class System.IFormatProvider provider, valuetype System.Globalization.DateTimeStyles style)" />
+      <MemberSignature Language="C#" Value="public static DateTime ParseExact (string s, string[] formats, IFormatProvider provider, System.Globalization.DateTimeStyles style);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="formats" Type="System.String[]" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+        <Parameter Name="style" Type="System.Globalization.DateTimeStyles" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" /> containing one or more dates and times to convert. The format of the string is required to match the specified format exactly. </param>
+        <param name="formats">A <see cref="T:System.String" /> array containing the expected formats of <paramref name="s. " /><block subset="none" type="note">For a list of valid <paramref name="format" /> values, see <see cref="T:System.Globalization.DateTimeFormatInfo" /> .</block></param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.DateTimeFormatInfo" /> object containing culture-specific format information about <paramref name="s" /> . </param>
+        <param name="style">
+          <para>One or more <see cref="T:System.Globalization.DateTimeStyles" /> values that specify the style of <paramref name="s" />. Specify multiple values for <paramref name="styles" /> using the bitwise OR operator.</para>
+        </param>
+        <summary>
+          <para>Converts the <see cref="T:System.String" /> representation of a date and time to
+   its <see cref="T:System.DateTime" />
+   equivalent using a specified style, an array
+   of expected formats, and culture-specific format information.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> equivalent to the date and time contained in
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" />
+constructs a <see cref="T:System.DateTime" /> from the <paramref name="s" /><see cref="T:System.String" />. The string is
+required to specify a date and, optionally, a
+time in the provided format.</para>
+          <para>The string <paramref name="s" /> is parsed using the culture-specific
+formatting information from the <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance supplied by
+<paramref name="provider" />. If <paramref name="provider" /> is <see langword="null" /> or a <see cref="T:System.Globalization.DateTimeFormatInfo" /> cannot be obtained from <paramref name="provider" />, 
+the formatting information for the
+current system culture is used.</para>
+          <para>If the <paramref name="s" /> string contains only a time, and no date, and if the <paramref name="styles" />
+parameter is set to <see cref="F:System.Globalization.DateTimeStyles.NoCurrentDateDefault" /> the Gregorian year 1, month 1, day 1 are
+used, and no leading, trailing, or inner white space characters are allowed. In
+all other cases where a date is not specified, the current date (<see cref="P:System.DateTime.Now" />) is
+used.</para>
+          <para>If the <paramref name="s" /> string contains only a date and no time, this method assumes
+12 a.m.</para>
+          <para>
+            <block subset="none" type="note"> For information
+   on formatting system-supplied data types, see the <see cref="T:System.IFormattable" />
+   interface.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s " />or <paramref name="formats" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <para>
+            <paramref name="s" /> or <paramref name="format" /> is an empty string.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="s" /> does not contain a date and time that were recognized as the pattern specified in <paramref name="format" /></para>
+        </exception>
+        <example>
+          <para>This example demonstrates the <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> method.</para>
+          <code lang="C#">using System;
+using System.Globalization;
+
+public class DateTimeTest {
+ public static void Main() {
+     DateTimeFormatInfo dtfi = new DateTimeFormatInfo();
+     string [] patterns = {dtfi.LongTimePattern, dtfi.ShortTimePattern}; 
+
+     DateTime dt = DateTime.ParseExact("10:11:12", patterns, null, DateTimeStyles.NoCurrentDateDefault);
+     Console.WriteLine(dt);
+ }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+            <c>1/1/0001
+      10:11:12 AM</c>
+          </para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Second">
+      <MemberSignature Language="ILASM" Value=".property int32 Second { public hidebysig specialname instance int32 get_Second() }" />
+      <MemberSignature Language="C#" Value="public int Second { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the seconds component of the date represented by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> between 0 and 59 set to the seconds component of the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SpecifyKind">
+      <MemberSignature Language="C#" Value="public static DateTime SpecifyKind (DateTime value, DateTimeKind kind);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.DateTime" />
+        <Parameter Name="kind" Type="System.DateTimeKind" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="kind">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Subtract">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Subtract(valuetype System.DateTime value)" />
+      <MemberSignature Language="C#" Value="public TimeSpan Subtract (DateTime value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="value">An instance of <see cref="T:System.DateTime" />.</param>
+        <summary>
+          <para> Subtracts a specified date and
+      time from the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.TimeSpan" /> interval equal to
+   the date and time represented by the current instance minus the date and time
+   represented by the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Subtract">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime Subtract(valuetype System.TimeSpan value)" />
+      <MemberSignature Language="C#" Value="public DateTime Subtract (TimeSpan value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="value">An instance of <see cref="T:System.TimeSpan" />.</param>
+        <summary>
+          <para>Subtracts a specified <see cref="T:System.TimeSpan" /> from the current instance.</para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.DateTime" /> instance equal to the date and time represented by the
+   current instance minus the time interval of the specified <see cref="T:System.TimeSpan" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The resulting date and time is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToBoolean">
+      <MemberSignature Language="C#" Value="bool IConvertible.ToBoolean (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToByte">
+      <MemberSignature Language="C#" Value="byte IConvertible.ToByte (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToChar">
+      <MemberSignature Language="C#" Value="char IConvertible.ToChar (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDateTime">
+      <MemberSignature Language="C#" Value="DateTime IConvertible.ToDateTime (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDecimal">
+      <MemberSignature Language="C#" Value="decimal IConvertible.ToDecimal (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDouble">
+      <MemberSignature Language="C#" Value="double IConvertible.ToDouble (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt16">
+      <MemberSignature Language="C#" Value="short IConvertible.ToInt16 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt32">
+      <MemberSignature Language="C#" Value="int IConvertible.ToInt32 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt64">
+      <MemberSignature Language="C#" Value="long IConvertible.ToInt64 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSByte">
+      <MemberSignature Language="C#" Value="sbyte IConvertible.ToSByte (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSingle">
+      <MemberSignature Language="C#" Value="float IConvertible.ToSingle (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToType">
+      <MemberSignature Language="C#" Value="object IConvertible.ToType (Type type, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt16">
+      <MemberSignature Language="C#" Value="ushort IConvertible.ToUInt16 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt32">
+      <MemberSignature Language="C#" Value="uint IConvertible.ToUInt32 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt64">
+      <MemberSignature Language="C#" Value="ulong IConvertible.ToUInt64 (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ticks">
+      <MemberSignature Language="ILASM" Value=".property int64 Ticks { public hidebysig specialname instance int64 get_Ticks() }" />
+      <MemberSignature Language="C#" Value="public long Ticks { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the number of 100-nanosecond ticks that represent the date and time of the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int64" /> set to the number of ticks that represent the date and
+   time of the current instance.</para>
+        </value>
+        <remarks>
+          <para> The value of this property is the number of
+      100-nanosecond intervals that have elapsed since 00:00:00, 1/1/0001. The value
+      of the property is between <see cref="F:System.DateTime.MinValue" /> and <see cref="F:System.DateTime.MaxValue" />
+      
+      .</para>
+          <para> This
+      property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TimeOfDay">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.TimeSpan TimeOfDay { public hidebysig specialname instance valuetype System.TimeSpan get_TimeOfDay() }" />
+      <MemberSignature Language="C#" Value="public TimeSpan TimeOfDay { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the
+      time of day of the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.TimeSpan" /> instance set to the
+   time component of the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToBinary">
+      <MemberSignature Language="C#" Value="public long ToBinary ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Today">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.DateTime Today { public hidebysig static specialname valuetype System.DateTime get_Today() }" />
+      <MemberSignature Language="C#" Value="public static DateTime Today { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets
+ the current date.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.DateTime" /> instance set to the date of the current instance, with the time set to
+ 00:00:00.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToFileTime">
+      <MemberSignature Language="C#" Value="public long ToFileTime ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToFileTimeUtc">
+      <MemberSignature Language="C#" Value="public long ToFileTimeUtc ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToLocalTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime ToLocalTime()" />
+      <MemberSignature Language="C#" Value="public DateTime ToLocalTime ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Converts the universal time coordinate (UTC) time value in the current instance to local time.
+      </para>
+        </summary>
+        <returns>
+          <para>An instance of <see cref="T:System.DateTime" /> equivalent of the time value in the
+   current instance, adjusted to the local time zone and daylight saving time. If
+   the result is too large or too small to be represented as a <see cref="T:System.DateTime" /> , this
+   method returns a <see cref="T:System.DateTime" /> set to <see cref="F:System.DateTime.MaxValue" /> or <see cref="F:System.DateTime.MinValue" />
+   
+   .</para>
+        </returns>
+        <remarks>
+          <para>This method assumes that the current instance of <see cref="T:System.DateTime" /> holds the
+   UTC time value, and not a local time. Each time it is invoked, this method
+   performs the necessary modifications on the <see cref="T:System.DateTime" /> to derive the local time, whether the
+   current <see cref="T:System.DateTime" /> holds the UTC time or not.</para>
+          <para>The local time zone information is obtained from the operating system.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToLongDateString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToLongDateString()" />
+      <MemberSignature Language="C#" Value="public string ToLongDateString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Converts the date denoted by the current instance to its
+      equivalent long date <see cref="T:System.String" /> representation.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the same value as a <see cref="T:System.String" /> returned by
+<see cref="M:System.DateTime.ToString" /> ("D", 
+<see langword="null" />
+).</para>
+        </returns>
+        <remarks>
+          <para>The value of the current instance is formatted using the 
+      long date format
+      specifier, 'D'.</para>
+          <block subset="none" type="note">
+            <para>This format uses the culture of the current thread. To
+         specify formatting using a different culture, use <see cref="M:System.DateTime.ToString" />
+         .</para>
+            <para>For more information regarding the long date specifier,
+         see <see cref="T:System.Globalization.DateTimeFormatInfo" />
+         .</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToLongTimeString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToLongTimeString()" />
+      <MemberSignature Language="C#" Value="public string ToLongTimeString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Converts the time denoted by the current instance to its
+      equivalent long time <see cref="T:System.String" /> representation.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the same value as a <see cref="T:System.String" /> returned by
+<see cref="M:System.DateTime.ToString" /> ("T", 
+<see langword="null" /> 
+).</para>
+        </returns>
+        <remarks>
+          <para>The value of the current instance is formatted using the 
+      long time format specifier, 'T'.</para>
+          <block subset="none" type="note">
+            <para>This format uses the culture of the current thread. To
+         specify formatting using a different culture, use <see cref="M:System.DateTime.ToString" /> .</para>
+            <para>For more information regarding the long time specifier,
+         see <see cref="T:System.Globalization.DateTimeFormatInfo" /> .</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToOADate">
+      <MemberSignature Language="C#" Value="public double ToOADate ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToShortDateString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToShortDateString()" />
+      <MemberSignature Language="C#" Value="public string ToShortDateString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Converts the date denoted by the current instance to its
+      equivalent short date <see cref="T:System.String" /> representation.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the same value as a <see cref="T:System.String" /> returned by
+<see cref="M:System.DateTime.ToString" /> ("d", 
+<see langword="null" />
+).</para>
+        </returns>
+        <remarks>
+          <para>The value of the current instance is formatted using the 
+      short date format specifier,
+      'd'.</para>
+          <block subset="none" type="note">
+            <para>This format uses the culture of the current thread. To specify formatting
+         using a different culture, use <see cref="M:System.DateTime.ToString" /> .</para>
+            <para>For more information regarding the short date specifier, see <see cref="T:System.Globalization.DateTimeFormatInfo" /> .</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToShortTimeString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToShortTimeString()" />
+      <MemberSignature Language="C#" Value="public string ToShortTimeString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Converts the time denoted by this instance to its
+      equivalent short time <see cref="T:System.String" /> representation.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the same value as a <see cref="T:System.String" /> returned by
+<see cref="M:System.DateTime.ToString" /> ("t", 
+<see langword="null" /> 
+).</para>
+        </returns>
+        <remarks>
+          <para>The value of the current instance is formatted using the 
+      short time format specifier,
+      't'.</para>
+          <block subset="none" type="note">
+            <para>This format uses the culture of the current thread. To specify formatting
+         using a different culture, use <see cref="M:System.DateTime.ToString" /> .</para>
+            <para>For more information regarding the short time specifier, see <see cref="T:System.Globalization.DateTimeFormatInfo" /> .</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
+   the general format specifier, ("G"). The string takes
+   into account the current system culture.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.DateTime.ToString" /> is equivalent to <see cref="M:System.DateTime.ToString" /> ("G", <see langword="null" /> 
+).</para>
+          <block subset="none" type="note">
+            <para>For more information about the general format specifier
+      ("G") see <see cref="T:System.Globalization.DateTimeFormatInfo" />.</para>
+            <para>This method overrides <see cref="M:System.Object.ToString" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.DateTimeFormatInfo" /> containing culture-specific formatting information.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of
+   the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
+   the general format specifier, ("G"). The string takes into account the
+   formatting information in the <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance supplied by
+<paramref name="provider" />.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.DateTime.ToString" /> is equivalent to <see cref="M:System.DateTime.ToString" />
+("<paramref name="G" />", <paramref name="provider" />
+).</para>
+          <para>If <paramref name="provider" /> is
+<see langword="null" /> or the <see cref="T:System.Globalization.DateTimeFormatInfo" />
+cannot be obtained from <paramref name="provider" />, the formatting information for the current system culture
+is
+used.</para>
+          <block subset="none" type="note">
+            <para>The general format specifier ("G") provides the general
+      date pattern including the long time form, equivalent to <see cref="P:System.Globalization.DateTimeFormatInfo.ShortDatePattern" /> combined with <see cref="P:System.Globalization.DateTimeFormatInfo.LongTimePattern" />. For more information on format specifiers, see <see cref="T:System.Globalization.DateTimeFormatInfo" /> . For
+      information on formatting system-supplied data types, see the <see cref="T:System.IFormattable" />
+      interface.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToString(string format)" />
+      <MemberSignature Language="C#" Value="public string ToString (string format);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> that specifies the format of the returned string. <block subset="none" type="note"> For a list of valid values, see <see cref="T:System.Globalization.DateTimeFormatInfo" /> .</block></param>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of
+   the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
+   specified by <paramref name="format" />. The string takes into account the current system
+   culture.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.DateTime.ToString" /> is equivalent to <see cref="M:System.DateTime.ToString" /> (<paramref name="format" /> ,
+<see langword="null" />
+).</para>
+          <para>If <paramref name="format" /> is a null reference, the general
+format specifier "G" is used.</para>
+          <block subset="none" type="note">
+            <para>This method uses the culture information of the current
+      thread.</para>
+            <para> For information on formatting system-supplied data 
+      types, see the <see cref="T:System.IFormattable" /> interface.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.FormatException">
+          <para>The length of the <paramref name="format" /> string is 1, and it is not one of the format specifier characters defined for <see cref="T:System.Globalization.DateTimeFormatInfo" />.</para>
+          <para>-or-</para>
+          <para>The <paramref name="format" /> string does not contain a valid custom format pattern.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(string format, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (string format, IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing a character that specifies the format of the returned string. <block subset="none" type="note">For a list of valid values, see <see cref="T:System.Globalization.DateTimeFormatInfo" /> .</block></param>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance containing culture-specific formatting information.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of
+   the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
+   specified by <paramref name="format" />. The string takes into account the information in
+   the <see cref="T:System.Globalization.DateTimeFormatInfo" /> supplied by <paramref name="provider" />.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="provider" /> is 
+<see langword="null" /> or a <see cref="T:System.Globalization.DateTimeFormatInfo" />
+cannot be obtained from <paramref name="provider" />, the formatting information for the
+current system culture is used.</para>
+          <para>If <paramref name="format" /> is a null reference, the general
+format specifier "G" is used.</para>
+          <block subset="none" type="note">
+            <para>For more information regarding the standard format
+      specifier, see <see cref="T:System.Globalization.DateTimeFormatInfo" />. For
+      information on formatting system-supplied data types, see the <see cref="T:System.IFormattable" />
+      interface.</para>
+            <para>This method is implemented to support the <see cref="T:System.IFormattable" />
+interface.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.FormatException">
+          <para>The length of the <paramref name="format" /> string is 1, and it is not one of the format specifier characters defined for <see cref="T:System.Globalization.DateTimeFormatInfo" />.</para>
+          <para>-or-</para>
+          <para>The <paramref name="format" /> string does not contain a valid custom format pattern.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToUniversalTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.DateTime ToUniversalTime()" />
+      <MemberSignature Language="C#" Value="public DateTime ToUniversalTime ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Converts the current <see cref="T:System.DateTime" /> value to coordinated universal time (UTC). </para>
+        </summary>
+        <returns>
+          <para>The UTC <see cref="T:System.DateTime" /> equivalent of the current <see cref="T:System.DateTime" /> value. If the
+   result is too large or too small to be represented as a <see cref="T:System.DateTime" />, the current
+   function returns a <see cref="T:System.DateTime" /> set to <see cref="F:System.DateTime.MaxValue" /> or <see cref="F:System.DateTime.MinValue" />
+   .</para>
+        </returns>
+        <remarks>
+          <para> This method assumes that the current instance of <see cref="T:System.DateTime" /> holds the
+   local time value, and not a UTC time. Therefore each time it is run, this
+   method performs the necessary modifications on the <see cref="T:System.DateTime" /> to derive the
+   UTC time, whether the current <see cref="T:System.DateTime" /> holds the local time or not.
+   </para>
+          <para> The local time zone information is obtained from the
+   operating system.
+   </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string s, out DateTime result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="result" Type="System.DateTime&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string s, IFormatProvider provider, System.Globalization.DateTimeStyles styles, out DateTime result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+        <Parameter Name="styles" Type="System.Globalization.DateTimeStyles" />
+        <Parameter Name="result" Type="System.DateTime&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="provider">To be added.</param>
+        <param name="styles">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParseExact">
+      <MemberSignature Language="C#" Value="public static bool TryParseExact (string s, string format, IFormatProvider provider, System.Globalization.DateTimeStyles style, out DateTime result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+        <Parameter Name="style" Type="System.Globalization.DateTimeStyles" />
+        <Parameter Name="result" Type="System.DateTime&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="format">To be added.</param>
+        <param name="provider">To be added.</param>
+        <param name="style">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParseExact">
+      <MemberSignature Language="C#" Value="public static bool TryParseExact (string s, string[] formats, IFormatProvider provider, System.Globalization.DateTimeStyles style, out DateTime result);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="formats" Type="System.String[]" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+        <Parameter Name="style" Type="System.Globalization.DateTimeStyles" />
+        <Parameter Name="result" Type="System.DateTime&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="formats">To be added.</param>
+        <param name="provider">To be added.</param>
+        <param name="style">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UtcNow">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.DateTime UtcNow { public hidebysig static specialname valuetype System.DateTime get_UtcNow() }" />
+      <MemberSignature Language="C#" Value="public static DateTime UtcNow { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the current
+      time converted to coordinated
+      universal time (UTC).</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.DateTime" /> instance set to the current date and time in coordinated universal time (UTC). </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Year">
+      <MemberSignature Language="ILASM" Value=".property int32 Year { public hidebysig specialname instance int32 get_Year() }" />
+      <MemberSignature Language="C#" Value="public int Year { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the year component of the date represented by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> between 1 and 9999 set to the year component of the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

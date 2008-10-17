@@ -1,0 +1,44 @@
+<Type Name="IsVolatile" FullName="System.Runtime.CompilerServices.IsVolatile" FullNameSP="System_Runtime_CompilerServices_IsVolatile" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed IsVolatile extends System.Object" />
+  <TypeSignature Language="C#" Value="public static class IsVolatile" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Marks a location in the memory store as volatile.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.Runtime.CompilerServices.IsVolatile" /> is a class used only in custom modifiers of method signatures to indicate that a location in the memory store (see "The Memory Store" in Partition I) is "volatile".</para>
+      <para>When used as a required modifier, any compiler that successfully imports metadata that describes a memory location as "volatile" is required to use <see langword="volatile." /> 
+prefixed instructions to access such locations. Examples of such locations are volatile fields, volatile targets of pointers, and volatile elements of arrays.</para>
+      <block subset="none" type="note">
+        <para>For most languages, it is recommended that the notion of "volatile" be attached to locations using language syntax instead of custom modifiers.</para>
+        <para>The types in 
+   <see langword="System.Runtime.CompilerServices" /> are intended primarily for use by
+      compilers, not application programmers. They allow compilers to easily
+      implement certain language features that are not directly visible to
+      programmers.</para>
+      </block>
+      <para>For more information on custom modifiers, see
+   Partition II of the CLI Specification.</para>
+    </remarks>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,362 @@
+<Type Name="SecurityPermissionFlag" FullName="System.Security.Permissions.SecurityPermissionFlag" FullNameSP="System_Security_Permissions_SecurityPermissionFlag" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable SecurityPermissionFlag extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum SecurityPermissionFlag" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>Specifies a set of security permissions applied to a
+   <see cref="T:System.Security.Permissions.SecurityPermission" /> instance.</para>
+    </summary>
+    <remarks>
+      <para>This enumeration is used by <see cref="T:System.Security.Permissions.SecurityPermission" />.</para>
+      <para>
+        <see cref="T:System.Security.Permissions.SecurityPermissionFlag" /> is
+a bit-field; specify multiple values using the bitwise OR
+operator.</para>
+      <para>For information on security, see Partition
+   II of the CLI Specification.</para>
+      <para>
+        <block subset="none" type="note">Many of these flags are powerful and
+   should only be granted to highly trusted code. </block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AllFlags">
+      <MemberSignature Language="C#" Value="AllFlags" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <MemberValue>AllFlags</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Assertion">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.SecurityPermissionFlag Assertion = 0x1" />
+      <MemberSignature Language="C#" Value="Assertion" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Assertion</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies the ability to assert that all of the callers 
+      of the code granted this permission
+      will pass the check for
+      a specific permission
+      or permission set.</para>
+          <para>The ability to assert a specific permission or permission set allows code to 
+      ensure that its callers do not fail with a security exception for lack of
+      the specific permission or permission set asserted. </para>
+          <para>
+            <block subset="none" type="note">Asserting a permission is often used 
+      when writing library code that accesses protected resources but itself does not
+      expose these resources in any exploitable way to the calling code.
+   </block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BindingRedirects">
+      <MemberSignature Language="C#" Value="BindingRedirects" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <MemberValue>BindingRedirects</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ControlAppDomain">
+      <MemberSignature Language="C#" Value="ControlAppDomain" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <MemberValue>ControlAppDomain</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ControlDomainPolicy">
+      <MemberSignature Language="C#" Value="ControlDomainPolicy" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <MemberValue>ControlDomainPolicy</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ControlEvidence">
+      <MemberSignature Language="C#" Value="ControlEvidence" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <MemberValue>ControlEvidence</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ControlPolicy">
+      <MemberSignature Language="C#" Value="ControlPolicy" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <MemberValue>ControlPolicy</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ControlPrincipal">
+      <MemberSignature Language="C#" Value="ControlPrincipal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <MemberValue>ControlPrincipal</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ControlThread">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.SecurityPermissionFlag ControlThread = 0x10" />
+      <MemberSignature Language="C#" Value="ControlThread" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ControlThread</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies the ability to control thread behavior.
+      The operations protected include <see cref="M:System.Threading.Thread.Abort(System.Object)" />
+      and <see cref="M:System.Threading.Thread.ResetAbort" /> .</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Execution">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.SecurityPermissionFlag Execution = 0x8" />
+      <MemberSignature Language="C#" Value="Execution" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Execution</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies permission for the code to run. Without this
+ permission managed code cannot execute.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Infrastructure">
+      <MemberSignature Language="C#" Value="Infrastructure" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <MemberValue>Infrastructure</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoFlags">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.SecurityPermissionFlag NoFlags = 0x0" />
+      <MemberSignature Language="C#" Value="NoFlags" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NoFlags</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that none of the permissions in this 
+      enumeration are available.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemotingConfiguration">
+      <MemberSignature Language="C#" Value="RemotingConfiguration" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <MemberValue>RemotingConfiguration</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SerializationFormatter">
+      <MemberSignature Language="C#" Value="SerializationFormatter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <MemberValue>SerializationFormatter</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SkipVerification">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.SecurityPermissionFlag SkipVerification = 0x4" />
+      <MemberSignature Language="C#" Value="SkipVerification" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SkipVerification</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies the right to skip the verification checks that
+      ensure type safety and metadata correctness in an assembly. If an assembly has
+      been granted this permission it will not fail with a <see cref="T:System.Security.VerificationException" />
+      even if the assembly contains unverifiable constructs.</para>
+          <para>
+            <block subset="none" type="note">Code that is
+      unverifiable can execute without causing a <see cref="T:System.Security.VerificationException" /> if
+      this permission is granted.</block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnmanagedCode">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.SecurityPermissionFlag UnmanagedCode = 0x2" />
+      <MemberSignature Language="C#" Value="UnmanagedCode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>UnmanagedCode</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies the ability to call unmanaged code.</para>
+          <para>
+            <block subset="none" type="note">
+      
+      Because unmanaged code potentially allows other permissions to be bypassed,
+      this permission should be used with caution. It is used for applications calling native
+      code using PInvoke.</block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

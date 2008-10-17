@@ -1,0 +1,1691 @@
+<Type Name="File" FullName="System.IO.File" FullNameSP="System_IO_File" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed File extends System.Object" />
+  <TypeSignature Language="C#" Value="public static class File" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Provides information and performs operations on
+      files<SPAN>
+      .</SPAN></para>
+    </summary>
+    <remarks>
+      <para>Implementations of this class are required to
+      preserve the case of path strings. Implementations are required to be case
+      sensitive if and only if the platform is case-sensitive. </para>
+      <para>The following table describes the enumerations that are
+      used to customize the behavior of various <see cref="T:System.IO.File" /> methods.</para>
+      <list type="table">
+        <listheader>
+          <term>Enumeration</term>
+          <description>Description</description>
+        </listheader>
+        <item>
+          <term>
+            <see cref="T:System.IO.FileAccess" />
+          </term>
+          <description>Specifies read and write access to a
+         file.</description>
+        </item>
+        <item>
+          <term>
+            <see cref="T:System.IO.FileShare" />
+          </term>
+          <description>Specifies the level of access permitted for a file that is already in
+      use.</description>
+        </item>
+        <item>
+          <term>
+            <see cref="T:System.IO.FileMode" />
+          </term>
+          <description>Specifies whether the contents of an existing file are preserved or
+   overwritten, and whether requests to create an existing file cause an
+   exception.</description>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AppendAllText">
+      <MemberSignature Language="C#" Value="public static void AppendAllText (string path, string contents);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="contents" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="contents">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendAllText">
+      <MemberSignature Language="C#" Value="public static void AppendAllText (string path, string contents, System.Text.Encoding encoding);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="contents" Type="System.String" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="contents">To be added.</param>
+        <param name="encoding">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendText">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.StreamWriter AppendText(string path)" />
+      <MemberSignature Language="C#" Value="public static System.IO.StreamWriter AppendText (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.StreamWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file to append to.</param>
+        <summary>
+          <para> Appends UTF-8 encoded text to an existing file.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.StreamWriter" /> that appends UTF-8 encoded text to the
+   specified file.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="T:System.IO.StreamWriter" /> (<paramref name="path" />, <see langword="true" />
+). If the file specified by <paramref name="path" /> does not exist, it is created. If the file does
+exist, writes to the <see cref="T:System.IO.StreamWriter" /> append
+text to the
+file. Additional threads are permitted to read the file while it is
+open.</para>
+          <para>The <paramref name="path" /> argument is permitted
+to specify relative or absolute path information. Relative path information is
+interpreted as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the implementation-specific maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission"> Requires permission to write to the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <exception cref="T:System.IO.Exception">A general I/O exception occurred, such as trying to access a CD-ROM drive whose tray is open.</exception>
+        <exception cref="T:System.IO.NotSupportedException">
+          <paramref name="path " /> is in an implementation-specific invalid format.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">Access is denied. The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Copy(string sourceFileName, string destFileName)" />
+      <MemberSignature Language="C#" Value="public static void Copy (string sourceFileName, string destFileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sourceFileName" Type="System.String" />
+        <Parameter Name="destFileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="sourceFileName">A <see cref="T:System.String" /> containing the name of the file to copy.</param>
+        <param name="destFileName">A <see cref="T:System.String" /> containing the name of the destination file. Cannot specify a directory or an existing file.</param>
+        <summary>
+          <para>Copies the specified file to a new location.</para>
+        </summary>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.IO.File.Copy(System.String,System.String)" />
+(<paramref name="sourceFileName" />, <paramref name="destFileName" />, <see langword="false" />).</para>
+          <para>The <paramref name="sourceFileName " />and <paramref name="destFileName" /> arguments are permitted to specify
+relative or absolute path information. Relative path information is interpreted
+as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" />.</block></para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <para>
+            <paramref name="destFileName" /> exists.</para>
+          <para>-or-</para>
+          <para> An I/O error occurred.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="sourceFileName " />or <paramref name="destFileName " />is <see langword="null" />. </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="sourceFileName " />or <paramref name="destFileName " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters. </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="sourceFileName " />or <paramref name="destFileName" /> specifies a directory.</para>
+        </exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">Directory information in <paramref name="sourceFileName" /> or <paramref name="destFileName" /> was not found.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="sourceFileName " /> was not found.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length or the absolute path information for <paramref name="sourceFileName" /> or <paramref name="destFileName" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read the source file and write the destination file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Copy(string sourceFileName, string destFileName, bool overwrite)" />
+      <MemberSignature Language="C#" Value="public static void Copy (string sourceFileName, string destFileName, bool overwrite);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sourceFileName" Type="System.String" />
+        <Parameter Name="destFileName" Type="System.String" />
+        <Parameter Name="overwrite" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="sourceFileName">A <see cref="T:System.String" /> containing the name of the file to copy.</param>
+        <param name="destFileName">A <see cref="T:System.String" /> containing the name of the destination file. Cannot specify the name of a directory.</param>
+        <param name="overwrite">A <see cref="T:System.Boolean" /> value. Specify <see langword="true" /> if the destination file can be overwritten; otherwise <see langword="false" />.</param>
+        <summary>
+          <para> Copies the specified file to a new location.</para>
+        </summary>
+        <remarks>
+          <para>The <paramref name="sourceFileName " />and <paramref name="destFileName" /> arguments are
+   permitted to specify relative or absolute path information. Relative path
+   information is interpreted as relative to the current working directory.
+   <block subset="none" type="note">To obtain the current working directory,
+      see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <para>
+            <paramref name="destFileName" /> is read-only (write-protected), or <paramref name="destFileName" /> exists and <paramref name="overwrite" /> is <see langword="false" /> .</para>
+          <para>-or-</para>
+          <para> An I/O error occurred.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="sourceFileName " />or <paramref name="destFileName " />is <see langword="null" />. </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="sourceFileName" /> or <paramref name="destFileName" /> is a zero-length string, contains only white space, or contains one or more invalid characters.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="sourceFileName" /> or <paramref name="destFileName" /> specifies a directory.</para>
+        </exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">Directory information in <paramref name="destFileName" /> or <paramref name="sourceFileName" /> was not found.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="sourceFileName " /> was not found.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length or the absolute path information for <paramref name="sourceFileName" /> or <paramref name="destFileName" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read the source file and write the destination file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Create(string path)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file.</param>
+        <summary>
+          <para> Creates or overwrites the specified file.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.FileStream" /> that provides read/write access to the specified file.</para>
+        </returns>
+        <remarks>
+          <para>If the specified file does not exist, it is created; if it does exist and it is not read-only, the
+   contents are overwritten.</para>
+          <para>The <paramref name="path" />
+argument is permitted to specify relative or absolute path
+information. Relative path information is interpreted as relative to the current
+working directory. <block subset="none" type="note">To obtain the current
+working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred while creating the file.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Create(string path, int32 bufferSize)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path, int bufferSize);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file.</param>
+        <param name="bufferSize">A <see cref="T:System.Int32" /> containing the number of bytes buffered for reads and writes to the file.</param>
+        <summary>
+          <para> Creates or overwrites the specified file.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.FileStream" /> that provides read/write access to the specified file.</para>
+        </returns>
+        <remarks>
+          <para> This method is equivalent to <see cref="T:System.IO.FileStream" /> (<paramref name="path" />, <see cref="F:System.IO.FileMode.Create" />, <see cref="F:System.IO.FileAccess.ReadWrite" />,
+<see cref="F:System.IO.FileShare.None" />
+, <paramref name="bufferSize" />).</para>
+          <para> If the specified file does not exist, it is created; if it does exist and it is
+   not read-only, the contents are
+   overwritten.</para>
+          <para>The <paramref name="path" />
+argument is permitted to specify relative or absolute path
+information. Relative path information is interpreted as relative to the current
+working directory. <block subset="none" type="note">To obtain the current
+working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred while creating the file.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path, int bufferSize, System.IO.FileOptions options);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="options" Type="System.IO.FileOptions" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="bufferSize">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path, int bufferSize, System.IO.FileOptions options, System.Security.AccessControl.FileSecurity fileSecurity);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="options" Type="System.IO.FileOptions" />
+        <Parameter Name="fileSecurity" Type="System.Security.AccessControl.FileSecurity" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="bufferSize">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="fileSecurity">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateText">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.StreamWriter CreateText(string path)" />
+      <MemberSignature Language="C#" Value="public static System.IO.StreamWriter CreateText (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.StreamWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">The file to be opened for writing.</param>
+        <summary>
+          <para>Creates or opens a file for writing UTF-8 encoded text.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.StreamWriter" /> that writes to the specified file using UTF-8 encoding.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="T:System.IO.StreamWriter" /> (<paramref name="path" />, <see langword="false" />
+). If the file specified by <paramref name="path" />
+does not exist, it is created. If
+the file does exist, its contents are overwritten. Additional threads are permitted
+to read the file while it is open. </para>
+          <para>The <paramref name="path" />
+argument is permitted to specify relative or absolute path
+information. Relative path information is interpreted as relative to the current
+working directory. To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the implementation-specific maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <exception cref="T:System.IO.Exception">A general I/O exception occurred, such as trying to access a CD-ROM drive whose tray is open.</exception>
+        <exception cref="T:System.IO.NotSupportedException">
+          <paramref name="path" /> is in an implementation-specific invalid format.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">Access is denied. The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Decrypt">
+      <MemberSignature Language="C#" Value="public static void Decrypt (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Delete">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Delete(string path)" />
+      <MemberSignature Language="C#" Value="public static void Delete (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file to be deleted.</param>
+        <summary>
+          <para>Deletes the specified file.</para>
+        </summary>
+        <remarks>
+          <para>The <paramref name="path" />
+argument is permitted to specify relative or absolute path
+information. Relative path information is interpreted as relative to the current
+working directory. <block subset="none" type="note">To obtain the current
+working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+          <para>
+            <block subset="none" type="note">Some implementations might throw <see cref="T:System.IO.IOException" /> to cover such implementation-specific conditions as "file in use".</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path " />is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.IOException">The specified file is in use.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write to the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Encrypt">
+      <MemberSignature Language="C#" Value="public static void Encrypt (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Exists">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Exists(string path)" />
+      <MemberSignature Language="C#" Value="public static bool Exists (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file to check.</param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> indicating whether the specified file exists.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " />if the caller
+   has the required permissions and <paramref name="path" /> contains the name of an existing file; otherwise, <see langword="false" />. If <paramref name="path" /> is <see langword="null" /> or a
+   zero-length string, returns <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>If the caller does not have sufficient permissions to
+      read the specified file, no exception is thrown and the method returns <see langword="false" /> regardless of the existence of <paramref name="path" />.</para>
+          <para>The <paramref name="path " /> argument is permitted to specify
+   relative or absolute path information. Relative path information is interpreted
+   as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public static System.Security.AccessControl.FileSecurity GetAccessControl (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.FileSecurity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public static System.Security.AccessControl.FileSecurity GetAccessControl (string path, System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.FileSecurity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="includeSections">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAttributes">
+      <MemberSignature Language="C#" Value="public static System.IO.FileAttributes GetAttributes (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCreationTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime GetCreationTime(string path)" />
+      <MemberSignature Language="C#" Value="public static DateTime GetCreationTime (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file or directory for which to obtain creation date and time information.</param>
+        <summary>
+          <para>Returns the creation date and time of the specified file or directory.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> structure set
+   to the creation date and time for the specified file or directory. This value is expressed in local time.</para>
+          <para>Platforms that do not
+   support this feature return <see cref="F:System.DateTime.MinValue" />.</para>
+        </returns>
+        <remarks>
+          <para>The <paramref name="path" /> argument is permitted to specify
+   relative or absolute path information. Relative path information is interpreted
+   as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read the specified file or directory. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />.</permission>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCreationTimeUtc">
+      <MemberSignature Language="C#" Value="public static DateTime GetCreationTimeUtc (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetLastAccessTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime GetLastAccessTime(string path)" />
+      <MemberSignature Language="C#" Value="public static DateTime GetLastAccessTime (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file or directory for which to obtain access date and time information.</param>
+        <summary>
+          <para>Returns the date and time the specified file or directory was last accessed.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> structure set to
+   the date and time the specified file or directory was last accessed. This value is expressed in local time.</para>
+          <para>Platforms that do not
+   support this feature return <see cref="F:System.DateTime.MinValue" />.</para>
+        </returns>
+        <remarks>
+          <para>The <paramref name="path" /> argument is permitted to specify
+   relative or absolute path information. Relative path information is interpreted
+   as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read the specified file or directory. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />.</permission>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetLastAccessTimeUtc">
+      <MemberSignature Language="C#" Value="public static DateTime GetLastAccessTimeUtc (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetLastWriteTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime GetLastWriteTime(string path)" />
+      <MemberSignature Language="C#" Value="public static DateTime GetLastWriteTime (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file for which to obtain write date and time information.</param>
+        <summary>
+          <para>Returns the date and time the specified file or directory was last written to.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.DateTime" /> structure set to
+   the date and time the specified file or directory was last written to. This value is expressed in local time.</para>
+          <para>Platforms that do not
+   support this feature return <see cref="F:System.DateTime.MinValue" />.</para>
+        </returns>
+        <remarks>
+          <para>The <paramref name="path" /> argument is permitted to specify
+   relative or absolute path information. Relative path information is interpreted
+   as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read the specified file or directory. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />.</permission>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetLastWriteTimeUtc">
+      <MemberSignature Language="C#" Value="public static DateTime GetLastWriteTimeUtc (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Move">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Move(string sourceFileName, string destFileName)" />
+      <MemberSignature Language="C#" Value="public static void Move (string sourceFileName, string destFileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sourceFileName" Type="System.String" />
+        <Parameter Name="destFileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="sourceFileName">A <see cref="T:System.String" /> containing the name of the file to move.</param>
+        <param name="destFileName">A <see cref="T:System.String" /> containing the name of the new location for the file.</param>
+        <summary>
+          <para> Moves the specified file to a new location.</para>
+        </summary>
+        <remarks>
+          <para>This method does not throw an exception if the source and destination are the same.</para>
+          <para>The <paramref name="sourceFileName " />and <paramref name="destFileName" /> arguments are
+   permitted to specify relative or absolute path information. Relative path
+   information is interpreted as relative to the current working directory.
+   <block subset="none" type="note">To obtain the current working directory,
+      see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="destFileName" /> already exists or is a directory.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="sourceFileName " />or <paramref name="destFileName " />is <see langword="null" />. </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="sourceFileName " />or <paramref name="destFileName " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters. </para>
+        </exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information in <paramref name="sourceFileName" /> or <paramref name="destFileName" /> was not found.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="sourceFileName " />was not found or specifies a directory.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length or absolute path information for <paramref name="sourceFileName" /> or <paramref name="destFileName" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read from <paramref name="sourceFileName," /><paramref name=" " />and write to <paramref name="sourceFileName " />and <paramref name="destFileName" />. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Open (string path, System.IO.FileMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file to open.</param>
+        <param name="mode">A <see cref="T:System.IO.FileMode" /> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+        <param name="mode">To be added.</param>
+        <summary>
+          <para>Opens a <see cref="T:System.IO.FileStream" /> on the specified file
+   with read/write access.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.FileStream" /> that provides read/write access to the specified file.</para>
+        </returns>
+        <remarks>
+          <para> This method is equivalent to <see cref="T:System.IO.FileStream" /> (<paramref name="path" />,
+<paramref name="mode" />, <see cref="F:System.IO.FileAccess.ReadWrite" />, 
+<see cref="F:System.IO.FileShare.None" /> 
+).</para>
+          <para>The <paramref name="path " /> argument is permitted to specify
+relative or absolute path information. Relative path information is interpreted
+as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</para>
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="mode" /> specified an invalid value.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred while opening the file.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and write the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Open (string path, System.IO.FileMode mode, System.IO.FileAccess access);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file to open.</param>
+        <param name="mode">A <see cref="T:System.IO.FileMode" /> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+        <param name="access">A <see cref="T:System.IO.FileAccess" /> value that specifies the operations that can be performed on the file.</param>
+        <param name="mode">To be added.</param>
+        <param name="access">To be added.</param>
+        <summary>
+          <para>Opens a <see cref="T:System.IO.FileStream" /> on
+   the specified file.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.FileStream" />
+that provides access to the specified file.</para>
+        </returns>
+        <remarks>
+          <para> This method is equivalent to <see cref="T:System.IO.FileStream" /> (<paramref name="path" />,
+<paramref name="mode" />, <paramref name="access" />, <see cref="F:System.IO.FileShare.None" /> ).</para>
+          <para>The <paramref name="path " /> argument is permitted to specify
+relative or absolute path information. Relative path information is interpreted
+as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="access" /> specified <see langword="Read" /> and <paramref name="mode" /> specified <see langword="Create" />, <see langword="CreateNew" />, <see langword="Truncate" /> or <see langword="Append" />.</para>
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="mode" /> is <see cref="F:System.IO.FileMode.Truncate" /> or <see cref="F:System.IO.FileMode.Open" />, but the specified file was not found. If a different mode is specified and the file was not found, a new one is created.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="mode" /> or <paramref name="access" /> specified an invalid value.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred, such as specifying <see cref="F:System.IO.FileMode.CreateNew" /> when the file specified by path already exists.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+          <paramref name="path" /> specified a read-only file and <paramref name="access" /> is not <see langword="Read" />, or <paramref name="path" /> specified a directory.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and might also require permission to write to the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Open (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="share" Type="System.IO.FileShare" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file to open.</param>
+        <param name="mode">A <see cref="T:System.IO.FileMode" /> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+        <param name="access">A <see cref="T:System.IO.FileAccess" /> value that specifies the operations that can be performed on the file.</param>
+        <param name="share">A <see cref="T:System.IO.FileShare" /> value specifying the type of access other threads have to the file.</param>
+        <param name="mode">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="share">To be added.</param>
+        <summary>
+          <para>Opens a <see cref="T:System.IO.FileStream" /> on the specified file.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.FileStream" />
+that provides access to the specified file.</para>
+        </returns>
+        <remarks>
+          <para> This method is equivalent to <see cref="T:System.IO.FileStream" /> (<paramref name="path" />,
+<paramref name="mode" />, <paramref name="access" />, <paramref name="share" />).</para>
+          <para>The <paramref name="path " /> argument is permitted to specify
+relative or absolute path information. Relative path information is interpreted
+as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="access" /> specified <see langword="Read" /> and <paramref name="mode" /> specified <see langword="Create" />, <see langword="CreateNew" />, <see langword="Truncate" /> or <see langword="Append" />.</para>
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="mode" />, <paramref name="access" />, or <paramref name="share" /> specified an invalid value.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred while opening the file.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and might also require permission to write the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OpenRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream OpenRead(string path)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream OpenRead (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file to be opened for reading.</param>
+        <summary>
+          <para> Opens an
+      existing file for reading.</para>
+        </summary>
+        <returns>
+          <para> A read-only <see cref="T:System.IO.FileStream" /> containing the contents of the specified file.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="T:System.IO.FileStream" /> (<paramref name="path" />, <see cref="F:System.IO.FileMode.Open" />, <see cref="F:System.IO.FileAccess.Read" />,
+<see cref="F:System.IO.FileShare.Read" /> ).</para>
+          <para>The <paramref name="path " /> argument is permitted to specify
+relative or absolute path information. Relative path information is interpreted
+as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path " /> was not found.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OpenText">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.StreamReader OpenText(string path)" />
+      <MemberSignature Language="C#" Value="public static System.IO.StreamReader OpenText (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.StreamReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file to be opened for reading.</param>
+        <summary>
+          <para> Opens an existing UTF-8 encoded text file
+      for reading.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.StreamReader" /> containing the contents of the
+   specified file.</para>
+        </returns>
+        <remarks>
+          <para> This method is equivalent to <see cref="T:System.IO.StreamReader" />
+(<paramref name="path" />). </para>
+          <para>The <paramref name="path " /> argument is permitted to specify
+relative or absolute path information. Relative path information is interpreted
+as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write to the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OpenWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream OpenWrite(string path)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream OpenWrite (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.FileStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file to be opened for writing.</param>
+        <summary>
+          <para> Opens an
+      existing file for writing.</para>
+        </summary>
+        <returns>
+          <para>A writable <see cref="T:System.IO.FileStream" /> that writes to the file specified by
+<paramref name="path" />.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="T:System.IO.FileStream" /> (<paramref name="path" />, <see cref="F:System.IO.FileMode.OpenOrCreate" />, <see cref="F:System.IO.FileAccess.Write" />,
+<see cref="F:System.IO.FileShare.None" /> ).</para>
+          <para>The <paramref name="path " /> argument is permitted to specify
+relative or absolute path information. Relative path information is interpreted
+as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadAllBytes">
+      <MemberSignature Language="C#" Value="public static byte[] ReadAllBytes (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadAllLines">
+      <MemberSignature Language="C#" Value="public static string[] ReadAllLines (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadAllLines">
+      <MemberSignature Language="C#" Value="public static string[] ReadAllLines (string path, System.Text.Encoding encoding);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="encoding">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadAllText">
+      <MemberSignature Language="C#" Value="public static string ReadAllText (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadAllText">
+      <MemberSignature Language="C#" Value="public static string ReadAllText (string path, System.Text.Encoding encoding);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="encoding">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="C#" Value="public static void Replace (string sourceFileName, string destinationFileName, string destinationBackupFileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sourceFileName" Type="System.String" />
+        <Parameter Name="destinationFileName" Type="System.String" />
+        <Parameter Name="destinationBackupFileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="sourceFileName">To be added.</param>
+        <param name="destinationFileName">To be added.</param>
+        <param name="destinationBackupFileName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="C#" Value="public static void Replace (string sourceFileName, string destinationFileName, string destinationBackupFileName, bool ignoreMetadataErrors);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sourceFileName" Type="System.String" />
+        <Parameter Name="destinationFileName" Type="System.String" />
+        <Parameter Name="destinationBackupFileName" Type="System.String" />
+        <Parameter Name="ignoreMetadataErrors" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="sourceFileName">To be added.</param>
+        <param name="destinationFileName">To be added.</param>
+        <param name="destinationBackupFileName">To be added.</param>
+        <param name="ignoreMetadataErrors">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetAccessControl">
+      <MemberSignature Language="C#" Value="public static void SetAccessControl (string path, System.Security.AccessControl.FileSecurity fileSecurity);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="fileSecurity" Type="System.Security.AccessControl.FileSecurity" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="fileSecurity">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetAttributes">
+      <MemberSignature Language="C#" Value="public static void SetAttributes (string path, System.IO.FileAttributes fileAttributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="fileAttributes" Type="System.IO.FileAttributes" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="fileAttributes">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetCreationTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetCreationTime(string path, valuetype System.DateTime creationTime)" />
+      <MemberSignature Language="C#" Value="public static void SetCreationTime (string path, DateTime creationTime);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="creationTime" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file for which to set the creation date and time information.</param>
+        <param name="creationTime">A <see cref="T:System.DateTime" /> containing the value to set for the creation date and time of <paramref name="path" />. This value is expressed in local time.</param>
+        <summary>
+          <para>Sets the creation date and time for the specified file.</para>
+        </summary>
+        <remarks>
+          <para>The <paramref name="path" /> argument is permitted to specify
+   relative or absolute path information. Relative path information is interpreted
+   as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+          <para>On platforms that do not support
+   this feature, this method has no effect. If this feature is supported, the range of dates that
+   is valid for this operation
+   is implementation-specific. </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="creationTime " /> specifies a value outside the range of date/times permitted for this operation.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred while performing the operation.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write to the specified file or directory. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetCreationTimeUtc">
+      <MemberSignature Language="C#" Value="public static void SetCreationTimeUtc (string path, DateTime creationTimeUtc);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="creationTimeUtc" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="creationTimeUtc">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetLastAccessTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetLastAccessTime(string path, valuetype System.DateTime lastAccessTime)" />
+      <MemberSignature Language="C#" Value="public static void SetLastAccessTime (string path, DateTime lastAccessTime);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="lastAccessTime" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file for which to set the access date and time information.</param>
+        <param name="lastAccessTime">A <see cref="T:System.DateTime" /> containing the value to set for the access date and time of <paramref name="path" />. This value is expressed in local time.</param>
+        <summary>
+          <para>Sets the date and time the specified file was last accessed.</para>
+        </summary>
+        <remarks>
+          <para>The <paramref name="path" /> argument is permitted to specify
+   relative or absolute path information. Relative path information is interpreted
+   as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+          <para>On platforms that do not
+   support this feature, this method has no effect. If this feature is
+   supported, the range of dates that is valid for this operation
+   is implementation-specific. </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred while performing the operation.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write to the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="lastAccessTime" /> specifies a value outside the range of date/times permitted for this operation.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetLastAccessTimeUtc">
+      <MemberSignature Language="C#" Value="public static void SetLastAccessTimeUtc (string path, DateTime lastAccessTimeUtc);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="lastAccessTimeUtc" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="lastAccessTimeUtc">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetLastWriteTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetLastWriteTime(string path, valuetype System.DateTime lastWriteTime)" />
+      <MemberSignature Language="C#" Value="public static void SetLastWriteTime (string path, DateTime lastWriteTime);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="lastWriteTime" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the name of the file for which to set the date and time information.</param>
+        <param name="lastWriteTime">A <see cref="T:System.DateTime" /> containing the value to set for the last write date and time of <paramref name="path" />. This value is expressed in local time.</param>
+        <summary>
+          <para>Sets the date and time a file was last written to.</para>
+        </summary>
+        <remarks>
+          <para>The <paramref name="path" /> argument is permitted to specify
+   relative or absolute path information. Relative path information is interpreted
+   as relative to the current working directory. <block subset="none" type="note">To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qualify="true" />.</block></para>
+          <para>On platforms that do not
+   support this feature, this method has no effect. If this feature is
+   supported, the range of dates that is valid for this operation
+   is implementation-specific. </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred while performing the operation.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write to the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="lastWriteTime" /> specifies a value outside the range of date/times permitted for this operation.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetLastWriteTimeUtc">
+      <MemberSignature Language="C#" Value="public static void SetLastWriteTimeUtc (string path, DateTime lastWriteTimeUtc);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="lastWriteTimeUtc" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="lastWriteTimeUtc">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteAllBytes">
+      <MemberSignature Language="C#" Value="public static void WriteAllBytes (string path, byte[] bytes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="bytes" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="bytes">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteAllLines">
+      <MemberSignature Language="C#" Value="public static void WriteAllLines (string path, string[] contents);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="contents" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="contents">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteAllLines">
+      <MemberSignature Language="C#" Value="public static void WriteAllLines (string path, string[] contents, System.Text.Encoding encoding);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="contents" Type="System.String[]" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="contents">To be added.</param>
+        <param name="encoding">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteAllText">
+      <MemberSignature Language="C#" Value="public static void WriteAllText (string path, string contents);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="contents" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="contents">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteAllText">
+      <MemberSignature Language="C#" Value="public static void WriteAllText (string path, string contents, System.Text.Encoding encoding);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="contents" Type="System.String" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="contents">To be added.</param>
+        <param name="encoding">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

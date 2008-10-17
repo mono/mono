@@ -1,0 +1,9 @@
+<Namespace Name="System.Reflection" FullName="System.Reflection" FullNameSP="System.Reflection" Maintainer="Mono">
+  <Docs>
+    <summary>
+        Reflection is the ability for a program at run-time to get information about loaded type and assemblies.  It can be used to access and invoke members and fields by their name, for instance.
+    </summary>
+    <remarks>
+    </remarks>
+  </Docs>
+</Namespace>

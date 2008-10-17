@@ -1,0 +1,266 @@
+<Type Name="TypeLoadException" FullName="System.TypeLoadException" FullNameSP="System_TypeLoadException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable TypeLoadException extends System.SystemException" />
+  <TypeSignature Language="C#" Value="public class TypeLoadException : SystemException" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.SystemException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Represents the error that occurs when the system cannot
+      load a <see cref="T:System.Type" />.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.TypeLoadException" /> is thrown when the system cannot load a <see cref="T:System.Type" /> , or
+   cannot locate the assembly that contains the <see cref="T:System.Type" />
+   
+   .</para>
+      <block subset="none" type="note">
+        <para>The following CIL instructions throw <see cref="T:System.TypeLoadException" /> and set the TypeName property via some unspecified mechanism:</para>
+        <list type="bullet">
+          <item>
+            <term>box</term>
+          </item>
+          <item>
+            <term>castclass</term>
+          </item>
+          <item>
+            <term>cpobj</term>
+          </item>
+          <item>
+            <term>isinst</term>
+          </item>
+          <item>
+            <term>ldobj</term>
+          </item>
+          <item>
+            <term>mkrefany</term>
+          </item>
+          <item>
+            <term>refanyval</term>
+          </item>
+          <item>
+            <term>stobj</term>
+          </item>
+          <item>
+            <term>unbox</term>
+          </item>
+        </list>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public TypeLoadException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.TypeLoadException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.TypeLoadException.Message" /> property of the new instance to a
+   system-supplied message that describes the error, such as "A failure has
+   occurred while loading a type." This message takes into
+   account the
+   current system culture.</para>
+          <para> The <see cref="P:System.TypeLoadException.TypeName" /> property is initialized to <see cref="F:System.String.Empty" />, and the
+<see cref="!:System.TypeLoadException.InnerException" /> property 
+is initialized to <see langword="null" />
+.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public TypeLoadException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.TypeLoadException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.TypeLoadException.Message" /> property
+   of the new instance using <paramref name="message" />. If <paramref name="message" /> is <see langword="null" />,
+   the <see cref="P:System.TypeLoadException.Message" /> property is initialized to the system-supplied message
+   provided by the constructor that takes no arguments. </para>
+          <para> The <see cref="P:System.TypeLoadException.TypeName" /> property is initialized to <see cref="F:System.String.Empty" />, and the
+<see cref="!:System.TypeLoadException.InnerException" /> property is initialized to 
+<see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected TypeLoadException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public TypeLoadException (string message, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is non-null, then the current Exception was raised in a catch block handling <paramref name="inner" />.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.TypeLoadException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.TypeLoadException.Message" /> property
+   of the new instance using <paramref name="message" /> and the <see cref="!:System.TypeLoadException.InnerException" /> property using
+<paramref name="inner" />. If <paramref name="message" /> is <see langword="null" />, the 
+<see cref="P:System.TypeLoadException.Message" /> property is initialized to the system-supplied message 
+   provided by the constructor that takes no arguments. </para>
+          <para> The <see cref="P:System.TypeLoadException.TypeName" /> property is initialized to <see cref="F:System.String.Empty" />. </para>
+          <para>For more information on inner
+   exceptions, see <see cref="P:System.Exception.InnerException" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="ILASM" Value=".property string Message { public hidebysig virtual specialname string get_Message() }" />
+      <MemberSignature Language="C#" Value="public override string Message { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the error message for this exception.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing a message that describes the error.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">This property
+      overrides <see cref="P:System.Exception.Message" /> .</block>
+          </para>
+          <para> If no message was supplied to the constructor for
+      the current instance, the system supplies a default message that is formatted
+      using the current system culture. The system-supplied message includes the fully
+      qualified name of the type that failed to load, and the string obtained by
+      invoking <see cref="M:System.Reflection.Assembly.ToString" /> on the assembly that referenced the type. For
+      a type named <paramref name="MyTypes.MyClass" />, referenced by an assembly with the
+      simple name <paramref name="MyAssembly" /> ,
+      the message might
+      read as follows:</para>
+          <para>
+            <c>Could not load type
+      MyTypes.MyClass from assembly MyAssembly, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null.</c>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TypeName">
+      <MemberSignature Language="ILASM" Value=".property string TypeName { public hidebysig specialname instance string get_TypeName() }" />
+      <MemberSignature Language="C#" Value="public string TypeName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the fully qualified name of the <see cref="T:System.Type" /> that failed to load.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the fully qualified type name.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

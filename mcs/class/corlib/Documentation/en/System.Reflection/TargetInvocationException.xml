@@ -1,0 +1,98 @@
+<Type Name="TargetInvocationException" FullName="System.Reflection.TargetInvocationException" FullNameSP="System_Reflection_TargetInvocationException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable TargetInvocationException extends System.ApplicationException" />
+  <TypeSignature Language="C#" Value="public sealed class TargetInvocationException : ApplicationException" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ApplicationException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Represents the error that occurs when a method invoked via reflection throws
+      an exception.</para>
+    </summary>
+    <remarks>
+      <para> The
+   <see langword="TargetInvocationException" /> constructors are passed 
+      a reference to the exception thrown by the invoked method. <block subset="none" type="note">The <see cref="!:System.Reflection.TargetInvocationException.InnerException" /> property inherited
+      from <see cref="T:System.Exception" />
+      holds the exception.</block></para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public TargetInvocationException (Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="inner">The <see cref="T:System.Exception" /> that is the cause of the current exception. If the <paramref name="inner" /> parameter is not <see langword="null" />, the current exception was raised as a result of the inner exception being thrown by a method invoked via reflection.</param>
+        <summary>
+   Constructs and initializes a new instance of the <see cref="T:System.Reflection.TargetInvocationException" /> class.
+</summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.Reflection.TargetInvocationException.Message" /> property of 
+   the new instance to a system-supplied message that describes the error, such as
+   "Exception has been thrown by the target of an invocation." This message takes
+   into account the current system culture.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public TargetInvocationException (string message, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="inner">The <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is not <see langword="null" />, the current exception was raised as a result of <paramref name="inner" /> being thrown by a method invoked via reflection.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Reflection.TargetInvocationException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.Reflection.TargetInvocationException.Message" /> property of the new instance using <paramref name="message" />, and
+   the <see cref="!:System.Reflection.TargetInvocationException.InnerException" /> property using <paramref name="inner" />. If <paramref name="message" /> is <see langword="null" />,
+   the <see cref="!:System.Reflection.TargetInvocationException.Message" /> property is
+   initialized to a system-supplied message that describes the error, such as
+   "Exception has been thrown by the target of an invocation." This message takes into
+   account the current system culture. </para>
+          <para>
+            <block subset="none" type="note"> For information on inner exceptions,
+   see <see cref="P:System.Exception.InnerException" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

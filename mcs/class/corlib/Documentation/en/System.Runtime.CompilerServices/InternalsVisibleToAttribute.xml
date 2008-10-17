@@ -1,0 +1,88 @@
+<Type Name="InternalsVisibleToAttribute" FullName="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+  <TypeSignature Language="C#" Value="public sealed class InternalsVisibleToAttribute : Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly, AllowMultiple=true, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>This attribute is used to expose internal methods to another assembly.</summary>
+    <remarks>
+      <para>This is an assembly-level attribute that is used to expose the internal types and members to another assembly.   This makes everything that might have been flagged as "internal" visible as a public member to the assembly referenced.</para>
+      <para>
+If you have a public key (the .pub file used to sign an assembly): use the following command to extract the Public Key):
+</para>
+      <example>
+        <code lang="Shell Inovcation">
+mono$ sn -tp /cvs/moon/class/silverlight.pub 
+Mono StrongName - version 1.9.0.0
+StrongName utility for signing assemblies
+Copyright 2002, 2003 Motus Technologies. Copyright 2004-2008 Novell. BSD licensed.
+
+Public Key:
+00240000048000009400000006020000002400005253413100040000010001008d56c76f9e8649
+383049f383c44be0ec204181822a6c31cf5eb7ef486944d032188ea1d3920763712ccb12d75fb7
+7e9811149e6148e5d32fbaab37611c1878ddc19e20ef135d0cb2cff2bfec3d115810c3d9069638
+fe4be215dbf795861920e5ab6f7db2e2ceef136ac23d5dd2bf031700aec232f6c6b1c785b4305c
+123b37ab
+
+Public Key Token: 7cec85d7bea7798e
+  </code>
+      </example>
+      <para>
+Use this key then as the PublicKey value inside the string:
+</para>
+      <example>
+        <code lang="C#">
+// This attribute makes the internal methods available to the Mono.Moonlight assembly.
+[assembly: InternalsVisibleTo ("Mono.Moonlight, PublicKey=002400000480000094000000060200000024000052534131000400000100010079159977d2d03a8e6bea7a2e74e8d1afcc93e8851974952bb480a12c913
+4474d04062447c37e0e68c080536fcf3c3fbe2ff9c979ce998475e506e8ce82dd5b0f350dc10e93bf2eeecf874b24770c5081dbea7447fddafa277b22de47d6ffea449674a4f9fccf84d15069089380284dbdd35f46cdff12a1bd78e4ef00
+65d016df")]
+  </code>
+      </example>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public InternalsVisibleToAttribute (string assemblyName);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">The assembly name, this must include the Public Key.   See the class documentation for an example.</param>
+        <summary>To be added.</summary>
+        <remarks>Allows the specified assembly to have access to the internal classes and members  of this assembly.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AssemblyName">
+      <MemberSignature Language="C#" Value="public string AssemblyName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

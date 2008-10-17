@@ -1,0 +1,531 @@
+<Type Name="SoapServices" FullName="System.Runtime.Remoting.SoapServices">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public class SoapServices" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CodeXmlNamespaceForClrTypeNamespace">
+      <MemberSignature Language="C#" Value="public static string CodeXmlNamespaceForClrTypeNamespace (string typeNamespace, string assemblyName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="typeNamespace" Type="System.String" />
+        <Parameter Name="assemblyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="typeNamespace">To be added: an object of type 'string'</param>
+        <param name="assemblyName">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'string'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DecodeXmlNamespaceForClrTypeNamespace">
+      <MemberSignature Language="C#" Value="public static bool DecodeXmlNamespaceForClrTypeNamespace (string inNamespace, out string typeNamespace, out string assemblyName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inNamespace" Type="System.String" />
+        <Parameter Name="typeNamespace" Type="System.String&amp;" RefType="out" />
+        <Parameter Name="assemblyName" Type="System.String&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="inNamespace">To be added: an object of type 'string'</param>
+        <param name="typeNamespace">To be added: an object of type 'string&amp;'</param>
+        <param name="assemblyName">To be added: an object of type 'string&amp;'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'bool'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetInteropFieldTypeAndNameFromXmlAttribute">
+      <MemberSignature Language="C#" Value="public static void GetInteropFieldTypeAndNameFromXmlAttribute (Type containingType, string xmlAttribute, string xmlNamespace, out Type type, out string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="containingType" Type="System.Type" />
+        <Parameter Name="xmlAttribute" Type="System.String" />
+        <Parameter Name="xmlNamespace" Type="System.String" />
+        <Parameter Name="type" Type="System.Type&amp;" RefType="out" />
+        <Parameter Name="name" Type="System.String&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="containingType">To be added: an object of type 'Type'</param>
+        <param name="xmlAttribute">To be added: an object of type 'string'</param>
+        <param name="xmlNamespace">To be added: an object of type 'string'</param>
+        <param name="type">To be added: an object of type 'Type&amp;'</param>
+        <param name="name">To be added: an object of type 'string&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetInteropFieldTypeAndNameFromXmlElement">
+      <MemberSignature Language="C#" Value="public static void GetInteropFieldTypeAndNameFromXmlElement (Type containingType, string xmlElement, string xmlNamespace, out Type type, out string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="containingType" Type="System.Type" />
+        <Parameter Name="xmlElement" Type="System.String" />
+        <Parameter Name="xmlNamespace" Type="System.String" />
+        <Parameter Name="type" Type="System.Type&amp;" RefType="out" />
+        <Parameter Name="name" Type="System.String&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="containingType">To be added: an object of type 'Type'</param>
+        <param name="xmlElement">To be added: an object of type 'string'</param>
+        <param name="xmlNamespace">To be added: an object of type 'string'</param>
+        <param name="type">To be added: an object of type 'Type&amp;'</param>
+        <param name="name">To be added: an object of type 'string&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetInteropTypeFromXmlElement">
+      <MemberSignature Language="C#" Value="public static Type GetInteropTypeFromXmlElement (string xmlElement, string xmlNamespace);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlElement" Type="System.String" />
+        <Parameter Name="xmlNamespace" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="xmlElement">To be added: an object of type 'string'</param>
+        <param name="xmlNamespace">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'Type'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetInteropTypeFromXmlType">
+      <MemberSignature Language="C#" Value="public static Type GetInteropTypeFromXmlType (string xmlType, string xmlTypeNamespace);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlType" Type="System.String" />
+        <Parameter Name="xmlTypeNamespace" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="xmlType">To be added: an object of type 'string'</param>
+        <param name="xmlTypeNamespace">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'Type'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSoapActionFromMethodBase">
+      <MemberSignature Language="C#" Value="public static string GetSoapActionFromMethodBase (System.Reflection.MethodBase mb);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mb" Type="System.Reflection.MethodBase" />
+      </Parameters>
+      <Docs>
+        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'string'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTypeAndMethodNameFromSoapAction">
+      <MemberSignature Language="C#" Value="public static bool GetTypeAndMethodNameFromSoapAction (string soapAction, out string typeName, out string methodName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="soapAction" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String&amp;" RefType="out" />
+        <Parameter Name="methodName" Type="System.String&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="soapAction">To be added: an object of type 'string'</param>
+        <param name="typeName">To be added: an object of type 'string&amp;'</param>
+        <param name="methodName">To be added: an object of type 'string&amp;'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'bool'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetXmlElementForInteropType">
+      <MemberSignature Language="C#" Value="public static bool GetXmlElementForInteropType (Type type, out string xmlElement, out string xmlNamespace);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="xmlElement" Type="System.String&amp;" RefType="out" />
+        <Parameter Name="xmlNamespace" Type="System.String&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added: an object of type 'Type'</param>
+        <param name="xmlElement">To be added: an object of type 'string&amp;'</param>
+        <param name="xmlNamespace">To be added: an object of type 'string&amp;'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'bool'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetXmlNamespaceForMethodCall">
+      <MemberSignature Language="C#" Value="public static string GetXmlNamespaceForMethodCall (System.Reflection.MethodBase mb);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mb" Type="System.Reflection.MethodBase" />
+      </Parameters>
+      <Docs>
+        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'string'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetXmlNamespaceForMethodResponse">
+      <MemberSignature Language="C#" Value="public static string GetXmlNamespaceForMethodResponse (System.Reflection.MethodBase mb);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mb" Type="System.Reflection.MethodBase" />
+      </Parameters>
+      <Docs>
+        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'string'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetXmlTypeForInteropType">
+      <MemberSignature Language="C#" Value="public static bool GetXmlTypeForInteropType (Type type, out string xmlType, out string xmlTypeNamespace);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="xmlType" Type="System.String&amp;" RefType="out" />
+        <Parameter Name="xmlTypeNamespace" Type="System.String&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added: an object of type 'Type'</param>
+        <param name="xmlType">To be added: an object of type 'string&amp;'</param>
+        <param name="xmlTypeNamespace">To be added: an object of type 'string&amp;'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'bool'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsClrTypeNamespace">
+      <MemberSignature Language="C#" Value="public static bool IsClrTypeNamespace (string namespaceString);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="namespaceString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="namespaceString">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'bool'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSoapActionValidForMethodBase">
+      <MemberSignature Language="C#" Value="public static bool IsSoapActionValidForMethodBase (string soapAction, System.Reflection.MethodBase mb);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="soapAction" Type="System.String" />
+        <Parameter Name="mb" Type="System.Reflection.MethodBase" />
+      </Parameters>
+      <Docs>
+        <param name="soapAction">To be added: an object of type 'string'</param>
+        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'bool'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreLoad">
+      <MemberSignature Language="C#" Value="public static void PreLoad (System.Reflection.Assembly assembly);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assembly" Type="System.Reflection.Assembly" />
+      </Parameters>
+      <Docs>
+        <param name="assembly">To be added: an object of type 'Reflection.Assembly'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreLoad">
+      <MemberSignature Language="C#" Value="public static void PreLoad (Type type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added: an object of type 'Type'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterInteropXmlElement">
+      <MemberSignature Language="C#" Value="public static void RegisterInteropXmlElement (string xmlElement, string xmlNamespace, Type type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlElement" Type="System.String" />
+        <Parameter Name="xmlNamespace" Type="System.String" />
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="xmlElement">To be added: an object of type 'string'</param>
+        <param name="xmlNamespace">To be added: an object of type 'string'</param>
+        <param name="type">To be added: an object of type 'Type'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterInteropXmlType">
+      <MemberSignature Language="C#" Value="public static void RegisterInteropXmlType (string xmlType, string xmlTypeNamespace, Type type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlType" Type="System.String" />
+        <Parameter Name="xmlTypeNamespace" Type="System.String" />
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="xmlType">To be added: an object of type 'string'</param>
+        <param name="xmlTypeNamespace">To be added: an object of type 'string'</param>
+        <param name="type">To be added: an object of type 'Type'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterSoapActionForMethodBase">
+      <MemberSignature Language="C#" Value="public static void RegisterSoapActionForMethodBase (System.Reflection.MethodBase mb);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mb" Type="System.Reflection.MethodBase" />
+      </Parameters>
+      <Docs>
+        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterSoapActionForMethodBase">
+      <MemberSignature Language="C#" Value="public static void RegisterSoapActionForMethodBase (System.Reflection.MethodBase mb, string soapAction);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mb" Type="System.Reflection.MethodBase" />
+        <Parameter Name="soapAction" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
+        <param name="soapAction">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlNsForClrType">
+      <MemberSignature Language="C#" Value="public static string XmlNsForClrType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlNsForClrTypeWithAssembly">
+      <MemberSignature Language="C#" Value="public static string XmlNsForClrTypeWithAssembly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlNsForClrTypeWithNs">
+      <MemberSignature Language="C#" Value="public static string XmlNsForClrTypeWithNs { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlNsForClrTypeWithNsAndAssembly">
+      <MemberSignature Language="C#" Value="public static string XmlNsForClrTypeWithNsAndAssembly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

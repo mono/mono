@@ -1,0 +1,677 @@
+<Type Name="UnicodeCategory" FullName="System.Globalization.UnicodeCategory" FullNameSP="System_Globalization_UnicodeCategory" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable UnicodeCategory extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum UnicodeCategory" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para>Designates the general Unicode category of a <see cref="T:System.Char" /> .</para>
+    </summary>
+    <remarks>
+      <para>These categories conform to Version 3.1 of the Unicode
+      Standard.
+      </para>
+      <para>
+        <block subset="none" type="note">For information on mapping specific 
+      Unicode characters to categories, see the UnicodeData.txt file in the
+      Unicode Character Database at http://www.unicode.org/Public/UNIDATA/UnicodeCharacterDatabase.html. The
+      UnicodeData.txt file format is described at http://www.unicode.org/Public/3.1-Update/UnicodeData-3.1.0.html.</block>
+      </para>
+      <para>This enumeration
+      is used to support <see cref="T:System.Char" /> methods such as
+   <see cref="M:System.Char.IsLetter(System.Char)" />,
+   <see cref="M:System.Char.IsUpper(System.Char)" />
+   , etc.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ClosePunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ClosePunctuation = 21" />
+      <MemberSignature Language="C#" Value="ClosePunctuation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ClosePunctuation</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Pe' (punctuation, close).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConnectorPunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ConnectorPunctuation = 18" />
+      <MemberSignature Language="C#" Value="ConnectorPunctuation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ConnectorPunctuation</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Pc' (punctuation, connector).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Control">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Control = 14" />
+      <MemberSignature Language="C#" Value="Control" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Control</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Cc' (other, control).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CurrencySymbol">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory CurrencySymbol = 26" />
+      <MemberSignature Language="C#" Value="CurrencySymbol" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>CurrencySymbol</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Sc' (symbol, currency).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DashPunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory DashPunctuation = 19" />
+      <MemberSignature Language="C#" Value="DashPunctuation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DashPunctuation</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Pd' (punctuation, dash).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DecimalDigitNumber">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory DecimalDigitNumber = 8" />
+      <MemberSignature Language="C#" Value="DecimalDigitNumber" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DecimalDigitNumber</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Nd' (number, decimal digit).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EnclosingMark">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory EnclosingMark = 7" />
+      <MemberSignature Language="C#" Value="EnclosingMark" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>EnclosingMark</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Me' (mark, enclosing).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FinalQuotePunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory FinalQuotePunctuation = 23" />
+      <MemberSignature Language="C#" Value="FinalQuotePunctuation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>FinalQuotePunctuation</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Pf' (punctuation, final quote).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Format">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Format = 15" />
+      <MemberSignature Language="C#" Value="Format" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Format</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Cf' (other, format).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InitialQuotePunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory InitialQuotePunctuation = 22" />
+      <MemberSignature Language="C#" Value="InitialQuotePunctuation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>InitialQuotePunctuation</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Pi' (punctuation, initial quote).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LetterNumber">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LetterNumber = 9" />
+      <MemberSignature Language="C#" Value="LetterNumber" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>LetterNumber</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Nl' (number, letter).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LineSeparator">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LineSeparator = 12" />
+      <MemberSignature Language="C#" Value="LineSeparator" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>LineSeparator</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Zl' (separator, line).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LowercaseLetter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LowercaseLetter = 1" />
+      <MemberSignature Language="C#" Value="LowercaseLetter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>LowercaseLetter</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Ll' (letter, lowercase).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MathSymbol">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory MathSymbol = 25" />
+      <MemberSignature Language="C#" Value="MathSymbol" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>MathSymbol</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Sm' (symbol, math).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ModifierLetter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ModifierLetter = 3" />
+      <MemberSignature Language="C#" Value="ModifierLetter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ModifierLetter</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Lm' (letter, modifier).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ModifierSymbol">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ModifierSymbol = 27" />
+      <MemberSignature Language="C#" Value="ModifierSymbol" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ModifierSymbol</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Sk' (symbol, modifier).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NonSpacingMark">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory NonSpacingMark = 5" />
+      <MemberSignature Language="C#" Value="NonSpacingMark" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NonSpacingMark</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Mn' (mark, non-spacing).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OpenPunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OpenPunctuation = 20" />
+      <MemberSignature Language="C#" Value="OpenPunctuation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OpenPunctuation</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Ps' (punctuation, open).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OtherLetter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherLetter = 4" />
+      <MemberSignature Language="C#" Value="OtherLetter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OtherLetter</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Lo' (letter, other: not an 
+      uppercase letter, a lowercase letter, a titlecase letter, or a modifier letter).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OtherNotAssigned">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherNotAssigned = 29" />
+      <MemberSignature Language="C#" Value="OtherNotAssigned" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OtherNotAssigned</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Cn' (other, not assigned).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OtherNumber">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherNumber = 10" />
+      <MemberSignature Language="C#" Value="OtherNumber" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OtherNumber</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'No' (number, other: not a decimal 
+      digit number or a letter number).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OtherPunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherPunctuation = 24" />
+      <MemberSignature Language="C#" Value="OtherPunctuation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OtherPunctuation</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Po' (punctuation, other: not 
+      connector, dash, open, close, initial quote, or final quote punctuation).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OtherSymbol">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherSymbol = 28" />
+      <MemberSignature Language="C#" Value="OtherSymbol" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OtherSymbol</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'So' (symbol, other: not a math, 
+      currency, or modifier symbol).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ParagraphSeparator">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ParagraphSeparator = 13" />
+      <MemberSignature Language="C#" Value="ParagraphSeparator" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ParagraphSeparator</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Zp' (separator, paragraph).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrivateUse">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory PrivateUse = 17" />
+      <MemberSignature Language="C#" Value="PrivateUse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>PrivateUse</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Co' (other, private use).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SpaceSeparator">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory SpaceSeparator = 11" />
+      <MemberSignature Language="C#" Value="SpaceSeparator" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SpaceSeparator</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Zs' (separator, space).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SpacingCombiningMark">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory SpacingCombiningMark = 6" />
+      <MemberSignature Language="C#" Value="SpacingCombiningMark" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SpacingCombiningMark</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Mc' (mark, spacing combining).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Surrogate">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Surrogate = 16" />
+      <MemberSignature Language="C#" Value="Surrogate" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Surrogate</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Cs' (other, surrogate).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TitlecaseLetter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory TitlecaseLetter = 2" />
+      <MemberSignature Language="C#" Value="TitlecaseLetter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>TitlecaseLetter</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Lt' (letter, titlecase).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UppercaseLetter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory UppercaseLetter = 0" />
+      <MemberSignature Language="C#" Value="UppercaseLetter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>UppercaseLetter</MemberValue>
+      <Docs>
+        <summary>
+          <para>Designates a Unicode 'Lu' (letter, uppercase).</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

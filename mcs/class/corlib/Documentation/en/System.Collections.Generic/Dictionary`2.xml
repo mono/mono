@@ -1,0 +1,989 @@
+<Type Name="Dictionary&lt;TKey,TValue&gt;" FullName="System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;">
+  <TypeSignature Language="C#" Value="public class Dictionary&lt;TKey,TValue&gt; : System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;, System.Collections.IDictionary, System.Runtime.Serialization.IDeserializationCallback, System.Runtime.Serialization.ISerializable" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TKey" />
+    <TypeParameter Name="TValue" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.IDictionary</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.IDeserializationCallback</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <typeparam name="TKey">To be added.</typeparam>
+    <typeparam name="TValue">To be added.</typeparam>
+    <summary>
+      <para>Represents a collection of key/value pairs that are organized based on the key.</para>
+    </summary>
+    <remarks>
+      <para>Each element is a key/value pair that can be retrieved as a <see cref="T:System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;" /> object.</para>
+      <para>
+        <see cref="T:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;" /> requires an equality comparer implementation to perform comparisons.  If no equality comparer is provided, the following default equality comparer approach is used: If type <see langword="TKey" />  implements <see cref="T:System.IEquatable&lt;TKey&gt;" />, that implementation is used; otherwise, <see langword="TKey" />'s implementations of <see cref="T:System.Object.Equals(Object)" /> and <see cref="T:System.Object.GetHashCode()" /> are used. In any case, you can specify a <see cref="T:System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" /> implementation in a constructor overload that accepts an equality comparer parameter.</para>
+      <para>After its insertion in a dictionary, changes to the value of a key that affect the equality comparer render the dictionary's behavior unspecified. Every key in a dictionary must be unique according to the equality comparer. A key cannot be <see langword="null" />, but a value can be, if the value type <see langword="TValue" /> is a reference type.</para>
+      <para>The capacity of a dictionary is the number of elements that dictionary can hold.  As elements are added to a dictionary, the capacity is automatically increased.</para>
+      <para>This type contains a member that is a nested type, called <see langword="Enumerator" />. Although <see langword="Enumerator" /> is a member of this type, <see langword="Enumerator" /> is not described here; instead, it is described in its own entry, <see langword="Dictionary&lt;TKey,TValue&gt;.Enumerator" />.</para>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Dictionary ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Initializes a new dictionary that is empty, has the default initial capacity, and uses the default equality comparer.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Dictionary (System.Collections.Generic.IDictionary&lt;TKey,TValue&gt; dictionary);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="dictionary" Type="System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="dictionary">
+          <para>The dictionary whose elements are to be copied to the new dictionary.</para>
+        </param>
+        <summary>
+          <para>Initializes a new dictionary that contains elements copied from the specified dictionary, has sufficient capacity to accommodate the number of elements copied, and uses the default equality comparer.</para>
+        </summary>
+        <remarks>
+          <para>Every key in a dictionary must be unique according to the default equality comparer; otherwise, a <see cref="T:System.ArgumentException" /> is thrown; likewise, every key in the source dictionary must also be unique according to the default equality comparer.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="dictionary" /> contains one or more duplicate keys.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="dictionary" /> is <see langword="null" />.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Dictionary (System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="comparer">
+          <para>The equality comparer implementation to use when comparing keys.</para>
+          <para>-or-</para>
+          <para>
+            <see langword="null" /> to use the default equality comparer for the type of the key.</para>
+        </param>
+        <summary>
+          <para>Initializes a new dictionary that is empty, has the default initial capacity, and uses the specified equality comparer.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Dictionary (int capacity);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">The initial number of elements that the dictionary can contain.</param>
+        <summary>
+          <para>Initializes a new dictionary that is empty, has the specified initial capacity, and uses the default equality comparer.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="capacity" /> is less than zero.</exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Dictionary (System.Collections.Generic.IDictionary&lt;TKey,TValue&gt; dictionary, System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="dictionary" Type="System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;" />
+        <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="dictionary">
+          <para>The dictionary whose elements are to be copied to the new dictionary.</para>
+        </param>
+        <param name="comparer">
+          <para>The equality comparer implementation to use when comparing keys.</para>
+          <para>-or-</para>
+          <para>
+            <see langword="null" /> to use the default equality comparer for the type of the key.</para>
+        </param>
+        <summary>
+          <para>Initializes a new dictionary that contains elements copied from the specified dictionary, has sufficient capacity to accommodate the number of elements copied, and uses the specified equality comparer.</para>
+        </summary>
+        <remarks>
+          <para>Every key in a dictionary must be unique according to the specified; otherwise, a <see cref="T:System.ArgumentException" /> is thrown; likewise, every key in the source dictionary must also be unique according to the specified equality comparer.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="dictionary" /> contains one or more duplicate keys.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="dictionary" /> is <see langword="null" />.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Dictionary (int capacity, System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">
+          <para>The initial number of elements that the dictionary can contain.</para>
+        </param>
+        <param name="comparer">
+          <para>The equality comparer implementation to use when comparing keys.</para>
+          <para>-or-</para>
+          <para>
+            <see langword="null" /> to use the default equality comparer for the type of the key.</para>
+        </param>
+        <summary>
+          <para>Initializes a new dictionary that is empty, has the specified initial capacity, and uses the specified equality comparer.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="capacity" /> is less than zero.</exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Dictionary (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (TKey key, TValue value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="TKey" />
+        <Parameter Name="value" Type="TValue" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key of the element to add to the dictionary.</param>
+        <param name="value">The value of the element to add to the dictionary.</param>
+        <summary>
+          <para>Adds an element with the specified key and value to the dictionary.</para>
+        </summary>
+        <remarks>
+          <para>You can also use the <see cref="P:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Item" /><see langword="(TKey)" /> property to add new elements by setting the value of a key that does not exist in the dictionary. However, if the specified key already exists in the dictionary, setting the <see cref="P:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Item" /><see langword="(TKey)" /> property overwrites the old value. In contrast, the <see cref="M:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Add" /><see langword="(TKey,TValue)" /> method does not modify existing elements.</para>
+          <para>If <see cref="P:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Count" /> already equals the capacity, the capacity of the dictionary is increased.</para>
+          <para>A key cannot be <see cref="null" />, but a value can be, if the value type TValue is a reference type.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentException">An element with the same key already exists in the dictionary.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="key" /> is <see langword="null" />.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Removes all elements from the dictionary.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <para>This method is implemented to support the <see cref="T:System.Collections.IDictionary" /> interface.</para>
+            </block>
+          </para>
+          <para>
+            <see cref="P:System.Collections.Generic.ICollection&lt;TKey&gt;.Count" /> gets set to zero, and references to other objects from elements of the collection are also released. The capacity remains unchanged.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Comparer">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEqualityComparer&lt;TKey&gt; Comparer { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEqualityComparer&lt;TKey&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContainsKey">
+      <MemberSignature Language="C#" Value="public bool ContainsKey (TKey key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="TKey" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key to locate in the dictionary.</param>
+        <summary>
+          <para>Determines whether the dictionary contains an element with a specific key.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" />, if an element whose key is <paramref name="key" /> is found in the dictionary; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>This implementation is close to O(1) in most cases.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="key" /> is <see langword="null" />.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContainsValue">
+      <MemberSignature Language="C#" Value="public bool ContainsValue (TValue value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="TValue" />
+      </Parameters>
+      <Docs>
+        <param name="value">The value to locate in the dictionary.</param>
+        <summary>
+          <para>Determines whether the dictionary contains an element with a specific value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" />, if an element whose value is <paramref name="value" /> is found in the dictionary; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>This method determines equality using the default equality comparer for the value type TValue. If TValue implements <see cref="T:System.IEquatable&lt;TValue&gt;" />, that type is used. Otherwise, <see cref="M:System.Object.Equals" /> is used.</para>
+          <para>This method performs a linear search; therefore, the average execution time is proportional to <see cref="P:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Count" />. That is, this method is an O(n) operation, where n is <see cref="P:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Count" />.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets the number of key/value pairs contained in the dictionary.</para>
+        </summary>
+        <value>
+          <para>The number of key/value pairs contained in the dictionary.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>Retrieving the value of this property is an O(1) operation.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Enumerator GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;+Enumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns an enumerator that can be used to iterate over the dictionary.</para>
+        </summary>
+        <returns>
+          <para>An enumerator for the dictionary.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="usage">For a detailed description regarding the use of an enumerator, see <see cref="T:System.Collections.Generic.IEnumerator&lt;TKey&gt;" />.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public virtual void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public TValue this[TKey key] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>TValue</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="TKey" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key whose value is to be gotten or set.</param>
+        <summary>
+          <para>Gets or sets the value associated with the specified key.</para>
+        </summary>
+        <value>
+          <para>The value associated with the specified key. On a get attempt, if the specified key is not found, a <see cref="T:System.Collections.Generic.KeyNotFoundException" /> is thrown. On a set attempt, if the specified key is not found, a new element using the specified key is created.</para>
+        </value>
+        <remarks>
+          <para>The default value for value types is zero while that for reference types is <see cref="null" />.</para>
+          <para>You can also use the <see cref="P:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Item" /><see langword="(TKey)" /> property to add new elements by setting the value of a key that does not exist in the dictionary. However, if the specified key already exists in the dictionary, setting the <see cref="P:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Item" /><see langword="(TKey)" /> property overwrites the old value. In contrast, the <see cref="M:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Add" /><see langword="(TKey,TValue)" /> method does not modify existing elements.</para>
+          <para>A key cannot be <see cref="null" />, but a value can be, if the value type TValue is a reference type.</para>
+          <para>Retrieving the value of this property is an O(1) operation; setting the property is also an O(1) operation.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="key" /> is <see langword="null" />.</para>
+        </exception>
+        <exception cref="T:System.Collections.Generic.KeyNotFoundException">
+          <para>During a get attempt, <paramref name="key" /> is not found in the dictionary.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Keys">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.KeyCollection Keys { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;+KeyCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a collection that contains the keys in the dictionary.</para>
+        </summary>
+        <value>
+          <para>A collection of the keys in the dictionary.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The order of the keys in the key collection is unspecified, but it is the same order as the associated values in the value collection returned by the <see cref="P:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Values" /> property.</para>
+          <para>If the dictionary is modified, or the value of any key in the dictionary is modified, the behavior of the key collection is unspecified.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnDeserialization">
+      <MemberSignature Language="C#" Value="public virtual void OnDeserialization (object sender);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public bool Remove (TKey key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="TKey" />
+      </Parameters>
+      <Docs>
+        <param name="key">The key of the element to be removed from the dictionary.</param>
+        <summary>
+          <para>Removes the element with the specified key from the dictionary.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the element containing <paramref name="key" /> is successfully removed; otherwise, <see langword="false" />. This method also returns <see langword="false" /> if <paramref name="key" /> was not found in the dictionary.</para>
+        </returns>
+        <remarks>
+          <para>If the dictionary does not contain an element with the specified key, the dictionary remains unchanged. No exception is thrown.</para>
+          <para>This method shall be implemented with efficiency that is at least an O(1) operation.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="key" /> is <see langword="null" />.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;.Add">
+      <MemberSignature Language="C#" Value="void ICollection&lt;KeyValuePair&lt;TKey,TValue&gt;&gt;.Add (System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt; keyValuePair);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keyValuePair" Type="System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="keyValuePair">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;.Contains">
+      <MemberSignature Language="C#" Value="bool ICollection&lt;KeyValuePair&lt;TKey,TValue&gt;&gt;.Contains (System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt; keyValuePair);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keyValuePair" Type="System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="keyValuePair">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;.CopyTo">
+      <MemberSignature Language="C#" Value="void ICollection&lt;KeyValuePair&lt;TKey,TValue&gt;&gt;.CopyTo (System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;[] array, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;[]" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">To be added.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>This method is implemented to support the <see cref="T:System.Collections.Generics.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt; " /> interface.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;.IsReadOnly">
+      <MemberSignature Language="C#" Value="bool System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;.IsReadOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>This read-only property is implemented to support the <see cref="T:System.Collections.Generics.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt; " /> interface.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;.Remove">
+      <MemberSignature Language="C#" Value="bool ICollection&lt;KeyValuePair&lt;TKey,TValue&gt;&gt;.Remove (System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt; keyValuePair);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keyValuePair" Type="System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="keyValuePair">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Keys">
+      <MemberSignature Language="C#" Value="System.Collections.Generic.ICollection&lt;TKey&gt; System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Keys { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.ICollection&lt;TKey&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>This read-only property is implemented to support the <see cref="T:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;" /> interface.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Values">
+      <MemberSignature Language="C#" Value="System.Collections.Generic.ICollection&lt;TValue&gt; System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;.Values { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.ICollection&lt;TValue&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>This read-only property is implemented to support the <see cref="T:System.Collections.Generic.IDictionary&lt;TKey,TValue&gt;" /> interface.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.Generic.IEnumerator&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt; IEnumerable&lt;KeyValuePair&lt;TKey,TValue&gt;&gt;.GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerator&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>This method is implemented to support the <see cref="T:System.Collections.Generics.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt; " /> interface.</para>
+        </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.ICollection.CopyTo">
+      <MemberSignature Language="C#" Value="void ICollection.CopyTo (Array array, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Array" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">To be added.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>This method is implemented to support the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.ICollection.IsSynchronized">
+      <MemberSignature Language="C#" Value="bool System.Collections.ICollection.IsSynchronized { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>This read-only property is implemented to support the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.ICollection.SyncRoot">
+      <MemberSignature Language="C#" Value="object System.Collections.ICollection.SyncRoot { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>This read-only property is implemented to support the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IDictionary.Add">
+      <MemberSignature Language="C#" Value="void IDictionary.Add (object key, object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="key">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>
+          <para>This method is implemented to support the <see cref="T:System.Collections.IDictionary" /> interface.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IDictionary.Contains">
+      <MemberSignature Language="C#" Value="bool IDictionary.Contains (object key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="key">To be added.</param>
+        <summary>
+          <para>This method is implemented to support the <see cref="T:System.Collections.IDictionary" /> interface.</para>
+        </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IDictionary.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IDictionaryEnumerator IDictionary.GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionaryEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>This method is implemented to support the <see cref="T:System.Collections.IDictionary" /> interface.</para>
+        </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IDictionary.IsFixedSize">
+      <MemberSignature Language="C#" Value="bool System.Collections.IDictionary.IsFixedSize { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>This read-only property is implemented to support the <see cref="T:System.Collections.IDictionary" /> interface.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IDictionary.IsReadOnly">
+      <MemberSignature Language="C#" Value="bool System.Collections.IDictionary.IsReadOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>This read-only property is implemented to support the <see cref="T:System.Collections.IDictionary" /> interface.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IDictionary.Item">
+      <MemberSignature Language="C#" Value="object System.Collections.IDictionary.Item[object key] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="key">To be added.</param>
+        <summary>
+          <para>This read-only property is implemented to support the <see cref="T:System.Collections.IDictionary" /> interface.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IDictionary.Keys">
+      <MemberSignature Language="C#" Value="System.Collections.ICollection System.Collections.IDictionary.Keys { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ICollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>This read-only property is implemented to support the <see cref="T:System.Collections.IDictionary" /> interface.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IDictionary.Remove">
+      <MemberSignature Language="C#" Value="void IDictionary.Remove (object key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="key">To be added.</param>
+        <summary>
+          <para>This method is implemented to support the <see cref="T:System.Collections.IDictionary" /> interface.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IDictionary.Values">
+      <MemberSignature Language="C#" Value="System.Collections.ICollection System.Collections.IDictionary.Values { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ICollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>This read-only property is implemented to support the <see cref="T:System.Collections.IDictionary" /> interface.</para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>This method is implemented to support the <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+        </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryGetValue">
+      <MemberSignature Language="C#" Value="public bool TryGetValue (TKey key, out TValue value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="TKey" />
+        <Parameter Name="value" Type="TValue&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="key">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Values">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.ValueCollection Values { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;+ValueCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a collection that contains the values in the dictionary.</para>
+        </summary>
+        <value>
+          <para>A collection of the values in the dictionary.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The order of the values in the value collection is unspecified, but it is the same order as the associated values in the key collection returned by the <see cref="P:System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.Keys" /> property.</para>
+          <para>The returned value collection is not a static copy; instead, it refers back to the values in the original dictionary. Therefore, changes to the dictionary continue to be reflected in the value collection.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

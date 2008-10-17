@@ -1,0 +1,945 @@
+<Type Name="MethodBase" FullName="System.Reflection.MethodBase" FullNameSP="System_Reflection_MethodBase" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable MethodBase extends System.Reflection.MemberInfo" />
+  <TypeSignature Language="C#" Value="public abstract class MethodBase : System.Reflection.MemberInfo, System.Runtime.InteropServices._MethodBase" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Reflection.MemberInfo</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.InteropServices._MethodBase</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._MethodBase))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>Provides information about methods and constructors.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>
+          <see langword="MethodBase " />is used 
+      to represent method types.</para>
+        <para>The Base Class Library includes the following derived 
+      types:</para>
+        <list type="bullet">
+          <item>
+            <term>
+              <see cref="T:System.Reflection.MethodInfo" />
+            </term>
+          </item>
+          <item>
+            <term>
+              <see cref="T:System.Reflection.ConstructorInfo" />
+            </term>
+          </item>
+        </list>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected MethodBase ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs a new instance of the <see cref="T:System.Reflection.MethodBase" />
+class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Attributes">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Reflection.MethodAttributes Attributes { public hidebysig virtual abstract specialname valuetype System.Reflection.MethodAttributes get_Attributes() }" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodAttributes Attributes { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the attributes of the method reflected by the
+      current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Reflection.MethodAttributes" /> value that signifies the attributes of
+   the method reflected by the current instance.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+            <para>This property
+         gets a <see cref="T:System.Reflection.MethodAttributes" /> value that
+         indicates the attributes set in the metadata of the method reflected by the
+         current instance.</para>
+          </block>
+          <para>
+            <block subset="none" type="usage">Use this property
+      to determine the accessibility, layout, and semantics of the constructor
+      or method reflected by the current instance. Also use this property to
+      determine if the member reflected by the current instance is implemented in
+      native code or has a special name.</block>
+          </para>
+        </remarks>
+        <example>
+          <para> The following example demonstrates using this property to
+      obtain the attributes of three methods.</para>
+          <code lang="C#">using System;
+using System.Reflection;
+
+abstract class MyBaseClass
+{
+
+   abstract public void MyPublicInstanceMethod();
+
+}
+
+class MyDerivedClass : MyBaseClass
+{
+
+   public override void MyPublicInstanceMethod() {}
+   private static void MyPrivateStaticMethod() {}
+
+}
+
+class MethodAttributesExample
+{
+
+   static void PrintMethodAttributes(Type t)
+   {
+
+      string str;
+      MethodInfo[] miAry = t.GetMethods( BindingFlags.Static |
+         BindingFlags.Instance | BindingFlags.Public |
+         BindingFlags.NonPublic | BindingFlags.DeclaredOnly );
+      foreach (MethodInfo mi in miAry)
+      {
+
+         Console.WriteLine("Method {0} is: ", mi.Name);
+         str = ((mi.Attributes &amp; MethodAttributes.Static) != 0) ?
+            "Static" : "Instance";
+         Console.Write(str + " ");
+         str = ((mi.Attributes &amp; MethodAttributes.Public) != 0) ?
+            "Public" : "Not-Public";
+         Console.Write(str + " ");
+         str = ((mi.Attributes &amp; MethodAttributes.HideBySig) != 0) ?
+            "HideBySig" : "Hide-by-name";
+         Console.Write(str + " ");
+         str = ((mi.Attributes &amp; MethodAttributes.Abstract) != 0) ?
+            "Abstract" : String.Empty;
+         Console.WriteLine(str);
+
+      }
+
+   }
+
+   public static void Main()
+   {
+
+      PrintMethodAttributes(typeof(MyBaseClass));
+      PrintMethodAttributes(typeof(MyDerivedClass));
+
+   }
+
+}
+      </code>
+          <para>The output is</para>
+          <c>
+            <para>Method MyPublicInstanceMethod is:</para>
+            <para>Instance Public HideBySig Abstract</para>
+            <para>Method MyPublicInstanceMethod is:</para>
+            <para>Instance Public HideBySig</para>
+            <para>Method MyPrivateStaticMethod is:</para>
+            <para>Static Not-Public HideBySig</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CallingConvention">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.CallingConventions CallingConvention { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.CallingConventions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContainsGenericParameters">
+      <MemberSignature Language="C#" Value="public virtual bool ContainsGenericParameters { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a value that indicates whether a generic method contains unassigned generic type parameters.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the current method  contains unassigned generic type parameters; otherwise <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>The default behavior, when not overridden in a derived class, is to return <see langword="false" />. In other words, by default, derived classes do not support generics.</para>
+          <para>In order to invoke a generic method, there must be no generic type definitions or open constructed types in the type arguments of the method itself, or in any enclosing types. If the <see cref="P:System.Reflection.MethodBase.ContainsGenericParameters " /> property returns <see langword="true" />, the method cannot be invoked.</para>
+          <para>The <see cref="P:System.Reflection.MethodBase.ContainsGenericParameters" /> property searches recursively for type parameters. For example, it returns <see langword="true" /> for any method in an open type <see langword="A&lt;T&gt;" />, even though the method itself is not generic. Contrast this with the behavior of the <see cref="P:System.Reflection.MethodBase.IsGenericMethod" /> property, which returns <see langword="false" /> for such a method.</para>
+          <para>For a list of the invariant conditions for terms specific to generic methods, see the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" />  property. For a list of the invariant conditions for other terms used in generic reflection, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+          </block>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCurrentMethod">
+      <MemberSignature Language="C#" Value="public static System.Reflection.MethodBase GetCurrentMethod ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodBase</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetGenericArguments">
+      <MemberSignature Language="C#" Value="public virtual Type[] GetGenericArguments ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns an array of <see cref="T:System.Type" /> objects that represent the type arguments of a generic method or the type parameters of a generic method definition.</para>
+        </summary>
+        <returns>
+          <para>An array of <see cref="T:System.Type" /> objects that represent the type arguments of a generic method or the type parameters of a generic method definition. Returns an empty array if the current method is not a generic method.</para>
+        </returns>
+        <remarks>
+          <para>The default behavior, when not overridden in a derived class, is to throw <see cref="T:System.NotSupportedException" />. In other words, derived classes do not support generics by default.</para>
+          <para>The elements of the returned array are in the order in which they appear in the list of type parameters for the generic method.</para>
+          <list type="bullet">
+            <item>
+              <term>
+                <para>If the current method is a closed constructed method (that is, the <see cref="P:System.Reflection.MethodBase.ContainsGenericParameters" /> property returns <see langword="false" />), the array returned by the <see cref="M:System.Reflection.MethodBase.GetGenericArguments" /> method contains the types that have been assigned to the generic type parameters of the generic method definition.</para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>If the current method is a generic method definition, the array contains the type parameters. </para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>If the current method is an open constructed method (that is, the <see cref="P:System.Reflection.MethodBase.ContainsGenericParameters" /> property returns <see langword="true" />) in which specific types have been assigned to some type parameters and type parameters of enclosing generic types have been assigned to other type parameters, the array contains both types and type parameters. Use the <see cref="P:System.Type.IsGenericParameter" /> property to tell them apart.</para>
+              </term>
+            </item>
+          </list>
+          <para>For a list of the invariant conditions for terms specific to generic methods, see the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" />  property. For a list of the invariant conditions for other terms used in generic reflection, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.NotSupportedException">
+          <para>Default behavior when not overridden in a derived class.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetMethodBody">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodBody GetMethodBody ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodBody</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMethodFromHandle">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Reflection.MethodBase GetMethodFromHandle(valuetype System.RuntimeMethodHandle handle)" />
+      <MemberSignature Language="C#" Value="public static System.Reflection.MethodBase GetMethodFromHandle (RuntimeMethodHandle handle);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodBase</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handle" Type="System.RuntimeMethodHandle" />
+      </Parameters>
+      <Docs>
+        <param name="handle">The method's <see cref="T:System.RuntimeMethodHandle" /> handle.</param>
+        <summary>
+          <para>Gets method information by using the method's internal
+      metadata representation (handle).</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodBase" /> object containing information about the method.</para>
+        </returns>
+        <remarks>
+          <para>The handles are valid only in the application domain in which they were obtained.</para>
+        </remarks>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMethodFromHandle">
+      <MemberSignature Language="C#" Value="public static System.Reflection.MethodBase GetMethodFromHandle (RuntimeMethodHandle handle, RuntimeTypeHandle declaringType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodBase</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handle" Type="System.RuntimeMethodHandle" />
+        <Parameter Name="declaringType" Type="System.RuntimeTypeHandle" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <param name="declaringType">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetMethodImplementationFlags">
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodImplAttributes GetMethodImplementationFlags ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodImplAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetParameters">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.ParameterInfo[] GetParameters()" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.ParameterInfo[] GetParameters ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ParameterInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns the parameters of the method or
+      constructor reflected by the current instance.</para>
+        </summary>
+        <returns>
+          <para> An array of <see cref="T:System.Reflection.ParameterInfo" /> objects that
+   contain information that matches the signature of the method or constructor
+   reflected by the current
+   instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance object Invoke(object obj, class System.Object[] parameters)" />
+      <MemberSignature Language="C#" Value="public object Invoke (object obj, object[] parameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="parameters" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="obj">An instance of a type that contains the constructor or method reflected by the current instance. If the member is static, <paramref name="obj" /> is ignored. For non-static methods, <paramref name="obj" /> is an instance of a class that inherits or declares the method.</param>
+        <param name="parameters">
+          <para>An array objects that match the number, order and type of the parameters for the constructor or method reflected by the current instance. If the member reflected by the current instance takes no parameters, specify either an array with zero elements or <see langword="null" /> . <block subset="none" type="note">Any object in this array that is not explicitly initialized with a value will contain the default value for that object type. For reference-type elements, this value is <see langword="null" />. For value-type elements, this value is 0, 0.0, or <see langword="false" />, depending on the specific element type. If the method or constructor reflected by the current instance is <see langword="static" /> , this parameter is ignored.</block></para>
+        </param>
+        <param name="parameters">To be added.</param>
+        <summary>
+          <para> Invokes the method or constructor reflected by the current instance
+      on the specified object and using the specified arguments.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Object" /> that contains the return
+   value of the invoked method, or a re-initialized object if a constructor was invoked.</para>
+        </returns>
+        <remarks>
+          <para>This version of <see cref="M:System.Reflection.MethodBase.Invoke(System.Object,System.Object[])" /> is equivalent to <see cref="M:System.Reflection.MethodBase.Invoke(System.Object,System.Object[])" />(<paramref name="obj" />,
+   (<see langword="BindingFlags" />)0, <see langword="null" />, <paramref name="parameters" />,
+<see langword="null" />).</para>
+          <para>Optional parameters cannot be omitted in calls to <see cref="M:System.Reflection.MethodBase.Invoke(System.Object,System.Object[])" /> .</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The types of the elements of <paramref name="parameters" /> do not match the types of the parameters accepted by the constructor or method reflected by the current instance, under the constraints of  the default binder.</exception>
+        <exception cref="T:System.Reflection.TargetException">The constructor or method reflected by the current instance is non-static and <paramref name="obj" /> is <see langword="null" />, or is of a type that does not implement the member reflected by the current instance.</exception>
+        <exception cref="T:System.Reflection.TargetInvocationException">The constructor or method reflected by the current instance threw an exception.</exception>
+        <exception cref="T:System.Reflection.TargetParameterCountException">
+          <paramref name="parameters" />.Length does not equal the number of parameters required by the contract of the member reflected by the current instance.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to invoke non-public members of loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <exception cref="T:System.MemberAccessException">The caller does not have permission to execute the method or constructor.</exception>
+        <exception cref="T:System.InvalidOperationException">The type that declares the method is an open generic type. That is, <see cref="P:System.Type.ContainsGenericParameters" /> returns <see langword="true" /> for the declaring type.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract object Invoke(object obj, valuetype System.Reflection.BindingFlags invokeAttr, class System.Reflection.Binder binder, class System.Object[] parameters, class System.Globalization.CultureInfo culture)" />
+      <MemberSignature Language="C#" Value="public abstract object Invoke (object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="invokeAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="binder" Type="System.Reflection.Binder" />
+        <Parameter Name="parameters" Type="System.Object[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="obj">An instance of the type that contains the method reflected by the current instance. If the method is static, <paramref name="obj" /> is ignored. For non-static methods, <paramref name="obj" /> is an instance of a class that inherits or declares the method. </param>
+        <param name="invokeAttr">A <see cref="T:System.Reflection.BindingFlags" /> value that controls the binding process.</param>
+        <param name="binder">An object that enables the binding, coercion of argument types, invocation of members, and retrieval of <see langword="MemberInfo" /> objects via reflection. If <paramref name="binder" /> is <see langword="null" /> , the default binder is used.</param>
+        <param name="parameters">
+          <para>An array of objects that match the number, order and type of the parameters for the constructor or method reflected by the current instance. If the member reflected by the current instance takes no parameters, specify either an array with zero elements or <see langword="null" /> . <block subset="none" type="note">Any object in this array that is not explicitly initialized with a value will contain the default value for that object type. For reference-type elements, this value is <see langword="null" />. For value-type elements, this value is 0, 0.0, or <see langword="false" />, depending on the specific element type. If the method or constructor reflected by the current instance is <see langword="static" /> , this parameter is ignored.</block></para>
+        </param>
+        <param name="culture">
+          <para>The only defined value for this parameter is <see langword="null" /> .</para>
+        </param>
+        <param name="invokeAttr">To be added.</param>
+        <param name="binder">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <param name="culture">To be added.</param>
+        <summary>
+          <para>Invokes the method or constructor reflected by the current instance as
+      determined by the specified arguments.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Object" /> that
+   contains the return value of the invoked method, or a re-initialized object if a
+   constructor was invoked.</para>
+        </returns>
+        <remarks>
+          <para>Optional parameters can not be omitted in calls to
+   <see cref="M:System.Reflection.MethodBase.Invoke(System.Object,System.Object[])" />
+   .</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The types of the elements of <paramref name="parameters" /> do not match the types of the parameters accepted by the constructor or method reflected by the current instance, under the constraints of the default binder.</exception>
+        <exception cref="T:System.Reflection.TargetException">The constructor or method reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the member reflected by the current instance.</exception>
+        <exception cref="T:System.Reflection.TargetInvocationException">The method reflected by the current instance threw an exception.</exception>
+        <exception cref="T:System.Reflection.TargetParameterCountException">
+          <paramref name="parameters" />.Length does not equal the number of parameters required by the contract of the constructor or method reflected by the current instance.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to invoke non-public members of loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <exception cref="T:System.MemberAccessException">The caller does not have permission to execute the method or constructor.</exception>
+        <exception cref="T:System.InvalidOperationException">The type that declares the method is an open generic type. That is, <see cref="P:System.Type.ContainsGenericParameters" /> returns <see langword="true" /> for the declaring type.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsAbstract">
+      <MemberSignature Language="C#" Value="public bool IsAbstract { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsAssembly">
+      <MemberSignature Language="C#" Value="public bool IsAssembly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsConstructor">
+      <MemberSignature Language="C#" Value="public bool IsConstructor { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsFamily">
+      <MemberSignature Language="C#" Value="public bool IsFamily { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsFamilyAndAssembly">
+      <MemberSignature Language="C#" Value="public bool IsFamilyAndAssembly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsFamilyOrAssembly">
+      <MemberSignature Language="C#" Value="public bool IsFamilyOrAssembly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsFinal">
+      <MemberSignature Language="C#" Value="public bool IsFinal { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsGenericMethod">
+      <MemberSignature Language="C#" Value="public virtual bool IsGenericMethod { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a value that indicates whether the current object is a generic method.</para>
+        </summary>
+        <value>
+          <see langword="true" /> if the current object is a generic method; otherwise <see langword="false" />.</value>
+        <remarks>
+          <para>The default behavior, when not overridden in a derived class, is to return <see langword="false" />. In other words, by default, derived classes do not support generics.</para>
+          <para>Use this property to determine whether the current  <see cref="T:System.Reflection.MethodBase" /> object represents a generic method. Use the <see cref="P:System.Reflection.MethodBase.ContainsGenericParameters" /> property to determine whether the current <see cref="T:System.Reflection.MethodBase" /> object represents an open constructed method or a closed constructed method.</para>
+          <para>For a list of the invariant conditions for terms specific to generic methods, see the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" />  property. For a list of the invariant conditions for other terms used in generic reflection, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+          </block>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsGenericMethodDefinition">
+      <MemberSignature Language="C#" Value="public virtual bool IsGenericMethodDefinition { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a value that indicates whether the current <see cref="System.Reflection.MethodBase" /> represents a definition of a generic method.</para>
+        </summary>
+        <value>
+          <see langword="true" /> if the current <see cref="T:System.Reflection.MethodBase" />  object represents the definition of a generic method; otherwise <see langword="false" />.</value>
+        <remarks>
+          <para>The default behavior, when not overridden in a derived class, is to return <see langword="false" />. In other words, by default, derived classes do not support generics.</para>
+          <para>If the current <see cref="T:System.Reflection.MethodBase" /> represents a generic method definition, then:</para>
+          <list type="bullet">
+            <item>
+              <term>
+                <para>
+                  <see cref="M:System.Reflection.MethodBase.IsGenericMethodDefinition" /> returns <see langword="true" />.</para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>For each <see cref="T:System.Type" /> object in the array returned by the <see cref="System.Reflection.MethodBase.GetGenericArguments" /> method: The <see cref="P:System.Type.IsGenericParameter" /> property returns <see langword="true" />; the <see cref="P:System.Type.DeclaringMethod" /> returns the current instance; and the <see cref="P:System.Type.GenericParameterPosition" /> property is the same as the position of the <see cref="T:System.Type" /> object in the array.</para>
+              </term>
+            </item>
+          </list>
+          <para>For a list of the invariant conditions for terms specific to generic methods, see the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" />  property. For a list of the invariant conditions for other terms used in generic reflection, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+          </block>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsHideBySig">
+      <MemberSignature Language="C#" Value="public bool IsHideBySig { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPrivate">
+      <MemberSignature Language="C#" Value="public bool IsPrivate { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPublic">
+      <MemberSignature Language="C#" Value="public bool IsPublic { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSpecialName">
+      <MemberSignature Language="C#" Value="public bool IsSpecialName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsStatic">
+      <MemberSignature Language="C#" Value="public bool IsStatic { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsVirtual">
+      <MemberSignature Language="C#" Value="public bool IsVirtual { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MethodHandle">
+      <MemberSignature Language="C#" Value="public abstract RuntimeMethodHandle MethodHandle { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.RuntimeMethodHandle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MethodBase.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _MethodBase.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="rgszNames" Type="System.IntPtr" />
+        <Parameter Name="cNames" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="rgDispId" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="riid">To be added.</param>
+        <param name="rgszNames">To be added.</param>
+        <param name="cNames">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="rgDispId">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MethodBase.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _MethodBase.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="iTInfo" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="ppTInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="iTInfo">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="ppTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MethodBase.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _MethodBase.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcTInfo" Type="System.UInt32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pcTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MethodBase.Invoke">
+      <MemberSignature Language="C#" Value="void _MethodBase.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dispIdMember" Type="System.UInt32" />
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="wFlags" Type="System.Int16" />
+        <Parameter Name="pDispParams" Type="System.IntPtr" />
+        <Parameter Name="pVarResult" Type="System.IntPtr" />
+        <Parameter Name="pExcepInfo" Type="System.IntPtr" />
+        <Parameter Name="puArgErr" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dispIdMember">To be added.</param>
+        <param name="riid">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="wFlags">To be added.</param>
+        <param name="pDispParams">To be added.</param>
+        <param name="pVarResult">To be added.</param>
+        <param name="pExcepInfo">To be added.</param>
+        <param name="puArgErr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

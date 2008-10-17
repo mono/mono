@@ -1,0 +1,850 @@
+<Type Name="StreamReader" FullName="System.IO.StreamReader" FullNameSP="System_IO_StreamReader" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable StreamReader extends System.IO.TextReader" />
+  <TypeSignature Language="C#" Value="public class StreamReader : System.IO.TextReader" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.IO.TextReader</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para>Implements a <see cref="T:System.IO.Stream" /> that reads
+   characters from a byte stream in a particular encoding.</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.IO.StreamReader" /> class is designed for
+   character input in a particular <see cref="T:System.Text.Encoding" />, whereas subclasses of <see cref="T:System.IO.Stream" /> are designed for byte input and output.</para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.IO.StreamReader" /> defaults to UTF-8 encoding unless specified
+   otherwise, instead of defaulting to the ANSI code page for the current system.
+   UTF-8 handles Unicode characters correctly and provides consistent results on localized
+   versions of the operating system.</para>
+        <para>When reading from a <see cref="T:System.IO.Stream" />, it is more efficient to use a buffer that is the
+same size as the internal buffer of the stream.</para>
+        <para>By default, a <see cref="T:System.IO.StreamReader" /> is not thread safe. For a
+thread-safe wrapper, see <see cref="M:System.IO.TextReader.Synchronized(System.IO.TextReader)" qualify="true" />
+.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream stream)" />
+      <MemberSignature Language="C#" Value="public StreamReader (System.IO.Stream stream);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">The <see cref="T:System.IO.Stream" /> to read.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamReader" /> class for the specified stream.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamReader.CurrentEncoding" /> property to <see cref="T:System.Text.UTF8Encoding" />, the <see cref="P:System.IO.StreamReader.BaseStream" /> property using <paramref name="stream    " /> , and the internal buffer to the default size.
+   <block subset="none" type="note">The default buffer size is implementation
+      dependent.</block></para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="stream" /> does not support reading.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="stream" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path)" />
+      <MemberSignature Language="C#" Value="public StreamReader (string path);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> that specifies the complete file path to read.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamReader" /> class for the specified file name.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamReader.CurrentEncoding" /> property to <see cref="T:System.Text.UTF8Encoding" />, and
+   the internal buffer to the default size. <block subset="none" type="note">The default buffer size is implementation defined.</block></para>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="path" /> is not required to be
+   a file stored on disk; it can be any part of a system that supports access via
+   streams. For example, depending on the system, this class might be able to access
+   a physical device.</para>
+            <para> For information on the valid format and characters for
+   path strings, see <see cref="T:System.IO.Path" /> . </para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="path" /> is in an invalid format or contains invalid characters.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">The file specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " /> is an empty string ("").</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path " /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream stream, bool detectEncodingFromByteOrderMarks)" />
+      <MemberSignature Language="C#" Value="public StreamReader (System.IO.Stream stream, bool detectEncodingFromByteOrderMarks);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="detectEncodingFromByteOrderMarks" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="stream">The <paramref name="stream " /> to read.</param>
+        <param name="detectEncodingFromByteOrderMarks">A <see cref="T:System.Boolean" /> value that indicates whether the new <see cref="T:System.IO.StreamReader" /> is required to look for byte order marks at the beginning of the stream. Specify <see langword="true" /> to enable detection of byte order marks; otherwise, specify <see langword="false" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamReader" /> class for the specified stream, with the specified
+   byte order mark detection option.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamReader.CurrentEncoding" /> property to <see cref="T:System.Text.UTF8Encoding" /> , the <see cref="P:System.IO.StreamReader.BaseStream" /> property using <paramref name="stream    " />, and the internal buffer to the default size.
+      <block subset="none" type="note">The default buffer size is implementation
+      defined.</block></para>
+          <para>If requested, the current constructor detects the encoding by
+      examining the first three bytes of the stream. The constructor automatically recognizes
+      UTF-8, little-endian Unicode, and big-endian Unicode text if
+      the file starts with the appropriate byte order marks. Otherwise, UTF-8 encoding is
+      used. For more information, see the <see cref="M:System.Text.Encoding.GetPreamble" qualify="true" /> method.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="stream" /> does not support reading.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="stream " /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream stream, class System.Text.Encoding encoding)" />
+      <MemberSignature Language="C#" Value="public StreamReader (System.IO.Stream stream, System.Text.Encoding encoding);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <param name="stream">The <see cref="T:System.IO.Stream" /> to read.</param>
+        <param name="encoding">A <see cref="T:System.Text.Encoding" /> that specifies the character encoding to use.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamReader" />
+class for the specified stream with the specified character encoding.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamReader.CurrentEncoding" /> property using <paramref name="encoding" /> , the <see cref="P:System.IO.StreamReader.BaseStream" /> property using <paramref name="stream    " />
+   , and the internal buffer to the default size. <block subset="none" type="note">The default buffer size is implementation defined.</block></para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="stream" /> does not support reading.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="stream " /> or <paramref name="encoding" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, bool detectEncodingFromByteOrderMarks)" />
+      <MemberSignature Language="C#" Value="public StreamReader (string path, bool detectEncodingFromByteOrderMarks);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="detectEncodingFromByteOrderMarks" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> that specifies the complete file path to read.</param>
+        <param name="detectEncodingFromByteOrderMarks">A <see cref="T:System.Boolean" /> value that indicates whether the new <see cref="T:System.IO.StreamReader" /> is required to look for byte order marks at the beginning of the stream. Specify <see langword="true" /> to enable detection of byte order marks; otherwise, specify <see langword="false" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamReader" /> class
+   for the specified file name, with the specified byte order mark detection option.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamReader.CurrentEncoding" /> property to <see cref="T:System.Text.UTF8Encoding" /> , and the internal buffer to the default size.
+      <block subset="none" type="note">The default buffer size is implementation
+      defined.</block></para>
+          <para> If requested, the current constructor
+      detects the encoding by examining the first three bytes of the stream.
+      The constructor automatically recognizes UTF-8, little-endian Unicode, and
+      big-endian Unicode text if the file starts with the appropriate byte order marks.
+      Otherwise, UTF-8 encoding is used. See the <see cref="M:System.Text.Encoding.GetPreamble" qualify="true" />
+      method for more information.</para>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="path" /> is not required to be a
+      file stored on disk; it can be any part of a system that supports access via
+      streams. For example, depending on the system, this class might be able to access
+      a physical device.</para>
+            <para>For information on the valid format and characters for
+      path strings, see <see cref="T:System.IO.Path" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="path" /> is in an invalid format or contains invalid characters.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">The file specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is an empty string ("").</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path " /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, class System.Text.Encoding encoding)" />
+      <MemberSignature Language="C#" Value="public StreamReader (string path, System.Text.Encoding encoding);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> that specifies the complete file path to read.</param>
+        <param name="encoding">A <see cref="T:System.Text.Encoding" /> that specifies the character encoding to use.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamReader" />
+class for the specified file name and with the specified character encoding.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamReader.CurrentEncoding" /> property using
+<paramref name="encoding" /> , and the internal buffer to the default size. 
+   <block subset="none" type="note">The default buffer size is implementation
+      defined.</block></para>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="path" /> is not required to be a
+      file stored on disk; it can be any part of a system that supports access via
+      streams. For example, depending on the system, this class might be able to access
+      a physical device.</para>
+            <para>For information on the valid format and characters for
+      path strings, see <see cref="T:System.IO.Path" />. </para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="path" /> is in an invalid format or contains invalid characters.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">The file specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is an empty string ("").</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path " />or <paramref name="encoding" /> is <see langword="null" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream stream, class System.Text.Encoding encoding, bool detectEncodingFromByteOrderMarks)" />
+      <MemberSignature Language="C#" Value="public StreamReader (System.IO.Stream stream, System.Text.Encoding encoding, bool detectEncodingFromByteOrderMarks);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="detectEncodingFromByteOrderMarks" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="stream">The <see cref="T:System.IO.Stream" /> to read.</param>
+        <param name="encoding">A <see cref="T:System.Text.Encoding" /> that specifies the character encoding to use.</param>
+        <param name="detectEncodingFromByteOrderMarks">A <see cref="T:System.Boolean" /> value that indicates whether the new <see cref="T:System.IO.StreamReader" /> is required to look for byte order marks at the beginning of the stream. Specify <see langword="true" /> to enable detection of byte order marks; otherwise, specify <see langword="false" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamReader" /> class for the specified stream, with the specified character encoding and byte order mark detection option.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamReader.CurrentEncoding" /> property using
+<paramref name="encoding" /> , the <see cref="P:System.IO.StreamReader.BaseStream" /> property using <paramref name="stream " /> , and the internal buffer to the default size. 
+      <block subset="none" type="note">The default buffer size is implementation
+      defined.</block></para>
+          <para>If requested, this constructor detects the encoding
+      by examining the first three bytes of <paramref name="stream" />
+      . This constructor
+      automatically recognizes UTF-8, little-endian Unicode, and big-endian Unicode text if the stream starts
+      with the appropriate byte order marks. Otherwise, the user-provided encoding is
+      used. See the <see cref="M:System.Text.Encoding.GetPreamble" qualify="true" /> method for more information.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="stream" /> does not support reading.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="stream " />or <paramref name="encoding" /> is <see langword="null" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, class System.Text.Encoding encoding, bool detectEncodingFromByteOrderMarks)" />
+      <MemberSignature Language="C#" Value="public StreamReader (string path, System.Text.Encoding encoding, bool detectEncodingFromByteOrderMarks);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="detectEncodingFromByteOrderMarks" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> that specifies the complete file path to read.</param>
+        <param name="encoding">A <see cref="T:System.Text.Encoding" /> that specifies the character encoding to use.</param>
+        <param name="detectEncodingFromByteOrderMarks">A <see cref="T:System.Boolean" /> value that indicates whether the new <see cref="T:System.IO.StreamReader" />is required to look for byte order marks at the beginning of the stream. Specify <see langword="true" /> to enable detection of byte order marks; otherwise, specify <see langword="false" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamReader" /> class for the specified file name, with the specified character encoding and byte order mark detection option.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamReader.CurrentEncoding" /> property using
+<paramref name="encoding" /> , and the internal buffer to the default size. 
+   <block subset="none" type="note">The default buffer size is implementation
+      defined.</block></para>
+          <para>If requested, the current constructor detects the
+      encoding by examining the first three bytes of the stream. The constructor
+      automatically recognizes UTF-8, little-endian Unicode, and big-endian Unicode
+      text if the file starts with the appropriate byte order marks. Otherwise, the
+      user-provided encoding is used. See the <see cref="M:System.Text.Encoding.GetPreamble" qualify="true" />
+      
+      method for more information.</para>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="path" /> is not required to be a
+      file stored on disk; it can be any part of a system that supports access via
+      streams. For example, depending on the system, this class might be able to access
+      a physical device.</para>
+            <para>For information on the valid format and characters for
+      path strings, see <see cref="T:System.IO.Path" />. </para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="path" /> is in an invalid format or contains invalid characters.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">The file specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " /> is an empty string ("").</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path " /> or <paramref name="encoding" /> is <see langword="null" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream stream, class System.Text.Encoding encoding, bool detectEncodingFromByteOrderMarks, int32 bufferSize)" />
+      <MemberSignature Language="C#" Value="public StreamReader (System.IO.Stream stream, System.Text.Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="detectEncodingFromByteOrderMarks" Type="System.Boolean" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="stream">The <see cref="T:System.IO.Stream" /> to read.</param>
+        <param name="encoding">A <see cref="T:System.Text.Encoding" /> that specifies the character encoding to use.</param>
+        <param name="detectEncodingFromByteOrderMarks">A <see cref="T:System.Boolean" /> value that indicates whether the new <see cref="T:System.IO.StreamReader" /> is required to look for byte order marks at the beginning of the stream. Specify <see langword="true" /> to enable detection of byte order marks; otherwise, specify <see langword="false" /> .</param>
+        <param name="bufferSize">A <see cref="T:System.Int32" /> that specifies the minimum buffer size, in number of 16-bit characters. If <paramref name="bufferSize" /> is less than the minimum allowable size (128 characters), the minimum allowable size is used.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamReader" /> class for the specified stream, with the specified character encoding, byte order mark
+   detection option, and buffer size.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamReader.CurrentEncoding" /> property using
+<paramref name="encoding" /> parameter the <see cref="P:System.IO.StreamReader.BaseStream" /> property using <paramref name="stream " /> .</para>
+          <para>If requested, this constructor detects the encoding by examining
+   the first three bytes of the stream. The constructor automatically recognizes UTF-8,
+   little-endian Unicode, and big-endian Unicode text if the
+   file starts with the appropriate byte order marks. Otherwise, the user-provided encoding is
+   used. For more information, see the <see cref="M:System.Text.Encoding.GetPreamble" qualify="true" /> method.</para>
+          <para>
+            <block subset="none" type="note">When reading from a <see cref="T:System.IO.Stream" />, it is more
+efficient to use a buffer that is the same size as the internal buffer of the
+stream.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="stream" /> does not support reading.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="stream " />or <paramref name="encoding" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="bufferSize " />is less than or equal to zero.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, class System.Text.Encoding encoding, bool detectEncodingFromByteOrderMarks, int32 bufferSize)" />
+      <MemberSignature Language="C#" Value="public StreamReader (string path, System.Text.Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="detectEncodingFromByteOrderMarks" Type="System.Boolean" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> that specifies the complete file path to read.</param>
+        <param name="encoding">A <see cref="T:System.Text.Encoding" /> that specifies the character encoding to use.</param>
+        <param name="detectEncodingFromByteOrderMarks">A <see cref="T:System.Boolean" /> value that indicates whether the new <see cref="T:System.IO.StreamReader" />is required to look for byte order marks at the beginning of the stream. Specify <see langword="true" /> to enable detection of byte order marks; otherwise, specify <see langword="false" /> .</param>
+        <param name="bufferSize">A <see cref="T:System.Int32" /> that specifies the minimum buffer size, in number of 16-bit characters. If less than the minimum allowable size (128 characters), the minimum allowable size is used.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamReader" /> class for the specified file name, with the specified character encoding, byte order
+   mark detection option, and buffer size.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamReader.CurrentEncoding" /> property using
+<paramref name="encoding" /> .</para>
+          <para>If requested, the current constructor detects the encoding by examining the
+   first three bytes of the stream. The constructor automatically recognizes UTF-8,
+   little-endian Unicode, and big-endian Unicode text if the file starts with the
+   appropriate byte order marks. Otherwise, the user-provided encoding is used. See
+   the <see cref="M:System.Text.Encoding.GetPreamble" qualify="true" /> method for more information.</para>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="path" /> is not required to be a file stored on disk;
+   it can be any part of a system that supports access via streams. For example,
+   depending on the system, this class might be able to access a physical device.</para>
+            <para>When reading from a <see cref="T:System.IO.Stream" />, it is more efficient to use a buffer that is the
+same size as the internal buffer of the stream.</para>
+            <para>For information on the valid format and characters for path strings, see
+<see cref="T:System.IO.Path" />. </para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="path" /> is in an invalid format or contains invalid characters.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">The file specified in <paramref name="path" /> was not found.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is an empty string ("").</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path " /> or <paramref name="encoding" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="buffersize" /> is less than or equal to zero.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BaseStream">
+      <MemberSignature Language="ILASM" Value=".property class System.IO.Stream BaseStream { public hidebysig virtual specialname class System.IO.Stream get_BaseStream() }" />
+      <MemberSignature Language="C#" Value="public virtual System.IO.Stream BaseStream { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the underlying stream.</para>
+        </summary>
+        <value>
+          <para>The underlying <see cref="T:System.IO.Stream" /> which the current <see cref="T:System.IO.StreamReader" /> instance is reading.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
+      <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Closes the current instance of <see cref="T:System.IO.StreamReader" />
+, releasing any system resources associated with it.</para>
+        </summary>
+        <remarks>
+          <para> Following a call to this method, operations on the current instance might raise exceptions.</para>
+          <block subset="none" type="note">
+            <para>This version of <see cref="M:System.IO.StreamReader.Close" /> is equivalent to <see cref="M:System.IO.StreamReader.Dispose(System.Boolean)" />(<see langword="true" />).</para>
+            <para>This method overrides <see cref="M:System.IO.TextReader.Close" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CurrentEncoding">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding CurrentEncoding { public hidebysig virtual specialname class System.Text.Encoding get_CurrentEncoding() }" />
+      <MemberSignature Language="C#" Value="public virtual System.Text.Encoding CurrentEncoding { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the current character encoding that the current
+   <see cref="T:System.IO.StreamReader" /> is
+      using.</para>
+        </summary>
+        <value>
+   The current <see cref="T:System.Text.Encoding" /> used by the current reader.
+</value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para> The value returned
+      by this property might change after the first call to a <see cref="M:System.IO.StreamReader.Read" qualify="true" />
+      method if encoding auto detection was specified to the constructor for the
+      current instance.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DiscardBufferedData">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void DiscardBufferedData()" />
+      <MemberSignature Language="C#" Value="public void DiscardBufferedData ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Allows a <see cref="T:System.IO.StreamReader" />
+to discard its buffered data.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is useful when reading from a stream after seeking
+      to a new position. If this method is not called and the internal
+      buffer is not empty, a read attempt at the new location will first
+      return data that is in the buffer before returning the text at the current
+      position in the stream.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool disposing)" />
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">
+          <see langword="true" /> to release both managed and unmanaged resources; <see langword="false" /> to release only unmanaged resources.</param>
+        <summary>
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.StreamReader" /> and
+   optionally releases the managed resources.</para>
+        </summary>
+        <remarks>
+          <para>When the <paramref name="disposing" /> parameter is <see langword="true" />, this method
+   releases all resources held by any managed objects that this <see cref="T:System.IO.StreamReader" />
+   references. This method invokes the <see langword="Dispose()" /> method of each
+   referenced object.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="M:System.IO.StreamReader.Dispose(System.Boolean)" /> can be called multiple
+   times by other objects. When overriding <see cref="M:System.IO.StreamReader.Dispose(System.Boolean)" />(<see cref="T:System.Boolean" />), be careful not
+   to reference objects that have been previously disposed in an earlier call to
+<see cref="M:System.IO.StreamReader.Dispose(System.Boolean)" /> .</para>
+            <para>This method calls the dispose method of the base class, <see cref="M:System.IO.TextReader.Dispose(System.Boolean)" />(<paramref name="disposing" />).</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndOfStream">
+      <MemberSignature Language="C#" Value="public bool EndOfStream { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Null">
+      <MemberSignature Language="C#" Value="public static readonly System.IO.StreamReader Null;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.StreamReader</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Peek">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Peek()" />
+      <MemberSignature Language="C#" Value="public override int Peek ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns the next character in the underlying stream
+      without advancing the position of the <see cref="T:System.IO.StreamReader" />
+      in the stream.</para>
+        </summary>
+        <returns>
+          <para> The next character from the character source
+      as a <see cref="T:System.Int32" /> , or -1 if at the end of the
+      stream.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method returns -1 is when the end of the underlying stream is reached
+         because a Unicode character can contain only values between hexadecimal 0x0000
+         to 0xFFFF (0 to 65535).</para>
+            <para>This method overrides <see cref="M:System.IO.TextReader.Peek" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Read()" />
+      <MemberSignature Language="C#" Value="public override int Read ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Reads the next
+      character from the input stream
+      and advances the character position by one character.</para>
+        </summary>
+        <returns>
+          <para>The next character from the character source represented
+      as a <see cref="T:System.Int32" /> , or -1 if at the end
+      of the stream.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method returns -1 when the end of the underlying stream is reached
+         because a Unicode character can contain only values between hexadecimal 0x0000
+         to 0xFFFF (0 to 65535).</para>
+            <para>This method overrides <see cref="M:System.IO.TextReader.Read" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Read(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public override int Read (char[] buffer, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Char" /> array. When this method returns, contains the specified character array with the values between <paramref name="index" /> and <paramref name="(index + count - 1)" /> replaced by the characters read from the current instance.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the index of <paramref name="buffer" /> at which to begin writing.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the maximum number of characters to read.</param>
+        <summary>
+          <para>Reads a maximum of <paramref name="count " />
+characters from the current stream into <paramref name="buffer" />,
+beginning at <paramref name="index" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the number of characters that have been read, or zero if
+   there are no more characters left to read. Can be less than <paramref name="count" />
+   if the end
+   of the stream has been reached.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method returns after either <paramref name="count" /> characters are
+      read, or the end of the file is reached. <see cref="M:System.IO.TextReader.ReadBlock(System.Char[],System.Int32,System.Int32)" /> is a blocking
+      version of <see cref="M:System.IO.StreamReader.Read" /> .</para>
+            <para>This method overrides <see cref="M:System.IO.TextReader.Read" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="buffer" /> .Length - <paramref name="index" /> &lt; <paramref name="count" /> .</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> or <paramref name="count" /> is negative.</exception>
+        <exception cref="T:System.IO.IOException">
+          <para> An I/O error occurred.</para>
+          <para>-or-</para>
+          <para>The current stream is closed.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadLine()" />
+      <MemberSignature Language="C#" Value="public override string ReadLine ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Reads a line of characters from the current stream and returns
+      the data as a string.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the next line from the input stream, or
+<see langword="null" /> if the end of the input
+   stream is reached.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para> This method defines a line as a sequence of
+         characters followed by a carriage return (hexadecimal 0x000d), a line feed (hexadecimal 0x000a), or <see cref="P:System.Environment.NewLine" qualify="true" />. The returned string does not contain the terminating
+         character(s).</para>
+            <para>This method overrides <see cref="M:System.IO.TextReader.ReadLine" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.OutOfMemoryException">There is insufficient memory to allocate a buffer for the returned string.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadToEnd">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadToEnd()" />
+      <MemberSignature Language="C#" Value="public override string ReadToEnd ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Reads the stream from the current position to the
+      end of the stream.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the rest of the stream as a string, from the current
+   position to the end. If the current position is at the end of the stream, returns the empty string ("").</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.IO.TextReader.ReadToEnd" qualify="true" />
+   .</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.OutOfMemoryException">There is insufficient memory to allocate a buffer for the returned string.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

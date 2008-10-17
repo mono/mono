@@ -1,0 +1,32 @@
+<Type Name="EventHandler&lt;TEventArgs&gt;" FullName="System.EventHandler&lt;TEventArgs&gt;">
+  <TypeSignature Language="C#" Value="public delegate void EventHandler&lt;TEventArgs&gt;(object sender, TEventArgs e) where TEventArgs : EventArgs;" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TEventArgs">
+      <Constraints>
+        <BaseTypeName>System.EventArgs</BaseTypeName>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="e" Type="TEventArgs" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <typeparam name="TEventArgs">To be added.</typeparam>
+    <param name="sender">To be added.</param>
+    <param name="e">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

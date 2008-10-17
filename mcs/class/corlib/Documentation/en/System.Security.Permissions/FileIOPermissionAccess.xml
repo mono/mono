@@ -1,0 +1,175 @@
+<Type Name="FileIOPermissionAccess" FullName="System.Security.Permissions.FileIOPermissionAccess" FullNameSP="System_Security_Permissions_FileIOPermissionAccess" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable FileIOPermissionAccess extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum FileIOPermissionAccess" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Represents access to files and
+ directories.</para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">This enumeration is used by the <see cref="T:System.Security.Permissions.FileIOPermission" /> class. </block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AllAccess">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess AllAccess = Read | Write | Append | PathDiscovery" />
+      <MemberSignature Language="C#" Value="AllAccess" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>AllAccess</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Append" />, <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />
+, <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" />, and
+<see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" /> access to a file or directory.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Append = 0x4" />
+      <MemberSignature Language="C#" Value="Append" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Append</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies append access to a file or directory. Append
+ access includes the ability to create a new file or directory.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoAccess">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess NoAccess = 0x0" />
+      <MemberSignature Language="C#" Value="NoAccess" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NoAccess</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies no access to a file or directory.
+ </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PathDiscovery">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess PathDiscovery = 0x8" />
+      <MemberSignature Language="C#" Value="PathDiscovery" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>PathDiscovery</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies access to the path information for a file or directory. <see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" /> does not
+ include access to the
+ contents of a file or directory.</para>
+          <para>
+            <block subset="none" type="note">This permission is used to protect
+ sensitive information in the path, such as user names, as well as information
+ about the directory structure revealed in the
+ path. </block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Read = 0x1" />
+      <MemberSignature Language="C#" Value="Read" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Read</MemberValue>
+      <Docs>
+        <summary>
+ Specifies read access to a file or directory.
+</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Write = 0x2" />
+      <MemberSignature Language="C#" Value="Write" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Write</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies write access to a file or
+ directory. Write access includes deleting and overwriting files or directories.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

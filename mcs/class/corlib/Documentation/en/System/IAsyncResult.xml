@@ -1,0 +1,216 @@
+<Type Name="IAsyncResult" FullName="System.IAsyncResult" FullNameSP="System_IAsyncResult" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class interface public abstract IAsyncResult" />
+  <TypeSignature Language="C#" Value="public interface IAsyncResult" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Docs>
+    <summary>
+      <para> Supported by objects
+      that represent the state
+      of an asynchronous operation.
+      </para>
+    </summary>
+    <remarks>
+      <para>An object that supports the <see cref="T:System.IAsyncResult" />
+interface stores state information for an asynchronous operation, and provides a
+synchronization object to allow threads to be signaled when the operation
+completes.</para>
+      <para>
+        <see cref="T:System.IAsyncResult" /> objects are returned by methods that begin
+asynchronous operations, such as <see cref="M:System.IO.FileStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />, and are passed to methods used to
+complete asynchronous operations, such as <see cref="M:System.IO.FileStream.EndRead(System.IAsyncResult)" />. <see cref="T:System.IAsyncResult" />
+objects are also passed to methods invoked by <see cref="T:System.AsyncCallback" /> delegates
+when an asynchronous operation completes.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AsyncState">
+      <MemberSignature Language="ILASM" Value=".property object AsyncState { public hidebysig virtual abstract specialname object get_AsyncState() }" />
+      <MemberSignature Language="C#" Value="public object AsyncState { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the user-provided state object supplied at the time the asynchronous
+      operation was started.
+      </para>
+        </summary>
+        <value>
+          <para>The supplied <see cref="T:System.Object" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para> The object returned by this property is required to be
+         the object specified as the last parameter to methods that begin asynchronous
+         operations, such as <see cref="M:System.IO.FileStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
+            <para>This property is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides">
+      
+      Implement this property to allow the caller of an
+      asynchronous operation to obtain an application-defined object specified at the
+      start of the operation.
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> The object returned by
+      
+      this property can be used to pass state information for
+      the asynchronous operation to a <see cref="T:System.AsyncCallback" />
+      delegate.
+      </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AsyncWaitHandle">
+      <MemberSignature Language="ILASM" Value=".property class System.Threading.WaitHandle AsyncWaitHandle { public hidebysig virtual abstract specialname class System.Threading.WaitHandle get_AsyncWaitHandle() }" />
+      <MemberSignature Language="C#" Value="public System.Threading.WaitHandle AsyncWaitHandle { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Threading.WaitHandle</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Threading.WaitHandle" /> that can be used to block a thread until an asynchronous
+   operation completes.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Threading.WaitHandle" /> that is signaled when an asynchronous operation completes.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>The object returned by <see cref="P:System.IAsyncResult.AsyncWaitHandle" /> can be allocated in advance or on demand. However, once
+      allocated it is required to be kept alive until the user calls a method that
+      ends the asynchronous operation, such as <see cref="M:System.IO.FileStream.EndRead(System.IAsyncResult)" />.
+      Only after the operation completes or is canceled, can the object be disposed
+      of.</para>
+            <para>
+              <block subset="none" type="note">
+                <see langword="WaitHandle" /> supplies methods that support waiting 
+   for synchronization objects to become signaled, such as <see cref="M:System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" />
+   .</block>
+            </para>
+            <para>This property is read-only.</para>
+          </block>
+          <block subset="none" type="usage">
+            <para>Clients that wait for the operation to complete (as
+      opposed to polling), use this property to obtain a synchronization object to
+      wait on.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompletedSynchronously">
+      <MemberSignature Language="ILASM" Value=".property bool CompletedSynchronously { public hidebysig virtual abstract specialname bool get_CompletedSynchronously() }" />
+      <MemberSignature Language="C#" Value="public bool CompletedSynchronously { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Boolean" /> 
+value that specifies whether the
+asynchronous operation completed synchronously.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the operation synchronously;
+   otherwise <see langword="false" />. </para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para> 
+         As described above.</para>
+            <para>
+              <block subset="none" type="note">Most 
+         implementations of the <see cref="T:System.IAsyncResult" /> interface will not use this property, and should return
+      <see langword="false" /> 
+      .</block>
+            </para>
+            <para>This property is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="usage">
+   Use this property to determine if the asynchronous
+   operation completed synchronously. For example, this property can return
+<see langword="true" /> for an asynchronous IO
+   operation if the IO request was small.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsCompleted">
+      <MemberSignature Language="ILASM" Value=".property bool IsCompleted { public hidebysig virtual abstract specialname bool get_IsCompleted() }" />
+      <MemberSignature Language="C#" Value="public bool IsCompleted { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Boolean" /> 
+value that specifies
+whether an asynchronous operation has completed.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the operation has completed;
+   otherwise <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described above. </para>
+            <para>This property is read-only.</para>
+          </block>
+          <block subset="none" type="usage">
+            <para>Clients that poll for operation status (as opposed to waiting on a
+         synchronization object) use this property to determine the status of the
+         operation.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

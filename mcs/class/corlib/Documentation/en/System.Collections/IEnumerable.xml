@@ -1,0 +1,77 @@
+<Type Name="IEnumerable" FullName="System.Collections.IEnumerable" FullNameSP="System_Collections_IEnumerable" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class interface public abstract IEnumerable" />
+  <TypeSignature Language="C#" Value="public interface IEnumerable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.Guid("496B0ABE-CDEE-11d3-88E8-00902754C43A")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Implemented by classes that support a simple iteration over instances of the collection.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Collections.IEnumerable" /> contains the <see cref="M:System.Collections.IEnumerable.GetEnumerator" />
+   method. The consumer of an object should call this method to obtain an
+   enumerator for simple iteration over an instance of a collection.</para>
+        <para>Implement this interface to support the 
+<see langword="foreach" /> semantics of C#.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Collections.IEnumerator GetEnumerator()" />
+      <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a <see cref="T:System.Collections.IEnumerator" /> that
+   can be used for simple iteration over a collection.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Collections.IEnumerator" />
+that can be used for simple iteration over a collection.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">For a detailed description regarding the use of an
+      enumerator, see <see cref="T:System.Collections.IEnumerator" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.DispId(-4)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Interfaces />
+</Type>

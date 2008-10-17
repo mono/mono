@@ -1,0 +1,151 @@
+<Type Name="IList&lt;T&gt;" FullName="System.Collections.Generic.IList&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public interface IList&lt;T&gt; : System.Collections.Generic.ICollection&lt;T&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.ICollection&lt;T&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>
+      <para>Represents a collection of objects that can be individually accessed by index.</para>
+    </summary>
+    <remarks>
+      <para>This interface is a descendant of the <see cref="T:System.Collections.Generic.ICollection&lt;T&gt;" /> interface and is the base interface of all generic lists.</para>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="C#" Value="public int IndexOf (T item);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="item">To be added.</param>
+        <summary>
+          <para>Determines the index of a specific item in the current instance.</para>
+        </summary>
+        <returns>The index of <paramref name="value" /> if found in the current instance; otherwise, -1.</returns>
+        <remarks>
+          <para>Implementations can vary in how they determine equality of objects; for example, <see cref="T:System.Collections.Generic.List&lt;T&gt;" />  uses the default comparer, whereas, <see cref="T:System.Collections.Generic.Dictionary&lt;T,U&gt;" /> allows the user to specify the <see cref="T:System.Collections.Generic.IComparer&lt;T&gt;" /> implementation to use for comparing keys.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="C#" Value="public void Insert (int index, T item);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="item" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="System.Int32" /> that specifies the zero-based index at which value is inserted.</param>
+        <param name="item">To be added.</param>
+        <summary>
+          <para>Inserts an item into the current instance at the specified position.</para>
+        </summary>
+        <remarks>
+          <para>In collections of contiguous elements, such as lists, the elements that follow the insertion point have indices one more than previously, to accommodate the new element. If the collection is indexed, the indexes of the elements that are moved are also updated.</para>
+          <para>
+            <block subset="none" type="behaviors">
+              <para>If <paramref name="index" /> equals the number of items in the <see cref="System.Collections.Generic.IList&lt;T&gt;" />, then value is required to be appended to the end of the current instance.</para>
+            </block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is not a valid index in the current instance (i.e. is negative or greater than the number of elements in the current instance).</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public T this[int index] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">The zero-based index of the element to get or set.</param>
+        <summary>
+          <para>Gets or sets the element at the specified index in the current instance.</para>
+        </summary>
+        <value>
+          <para>The element at the specified index in the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property provides the ability to access a specific element in the collection by using some language-specific syntax.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is not a valid index in the current instance.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The property is being set and the current instance is read-only.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveAt">
+      <MemberSignature Language="C#" Value="public void RemoveAt (int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="System.Int32" /> that specifies the zero-based index of the item to remove.</param>
+        <summary>
+          <para>Removes the item at the specified index of the current instance.</para>
+        </summary>
+        <remarks>
+          <para>In collections of contiguous elements, such as lists, the elements that follow the removed element have indices one less than previously. If the collection is indexed, the indexes of the elements that are moved are also updated.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is not a valid index in the current instance.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only.</para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

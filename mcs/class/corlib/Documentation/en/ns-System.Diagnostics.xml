@@ -1,0 +1,9 @@
+<Namespace Name="System.Diagnostics" FullName="System.Diagnostics" FullNameSP="System.Diagnostics" Maintainer="Mono">
+  <Docs>
+    <summary>
+        This namespace contains classes for interacting with system resources like event logs, processes, and performance counters.
+    </summary>
+    <remarks>
+    </remarks>
+  </Docs>
+</Namespace>

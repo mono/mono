@@ -1,0 +1,160 @@
+<Type Name="IDictionaryEnumerator" FullName="System.Collections.IDictionaryEnumerator" FullNameSP="System_Collections_IDictionaryEnumerator" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class interface public abstract IDictionaryEnumerator implements System.Collections.IEnumerator" />
+  <TypeSignature Language="C#" Value="public interface IDictionaryEnumerator : System.Collections.IEnumerator" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Docs>
+    <summary>
+      <para>Implemented by classes that support the use of an enumerator over a
+      dictionary (i.e., a collection of <see cref="T:System.Collections.DictionaryEntry" />
+      objects).</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Collections.IDictionaryEnumerator" /> contains members that get
+      the properties of <see cref="T:System.Collections.DictionaryEntry" /> objects.</para>
+        <para> For detailed information regarding the use of an
+      enumerator, see <see cref="T:System.Collections.IEnumerator" />.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Entry">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Collections.DictionaryEntry Entry { public hidebysig virtual abstract specialname valuetype System.Collections.DictionaryEntry get_Entry() }" />
+      <MemberSignature Language="C#" Value="public System.Collections.DictionaryEntry Entry { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.DictionaryEntry</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the <see cref="T:System.Collections.DictionaryEntry" /> in the collection over 
+   which the current instance is positioned.</para>
+        </summary>
+        <value>
+          <para> The <see cref="T:System.Collections.DictionaryEntry" /> in the collection over which the current instance is positioned.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors">It is required that a call to
+   <see cref="P:System.Collections.IDictionaryEnumerator.Entry" /> leave the position of
+      the enumerator unchanged: consecutive calls to this property are required to return the same <see cref="T:System.Object" /> until <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is
+      called.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use
+   <see cref="P:System.Collections.IDictionaryEnumerator.Entry" /> to get the same data
+      that would be provided by a call to <see cref="P:System.Collections.IEnumerator.Current" qualify="true" />. Because this property is a <see cref="T:System.Collections.DictionaryEntry" />, boxing is not required as it is for <see cref="P:System.Collections.IEnumerator.Current" qualify="true" />;
+      therefore, for this operation, <see cref="P:System.Collections.IDictionaryEnumerator.Entry" /> has reduced overhead compared to <see cref="P:System.Collections.IEnumerator.Current" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:System.Collections.IDictionaryEnumerator" /> is positioned before the first element of the dictionary or after the last element.</para>
+          <para>-or-</para>
+          <para>The dictionary was modified after the <see cref="T:System.Collections.IDictionaryEnumerator" /> was created.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Key">
+      <MemberSignature Language="ILASM" Value=".property object Key { public hidebysig virtual abstract specialname object get_Key() }" />
+      <MemberSignature Language="C#" Value="public object Key { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the <see cref="P:System.Collections.DictionaryEntry.Key" /> of the <see cref="T:System.Collections.DictionaryEntry" /> in the collection over which the current instance is positioned.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Object" /> that contains the
+<see cref="P:System.Collections.DictionaryEntry.Key" /> 
+of the <see cref="T:System.Collections.DictionaryEntry" /> in the collection over which the current instance is positioned.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors">It is required that reading
+   <see cref="P:System.Collections.IDictionaryEnumerator.Key" /> leave the position of
+      the enumerator unchanged: consecutive calls to this property are required to return the
+      same <see cref="T:System.Object" />
+      until <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is called.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:System.Collections.IDictionaryEnumerator" /> is positioned before the first element of the dictionary or after the last element.</para>
+          <para>-or-</para>
+          <para>The dictionary was modified after the <see cref="T:System.Collections.IDictionaryEnumerator" /> was instantiated.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="ILASM" Value=".property object Value { public hidebysig virtual abstract specialname object get_Value() }" />
+      <MemberSignature Language="C#" Value="public object Value { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the <see cref="P:System.Collections.DictionaryEntry.Value" /> of the <see cref="T:System.Collections.DictionaryEntry" /> in the collection over which the current instance is positioned.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Object" /> that contains the
+<see cref="P:System.Collections.DictionaryEntry.Value" /> 
+of the <see cref="T:System.Collections.DictionaryEntry" /> in the collection over which the current instance is positioned.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors">It is required
+      that a call to <see cref="P:System.Collections.IDictionaryEnumerator.Value" /> leave the position of
+      the enumerator unchanged: consecutive calls to this property
+      are required to return the same <see cref="T:System.Object" /> until <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is called.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:System.Collections.IDictionaryEnumerator" /> is positioned before the first element of the dictionary or after the last element.</para>
+          <para>-or-</para>
+          <para>The dictionary was modified after the <see cref="T:System.Collections.IDictionaryEnumerator" /> was created.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerator</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

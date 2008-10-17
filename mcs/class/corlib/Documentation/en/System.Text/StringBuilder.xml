@@ -1,0 +1,2673 @@
+<Type Name="StringBuilder" FullName="System.Text.StringBuilder" FullNameSP="System_Text_StringBuilder" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable StringBuilder extends System.Object" />
+  <TypeSignature Language="C#" Value="public sealed class StringBuilder : System.Runtime.Serialization.ISerializable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+   Represents a mutable string of characters.
+</summary>
+    <remarks>
+      <para>This class represents string-like objects that are
+      mutable. After a <see cref="T:System.Text.StringBuilder" /> object has been created, it can be directly modified by
+      removing, replacing, or inserting characters. This contrasts the <see cref="T:System.String" /> class, which
+      represents an immutable string of characters.</para>
+      <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of an instance of the <see cref="T:System.Text.StringBuilder" /> class is
+   the maximum number of characters it can hold in the currently allocated space.
+   The <see cref="T:System.Text.StringBuilder" /> will dynamically allocate more space when it is
+   required.</para>
+      <para>Unlike most types in the Base Class Library, the arguments to <see cref="T:System.Text.StringBuilder" /> members
+are assumed to be passed as <see langword="in" /> / <see langword="out" /> arguments
+(passed by reference). <block subset="none" type="note">Normally arguments
+are <see langword="in" /> arguments (passed by value) unless explicitly declared
+as <see langword="out" /> or <see langword="in " />/
+<see langword="out" />.</block></para>
+      <block subset="none" type="note">
+        <para>An instance of <see cref="T:System.String" /> is said to be "immutable" because its
+   value cannot be modified once it has been created. Methods on <see cref="T:System.String" /> that appear to
+   modify a <see cref="T:System.String" />
+   instance actually return a new instance containing the modification. The <see cref="T:System.Text.StringBuilder" /> class
+   provides methods that actually modify the contents of a string-like object.</para>
+        <para>Relational operators only perform reference comparisons
+   (unless overloaded by a particular language compiler). Despite this restriction,
+   relational operators can be used to compare <see cref="T:System.String" /> objects that are assigned literal
+   values. Their values are immutable and can't change, so a reference comparison
+   is sufficient. Because <see cref="T:System.Text.StringBuilder" /> instances are mutable, they should not be compared with
+   relational operators.</para>
+        <para>For performance reasons a <see cref="T:System.Text.StringBuilder" /> might
+allocate more memory than needed. The amount of memory allocated is
+implementation specific.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public StringBuilder ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Constructs and initializes a new, empty instance of the <see cref="T:System.Text.StringBuilder" />
+class.</para>
+        </summary>
+        <remarks>
+          <para> The new instance of <see cref="T:System.Text.StringBuilder" /> represents a string equal to <see cref="F:System.String.Empty" />. The <see cref="P:System.Text.StringBuilder.Capacity" />
+is set to the default capacity.</para>
+          <para>
+            <block subset="none" type="note"> The default value
+   of the <see cref="P:System.Text.StringBuilder.Capacity" />
+   property is implementation dependent.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity)" />
+      <MemberSignature Language="C#" Value="public StringBuilder (int capacity);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">A <see cref="T:System.Int32" /> containing the starting number of characters allowed in the <see cref="T:System.Text.StringBuilder" /> . </param>
+        <summary>
+          <para> Constructs and initializes a new, empty instance of the <see cref="T:System.Text.StringBuilder" /> class, with a specified
+<see cref="P:System.Text.StringBuilder.Capacity" />
+.</para>
+        </summary>
+        <remarks>
+          <para> If the specified capacity is less than the default
+      capacity, the <see cref="P:System.Text.StringBuilder.Capacity" /> of the new instance of <see cref="T:System.Text.StringBuilder" /> is set to
+      the default value. The <see cref="T:System.Text.StringBuilder" /> will dynamically allocate more space when it is
+      required.
+      </para>
+          <para> The new <see cref="T:System.Text.StringBuilder" /> is initialized to represent an empty
+   string.
+   </para>
+          <para>
+            <block subset="none" type="note"> The default value
+   of the <see cref="P:System.Text.StringBuilder.Capacity" />
+   property is implementation dependent.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="capacity" /> is less than zero.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string value)" />
+      <MemberSignature Language="C#" Value="public StringBuilder (string value);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.String" /> containing the string value of the new instance of <see cref="T:System.Text.StringBuilder" />.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Text.StringBuilder" /> class, with the specified <see cref="T:System.String" /> as its value.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> The <see cref="P:System.Text.StringBuilder.Capacity" /> of
+   the new instance is implementation defined.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StringBuilder (int capacity, int maxCapacity);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="maxCapacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">To be added.</param>
+        <param name="maxCapacity">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StringBuilder (string value, int capacity);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="capacity">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StringBuilder (string value, int startIndex, int length, int capacity);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="startIndex">To be added.</param>
+        <param name="length">To be added.</param>
+        <param name="capacity">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(bool value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (bool value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Boolean" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.Boolean" /> to the end of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para> The current instance after the operation has
+      occurred.
+      </para>
+        </returns>
+        <remarks>
+          <para> This method appends
+   <paramref name="value" />.ToString()
+      to the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" />
+of the current instance is increased as necessary.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int8 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (byte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Byte" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.Byte" /> to the end of the current instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends
+   <paramref name="value" />.ToString() to
+      the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Char" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a Unicode character to the end of the
+      current instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends the specified character to the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(class System.Char[] value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char[] value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char[]" />
+      </Parameters>
+      <Docs>
+        <param name="value">The array of <see cref="T:System.Char" /> to be appended. </param>
+        <summary>
+          <para> Appends the string representation of all of the
+      characters in a <see cref="T:System.Array" /> to the end of the
+      current instance.
+      </para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends all of the characters in the specified array to the
+      current instance in the same order as they appear in <paramref name="value" />. If
+   <paramref name="value" /> is a null reference no changes are made.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(decimal value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.Decimal" /> to
+   the end of the current instance.</para>
+        </summary>
+        <returns>
+          <para> The current instance after the operation has
+      occurred.
+      </para>
+        </returns>
+        <remarks>
+          <para>This method appends
+   <paramref name="value" />.ToString() to
+      the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(float64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Double" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.Double" />
+to the end of the current instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends
+   <paramref name="value" />.ToString() to the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int16 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (short value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int16" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.Int16" /> to the end of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para> The current instance after the operation has occurred.
+      </para>
+        </returns>
+        <remarks>
+          <para>This method appends
+   <paramref name="value" />.ToString() to the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int32" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.Int32" /> to the end of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends
+   <paramref name="value" />.ToString() to the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int64" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.Int64" /> to the end of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends
+   <paramref name="value" />.ToString() to the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(object value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Object" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of an object to the end of the current
+      instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends
+   <paramref name="value" />.ToString() to the current instance. If <paramref name="value" /> is a
+      null reference, no changes are made.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int8 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (sbyte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.SByte" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.SByte" /> to the end of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />(<see cref="T:System.Int16" />).</para>
+          <para>This method appends
+   <paramref name="value" />.ToString() to the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(float32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (float value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Single" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.Single" />
+to the end of the current instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends
+   <paramref name="value" />.ToString() to the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(string value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.String" /> to be appended. </param>
+        <summary>
+          <para>Appends a copy of a string to the end of the current instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends the <paramref name="value" /> string to the
+   current instance. If <paramref name="value" /> is a null reference, no changes are
+   made.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+necessary.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int16 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (ushort value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt16" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt16" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.UInt16" /> to the end of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />(<see cref="T:System.Int32" />).</para>
+          <para>This method appends
+   <paramref name="value" />.ToString() to
+      the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (uint value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt32" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.UInt32" /> to the end of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />(<see cref="T:System.Int64" />).</para>
+          <para>This method appends
+   <paramref name="value" />.ToString() to
+      the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (ulong value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt64" /> to be appended. </param>
+        <summary>
+          <para>Appends the string representation of a <see cref="T:System.UInt64" /> to the end of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />(<see cref="T:System.Decimal" />).</para>
+          <para>This method appends
+   <paramref name="value" />.ToString() to
+      the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(valuetype System.Char value, int32 repeatCount)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char value, int repeatCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+        <Parameter Name="repeatCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Char" /> to be appended.</param>
+        <param name="repeatCount">A <see cref="T:System.Int32" /> containing the number of times to append <paramref name="value" /> . </param>
+        <summary>
+          <para> Appends multiple copies of a character to the end of the 
+      current <see cref="T:System.Text.StringBuilder" />
+      .
+      </para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends <paramref name="repeatCount" /> copies of the specified character to
+   the current instance.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+necessary.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="repeatCount" /> is less than zero.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(class System.Char[] value, int32 startIndex, int32 charCount)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char[] value, int startIndex, int charCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char[]" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="charCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Char" /> array to be appended.</param>
+        <param name="startIndex">A <see cref="T:System.Int32" /> containing the index in <paramref name="value" /> at which the subarray starts. </param>
+        <param name="charCount">A <see cref="T:System.Int32" /> containing the number of characters to copy from <paramref name="value" /> . </param>
+        <summary>
+          <para>Appends the string representation of an array of Unicode characters to the
+      end of the current instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends the specified range of characters from the
+   <paramref name="value" /> array to the current instance. If <paramref name="value" /> is a null
+      reference, and both <paramref name="startIndex" /> and <paramref name="charCount" /> are zero, no
+      changes are made.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="value" /> is a null reference, and <paramref name="startIndex" /> and <paramref name="charCount" /> are not both zero.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="charCount" /> or <paramref name="startIndex" /> is less than zero.</para>
+          <para>-or-</para>
+          <para>The sum of <paramref name="startIndex" /> and <paramref name="charCount" /> is greater than the length of <paramref name="value" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(string value, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (string value, int startIndex, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.String" /> from which the substring will be taken. </param>
+        <param name="startIndex">A <see cref="T:System.Int32" /> containing the index in <paramref name="value" /> from which to start copying.</param>
+        <param name="count">A <see cref="T:System.Int32" /> containing the number of characters to copy from <paramref name="value" /> . </param>
+        <summary>
+          <para>Appends a copy of an array of Unicode characters, specified by a starting
+      index and length, of a specified <see cref="T:System.String" /> to the end of the current instance.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends the specified range of characters in
+      the <paramref name="value" /> string to the current instance. If <paramref name="value" /> is a null
+      reference and <paramref name="startIndex" /> and <paramref name="count" /> are both zero, no changes
+      are made.</para>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance is increased as
+   necessary.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="value" /> is a null reference, and <paramref name="startIndex" /> and <paramref name="count" /> are not both zero.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="charCount" /> or <paramref name="startIndex" /> is less than zero. </para>
+          <para> -or- </para>
+          <para>The sum of <paramref name="startIndex" /> and <paramref name="charCount" /> is greater than the length of <paramref name="value" /> . </para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object arg0);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg0" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing zero or more format specifications.</param>
+        <param name="arg0">A <see cref="T:System.Object" /> to be formatted.</param>
+        <summary>
+          <para>Appends the specified string to the current instance, with the format
+      specifications in that string being replaced with the appropriately formatted
+      string value of the specified object.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends the formatted copy of the specified string to the current
+      instance.</para>
+          <para>
+            <block subset="none" type="note"> This version of <see cref="M:System.Text.StringBuilder.AppendFormat(System.String,System.Object)" /> is equivalent to <see cref="M:System.Text.StringBuilder.AppendFormat(System.String,System.Object)" />(
+<see langword="null" /> , <paramref name="format" />, <see langword="new Object[]" /> 
+{<paramref name="arg0" />} ). For more information on the format specification, see the
+<see cref="T:System.String" /> 
+class overview. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="format" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="format" /> is invalid.</exception>
+        <example>
+          <code lang="C#">using System;
+using System.Text;
+
+public class StringBuilderTest {
+  public static void Main() { 
+     
+      StringBuilder sb = new StringBuilder("The high ");
+      Console.WriteLine( sb.AppendFormat("temperature today was {0, 6}.", 88) ); 
+  }
+}
+      </code>
+          <para>The output is</para>
+          <code>The high temperature today was     88.
+ </code>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, class System.Object[] args)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing zero or more format specifications.</param>
+        <param name="args"> A <see cref="T:System.Object" /> array to be formatted.</param>
+        <summary>
+          <para>Appends the specified string to the current instance, with the
+      format specifications in that string being replaced with the appropriately formatted string values of
+      the elements in the specified array.</para>
+        </summary>
+        <returns>
+          <para> The current instance after
+      operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends the formatted copy of the specified
+      string to the current instance. If an object referenced in the format string is
+   <see langword="null" />
+   , an empty string is used in its place.</para>
+          <para>
+            <block subset="none" type="note"> This version of
+<see cref="M:System.Text.StringBuilder.AppendFormat(System.String,System.Object)" /> is equivalent to <see cref="M:System.Text.StringBuilder.AppendFormat(System.String,System.Object)" />( 
+<see langword="null" /> , <paramref name="format" />, <paramref name="args" /> ). For more
+   information on the format specification see the <see cref="T:System.String" />
+   class overview. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="format" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="format" /> is invalid.</exception>
+        <example>
+          <code lang="C#">using System;
+using System.Text;
+
+public class StringBuilderTest {
+  public static void Main() {
+
+     string [] strings = {"very", "very", null, "high"};
+
+     StringBuilder sb = new StringBuilder("The high ");
+     Console.WriteLine( sb.AppendFormat("temperature today was {0}, {1} {2}{3}.", strings) ); 
+  }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+            <c>The high
+      temperature today was very, very high.</c>
+          </para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(class System.IFormatProvider provider, string format, class System.Object[] args)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (IFormatProvider provider, string format, object[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a formatting object that provides culture specific formatting information. Can be a null reference.</param>
+        <param name="format">A <see cref="T:System.String" /> containing zero or more format specifications.</param>
+        <param name="args"> A <see cref="T:System.Object" /> array to be formatted.</param>
+        <summary>
+          <para>Appends the specified string to the current instance, with the format specifications in that string being replaced
+      with the string values of the specified array of objects, formatted in
+      accordance with the formatting object returned by the specified <see cref="T:System.IFormatProvider" />.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends the formatted copy of the specified
+      string to the current instance. If an object referenced in the format string is
+   <see langword="null" />
+   , an empty string is used in its place.</para>
+          <para>The format parameter is embedded with zero or more format
+   specifications of the form, {<paramref name="N" /> [, <paramref name="M" />
+   ][: <paramref name="formatString" /> ]}, where <paramref name="N" /> is a zero-based
+   integer indicating the argument to be formatted, <paramref name="M" />
+   is an optional
+   integer indicating the width of the region to contain the formatted value, and
+<paramref name="formatString" /> is an optional string of formatting codes.
+   <block subset="none" type="note"> For more information on the format
+      specification see the <see cref="T:System.String" />
+      class overview.</block></para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="format" /> or <paramref name="args" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="format" /> is invalid.</exception>
+        <example>
+          <code lang="C#">using System;
+using System.Text;
+
+public class StringBuilderTest {
+  public static void Main() {
+
+     string a = "very";
+     string b = "very";
+     string c = "high";
+
+     StringBuilder sb = new StringBuilder("The high ");
+     Console.WriteLine(sb.AppendFormat(null, "temperature today was {0}, {1} {2}.", a, b, c) ); 
+  }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+            <c>The high
+      temperature today was very, very high.</c>
+          </para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0, object arg1)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object arg0, object arg1);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg0" Type="System.Object" />
+        <Parameter Name="arg1" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing zero or more format specifications.</param>
+        <param name="arg0">The first <see cref="T:System.Object" /> to be formatted. Can be a null reference.</param>
+        <param name="arg1">The second <see cref="T:System.Object" /> to be formatted. Can be a null reference.</param>
+        <summary>
+          <para>Appends the specified string to the current instance, with the format
+      specifications in that string being replaced with the appropriately formatted
+      string values of the specified objects.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends the formatted copy of the specified 
+      string to the current instance. If an object referenced in the format string is
+   <see langword="null" /> 
+   , an empty string is used in its place.</para>
+          <para>
+            <block subset="none" type="note"> This version of
+<see cref="M:System.Text.StringBuilder.AppendFormat(System.String,System.Object)" /> is equivalent to <see cref="M:System.Text.StringBuilder.AppendFormat(System.String,System.Object)" />(
+<see langword="null" /> , <paramref name="format" />,
+<see langword="new Object[]" />
+{<paramref name="arg0" />, <paramref name="arg1" />} ). For more information on the format
+specification, see the <see cref="T:System.String" /> class overview.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="format" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="format" /> is invalid.</exception>
+        <example>
+          <code lang="C#">using System;
+using System.Text;
+
+public class StringBuilderTest {
+  public static void Main() {
+
+     StringBuilder sb = new StringBuilder("The high ");
+     Console.WriteLine( sb.AppendFormat("temperature today was {0} {1}.", "very", "high") ); 
+  }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>The high temperature today was very high.</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0, object arg1, object arg2)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object arg0, object arg1, object arg2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="arg0" Type="System.Object" />
+        <Parameter Name="arg1" Type="System.Object" />
+        <Parameter Name="arg2" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="format">A <see cref="T:System.String" /> containing zero or more format specifications.</param>
+        <param name="arg0">The first <see cref="T:System.Object" /> to be formatted. Can be a null reference.</param>
+        <param name="arg1">The second <see cref="T:System.Object" /> to be formatted. Can be a null reference.</param>
+        <param name="arg2">The third <see cref="T:System.Object" /> to be formatted. Can be a null reference.</param>
+        <summary>
+          <para>Appends the specified string to the current instance, with
+      the format specifications in that string being replaced with the appropriately formatted
+      string values of the specified objects.</para>
+        </summary>
+        <returns>
+          <para>The current instance after the operation has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method appends the formatted copy of the specified 
+      string to the current instance. If an object referenced in the format string is
+   <see langword="null" /> 
+   , an empty string is used in its place.</para>
+          <para>
+            <block subset="none" type="note"> This version of
+<see cref="M:System.Text.StringBuilder.AppendFormat(System.String,System.Object)" /> is equivalent to <see cref="M:System.Text.StringBuilder.AppendFormat(System.String,System.Object)" />(
+<see langword="null" /> , <paramref name="format" />,
+<see langword="new Object[]" />
+{<paramref name="arg0, arg1, arg2" />} ). For more information on the format specification, see the
+<see cref="T:System.String" />
+class overview. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="format" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="format" /> is invalid.</exception>
+        <example>
+          <code lang="C#">using System;
+using System.Text;
+
+public class StringBuilderTest {
+  public static void Main() {
+
+     StringBuilder sb = new StringBuilder("The high ");
+     Console.WriteLine( sb.AppendFormat("temperature today was {0} {1} {2}.", "very", "very", "high") ); 
+  }
+}
+   </code>
+          <para>The output is</para>
+          <para>
+            <c>The high
+      temperature today was very very high.</c>
+          </para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendLine">
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendLine ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="AppendLine">
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendLine (string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Capacity">
+      <MemberSignature Language="ILASM" Value=".property int32 Capacity { public hidebysig specialname instance int32 get_Capacity() public hidebysig specialname instance void set_Capacity(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int Capacity { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the maximum number of characters that can be contained in the
+      memory allocated by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> containing the maximum number of characters that can be contained in the memory
+   allocated by the current instance.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="P:System.Text.StringBuilder.Capacity" /> property does not affect the string value of the current
+   instance. The <see cref="T:System.Text.StringBuilder" /> will dynamically
+   increase the <see cref="P:System.Text.StringBuilder.Capacity" /> and allocate
+   more space when it is required.</para>
+          <para>
+            <block subset="none" type="note"> For performance
+   reasons a <see cref="T:System.Text.StringBuilder" /> might allocate more memory than needed. The amount of
+   memory allocated is implementation specific. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The value specified for a set operation is less than <see cref="P:System.Text.StringBuilder.Length" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Chars">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Char Chars[int32 index] { public hidebysig specialname instance valuetype System.Char get_Chars(int32 index) public hidebysig specialname instance void set_Chars(int32 index, valuetype System.Char value) }" />
+      <MemberSignature Language="C#" Value="public char this[int index] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Gets or sets the character at a specified position in the current
+      instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Char" /> containing the Unicode character at location <paramref name="index" /> in the current instance.</para>
+        </value>
+        <remarks>
+          <para>
+            <paramref name="index" /> is the position of a character within the
+<see cref="T:System.Text.StringBuilder" />. The first character in the string is at index 0. 
+   The length of a string is the number of characters it contains. The last
+   accessible character of a <see cref="T:System.Text.StringBuilder" /> instance is at the index <see cref="P:System.Text.StringBuilder.Length" />
+   - 1.</para>
+        </remarks>
+        <exception cref="T:System.IndexOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than or equal to the length of the current instance.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (int sourceIndex, char[] destination, int destinationIndex, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sourceIndex" Type="System.Int32" />
+        <Parameter Name="destination" Type="System.Char[]" />
+        <Parameter Name="destinationIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="sourceIndex">To be added.</param>
+        <param name="destination">To be added.</param>
+        <param name="destinationIndex">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="EnsureCapacity">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 EnsureCapacity(int32 capacity)" />
+      <MemberSignature Language="C#" Value="public int EnsureCapacity (int capacity);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">A <see cref="T:System.Int32" /> containing the minimum capacity to ensure. </param>
+        <summary>
+          <para>Ensures that the capacity of the current instance is at least a specified
+      value.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> equal to the
+   new <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance.</para>
+        </returns>
+        <remarks>
+          <para>If the specified value is less than the current
+   <see cref="P:System.Text.StringBuilder.Capacity" />, no changes are made and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> remains the same.</para>
+          <para>
+            <block subset="none" type="note"> For performance
+      reasons, the new <see cref="P:System.Text.StringBuilder.Capacity" /> might
+      be larger than the specified value. The amount of memory allocated by this
+      method is implementation specific.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="capacity" /> is less zero. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Equals(class System.Text.StringBuilder sb)" />
+      <MemberSignature Language="C#" Value="public bool Equals (System.Text.StringBuilder sb);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sb" Type="System.Text.StringBuilder" />
+      </Parameters>
+      <Docs>
+        <param name="sb">A <see cref="T:System.Text.StringBuilder" />.</param>
+        <summary>
+          <para>Determines whether the current instance and a specified <see cref="T:System.Text.StringBuilder" /> have 
+ the same value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the current instance and <paramref name="sb" /> have the same 
+ value; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, bool value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, bool value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.Boolean" /> value to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.Boolean" /> value into the current
+   instance at a specified index.</para>
+        </summary>
+        <returns>
+          <para> The current instance after insertion has occurred.
+      </para>
+        </returns>
+        <remarks>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is
+      adjusted as necessary.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int8 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, byte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.Byte" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.Byte" /> into the current instance at the
+   specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" />
+   is adjusted as
+   necessary.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, char value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.Char" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a Unicode character into the current
+      instance at a specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is
+      adjusted as necessary.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, class System.Char[] value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, char[] value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Char[]" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert.</param>
+        <param name="value">The <see cref="T:System.Char" /> array to be inserted.</param>
+        <summary>
+          <para>Inserts the string representation of an array of Unicode characters into the
+      current instance at a specified index.</para>
+        </summary>
+        <returns>
+          <para> The current instance after insertion has occurred.
+      </para>
+        </returns>
+        <remarks>
+          <para>This method inserts all of the characters in the specified array into the
+      current instance in the same order as they appear in <paramref name="value" />. Existing characters are shifted to make room for
+      the new text, and <see cref="P:System.Text.StringBuilder.Capacity" /> is
+      adjusted as necessary.</para>
+          <para>If <paramref name="value" /> is empty or a null reference, the <see cref="T:System.Text.StringBuilder" /> is
+   not changed.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, decimal value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.Decimal" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.Decimal" /> into the current instance at the
+   specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is adjusted as necessary.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero</para>
+        </exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, float64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.Double" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.Double" /> into the current instance at the
+   specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is adjusted as necessary.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero</para>
+        </exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int16 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, short value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.Int16" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.Int16" /> into the current instance at a
+   specified index.</para>
+        </summary>
+        <returns>
+          <para> The current instance after insertion has occurred.
+      </para>
+        </returns>
+        <remarks>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is adjusted as necessary.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.Int32" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.Int32" /> into the current instance at the
+   specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is adjusted as necessary.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.Int64" /> to be inserted. </param>
+        <summary>
+          <para> Inserts the string representation of a <see cref="T:System.Int64" /> into the current instance at the
+   specified index.
+   </para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is adjusted as necessary.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="index" /> is less than zero. </para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, object value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.Object" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of an object into the current instance at a
+      specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is
+      adjusted as necessary.</para>
+          <para>If <paramref name="value" /> is a null reference, the <see cref="T:System.Text.StringBuilder" /> is
+   not changed.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int8 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, sbyte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.SByte" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.SByte" /> into the current instance at the
+   specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.Text.StringBuilder.Insert(System.Int32,System.String,System.Int32)" />(<see cref="T:System.Int32" />, <see cref="T:System.Int16" />).</para>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is adjusted as necessary.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, float32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, float value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.Single" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.Single" /> into the current instance at the
+   specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is adjusted as necessary.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero</para>
+        </exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, string value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.String" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a string object into the current instance at a
+      specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method inserts <paramref name="value" />
+into the current instance at the specified location. Existing characters are
+shifted to make room for the new text, and <see cref="P:System.Text.StringBuilder.Capacity" /> is
+adjusted as necessary.</para>
+          <para>If <paramref name="value" /> is
+<see cref="F:System.String.Empty" /> or a null reference, the <see cref="T:System.Text.StringBuilder" /> is
+not changed.</para>
+          <see langword="" />
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int16 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, ushort value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.UInt16" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.UInt16" /> to insert. </param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.UInt16" /> into the current instance at the
+   specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.Text.StringBuilder.Insert(System.Int32,System.String,System.Int32)" />(<see cref="T:System.Int32" />, <see cref="T:System.Int32" />).</para>
+          <para> This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is adjusted as necessary.
+      </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, uint value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.UInt32" /> to be inserted. </param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.UInt32" /> into the current instance at the
+   specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.Text.StringBuilder.Insert(System.Int32,System.String,System.Int32)" />(<see cref="T:System.Int32" />, <see cref="T:System.Int64" />).</para>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is
+      adjusted as necessary.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, ulong value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert. </param>
+        <param name="value">The <see cref="T:System.UInt64" /> to be inserted.</param>
+        <summary>
+          <para>Inserts the string representation of a <see cref="T:System.UInt64" /> into the current instance at a
+   specified index.</para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
+   <see cref="M:System.Text.StringBuilder.Insert(System.Int32,System.String,System.Int32)" />(<see cref="T:System.Int32" />, <see cref="T:System.Decimal" />).</para>
+          <para>This method inserts
+   <paramref name="value" />.ToString() into the current instance at the specified
+      location. Existing characters are shifted to make room for the new text, and
+   <see cref="P:System.Text.StringBuilder.Capacity" /> is
+      adjusted as necessary.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, string value, int32 count)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, string value, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert.</param>
+        <param name="value">The <see cref="T:System.String" /> to be inserted.</param>
+        <param name="count">A <see cref="T:System.Int32" /> containing the number of times the string is to be inserted. </param>
+        <summary>
+          <para> Inserts multiple copies of a
+      string into the current instance at a specified index.
+      </para>
+        </summary>
+        <returns>
+          <para> The current instance after insertion has occurred.
+      </para>
+        </returns>
+        <remarks>
+          <para>This method inserts the <paramref name="value" /> string <paramref name="count" /> times
+   into the current instance at the specified location. Existing characters are
+   shifted to make room for the new text, and <see cref="P:System.Text.StringBuilder.Capacity" /> is adjusted as necessary.</para>
+          <para>If <paramref name="value" /> is
+<see langword="Empty" /> or a null reference, the <see cref="T:System.Text.StringBuilder" /> is
+not changed. </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is less than zero</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="count" /> is less than zero</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, class System.Char[] value, int32 startIndex, int32 charCount)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, char[] value, int startIndex, int charCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Char[]" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="charCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> containing the index at which to insert.</param>
+        <param name="value">The <see cref="T:System.Char" /> array from which to get the characters to be inserted. </param>
+        <param name="startIndex">A <see cref="T:System.Int32" /> containing the starting index within <paramref name="value" />.</param>
+        <param name="charCount">A <see cref="T:System.Int32" /> containing the number of characters to insert from <paramref name="value" />.</param>
+        <summary>
+          <para> Inserts the string representation of a subarray
+      of Unicode characters into the current instance at a specified index.
+      </para>
+        </summary>
+        <returns>
+          <para>The current instance after insertion has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method inserts the specified range of characters from <paramref name="value" />
+array into the current instance in the same order as they appear in
+<paramref name="value" />. Existing 
+characters are shifted to make room for the new text, and
+<see cref="P:System.Text.StringBuilder.Capacity" /> is adjusted as necessary.</para>
+          <para>If <paramref name="value" /> is an empty array or a null reference and
+<paramref name="startIndex" /> and <paramref name="charCount" /> are both zero, the <see cref="T:System.Text.StringBuilder" /> is 
+not changed. </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="value" /> is a null reference, and <paramref name="startIndex" /> and <paramref name="charCount" /> are not both zero.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> is greater than the length of the current instance or less than zero.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="startIndex" /> or <paramref name="charCount" /> is less than zero or their sum is greater than the length of <paramref name="value" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="ILASM" Value=".property int32 Length { public hidebysig specialname instance int32 get_Length() public hidebysig specialname instance void set_Length(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int Length { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the length of the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> containing the length of the current instance.</para>
+        </value>
+        <remarks>
+          <para> If the specified length is less than the current length,
+      the <see cref="T:System.Text.StringBuilder" /> is truncated to the specified length. If the specified
+      length is greater than the current length, the end of the string value of the
+   <see cref="T:System.Text.StringBuilder" /> is
+      padded with
+      spaces.
+      </para>
+          <para> If the specified length is greater than the current
+   <see cref="P:System.Text.StringBuilder.Capacity" /> , <see cref="P:System.Text.StringBuilder.Capacity" /> is set to the
+      specified
+      length.
+      </para>
+          <para>
+            <block subset="none" type="note"> A space in Unicode format is defined as the
+      hexadecimal value
+      0x20.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than 0.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxCapacity">
+      <MemberSignature Language="C#" Value="public int MaxCapacity { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Remove(int32 startIndex, int32 length)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Remove (int startIndex, int length);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">A <see cref="T:System.Int32" /> containing the index at which to begin removal.</param>
+        <param name="length">A <see cref="T:System.Int32" /> containing the number of characters to be removed. </param>
+        <summary>
+          <para>Removes a specified range of characters from the current instance.</para>
+        </summary>
+        <returns>
+          <para> The current instance after removal has occurred.
+      </para>
+        </returns>
+        <remarks>
+          <para> This method removes the specified range of characters from the current
+      instance. The characters at (<paramref name="startIndex" /> + <paramref name="length" />) are moved to
+   <paramref name="startIndex" />, and the string value of the current instance is shortened
+      by <paramref name="length" />.</para>
+          <para>
+            <block subset="none" type="note">The 
+   <see cref="M:System.Text.StringBuilder.Replace(System.String,System.String)" /> method can be used
+      to remove all instances of a string from a <see cref="T:System.Text.StringBuilder" />. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="startIndex" /> or <paramref name="length" /> is less than zero </para>
+          <para>-or-</para>
+          <para>The sum of <paramref name="startIndex" /> and <paramref name="length" /> is greater than the length of the current instance.</para>
+        </exception>
+        <example>
+          <code lang="C#">using System;
+using System.Text;
+
+public class StringBuilderTest  {
+   public static void Main()  {
+   
+      StringBuilder sb = new StringBuilder("0123456789");
+      Console.WriteLine(sb);
+      sb.Remove(3, 4);
+      Console.WriteLine(sb);
+   }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>0123456789</para>
+            <para>012789</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(valuetype System.Char oldChar, valuetype System.Char newChar)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (char oldChar, char newChar);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oldChar" Type="System.Char" />
+        <Parameter Name="newChar" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="oldChar">The <see cref="T:System.Char" /> to replace.</param>
+        <param name="newChar">The <see cref="T:System.Char" /> with which to replace <paramref name="oldChar" /> . </param>
+        <summary>
+          <para>Replaces all instances of a specified character in the current instance with
+      another specified character.</para>
+        </summary>
+        <returns>
+          <para>The current instance after substitution has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method substitutes each occurrence of <paramref name="oldChar" /> in the current instance with
+<paramref name="newChar" />.</para>
+          <para>This method is case-sensitive.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(string oldValue, string newValue)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (string oldValue, string newValue);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oldValue" Type="System.String" />
+        <Parameter Name="newValue" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="oldValue">A <see cref="T:System.String" /> containing the string value to replace. </param>
+        <param name="newValue">A <see cref="T:System.String" /> containing the string value with which to replace <paramref name="oldValue" />. Can be a null reference. </param>
+        <summary>
+   Replaces all instances of a specified string with
+   another specified string<see langword="." /></summary>
+        <returns>
+          <para> The current instance after substitution has
+      occurred.
+      </para>
+        </returns>
+        <remarks>
+          <para> This method substitutes each occurrence of <paramref name="oldValue" /> in the
+   current instance with <paramref name="newValue" />. <block subset="none" type="note">
+   If <paramref name="newValue" /> is <see langword="null" /> , instances of <paramref name="oldValue" />
+   are removed.</block></para>
+          <para>This method is case-sensitive.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="oldValue" /> is a null reference.</exception>
+        <exception cref="T:System.ArgumentException">The length of <paramref name="oldvalue" /> is zero.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(valuetype System.Char oldChar, valuetype System.Char newChar, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (char oldChar, char newChar, int startIndex, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oldChar" Type="System.Char" />
+        <Parameter Name="newChar" Type="System.Char" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="oldChar">The <see cref="T:System.Char" /> to replace. </param>
+        <param name="newChar">The <see cref="T:System.Char" /> with which to replace <paramref name="oldChar" /> . </param>
+        <param name="startIndex">A <see cref="T:System.Int32" /> containing the index from which to start replacing <paramref name="oldChar" />.</param>
+        <param name="count">A <see cref="T:System.Int32" /> containing the length of the range in which to replace <paramref name="oldChar" /> . </param>
+        <summary>
+          <para>Replaces all instances of a specified character in a specified range with
+      another specified character.</para>
+        </summary>
+        <returns>
+          <para>The current instance after substitution has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method substitutes each occurrence of <paramref name="oldChar" /> in the specified range of the
+   current instance with <paramref name="newChar" />.</para>
+          <para>This method is case-sensitive.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>The sum of <paramref name="startIndex" /> and <paramref name="count" /> is larger than the length of the current instance </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="startIndex" /> or <paramref name="count" /> is less than zero.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(string oldValue, string newValue, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (string oldValue, string newValue, int startIndex, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oldValue" Type="System.String" />
+        <Parameter Name="newValue" Type="System.String" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="oldValue">A <see cref="T:System.String" /> containing the string value to replace.</param>
+        <param name="newValue">A <see cref="T:System.String" /> containing the string value with which to replace <paramref name="oldValue" />. Can be a null reference.</param>
+        <param name="startIndex">A <see cref="T:System.Int32" /> containing the location from which to start replacing <paramref name="oldValue" />.</param>
+        <param name="count">A <see cref="T:System.Int32" /> containing the length of the range in which to replace <paramref name="oldValue" />.</param>
+        <summary>
+          <para>Replaces all instances of a specified string in a 
+      specified range with another specified string.</para>
+        </summary>
+        <returns>
+          <para>The current instance after substitution has occurred.</para>
+        </returns>
+        <remarks>
+          <para>This method substitutes each occurrence of <paramref name="oldValue" /> in the specified range of the
+   current instance with <paramref name="newValue" />. <block subset="none" type="note">
+   If <paramref name="newValue" /> is <see langword="null" /> , instances of <paramref name="oldValue" /> are
+   removed.</block></para>
+          <para>This method is case-sensitive.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="oldValue" /> is a null reference.</para>
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="startIndex" /> or <paramref name="count" /> is less than zero.</para>
+          <para>-or-</para>
+          <para>The sum of <paramref name="startIndex" /> and <paramref name="count" /> is greater than the length of the current instance.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">The length of <paramref name="oldvalue" /> is zero.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
+      <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representing the current instance.</para>
+        </returns>
+        <remarks>
+          <para>This method overrides <see cref="M:System.Object.ToString" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToString(int32 startIndex, int32 length)" />
+      <MemberSignature Language="C#" Value="public string ToString (int startIndex, int length);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">A <see cref="T:System.Int32" /> containing the index at which the substring begins. </param>
+        <param name="length">A <see cref="T:System.Int32" /> containing the length of the substring. </param>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of a substring of the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.String" /> representing the characters in the specified range.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="startIndex" /> or <paramref name="length" /> is less than zero. </para>
+          <para> -or- </para>
+          <para>The sum of <paramref name="startIndex" /> and <paramref name="length" /> is greater than the length of the current instance. </para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

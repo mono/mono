@@ -1,0 +1,465 @@
+<Type Name="BindingFlags" FullName="System.Reflection.BindingFlags" FullNameSP="System_Reflection_BindingFlags" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable BindingFlags extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum BindingFlags" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Specifies flags
+      that control the binding and the invocation processes conducted by reflection.</para>
+    </summary>
+    <remarks>
+      <para>This enumeration is used by reflection classes such as <see cref="T:System.Reflection.Binder" />,
+<see cref="T:System.Reflection.Module" />, and <see cref="T:System.Reflection.ConstructorInfo" /> . <see cref="T:System.Reflection.BindingFlags" /> values are used to control binding in methods in 
+   classes that find
+   and invoke, create, get, and set
+   members and
+   types.</para>
+      <para>To specify multiple <see cref="T:System.Reflection.BindingFlags" /> values, use the bitwise 'OR' operator.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags CreateInstance = 0x200" />
+      <MemberSignature Language="C#" Value="CreateInstance" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>CreateInstance</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that
+      an instance of a type will be created.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DeclaredOnly">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags DeclaredOnly = 0x2" />
+      <MemberSignature Language="C#" Value="DeclaredOnly" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DeclaredOnly</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that only the members declared on a type will be searched when binding. When this
+      field is specified, inherited members will not be searched.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <MemberValue>Default</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExactBinding">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags ExactBinding = 0x10000" />
+      <MemberSignature Language="C#" Value="ExactBinding" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ExactBinding</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that, when binding to a method, the types of
+      the arguments passed to the binder are required to be the same
+      as the types of
+      
+      the corresponding parameters in the method
+      signature.</para>
+          <para>
+            <block subset="none" type="note">Custom binders are allowed to ignore this
+      flag. This flag is provided as a hint for custom binders.</block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FlattenHierarchy">
+      <MemberSignature Language="C#" Value="FlattenHierarchy" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <MemberValue>FlattenHierarchy</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetField">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags GetField = 0x400" />
+      <MemberSignature Language="C#" Value="GetField" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>GetField</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the value of a field will be returned.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetProperty">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags GetProperty = 0x1000" />
+      <MemberSignature Language="C#" Value="GetProperty" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>GetProperty</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the value of a property will be returned 
+      by invoking the <see langword="get" /> accessor of a <see cref="T:System.Reflection.PropertyInfo" />
+      instance that reflects that property.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IgnoreCase">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags IgnoreCase = 0x1" />
+      <MemberSignature Language="C#" Value="IgnoreCase" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>IgnoreCase</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that a member name will be handled in a case-insensitive
+      manner when binding.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IgnoreReturn">
+      <MemberSignature Language="C#" Value="IgnoreReturn" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <MemberValue>IgnoreReturn</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Instance">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags Instance = 0x4" />
+      <MemberSignature Language="C#" Value="Instance" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Instance</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that instance members will be included in the binding search.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvokeMethod">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags InvokeMethod = 0x100" />
+      <MemberSignature Language="C#" Value="InvokeMethod" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>InvokeMethod</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that a method will be invoked.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NonPublic">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags NonPublic = 0x20" />
+      <MemberSignature Language="C#" Value="NonPublic" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NonPublic</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that non-public (i.e. family and private) members will be 
+      included in the binding search if the search has the permission required to bind non-public members.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OptionalParamBinding">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags OptionalParamBinding = 0x40000" />
+      <MemberSignature Language="C#" Value="OptionalParamBinding" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OptionalParamBinding</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the set of members whose parameter count
+      matches the number of arguments supplied to the binding method are to be returned
+      by the binding method. <block subset="none" type="note">This flag is used in conjunction with methods that have parameters with default values
+      and with methods that have variable arguments. </block></para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Public">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags Public = 0x10" />
+      <MemberSignature Language="C#" Value="Public" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Public</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that public members will be included in the binding search.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PutDispProperty">
+      <MemberSignature Language="C#" Value="PutDispProperty" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <MemberValue>PutDispProperty</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PutRefDispProperty">
+      <MemberSignature Language="C#" Value="PutRefDispProperty" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <MemberValue>PutRefDispProperty</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetField">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags SetField = 0x800" />
+      <MemberSignature Language="C#" Value="SetField" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SetField</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the value of a field will be set.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetProperty">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags SetProperty = 0x2000" />
+      <MemberSignature Language="C#" Value="SetProperty" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SetProperty</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the value of a property will be set by invoking the 
+   <see langword="set" /> accessor of a <see cref="T:System.Reflection.PropertyInfo" /> instance that reflects that 
+      property. </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Static">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags Static = 0x8" />
+      <MemberSignature Language="C#" Value="Static" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Static</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that static members will be included in the binding search.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SuppressChangeType">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.BindingFlags SuppressChangeType = 0x20000" />
+      <MemberSignature Language="C#" Value="SuppressChangeType" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.BindingFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SuppressChangeType</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that the system will not change the types of
+      parameters when binding with the default binder.</para>
+          <block subset="none" type="note">Custom binders are allowed to ignore this flag. This flag is provided
+      as a hint for custom binders.</block>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

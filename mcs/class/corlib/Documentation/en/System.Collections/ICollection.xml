@@ -1,0 +1,193 @@
+<Type Name="ICollection" FullName="System.Collections.ICollection" FullNameSP="System_Collections_ICollection" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class interface public abstract ICollection implements System.Collections.IEnumerable" />
+  <TypeSignature Language="C#" Value="public interface ICollection : System.Collections.IEnumerable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Docs>
+    <summary>
+      <para>Serves as the base interface for implementing collection
+ classes. Defines
+ size, enumeration, and synchronization methods for all system collections.</para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">
+          <see cref="T:System.Collections.ICollection" /> contains the <see cref="M:System.Collections.ICollection.CopyTo(System.Array,System.Int32)" /> method. The consumer of 
+ a collection object that implements this interface should call this method when
+ copying the elements of that object to a
+<see cref="T:System.Array" />.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void CopyTo(class System.Array array, int32 index)" />
+      <MemberSignature Language="C#" Value="public void CopyTo (Array array, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Array" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">A one-dimensional, zero-based <see cref="T:System.Array" /> that is the destination of the elements copied from the current instance.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index in <paramref name="array" /> at which copying begins. </param>
+        <summary>
+          <para> Copies the elements from the current instance to the
+      specified <see cref="T:System.Array" />, starting at the specified
+      index in the array.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to copy from a collection to a
+   <see cref="T:System.Array" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> &lt; 0.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="array" /> has more than one dimension.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> is greater than or equal to <paramref name="array" />.Length.</para>
+          <para>-or-</para>
+          <para> The sum of <paramref name="index" /> and the <see cref="P:System.Collections.ICollection.Count" /> of the current instance is greater than <paramref name="array" />.Length.</para>
+        </exception>
+        <exception cref="T:System.InvalidCastException">At least one element in the current instance is not assignment-compatible with the type of <paramref name="array" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="ILASM" Value=".property int32 Count { public hidebysig virtual abstract specialname int32 get_Count() }" />
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the number of elements contained in the current
+      instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> that indicates the number of elements contained in the current
+   instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="behaviors">
+            <para>The <see cref="P:System.Collections.ICollection.Count" /> property
+      is required to return the total number of elements contained in the current instance.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSynchronized">
+      <MemberSignature Language="ILASM" Value=".property bool IsSynchronized { public hidebysig virtual abstract specialname bool get_IsSynchronized() }" />
+      <MemberSignature Language="C#" Value="public bool IsSynchronized { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> indicating whether access to the
+   current instance is synchronized
+   (thread-safe).</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if access to
+   the current instance is synchronized (thread-safe); otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors"> As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> To
+   synchronize a collection, use <see cref="P:System.Collections.ICollection.SyncRoot" /> to obtain a <see cref="T:System.Object" />
+   with
+   which to synchronize the collection. </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SyncRoot">
+      <MemberSignature Language="ILASM" Value=".property object SyncRoot { public hidebysig virtual abstract specialname object get_SyncRoot() }" />
+      <MemberSignature Language="C#" Value="public object SyncRoot { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Object" /> that can be used
+   for thread-safe synchronized access to the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Object" /> that can be
+   used for thread-safe synchronized access to the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>For collections with no publicly available underlying 
+         store, the expected implementation is to simply return the current instance.
+         Note that
+         this might not be sufficient for collections that wrap other collections; those
+         should return the underlying collection's <see cref="P:System.Collections.ICollection.SyncRoot" />
+         property.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

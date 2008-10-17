@@ -1,0 +1,167 @@
+<Type Name="MemberAccessException" FullName="System.MemberAccessException" FullNameSP="System_MemberAccessException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable MemberAccessException extends System.SystemException" />
+  <TypeSignature Language="C#" Value="public class MemberAccessException : SystemException" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.SystemException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>
+        <see cref="T:System.MemberAccessException" /> is the base class for
+   exceptions that occurs when an attempt to locate or access a type
+   member fails.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.MemberAccessException" /> exceptions are typically thrown by the system
+      when members in a class library have been changed or removed, and an assembly that references the class library has not been recompiled.
+      </para>
+        <para>The Base Class Library includes the following derived types:
+      </para>
+        <list type="bullet">
+          <item>
+            <term>
+              <see cref="T:System.FieldAccessException" />
+            </term>
+          </item>
+          <item>
+            <term>
+              <see cref="T:System.MethodAccessException" />
+            </term>
+          </item>
+          <item>
+            <term>
+              <see cref="T:System.MissingMemberException" />
+            </term>
+          </item>
+        </list>
+        <para>When appropriate, use these types instead of <see cref="T:System.MemberAccessException" />.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public MemberAccessException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.MemberAccessException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.MemberAccessException.Message" />
+property of the new instance to a system-supplied message that describes the
+error, such as "Cannot access member." This message takes into account the
+current system culture.</para>
+          <para>The <see cref="!:System.MemberAccessException.InnerException" /> property of the new instance is
+initialized to <see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public MemberAccessException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.MemberAccessException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.MemberAccessException.Message" />
+property of the new instance using <paramref name="message" />. If <paramref name="message" /> is
+<see langword="null" />, the <see cref="!:System.MemberAccessException.Message" /> property is initialized to the 
+system-supplied message provided by the constructor that takes no
+arguments. </para>
+          <para> The <see cref="!:System.MemberAccessException.InnerException" /> property of the
+new instance is initialized to <see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MemberAccessException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public MemberAccessException (string message, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is not a <see langword="null" /> reference, then the current <see cref="T:System.Exception" /> was raised in a catch block handling <paramref name="inner" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.MemberAccessException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.MemberAccessException.Message" /> property of the new instance
+   using <paramref name="message" /> and the <see cref="!:System.MemberAccessException.InnerException" /> property using
+<paramref name="inner" />. If <paramref name="message" /> is <see langword="null" />, 
+   the <see cref="!:System.MemberAccessException.Message" /> property is initialized to the system-supplied message
+   provided by the constructor that takes no arguments.</para>
+          <para>
+            <block subset="none" type="note">For more information on inner
+   exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,9 @@
+<Namespace Name="System.Reflection.Emit" FullName="System.Reflection.Emit" FullNameSP="System.Reflection.Emit" Maintainer="Mono">
+  <Docs>
+    <summary>
+		This namespace contains classes for creating new assemblies and types at run-time by emitting IL instructions.
+    </summary>
+    <remarks>
+    </remarks>
+  </Docs>
+</Namespace>

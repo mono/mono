@@ -1,0 +1,456 @@
+<Type Name="UCOMIMoniker" FullName="System.Runtime.InteropServices.UCOMIMoniker">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public interface UCOMIMoniker" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.Guid("0000000f-0000-0000-c000-000000000046")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Obsolete</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="BindToObject">
+      <MemberSignature Language="C#" Value="public void BindToObject (System.Runtime.InteropServices.UCOMIBindCtx pbc, System.Runtime.InteropServices.UCOMIMoniker pmkToLeft, ref Guid riidResult, out object ppvResult);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.UCOMIBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="riidResult" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="ppvResult" Type="System.Object&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added: an object of type 'UCOMIBindCtx'</param>
+        <param name="pmkToLeft">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="riidResult">To be added: an object of type 'Guid&amp;'</param>
+        <param name="ppvResult">To be added: an object of type 'object&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BindToStorage">
+      <MemberSignature Language="C#" Value="public void BindToStorage (System.Runtime.InteropServices.UCOMIBindCtx pbc, System.Runtime.InteropServices.UCOMIMoniker pmkToLeft, ref Guid riid, out object ppvObj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.UCOMIBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="ppvObj" Type="System.Object&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added: an object of type 'UCOMIBindCtx'</param>
+        <param name="pmkToLeft">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="riid">To be added: an object of type 'Guid&amp;'</param>
+        <param name="ppvObj">To be added: an object of type 'object&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CommonPrefixWith">
+      <MemberSignature Language="C#" Value="public void CommonPrefixWith (System.Runtime.InteropServices.UCOMIMoniker pmkOther, out System.Runtime.InteropServices.UCOMIMoniker ppmkPrefix);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkOther" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="ppmkPrefix" Type="System.Runtime.InteropServices.UCOMIMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pmkOther">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="ppmkPrefix">To be added: an object of type 'UCOMIMoniker&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ComposeWith">
+      <MemberSignature Language="C#" Value="public void ComposeWith (System.Runtime.InteropServices.UCOMIMoniker pmkRight, bool fOnlyIfNotGeneric, out System.Runtime.InteropServices.UCOMIMoniker ppmkComposite);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkRight" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="fOnlyIfNotGeneric" Type="System.Boolean" />
+        <Parameter Name="ppmkComposite" Type="System.Runtime.InteropServices.UCOMIMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pmkRight">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="fOnlyIfNotGeneric">To be added: an object of type 'bool'</param>
+        <param name="ppmkComposite">To be added: an object of type 'UCOMIMoniker&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Enum">
+      <MemberSignature Language="C#" Value="public void Enum (bool fForward, out System.Runtime.InteropServices.UCOMIEnumMoniker ppenumMoniker);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fForward" Type="System.Boolean" />
+        <Parameter Name="ppenumMoniker" Type="System.Runtime.InteropServices.UCOMIEnumMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="fForward">To be added: an object of type 'bool'</param>
+        <param name="ppenumMoniker">To be added: an object of type 'UCOMIEnumMoniker&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetClassID">
+      <MemberSignature Language="C#" Value="public void GetClassID (out Guid pClassID);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pClassID" Type="System.Guid&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pClassID">To be added: an object of type 'Guid&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDisplayName">
+      <MemberSignature Language="C#" Value="public void GetDisplayName (System.Runtime.InteropServices.UCOMIBindCtx pbc, System.Runtime.InteropServices.UCOMIMoniker pmkToLeft, out string ppszDisplayName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.UCOMIBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="ppszDisplayName" Type="System.String&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added: an object of type 'UCOMIBindCtx'</param>
+        <param name="pmkToLeft">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="ppszDisplayName">To be added: an object of type 'string&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSizeMax">
+      <MemberSignature Language="C#" Value="public void GetSizeMax (out long pcbSize);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcbSize" Type="System.Int64&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pcbSize">To be added: an object of type 'long&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTimeOfLastChange">
+      <MemberSignature Language="C#" Value="public void GetTimeOfLastChange (System.Runtime.InteropServices.UCOMIBindCtx pbc, System.Runtime.InteropServices.UCOMIMoniker pmkToLeft, out System.Runtime.InteropServices.FILETIME pFileTime);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.UCOMIBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="pFileTime" Type="System.Runtime.InteropServices.FILETIME&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added: an object of type 'UCOMIBindCtx'</param>
+        <param name="pmkToLeft">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="pFileTime">To be added: an object of type 'FILETIME&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Hash">
+      <MemberSignature Language="C#" Value="public void Hash (out int pdwHash);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pdwHash" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pdwHash">To be added: an object of type 'int&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Inverse">
+      <MemberSignature Language="C#" Value="public void Inverse (out System.Runtime.InteropServices.UCOMIMoniker ppmk);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ppmk" Type="System.Runtime.InteropServices.UCOMIMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="ppmk">To be added: an object of type 'UCOMIMoniker&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsDirty">
+      <MemberSignature Language="C#" Value="public int IsDirty ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'int'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsEqual">
+      <MemberSignature Language="C#" Value="public void IsEqual (System.Runtime.InteropServices.UCOMIMoniker pmkOtherMoniker);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkOtherMoniker" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+      </Parameters>
+      <Docs>
+        <param name="pmkOtherMoniker">To be added: an object of type 'UCOMIMoniker'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsRunning">
+      <MemberSignature Language="C#" Value="public void IsRunning (System.Runtime.InteropServices.UCOMIBindCtx pbc, System.Runtime.InteropServices.UCOMIMoniker pmkToLeft, System.Runtime.InteropServices.UCOMIMoniker pmkNewlyRunning);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.UCOMIBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="pmkNewlyRunning" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added: an object of type 'UCOMIBindCtx'</param>
+        <param name="pmkToLeft">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="pmkNewlyRunning">To be added: an object of type 'UCOMIMoniker'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSystemMoniker">
+      <MemberSignature Language="C#" Value="public void IsSystemMoniker (out int pdwMksys);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pdwMksys" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pdwMksys">To be added: an object of type 'int&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Runtime.InteropServices.UCOMIStream pStm);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pStm" Type="System.Runtime.InteropServices.UCOMIStream" />
+      </Parameters>
+      <Docs>
+        <param name="pStm">To be added: an object of type 'UCOMIStream'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ParseDisplayName">
+      <MemberSignature Language="C#" Value="public void ParseDisplayName (System.Runtime.InteropServices.UCOMIBindCtx pbc, System.Runtime.InteropServices.UCOMIMoniker pmkToLeft, string pszDisplayName, out int pchEaten, out System.Runtime.InteropServices.UCOMIMoniker ppmkOut);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.UCOMIBindCtx" />
+        <Parameter Name="pmkToLeft" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="pszDisplayName" Type="System.String" />
+        <Parameter Name="pchEaten" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="ppmkOut" Type="System.Runtime.InteropServices.UCOMIMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added: an object of type 'UCOMIBindCtx'</param>
+        <param name="pmkToLeft">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="pszDisplayName">To be added: an object of type 'string'</param>
+        <param name="pchEaten">To be added: an object of type 'int&amp;'</param>
+        <param name="ppmkOut">To be added: an object of type 'UCOMIMoniker&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reduce">
+      <MemberSignature Language="C#" Value="public void Reduce (System.Runtime.InteropServices.UCOMIBindCtx pbc, int dwReduceHowFar, ref System.Runtime.InteropServices.UCOMIMoniker ppmkToLeft, out System.Runtime.InteropServices.UCOMIMoniker ppmkReduced);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pbc" Type="System.Runtime.InteropServices.UCOMIBindCtx" />
+        <Parameter Name="dwReduceHowFar" Type="System.Int32" />
+        <Parameter Name="ppmkToLeft" Type="System.Runtime.InteropServices.UCOMIMoniker&amp;" RefType="ref" />
+        <Parameter Name="ppmkReduced" Type="System.Runtime.InteropServices.UCOMIMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pbc">To be added: an object of type 'UCOMIBindCtx'</param>
+        <param name="dwReduceHowFar">To be added: an object of type 'int'</param>
+        <param name="ppmkToLeft">To be added: an object of type 'UCOMIMoniker&amp;'</param>
+        <param name="ppmkReduced">To be added: an object of type 'UCOMIMoniker&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RelativePathTo">
+      <MemberSignature Language="C#" Value="public void RelativePathTo (System.Runtime.InteropServices.UCOMIMoniker pmkOther, out System.Runtime.InteropServices.UCOMIMoniker ppmkRelPath);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pmkOther" Type="System.Runtime.InteropServices.UCOMIMoniker" />
+        <Parameter Name="ppmkRelPath" Type="System.Runtime.InteropServices.UCOMIMoniker&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pmkOther">To be added: an object of type 'UCOMIMoniker'</param>
+        <param name="ppmkRelPath">To be added: an object of type 'UCOMIMoniker&amp;'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.Runtime.InteropServices.UCOMIStream pStm, bool fClearDirty);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pStm" Type="System.Runtime.InteropServices.UCOMIStream" />
+        <Parameter Name="fClearDirty" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="pStm">To be added: an object of type 'UCOMIStream'</param>
+        <param name="fClearDirty">To be added: an object of type 'bool'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Interfaces />
+</Type>

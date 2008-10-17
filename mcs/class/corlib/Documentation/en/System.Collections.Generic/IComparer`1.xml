@@ -1,0 +1,91 @@
+<Type Name="IComparer&lt;T&gt;" FullName="System.Collections.Generic.IComparer&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public interface IComparer&lt;T&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Interfaces />
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>
+      <para>Provides a mechanism to customize comparison in sort ordering of a generic collection.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Compare">
+      <MemberSignature Language="C#" Value="public int Compare (T x, T y);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x" Type="T" />
+        <Parameter Name="y" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="x">First <see langword="T" /> to compare.</param>
+        <param name="y">Second <see langword="T" /> to compare.</param>
+        <summary>
+          <para> Returns the sort order of two <see langword="T" /> instances.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing a value that reflects the sort order of
+<paramref name="x" /> as compared to <paramref name="y" />. The following table defines the conditions
+   under which the returned value is a negative number, zero, or a positive
+   number.</para>
+          <list type="table">
+            <listheader>
+              <term>Value</term>
+              <description>Condition</description>
+            </listheader>
+            <item>
+              <term> A negative number</term>
+              <description>
+                <paramref name="x" /> &lt; <paramref name="y" />.</description>
+            </item>
+            <item>
+              <term> Zero</term>
+              <description>
+                <paramref name="x" /> == <paramref name="y" />.</description>
+            </item>
+            <item>
+              <term> A positive number</term>
+              <description>
+                <paramref name="x" /> &gt; <paramref name="y" />.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>For any objects A, B and C, the following are required to be true:</para>
+            <para>Compare(A,A) is required to return zero. </para>
+            <para>If Compare(A,B) returns zero then Compare(B,A) is required to return zero.</para>
+            <para>If Compare(A,B) is zero, then Compare(B,C) and Compare(A,C) must have the same sign (negative, zero or positive).</para>
+            <para>If Compare(B,C) is zero, then Compare(A,B) and Compare(A,C) must have the same sign (negative, zero or positive).</para>
+            <para>If Compare(A,B) returns zero and Compare(B,C) returns zero then Compare(A,C) is required to return zero.</para>
+            <para>If Compare(A,B) returns a value other than zero then Compare(B,A) is required to return a value of the opposite sign.</para>
+            <para>If Compare(A,B) returns a value <paramref name="x" /> not equal 
+      to zero, and Compare(B,C) returns a value <paramref name="y" /> of the same sign as
+   <paramref name="x" />, then Compare(A,C) is required to a value of the same sign as 
+   <paramref name="x" /> and <paramref name="y" /> 
+   .</para>
+            <para>The exact behavior of this method is unspecified. The intent of this method is
+   to provide a mechanism that orders instances of a class in a manner that is
+   consistent with the mathematical definitions of the relational operators (&lt;,
+   &gt;, and ==), without regard for class-specific definitions of the
+   operators.</para>
+          </block>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

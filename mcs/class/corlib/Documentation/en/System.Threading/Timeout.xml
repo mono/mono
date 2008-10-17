@@ -1,0 +1,61 @@
+<Type Name="Timeout" FullName="System.Threading.Timeout" FullNameSP="System_Threading_Timeout" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed Timeout extends System.Object" />
+  <TypeSignature Language="C#" Value="public static class Timeout" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+   Contains a constant used to specify an infinite amount
+   of time.
+</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Infinite">
+      <MemberSignature Language="ILASM" Value=".field public static literal int32 Infinite = -1" />
+      <MemberSignature Language="C#" Value="public const int Infinite = -1;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> A constant used to specify an infinite waiting period.
+ </para>
+        </summary>
+        <remarks>
+          <para> The value of this
+ constant is -1.</para>
+          <para>
+            <block subset="none" type="note">For threading methods that accept a timeout
+ parameter, such as <see cref="M:System.Threading.Thread.Sleep(System.Int32)" /> and <see cref="!:System.Threading.Thread.Join" /> , this value is used to suppress method behavior that would normally occur due to
+ elapsed time. </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <MemberValue>-1</MemberValue>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

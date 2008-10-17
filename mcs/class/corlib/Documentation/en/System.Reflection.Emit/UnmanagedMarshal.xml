@@ -1,0 +1,218 @@
+<Type Name="UnmanagedMarshal" FullName="System.Reflection.Emit.UnmanagedMarshal">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class UnmanagedMarshal" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="BaseType">
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.UnmanagedType BaseType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineByValArray">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineByValArray (int elemCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="elemCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="elemCount">To be added: an object of type 'int'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineByValTStr">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineByValTStr (int elemCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="elemCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="elemCount">To be added: an object of type 'int'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineCustom">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineCustom (Type typeref, string cookie, string mtype, Guid id);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="typeref" Type="System.Type" />
+        <Parameter Name="cookie" Type="System.String" />
+        <Parameter Name="mtype" Type="System.String" />
+        <Parameter Name="id" Type="System.Guid" />
+      </Parameters>
+      <Docs>
+        <param name="typeref">To be added.</param>
+        <param name="cookie">To be added.</param>
+        <param name="mtype">To be added.</param>
+        <param name="id">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineLPArray">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineLPArray (System.Runtime.InteropServices.UnmanagedType elemType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="elemType" Type="System.Runtime.InteropServices.UnmanagedType" />
+      </Parameters>
+      <Docs>
+        <param name="elemType">To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineSafeArray">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineSafeArray (System.Runtime.InteropServices.UnmanagedType elemType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="elemType" Type="System.Runtime.InteropServices.UnmanagedType" />
+      </Parameters>
+      <Docs>
+        <param name="elemType">To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefineUnmanagedMarshal">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineUnmanagedMarshal (System.Runtime.InteropServices.UnmanagedType unmanagedType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="unmanagedType" Type="System.Runtime.InteropServices.UnmanagedType" />
+      </Parameters>
+      <Docs>
+        <param name="unmanagedType">To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ElementCount">
+      <MemberSignature Language="C#" Value="public int ElementCount { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'int'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetUnmanagedType">
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.UnmanagedType GetUnmanagedType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IIDGuid">
+      <MemberSignature Language="C#" Value="public Guid IIDGuid { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'Guid'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Obsolete("An alternate API is available: Emit the MarshalAs custom attribute instead.")</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

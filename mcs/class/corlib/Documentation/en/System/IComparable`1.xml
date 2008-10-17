@@ -1,0 +1,92 @@
+<Type Name="IComparable&lt;T&gt;" FullName="System.IComparable&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public interface IComparable&lt;T&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Interfaces />
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>
+      <para>Defines generalized comparison methods that a value type or class implements to create a type-specific comparison method.</para>
+    </summary>
+    <remarks>
+      <para>This interface is implemented by types whose values can be ordered; for example, the numeric and string classes.</para>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="C#" Value="public int CompareTo (T other);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="other">To be added.</param>
+        <summary>
+          <para>Returns the sort order of the current instance compared to the specified object.</para>
+        </summary>
+        <returns>
+          <para>A value that reflects the sort order of the current instance as compared to <paramref name="obj" />. The following table defines the conditions under which the returned value is a negative number, zero, or a positive number.</para>
+          <list type="table">
+            <listheader>
+              <term>Returned Value </term>
+              <description>Description </description>
+            </listheader>
+            <item>
+              <term> A negative value </term>
+              <description> The current instance is &lt; <paramref name="obj" />. </description>
+            </item>
+            <item>
+              <term> Zero </term>
+              <description>The current instance is ==
+   <paramref name="obj" />. </description>
+            </item>
+            <item>
+              <term> A positive value </term>
+              <description> The current instance is &gt; than <paramref name="obj" />.</description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>For any objects A, B and C, the following are required to be true:</para>
+            <para>A.CompareTo(A) is required to return zero. </para>
+            <para>If A.CompareTo(B) returns zero then B.CompareTo(A) is required to return zero.</para>
+            <para>If A.CompareTo(B) is zero, then B.CompareTo(C) and A.CompareTo(C) must have the same sign (negative, zero or positive).</para>
+            <para>If B.CompareTo(C) is zero, then A.CompareTo(B) and A.CompareTo(C) must have the same sign (negative, zero or positive).</para>
+            <para>If A.CompareTo(B) returns zero and B.CompareTo(C) 
+         returns zero then A.CompareTo(C) is required to return zero.</para>
+            <para>If A.CompareTo(B) returns a value other than zero then 
+         B.CompareTo(A) is required to return a value of the opposite
+         sign.</para>
+            <para>If A.CompareTo(B) returns a value <paramref name="other" /> not equal 
+      to zero, and B.CompareTo(C) returns a value <paramref name="y" /> of the same sign as
+   <paramref name="other" />, then A.CompareTo(C) is required to a value of the same sign as 
+   <paramref name="other" /> and <paramref name="y" /> 
+   .</para>
+            <para>The exact behavior of this method is unspecified. The intent of this method is
+   to provide a mechanism that orders instances of a class in a manner that is
+   consistent with the mathematical definitions of the relational operators (&lt;,
+   &gt;, and ==), without regard for class-specific definitions of the
+   operators.</para>
+          </block>
+          <para>
+            <block subset="none" type="usage">Use the <see cref="M:System.IComparable&lt;T&gt;.CompareTo" /><see langword="(T)" /> method to determine the ordering of instances of a class.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

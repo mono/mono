@@ -1,0 +1,313 @@
+<Type Name="DllImportAttribute" FullName="System.Runtime.InteropServices.DllImportAttribute" FullNameSP="System_Runtime_InteropServices_DllImportAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed DllImportAttribute extends System.Attribute" />
+  <TypeSignature Language="C#" Value="public sealed class DllImportAttribute : Attribute" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Method, Inherited=false)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Indicates that the target method of this attribute is an export from an unmanaged shared library.</para>
+    </summary>
+    <remarks>
+      <para> This attribute provides the information needed to call
+      a method exported from an unmanaged shared library. This attribute provides the name of the
+      shared library file, the name of the method within that library, the calling convention, and character set of the
+      unmanaged function.</para>
+      <para>
+        <block subset="none" type="note">A shared library refers
+      to Dynamically Linked Libraries on Windows systems, and Shared Libraries on
+      Unix systems.</block>
+      </para>
+      <para>Compilers are required to not preserve this type 
+      in metadata as a custom attribute. Instead, compilers are required to emit it
+      directly in the file format, as described in Partition II of the CLI
+      Specification. Metadata consumers, such as the Reflection API, are required to
+      retrieve this data from the file format and return it as if it were a custom
+      attribute. </para>
+    </remarks>
+    <example>
+      <para>The following example demonstrates the use of the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" />.</para>
+      <para>
+        <block subset="none" type="note">The non-standard
+<see langword="GetLocalTime" /> API used in this example indicates the current local system time.</block>
+      </para>
+      <code lang="C#">using System;
+using System.Runtime.InteropServices;
+
+[ StructLayout( LayoutKind.Sequential )]
+public class SystemTime {
+ public ushort year; 
+ public ushort month;
+ public ushort dayOfWeek; 
+ public ushort day; 
+ public ushort hour; 
+ public ushort minute; 
+ public ushort second; 
+ public ushort milliseconds; 
+}
+
+public class LibWrap {
+ [ DllImportAttribute( "Kernel32", CharSet=CharSet.Auto, CallingConvention=CallingConvention.StdCall, EntryPoint="GetLocalTime" )]
+ public static extern void GetLocalTime( SystemTime st );
+}
+
+public class DllImportAttributeTest {
+ public static void Main() {
+
+ SystemTime st = new SystemTime();
+ 
+ LibWrap.GetLocalTime( st );
+ Console.Write( "The Date and Time is: " );
+ Console.Write( "{0:00}/{1:00}/{2} at ", st.month, st.day, st.year );
+ Console.WriteLine( "{0:00}:{1:00}:{2:00}", st.hour, st.minute, st.second ); 
+ }
+}
+</code>
+      <para>When run at the given time on the given date, the output produced was</para>
+      <c>
+        <para>The Date and Time is: 05/16/2001 at 11:39:17</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string dllName)" />
+      <MemberSignature Language="C#" Value="public DllImportAttribute (string dllName);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="dllName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="dllName">A <see cref="T:System.String" /> that specifies the name of the shared library containing the unmanaged method to import.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>If the shared library specified in <paramref name="dllName" /> is not found, an error
+   occurs at runtime.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BestFitMapping">
+      <MemberSignature Language="C#" Value="public bool BestFitMapping;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CallingConvention">
+      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CallingConvention CallingConvention" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CallingConvention CallingConvention;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.CallingConvention</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.Runtime.InteropServices.CallingConvention" /> 
+value that specifies the calling convention used when passing arguments to
+the unmanaged implementation of a method in a
+shared library.</para>
+        </summary>
+        <remarks>
+          <para> The default
+   <see cref="T:System.Runtime.InteropServices.CallingConvention" /> value
+      is <see cref="F:System.Runtime.InteropServices.CallingConvention.StdCall" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CharSet">
+      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>A <see cref="T:System.Runtime.InteropServices.CharSet" /> value that controls function name modification and indicates how the <see cref="T:System.String" /> arguments to the method will be
+   marshaled.</para>
+        </summary>
+        <remarks>
+          <para>This field is set to one of the <see cref="T:System.Runtime.InteropServices.CharSet" /> values to indicate the
+   required modifications to the name of the imported function and to the <see cref="T:System.String" /> arguments of the
+   function. The default value for <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> is <see cref="F:System.Runtime.InteropServices.CharSet.Ansi" />.</para>
+          <para>If <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> is set to <see cref="F:System.Runtime.InteropServices.CharSet.Unicode" />, all string arguments
+are converted to Unicode characters before being passed to the unmanaged
+implementation. If the
+field is set to <see cref="F:System.Runtime.InteropServices.CharSet.Ansi" /> the string characters
+are converted to ANSI characters. If <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> is set to <see cref="F:System.Runtime.InteropServices.CharSet.Auto" />, the <see cref="T:System.String" /> and function name
+conversion is platform dependent.</para>
+          <para>The <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> field might 
+also be used to determine which version of a function is imported from the
+specified shared library by modifying the provided name of the function.
+The name modification is platform specific, and includes
+   additional characters to indicate the character set.</para>
+          <para>The default value of this field is
+<see cref="F:System.Runtime.InteropServices.CharSet.Ansi" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EntryPoint">
+      <MemberSignature Language="ILASM" Value=".field public string EntryPoint" />
+      <MemberSignature Language="C#" Value="public string EntryPoint;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.String" /> that specifies the name of the shared library
+   entry
+   point.</para>
+        </summary>
+        <remarks />
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExactSpelling">
+      <MemberSignature Language="ILASM" Value=".field public bool ExactSpelling" />
+      <MemberSignature Language="C#" Value="public bool ExactSpelling;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>A <see cref="T:System.Boolean" />
+value indicating whether the name of the
+entry point in the unmanaged library is modified to correspond to the <see cref="T:System.Runtime.InteropServices.CharSet" /> value specified in
+the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> field.</para>
+        </summary>
+        <remarks />
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreserveSig">
+      <MemberSignature Language="C#" Value="public bool PreserveSig;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetLastError">
+      <MemberSignature Language="C#" Value="public bool SetLastError;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ThrowOnUnmappableChar">
+      <MemberSignature Language="C#" Value="public bool ThrowOnUnmappableChar;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="ILASM" Value=".property string Value { public hidebysig specialname instance string get_Value() }" />
+      <MemberSignature Language="C#" Value="public string Value { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the name of the shared library file with the entry point.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the name of the shared library file from which a function implementation
+   is imported.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

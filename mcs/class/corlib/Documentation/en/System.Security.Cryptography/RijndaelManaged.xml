@@ -1,0 +1,135 @@
+<Type Name="RijndaelManaged" FullName="System.Security.Cryptography.RijndaelManaged">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class RijndaelManaged : System.Security.Cryptography.Rijndael" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Security.Cryptography.Rijndael</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Docs>
+    <summary>Managed implementation of the Rijndael symmetric algorithm, also known as Advanced Encryption Standard (AES).</summary>
+    <remarks>In order for this implementation to be compatible with AES you must only use the 128 bits block size. Rijndael also supports 192 and 256 bits block size but they aren't supported in NIST FIPS 197. Note: this restriction is only for "block sizes" not for "key sizes".</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RijndaelManaged ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDecryptor">
+      <MemberSignature Language="C#" Value="public override System.Security.Cryptography.ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.ICryptoTransform</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgbKey" Type="System.Byte[]" />
+        <Parameter Name="rgbIV" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rgbKey">Secret key to be used for the decryption transform.</param>
+        <param name="rgbIV">Initialization Vector (IV) to be used by the decryption transform.</param>
+        <summary>Creates a symmetric Rijndael decryptor transform.</summary>
+        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to decrypt data.</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateEncryptor">
+      <MemberSignature Language="C#" Value="public override System.Security.Cryptography.ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.ICryptoTransform</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgbKey" Type="System.Byte[]" />
+        <Parameter Name="rgbIV" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rgbKey">Secret key to be used for the encryption transform.</param>
+        <param name="rgbIV">Initialization Vector (IV) to be used by the encryption transform.</param>
+        <summary> Creates a symmetric Rijndael encryptor transform.</summary>
+        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to encrypt data.</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GenerateIV">
+      <MemberSignature Language="C#" Value="public override void GenerateIV ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Generate a new random Initialization Vector (IV) required for some block cipher modes.</summary>
+        <remarks>
+          <para>
+The IV is used for most <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Mode" /> of operation (except <see cref="E:System.Security.Cryptography.CipherMode.ECB" />). The value can be made public and must be available when decrypting the data.
+</para>
+          <para>
+IMPORTANT: If you reuse the same Rijndael object for multiple encryption using the same key it is CAPITAL that you use a different IV each time.
+</para>
+          <example>
+            <code lang="C#">
+Rijndael aes = Rijndael.Create ();
+aes.GenerateKey ();
+foreach (string file in files) {
+	// each file MUST be encrypted with a different IV
+	aes.GenerateIV ();
+	// encrypt the specified file with our Rijndael key
+	EncryptFile (file, aes);
+}
+  </code>
+          </example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GenerateKey">
+      <MemberSignature Language="C#" Value="public override void GenerateKey ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Generates a random key for Rijndael.  Uses the current KeySize.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

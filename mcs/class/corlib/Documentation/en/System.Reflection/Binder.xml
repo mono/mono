@@ -1,0 +1,454 @@
+<Type Name="Binder" FullName="System.Reflection.Binder" FullNameSP="System_Reflection_Binder" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable Binder extends System.Object" />
+  <TypeSignature Language="C#" Value="public abstract class Binder" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.AutoDual)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Performs custom overload resolution and argument coercion to bind a member when reflection is used to
+      invoke a member of a <see cref="T:System.Type" />.</para>
+    </summary>
+    <remarks>
+      <para> Late binding is controlled by a customized binding interface
+      through reflection. The <see cref="T:System.Reflection.Binder" /> class is designed to provide this
+      functionality. <see cref="T:System.Reflection.Binder" /> objects are used in overload resolution and
+      argument coercion for dynamic invocation of members at runtime.</para>
+      <para>Access to information obtained from reflection is controlled at two levels:
+      untrusted code and code with <see cref="T:System.Security.Permissions.ReflectionPermission" />.</para>
+      <para> Untrusted code is code
+      with no special level of trust (such as code downloaded from
+      the Internet). Such code is allowed to invoke anything that it would have been
+      able to invoke in an early bound way.</para>
+      <para>
+        <see cref="T:System.Security.Permissions.ReflectionPermission" />
+controls access to metadata through
+reflection. If this permission is granted to code, that code has access
+to all the types in its application domain, assembly, and module. It
+can access information about public, family, and private members of all types it
+has access to. Two primary capabilities are granted:</para>
+      <list type="bullet">
+        <item>
+          <term>
+      
+      The ability to read the metadata for family and
+      private members of any type.</term>
+        </item>
+        <item>
+          <term>
+      
+      The ability to access peer classes in the module and peer modules in the
+      assembly.</term>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>The term "reflection" refers to the ability to obtain
+      information about a <see cref="T:System.Object" /> during runtime. The primary means through
+      which this information is accessed is via the <see cref="T:System.Type" />
+      of the object. Reflection allows the programmatic discovery of a type's
+      metadata. The information included in the metadata includes details about
+      the assembly or module in which the type is defined as well as
+      members of the type. Reflection uses this information to provide the following
+      primary services:</para>
+        <list type="bullet">
+          <item>
+            <term>
+         
+         Access to type information at runtime.</term>
+          </item>
+          <item>
+            <term>
+         
+         The ability to use this type information to create instances,
+         invoke methods, and access data members of the type.</term>
+          </item>
+        </list>
+        <para>The primary users of these services are script engines, object viewers,
+   compilers, and object
+   persistence formatters.</para>
+        <para>Through reflection, methods can be bound and invoked at
+   runtime. If more than one member exists for a given member name, overload
+   resolution determines which implementation of that method is invoked
+   by the system. Coercion can occur when a parameter specified for a method
+   call does not match the type specified for the parameter
+   in the method signature. When possible, the binder converts the parameter
+   (coerces it) to the type specified by the method signature. Coercion might not be
+   possible depending on the types involved.</para>
+        <para>To bind to a method, field, or property, typically a list of probable
+   candidates is obtained from the <see cref="T:System.Type" /> of a <see cref="T:System.Object" />. That list is the passed to the appropriate method
+   of a <see cref="T:System.Reflection.Binder" /> instance. Based on the other parameters
+   passed to that method, typically (although not necessarily) one of the members
+   of the list is chosen, and an object that reflects that member is returned.</para>
+        <para> The system supplies a default binder that provides
+   default binding rules. Because binding rules vary among programming languages,
+   it is recommended that each programming language provide a custom implementation
+   of <see cref="T:System.Reflection.Binder" />
+   .</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected Binder ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Constructs a new instance of the <see cref="T:System.Reflection.Binder" /> class.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BindToField">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.FieldInfo BindToField(valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.FieldInfo[] match, object value, class System.Globalization.CultureInfo culture)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.FieldInfo BindToField (System.Reflection.BindingFlags bindingAttr, System.Reflection.FieldInfo[] match, object value, System.Globalization.CultureInfo culture);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="match" Type="System.Reflection.FieldInfo[]" />
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="bindingAttr">A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values that control the binding process. For requirements, see the Behaviors section.</param>
+        <param name="match">
+          <para>An array of <see cref="T:System.Reflection.FieldInfo" /> objects whose elements represent the set of fields that reflection has determined to be a possible match, typically because the fields have the correct member name.</para>
+        </param>
+        <param name="value"> An object of a type that is assignment-compatible with the type of the field being searched for. <block subset="none" type="note">For example, if <paramref name="value" /> is an instance of a class, the type of that instance can be assigned to the type of the field returned by this method. Fields in <paramref name="match" /> that cannot be assigned to this value are eliminated from the search.</block></param>
+        <param name="culture">
+          <para>The only defined value for this parameter is <see langword="null" /> .</para>
+        </param>
+        <summary>
+          <para> Selects a field from
+      the specified set of fields, based on the specified criteria.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Reflection.FieldInfo" /> 
+instance that reflects the field that matches the specified criteria. It is not
+required that this instance be contained in <paramref name="match" />. If a suitable field is not found,
+returns <see langword="null" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">For the 
+   <paramref name="bindingAttr" /> parameter, the caller is required to 
+      specify either <see cref="F:System.Reflection.BindingFlags.Public" /> or <see cref="F:System.Reflection.BindingFlags.NonPublic" />, and either <see cref="F:System.Reflection.BindingFlags.Instance" /> or <see cref="F:System.Reflection.BindingFlags.Static" />. If at least
+      one value from each pair is not specified, this method is required to return
+   <see langword=" null" /> .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BindToMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodBase BindToMethod(valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.MethodBase[] match, class System.Object[]&amp; args, class System.Reflection.ParameterModifier[] modifiers, class System.Globalization.CultureInfo culture, class System.String[] names, class System.Object&amp; state)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodBase BindToMethod (System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, ref object[] args, System.Reflection.ParameterModifier[] modifiers, System.Globalization.CultureInfo culture, string[] names, out object state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodBase</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="match" Type="System.Reflection.MethodBase[]" />
+        <Parameter Name="args" Type="System.Object[]&amp;" RefType="ref" />
+        <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+        <Parameter Name="names" Type="System.String[]" />
+        <Parameter Name="state" Type="System.Object&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="bindingAttr">A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values that control the binding process. For requirements, see the Behaviors section.</param>
+        <param name="match">An array of <see cref="T:System.Reflection.MethodBase" /> objects that represent the set of methods that Reflection has determined to be a possible match, typically because they have the correct member name.</param>
+        <param name="args">An array of objects that represent the parameters passed in the method invocation. The types, values, and order of the elements of this array might be changed by this method to match the signature of the selected method.</param>
+        <param name="modifiers">
+          <para>The only defined value for this parameter is <see langword="null" /> .</para>
+        </param>
+        <param name="culture">
+          <para>The only defined value for this parameter is <see langword="null" /> .</para>
+        </param>
+        <param name="names">A <see cref="T:System.String" /> array containing the names of methods to be searched.</param>
+        <param name="state">
+          <para>A binder-provided <see cref="T:System.Object" /> that keeps track of parameter reordering. The <paramref name="state" /> object is totally defined by the implementer of the <see cref="T:System.Reflection.Binder" /> class. This object is <see langword="null" /> if the binder does not reorder the argument array of the bound method.</para>
+        </param>
+        <summary>
+          <para> Selects a method based on the specified
+      criteria. </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Reflection.MethodBase" />
+instance that reflects the method that matches to the specified
+criteria. It is not required that this instance be contained in
+<paramref name="match" /> . If a suitable method is not found, 
+returns <see langword="null" />
+.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="state" /> is not <see langword="null" />, the system invokes <see cref="M:System.Reflection.Binder.ReorderArgumentArray(System.Object[]@,System.Object)" /> after this method returns. <block subset="none" type="note">This allows a caller to map the argument array of a method back to the original form if the order has been altered by <see cref="M:System.Reflection.Binder.BindToMethod(System.Reflection.BindingFlags,System.Reflection.MethodBase[],System.Object[]@,System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[],System.Object@)" /> . This is useful if <see langword="ByRef" /> arguments are in the 
+   argument array, because the caller can retrieve those arguments in their
+   original order on return from this method. When arguments are passed by name
+   (i.e., using named arguments), the binder reorders the argument array and that
+   is what the caller sees. This method insures that the original order of the
+   arguments is restored.</block></para>
+          <block subset="none" type="behaviors">
+            <para>For the <paramref name="bindingAttr" /> parameter, the caller is
+   required to specify either <see cref="F:System.Reflection.BindingFlags.Public" /> or <see cref="F:System.Reflection.BindingFlags.NonPublic" />, and either <see cref="F:System.Reflection.BindingFlags.Instance" /> or <see cref="F:System.Reflection.BindingFlags.Static" />. If at least
+   one value from each pair is not specified, this method is required to return
+<see langword="null" /> .</para>
+            <para> The <see cref="M:System.Reflection.Binder.BindToMethod(System.Reflection.BindingFlags,System.Reflection.MethodBase[],System.Object[]@,System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[],System.Object@)" /> method is permitted to change the order of the argument array of a method call only if the binder returns, via the <paramref name="state" /> parameter, a non-null opaque object that records the original order of the argument array. If, on return from <see cref="M:System.Reflection.Binder.BindToMethod(System.Reflection.BindingFlags,System.Reflection.MethodBase[],System.Object[]@,System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[],System.Object@)" />, <paramref name="state" /> is not <see langword="null" />, the system calls <see cref="M:System.Reflection.Binder.ReorderArgumentArray(System.Object[]@,System.Object)" /> 
+.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ChangeType">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract object ChangeType(object value, class System.Type type, class System.Globalization.CultureInfo culture)" />
+      <MemberSignature Language="C#" Value="public abstract object ChangeType (object value, Type type, System.Globalization.CultureInfo culture);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="value">The object to be converted to a new <see cref="T:System.Type" /> . </param>
+        <param name="type">The <see cref="T:System.Type" /> to which <paramref name="value" /> is converted. </param>
+        <param name="culture">
+          <para>The only defined value for this parameter is <see langword="null" /> .</para>
+        </param>
+        <summary>
+          <para> Converts the type of the specified object to the
+      specified type.</para>
+        </summary>
+        <returns>
+          <para> A new object of the type specified by <paramref name="type       " />. The contents of
+      this object are equal to those of <paramref name="value" />
+      .</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Implement this method
+   to change the type of a member of a parameter array. Typically,
+   it is recommended that implementations of this method perform only widening
+   conversions.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">This method is used
+   to change the type of a element in a parameter array to match
+   the type required by the signature of a bound method.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReorderArgumentArray">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void ReorderArgumentArray(class System.Object[]&amp; args, object state)" />
+      <MemberSignature Language="C#" Value="public abstract void ReorderArgumentArray (ref object[] args, object state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Object[]&amp;" RefType="ref" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="args">An array of objects whose elements represent the parameters passed to the bound method in their original order.</param>
+        <param name="state">
+          <para>A binder-provided opaque object that keeps track of parameter reordering. This object is the same object that was passed as the <paramref name="state" /> parameter in the invocation of <see cref="M:System.Reflection.Binder.BindToMethod(System.Reflection.BindingFlags,System.Reflection.MethodBase[],System.Object[]@,System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[],System.Object@)" /> that caused <see cref="M:System.Reflection.Binder.ReorderArgumentArray(System.Object[]@,System.Object)" /> to be called. </para>
+        </param>
+        <param name="state">To be added.</param>
+        <summary>
+          <para> Restores the specified set of parameters
+      to their original order after a call to <see cref="M:System.Reflection.Binder.BindToMethod(System.Reflection.BindingFlags,System.Reflection.MethodBase[],System.Object[]@,System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[],System.Object@)" />
+      .</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">When a method call is bound to a method 
+      through reflection using <see cref="M:System.Reflection.Binder.BindToMethod(System.Reflection.BindingFlags,System.Reflection.MethodBase[],System.Object[]@,System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[],System.Object@)" /> , the order, value, and type of the
+      parameters in the original method call can be changed to match the signature of
+      the bound method. The binder creates <paramref name="state" /> as an opaque object that
+      records the original order of the argument array. If, on return from <see cref="M:System.Reflection.Binder.BindToMethod(System.Reflection.BindingFlags,System.Reflection.MethodBase[],System.Object[]@,System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[],System.Object@)" />, <paramref name="state" /> is not
+   <see langword="null" />, the system calls <see cref="M:System.Reflection.Binder.ReorderArgumentArray(System.Object[]@,System.Object)" />. This allows a caller to map the 
+      argument array of a method back to the original form if the order had been
+      altered by <see cref="M:System.Reflection.Binder.BindToMethod(System.Reflection.BindingFlags,System.Reflection.MethodBase[],System.Object[]@,System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[],System.Object@)" /> . This is useful if
+   <see langword="ByRef" /> arguments are in the argument array, because the caller 
+      can retrieve those arguments in their original order on return from this method.
+      When arguments are passed by name (i.e., using named arguments), the binder
+      reorders the argument array and that is what the caller sees. This method
+      insures that the original order of the arguments is restored.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">
+              <paramref name="state" /> is required to be a non-null <see cref="T:System.Object" /> that tracks the
+   original ordering of <paramref name="args" /> if <paramref name="args" /> is reordered
+   by a call to <see cref="M:System.Reflection.Binder.BindToMethod(System.Reflection.BindingFlags,System.Reflection.MethodBase[],System.Object[]@,System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[],System.Object@)" />
+   . This method is required to
+   restore the elements of <paramref name="args" /> to their original order, value, and <see cref="T:System.Type" /></block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Implement this method to insure that the
+   parameters contained in <paramref name="args" />
+   are returned to their original order, <see cref="T:System.Type" /> and value, after being used by a bound
+   method.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+   insure that the parameters contained in <paramref name="args" /> are returned
+   to their original order, <see cref="T:System.Type" /> and value, after being used by a bound method.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SelectMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodBase SelectMethod(valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.MethodBase[] match, class System.Type[] types, class System.Reflection.ParameterModifier[] modifiers)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodBase SelectMethod (System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, Type[] types, System.Reflection.ParameterModifier[] modifiers);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodBase</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="match" Type="System.Reflection.MethodBase[]" />
+        <Parameter Name="types" Type="System.Type[]" />
+        <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
+      </Parameters>
+      <Docs>
+        <param name="bindingAttr">A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values that control the binding process. For requirements, see the Behaviors section.</param>
+        <param name="match">An array of <see cref="T:System.Reflection.MethodBase" /> objects that represent the set of methods that Reflection has determined to be a possible match, typically because they have the correct member name. </param>
+        <param name="types">An array of <see cref="T:System.Type" /> objects that represent the values used to locate a matching method.</param>
+        <param name="modifiers">
+          <para>The only defined value for this parameter is <see langword="null" /> .</para>
+        </param>
+        <summary>
+          <para>Selects a method from
+      the specified set of methods, based on the argument type.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodBase" />
+instance that reflects the method that
+is matched to the specified criteria. It is not required that this instance
+be contained in <paramref name="match" /> . If a suitable method is
+not found, returns <see langword="null" />
+.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">For the
+   <paramref name="bindingAttr" /> parameter, the caller is required to
+      specify either <see cref="F:System.Reflection.BindingFlags.Public" /> or <see cref="F:System.Reflection.BindingFlags.NonPublic" />, and either <see cref="F:System.Reflection.BindingFlags.Instance" /> or <see cref="F:System.Reflection.BindingFlags.Static" />. If at least
+      one value from each pair is not specified, this method is required to return
+   <see langword="null" /> .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SelectProperty">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.PropertyInfo SelectProperty(valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.PropertyInfo[] match, class System.Type returnType, class System.Type[] indexes, class System.Reflection.ParameterModifier[] modifiers)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.PropertyInfo SelectProperty (System.Reflection.BindingFlags bindingAttr, System.Reflection.PropertyInfo[] match, Type returnType, Type[] indexes, System.Reflection.ParameterModifier[] modifiers);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.PropertyInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="match" Type="System.Reflection.PropertyInfo[]" />
+        <Parameter Name="returnType" Type="System.Type" />
+        <Parameter Name="indexes" Type="System.Type[]" />
+        <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
+      </Parameters>
+      <Docs>
+        <param name="bindingAttr">A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values that control the binding process. For requirements, see the Behaviors section.</param>
+        <param name="match">An array of <see cref="T:System.Reflection.PropertyInfo" /> objects that represent the set of properties that Reflection has determined to be a possible match, typically because they have the correct member name. </param>
+        <param name="returnType">The <see cref="T:System.Type" /> of the property being searched for. </param>
+        <param name="indexes">An array of <see cref="T:System.Type" /> objects that represent the index types of the property being searched for. <block subset="none" type="note">Use this parameter for index properties such as the indexer for a class. </block></param>
+        <param name="modifiers">
+          <para>The only defined value for this parameter is <see langword="null" /> .</para>
+        </param>
+        <summary>
+          <para> Selects a property
+      from the specified set of properties, based on the specified criteria.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Reflection.PropertyInfo" /> instance that reflects the property that
+   matches the specified criteria. It is not required that this instance be
+   contained in <paramref name="match" /> . If a
+   suitable property is not found, returns <see langword="null" />
+   .</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">For the 
+   <paramref name="bindingAttr" /> parameter, the caller is required to specify either <see cref="F:System.Reflection.BindingFlags.Public" /> or <see cref="F:System.Reflection.BindingFlags.NonPublic" />, and either <see cref="F:System.Reflection.BindingFlags.Instance" /> or <see cref="F:System.Reflection.BindingFlags.Static" />. If at least 
+      one value from each pair is not specified, this method is required to return
+   <see langword=" null" /> .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

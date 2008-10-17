@@ -1,0 +1,96 @@
+<Type Name="DefaultMemberAttribute" FullName="System.Reflection.DefaultMemberAttribute" FullNameSP="System_Reflection_DefaultMemberAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable DefaultMemberAttribute extends System.Attribute" />
+  <TypeSignature Language="C#" Value="public sealed class DefaultMemberAttribute : Attribute" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Interface)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Defines the member that is invoked when no member name
+      is specified for the type targeted by <see cref="T:System.Reflection.DefaultMemberAttribute" />
+      .
+      </para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>This attribute is used by the <see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" /> methods.</para>
+        <para>This attribute can
+      be applied to classes, structs, and interfaces.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string memberName)" />
+      <MemberSignature Language="C#" Value="public DefaultMemberAttribute (string memberName);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="memberName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="memberName">
+          <para>A <see cref="T:System.String" /> containing the name of the member to invoke. Can be a constructor, method, property, or field.</para>
+        </param>
+        <summary>
+          <para> Constructs and initializes new instance of the <see cref="T:System.Reflection.DefaultMemberAttribute" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Reflection.DefaultMemberAttribute.MemberName" /> property using <paramref name="memberName" />
+.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MemberName">
+      <MemberSignature Language="ILASM" Value=".property string MemberName { public hidebysig specialname instance string get_MemberName() }" />
+      <MemberSignature Language="C#" Value="public string MemberName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the member name contained by the current instance.
+      </para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> representing the member name contained by the current instance.
+   </para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

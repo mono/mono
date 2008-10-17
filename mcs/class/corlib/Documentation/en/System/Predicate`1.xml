@@ -1,0 +1,42 @@
+<Type Name="Predicate&lt;T&gt;" FullName="System.Predicate&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public delegate bool Predicate&lt;T&gt;(T obj);" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="obj" Type="T" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Boolean</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <param name="obj">To be added.</param>
+    <summary>
+      <para>Represents the method that defines a Boolean query on an object.</para>
+    </summary>
+    <value>
+      <para>
+        <see langword="true" /> if <paramref name="obj" /> meets the criteria defined within the method represented by this delegate; otherwise, <see langword="false" />.</para>
+    </value>
+    <value>
+      <para>
+        <see langword="true" /> if <paramref name="obj" /> meets the criteria defined within the method represented by this delegate; otherwise, <see langword="false" />.</para>
+    </value>
+    <value>To be added.</value>
+    <remarks>
+      <para>Predicate methods are expected to not throw exceptions. If they do throw exceptions, other methods that use that delegate might exhibit unspecified behavior. It is also intended that predicate methods not produce side-effects; however, such methods need not be thread safe.</para>
+      <block subset="none" type="note">
+        <para>This delegate is used by several methods in <see cref="T:System.Array" />, and in <see cref="T:System.Collections.Generic.List&lt;T&gt; " /> to search for elements in the collection.</para>
+      </block>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

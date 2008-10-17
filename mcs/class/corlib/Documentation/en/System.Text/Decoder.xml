@@ -1,0 +1,542 @@
+<Type Name="Decoder" FullName="System.Text.Decoder" FullNameSP="System_Text_Decoder" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable Decoder extends System.Object" />
+  <TypeSignature Language="C#" Value="public abstract class Decoder" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Converts blocks of bytes into blocks of characters,
+      maintaining state across successive calls for reading from a <see cref="T:System.IO.Stream" />.
+      </para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">Following instantiation of a decoder,
+      sequential blocks of bytes are converted into blocks of characters through calls
+      to the <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> method. The decoder maintains state between the
+      conversions, allowing it to correctly decode a character whose bytes span
+      multiple blocks. This greatly assists decoding streams of bytes into
+      characters. An instance of a specific implementation of the
+   <see cref="T:System.Text.Decoder" />
+   class is typically obtained through a call to the <see cref="M:System.Text.Encoding.GetDecoder" />
+   method of a <see cref="T:System.Text.Encoding" /> object.</block>
+      </para>
+    </remarks>
+    <example>
+      <para> The following example demonstrates using the <see cref="T:System.Text.UTF8Encoding" />
+implementation of the <see cref="T:System.Text.Decoder" /> class to convert two byte arrays to a character
+array, where one character's bytes span multiple byte arrays. This demonstrates
+how to use a <see cref="T:System.Text.Decoder" />
+in streaming-like situations.</para>
+      <code lang="C#">
+using System;
+using System.Text;
+
+public class DecoderExample 
+{
+   public static void Main() 
+   {
+      // These bytes in UTF-8 correspond to 3 different
+      // Unicode characters - A (U+0041), # (U+0023),
+      // and the biohazard symbol (U+2623). Note the 
+      // biohazard symbol requires 3 bytes in UTF-8 
+      // (in hex, e2, 98, a3). Decoders store state across
+      // multiple calls to GetChars, handling the case 
+      // when one char spans multiple byte arrays.
+
+      byte[] bytes1 = { 0x41, 0x23, 0xe2 };
+      byte[] bytes2 = { 0x98, 0xa3 };
+      char[] chars = new char[3]; 
+
+      Decoder d = Encoding.UTF8.GetDecoder();
+      int charLen = d.GetChars(bytes1, 0, bytes1.Length,
+                               chars, 0);
+      // charLen is 2.
+
+      charLen += d.GetChars(bytes2, 0, bytes2.Length,
+                            chars, charLen);
+      // charLen is now 3. 
+
+      foreach(char c in chars) 
+         Console.Write("U+{0:x} ", (ushort)c);
+   }
+}
+</code>
+      <para>The output is </para>
+      <c>
+        <para>U+41 U+23 U+2623</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected Decoder ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Constructs a new instance of the <see cref="T:System.Text.Decoder" /> class.
+   </para>
+        </summary>
+        <remarks>
+          <para>This constructor is called only by classes that inherit from the <see cref="T:System.Text.Decoder" /> class.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Convert">
+      <MemberSignature Language="C#" Value="public virtual void Convert (byte* bytes, int byteCount, char* chars, int charCount, bool flush, out int bytesUsed, out int charsUsed, out bool completed);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte*" />
+        <Parameter Name="byteCount" Type="System.Int32" />
+        <Parameter Name="chars" Type="System.Char*" />
+        <Parameter Name="charCount" Type="System.Int32" />
+        <Parameter Name="flush" Type="System.Boolean" />
+        <Parameter Name="bytesUsed" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="charsUsed" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="completed" Type="System.Boolean&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">To be added.</param>
+        <param name="byteCount">To be added.</param>
+        <param name="chars">To be added.</param>
+        <param name="charCount">To be added.</param>
+        <param name="flush">To be added.</param>
+        <param name="bytesUsed">To be added.</param>
+        <param name="charsUsed">To be added.</param>
+        <param name="completed">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Convert">
+      <MemberSignature Language="C#" Value="public virtual void Convert (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex, int charCount, bool flush, out int bytesUsed, out int charsUsed, out bool completed);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="byteIndex" Type="System.Int32" />
+        <Parameter Name="byteCount" Type="System.Int32" />
+        <Parameter Name="chars" Type="System.Char[]" />
+        <Parameter Name="charIndex" Type="System.Int32" />
+        <Parameter Name="charCount" Type="System.Int32" />
+        <Parameter Name="flush" Type="System.Boolean" />
+        <Parameter Name="bytesUsed" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="charsUsed" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="completed" Type="System.Boolean&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">To be added.</param>
+        <param name="byteIndex">To be added.</param>
+        <param name="byteCount">To be added.</param>
+        <param name="chars">To be added.</param>
+        <param name="charIndex">To be added.</param>
+        <param name="charCount">To be added.</param>
+        <param name="flush">To be added.</param>
+        <param name="bytesUsed">To be added.</param>
+        <param name="charsUsed">To be added.</param>
+        <param name="completed">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Fallback">
+      <MemberSignature Language="C#" Value="public System.Text.DecoderFallback Fallback { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Text.DecoderFallback</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FallbackBuffer">
+      <MemberSignature Language="C#" Value="public System.Text.DecoderFallbackBuffer FallbackBuffer { get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Text.DecoderFallbackBuffer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCharCount">
+      <MemberSignature Language="C#" Value="public virtual int GetCharCount (byte* bytes, int count, bool flush);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte*" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="flush" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">To be added.</param>
+        <param name="count">To be added.</param>
+        <param name="flush">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetCharCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetCharCount(class System.Byte[] bytes, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public abstract int GetCharCount (byte[] bytes, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">A <see cref="T:System.Byte" /> array to decode. </param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the first index in <paramref name="bytes" /> to decode. </param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number elements in <paramref name="bytes" /> to decode. </param>
+        <summary>
+          <para> Determines the exact number of characters that will be produced by
+      decoding the specified range of the specified array of
+      bytes.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing 
+   the number of characters the next call to <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> will produce if presented with the
+   specified range of <paramref name="bytes" />
+   .</para>
+          <para>
+            <block subset="none" type="note">This value takes into account the state in which the current instance was
+   left following the last call to <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" qualify="true" />. This
+   contrasts with <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" qualify="true" />, which does not maintain state information
+   across subsequent calls.</block>
+          </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this
+      method
+      
+      to return the appropriate value for a
+      particular encoding.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+      determine the appropriate size of a buffer to contain the
+      decoded values.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="bytes" /> is <see langword="null" /> . </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index" /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="count" /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="index " />and <paramref name="count " />do not specify a valid range in <paramref name="bytes" /> (i.e. (<paramref name="index" /> + <paramref name="count" />) &gt; <paramref name="bytes" />.Length).</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCharCount">
+      <MemberSignature Language="C#" Value="public virtual int GetCharCount (byte[] bytes, int index, int count, bool flush);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="flush" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">To be added.</param>
+        <param name="index">To be added.</param>
+        <param name="count">To be added.</param>
+        <param name="flush">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetChars">
+      <MemberSignature Language="C#" Value="public virtual int GetChars (byte* bytes, int byteCount, char* chars, int charCount, bool flush);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte*" />
+        <Parameter Name="byteCount" Type="System.Int32" />
+        <Parameter Name="chars" Type="System.Char*" />
+        <Parameter Name="charCount" Type="System.Int32" />
+        <Parameter Name="flush" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">To be added.</param>
+        <param name="byteCount">To be added.</param>
+        <param name="chars">To be added.</param>
+        <param name="charCount">To be added.</param>
+        <param name="flush">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetChars">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetChars(class System.Byte[] bytes, int32 byteIndex, int32 byteCount, class System.Char[] chars, int32 charIndex)" />
+      <MemberSignature Language="C#" Value="public abstract int GetChars (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="byteIndex" Type="System.Int32" />
+        <Parameter Name="byteCount" Type="System.Int32" />
+        <Parameter Name="chars" Type="System.Char[]" />
+        <Parameter Name="charIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">A <see cref="T:System.Byte" /> array to decode. </param>
+        <param name="byteIndex">A <see cref="T:System.Int32" /> that specifies the first index of <paramref name="bytes" /> from which to decode. </param>
+        <param name="byteCount">A <see cref="T:System.Int32" /> that specifies the number elements in <paramref name="bytes" /> to decode. </param>
+        <param name="chars">A <see cref="T:System.Char" /> array of characters to decode into. </param>
+        <param name="charIndex">A <see cref="T:System.Int32" /> that specifies the first index of <paramref name="chars" /> to store the decoded bytes. </param>
+        <summary>
+          <para> Decodes the specified range of the specified array of bytes into the specified range
+      of the specified array of characters for a particular encoding.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing
+   the number of characters decoded into <paramref name="chars" /> for a
+   particular encoding.
+   </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <see cref="M:System.Text.Decoder.GetCharCount(System.Byte[],System.Int32,System.Int32)" /> can be used to determine the exact number of
+   characters that will be produced for a specified range of bytes.
+   Alternatively, <see cref="M:System.Text.Encoding.GetMaxCharCount(System.Int32)" /> of the <see cref="T:System.Text.Encoding" /> object that produced the current instance can be used to
+   determine the maximum number of characters that might be produced for a specified
+   number of bytes, regardless of the actual byte values.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this method to decode the values of a <see cref="T:System.Byte" /> array for a
+particular encoding.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+   decode the elements of a byte array for a particular encoding.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="chars" /> does not contain sufficient space to store the decoded characters.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="bytes " />is <see langword="null" /> . </para>
+          <para>-or- </para>
+          <para>
+            <paramref name="chars " />is <see langword="null" /> . </para>
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="byteIndex" /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="byteCount " /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="charIndex " /> &lt; 0. </para>
+          <para> -or- </para>
+          <para>
+            <paramref name="byteIndex" /> and <paramref name="byteCount" /> do not specify a valid range in <paramref name="bytes" /> (i.e. (<paramref name="byteIndex " />+ <paramref name="byteCount " /> ) &gt; <paramref name="bytes" />.Length). </para>
+          <para>-or- </para>
+          <para>
+            <paramref name="charIndex" /> &gt; <paramref name="chars" />.Length.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetChars">
+      <MemberSignature Language="C#" Value="public virtual int GetChars (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex, bool flush);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="byteIndex" Type="System.Int32" />
+        <Parameter Name="byteCount" Type="System.Int32" />
+        <Parameter Name="chars" Type="System.Char[]" />
+        <Parameter Name="charIndex" Type="System.Int32" />
+        <Parameter Name="flush" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">To be added.</param>
+        <param name="byteIndex">To be added.</param>
+        <param name="byteCount">To be added.</param>
+        <param name="chars">To be added.</param>
+        <param name="charIndex">To be added.</param>
+        <param name="flush">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public virtual void Reset ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

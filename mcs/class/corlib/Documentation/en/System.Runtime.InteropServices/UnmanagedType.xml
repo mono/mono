@@ -1,0 +1,748 @@
+<Type Name="UnmanagedType" FullName="System.Runtime.InteropServices.UnmanagedType" FullNameSP="System_Runtime_InteropServices_UnmanagedType" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable UnmanagedType extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum UnmanagedType" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Identifies how parameters or fields are to be marshaled to unmanaged
+      code.
+      </para>
+    </summary>
+    <remarks>
+      <para>This type provides a set of values that identify the native types that are supported by the CLI. Each native type is encoded by a different value.  All encoding values in the range 0-63, inclusive, are reserved for backward compatibility with existing implementations of the CLI.  Values in the range 64-127 are reserved for future use in this and related Standards.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AnsiBStr">
+      <MemberSignature Language="C#" Value="AnsiBStr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>AnsiBStr</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AsAny">
+      <MemberSignature Language="C#" Value="AsAny" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>AsAny</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Bool">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType Bool = 2" />
+      <MemberSignature Language="C#" Value="Bool" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Bool</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a 4-byte Boolean value where 
+   <see langword="true" /> is denoted by all non-zero values and 
+   <see langword="false" /> is denoted by
+      zero.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BStr">
+      <MemberSignature Language="C#" Value="BStr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>BStr</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ByValArray">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType ByValArray = 30" />
+      <MemberSignature Language="C#" Value="ByValArray" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ByValArray</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies an array of fixed size. This unmanaged type is valid only for
+      an array in a structure.</para>
+          <para>When <see cref="P:System.Runtime.InteropServices.MarshalAsAttribute.Value" /> is set to
+<see langword="ByValArray" />, the <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SizeConst" /> field is required 
+   to contain the number of elements in the array.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ByValTStr">
+      <MemberSignature Language="C#" Value="ByValTStr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>ByValTStr</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Currency">
+      <MemberSignature Language="C#" Value="Currency" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>Currency</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CustomMarshaler">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType CustomMarshaler = 44" />
+      <MemberSignature Language="C#" Value="CustomMarshaler" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>CustomMarshaler</MemberValue>
+      <Docs>
+        <summary>
+   Specifies the custom marshaler class when used
+   with <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.MarshalType" /> or <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.MarshalTypeRef" /> .
+</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Error">
+      <MemberSignature Language="C#" Value="Error" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>Error</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FunctionPtr">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType FunctionPtr = 38" />
+      <MemberSignature Language="C#" Value="FunctionPtr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>FunctionPtr</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a function pointer.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="I1">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType I1 = 3" />
+      <MemberSignature Language="C#" Value="I1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>I1</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a 1-byte signed integer.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="I2">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType I2 = 5" />
+      <MemberSignature Language="C#" Value="I2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>I2</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a 2-byte signed integer.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="I4">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType I4 = 7" />
+      <MemberSignature Language="C#" Value="I4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>I4</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a 4-byte signed integer.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="I8">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType I8 = 9" />
+      <MemberSignature Language="C#" Value="I8" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>I8</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies an 8-byte signed integer.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IDispatch">
+      <MemberSignature Language="C#" Value="IDispatch" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>IDispatch</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Interface">
+      <MemberSignature Language="C#" Value="Interface" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>Interface</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IUnknown">
+      <MemberSignature Language="C#" Value="IUnknown" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>IUnknown</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LPArray">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType LPArray = 42" />
+      <MemberSignature Language="C#" Value="LPArray" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>LPArray</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies a C-style array. When marshaling from 
+      managed to unmanaged, the length of the array is determined by the length of the
+      managed array. When marshaling from unmanaged to managed, the length of the
+      array is determined from the <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SizeConst" /> and <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SizeParamIndex" />
+      fields. </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LPStr">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType LPStr = 20" />
+      <MemberSignature Language="C#" Value="LPStr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>LPStr</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a pointer to an ANSI character string.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LPStruct">
+      <MemberSignature Language="C#" Value="LPStruct" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>LPStruct</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LPTStr">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType LPTStr = 22" />
+      <MemberSignature Language="C#" Value="LPTStr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>LPTStr</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a pointer to the preferred character
+      string representation for the current platform. </para>
+          <para>
+            <block subset="none" type="note">A type library exported with an
+   <see langword="LPTStr" /> on an ANSI platform will have a different
+      size than one exported on a Unicode platform.</block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LPWStr">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType LPWStr = 21" />
+      <MemberSignature Language="C#" Value="LPWStr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>LPWStr</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a pointer to a Unicode character string.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="R4">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType R4 = 11" />
+      <MemberSignature Language="C#" Value="R4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>R4</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a 4-byte floating-point number.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="R8">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType R8 = 12" />
+      <MemberSignature Language="C#" Value="R8" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>R8</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies an 8-byte floating-point number.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SafeArray">
+      <MemberSignature Language="C#" Value="SafeArray" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>SafeArray</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Struct">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType Struct = 27" />
+      <MemberSignature Language="C#" Value="Struct" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Struct</MemberValue>
+      <Docs>
+        <summary>
+          <para>    A C-style structure, used to marshal managed formatted classes and value
+      types.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SysInt">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType SysInt = 31" />
+      <MemberSignature Language="C#" Value="SysInt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SysInt</MemberValue>
+      <Docs>
+        <summary>
+   Specifies an implementation-specific sized signed integer.
+</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SysUInt">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType SysUInt = 32" />
+      <MemberSignature Language="C#" Value="SysUInt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SysUInt</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies an implementation-specific sized unsigned integer.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TBStr">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType TBStr = 36" />
+      <MemberSignature Language="C#" Value="TBStr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>TBStr</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies a pointer to the preferred BSTR representation 
+      for the current platform - Unicode or SBCS.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="U1">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType U1 = 4" />
+      <MemberSignature Language="C#" Value="U1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>U1</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a 1-byte unsigned integer.
+      </para>
+          <para>
+            <block subset="none" type="note">
+              <see cref="F:System.Runtime.InteropServices.UnmanagedType.U1" /> can be used to marshal 
+   a <see cref="T:System.Char" /> parameter
+   as an ANSI character.</block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="U2">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType U2 = 6" />
+      <MemberSignature Language="C#" Value="U2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>U2</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a 2-byte unsigned integer.
+      </para>
+          <para>
+            <block subset="none" type="note">
+              <see cref="F:System.Runtime.InteropServices.UnmanagedType.U2" /> 
+can be used to marshal a <see cref="T:System.Char" /> parameter as a Unicode character.</block>
+          </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="U4">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType U4 = 8" />
+      <MemberSignature Language="C#" Value="U4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>U4</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies a 4-byte unsigned integer.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="U8">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.UnmanagedType U8 = 10" />
+      <MemberSignature Language="C#" Value="U8" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>U8</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies an 8-byte unsigned integer.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VariantBool">
+      <MemberSignature Language="C#" Value="VariantBool" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>VariantBool</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VBByRefStr">
+      <MemberSignature Language="C#" Value="VBByRefStr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
+      </ReturnValue>
+      <MemberValue>VBByRefStr</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

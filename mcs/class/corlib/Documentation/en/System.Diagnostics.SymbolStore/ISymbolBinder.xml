@@ -1,0 +1,51 @@
+<Type Name="ISymbolBinder" FullName="System.Diagnostics.SymbolStore.ISymbolBinder">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISymbolBinder" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="GetReader">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolReader GetReader (int importer, string filename, string searchPath);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.SymbolStore.ISymbolReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="importer" Type="System.Int32" />
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="searchPath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="importer">To be added: an object of type 'int'</param>
+        <param name="filename">To be added: an object of type 'string'</param>
+        <param name="searchPath">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'ISymbolReader'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("This interface is not 64-bit clean.  Use ISymbolBinder1 instead", false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,235 @@
+<Type Name="DateTimeStyles" FullName="System.Globalization.DateTimeStyles" FullNameSP="System_Globalization_DateTimeStyles" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable DateTimeStyles extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum DateTimeStyles" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>Defines the formatting options that customize how the
+   <see cref="M:System.DateTime.Parse(System.String)" />
+   and <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> methods parse a string.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>See the <see cref="T:System.String" /> class for the list of white space characters.</para>
+        <para>Only the <see cref="F:System.Globalization.DateTimeStyles.NoCurrentDateDefault" /> option affects the <see cref="M:System.DateTime.Parse(System.String)" /> method.
+<see cref="M:System.DateTime.Parse(System.String)" /> always 
+   ignores leading, inner, and trailing white spaces.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AdjustToUniversal">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AdjustToUniversal = 0x10" />
+      <MemberSignature Language="C#" Value="AdjustToUniversal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>AdjustToUniversal</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the date and time must be converted to 
+      universal time coordinate time or Greenwich mean time (GMT)</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AllowInnerWhite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowInnerWhite = 0x4" />
+      <MemberSignature Language="C#" Value="AllowInnerWhite" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>AllowInnerWhite</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that extra white space characters not specified
+      in the <see cref="T:System.Globalization.DateTimeFormatInfo" /> format patterns are allowed.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AllowLeadingWhite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowLeadingWhite = 0x1" />
+      <MemberSignature Language="C#" Value="AllowLeadingWhite" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>AllowLeadingWhite</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that leading white space characters are allowed.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AllowTrailingWhite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowTrailingWhite = 0x2" />
+      <MemberSignature Language="C#" Value="AllowTrailingWhite" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>AllowTrailingWhite</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that trailing white space characters are allowed.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AllowWhiteSpaces">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowWhiteSpaces = AllowLeadingWhite | AllowTrailingWhite | AllowInnerWhite" />
+      <MemberSignature Language="C#" Value="AllowWhiteSpaces" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>AllowWhiteSpaces</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that white space characters anywhere in the
+      string are allowed.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AssumeLocal">
+      <MemberSignature Language="C#" Value="AssumeLocal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AssumeUniversal">
+      <MemberSignature Language="C#" Value="AssumeUniversal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoCurrentDateDefault">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles NoCurrentDateDefault = 0x8" />
+      <MemberSignature Language="C#" Value="NoCurrentDateDefault" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NoCurrentDateDefault</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that there is no current date default. If a
+      string contains only the time and not the date, and this option is used with the
+   <see cref="M:System.DateTime.Parse(System.String)" /> or <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> methods, a Gregorian year 1, month 1, day
+      1 date is assumed. In all other cases the methods assume the current local system date.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles None = 0x0" />
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>None</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies that the default formatting options are to be used.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RoundtripKind">
+      <MemberSignature Language="C#" Value="RoundtripKind" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

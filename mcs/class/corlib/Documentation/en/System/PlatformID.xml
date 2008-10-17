@@ -1,0 +1,128 @@
+<Type Name="PlatformID" FullName="System.PlatformID">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public enum PlatformID" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Represents the Platform of the <see cref="T:System.OperatingSystem" />.</summary>
+    <remarks>This is an Enum used to represent an operating system platform.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="MacOSX">
+      <MemberSignature Language="C#" Value="MacOSX" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.PlatformID</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Unix">
+      <MemberSignature Language="C#" Value="Unix" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.PlatformID</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Win32NT">
+      <MemberSignature Language="C#" Value="Win32NT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.PlatformID</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The WinNT Platform (Microsoft Windows NT or later).</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Win32S">
+      <MemberSignature Language="C#" Value="Win32S" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.PlatformID</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The Win32s platform (a layer for 16 bit Windows versions to access 32 bit Windows applications).</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Win32Windows">
+      <MemberSignature Language="C#" Value="Win32Windows" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.PlatformID</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>A Win32 platform (Microsoft Windows 95 and later).</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WinCE">
+      <MemberSignature Language="C#" Value="WinCE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.PlatformID</ReturnType>
+      </ReturnValue>
+      <MemberValue>WinCE</MemberValue>
+      <Docs>
+        <summary>Microsoft Windows CE (Embedded Windows Operating System).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Xbox">
+      <MemberSignature Language="C#" Value="Xbox" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.PlatformID</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

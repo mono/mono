@@ -1,0 +1,1590 @@
+<Type Name="FileStream" FullName="System.IO.FileStream" FullNameSP="System_IO_FileStream" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public FileStream extends System.IO.Stream" />
+  <TypeSignature Language="C#" Value="public class FileStream : System.IO.Stream" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.IO.Stream</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para>Exposes a <see cref="T:System.IO.Stream" /> around a file,
+   supporting both synchronous and asynchronous read and write operations.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.IO.FileStream" /> is used for reading and writing files on
+   a file system, as well as other file-related operating system handles
+   such as pipes, standard input, standard output. <see cref="T:System.IO.FileStream" />
+   buffers input and output for better performance.</para>
+      <para>The <see cref="T:System.IO.FileStream" />
+class can open a file in one of two modes, either synchronously or
+asynchronously, with significant performance consequences for the
+synchronous methods (<see cref="M:System.IO.FileStream.Read(System.Byte[],System.Int32,System.Int32)" /> and
+<see cref="M:System.IO.FileStream.Write(System.Byte[],System.Int32,System.Int32)" />) and the asynchronous
+methods (<see cref="M:System.IO.FileStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> and
+<see cref="M:System.IO.FileStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> ). Both sets 
+of methods will work in either mode; however, the mode will affect the
+performance of these methods. <see cref="T:System.IO.FileStream" /> defaults
+to opening files synchronously, but provides a constructor to open
+files asynchronously.</para>
+      <para> When accessing files, a security check is performed when
+   the file is created or opened. The security check is typically not done again unless
+   the file is closed and reopened. <block subset="none" type="note">Checking
+   permissions when the file is first accessed minimizes the impact of the security
+   check on application performance (since opening a file happens once, while
+   reading and writing can happen multiple times).</block> Note that if an
+opened file is passed to an untrusted caller, the security system can, but is
+not required to prevent the caller from accessing the file.</para>
+      <para>
+        <see cref="T:System.IO.FileStream" /> objects support random access to files using the
+<see cref="M:System.IO.FileStream.Seek(System.Int64,System.IO.SeekOrigin)" /> method, and the <see cref="P:System.IO.Stream.CanSeek" /> properties 
+of <see cref="T:System.IO.FileStream" /> instances encapsulating files are set to <see langword="true" />. The <see cref="M:System.IO.FileStream.Seek(System.Int64,System.IO.SeekOrigin)" /> method allows the
+read/write position to be moved to any position within the file. This is done
+with byte offset reference point parameters. The byte offset is relative to the
+seek reference point, which can be the beginning, the current position, or the
+end of the underlying file, as represented by the three values of the
+<see cref="T:System.IO.SeekOrigin" /> enumeration.</para>
+      <para>If a <see cref="T:System.IO.FileStream" /> encapsulates a device that does not support
+seeking, its <see cref="P:System.IO.FileStream.CanSeek" /> property is <see langword="false" />. <block subset="none" type="note">For additional information, see <see cref="P:System.IO.Stream.CanSeek" />.</block></para>
+      <para>
+        <block subset="none" type="note">The
+<see cref="T:System.IO.File" /> class provides 
+   methods for the creation of <see cref="T:System.IO.FileStream" />
+   objects
+   based on file paths. The <see cref="T:System.IO.MemoryStream" /> class creates a stream from a byte array and
+   functions similarly to a <see cref="T:System.IO.FileStream" />.</block>
+      </para>
+    </remarks>
+    <example>
+      <para>The following example demonstrates the use of a <see cref="T:System.IO.FileStream" />
+object.</para>
+      <code lang="C#">using System;
+using System.IO;
+
+class Directory {
+   public static void Main(String[] args) { 
+      FileStream fs = new FileStream("log.txt", FileMode.OpenOrCreate, FileAccess.Write);
+      StreamWriter w = new StreamWriter(fs);         
+      w.BaseStream.Seek(0, SeekOrigin.End);   // Set the file pointer to the end.
+
+      Log ("Test1", w);
+      Log ("Test2", w);
+ 
+      w.Close(); // Close the writer and underlying file.     
+
+      fs = new FileStream("log.txt", FileMode.OpenOrCreate, FileAccess.Read);
+
+      StreamReader r = new StreamReader(fs);        
+      r.BaseStream.Seek(0, SeekOrigin.Begin);   
+      DumpLog (r);
+   }
+
+   public static void Log (String logMessage, StreamWriter w) {
+      w.Write("Log Entry : ");
+      w.WriteLine("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
+      w.WriteLine(":");
+      w.WriteLine(":{0}", logMessage);
+      w.WriteLine ("-------------------------------");
+      w.Flush();  
+   }
+
+   public static void DumpLog (StreamReader r) {
+      while (r.Peek() &gt; -1) { // While not at the end of the file, write to standard output.     
+        Console.WriteLine(r.ReadLine());
+      }
+
+      r.Close();
+   }
+}
+</code>
+      <para>Some example output is </para>
+      <c>
+        <para>Log Entry : 9:26:21 AM Friday, July 06, 2001</para>
+        <para>:</para>
+        <para>:Test1</para>
+        <para>-------------------------------</para>
+        <para>Log Entry : 9:26:21 AM Friday, July 06, 2001</para>
+        <para>:</para>
+        <para>:Test2</para>
+        <para>-------------------------------</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FileStream (Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="handle" Type="Microsoft.Win32.SafeHandles.SafeFileHandle" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <param name="access">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FileStream (IntPtr handle, System.IO.FileAccess access);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="handle" Type="System.IntPtr" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <param name="access">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, valuetype System.IO.FileMode mode)" />
+      <MemberSignature Language="C#" Value="public FileStream (string path, System.IO.FileMode mode);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the relative or absolute path for the file that the current <see cref="T:System.IO.FileStream" /> object will encapsulate.</param>
+        <param name="mode">A <see cref="T:System.IO.FileMode" /> value that determines how to open or create the file.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.FileStream" />
+class with the specified path and creation mode.</para>
+        </summary>
+        <remarks>
+          <para>This constructor sets <see cref="F:System.IO.FileAccess.ReadWrite" /> access to the file, and the <see cref="P:System.IO.Stream.CanRead" /> and
+<see cref="P:System.IO.Stream.CanWrite" /> properties of the current instance are set to 
+<see langword="true" /> .</para>
+          <para>
+            <block subset="none" type="note">
+              <paramref name="path" /> is not required to be a
+file stored on disk; it can be any part of a system that supports access via
+streams. For example, depending on the system, this class might be able to access
+a physical device.</block>
+          </para>
+          <para>
+            <see cref="P:System.IO.Stream.CanSeek" /> is
+<see langword="true" /> for all <see cref="T:System.IO.FileStream" /> objects that encapsulate files. If <paramref name="path  " />specifies a device that does not support seeking, the <see cref="P:System.IO.FileStream.CanSeek" />
+property of the resulting <see cref="T:System.IO.FileStream" /> is required to be <see langword="false" />. <block subset="none" type="note">For additional
+information, see <see cref="P:System.IO.Stream.CanSeek" /> .
+</block></para>
+          <para> Requests to open the
+   file for writing by the current or another thread will fail until the <see cref="T:System.IO.FileStream" /> object has been closed.
+   Read attempts
+   will succeed.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <para>
+            <paramref name="mode" /> is <see cref="F:System.IO.FileMode.Truncate" /> or <see cref="F:System.IO.FileMode.Open" />, but the specified file cannot be found. If a different mode is specified and the file cannot be found, a new one is created.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred, such as specifying <see cref="F:System.IO.FileMode.CreateNew" /> when the file specified by <paramref name="path" /> already exists.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> does not exist.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path " />exceeds the system-defined maximum length. </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="mode" /> contains an invalid value. </para>
+        </exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read, write, and append to files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />, <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />, and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Append" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FileStream (Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access, int bufferSize);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="handle" Type="Microsoft.Win32.SafeHandles.SafeFileHandle" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="bufferSize">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FileStream (IntPtr handle, System.IO.FileAccess access, bool ownsHandle);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="handle" Type="System.IntPtr" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="ownsHandle" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="ownsHandle">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access)" />
+      <MemberSignature Language="C#" Value="public FileStream (string path, System.IO.FileMode mode, System.IO.FileAccess access);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the relative or absolute path for the file that the current <see cref="T:System.IO.FileStream" /> object will encapsulate.</param>
+        <param name="mode">A <see cref="T:System.IO.FileMode" /> value that determines how to open or create the file.</param>
+        <param name="access">A <see cref="T:System.IO.FileAccess" /> value that determines how the file can be accessed by the <see cref="T:System.IO.FileStream" /> object. This parameter is used to specify the initial values of the <see cref="P:System.IO.FileStream.CanRead" qualify="true" /> and <see cref="P:System.IO.FileStream.CanWrite" qualify="true" /> properties.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.FileStream" />
+class with the specified path, creation mode, and access
+type.</para>
+        </summary>
+        <remarks>
+          <para> This constructor sets read/write access to the file. Requests to open the
+      file for writing by the current or another thread will fail until the <see cref="T:System.IO.FileStream" /> object has
+      been closed. Read attempts will succeed.</para>
+          <para>
+            <block subset="none" type="note">
+              <paramref name="path" /> is not required to be a
+   file stored on disk; it can be any part of a system that supports access via
+   streams. For example, depending on the system, this class might be able to access
+   a physical device.</block>
+          </para>
+          <para>
+            <see cref="P:System.IO.Stream.CanSeek" /> is
+<see langword="true" /> for all <see cref="T:System.IO.FileStream" /> objects that encapsulate files. If <paramref name="path  " />indicates a device that does not support seeking, the <see cref="P:System.IO.FileStream.CanSeek" />
+property on the resulting <see cref="T:System.IO.FileStream" /> is required to be <see langword="false" />. For additional
+information, see <see cref="P:System.IO.Stream.CanSeek" />
+.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="access " /> specified <see langword="Read" /> and <paramref name="mode" /> specified <see langword="Create" /> , <see langword="CreateNew" /> , <see langword="Truncate" /> or <see langword="Append" />.</para>
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <para>
+            <paramref name="mode" /> is <see cref="F:System.IO.FileMode.Truncate" /> or <see cref="F:System.IO.FileMode.Open" /> , but the specified file was not found. If a different mode is specified and the file was not found, a new one is created.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred, such as specifying <see cref="F:System.IO.FileMode.CreateNew" /> when the file specified by <paramref name="path" /> already exists.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified by <paramref name="path" /> does not exist.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+          <paramref name="path" /> specified a read-only file and <paramref name="access" />  is not <see langword="Read" />  , or <paramref name="path" /> specified a directory.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path " />exceeds the system-defined maximum length. </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="mode" /> or <paramref name="access" /> contain an invalid value. </para>
+        </exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read, write, and append to files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />, <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />, and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Append" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FileStream (Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access, int bufferSize, bool isAsync);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="handle" Type="Microsoft.Win32.SafeHandles.SafeFileHandle" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="isAsync" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="bufferSize">To be added.</param>
+        <param name="isAsync">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FileStream (IntPtr handle, System.IO.FileAccess access, bool ownsHandle, int bufferSize);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="handle" Type="System.IntPtr" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="ownsHandle" Type="System.Boolean" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="ownsHandle">To be added.</param>
+        <param name="bufferSize">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share)" />
+      <MemberSignature Language="C#" Value="public FileStream (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="share" Type="System.IO.FileShare" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing relative or absolute path for the file that the current <see cref="T:System.IO.FileStream" /> object will encapsulate.</param>
+        <param name="mode">A <see cref="T:System.IO.FileMode" /> value that determines how to open or create the file.</param>
+        <param name="access">A <see cref="T:System.IO.FileAccess" /> value that determines how the file can be accessed by the <see cref="T:System.IO.FileStream" /> object. This parameter is used to specify the initial values of the <see cref="P:System.IO.FileStream.CanRead" qualify="true" /> and <see cref="P:System.IO.FileStream.CanWrite" qualify="true" /> properties. For additional information, see <see cref="P:System.IO.Stream.CanRead" /> and <see cref="P:System.IO.Stream.CanWrite" />.</param>
+        <param name="share">A <see cref="T:System.IO.FileShare" /> value that determines how the file will be shared by processes.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.FileStream" /> class
+   with the specified path, creation mode, access type, and
+   sharing permission.</para>
+        </summary>
+        <remarks>
+          <para> This constructor sets read/write access to the file.</para>
+          <para>
+            <block subset="none" type="note">
+              <paramref name="path" /> is not required to be a
+   file stored on disk; it can be any part of a system that supports access via
+   streams. For example, depending on the system, this class might be able to access
+   a physical device.</block>
+          </para>
+          <para>
+            <see cref="P:System.IO.Stream.CanSeek" /> is
+<see langword="true" /> for all <see cref="T:System.IO.FileStream" /> objects that encapsulate files. If <paramref name="path  " />indicates a device that does not support seeking, the <see cref="P:System.IO.FileStream.CanSeek" />
+property on the resulting <see cref="T:System.IO.FileStream" /> is required to be <see langword="false" />. For additional
+information, see <see cref="P:System.IO.Stream.CanSeek" />
+.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <para>
+            <paramref name="mode" /> is <see cref="F:System.IO.FileMode.Truncate" /> or <see cref="F:System.IO.FileMode.Open" /> , but the specified file cannot be found. If a different mode is specified and the file cannot be found, a new one is created.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred, such as specifying <see cref="F:System.IO.FileMode.CreateNew" /> and the file specified by <paramref name="path" /> already exists.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified by <paramref name="path" /> does not exist.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The <paramref name="access" /> requested is not permitted by the operating system for the specified <paramref name="path" />.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path " />exceeds the system-defined maximum length. </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="mode" />, <paramref name="access" />, or <paramref name="share " />contains an invalid value. </para>
+        </exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read, write, and append to files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />, <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />, and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Append" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FileStream (IntPtr handle, System.IO.FileAccess access, bool ownsHandle, int bufferSize, bool isAsync);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="handle" Type="System.IntPtr" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="ownsHandle" Type="System.Boolean" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="isAsync" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="ownsHandle">To be added.</param>
+        <param name="bufferSize">To be added.</param>
+        <param name="isAsync">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share, int32 bufferSize)" />
+      <MemberSignature Language="C#" Value="public FileStream (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="share" Type="System.IO.FileShare" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the relative or absolute path for the file that the current <see cref="T:System.IO.FileStream" /> object will encapsulate.</param>
+        <param name="mode">A <see cref="T:System.IO.FileMode" /> constant that determines how to open or create the file.</param>
+        <param name="access">A <see cref="T:System.IO.FileAccess" /> value that determines how the file can be accessed by the <see cref="T:System.IO.FileStream" /> object. This parameter is used to specify the initial values of the <see cref="P:System.IO.FileStream.CanRead" qualify="true" /> and <see cref="P:System.IO.FileStream.CanWrite" qualify="true" /> properties. For additional information, see <see cref="P:System.IO.Stream.CanRead" /> and <see cref="P:System.IO.Stream.CanWrite" /> .</param>
+        <param name="share">A <see cref="T:System.IO.FileShare" /> constant that determines how the file will be shared by processes.</param>
+        <param name="bufferSize">A <see cref="T:System.Int32" /> containing the desired buffer size in bytes.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.FileStream" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <paramref name="path" /> is not required to be a
+   file stored on disk; it can be any part of a system that supports access via
+   streams. For example, depending on the system, this class might be able to access
+   a physical device.</block>
+          </para>
+          <para>
+            <see cref="P:System.IO.Stream.CanSeek" /> is
+<see langword="true" /> for all <see cref="T:System.IO.FileStream" /> objects that encapsulate files. If <paramref name="path  " />indicates a device that does not support seeking, the <see cref="P:System.IO.FileStream.CanSeek" />
+property on the resulting <see cref="T:System.IO.FileStream" /> is required to be <see langword="false" />. For additional
+information, see <see cref="P:System.IO.Stream.CanSeek" />
+.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The <paramref name="path" /> parameter is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="bufferSize" /> is less than or equal to zero.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="mode" />, <paramref name="access" />, or <paramref name="share " />contain an invalid value.</para>
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <para>
+            <paramref name="mode" /> is <see cref="F:System.IO.FileMode.Truncate" /> or <see cref="F:System.IO.FileMode.Open" /> , but the specified file cannot be found. If a different mode is specified and the file cannot be found, a new one is created.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred, such as specifying <see cref="F:System.IO.FileMode.CreateNew" /> and the file specified by <paramref name="path" /> already exists.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> does not exist.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The <paramref name="access" /> requested is not permitted by the operating system for the specified <paramref name="path" />.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path " />exceeds the system-defined maximum length. </exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read, write, and append to files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />, <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />, and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Append" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share, int32 bufferSize, bool useAsync)" />
+      <MemberSignature Language="C#" Value="public FileStream (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, bool useAsync);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="share" Type="System.IO.FileShare" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="useAsync" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the relative or absolute path for the file that the new <see cref="T:System.IO.FileStream" /> object will encapsulate.</param>
+        <param name="mode">A <see cref="T:System.IO.FileMode" /> value that determines how to open or create the file.</param>
+        <param name="access">A <see cref="T:System.IO.FileAccess" /> value that determines how the file can be accessed by the <see cref="T:System.IO.FileStream" /> object. This parameter is used to specify the initial values of the <see cref="P:System.IO.FileStream.CanRead" qualify="true" /> and <see cref="P:System.IO.FileStream.CanWrite" qualify="true" /> properties.</param>
+        <param name="share">A <see cref="T:System.IO.FileShare" /> value that determines how the file will be shared by processes.</param>
+        <param name="bufferSize">A <see cref="T:System.Int32" /> containing the desired buffer size in bytes.</param>
+        <param name="useAsync">A <see cref="T:System.Boolean" /> value that specifies whether to use asynchronous I/O or synchronous I/O. If the underlying operating system does not support asynchronous I/O, the <see cref="T:System.IO.FileStream" /> ignores this parameter and uses synchronous I/O.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.FileStream" />
+class.</para>
+        </summary>
+        <remarks>
+          <para> This constructor sets read/write access to the file.</para>
+          <para>
+            <block subset="none" type="note">
+              <paramref name="path" /> is not required to be a file
+   stored on disk; it can be any part of a system that supports access via streams.
+   For example, depending on the system, this class might be able to access a
+   physical device.</block>
+          </para>
+          <para>
+            <see cref="P:System.IO.Stream.CanSeek" /> is <see langword="true" /> for all <see cref="T:System.IO.FileStream" /> objects
+that encapsulate files. If <paramref name="path " />indicates a device that does not support
+seeking, the <see cref="P:System.IO.FileStream.CanSeek" /> property on the resulting <see cref="T:System.IO.FileStream" /> is required to be
+<see langword="false" />. For additional information, see <see cref="P:System.IO.Stream.CanSeek" />
+.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="bufferSize" /> is less than or equal to zero.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="mode" />, <paramref name="access" />, or <paramref name="share " />contain an invalid value.</para>
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <para>
+            <paramref name="mode" /> is <see cref="F:System.IO.FileMode.Truncate" /> or <see cref="F:System.IO.FileMode.Open" />, but the specified file cannot be found. If a different mode is specified and the file cannot be found, a new one is created.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred, such as specifying <see cref="F:System.IO.FileMode.CreateNew" /> and the file specified by <paramref name="path" /> already exists.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified by <paramref name="path" /> does not exist.</exception>
+        <exception cref="T:System.UnauthorizedAccessException">The <paramref name="access" /> requested is not permitted by the operating system for the specified <paramref name="path" />.</exception>
+        <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path " />exceeds the system-defined maximum length. </exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read, write, and append to files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />, <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />, and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Append" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FileStream (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, System.IO.FileOptions options);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="share" Type="System.IO.FileShare" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="options" Type="System.IO.FileOptions" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="mode">To be added.</param>
+        <param name="access">To be added.</param>
+        <param name="share">To be added.</param>
+        <param name="bufferSize">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FileStream (string path, System.IO.FileMode mode, System.Security.AccessControl.FileSystemRights rights, System.IO.FileShare share, int bufferSize, System.IO.FileOptions options);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="rights" Type="System.Security.AccessControl.FileSystemRights" />
+        <Parameter Name="share" Type="System.IO.FileShare" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="options" Type="System.IO.FileOptions" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="mode">To be added.</param>
+        <param name="rights">To be added.</param>
+        <param name="share">To be added.</param>
+        <param name="bufferSize">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FileStream (string path, System.IO.FileMode mode, System.Security.AccessControl.FileSystemRights rights, System.IO.FileShare share, int bufferSize, System.IO.FileOptions options, System.Security.AccessControl.FileSecurity fileSecurity);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="rights" Type="System.Security.AccessControl.FileSystemRights" />
+        <Parameter Name="share" Type="System.IO.FileShare" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="options" Type="System.IO.FileOptions" />
+        <Parameter Name="fileSecurity" Type="System.Security.AccessControl.FileSecurity" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="mode">To be added.</param>
+        <param name="rights">To be added.</param>
+        <param name="share">To be added.</param>
+        <param name="bufferSize">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="fileSecurity">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BeginRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginRead(class System.Byte[] array, int32 offset, int32 numBytes, class System.AsyncCallback userCallback, object stateObject)" />
+      <MemberSignature Language="C#" Value="public override IAsyncResult BeginRead (byte[] array, int offset, int numBytes, AsyncCallback userCallback, object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="numBytes" Type="System.Int32" />
+        <Parameter Name="userCallback" Type="System.AsyncCallback" />
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="array">A <see cref="T:System.Byte" /> array that specifies the buffer to read data into.</param>
+        <param name="offset">A <see cref="T:System.Int32" /> containing the zero based byte offset in <paramref name="array" /> at which to begin writing data read from the stream.</param>
+        <param name="numBytes">A <see cref="T:System.Int32" /> containing the maximum number of bytes to read.</param>
+        <param name="userCallback">A <see cref="T:System.AsyncCallback" /> delegate that references the method to be called when the asynchronous read operation is completed.</param>
+        <param name="stateObject">An application-defined object containing the status of the asynchronous read.</param>
+        <summary>
+          <para>Begins an asynchronous read.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IAsyncResult" /> that references the asynchronous read.</para>
+        </returns>
+        <remarks>
+          <para> To determine the number of bytes read, call
+   <see cref="M:System.IO.Stream.EndRead(System.IAsyncResult)" /> with the returned
+   <see cref="T:System.IAsyncResult" />.</para>
+          <para>Multiple simultaneous asynchronous requests render the
+      request completion order uncertain.</para>
+          <block subset="none" type="note">
+            <para>Use the <see cref="P:System.IO.FileStream.CanRead" /> property to determine whether the current
+   instance supports reading. For additional information, see <see cref="P:System.IO.Stream.CanRead" />.</para>
+            <para>This method overrides <see cref="M:System.IO.Stream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" qualify="true" />. </para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The sum of <paramref name="offset and" /><paramref name="numBytes" /> is greater than the length of <paramref name="array" />.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="offset" /> or <paramref name="numBytes" /> is negative. </exception>
+        <exception cref="T:System.IO.IOException">The asynchronous read operation attempted to read past the end of the file.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BeginWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginWrite(class System.Byte[] array, int32 offset, int32 numBytes, class System.AsyncCallback userCallback, object stateObject)" />
+      <MemberSignature Language="C#" Value="public override IAsyncResult BeginWrite (byte[] array, int offset, int numBytes, AsyncCallback userCallback, object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="numBytes" Type="System.Int32" />
+        <Parameter Name="userCallback" Type="System.AsyncCallback" />
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="array">A <see cref="T:System.Byte" /> array buffer containing data to write to the current stream.</param>
+        <param name="offset">A <see cref="T:System.Int32" /> containing the zero-based byte offset in <paramref name="array" />, which marks the beginning of the data to written to the current stream.</param>
+        <param name="numBytes">A <see cref="T:System.Int32" /> containing the maximum number of bytes to write.</param>
+        <param name="userCallback">A <see cref="T:System.AsyncCallback" /> delegate that references the method to be called when the asynchronous write operation is completed.</param>
+        <param name="stateObject">An application-defined object containing the status of the asynchronous write.</param>
+        <summary>
+          <para>Begins an asynchronous write operation.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IAsyncResult" /> that references the asynchronous write.</para>
+        </returns>
+        <remarks>
+          <para>Multiple simultaneous asynchronous requests render the request completion
+      order uncertain.</para>
+          <block subset="none" type="note">
+            <para>Use the <see cref="P:System.IO.FileStream.CanWrite" /> property to determine whether the current
+      instance supports writing. For additional information, see <see cref="P:System.IO.Stream.CanWrite" />.
+      </para>
+            <para>This method overrides <see cref="M:System.IO.Stream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The sum of <paramref name="offset and " /><paramref name="numBytes" /> is greater than the length of <paramref name="array" />.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="offset" /> or <paramref name="numBytes" /> is negative.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.SystemNotSupportedException">The stream does not support writing. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanRead">
+      <MemberSignature Language="ILASM" Value=".property bool CanRead { public hidebysig virtual specialname bool get_CanRead() }" />
+      <MemberSignature Language="C#" Value="public override bool CanRead { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current stream supports reading.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the stream supports reading;
+<see langword="false" /> if the stream is
+   closed or was opened with write-only
+   access.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>This property overrides <see cref="P:System.IO.Stream.CanRead" />.</para>
+            <para>If a class derived from <see cref="T:System.IO.Stream" /> does not support reading,
+   the <see langword="Read" /> method throws a <see cref="T:System.NotSupportedException" />
+   .</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanSeek">
+      <MemberSignature Language="ILASM" Value=".property bool CanSeek { public hidebysig virtual specialname bool get_CanSeek() }" />
+      <MemberSignature Language="C#" Value="public override bool CanSeek { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current stream supports seeking.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the stream supports seeking;
+<see langword="false" /> if the stream is 
+   closed or if the <see cref="T:System.IO.FileStream" /> was constructed from an
+   operating-system handle such as a pipe or output to the console.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para>If a class derived from <see cref="T:System.IO.Stream" />
+   does not support seeking, a call to <see cref="P:System.IO.FileStream.Length" /> (both <see langword="get" /> and
+<see langword="set" />
+), <see cref="P:System.IO.FileStream.Position" />, or <see cref="M:System.IO.FileStream.Seek(System.Int64,System.IO.SeekOrigin)" /> throws a
+<see cref="T:System.NotSupportedException" />
+.</para>
+            <para>This property overrides <see cref="P:System.IO.Stream.CanSeek" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanWrite">
+      <MemberSignature Language="ILASM" Value=".property bool CanWrite { public hidebysig virtual specialname bool get_CanWrite() }" />
+      <MemberSignature Language="C#" Value="public override bool CanWrite { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current stream supports writing.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the stream supports writing;
+<see langword="false" /> if the stream is
+   closed or was opened with read-only access.</para>
+        </value>
+        <remarks>
+          <para>If a class derived from <see cref="T:System.IO.Stream" /> does not support writing, a call to <see cref="M:System.IO.FileStream.Write(System.Byte[],System.Int32,System.Int32)" /> or 
+<see cref="M:System.IO.FileStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> will throw a
+<see cref="T:System.NotSupportedException" />
+.</para>
+          <para>
+            <block subset="none" type="note">This property 
+   overrides <see cref="P:System.IO.Stream.CanWrite" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
+      <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Closes the file and releases any resources associated with
+      the current file stream.</para>
+        </summary>
+        <remarks>
+          <para>This method is
+      equivalent to <see cref="M:System.IO.FileStream.Dispose(System.Boolean)" />(<see langword="true" />).</para>
+          <para>Any data previously written to the buffer is copied to the file
+      before the file stream is closed, so it is not necessary to call <see cref="M:System.IO.FileStream.Flush" /> before
+      invoking <see langword="Close" />. Following a call to <see langword="Close" />, any operations on the file stream
+      might raise exceptions. Invoking this method on the
+      same instance multiple times does not result in an exception.</para>
+          <para>
+            <block subset="none" type="usage">The <see cref="M:System.IO.FileStream.Finalize" />
+method invokes <see langword="Close " />so that the file stream is closed
+before the garbage collector finalizes the object. However, objects writing to
+the <see cref="T:System.IO.FileStream" />, such as a <see cref="T:System.IO.StreamWriter" />, might not have flushed
+the data from their internal buffers to the <see cref="T:System.IO.FileStream" /> when the call to <see langword="Finalize" /> closes
+the stream. To prevent data loss, always call <see langword="Close" /> on the highest-level object.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">
+   
+   This method overrides <see cref="M:System.IO.Stream.Close" qualify="true" />.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool disposing)" />
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">Specify <see langword="true" /> to release both managed and unmanaged resources, or specify <see langword="false" /> to release only unmanaged resources.</param>
+        <summary>
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.FileStream" /> and
+   optionally releases the managed resources.</para>
+        </summary>
+        <remarks>
+          <para>When the <paramref name="disposing" /> parameter is <see langword="true" />, this method
+   releases all resources held by any managed objects that this <see cref="T:System.IO.FileStream" /> references.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="M:System.IO.FileStream.Dispose(System.Boolean)" />
+can be called multiple times by other objects. When overriding
+<see cref="M:System.IO.FileStream.Dispose(System.Boolean)" />(<see cref="T:System.Boolean" />), be careful not to reference objects 
+that have been previously disposed in an earlier call to <see cref="M:System.IO.FileStream.Dispose(System.Boolean)" /> .</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 EndRead(class System.IAsyncResult asyncResult)" />
+      <MemberSignature Language="C#" Value="public override int EndRead (IAsyncResult asyncResult);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">The <see cref="T:System.IAsyncResult" /> object for the pending asynchronous request.</param>
+        <summary>
+          <para>Ends a pending asynchronous read request, and blocks until
+      the read request has completed.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing the number of
+   bytes read from the stream. Returns 0 only if the end of the file has
+   been reached, otherwise, this method blocks until at least one byte is available.</para>
+        </returns>
+        <remarks>
+          <para>
+            <see langword="EndRead" /> will
+   block until the I/O operation has completed.</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.IO.Stream.EndRead(System.IAsyncResult)" qualify="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="asyncResult" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="asyncResult" /> was not returned by a call to <see cref="M:System.IO.FileStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</exception>
+        <exception cref="T:System.InvalidOperationException">
+          <see cref="M:System.IO.FileStream.EndRead(System.IAsyncResult)" /> was called multiple times with <paramref name="asyncResult" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void EndWrite(class System.IAsyncResult asyncResult)" />
+      <MemberSignature Language="C#" Value="public override void EndWrite (IAsyncResult asyncResult);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">The <see cref="T:System.IAsyncResult" /> object for the pending asynchronous request.</param>
+        <summary>
+          <para> Ends an asynchronous write, blocking until the I/O operation
+      has completed.</para>
+        </summary>
+        <remarks>
+          <para>
+            <see cref="M:System.IO.FileStream.EndWrite(System.IAsyncResult)" /> will block
+   until the I/O operation has completed.</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.IO.Stream.EndWrite(System.IAsyncResult)" qualify="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="asyncResult" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="asyncResult" /> was not returned by a call to <see cref="M:System.IO.FileStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</exception>
+        <exception cref="T:System.InvalidOperationException">
+          <see cref="M:System.IO.FileStream.EndWrite(System.IAsyncResult)" /> was called multiple times with <paramref name="asyncResult" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Finalize()" />
+      <MemberSignature Language="C#" Value="~FileStream ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Releases the resources held by the current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <see cref="M:System.IO.FileStream.Finalize" /> 
+closes the <see cref="T:System.IO.FileStream" />.</para>
+          <block subset="none" type="note">
+            <para>Application code does not call this method; it is automatically invoked by 
+      during garbage collection unless finalization by the garbage collector has been
+      disabled. For more information, see <see cref="M:System.GC.SuppressFinalize(System.Object)" qualify="true" />, and <see cref="M:System.Object.Finalize" qualify="true" />.</para>
+            <para>This method overrides <see cref="M:System.Object.Finalize" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Flush()" />
+      <MemberSignature Language="C#" Value="public override void Flush ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Updates the underlying file with the current state of the buffer and
+      subsequently clears the buffer.</para>
+        </summary>
+        <remarks>
+          <para>A <see cref="T:System.IO.FileStream" /> buffer can be 
+   used either for reading or writing. If data was copied to the buffer for
+   writing, it is written to the file and the buffer is
+   cleared. </para>
+          <para>If data was copied to the buffer for reading, and the
+<see cref="P:System.IO.Stream.CanSeek" /> property is <see langword="true" />, the current 
+   position within the file is decremented by the number of unread bytes in the
+   buffer. The buffer is then cleared. </para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.IO.Stream.Flush" qualify="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.ObjectDisposedException">The current instance has already been closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.FileSecurity GetAccessControl ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.FileSecurity</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Handle">
+      <MemberSignature Language="C#" Value="public virtual IntPtr Handle { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use SafeFileHandle instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IsAsync">
+      <MemberSignature Language="ILASM" Value=".property bool IsAsync { public hidebysig virtual specialname bool get_IsAsync() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsAsync { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current
+   instance was opened asynchronously or
+   synchronously.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the
+   current
+<see cref="T:System.IO.FileStream" /> was opened
+   asynchronously; otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This property is
+      read-only.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="ILASM" Value=".property int64 Length { public hidebysig virtual specialname int64 get_Length() }" />
+      <MemberSignature Language="C#" Value="public override long Length { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the length in bytes of the stream.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int64" /> value containing the length of the stream in bytes.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">
+          <see cref="P:System.IO.FileStream.CanSeek" /> for this stream is <see langword="false" />.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred, such as the file being closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Lock">
+      <MemberSignature Language="C#" Value="public virtual void Lock (long position, long length);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="position" Type="System.Int64" />
+        <Parameter Name="length" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="position">To be added.</param>
+        <param name="length">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Position">
+      <MemberSignature Language="ILASM" Value=".property int64 Position { public hidebysig virtual specialname int64 get_Position() public hidebysig virtual specialname void set_Position(int64 value) }" />
+      <MemberSignature Language="C#" Value="public override long Position { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the current
+      position of this stream.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Int64" /> containing the current position of this stream.</para>
+        </value>
+        <remarks>
+          <para>The position can be set beyond the end of the stream.</para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The current stream does not support seeking.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.IO.EndOfStreamException">Attempted seeking past the end of a stream that does not support this.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is negative.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Read(class System.Byte[] array, int32 offset, int32 count)" />
+      <MemberSignature Language="C#" Value="public override int Read (byte[] array, int offset, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">A <see cref="T:System.Byte" /> array. When this method returns, the bytes between <paramref name="offset " />and <paramref name="(offset + count - 1)" /> in <paramref name="array" /> are replaced by the bytes read from the current stream.</param>
+        <param name="offset">A <see cref="T:System.Int32" /> containing the byte offset in <paramref name="array" /> at which to begin writing data read from the current stream.</param>
+        <param name="count">A <see cref="T:System.Int32" /> containing maximum number of bytes to read.</param>
+        <summary>
+          <para> Reads a block of bytes from the stream and returns the data in
+      the specified buffer.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing the total number of bytes
+   read into the buffer, or zero if the end of the stream is reached.</para>
+        </returns>
+        <remarks>
+          <para>The <see cref="M:System.IO.FileStream.Read(System.Byte[],System.Int32,System.Int32)" /> method returns zero only after reaching
+   the end of the stream. Otherwise, <see cref="M:System.IO.FileStream.Read(System.Byte[],System.Int32,System.Int32)" /> always reads at least one byte from the
+   stream before returning. If no data is available from the stream, this method
+   blocks until at least one byte of data can be returned.</para>
+          <para>If the read operation is successful, the current position
+   of the stream is advanced by the number of bytes read. If
+   an exception occurs, the current position of the stream is unchanged.</para>
+          <para>
+            <block subset="none" type="note">Use the <see cref="P:System.IO.FileStream.CanRead" /> property to determine
+whether the current instance supports reading. For additional information, see
+<see cref="P:System.IO.Stream.CanRead" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)" qualify="true" />
+.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="offset" /> or <paramref name="count " /> is negative.</exception>
+        <exception cref="T:System.NotSupportedException">The current stream does not support reading.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="offset " /> + <paramref name="count" /> is greater than the length of <paramref name="array" />.</exception>
+        <exception cref="T:System.ObjectDisposedException">The current stream is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadByte">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 ReadByte()" />
+      <MemberSignature Language="C#" Value="public override int ReadByte ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Reads a byte from the file
+      and advances the read position one byte.</para>
+        </summary>
+        <returns>
+          <para>The byte cast to a <see cref="T:System.Int32" />, or -1 if the end of
+   the stream has been reached.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>Use the <see cref="P:System.IO.FileStream.CanRead" /> property to determine whether the current 
+      instance supports reading. For additional information, see <see cref="P:System.IO.Stream.CanRead" />.</para>
+            <para>This method overrides <see cref="M:System.IO.Stream.ReadByte" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current stream is closed.</exception>
+        <exception cref="T:System.NotSupportedException">The current stream does not support reading.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SafeFileHandle">
+      <MemberSignature Language="C#" Value="public virtual Microsoft.Win32.SafeHandles.SafeFileHandle SafeFileHandle { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.SafeHandles.SafeFileHandle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Seek">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int64 Seek(int64 offset, valuetype System.IO.SeekOrigin origin)" />
+      <MemberSignature Language="C#" Value="public override long Seek (long offset, System.IO.SeekOrigin origin);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="origin" Type="System.IO.SeekOrigin" />
+      </Parameters>
+      <Docs>
+        <param name="offset">A <see cref="T:System.Int64" /> containing the position relative to <paramref name="origin" /> from which to begin seeking.</param>
+        <param name="origin">A <see cref="T:System.IO.SeekOrigin" /> value specifying the beginning, the end, or the current position as a reference point for <paramref name="offset." /></param>
+        <summary>
+          <para>Changes the position within the current stream by the given offset, which is relative to the stated origin.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int64" /> containing the new position in the stream.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Use the <see cref="P:System.IO.FileStream.CanSeek" />
+property to determine whether the current instance supports seeking. For
+additional information, see <see cref="P:System.IO.Stream.CanSeek" />
+.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">The position can be set beyond the end of the stream.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.IO.Stream.Seek(System.Int64,System.IO.SeekOrigin)" qualify="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.NotSupportedException">The stream does not support seeking.</exception>
+        <exception cref="T:System.ArgumentException">Attempted seeking before the beginning of the stream or to more than one byte past the end of the stream.</exception>
+        <exception cref="T:System.ObjectDisposedException">The current stream is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetAccessControl">
+      <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.FileSecurity fileSecurity);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileSecurity" Type="System.Security.AccessControl.FileSecurity" />
+      </Parameters>
+      <Docs>
+        <param name="fileSecurity">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetLength">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void SetLength(int64 value)" />
+      <MemberSignature Language="C#" Value="public override void SetLength (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Int64" /> that specifies the new length of the stream.</param>
+        <summary>
+          <para>Sets the length of
+      the current stream to the specified value.</para>
+        </summary>
+        <remarks>
+          <para>If <paramref name="value" /> is less than the current length of the 
+   stream, the stream is truncated. If <paramref name="value" />
+   is greater than the current length of
+   the stream, the stream is expanded, and the contents of the stream between
+   the old and the new length are undefined. A stream is required to support
+   both writing and seeking to implement <see cref="M:System.IO.FileStream.SetLength(System.Int64)" />.</para>
+          <block subset="none" type="note">
+            <para>Use the <see cref="P:System.IO.FileStream.CanWrite" /> property to determine whether the current
+   instance supports writing, and the <see cref="P:System.IO.FileStream.CanSeek" /> property to determine whether
+   seeking is supported. For additional information, see <see cref="P:System.IO.Stream.CanWrite" /> and <see cref="P:System.IO.Stream.CanSeek" /> .</para>
+            <para>This method overrides <see cref="M:System.IO.Stream.SetLength(System.Int64)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+        <exception cref="T:System.NotSupportedException">The current stream does not support writing and seeking.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="value" /> is less than zero.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unlock">
+      <MemberSignature Language="C#" Value="public virtual void Unlock (long position, long length);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="position" Type="System.Int64" />
+        <Parameter Name="length" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="position">To be added.</param>
+        <param name="length">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Byte[] array, int32 offset, int32 count)" />
+      <MemberSignature Language="C#" Value="public override void Write (byte[] array, int offset, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">The <see cref="T:System.Byte" /> array to read.</param>
+        <param name="offset">A <see cref="T:System.Int32" /> that specifies the byte offset in <paramref name="array" /> at which to begin reading.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the maximum number of bytes to write to the current stream.</param>
+        <summary>
+          <para>Writes a block of bytes from a specified byte array to
+      the current stream.</para>
+        </summary>
+        <remarks>
+          <para>If the write operation is successful, the current position of the stream is
+      advanced by the number of bytes written. If an exception occurs, the current
+      position of the stream is unchanged.</para>
+          <block subset="none" type="note">
+            <para>Use the <see cref="P:System.IO.FileStream.CanWrite" /> property to determine whether the current
+      instance supports writing. For additional information, see <see cref="P:System.IO.Stream.CanWrite" />.</para>
+            <para>This method overrides <see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="offset " />+ <paramref name="count" /> is greater than the length of <paramref name="array" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="offset" /> or <paramref name="count" /> is negative.</exception>
+        <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <exception cref="T:System.NotSupportedException">The current stream does not support writing.</exception>
+        <exception cref="T:System.ObjectDisposedException">An I/O error occurred.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteByte">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteByte(unsigned int8 value)" />
+      <MemberSignature Language="C#" Value="public override void WriteByte (byte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="value">A <see cref="T:System.Byte" /> to write to the stream.</param>
+        <summary>
+          <para>Writes a byte to the current position in the file stream.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="usage">Use <see cref="M:System.IO.FileStream.WriteByte(System.Byte)" />
+method to write a byte to a <see cref="T:System.IO.FileStream" />
+efficiently.</block>
+          </para>
+          <block subset="none" type="note">
+            <para>Use the <see cref="P:System.IO.FileStream.CanWrite" /> property to determine whether the current
+   instance supports writing. For additional information, see <see cref="P:System.IO.Stream.CanWrite" />.</para>
+            <para>This method overrides <see cref="M:System.IO.Stream.WriteByte(System.Byte)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IO.IOException">The current stream is closed.</exception>
+        <exception cref="T:System.NotSupportedException">The current stream does not support writing.</exception>
+        <exception cref="T:System.ObjectDisposedException">The current stream is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

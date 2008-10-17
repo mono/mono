@@ -1,0 +1,107 @@
+<Type Name="EnterpriseServicesHelper" FullName="System.Runtime.Remoting.Services.EnterpriseServicesHelper">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class EnterpriseServicesHelper" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EnterpriseServicesHelper ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateConstructionReturnMessage">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Activation.IConstructionReturnMessage CreateConstructionReturnMessage (System.Runtime.Remoting.Activation.IConstructionCallMessage ctorMsg, MarshalByRefObject retObj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Activation.IConstructionReturnMessage</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ctorMsg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
+        <Parameter Name="retObj" Type="System.MarshalByRefObject" />
+      </Parameters>
+      <Docs>
+        <param name="ctorMsg">To be added: an object of type 'Runtime.Remoting.Activation.IConstructionCallMessage'</param>
+        <param name="retObj">To be added: an object of type 'MarshalByRefObject'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'Runtime.Remoting.Activation.IConstructionReturnMessage'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="SwitchWrappers">
+      <MemberSignature Language="C#" Value="public static void SwitchWrappers (System.Runtime.Remoting.Proxies.RealProxy oldcp, System.Runtime.Remoting.Proxies.RealProxy newcp);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oldcp" Type="System.Runtime.Remoting.Proxies.RealProxy" />
+        <Parameter Name="newcp" Type="System.Runtime.Remoting.Proxies.RealProxy" />
+      </Parameters>
+      <Docs>
+        <param name="oldcp">To be added: an object of type 'Runtime.Remoting.Proxies.RealProxy'</param>
+        <param name="newcp">To be added: an object of type 'Runtime.Remoting.Proxies.RealProxy'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WrapIUnknownWithComObject">
+      <MemberSignature Language="C#" Value="public static object WrapIUnknownWithComObject (IntPtr punk);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="punk" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="punk">To be added: an object of type 'IntPtr'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'object'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,85 @@
+<Type Name="Comparison&lt;T&gt;" FullName="System.Comparison&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public delegate int Comparison&lt;T&gt;(T x, T y);" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="x" Type="T" />
+    <Parameter Name="y" Type="T" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Int32</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <param name="x">The first object to compare.</param>
+    <param name="y">The second object to compare.</param>
+    <summary>
+      <para>Represents the method that compares two objects of the same type.</para>
+    </summary>
+    <value>
+      <para>A <see cref="T:System.Int32" /> containing a value that reflects the sort order of the objects.</para>
+      <list type="table">
+        <listheader>
+          <term>Value</term>
+          <description>Condition</description>
+        </listheader>
+        <item>
+          <term>Less than zero</term>
+          <description>
+            <paramref name="x" /> is less than <paramref name="y" />.</description>
+        </item>
+        <item>
+          <term>Zero
+   </term>
+          <description>
+            <paramref name="x" /> equals <paramref name="y" />.</description>
+        </item>
+        <item>
+          <term>Greater than zero</term>
+          <description>
+            <paramref name="x" /> is greater than <paramref name="y" />.</description>
+        </item>
+      </list>
+    </value>
+    <value>
+      <para>A <see cref="T:System.Int32" /> containing a value that reflects the sort order of the objects.</para>
+      <list type="table">
+        <listheader>
+          <term>Value</term>
+          <description>Condition</description>
+        </listheader>
+        <item>
+          <term>Less than zero</term>
+          <description>
+            <paramref name="x" /> is less than <paramref name="y" />.</description>
+        </item>
+        <item>
+          <term>Zero
+   </term>
+          <description>
+            <paramref name="x" /> equals <paramref name="y" />.</description>
+        </item>
+        <item>
+          <term>Greater than zero</term>
+          <description>
+            <paramref name="x" /> is greater than <paramref name="y" />.</description>
+        </item>
+      </list>
+    </value>
+    <value>To be added.</value>
+    <remarks>
+      <block subset="none" type="note">
+        <para>This delegate is used by the method <see cref="M:System.Array.Sort(T[], Comparison&lt;T&gt;)" /><see langword="(T[], Comparison&lt;T&gt;)" />, and in <see cref="T:System.Collections.Generic.List&lt;T&gt; " />to sort the elements of the collection.</para>
+      </block>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

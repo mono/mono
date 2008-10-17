@@ -1,0 +1,857 @@
+<Type Name="MethodInfo" FullName="System.Reflection.MethodInfo" FullNameSP="System_Reflection_MethodInfo" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable MethodInfo extends System.Reflection.MethodBase" />
+  <TypeSignature Language="C#" Value="public abstract class MethodInfo : System.Reflection.MethodBase, System.Runtime.InteropServices._MethodInfo" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations. </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Reflection.MethodBase</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.InteropServices._MethodInfo</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._MethodInfo))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>Discovers the attributes of a method and provides access to method metadata.</para>
+    </summary>
+    <remarks>
+      <para>Instances of <see cref="T:System.Reflection.MethodInfo" /> are obtained by calling the <see cref="M:System.Type.GetMethods" /> or <see cref="M:System.Type.GetMethod " />method of a <see cref="T:System.Type" /> object or of an object that derives from <see cref="M:System.Type" />, or by calling the <see cref="M:System.Reflection.MethodInfo.MakeGenericMethod(System.Type[])" /><see langword="(System.Type[])" /> method of a <see cref="T:System.Reflection.MethodInfo" /> that represents a generic method definition.</para>
+      <para>For a list of the invariant conditions for terms specific to generic methods, see the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" />  property. For a list of the invariant conditions for other terms used in generic reflection, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+      <block subset="none" type="note">
+        <para>When operating on the given kinds of methods, the following properties return the result as shown:</para>
+        <list type="table">
+          <listheader>
+            <term>Property</term>
+            <description>Non-Generic</description>
+            <description>Open Generic</description>
+            <description>Closed Generic</description>
+          </listheader>
+          <item>
+            <term>
+              <see langword="IsGenericMethodDefinition" />
+            </term>
+            <description>False</description>
+            <description>True</description>
+            <description>False</description>
+          </item>
+          <item>
+            <term>
+              <see langword="ContainsGenericParameters" />
+            </term>
+            <description>False</description>
+            <description>True</description>
+            <description>False</description>
+          </item>
+          <item>
+            <term>
+              <see langword="IsGenericMethod" />
+            </term>
+            <description>False</description>
+            <description>True</description>
+            <description>True</description>
+          </item>
+        </list>
+      </block>
+    </remarks>
+    <permission cref="!:ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected MethodInfo ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs a new instance of the <see cref="T:System.Reflection.MethodInfo" /> class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContainsGenericParameters">
+      <MemberSignature Language="C#" Value="public override bool ContainsGenericParameters { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a value that indicates whether a generic method contains unassigned generic type parameters.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the <see cref="T:System.Reflection.MethodInfo" />  contains unassigned generic type parameters; otherwise <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>In order to invoke a generic method, there must be no generic type definitions or open constructed types in the type arguments of the method itself, or in any enclosing types. If the <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> property returns <see langword="true" />, the method cannot be invoked.</para>
+          <para>The <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> property searches recursively for type parameters. For example, it returns true for any method in an open type <see langword="A&lt;T&gt;" />, even though the method itself is not generic. Contrast this with the behavior of the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" /> property, which returns false for such a method.</para>
+          <para>For a list of the invariant conditions for terms specific to generic methods, see the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" />  property. For a list of the invariant conditions for other terms used in generic reflection, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+          </block>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBaseDefinition">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetBaseDefinition()" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetBaseDefinition ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a new <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the first definition
+   of the method reflected by the current instance in
+   the inheritance hierarchy of that method. </para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the first definition
+   of the method reflected by the
+   current instance in the inheritance hierarchy of that method. </para>
+        </returns>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>
+              <see cref="M:System.Reflection.MethodInfo.GetBaseDefinition" /> proceeds along the inheritance
+      hierarchy of the method reflected by the current instance, returning a <see cref="T:System.Reflection.MethodInfo" />
+      instance that reflects the first definition in the hierarchy of that
+      method.</para>
+            <para>The method declaration to be reflected by the
+      new <see cref="T:System.Reflection.MethodInfo" />
+      instance
+      is determined as follows:</para>
+            <list type="bullet">
+              <item>
+                <term>
+         
+         If the method reflected by the current instance
+         overrides a virtual definition in the base class, the virtual definition is
+         reflected.</term>
+              </item>
+              <item>
+                <term>
+         
+         If the method reflected
+         
+         by the current instance is specified with the <see langword="new" /> keyword, the
+         current instance is returned.</term>
+              </item>
+              <item>
+                <term>
+         
+         If the method reflected by the current instance is
+         not defined in the type of the object on which <see cref="M:System.Reflection.MethodInfo.GetBaseDefinition" /> is called, the method definition of the furthest ancestor in
+         the class hierarchy is reflected.</term>
+              </item>
+            </list>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetGenericArguments">
+      <MemberSignature Language="C#" Value="public override Type[] GetGenericArguments ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns an array of <see cref="T:System.Type" /> objects that represent the type arguments of a generic method or the type parameters of a generic method definition.</para>
+        </summary>
+        <returns>
+          <para>An array of <see cref="T:System.Type" /> objects that represent the type arguments  of a generic method or the type parameters of a generic method definition. Returns an empty array if the current method is not a generic method.</para>
+        </returns>
+        <remarks>
+          <para>The elements of the returned array are in the order in which they appear in the list of type parameters for the generic method.</para>
+          <para>If the current method is a closed constructed method (that is, the <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> property returns <see langword="false" />), the array returned by the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method contains the types that have been assigned to the generic type parameters of the generic method definition. </para>
+          <para>If the current method is a generic method definition, the array contains the type parameters. </para>
+          <para>If the current method is an open constructed method (that is, the <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> property returns <see langword="true" />) in which specific types have been assigned to some type parameters and type parameters of enclosing generic types have been assigned to other type parameters, the array contains both types and type parameters. Use the <see cref="P:System.Type.IsGenericParameter" /> property to tell them apart.</para>
+          <para>For a list of the invariant conditions for terms specific to generic methods, see the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" />  property. For a list of the invariant conditions for other terms used in generic reflection, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <example>
+          <para>The following code shows how to get the type arguments of a generic method and display them. (It is part of a larger example for the method <see cref="M: System.Reflection.MethodInfo.MakeGenericMethod" />.)</para>
+          <code lang="C#">// If this is a generic method, display its type arguments.
+//
+if (mi.IsGenericMethod)
+{
+        Type[] typeArguments = mi.GetGenericArguments();
+
+        Console.WriteLine("\tList type arguments ({0}):", 
+                typeArguments.Length);
+
+        foreach (Type tParam in typeArguments)
+        {
+                // IsGenericParameter is true only for generic type
+                // parameters.
+                //
+                if (tParam.IsGenericParameter)
+                {
+                    Console.WriteLine("\t\t{0}  (unbound - parameter position {1})",
+                        tParam,
+                        tParam.GenericParameterPosition);
+                }
+                else
+                {
+                    Console.WriteLine("\t\t{0}", tParam);
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("\tThis is not a generic method.");
+        }
+}</code>
+        </example>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetGenericMethodDefinition">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodInfo GetGenericMethodDefinition ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.Reflection.MethodInfo" /> object that represents a generic method definition from which the current method can be constructed.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing a generic method definition from which the current method can be constructed.</para>
+        </returns>
+        <remarks>
+          <para>If you call <see cref="M:System.Reflection.MethodInfo.GetGenericMethodDefinition" /> on a <see cref="T:System.Reflection.MethodInfo" /> that already represents a generic method definition, it returns the current <see cref="T:System.Reflection.MethodInfo" />.</para>
+          <para>If a generic method definition includes generic parameters of the declaring type, there will be a generic method definition specific to each constructed type.</para>
+          <para>A generic method definition is a template from which methods can be constructed. For example, from the generic method definition <see langword="T M&lt;T&gt;(T t)" /> you can construct and invoke the method <see langword="int M&lt;int&gt;(int t)" />. Given a <see cref="T:System.Reflection.MethodInfo" /> object representing this constructed method, the <see cref="M:System.Reflection.MethodInfo.GetGenericMethodDefinition" /> method returns the generic method definition.</para>
+          <para>If two constructed methods are created from the same generic method definition, the <see cref="M:System.Reflection.MethodInfo.GetGenericMethodDefinition" /> method returns the same <see cref="T:System.Reflection.MethodInfo" /> object for both methods.</para>
+          <para>If you call <see cref="M:System.Reflection.MethodInfo.GetGenericMethodDefinition" /> on a <see cref="T:System.Reflection.MethodInfo" /> that already represents a generic method definition, it returns the current <see cref="T:System.Reflection.MethodInfo" />.</para>
+          <para>If a generic method definition includes generic parameters of the declaring type, there will be a generic method definition specific to each constructed type. For example, consider the following C# code:</para>
+          <para>
+            <see langword="class B&lt;U,V&gt; {}" />
+          </para>
+          <para>
+            <see langword="class C&lt;T&gt; { B&lt;T,S&gt; M&lt;S&gt;() {}}" />
+          </para>
+          <para>In the constructed type <see langword="C&lt;int&gt;" />, the generic method <see langword="M" /> returns <see langword="B&lt;int, S&gt;" />. In the open type <see langword=" C&lt;T&gt;" />, <see langword="M" /> returns <see langword="B&lt;T, S&gt;" />. In both cases, the <see cref="P:System.Reflection.MethodInfo.IsGenericMethodDefinition " />property returns true for the <see cref="T:System.Reflection.MethodInfo" /> that represents <see langword="M" />, so<see cref="M:System.Reflection.MethodInfo.MakeGenericMethod(System.Type[])" /><see langword="(System.Type[])" /> can be called on both <see cref="T:System.Reflection.MethodInfo" /> objects. In the case of the constructed type, the result of calling <see cref="M:System.Reflection.MethodInfo.MakeGenericMethod(System.Type[])" /><see langword="(System.Type[])" /> is a <see cref="T:System.Reflection.MethodInfo" /> that can be invoked. In the case of the open type, the <see cref="T:System.Reflection.MethodInfo" /> returned by <see cref="M:System.Reflection.MethodInfo.MakeGenericMethod(System.Type[])" /><see langword="(System.Type[])" /> cannot be invoked.  </para>
+          <para>For a list of the invariant conditions for terms specific to generic methods, see the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" />  property. For a list of the invariant conditions for other terms used in generic reflection, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.InvalidOperationException">The current method is not a generic method. That is, <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" /> returns <see langword="false" />. </exception>
+        <example>
+          <para>The following code shows a class with a generic method and the code required to obtain a <see cref="T:System.Reflection.MethodInfo" />  for the method, bind the method to type arguments, and get the original generic type definition back from the bound method. (It is part of a larger example for the method <see cref="M:System.Reflection.MethodInfo.MakeGenericMethod" />.)</para>
+          <code lang="C#">// Define a class with a generic method.
+public class Example
+{
+    public static void Generic&lt;T&gt;(T toDisplay)
+    {
+        Console.WriteLine("\nHere it is: {0}", toDisplay);
+    }
+}
+
+// ...
+// Create a Type object representing class Example, and
+// get a MethodInfo representing the generic method.
+//
+Type ex = Type.GetType("Example");
+MethodInfo mi = ex.GetMethod("Generic");
+
+DisplayGenericMethodInfo(mi);
+
+// Bind the type parameter of the Example method to 
+// type int.
+//
+Type[] arguments = {typeof(int)};
+MethodInfo miBound = mi.MakeGenericMethod(arguments);
+
+DisplayGenericMethodInfo(miBound);
+
+
+// ...
+// Get the generic type definition from the closed method,
+// and show it's the same as the original definition.
+//
+MethodInfo miDef = miBound.GetGenericMethodDefinition();
+Console.WriteLine("\nThe definition is the same: {0}",
+       miDef == mi);
+</code>
+        </example>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsGenericMethod">
+      <MemberSignature Language="C#" Value="public override bool IsGenericMethod { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Returns a value that indicates whether the current method is a generic method.</para>
+        </summary>
+        <value>
+          <see langword="true" /> if the current method is a generic method; otherwise <see langword="false" />.</value>
+        <remarks>
+          <para>Use the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" /> property to determine whether a System.Reflection.MethodInfo object represents a generic method. Use the <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> property to determine whether a <see cref="T:System.Reflection.MethodInfo" /> object represents an open constructed method or a closed constructed method.</para>
+          <para>The following table summarizes the invariant conditions for terms specific to generic methods. For other terms used in generic reflection, such as generic type parameter and generic type, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+          <para>
+            <list type="table">
+              <listheader>
+                <term>Term</term>
+                <description>Invariant</description>
+              </listheader>
+              <item>
+                <term>generic method definition</term>
+                <description>
+                  <para>The <see cref="P:System.Reflection.MethodInfo.IsGenericMethodDefinition" /> property is <see langword="true" />.</para>
+                  <para>Defines a generic method. A constructed method is created by calling the <see cref="M:System.Reflection.MethodInfo.MakeGenericMethod(System.Type[])" /><see langword="(System.Type[])" /> method on a <see cref="T:System.Reflection.MethodInfo" /> object that represents a generic method definition, and specifying an array of type arguments.</para>
+                  <para>
+                    <see cref="M:System.Reflection.MethodInfo.MakeGenericMethod(System.Type[])" />
+                    <see langword="(System.Type[])" /> can be called only on generic method definitions. </para>
+                  <para>Any generic method definition is a generic method, but the converse is not true.</para>
+                </description>
+              </item>
+              <item>
+                <term>generic method</term>
+                <description>
+                  <para>The <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" /> property is <see langword="true" />.</para>
+                  <para>Can be a generic method definition, an open constructed method, or a closed constructed method. </para>
+                </description>
+              </item>
+              <item>
+                <term>open constructed method</term>
+                <description>
+                  <para>The <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> property is <see langword="true" />.</para>
+                  <para>It is not possible to invoke an open constructed method.</para>
+                </description>
+              </item>
+              <item>
+                <term>closed constructed method</term>
+                <description>
+                  <para>The <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> property is <see langword="false" />.</para>
+                  <para>When examined recursively, the method has no unassigned generic parameters. The containing type has no generic type parameters, and none of the type arguments have generic type parameters.</para>
+                </description>
+              </item>
+            </list>
+          </para>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+          </block>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsGenericMethodDefinition">
+      <MemberSignature Language="C#" Value="public override bool IsGenericMethodDefinition { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a value that indicates whether the current <see cref="System.Reflection.MethodInfo" /> represents the definition of a generic method.</para>
+        </summary>
+        <value>
+          <see langword="true" /> if the <see cref="T:System.Reflection.MethodInfo" />  object represents the definition of a generic method; otherwise <see langword="false" />.</value>
+        <remarks>
+          <para>If the current <see cref="P:System.Reflection.MethodInfo" /> represents a generic method definition, then:</para>
+          <list type="bullet">
+            <item>
+              <term>
+                <see cref="P:System.Reflection.MethodInfo.IsGenericMethodDefinition" /> returns <see langword="true" />.</term>
+            </item>
+            <item>
+              <term>For each <see cref="T:System.Type" /> object in the array returned by the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method: The <see cref="P:System.Type.IsGenericParameter" /> property returns <see langword="true" />; the <see cref="M:System.Type.DeclaringMethod" /> returns the current <see cref="T:System.Reflection.MethodInfo" />; the <see cref="P:System.Type.GenericParameterPosition" /> property is the same as the position of the <see cref="T:System.Type" /> object in the array.</term>
+            </item>
+          </list>
+          <para>Use the <see cref="P:System.Reflection.MethodInfo.IsGenericMethodDefinition" /> property to determine whether type arguments have been assigned to the type parameters of a generic method. If type arguments have been assigned, the <see cref="P:System.Reflection.MethodInfo.IsGenericMethodDefinition" /> property returns <see langword="false" /> even if some of the type arguments are <see cref="T:System.Type" /> objects that represent type parameters of enclosing types. For example, consider the following C# code:</para>
+          <code>class C
+{
+  T N&lt;T,U&gt;(T t, U u) {...}
+  public V M&lt;V&gt;(V v)
+  {
+    return N&lt;V,int&gt;(v, 42);
+  }
+}</code>
+          <para>The method body of <see langword="M" /> contains a call to method <see langword="N" />, specifying the type parameter of <see langword="M" /> and the type <see cref="T:System.Int32" />. The <see cref="P:System.Reflection.MethodInfo.IsGenericMethodDefinition" /> property returns <see langword="false" /> for method <see langword="N&lt;V,int&gt;" />.</para>
+          <block subset="none" type="note">
+            <para>Although the open constructed method <see langword="N&lt;V,int&gt;" /> is not encountered when reflecting over class <see langword="C" />, it must be generated using <see cref="M:System.Reflection.MethodInfo.MakeGenericMethod(System.Type[])" /><see langword="(System.Type[])" />.</para>
+          </block>
+          <para>If a generic method definition includes generic parameters of the declaring type, there will be a generic method definition specific to each constructed type. For example, consider the following C# code:</para>
+          <code>class B&lt;U,V&gt; {}
+class C&lt;T&gt; { B&lt;T,S&gt; M&lt;S&gt;() {}}</code>
+          <para>In the constructed type <see langword="C&lt;int&gt;" />, the generic method <see langword="M" /> returns <see langword="B&lt;int, S&gt;" />. In the open type <see langword="C&lt;T&gt;" />, <see langword="M" /> returns <see langword="B&lt;T, S&gt;" />. In both cases, the <see cref="P:System.Reflection.MethodInfo.IsGenericMethodDefinition" /> property returns <see langword="true" /> for the <see cref="T:System.Reflection.MethodInfo" /> that represents <see langword="M" />.</para>
+          <para>For a list of the invariant conditions for terms specific to generic methods, see the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" />  property. For a list of the invariant conditions for other terms used in generic reflection, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+          <block subset="none" type="note">
+            <para>See the <see cref="T:System.Reflection.MethodInfo" /> type for an example of the use of this property.</para>
+          </block>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+          </block>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MakeGenericMethod">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodInfo MakeGenericMethod (Type[] typeArguments);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="typeArguments" Type="System.Type[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="typeArguments">To be added.</param>
+        <summary>
+          <para>Substitutes the elements of an array of types for the type parameters of the current generic method definition, and returns a <see cref="T:System.Reflection.MethodInfo" /> object representing the resulting constructed method.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodInfo" />  object that represents the constructed method formed by substituting the elements of <paramref name="typeArguments" /> for the type parameters of the current generic method definition.</para>
+        </returns>
+        <remarks>
+          <para>The <see cref="M:System.Reflection.MethodInfo.MakeGenericMethod(System.Type[])" /><see langword="(System.Type[])" /> method allows you to write code that assigns specific types to the type parameters of a generic method definition, thus creating a <see cref="T:System.Reflection.MethodInfo" /> object that represents a particular constructed method. If the <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> property of this <see cref="T:System.Reflection.MethodInfo" /> object returns <see langword="true" />, you can use it to invoke the method or to create a delegate to invoke the method.</para>
+          <para>Methods constructed with the <see cref="M:System.Reflection.MethodInfo.MakeGenericMethod(System.Type[])" /><see langword="(System.Type[])" /> method can be open; that is, some of their type arguments can be type parameters of enclosing generic types. You might use such open constructed methods when you generate dynamic assemblies. For example, consider the following C# code:</para>
+          <code>class C
+{
+  T N&lt;T,U&gt;(T t, U u) {...}
+  public V M&lt;V&gt;(V v)
+  {
+    return N&lt;V,int&gt;(v, 42);
+  }
+}</code>
+          <para />
+          <para>The method body of M<see langword="M" /> contains a call to method <see langword="N" />, specifying the type parameter of <see langword="M" /> and the type <see cref="T:System.Int32" />. The <see cref="P:System.Reflection.MethodInfo.IsGenericMethodDefinition " /> property returns <see langword="false" /> for method <see langword="N&lt;V,int&gt;" />. The <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> property returns <see langword="true" />, so method <see langword="N&lt;V,int&gt;" /> cannot be invoked.</para>
+          <para>For a list of the invariant conditions for terms specific to generic methods, see the <see cref="P:System.Reflection.MethodInfo.IsGenericMethod" />  property. For a list of the invariant conditions for other terms used in generic reflection, see the <see cref="P:System.Type.IsGenericType" /> property.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentException">
+          <para>The number of elements in <paramref name="typeArguments" /> is not the same as the number of type parameters of the current generic method definition.</para>
+          <para>-or-</para>
+          <para>An element of <paramref name="typeArguments" /> does not satisfy the constraints specified for the corresponding type parameter of the current generic method definition.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="typeArguments" /> is <see langword="null" />. </para>
+          <para>-or-</para>
+          <para>Any element of <paramref name="typeArguments" /> is <see langword="null" />. </para>
+        </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The current <see cref="T:System.Reflection.MethodInfo" /> does not represent the definition of a generic method. (That is, <see cref="P:System.Reflection.MethodInfo.IsGenericMethodDefinition" />  returns <see langword="false" />).</para>
+        </exception>
+        <example>
+          <para>The following code demonstrates the properties and methods of System.Reflection.MethodInfo that support the examination of generic methods. The example does the following:</para>
+          <list type="number">
+            <item>
+              <term>Defines a class that has a generic method.</term>
+            </item>
+            <item>
+              <term>Creates a <see cref="T:System.Reflection.MethodInfo" /> that represents the generic method.</term>
+            </item>
+            <item>
+              <term>Displays properties of the generic method definition.</term>
+            </item>
+            <item>
+              <term>Binds the <see cref="T:System.Reflection.MethodInfo" /> to a type, and invokes it.</term>
+            </item>
+            <item>
+              <term>Displays properties of the bound generic method.</term>
+            </item>
+            <item>
+              <term>Retrieves the generic method definition from the bound method.</term>
+            </item>
+          </list>
+          <code lang="C#">using System;
+using System.Reflection;
+
+// Define a class with a generic method.
+public class Example
+{
+    public static void Generic&lt;T&gt;(T toDisplay)
+    {
+        Console.WriteLine("\nHere it is: {0}", toDisplay);
+    }
+}
+
+public class Test
+{
+    public static void Main()
+    {
+        Console.WriteLine("\n--- Examine a generic method.");
+
+        // Create a Type object representing class Example, and
+        // get a MethodInfo representing the generic method.
+        //
+        Type ex = Type.GetType("Example");
+        MethodInfo mi = ex.GetMethod("Generic");
+
+        DisplayGenericMethodInfo(mi);
+
+        // Bind the type parameter of the Example method to 
+        // type int.
+        //
+        Type[] arguments = {typeof(int)};
+        MethodInfo miBound = mi.MakeGenericMethod(arguments);
+
+        DisplayGenericMethodInfo(miBound);
+
+        // Invoke the method.
+        object[] args = {42};
+        miBound.Invoke(null, args);
+
+        // Invoke the method normally.
+        Example.Generic&lt;int&gt;(42);
+
+        // Get the generic type definition from the closed method,
+        // and show it's the same as the original definition.
+        //
+        MethodInfo miDef = miBound.GetGenericMethodDefinition();
+        Console.WriteLine("\nThe definition is the same: {0}",
+            miDef == mi);
+    }
+        
+    private static void DisplayGenericMethodInfo(MethodInfo mi)
+    {
+        Console.WriteLine("\n{0}", mi);
+
+        Console.WriteLine("\tIs this a generic method definition? {0}", 
+            mi.IsGenericMethodDefinition);
+
+        Console.WriteLine("\tDoes it have generic arguments? {0}", 
+            mi.IsGenericMethod);
+
+        Console.WriteLine("\tDoes it have unbound generic parameters? {0}", 
+            mi.ContainsGenericParameters);
+
+        // If this is a generic method, display its type arguments.
+        //
+        if (mi.IsGenericMethod)
+        {
+            Type[] typeArguments = mi.GetGenericArguments();
+
+            Console.WriteLine("\tList type arguments ({0}):", 
+                typeArguments.Length);
+
+            foreach (Type tParam in typeArguments)
+            {
+                // IsGenericParameter is true only for generic type
+                // parameters.
+                //
+                if (tParam.IsGenericParameter)
+                {
+                    Console.WriteLine("\t\t{0}  (unbound - parameter position {1})",
+                        tParam,
+                        tParam.GenericParameterPosition);
+                }
+                else
+                {
+                    Console.WriteLine("\t\t{0}", tParam);
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("\tThis is not a generic method.");
+        }
+    }
+}
+
+/* This example produces the following output:
+
+--- Examine a generic method.
+
+Void Generic[T](T)
+        Is this a generic method definition? True
+        Does it have generic arguments? True
+        Does it have unbound generic parameters? True
+        List type arguments (1):
+                T  (unbound - parameter position 0)
+
+Void Generic[Int32](Int32)
+        Is this a generic method definition? False
+        Does it have generic arguments? True
+        Does it have unbound generic parameters? False
+        List type arguments (1):
+                System.Int32
+
+Here it is: 42
+
+Here it is: 42
+
+The definition is the same: True
+
+ */
+</code>
+        </example>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MemberType">
+      <MemberSignature Language="C#" Value="public override System.Reflection.MemberTypes MemberType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MemberTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReturnParameter">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.ParameterInfo ReturnParameter { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ParameterInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReturnType">
+      <MemberSignature Language="ILASM" Value=".property class System.Type ReturnType { public hidebysig virtual abstract specialname class System.Type get_ReturnType() }" />
+      <MemberSignature Language="C#" Value="public virtual Type ReturnType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the type of the return value of the method reflected by the current
+      instance.</para>
+        </summary>
+        <value>
+          <para> The <see cref="T:System.Type" /> of the return
+   value of the method reflected by the current instance. This property is equal to
+   the <see cref="T:System.Type" />
+   object representing
+<see cref="T:System.Void" /> if the 
+   return value of the method is <see langword="void" />
+   .</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This property is
+      read-only.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReturnTypeCustomAttributes">
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.ICustomAttributeProvider ReturnTypeCustomAttributes { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ICustomAttributeProvider</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MethodInfo.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _MethodInfo.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="rgszNames" Type="System.IntPtr" />
+        <Parameter Name="cNames" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="rgDispId" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="riid">To be added.</param>
+        <param name="rgszNames">To be added.</param>
+        <param name="cNames">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="rgDispId">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MethodInfo.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _MethodInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="iTInfo" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="ppTInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="iTInfo">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="ppTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MethodInfo.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _MethodInfo.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcTInfo" Type="System.UInt32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pcTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._MethodInfo.Invoke">
+      <MemberSignature Language="C#" Value="void _MethodInfo.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dispIdMember" Type="System.UInt32" />
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="wFlags" Type="System.Int16" />
+        <Parameter Name="pDispParams" Type="System.IntPtr" />
+        <Parameter Name="pVarResult" Type="System.IntPtr" />
+        <Parameter Name="pExcepInfo" Type="System.IntPtr" />
+        <Parameter Name="puArgErr" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dispIdMember">To be added.</param>
+        <param name="riid">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="wFlags">To be added.</param>
+        <param name="pDispParams">To be added.</param>
+        <param name="pVarResult">To be added.</param>
+        <param name="pExcepInfo">To be added.</param>
+        <param name="puArgErr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

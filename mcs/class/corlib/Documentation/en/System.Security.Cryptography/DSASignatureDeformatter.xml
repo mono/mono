@@ -1,0 +1,134 @@
+<Type Name="DSASignatureDeformatter" FullName="System.Security.Cryptography.DSASignatureDeformatter">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public class DSASignatureDeformatter : System.Security.Cryptography.AsymmetricSignatureDeformatter" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Security.Cryptography.AsymmetricSignatureDeformatter</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Signature verification using the DSA algorithm.</summary>
+    <remarks>You are encouraged to use this class for verifying all DSA signatures to ensure code portability with all DSA implementation. Some DSA implementations, like <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" />, provides some helper methods but these methods will limit your code to use this specific class.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DSASignatureDeformatter ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Create a new instance of the class.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DSASignatureDeformatter (System.Security.Cryptography.AsymmetricAlgorithm key);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="key" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
+      </Parameters>
+      <Docs>
+        <param name="key">An instance of a <see cref="T:System.Security.Cryptography.DSA" /> object. Instance derived from other <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> classes are ignored.</param>
+        <summary>Create a new instance of the class with the specified asymmetric key.</summary>
+        <remarks>Using this constructor is equivalent to the following code:
+<example><code lang="C#">
+DSASignatureDeformatter d = new DSASignatureDeformatter ();
+d.SetKey (dsa);
+  </code></example></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetHashAlgorithm">
+      <MemberSignature Language="C#" Value="public override void SetHashAlgorithm (string strName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="strName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="strName">Name of the hash algorithm. This name will be resolved by <see cref="T:System.Security.Cryptography.CryptoConfig" /> to create an instance of the class.</param>
+        <summary>Set the hash algorithm to be used to verify the digital signature. For DSA the default (and only acceptable) hash algorithm is SHA-1.</summary>
+        <remarks>
+          <para>
+This class only support the <see cref="T:System.Security.Cryptography.SHA1" /> hash algorithm. Any name that resolves in another hash algorithm (or anything else) will throw a <see cref="T:System.Security.Cryptography.CryptographicUnexpectedOperationException" />. This is a restriction of the DSA algorithm (FIPS 186) not of the class library.
+</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetKey">
+      <MemberSignature Language="C#" Value="public override void SetKey (System.Security.Cryptography.AsymmetricAlgorithm key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
+      </Parameters>
+      <Docs>
+        <param name="key">An instance of a <see cref="T:System.Security.Cryptography.DSA" /> object. Instance derived from other <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> classes are ignored.</param>
+        <summary>Set the public key to be used to verify signatures.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VerifySignature">
+      <MemberSignature Language="C#" Value="public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgbHash" Type="System.Byte[]" />
+        <Parameter Name="rgbSignature" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rgbHash">The hash to be signed. </param>
+        <param name="rgbSignature">The signature to be verified. </param>
+        <summary>Verify the signature for the specified hash value using the DSA public key.</summary>
+        <returns>True if the signature match the specified hash (with the DSA public key), false otherwise.</returns>
+        <remarks>
+          <para>
+A <see cref="T:System.Security.Cryptography.CryptographicUnexpectedOperationException" /> will be thrown if a <see cref="T:System.Security.Cryptography.DSA" /> object instance hasn't been set in the constructor or by <see cref="M:System.Security.Cryptography.DSASignatureFormatter.SetKey" />.
+</para>
+          <para>
+The hash byte array should always have 20 bytes as only the SHA-1 algorithm is supported.
+</para>
+          <para>
+The size of the signature, 40 bytes, isn't affected by the length of the public key (512 - 1024 bits).
+</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

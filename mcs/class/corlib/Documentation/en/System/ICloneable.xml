@@ -1,0 +1,118 @@
+<Type Name="ICloneable" FullName="System.ICloneable" FullNameSP="System_ICloneable" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class interface public abstract ICloneable" />
+  <TypeSignature Language="C#" Value="public interface ICloneable" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Docs>
+    <summary>
+      <para> Implemented by classes that require control over the
+ way in which copies of
+ instances are constructed.
+ </para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">
+          <see cref="T:System.ICloneable" /> contains the <see cref="M:System.ICloneable.Clone" /> method.
+ The consumer of an object should call this method when a copy of the object is
+ needed.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Clone">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract object Clone()" />
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Creates a copy of the current instance.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Object" /> of the same type as the current instance, containing
+   copies of the non-static members of the current instance.
+   </para>
+        </returns>
+        <remarks>
+          <para>The exact behavior of this method is unspecified. The intent
+      of the method is to provide a mechanism that constructs
+      instances that
+      are copies of the current instance, without regard for class-specific definitions of the term
+      "copy". </para>
+          <para>
+            <block subset="none" type="note"> Use the <see cref="M:System.Object.MemberwiseClone" />
+method to create a shallow copy of an object. For more information, see <see cref="M:System.Object.MemberwiseClone" /> . </block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors"> This method is required to return
+   an instance of the same type as the current instance. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Implement this method to provide
+   class-specific copying behavior. </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use the <see cref="M:System.ICloneable.Clone" /> method
+to obtain a copy of the current instance. </block>
+          </para>
+        </remarks>
+        <example>
+          <para>The following example shows an implementation of <see cref="M:System.ICloneable.Clone" /> that
+   uses the <see cref="M:System.Object.MemberwiseClone" />
+   method to create a copy of
+   the current instance.</para>
+          <code lang="C#">using System;
+class MyClass :ICloneable {
+    public int myField;
+    public MyClass() {
+        myField = 0;
+    }
+    public MyClass(int value) {
+        myField = value;
+    }
+    public object Clone() {
+        return this.MemberwiseClone();
+    }
+}
+public class TestMyClass {
+    public static void Main() {
+        MyClass my1 = new MyClass(44);
+        MyClass my2 = (MyClass) my1.Clone();
+        Console.WriteLine("my1 {0} my2 {1}",my1.myField, my2.myField);
+        my2.myField = 22;
+        Console.WriteLine("my1 {0} my2 {1}",my1.myField, my2.myField);
+    }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>my1 44 my2 44</para>
+            <para>my1 44 my2 22</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

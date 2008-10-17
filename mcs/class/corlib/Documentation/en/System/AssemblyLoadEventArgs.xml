@@ -1,0 +1,90 @@
+<Type Name="AssemblyLoadEventArgs" FullName="System.AssemblyLoadEventArgs" FullNameSP="System_AssemblyLoadEventArgs" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public AssemblyLoadEventArgs extends System.EventArgs" />
+  <TypeSignature Language="C#" Value="public class AssemblyLoadEventArgs : EventArgs" />
+  <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.EventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Provides access to the <see cref="T:System.Reflection.Assembly" /> that was loaded causing a <see cref="F:System.AppDomain.AssemblyLoad" /> event.</para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">This class provides the loaded assembly via the <see cref="P:System.AssemblyLoadEventArgs.LoadedAssembly" />
+property.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Reflection.Assembly loadedAssembly)" />
+      <MemberSignature Language="C#" Value="public AssemblyLoadEventArgs (System.Reflection.Assembly loadedAssembly);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="loadedAssembly" Type="System.Reflection.Assembly" />
+      </Parameters>
+      <Docs>
+        <param name="loadedAssembly">A <see cref="T:System.Reflection.Assembly" /> representing the loaded assembly.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.AssemblyLoadEventArgs" /> class.</para>
+        </summary>
+        <remarks>
+          <para>The <see cref="P:System.AssemblyLoadEventArgs.LoadedAssembly" /> property is initialized using 
+<paramref name="loadedAssembly" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LoadedAssembly">
+      <MemberSignature Language="ILASM" Value=".property class System.Reflection.Assembly LoadedAssembly { public hidebysig specialname instance class System.Reflection.Assembly get_LoadedAssembly() }" />
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly LoadedAssembly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Reflection.Assembly" /> instance that represents the assembly for
+ which an <see langword="AssemblyLoad" /> event was raised.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Reflection.Assembly" />
+representing the assembly that has been loaded.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">The value of this
+ property is set by the system when it raises a <see cref="F:System.AppDomain.AssemblyLoad" /> event.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

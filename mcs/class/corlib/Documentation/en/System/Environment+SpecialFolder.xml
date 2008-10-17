@@ -1,0 +1,391 @@
+<Type Name="Environment+SpecialFolder" FullName="System.Environment+SpecialFolder">
+  <TypeSignature Language="C#" Value="public enum Environment.SpecialFolder" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>An enumeration of common directories on the file system.</summary>
+    <remarks>
+      <para>The enumeration is used by <see cref="M:System.Environment.GetFolderPath" />.</para>
+      <para>Not all directories in this enumeration will be available on all platforms for all users.  When running on the Windows operating system, the operating system determines the paths to these directories.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ApplicationData">
+      <MemberSignature Language="C#" Value="ApplicationData" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>ApplicationData</MemberValue>
+      <Docs>
+        <summary>The directory for application data specific to the user executing the program.  On non-Windows operating systems, this path is the value of the environment variable XDG_CONFIG_HOME if it is set, otherwise the ".config" directory in the current user's home directory.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CommonApplicationData">
+      <MemberSignature Language="C#" Value="CommonApplicationData" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>CommonApplicationData</MemberValue>
+      <Docs>
+        <summary>The directory for data shared by applications.  On non-Windows operating systems, the "/usr/share" directory.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CommonProgramFiles">
+      <MemberSignature Language="C#" Value="CommonProgramFiles" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>CommonProgramFiles</MemberValue>
+      <Docs>
+        <summary>The CommonProgramFiles directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Cookies">
+      <MemberSignature Language="C#" Value="Cookies" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>Cookies</MemberValue>
+      <Docs>
+        <summary>The cookies directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Desktop">
+      <MemberSignature Language="C#" Value="Desktop" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>Desktop</MemberValue>
+      <Docs>
+        <summary>The desktop directory.  On Unix operating systems, this is either XDG_DESKTOP_DIR from the environment, XDG_DESKTOP_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Desktop" within the SpecialFolder.Personal directory (usually the home directory).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DesktopDirectory">
+      <MemberSignature Language="C#" Value="DesktopDirectory" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>DesktopDirectory</MemberValue>
+      <Docs>
+        <summary>The same as the Desktop enumeration value.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Favorites">
+      <MemberSignature Language="C#" Value="Favorites" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>Favorites</MemberValue>
+      <Docs>
+        <summary>The Favorites directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="History">
+      <MemberSignature Language="C#" Value="History" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>History</MemberValue>
+      <Docs>
+        <summary>The History directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InternetCache">
+      <MemberSignature Language="C#" Value="InternetCache" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>InternetCache</MemberValue>
+      <Docs>
+        <summary>The Internet cache directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LocalApplicationData">
+      <MemberSignature Language="C#" Value="LocalApplicationData" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>LocalApplicationData</MemberValue>
+      <Docs>
+        <summary>The directory for application data shared by users of the computer.  On non-Windows operating systems, this path is the value of the environment variable XDG_DATA_HOME if it is set, otherwise the ".local/share" directory in the current user's home directory.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MyComputer">
+      <MemberSignature Language="C#" Value="MyComputer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>MyComputer</MemberValue>
+      <Docs>
+        <summary>The My Computer directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MyDocuments">
+      <MemberSignature Language="C#" Value="MyDocuments" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MyMusic">
+      <MemberSignature Language="C#" Value="MyMusic" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>MyMusic</MemberValue>
+      <Docs>
+        <summary>The music directory.  On Unix operating systems, this is either XDG_MUSIC_DIR from the environment, XDG_MUSIC_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Music" within the SpecialFolder.Personal directory (usually the home directory).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MyPictures">
+      <MemberSignature Language="C#" Value="MyPictures" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>MyPictures</MemberValue>
+      <Docs>
+        <summary>The pictures directory.  On Unix operating systems, this is either XDG_PICTURES_DIR from the environment, XDG_PICTURES_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Pictures" within the SpecialFolder.Personal directory (usually the home directory).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Personal">
+      <MemberSignature Language="C#" Value="Personal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>Personal</MemberValue>
+      <Docs>
+        <summary>The personal or home directory for the current user.  On non-Windows operating systems, this is the user's home directory.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProgramFiles">
+      <MemberSignature Language="C#" Value="ProgramFiles" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>ProgramFiles</MemberValue>
+      <Docs>
+        <summary>The ProgramFiles directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Programs">
+      <MemberSignature Language="C#" Value="Programs" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>Programs</MemberValue>
+      <Docs>
+        <summary>The Programs directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Recent">
+      <MemberSignature Language="C#" Value="Recent" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>Recent</MemberValue>
+      <Docs>
+        <summary>The Recent files directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SendTo">
+      <MemberSignature Language="C#" Value="SendTo" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>SendTo</MemberValue>
+      <Docs>
+        <summary>The SendTo directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StartMenu">
+      <MemberSignature Language="C#" Value="StartMenu" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>StartMenu</MemberValue>
+      <Docs>
+        <summary>The directory displayed by the start menu.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Startup">
+      <MemberSignature Language="C#" Value="Startup" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>Startup</MemberValue>
+      <Docs>
+        <summary>The Startup directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System">
+      <MemberSignature Language="C#" Value="System" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>System</MemberValue>
+      <Docs>
+        <summary>The system directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Templates">
+      <MemberSignature Language="C#" Value="Templates" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Environment+SpecialFolder</ReturnType>
+      </ReturnValue>
+      <MemberValue>Templates</MemberValue>
+      <Docs>
+        <summary>The Templates directory.  Not available non-Windows operating systems.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

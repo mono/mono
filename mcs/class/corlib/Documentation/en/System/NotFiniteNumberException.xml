@@ -1,0 +1,283 @@
+<Type Name="NotFiniteNumberException" FullName="System.NotFiniteNumberException" FullNameSP="System_NotFiniteNumberException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable NotFiniteNumberException extends System.ArithmeticException" />
+  <TypeSignature Language="C#" Value="public class NotFiniteNumberException : ArithmeticException" />
+  <MemberOfLibrary>ExtendedNumerics</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ArithmeticException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Represents the error that occurs when an arithmetic operation cannot be performed on a floating-point value that
+      is not a finite number.</para>
+    </summary>
+    <remarks>
+      <para>This exception is thrown when an operand of an arithmetic operation is, and
+      is not permitted to be, one of the following:</para>
+      <list type="bullet">
+        <item>
+          <term> Positive infinity</term>
+        </item>
+        <item>
+          <term> Negative infinity</term>
+        </item>
+        <item>
+          <term> NaN (Not-a-Number)</term>
+        </item>
+      </list>
+      <para>
+        <block subset="none" type="note">Operations involving <see cref="T:System.Double" /> or <see cref="T:System.Single" /> operations throw
+this exception.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public NotFiniteNumberException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.NotFiniteNumberException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.NotFiniteNumberException.Message" /> property of the new instance to a system-supplied
+   message that describes the error, such as "The number encountered was not a
+   finite quantity." This message takes into account the current system culture. </para>
+          <para>This constructor initializes the <see cref="P:System.NotFiniteNumberException.OffendingNumber" /> property to zero. The <see cref="!:System.NotFiniteNumberException.InnerException" /> 
+property is initialized to <see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(float64 offendingNumber)" />
+      <MemberSignature Language="C#" Value="public NotFiniteNumberException (double offendingNumber);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="offendingNumber" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="offendingNumber">A <see cref="T:System.Double" /> that specifies the value of the argument that caused the Exception.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.NotFiniteNumberException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.NotFiniteNumberException.Message" /> property of the new instance to a system-supplied
+   message that describes the error, such as "The number encountered was not a
+   finite quantity." This message takes into account the current system
+   culture.</para>
+          <para>This constructor initializes the <see cref="P:System.NotFiniteNumberException.OffendingNumber" /> property using <paramref name="offendingNumber" />. The <see cref="!:System.NotFiniteNumberException.InnerException" /> property is initialized to 
+<see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public NotFiniteNumberException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.NotFiniteNumberException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.NotFiniteNumberException.Message" /> property of the new instance
+   using <paramref name="message" /> , and
+   initializes the <see cref="P:System.NotFiniteNumberException.OffendingNumber" />
+   property to zero. If <paramref name="message" /> is <see langword="null" />, the <see cref="!:System.NotFiniteNumberException.Message" /> property is initialized to the system-supplied message
+   provided by the constructor that takes no arguments. </para>
+          <para> The <see cref="!:System.NotFiniteNumberException.InnerException" />
+property is initialized to <see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected NotFiniteNumberException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, float64 offendingNumber)" />
+      <MemberSignature Language="C#" Value="public NotFiniteNumberException (string message, double offendingNumber);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="offendingNumber" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="offendingNumber">A <see cref="T:System.Double" /> that specifies the value of the argument that caused the current Exception.</param>
+        <summary>
+          <para>Constructs a new instance of the <see cref="T:System.NotFiniteNumberException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.NotFiniteNumberException.Message" /> property of the new instance using <paramref name="message" /> and
+   the <see langword="OffendingNumber" /> property using <paramref name="offendingNumber" />. If <paramref name="message" /> is
+<see langword="null" />, the <see cref="!:System.NotFiniteNumberException.Message" /> property is initialized to the system-supplied message 
+   provided by the constructor that takes no arguments.</para>
+          <para> The <see cref="!:System.NotFiniteNumberException.InnerException" /> property is initialized to
+<see langword="null" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NotFiniteNumberException (string message, Exception innerException);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="innerException">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, float64 offendingNumber, class System.Exception innerException)" />
+      <MemberSignature Language="C#" Value="public NotFiniteNumberException (string message, double offendingNumber, Exception innerException);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="offendingNumber" Type="System.Double" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="offendingNumber">A <see cref="T:System.Double" /> that specifies the value of the argument that caused the current exception.</param>
+        <param name="innerException">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="innerException" /> is non-null, then the current exception was raised in a catch block handling <paramref name="innerException" />.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.NotFiniteNumberException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.NotFiniteNumberException.Message" /> property of the new instance using <paramref name="message" />, the
+<see cref="P:System.NotFiniteNumberException.OffendingNumber" /> property using <paramref name="offendingNumber" />, and the <see cref="!:System.NotFiniteNumberException.InnerException" /> property using <paramref name="innerException" />. If <paramref name="message" /> is 
+<see langword="null" />, the <see cref="!:System.NotFiniteNumberException.Message" /> property is initialized to the system-supplied message 
+   provided by the constructor that takes no arguments. </para>
+          <para>
+            <block subset="none" type="note">For information on inner exceptions, see
+<see cref="P:System.Exception.InnerException" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OffendingNumber">
+      <MemberSignature Language="ILASM" Value=".property float64 OffendingNumber { public hidebysig specialname instance float64 get_OffendingNumber() }" />
+      <MemberSignature Language="C#" Value="public double OffendingNumber { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the value of the argument that caused the current Exception.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Double" /> that contains the invalid value.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.NotFiniteNumberException.OffendingNumber" />
+property returns the same value as was passed into the
+constructor, or zero if no value was supplied.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

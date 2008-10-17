@@ -1,0 +1,145 @@
+<Type Name="StackOverflowException" FullName="System.StackOverflowException" FullNameSP="System_StackOverflowException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable StackOverflowException extends System.SystemException" />
+  <TypeSignature Language="C#" Value="public sealed class StackOverflowException : SystemException" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.SystemException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Represents the error that occurs when the execution stack overflows due to too many
+      method calls.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.StackOverflowException" /> is thrown for execution stack overflow errors, typically
+      in the case of a very deep or unbounded recursion. </para>
+        <para>The localloc CIL instruction throws <see cref="T:System.StackOverflowException" />.</para>
+      </block>
+    </remarks>
+    <example>
+      <para>The following example demonstrates an error that causes
+      a <see cref="T:System.StackOverflowException" /> exception.</para>
+      <code lang="C#">using System;
+public class StackOverflowExample {
+   public static void recursion() { recursion(); }
+   public static void Main() {
+      try {
+         recursion();
+      }
+      catch(StackOverflowException e) {
+         Console.WriteLine("Error caught: {0}", e);
+      }
+   }
+}
+   </code>
+      <para>The output is</para>
+      <para>
+        <c>Error 
+      caught: System.StackOverflowException: Exception of type
+      System.StackOverflowException was thrown.</c>
+      </para>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public StackOverflowException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.StackOverflowException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.StackOverflowException.Message" /> property of the new instance to a system-supplied
+   message that describes the error, such as "The requested operation caused a
+   stack overflow." This message takes into account the current system culture.</para>
+          <para>The <see cref="!:System.StackOverflowException.InnerException" /> property is initialized to 
+<see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public StackOverflowException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.StackOverflowException" />
+class. </para>
+        </summary>
+        <remarks>
+          <para> This constructor initializes the <see cref="!:System.StackOverflowException.Message" /> property of the new instance using <paramref name="message" />. If <paramref name="message" /> is 
+<see langword="null" />, the <see cref="!:System.StackOverflowException.Message" /> property is initialized to the 
+   system-supplied message provided by the constructor that takes no arguments. The <see cref="!:System.StackOverflowException.InnerException" /> property is initialized to <see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception innerException)" />
+      <MemberSignature Language="C#" Value="public StackOverflowException (string message, Exception innerException);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="innerException">An instance of <see cref="T:System.Exception" /> that is the cause of the current Exception. If <paramref name="innerException" /> is non-null, then the current Exception was raised in a catch block handling <paramref name="innerException" /> .</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.StackOverflowException" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="!:System.StackOverflowException.Message" /> property of the new instance using <paramref name="message" />, and
+   the <see cref="!:System.StackOverflowException.InnerException" /> property using
+<paramref name="innerException" />. If <paramref name="message" /> is 
+<see langword="null" />, the <see cref="!:System.StackOverflowException.Message" /> property is initialized to the 
+   system-supplied message provided by the constructor that takes no arguments.</para>
+          <para>
+            <block subset="none" type="note">For information on inner exceptions, see
+<see cref="P:System.Exception.InnerException" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

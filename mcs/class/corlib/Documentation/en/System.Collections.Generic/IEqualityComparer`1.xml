@@ -1,0 +1,87 @@
+<Type Name="IEqualityComparer&lt;T&gt;" FullName="System.Collections.Generic.IEqualityComparer&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public interface IEqualityComparer&lt;T&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Interfaces />
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>
+      <para>Provides a mechanism to customize equality in sort ordering of a generic collection.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (T x, T y);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x" Type="T" />
+        <Parameter Name="y" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="x">First <see langword="T" /> to compare.</param>
+        <param name="y">Second <see langword="T" /> to compare.</param>
+        <summary>
+          <para>Determines whether the specified objects are equal.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the specified objects are equal; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>An implementation of Equals(T,T) shall satisfy the following: The equality function shall be be reflexive, so x.Equals(x) is true; symmetric, so x.Equals(y) and y.Equals(x); and transitive, so x.Equals(y)  and
+y.Equals(z) implies x.Equals(z); for any values x, y and z for  which these expressions are defined.</para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public int GetHashCode (T obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The object for which the hash code is to be returned.</param>
+        <summary>
+          <para>Returns a hash code for the specified object.</para>
+        </summary>
+        <returns>
+          <para>A hash code for the specified object.</para>
+        </returns>
+        <remarks>
+          <para>To produce a hash function for the given object. <block subset="none" type="note"> A hash function is used to
+   quickly generate a number (a hash code) corresponding to the value of an object.
+   Hash functions are used with <see langword="hashtables" />. A good hash function
+   algorithm rarely generates hash codes that collide. For more information about
+   hash functions, see <paramref name="The Art of Computer Programming" />
+   
+   , Vol. 3, by Donald E. Knuth.</block></para>
+          <block subset="none" type="behaviors">
+            <para>All implementations are required to ensure that if x.Equals(y) ==  true, then x.GetHashCode() equals y.GetHashCode(), for any x and y values for which these expressions are defined.</para>
+          </block>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="T:System.ArgumentNullException">The type of <paramref name="obj" /> is a reference type and <paramref name="obj" /> is <see langword="null" />.</exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

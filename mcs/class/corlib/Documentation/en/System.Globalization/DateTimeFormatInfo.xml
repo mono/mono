@@ -1,0 +1,1498 @@
+<Type Name="DateTimeFormatInfo" FullName="System.Globalization.DateTimeFormatInfo" FullNameSP="System_Globalization_DateTimeFormatInfo" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable DateTimeFormatInfo extends System.Object implements System.ICloneable, System.IFormatProvider" />
+  <TypeSignature Language="C#" Value="public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations. </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IFormatProvider</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para>Defines culture-specific formats and patterns for
+   <see cref="T:System.DateTime" /> values.</para>
+    </summary>
+    <remarks>
+      <para>
+        <see cref="T:System.DateTime" /> values are formatted by the <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> and
+<see cref="M:System.DateTime.ToString" /> methods according to standard or custom patterns stored 
+   in the properties of a <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance. The standard patterns can be
+   accessed and modified through the associated <see cref="T:System.Globalization.DateTimeFormatInfo" /> properties.
+   <block subset="none" type="note">The format patterns and properties of a
+      read-only <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance cannot be changed. To determine
+      whether a <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance is read-only, use the <see cref="P:System.Globalization.DateTimeFormatInfo.IsReadOnly" /> property.</block></para>
+      <para>Date and time format patterns are specified using
+      strings called <paramref name="format specifiers" />. A string is interpreted as standard
+      format specifier if it contains exactly one standard format specifier character.
+      If the string contains a single character and that character is not one of the
+      standard format specifiers, an exception is thrown. If the string contains two
+      or more characters, even if the extra characters are white spaces, the string is
+      interpreted as a custom format specifier. Format specifiers and format patterns
+      are case-sensitive; for example, 'g' and 'G' represent different
+      
+      patterns. </para>
+      <para>The following table shows the standard format specifiers and the associated
+      format pattern defined for the invariant culture. The exact pattern produced by
+      a format specifier is influenced by culture-specific date and/or time settings
+      on the current system; computers with different date and time settings might
+      display different patterns. The asterisk at the end of a format pattern
+      indicates that the preceding character can be repeated without changing the
+      meaning of the pattern. For example, the pattern "HH*" indicates that the
+      strings "HH", "HHH", "HHHH", and "HHHHH" produce the same result when used with
+   <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> and <see cref="M:System.DateTime.ToString" /> methods. </para>
+      <list type="table">
+        <listheader>
+          <term>Format Specifier</term>
+          <description>Format Pattern</description>
+          <description>Description</description>
+        </listheader>
+        <item>
+          <term> d</term>
+          <description>MM/dd/yyyy</description>
+          <description>The full date in numeric format (<see cref="P:System.Globalization.DateTimeFormatInfo.ShortDatePattern" />
+      ).</description>
+        </item>
+        <item>
+          <term> D</term>
+          <description>dddd*, dd MMMM* yyyy</description>
+          <description>The full date including the day of the week and the
+      name of the month (<see cref="P:System.Globalization.DateTimeFormatInfo.LongDatePattern" />
+      ).</description>
+        </item>
+        <item>
+          <term> f</term>
+          <description>dddd*, dd MMMM* yyyy HH*:mm*</description>
+          <description>The full date and time, including the day of the week
+      and the name of the month (<see cref="P:System.Globalization.DateTimeFormatInfo.LongDatePattern" /> combined with <see cref="P:System.Globalization.DateTimeFormatInfo.ShortTimePattern" />
+      ).</description>
+        </item>
+        <item>
+          <term> F</term>
+          <description>dddd*, dd MMMM* yyyy HH*:mm*:ss*</description>
+          <description>The full date and time, including the seconds
+      (<see cref="P:System.Globalization.DateTimeFormatInfo.FullDateTimePattern" /> equivalent to
+   <see cref="P:System.Globalization.DateTimeFormatInfo.LongDatePattern" /> combined with <see cref="P:System.Globalization.DateTimeFormatInfo.LongTimePattern" />
+   ).</description>
+        </item>
+        <item>
+          <term> g</term>
+          <description>MM/dd/yyyy HH*:mm*</description>
+          <description>A
+      general date pattern including the short time form (<see cref="P:System.Globalization.DateTimeFormatInfo.ShortDatePattern" /> combined with
+   <see cref="P:System.Globalization.DateTimeFormatInfo.ShortTimePattern" />
+   ).</description>
+        </item>
+        <item>
+          <term> G</term>
+          <description>MM/dd/yyyy HH*:mm*:ss*</description>
+          <description>A
+      general date pattern including the long time form (<see cref="P:System.Globalization.DateTimeFormatInfo.ShortDatePattern" /> combined with <see cref="P:System.Globalization.DateTimeFormatInfo.LongTimePattern" />
+      ).</description>
+        </item>
+        <item>
+          <term> m, M</term>
+          <description>MMMM* dd</description>
+          <description>The full name of the month and the date (<see cref="P:System.Globalization.DateTimeFormatInfo.MonthDayPattern" /> ).</description>
+        </item>
+        <item>
+          <term> t</term>
+          <description>HH*:mm*</description>
+          <description>The time in short format (<see cref="P:System.Globalization.DateTimeFormatInfo.ShortTimePattern" /> ).</description>
+        </item>
+        <item>
+          <term> T</term>
+          <description>HH*:mm*:ss*</description>
+          <description>The time in long format (<see cref="P:System.Globalization.DateTimeFormatInfo.LongTimePattern" /> ).</description>
+        </item>
+        <item>
+          <term> U</term>
+          <description>dddd*, dd MMMM* yyyy HH*:mm*:ss*</description>
+          <description>The
+      full date and time, including the seconds, in the Gregorian calendar (
+   <see cref="P:System.Globalization.DateTimeFormatInfo.FullDateTimePattern" />
+   ).</description>
+        </item>
+        <item>
+          <term> y, Y</term>
+          <description>yyyy MMMM*</description>
+          <description>The full name of the month and the year in four-digit
+      format (<see cref="P:System.Globalization.DateTimeFormatInfo.YearMonthPattern" />
+      ). </description>
+        </item>
+      </list>
+The following table lists custom format specifiers that can be combined to
+construct custom patterns. If the custom pattern contains white space
+characters, characters enclosed in single or double quotation marks, or
+characters not defined in the following table, these characters are considered
+literals and are included in the output string unchanged.
+<block subset="none" type="note"> See the <see cref="T:System.String" /> class for the 
+list of white space characters.</block><list type="table"><listheader><term>Format Pattern</term><description>Description</description><description>Examples</description></listheader><item><term> d</term><description>The
+         day of the month as a value in the range 1-31, inclusive. Single-digit days do
+         not have a leading zero.</description><description><para>1</para><para>22</para></description></item><item><term> dd</term><description>The
+            day of the month as a value in the range 1-31, inclusive. Single-digit days have a leading zero.</description><description><para>01</para><para>22</para></description></item><item><term> ddd</term><description>The abbreviated name of the day of the week, as
+               defined in <see cref="P:System.Globalization.DateTimeFormatInfo.AbbreviatedDayNames" />
+               .</description><description>Mon</description></item><item><term> dddd*</term><description>The full name of the day of the week, as defined in
+            <see cref="P:System.Globalization.DateTimeFormatInfo.DayNames" /> .</description><description>Monday</description></item><item><term> M</term><description>The
+               numeric month as a value in the range 1-12, inclusive. Single-digit months do not have a leading zero.</description><description><para>2</para><para>11</para></description></item><item><term> MM</term><description>The
+                  numeric month as a value in the range 1-12, inclusive. Single-digit months have a leading zero.</description><description><para>02</para><para>11</para></description></item><item><term> MMM</term><description>The abbreviated name of the month, as defined in
+                  <see cref="P:System.Globalization.DateTimeFormatInfo.AbbreviatedMonthNames" />
+                  .</description><description>Feb</description></item><item><term> MMMM*</term><description>The full name of the month, as defined in <see cref="P:System.Globalization.DateTimeFormatInfo.MonthNames" /> .</description><description>February</description></item><item><term> y</term><description>The year without the century (two-digit). If the value is less than
+               10, the year is displayed with no leading zero.</description><description><para>0</para><para>3</para></description></item><item><term> yy</term><description>The year without the century (two-digit). If the year without the
+                  century is less than 10, the year is displayed with a leading zero.</description><description><para>00</para><para>03</para></description></item><item><term> yyyy</term><description>The year including the century in four digits.</description><description><para>2000</para><para>2003</para></description></item><item><term> g*</term><description>The name of a period or era (such as "A.D." or "B.C."). This pattern
+                        is ignored if the date to be formatted does not have an associated period
+                        or era string.</description><description>A.D.</description></item><item><term> h</term><description>The hour
+                        within a 12-hour range as a value in the range 1-12, inclusive. Single-digit
+                        hours do not have a leading zero. <block subset="none" type="note"> The value represents whole hours passed since either midnight
+                        (12) or noon (12). To distinguish between values occurring before and after noon, include the "t" or "tt*" custom
+                        format specifier.</block></description><description><para>3</para><para>11</para></description></item><item><term> hh*</term><description>The
+                           hour within a 12-hour range as a value in the range 1-12, inclusive.
+                           Single-digit hours have a leading zero. <block subset="none" type="note"> The value represents whole hours passed since either midnight
+                           (12) or noon (12). To distinguish between values occurring before and after noon, include the "t" or "tt*" custom format
+                           specifier.</block></description><description><para>03</para><para>11</para></description></item><item><term> H</term><description>The hour as a value in the range 0-23, inclusive.
+                              Single-digit hours do not have a leading zero. <block subset="none" type="note"> The value represents whole hours passed since
+                              midnight.</block></description><description><para>3</para><para>13</para></description></item><item><term> HH*</term><description>The hour as a value in the range 0 and 23, inclusive.
+                                 Single-digit hours have a leading zero. <block subset="none" type="note"> The value represents whole hours passed since
+                                 midnight.</block></description><description><para>03</para><para>13</para></description></item><item><term> m</term><description>The minute
+                                    as a value in the range 0-59, inclusive. Single-digit minutes do not
+                                    have a leading zero. <block subset="none" type="note"> The value
+                                    represents whole minutes passed since the last hour.</block></description><description><para>5</para><para>15</para></description></item><item><term> mm*</term><description>The minute
+                                       as a value in the range 0-59, inclusive. Single-digit minutes have a
+                                       leading zero. <block subset="none" type="note"> The value represents
+                                       whole minutes passed since the last hour.</block></description><description><para>05</para><para>15</para></description></item><item><term> s</term><description>The
+                                          second as a value in the range 0-59, inclusive. Single-digit seconds do
+                                          not have a leading zero. <block subset="none" type="note"> The
+                                          value represents whole seconds passed since the last minute.</block></description><description><para>1</para><para>30</para></description></item><item><term> ss*</term><description>The
+                                             second as a value in the range 0-59, inclusive. Single-digit seconds have
+                                             a leading zero. <block subset="none" type="note">The value represents
+                                             whole seconds passed since the last minute.</block></description><description><para>01</para><para>30</para></description></item><item><term> f</term><description> Displays fractional
+                                                seconds represented in one digit.</description><description>1</description></item><item><term> ff</term><description> Displays fractional seconds represented in two digits.</description><description>01</description></item><item><term> fff</term><description> Displays fractional seconds represented in three digits.</description><description>001</description></item><item><term> ffff</term><description> Displays fractional seconds represented in four digits.</description><description>0001</description></item><item><term> fffff</term><description> Displays fractional seconds represented in five digits.</description><description>00001</description></item><item><term> ffffff</term><description> Displays fractional seconds represented in six digits.</description><description>000001</description></item><item><term> fffffff</term><description> Displays fractional seconds represented in seven digits.</description><description>0000001</description></item><item><term> t</term><description>The
+                                                first character of the AM/PM designator defined in the <see cref="T:System.Globalization.DateTimeFormatInfo" /> property <see cref="P:System.Globalization.DateTimeFormatInfo.AMDesignator" /> or <see cref="P:System.Globalization.DateTimeFormatInfo.PMDesignator" />. <block subset="none" type="note"> If the total number of hours passed since midnight is less
+                                                than 12, the A.M. designator is used; otherwise the P.M. designator is
+                                                used.</block></description><description><para>A</para><para>P</para></description></item><item><term> tt*</term><description>The AM/PM designator defined in the <see cref="T:System.Globalization.DateTimeFormatInfo" /> property <see cref="P:System.Globalization.DateTimeFormatInfo.AMDesignator" /> or <see cref="P:System.Globalization.DateTimeFormatInfo.PMDesignator" />. <block subset="none" type="note"> If the total number of hours passed since midnight is less
+                                                than 12, the A.M. designator is used; otherwise the P.M. designator is
+                                                used.</block></description><description><para>AM</para><para>PM</para></description></item><item><term> z</term><description>The time zone offset (hour only) from the universal
+                                                   time coordinate (UTC) time (Greenwich Mean Time) as a value in the range
+                                                   -12 to +13, inclusive. Single-digit hours do not have a leading zero.
+                                                   <block subset="none" type="note">The value always includes a leading sign (zero is '+0'), indicating hours ahead of UTC time (+) or hours behind UTC time
+                                                      (-). The offset takes Daylight Savings Time into account.</block></description><description>-8</description></item><item><term> zz</term><description>The time zone offset (hour only) from the UTC time
+                                                      (Greenwich Mean Time) as a value in the range -12 to +13, inclusive.
+                                                      Single-digit hours have a leading zero. <block subset="none" type="note"> The value always includes a leading sign (zero is
+                                                      '+0'), indicating hours ahead of UTC time (+) or hours behind UTC time (-). The
+                                                      offset takes Daylight Savings Time into account.</block></description><description>-08</description></item><item><term> zzz*</term><description> The full time zone offset (hour and minutes) from the
+                                                      UTC time (Greenwich Mean Time) as a value in the range -12:00 to +13:00,
+                                                      inclusive. Single-digit hours and minutes have leading zeros. <block subset="none" type="note"> The value always includes a leading sign (zero is '+0'), indicating hours ahead of UTC time (+) or hours behind
+                                                      UTC time (-). The offset takes Daylight Savings Time
+                                                      into account.</block></description><description>-08:00</description></item><item><term> :</term><description>The
+                                                      invariant culture time separator defined in <see cref="P:System.Globalization.DateTimeFormatInfo.TimeSeparator" />
+                                                      .</description><description>:</description></item><item><term> /</term><description>The
+                                                      invariant culture date separator defined in the <see cref="P:System.Globalization.DateTimeFormatInfo.DateSeparator" />
+                                                      .</description><description>/</description></item><item><term><paramref name="%c" /></term><description><paramref name="c" /> represents a single custom format character.
+                                                Produces the custom format pattern associated with the format character
+                                             <paramref name="c" />. The %<paramref name="c" /> specifier provides a mechanism for specifying
+                                                a single custom format character and having it recognized as a custom
+                                                specifier. This format is intended for characters that define both a
+                                                custom and a standard format. Note that a format string containing
+                                                exactly one such character will be interpreted as a standard format
+                                                specifier unless prefaced with the %. <block subset="none" type="note">For example, for the invariant culture, "%d" produces the
+                                                single or double digit date, while "d" produces the date
+                                                in "MM/dd/yyyy" format. Without the %, a format string containing one
+                                                character would have to include leading or trailing white space
+                                                to be interpreted as a custom specifier because custom formats are required to have two
+                                                or more characters.</block></description><description>"%y" produces a two digit year without a leading zero, and not the
+                                                "MMMM, yyyy" pattern.</description></item><item><term><paramref name="\c" /></term><description><paramref name="c" /> represents any character predefined as part of
+                                          a format specifier. Prevents the character from being interpreted as a
+                                          format specifier (the character is treated as a literal). <block subset="none" type="note"> In
+                                          programming languages where the backslash ('\') character is used to
+                                          specify control sequences such as newline (\n), the backslash character is required to be
+                                          specified twice. For example, in C#, "\d" is coded as
+                                          "\\d".</block></description><description>"\d" produces the character 'd', and not the day of the
+                                          month.</description></item><item><term> '<paramref name="xx" />' or "<paramref name="xx" />"</term><description><paramref name="xx" /> represents a string of characters of any length. The
+                                    characters are treated as literals.</description><description>"'d'" produces the character 'd', and not the day of the
+                                    month.</description></item></list></remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public DateTimeFormatInfo ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Globalization.DateTimeFormatInfo" /> class that is culture-independent (invariant).</para>
+        </summary>
+        <remarks>
+          <para> The new instance of <see cref="T:System.Globalization.DateTimeFormatInfo" /> is not read-only, and its properties can be modified with user-defined patterns.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AbbreviatedDayNames">
+      <MemberSignature Language="ILASM" Value=".property class System.String[] AbbreviatedDayNames { public hidebysig specialname instance class System.String[] get_AbbreviatedDayNames() public hidebysig specialname instance void set_AbbreviatedDayNames(class System.String[] value) }" />
+      <MemberSignature Language="C#" Value="public string[] AbbreviatedDayNames { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a one-dimensional array of type <see cref="T:System.String" />
+containing the
+culture-specific abbreviated names of the days of the week.</para>
+        </summary>
+        <value>
+          <para>A one-dimensional array of type <see cref="T:System.String" />
+containing the culture-specific abbreviated names of the days of the week.</para>
+        </value>
+        <remarks>
+          <para> The array specified in a set operation is required
+      to be one-dimensional and have exactly seven elements. The first element of the
+      array is the abbreviated day name for Sunday, and the last element is the name for Saturday.</para>
+          <para> The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.AbbreviatedDayNames" /> is a <see cref="T:System.String" /> array that contains "Sun", "Mon", "Tue", "Wed", "Thu", "Fri" and "Sat".</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.ArgumentException">The value specified for a set operation is not an array with exactly 7 elements.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AbbreviatedMonthGenitiveNames">
+      <MemberSignature Language="C#" Value="public string[] AbbreviatedMonthGenitiveNames { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AbbreviatedMonthNames">
+      <MemberSignature Language="ILASM" Value=".property class System.String[] AbbreviatedMonthNames { public hidebysig specialname instance class System.String[] get_AbbreviatedMonthNames() public hidebysig specialname instance void set_AbbreviatedMonthNames(class System.String[] value) }" />
+      <MemberSignature Language="C#" Value="public string[] AbbreviatedMonthNames { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a one-dimensional array of type <see cref="T:System.String" />
+containing the culture-specific abbreviated names of the months.</para>
+        </summary>
+        <value>
+          <para>A one-dimensional array of type <see cref="T:System.String" />
+containing the abbreviated names of the months. For
+cultures with 12-month calendars the 13th element of the array is an empty string.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="T:System.Array" /> specified in a set operation is required
+   to be one-dimensional and have exactly 13 elements.</para>
+          <para> The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.AbbreviatedMonthNames" /> is a <see cref="T:System.String" /> array that contains
+"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" and "".</para>
+          <para>
+            <block subset="none" type="note"> The array returned
+   by this property has 13 elements to support calendars with 13 months.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.ArgumentException">The value specified for a set operation is not an array with exactly 13 elements.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AMDesignator">
+      <MemberSignature Language="ILASM" Value=".property string AMDesignator { public hidebysig specialname instance string get_AMDesignator() public hidebysig specialname instance void set_AMDesignator(string value) }" />
+      <MemberSignature Language="C#" Value="public string AMDesignator { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the <see cref="T:System.String" /> culture-specific
+   designator for hours that are "ante meridiem" (before noon).</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.String" /> designator for hours that are before noon.</para>
+        </value>
+        <remarks>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.AMDesignator" /> returns the <see cref="T:System.String" /> "AM".</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Calendar">
+      <MemberSignature Language="C#" Value="public System.Globalization.Calendar Calendar { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.Calendar</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CalendarWeekRule">
+      <MemberSignature Language="C#" Value="public System.Globalization.CalendarWeekRule CalendarWeekRule { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CalendarWeekRule</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object Clone()" />
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Creates a copy of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance with property
+   values equal to the property values of the original <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance.</para>
+        </returns>
+        <remarks>
+          <para>The <see cref="M:System.Globalization.DateTimeFormatInfo.Clone" /> method creates a new instance of the same type as the
+   current instance, and then copies the contents of each of the current instance's non-static fields.</para>
+          <para>The new instance is not read-only, and its properties can be modified with user-defined patterns.</para>
+          <para>
+            <block subset="none" type="note"> This method is
+   implemented to support the <see cref="T:System.ICloneable" /> interface.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CurrentInfo">
+      <MemberSignature Language="ILASM" Value=".property class System.Globalization.DateTimeFormatInfo CurrentInfo { public hidebysig static specialname class System.Globalization.DateTimeFormatInfo get_CurrentInfo() }" />
+      <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo CurrentInfo { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeFormatInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a read-only <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance that formats values based on the current culture.</para>
+        </summary>
+        <value>
+          <para>A read-only <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance based on the
+   culture of the current thread.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DateSeparator">
+      <MemberSignature Language="ILASM" Value=".property string DateSeparator { public hidebysig specialname instance string get_DateSeparator() public hidebysig specialname instance void set_DateSeparator(string value) }" />
+      <MemberSignature Language="C#" Value="public string DateSeparator { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the culture-specific <see cref="T:System.String" /> to use to separate the year, month, and day components of a date.</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.String" /> to use to separate the year, month and day components of a date.</para>
+        </value>
+        <remarks>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.DateSeparator" /> is "/".</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DayNames">
+      <MemberSignature Language="ILASM" Value=".property class System.String[] DayNames { public hidebysig specialname instance class System.String[] get_DayNames() public hidebysig specialname instance void set_DayNames(class System.String[] value) }" />
+      <MemberSignature Language="C#" Value="public string[] DayNames { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a one-dimensional array of type <see cref="T:System.String" />
+containing the culture-specific full names of the days of the week.</para>
+        </summary>
+        <value>
+          <para>A one-dimensional array of type <see cref="T:System.String" /> containing the full names of the days of the week.</para>
+        </value>
+        <remarks>
+          <para>The array specified in a set operation is required
+      to be one-dimensional and have exactly seven elements. The first element of the
+      array is the abbreviated day name for Sunday, and the last element is the name for Saturday.</para>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.DayNames" /> is a <see cref="T:System.String" /> array that contains "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" and "Saturday".</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.ArgumentException">The value specified for a set operation is not an array with exactly 7 elements.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FirstDayOfWeek">
+      <MemberSignature Language="C#" Value="public DayOfWeek FirstDayOfWeek { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DayOfWeek</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FullDateTimePattern">
+      <MemberSignature Language="ILASM" Value=".property string FullDateTimePattern { public hidebysig specialname instance string get_FullDateTimePattern() public hidebysig specialname instance void set_FullDateTimePattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string FullDateTimePattern { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the format pattern for a long date and long time value.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the format pattern for a long date and long time value.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> and <see cref="M:System.DateTime.ToString" /> methods associate the
+   format pattern returned by this property with the 'F' format character.</para>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.FullDateTimePattern" /> is "dddd, dd MMMM yyyy HH:mm:ss".</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAbbreviatedDayName">
+      <MemberSignature Language="C#" Value="public string GetAbbreviatedDayName (DayOfWeek dayofweek);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dayofweek" Type="System.DayOfWeek" />
+      </Parameters>
+      <Docs>
+        <param name="dayofweek">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAbbreviatedEraName">
+      <MemberSignature Language="C#" Value="public string GetAbbreviatedEraName (int era);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="era" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="era">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAbbreviatedMonthName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetAbbreviatedMonthName(int32 month)" />
+      <MemberSignature Language="C#" Value="public string GetAbbreviatedMonthName (int month);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="month" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="month">A <see cref="T:System.Int32" /> from 1 through 13 representing the month name to retrieve.</param>
+        <summary>
+          <para>Gets the abbreviated name of the specified month based
+      on the culture of the current thread.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the abbreviated name of the month represented by
+<paramref name="month" />. For cultures with 12-month calendars, the empty string is
+   returned as the name of the 13th month.</para>
+        </returns>
+        <remarks>
+          <para>For the default (culture-invariant) <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance, this method returns one of the
+   following strings:</para>
+          <list type="table">
+            <listheader>
+              <term>
+                <paramref name="month" />
+              </term>
+              <description>Return Value</description>
+            </listheader>
+            <item>
+              <term> 1</term>
+              <description>"Jan"</description>
+            </item>
+            <item>
+              <term> 2</term>
+              <description>"Feb"</description>
+            </item>
+            <item>
+              <term> 3</term>
+              <description>"Mar"</description>
+            </item>
+            <item>
+              <term> 4</term>
+              <description>"Apr"</description>
+            </item>
+            <item>
+              <term> 5</term>
+              <description>"May"</description>
+            </item>
+            <item>
+              <term> 6</term>
+              <description>"Jun"</description>
+            </item>
+            <item>
+              <term> 7</term>
+              <description>"Jul"</description>
+            </item>
+            <item>
+              <term> 8</term>
+              <description>"Aug"</description>
+            </item>
+            <item>
+              <term> 9</term>
+              <description>"Sep"</description>
+            </item>
+            <item>
+              <term> 10</term>
+              <description>"Oct"</description>
+            </item>
+            <item>
+              <term> 11</term>
+              <description>"Nov"</description>
+            </item>
+            <item>
+              <term> 12</term>
+              <description>"Dec"</description>
+            </item>
+            <item>
+              <term> 13</term>
+              <description>""</description>
+            </item>
+          </list>
+          <para>
+            <block subset="none" type="note"> This method supports calendars with 13 months.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="month" /> is less than 1 or greater than 13.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAllDateTimePatterns">
+      <MemberSignature Language="C#" Value="public string[] GetAllDateTimePatterns ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAllDateTimePatterns">
+      <MemberSignature Language="C#" Value="public string[] GetAllDateTimePatterns (char format);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="format">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDayName">
+      <MemberSignature Language="C#" Value="public string GetDayName (DayOfWeek dayofweek);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dayofweek" Type="System.DayOfWeek" />
+      </Parameters>
+      <Docs>
+        <param name="dayofweek">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEra">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 GetEra(string eraName)" />
+      <MemberSignature Language="C#" Value="public int GetEra (string eraName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eraName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="eraName">A <see cref="T:System.String" /> containing the name of the era. </param>
+        <summary>
+          <para> Gets a <see cref="T:System.Int32" /> representing the specified era.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> representing the era. If <paramref name="eraName" /> is invalid, returns -1.</para>
+        </returns>
+        <remarks>
+          <para>The value specified for <paramref name="eraName" /> is case-insensitive.</para>
+          <para>
+            <block subset="none" type="note"> An era name is a
+   culturally specific name for a period of time marked by distinctive characters or
+   reckoned from a fixed point or event. For example "A.D." and "B.C." are two eras of the Gregorian calendar.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="eraName" /> is a null reference.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEraName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetEraName(int32 era)" />
+      <MemberSignature Language="C#" Value="public string GetEraName (int era);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="era" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="era">A <see cref="T:System.Int32" /> representing the era.</param>
+        <summary>
+          <para>Gets the <see cref="T:System.String" /> containing the name of the specified era.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the name of the era.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> An era name is a
+      culturally specific name for a period of time marked by distinctive characters or
+      reckoned from a fixed point or event. For example "A.D." and "B.C." are two eras
+      of the Gregorian calendar.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="era" /> does not represent a valid era in calendar for the current thread.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetFormat">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object GetFormat(class System.Type formatType)" />
+      <MemberSignature Language="C#" Value="public object GetFormat (Type formatType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="formatType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="formatType">The <see cref="T:System.Type" /> of the formatting object to be returned.</param>
+        <summary>
+          <para>Returns an object of the specified type that provides <see cref="T:System.DateTime" /> formatting services.</para>
+        </summary>
+        <returns>
+          <para>The current instance, if <paramref name="formatType" /> is of type <see cref="T:System.Globalization.DateTimeFormatInfo" />; otherwise, a null reference.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is
+      implemented to support the <see cref="T:System.IFormatProvider" />
+      interface.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetInstance">
+      <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo GetInstance (IFormatProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeFormatInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMonthName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetMonthName(int32 month)" />
+      <MemberSignature Language="C#" Value="public string GetMonthName (int month);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="month" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="month">A <see cref="T:System.Int32" /> from 1 through 13 representing the month name to retrieve.</param>
+        <summary>
+          <para>Gets the full name of the specified month based on the
+      culture of the current thread.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the full name of the month represented by
+<paramref name="month" />. For cultures with 12-month calendars the empty string is
+   returned as the name of the 13th month.</para>
+        </returns>
+        <remarks>
+          <para>For the default (culture invariant) <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance, this method returns one of the
+   following strings:</para>
+          <list type="table">
+            <listheader>
+              <term>
+                <paramref name="month" />
+              </term>
+              <description>Return Value</description>
+            </listheader>
+            <item>
+              <term> 1</term>
+              <description>"January"</description>
+            </item>
+            <item>
+              <term> 2</term>
+              <description>"February"</description>
+            </item>
+            <item>
+              <term> 3</term>
+              <description>"March"</description>
+            </item>
+            <item>
+              <term> 4</term>
+              <description>"April"</description>
+            </item>
+            <item>
+              <term> 5</term>
+              <description>"May"</description>
+            </item>
+            <item>
+              <term> 6</term>
+              <description>"June"</description>
+            </item>
+            <item>
+              <term> 7</term>
+              <description>"July"</description>
+            </item>
+            <item>
+              <term> 8</term>
+              <description>"August"</description>
+            </item>
+            <item>
+              <term> 9</term>
+              <description>"September"</description>
+            </item>
+            <item>
+              <term> 10</term>
+              <description>"October"</description>
+            </item>
+            <item>
+              <term> 11</term>
+              <description>"November"</description>
+            </item>
+            <item>
+              <term> 12</term>
+              <description>"December"</description>
+            </item>
+            <item>
+              <term> 13</term>
+              <description>""</description>
+            </item>
+          </list>
+          <para>
+            <block subset="none" type="note"> This method supports calendars with 13 months.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="month" /> is less than 1 or greater than 13.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetShortestDayName">
+      <MemberSignature Language="C#" Value="public string GetShortestDayName (DayOfWeek dayOfWeek);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dayOfWeek" Type="System.DayOfWeek" />
+      </Parameters>
+      <Docs>
+        <param name="dayOfWeek">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="InvariantInfo">
+      <MemberSignature Language="ILASM" Value=".property class System.Globalization.DateTimeFormatInfo InvariantInfo { public hidebysig static specialname class System.Globalization.DateTimeFormatInfo get_InvariantInfo() }" />
+      <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo InvariantInfo { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeFormatInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a culture invariant instance of <see cref="T:System.Globalization.DateTimeFormatInfo" /> that is read-only.</para>
+        </summary>
+        <value>
+          <para>A read-only <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance.</para>
+        </value>
+        <remarks>
+          <para> This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig specialname instance bool get_IsReadOnly() }" />
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current
+<see cref="T:System.Globalization.DateTimeFormatInfo" /> instance is read-only.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the <see cref="T:System.Globalization.DateTimeFormatInfo" /> is read-only; otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LongDatePattern">
+      <MemberSignature Language="ILASM" Value=".property string LongDatePattern { public hidebysig specialname instance string get_LongDatePattern() public hidebysig specialname instance void set_LongDatePattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string LongDatePattern { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the format pattern for a long date value.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the format pattern for a long date value.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> and <see cref="M:System.DateTime.ToString" /> methods associate the format
+   pattern returned by this property with the 'D' format character.</para>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.LongDatePattern" /> is "dddd, dd MMMM yyyy".</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LongTimePattern">
+      <MemberSignature Language="ILASM" Value=".property string LongTimePattern { public hidebysig specialname instance string get_LongTimePattern() public hidebysig specialname instance void set_LongTimePattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string LongTimePattern { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the format pattern for a long time value.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the format pattern for a long time value.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> and <see cref="M:System.DateTime.ToString" /> methods associate the format
+   pattern returned by this property with the 'T' format character.</para>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.LongTimePattern" /> is "HH:mm:ss".</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MonthDayPattern">
+      <MemberSignature Language="ILASM" Value=".property string MonthDayPattern { public hidebysig specialname instance string get_MonthDayPattern() public hidebysig specialname instance void set_MonthDayPattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string MonthDayPattern { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the format pattern for a month and day value.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the format pattern for a month and day value.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> and <see cref="M:System.DateTime.ToString" /> methods associate the format
+   pattern returned by this property with the 'm' and 'M' format characters.</para>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.MonthDayPattern" /> is "MMMM dd". </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MonthGenitiveNames">
+      <MemberSignature Language="C#" Value="public string[] MonthGenitiveNames { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MonthNames">
+      <MemberSignature Language="ILASM" Value=".property class System.String[] MonthNames { public hidebysig specialname instance class System.String[] get_MonthNames() public hidebysig specialname instance void set_MonthNames(class System.String[] value) }" />
+      <MemberSignature Language="C#" Value="public string[] MonthNames { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a one-dimensional array of type <see cref="T:System.String" />
+containing the culture-specific full names of the months.</para>
+        </summary>
+        <value>
+          <para>A one-dimensional array of type <see cref="T:System.String" />
+containing the full names of the months. For
+cultures with 12-month calendars the 13th element of the array is an empty string.</para>
+        </value>
+        <remarks>
+          <para> The array specified in a set operation is required
+      be one-dimensional and have exactly 13 elements.</para>
+          <para> The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.MonthNames" /> is a <see cref="T:System.String" /> array that contains
+   "January", "February", "March", "April", "May", "June", "July", "August",
+   "September", "October", "November", "December" and "".</para>
+          <para>
+            <block subset="none" type="note"> The array
+   returned by this property has 13 elements to support calendars with 13 months.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.ArgumentException">The value specified for a set operation is not an array with exactly 13 elements.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NativeCalendarName">
+      <MemberSignature Language="C#" Value="public string NativeCalendarName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PMDesignator">
+      <MemberSignature Language="ILASM" Value=".property string PMDesignator { public hidebysig specialname instance string get_PMDesignator() public hidebysig specialname instance void set_PMDesignator(string value) }" />
+      <MemberSignature Language="C#" Value="public string PMDesignator { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the culture-specific <see cref="T:System.String" /> designator for hours that are "post meridiem" (after noon).</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.String" /> designator for hours that are after noon.</para>
+        </value>
+        <remarks>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.PMDesignator" /> is "PM".</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadOnly">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Globalization.DateTimeFormatInfo ReadOnly(class System.Globalization.DateTimeFormatInfo dtfi)" />
+      <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo ReadOnly (System.Globalization.DateTimeFormatInfo dtfi);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeFormatInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dtfi" Type="System.Globalization.DateTimeFormatInfo" />
+      </Parameters>
+      <Docs>
+        <param name="dtfi">The <see cref="T:System.Globalization.DateTimeFormatInfo" /> to copy.</param>
+        <summary>
+          <para>Returns a read-only copy of the specified instance of
+   <see cref="T:System.Globalization.DateTimeFormatInfo" /> .</para>
+        </summary>
+        <returns>
+          <para>A read-only instance of <see cref="T:System.Globalization.DateTimeFormatInfo" /> that is a copy of <paramref name="dtfi" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Use a read-only <see cref="T:System.Globalization.DateTimeFormatInfo" /> copy to prevent modifications to the
+   specified instance.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="dtfi" /> is a null reference.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RFC1123Pattern">
+      <MemberSignature Language="C#" Value="public string RFC1123Pattern { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetAllDateTimePatterns">
+      <MemberSignature Language="C#" Value="public void SetAllDateTimePatterns (string[] patterns, char format);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="patterns" Type="System.String[]" />
+        <Parameter Name="format" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="patterns">To be added.</param>
+        <param name="format">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ShortDatePattern">
+      <MemberSignature Language="ILASM" Value=".property string ShortDatePattern { public hidebysig specialname instance string get_ShortDatePattern() public hidebysig specialname instance void set_ShortDatePattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string ShortDatePattern { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the format pattern for a short date value.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the format pattern for a short date value.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> and <see cref="M:System.DateTime.ToString" /> methods associate the format
+   pattern returned by this property with the 'd' format character.</para>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.ShortDatePattern" /> is "MM/dd/yyyy".</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ShortestDayNames">
+      <MemberSignature Language="C#" Value="public string[] ShortestDayNames { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ShortTimePattern">
+      <MemberSignature Language="ILASM" Value=".property string ShortTimePattern { public hidebysig specialname instance string get_ShortTimePattern() public hidebysig specialname instance void set_ShortTimePattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string ShortTimePattern { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the format pattern for a short time value.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the format pattern for a short time value.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> and <see cref="M:System.DateTime.ToString" /> methods associate the format
+   pattern returned by this property with the 't' format character.</para>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.ShortTimePattern" /> is "HH:mm". </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SortableDateTimePattern">
+      <MemberSignature Language="C#" Value="public string SortableDateTimePattern { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TimeSeparator">
+      <MemberSignature Language="ILASM" Value=".property string TimeSeparator { public hidebysig specialname instance string get_TimeSeparator() public hidebysig specialname instance void set_TimeSeparator(string value) }" />
+      <MemberSignature Language="C#" Value="public string TimeSeparator { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the culture-specific <see cref="T:System.String" /> to use to separate the components of time values (hour, minutes, seconds).</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.String" /> to use to separate the components of time; that is, the hour, the minutes and the seconds.</para>
+        </value>
+        <remarks>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.TimeSeparator" /> is ":".</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UniversalSortableDateTimePattern">
+      <MemberSignature Language="C#" Value="public string UniversalSortableDateTimePattern { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="YearMonthPattern">
+      <MemberSignature Language="ILASM" Value=".property string YearMonthPattern { public hidebysig specialname instance string get_YearMonthPattern() public hidebysig specialname instance void set_YearMonthPattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string YearMonthPattern { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the format pattern for a year and month value.</para>
+        </summary>
+        <value>
+          <para> The format pattern for a year and month value.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> and <see cref="M:System.DateTime.ToString" />
+methods associate the format pattern returned by this property with the
+'y' and 'Y' format character.</para>
+          <para>The property value of the culture invariant <see cref="P:System.Globalization.DateTimeFormatInfo.YearMonthPattern" /> is "yyyy MMMM". </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

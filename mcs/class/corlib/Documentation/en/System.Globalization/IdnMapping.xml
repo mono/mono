@@ -1,0 +1,268 @@
+<Type Name="IdnMapping" FullName="System.Globalization.IdnMapping">
+  <TypeSignature Language="C#" Value="public sealed class IdnMapping" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersions>
+      <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </AssemblyVersions>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public IdnMapping ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AllowUnassigned">
+      <MemberSignature Language="C#" Value="public bool AllowUnassigned { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberType>Method</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAscii">
+      <MemberSignature Language="C#" Value="public string GetAscii (string unicode);" />
+      <MemberType>Method</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="unicode" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="unicode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAscii">
+      <MemberSignature Language="C#" Value="public string GetAscii (string unicode, int index);" />
+      <MemberType>Method</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="unicode" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="unicode">To be added.</param>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAscii">
+      <MemberSignature Language="C#" Value="public string GetAscii (string unicode, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="unicode" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="unicode">To be added.</param>
+        <param name="index">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetUnicode">
+      <MemberSignature Language="C#" Value="public string GetUnicode (string ascii);" />
+      <MemberType>Method</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ascii" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="ascii">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetUnicode">
+      <MemberSignature Language="C#" Value="public string GetUnicode (string ascii, int index);" />
+      <MemberType>Method</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ascii" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="ascii">To be added.</param>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetUnicode">
+      <MemberSignature Language="C#" Value="public string GetUnicode (string ascii, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ascii" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="ascii">To be added.</param>
+        <param name="index">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UseStd3AsciiRules">
+      <MemberSignature Language="C#" Value="public bool UseStd3AsciiRules { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyVersions>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyVersions>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

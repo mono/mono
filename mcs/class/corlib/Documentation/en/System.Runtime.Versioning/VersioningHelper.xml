@@ -1,0 +1,68 @@
+<Type Name="VersioningHelper" FullName="System.Runtime.Versioning.VersioningHelper">
+  <TypeSignature Language="C#" Value="public static class VersioningHelper" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="MakeVersionSafeName">
+      <MemberSignature Language="C#" Value="public static string MakeVersionSafeName (string name, System.Runtime.Versioning.ResourceScope from, System.Runtime.Versioning.ResourceScope to);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="from" Type="System.Runtime.Versioning.ResourceScope" />
+        <Parameter Name="to" Type="System.Runtime.Versioning.ResourceScope" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="from">To be added.</param>
+        <param name="to">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MakeVersionSafeName">
+      <MemberSignature Language="C#" Value="public static string MakeVersionSafeName (string name, System.Runtime.Versioning.ResourceScope from, System.Runtime.Versioning.ResourceScope to, Type type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="from" Type="System.Runtime.Versioning.ResourceScope" />
+        <Parameter Name="to" Type="System.Runtime.Versioning.ResourceScope" />
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="from">To be added.</param>
+        <param name="to">To be added.</param>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

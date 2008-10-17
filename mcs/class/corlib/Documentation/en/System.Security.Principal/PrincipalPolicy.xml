@@ -1,0 +1,72 @@
+<Type Name="PrincipalPolicy" FullName="System.Security.Principal.PrincipalPolicy">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public enum PrincipalPolicy" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>The policy under which the thread principal is created.</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="NoPrincipal">
+      <MemberSignature Language="C#" Value="NoPrincipal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.PrincipalPolicy</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>No principal is created for threads.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnauthenticatedPrincipal">
+      <MemberSignature Language="C#" Value="UnauthenticatedPrincipal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.PrincipalPolicy</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>An unauthenticaed <see cref="T:System.Security.Principal.GenericPrincipal" /> is created.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WindowsPrincipal">
+      <MemberSignature Language="C#" Value="WindowsPrincipal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.PrincipalPolicy</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>An operating system principal is created for the threads.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

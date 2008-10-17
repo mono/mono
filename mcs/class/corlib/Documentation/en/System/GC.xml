@@ -1,0 +1,466 @@
+<Type Name="GC" FullName="System.GC" FullNameSP="System_GC" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed GC extends System.Object" />
+  <TypeSignature Language="C#" Value="public static class GC" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Provides a mechanism for programmatic control of
+      the garbage collector.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>The <paramref name="garbage" /><paramref name="collector" /> is responsible for tracking and reclaiming
+   objects allocated in managed memory. Periodically, the garbage collector
+   performs a garbage collection to reclaim memory allocated to objects for which
+   there are no valid references. Garbage collections happen automatically when a
+   request for memory cannot be satisfied using available free memory. </para>
+        <para>A garbage collection consists of the following
+   steps:
+   </para>
+        <list type="number">
+          <item>
+            <term>
+      The garbage collector searches for managed objects
+      that are referenced in managed code.</term>
+          </item>
+          <item>
+            <term>
+      The garbage collector attempts to finalize
+      unreferenced objects.</term>
+          </item>
+          <item>
+            <term>
+      The garbage collector frees unreferenced objects and reclaims their
+      memory.</term>
+          </item>
+        </list>
+        <para>During a collection, the garbage collector will not free an object if it
+   finds one or more references to the object in managed code. However, the garbage
+   collector does not recognize references to an object from unmanaged code, and
+   can free objects that are being used exclusively in unmanaged code unless
+   explicitly prevented from doing so. The <see cref="M:System.GC.KeepAlive(System.Object)" /> method provides a mechanism that
+   prevents the garbage collector from collecting objects that are still in use in
+   unmanaged code.</para>
+        <para>Implementations of the garbage collector should track the following
+      information:</para>
+        <list type="bullet">
+          <item>
+            <term>
+         Memory allocated to objects that are still in use</term>
+          </item>
+          <item>
+            <term>
+         Memory allocated to objects that are no longer in use</term>
+          </item>
+          <item>
+            <term>
+         Objects that require finalization prior to being
+         freed</term>
+          </item>
+        </list>
+        <para>Other than managed memory allocations, implementations
+   of the garbage collector should not maintain information about resources held by
+   an object, such as file handles or database connections. When a type uses
+   unmanaged resources that must be released before instances of the type are
+   reclaimed, the type should implement a <paramref name="finalizer" />
+   
+   . In most cases, finalizers are implemented by
+   overriding the <see cref="M:System.Object.Finalize" /> method; however, types written in C# or C++ implement
+   destructors, which compilers turn into an override of
+<see cref="M:System.Object.Finalize" />. </para>
+        <para>In most cases, if an object has a finalizer, the garbage collector calls it
+   prior to freeing the object. However, the garbage collector is not required to
+   call finalizers in all situations. Also, the garbage collector is not required
+   to use a specific thread to finalize objects, or guarantee the order in which
+   finalizers are called for objects that reference each other but are otherwise
+   available for garbage collection. </para>
+        <para>In scenarios where resources must be released at a specific time, classes
+   should implement the <see cref="T:System.IDisposable" /> interface, which contains a single method (<see cref="M:System.IDisposable.Dispose" />)
+   that is used to perform resource management and cleanup tasks. Classes that
+   implement <see cref="M:System.IDisposable.Dispose" /> must specify, as part of their class contract, if and when class
+   consumers call the method to clean up the object. The garbage collector does
+   not, by default, call the <see cref="M:System.IDisposable.Dispose" /> method; however, implementations of the
+<see cref="M:System.IDisposable.Dispose" /> method can call methods in the <see cref="T:System.GC" /> class to customize the finalization
+   behavior of the garbage collector.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AddMemoryPressure">
+      <MemberSignature Language="C#" Value="public static void AddMemoryPressure (long bytesAllocated);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytesAllocated" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="bytesAllocated">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Collect">
+      <MemberSignature Language="C#" Value="public static void Collect ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Requests that the garbage collector reclaim memory allocated to objects for which there are no valid references.</para>
+        </summary>
+        <remarks>
+          <para>A call to this method is only a suggestion; such a call does not guarantee that any inaccessible memory is, in fact, reclaimed.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Collect">
+      <MemberSignature Language="C#" Value="public static void Collect (int generation);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="generation" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="generation">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Collect">
+      <MemberSignature Language="C#" Value="public static void Collect (int generation, GCCollectionMode mode);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="generation" Type="System.Int32" />
+        <Parameter Name="mode" Type="System.GCCollectionMode" />
+      </Parameters>
+      <Docs>
+        <param name="generation">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CollectionCount">
+      <MemberSignature Language="C#" Value="public static int CollectionCount (int generation);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="generation" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="generation">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetGeneration">
+      <MemberSignature Language="C#" Value="public static int GetGeneration (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetGeneration">
+      <MemberSignature Language="C#" Value="public static int GetGeneration (WeakReference wo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="wo" Type="System.WeakReference" />
+      </Parameters>
+      <Docs>
+        <param name="wo">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTotalMemory">
+      <MemberSignature Language="C#" Value="public static long GetTotalMemory (bool forceFullCollection);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="forceFullCollection" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="forceFullCollection">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="KeepAlive">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void KeepAlive(object obj)" />
+      <MemberSignature Language="C#" Value="public static void KeepAlive (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">A <see cref="T:System.Object" /> that is not to be reclaimed by the garbage collector.</param>
+        <summary>
+          <para> Creates a reference to the specified
+      object.</para>
+        </summary>
+        <remarks>
+          <para>The purpose of the <see cref="M:System.GC.KeepAlive(System.Object)" />
+method is to ensure the existence of
+a reference to an object that is at risk of being reclaimed by the
+garbage collector prematurely.</para>
+          <para>The <see cref="M:System.GC.KeepAlive(System.Object)" />
+method performs no operations and does not produce
+any side effects.</para>
+          <para>This method is required to be implemented in
+   such a way as to prevent optimizing tools from omitting the method call from
+   the executable code.</para>
+          <para>During program execution, after the call to the <see cref="M:System.GC.KeepAlive(System.Object)" /> method is
+executed, if there are no additional references to <paramref name="obj" /> in managed code
+or data, <paramref name="obj" />
+is eligible
+for garbage collection.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="MaxGeneration">
+      <MemberSignature Language="C#" Value="public static int MaxGeneration { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveMemoryPressure">
+      <MemberSignature Language="C#" Value="public static void RemoveMemoryPressure (long bytesAllocated);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytesAllocated" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="bytesAllocated">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReRegisterForFinalize">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void ReRegisterForFinalize(object obj)" />
+      <MemberSignature Language="C#" Value="public static void ReRegisterForFinalize (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> to add to the set of objects that require finalization.</param>
+        <summary>
+          <para>Requests that the specified object be added to the list
+      of objects that require finalization.</para>
+        </summary>
+        <remarks>
+          <para>The <see cref="M:System.GC.ReRegisterForFinalize(System.Object)" /> method adds <paramref name="obj" /> to the list of
+   objects that request finalization before the garbage collector frees the object.
+<paramref name="obj" /> is required to be the caller of this
+   method.</para>
+          <para>Calling the <see cref="M:System.GC.ReRegisterForFinalize(System.Object)" /> method 
+does not guarantee that the garbage collector will call an object's finalizer.
+<block subset="none" type="note"> For more information, see
+<see cref="M:System.Object.Finalize" /> 
+.</block></para>
+          <para>
+            <block subset="none" type="note">By default, all
+   objects that implement finalizers are added to the list of objects that require
+   finalization; however, an object might have already been finalized, or might have
+   disabled finalization by calling the <see cref="M:System.GC.SuppressFinalize(System.Object)" />
+   method.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj" /> is a <see langword="null" /> reference.</exception>
+        <exception cref="T:System.ExecutionEngineException">The caller of this method is not the same as the object passed to this method.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SuppressFinalize">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SuppressFinalize(object obj)" />
+      <MemberSignature Language="C#" Value="public static void SuppressFinalize (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> whose <see cref="M:System.Object.Finalize" /> method will not be called.</param>
+        <summary>
+          <para>Instructs the garbage collector not to call the <see cref="M:System.Object.Finalize" /> method on the specified
+   object.</para>
+        </summary>
+        <remarks>
+          <para>The method removes <paramref name="obj" /> from the set of objects
+   that require finalization. <paramref name="obj" /> is required to be the caller of this
+   method.</para>
+          <para>
+            <block subset="none" type="note">Objects that
+   implement the <see cref="T:System.IDisposable" /> interface should call this method from the <see cref="M:System.IDisposable.Dispose" />
+   method to prevent the garbage collector from calling <see cref="M:System.Object.Finalize" /> on an
+   object that does not require it.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="obj" /> is a <see langword="null" /> reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The caller of this method is not the same as the object passed to this method.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WaitForPendingFinalizers">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WaitForPendingFinalizers()" />
+      <MemberSignature Language="C#" Value="public static void WaitForPendingFinalizers ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Suspends the current thread until the set of objects
+ waiting for finalization is empty.</para>
+        </summary>
+        <remarks>
+          <para>
+            <see cref="M:System.GC.WaitForPendingFinalizers" /> 
+
+blocks an application until all objects that are awaiting
+finalization have been finalized.</para>
+          <para>When the garbage collector finds objects that can be 
+ reclaimed, it checks each object to determine the object's finalization
+ requirements. If an object implements a finalizer and has not disabled
+ finalization by calling <see cref="M:System.GC.SuppressFinalize(System.Object)" />, the object is passed to the thread
+ that handles finalization. The <see cref="M:System.GC.WaitForPendingFinalizers" />
+ 
+ method blocks until all finalizers
+ have run to completion.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

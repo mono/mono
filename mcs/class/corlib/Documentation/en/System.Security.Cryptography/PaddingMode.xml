@@ -1,0 +1,103 @@
+<Type Name="PaddingMode" FullName="System.Security.Cryptography.PaddingMode">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public enum PaddingMode" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Padding Modes for Symmetric Block Ciphers. How to pad the message processed by block ciphers when they don't come out to the being the size of the block.</summary>
+    <remarks>
+      <para>Block ciphers requires complete block to encrypt. Any block smaller than the cipher block size must be padded.</para>
+      <para>Cipher padding modes are only applicable to block ciphers. Stream ciphers, like RC4(tm), do not use them.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ANSIX923">
+      <MemberSignature Language="C#" Value="ANSIX923" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.PaddingMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ISO10126">
+      <MemberSignature Language="C#" Value="ISO10126" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.PaddingMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.PaddingMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>No padding is added. This may be the case when an application use a custom padding or when data packets are always a multiple of the cipher block size. A <see cref="T:System.Security.Cryptography.CryptographicException" /> is thrown if the last block size is different from the cipher block size.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PKCS7">
+      <MemberSignature Language="C#" Value="PKCS7" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.PaddingMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Default padding. This padding adds the byte "padding length" as the padding material. That is a padding of 4 bytes will be 0x04 0x04 0x04 0x04. In case the last block size is equal to the cipher block size a new block is added containing only the padding (e.g. 8 times 0x08). Despite it's name the padding is detailled in PKCS #5 (<see cref="http://www.rsasecurity.com/rsalabs/pkcs/pkcs-5/index.html" />).</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Zeros">
+      <MemberSignature Language="C#" Value="Zeros" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.PaddingMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The last block is padded with 0x00. This makes it difficult when decrypting to know if the last bytes are real 0x00 or padding material. In the .NET framework the application decrypting the block must unpad the zero itself.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

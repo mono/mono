@@ -1,0 +1,9 @@
+<Namespace Name="System.Threading" FullName="System.Threading" FullNameSP="System.Threading" Maintainer="Mono">
+  <Docs>
+    <summary>
+        This namespace provides the core classes for multi-threaded programming, including the Thread class to launch threads as well as several classes for synchronization and multi-threaded resource management.
+    </summary>
+    <remarks>
+    </remarks>
+  </Docs>
+</Namespace>

@@ -1,0 +1,50 @@
+<Type Name="EventHandler" FullName="System.EventHandler" FullNameSP="System_EventHandler" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable EventHandler extends System.Delegate" />
+  <TypeSignature Language="C#" Value="public delegate void EventHandler(object sender, EventArgs e);" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Docs>
+    <param name="sender">The object that raised the event.</param>
+    <param name="e">A <see cref="T:System.EventArgs" /> instance that contains the event data.</param>
+    <summary>
+      <para> Defines the shape of methods that are called in response to an event.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para> A <see cref="T:System.EventHandler" /> instance is used to specify the methods that
+      are invoked in response to an event. To associate an instance of
+   <see langword="EventHandler" /> with an event, add the
+   <see langword="EventHandler" /> instance to the event. The methods referenced by the
+   <see langword="EventHandler " />instance are invoked
+      whenever the event is raised, until the
+   <see langword="EventHandler" />
+   instance is removed from the event. </para>
+        <para>If the event does not generate data, applications use the base
+   class <see cref="T:System.EventArgs" /> for the event data object
+<paramref name="e" />. For more information, see <see cref="T:System.EventArgs" />.  For additional information about events, see Partitions I and II of the CLI Specification. </para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="e" Type="System.EventArgs" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

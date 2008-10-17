@@ -1,0 +1,652 @@
+<Type Name="RSACryptoServiceProvider" FullName="System.Security.Cryptography.RSACryptoServiceProvider">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class RSACryptoServiceProvider : System.Security.Cryptography.RSA, System.Security.Cryptography.ICspAsymmetricAlgorithm" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Security.Cryptography.RSA</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Security.Cryptography.ICspAsymmetricAlgorithm</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>Managed implementation of the RSA asymmetric algorithm.</summary>
+    <remarks>
+      <para>In Mono this class is completely implemented in managed code.</para>
+      <para>A major design difference between Mono and Microsoft implementation is the key generation. Microsoft always generate a new key pair in the constructor (unless a <see cref="T:System.Security.Cryptography.CspParameters" /> object is used with an non-empty container). This can degrade performance (e.g. server) when key pair are imported (e.g. XML) after the object is created. Mono implementation doesn't generate a new key pair until it is required (e.g. exporting, signing, encrypting ...). This shouldn't affect functionality but you may experience slowdown (during key pair generation) at a different time than MS implementation.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RSACryptoServiceProvider ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Create a new RSACryptoServiceProvider instance with the specified key pair length. </summary>
+        <remarks>Default key size is 1024 bits.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RSACryptoServiceProvider (int dwKeySize);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="dwKeySize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="dwKeySize">Length of the public key modulus. This can be between 384 and 16384 bits in multiple of 8 bits increments.</param>
+        <summary>Create a new DSACryptoServiceProvider instance with the specified key pair length.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RSACryptoServiceProvider (System.Security.Cryptography.CspParameters parameters);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Security.Cryptography.CspParameters" />
+      </Parameters>
+      <Docs>
+        <param name="parameters">To be added: an object of type 'CspParameters'</param>
+        <summary>Create a new RSACryptoServiceProvider instance with the default key pair length. The generated key pair will be persisted in the key store specified by the CspParameters.</summary>
+        <remarks>Default key size is 1024 bits.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RSACryptoServiceProvider (int dwKeySize, System.Security.Cryptography.CspParameters parameters);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="dwKeySize" Type="System.Int32" />
+        <Parameter Name="parameters" Type="System.Security.Cryptography.CspParameters" />
+      </Parameters>
+      <Docs>
+        <param name="dwKeySize">Length of the public key modulus. This can be between 384 and 16384 bits in multiple of 8 bits increments.</param>
+        <param name="parameters">To be added: an object of type 'CspParameters'</param>
+        <summary>Create a new RSACryptoServiceProvider instance with the specified key pair length. The generated key pair will be persisted in the key store specified by the CspParameters.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CspKeyContainerInfo">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.CspKeyContainerInfo CspKeyContainerInfo { get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CspKeyContainerInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Decrypt">
+      <MemberSignature Language="C#" Value="public byte[] Decrypt (byte[] rgb, bool fOAEP);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgb" Type="System.Byte[]" />
+        <Parameter Name="fOAEP" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="rgb">The encrypted data.</param>
+        <param name="fOAEP">True to use the OAEP padding, false to use PKCS#1 padding.</param>
+        <summary>Decrypt the provided data using the private key and the specified padding mechanism.</summary>
+        <returns>An array of bytes containing the decrypted data.</returns>
+        <remarks>
+          <para>RSA isn't normally used to do bulk encryption. The two main reasons are length restriction (public key size and padding limit the maximum length of data that can be encrypted in a single operation) and performance (as RSA is very slow compared to most symmetric ciphers).</para>
+          <para>The following example shows how to combine the use of RSA and a symmetric cipher, Rjindael, to "quickly" decrypt data of an unlimited length (provided is was encrypted with the reversed algorithm).</para>
+          <example>
+            <code lang="C#">
+static byte[] Decrypt (RSA rsa, byte[] input) 
+{
+     // by default this will create a 128 bits AES (Rijndael) object
+     SymmetricAlgorithm sa = SymmetricAlgorithm.Create ();
+
+     byte[] keyex = new byte [rsa.KeySize &gt;&gt; 3];
+     Buffer.BlockCopy (input, 0, keyex, 0, keyex.Length);
+
+     RSAPKCS1KeyExchangeDeformatter def = new RSAPKCS1KeyExchangeDeformatter (rsa);
+     byte[] key = def.DecryptKeyExchange (keyex);
+
+     byte[] iv = new byte [sa.IV.Length];
+     Buffer.BlockCopy (input, keyex.Length, iv, 0, iv.Length);
+
+     ICryptoTransform ct = sa.CreateDecryptor (key, iv);
+     byte[] decrypt = ct.TransformFinalBlock (input, keyex.Length + iv.Length, input.Length - (keyex.Length + iv.Length));
+     return decrypt;
+}
+  </code>
+          </example>
+          <para>Interoperability warning: Microsoft CryptoAPI only supports OAEP since Windows XP.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DecryptValue">
+      <MemberSignature Language="C#" Value="public override byte[] DecryptValue (byte[] rgb);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgb" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rgb">The encrypted data.</param>
+        <summary>Raw (unpadded) decryption using the RSA private key.</summary>
+        <returns>An array of bytes containing the decrypted data. </returns>
+        <remarks>
+          <para>Note: This method is implemented in Mono but isn't supported in the Microsoft .NET framework. There are good reason for this:</para>
+          <list type="bullet">
+            <item>
+              <term>Mono requires the method to implement the RSA Formatter and Deformatter classes.</term>
+            </item>
+            <item>
+              <term>Microsoft's CryptoAPI doesn't support direct RSA encryption/decryption.</term>
+            </item>
+            <item>
+              <term>You shouldn't be using them anyway!!! as this isn't the way to encrypt using RSA. You need to apply padding before encrypting (and remove it when decrypting). Not doing so is both dangerous (non secure) and very slow.</term>
+            </item>
+          </list>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">To be added: an object of type 'bool'</param>
+        <summary>To be added</summary>
+        <remarks>The private key is zeroized during Dispose.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Encrypt">
+      <MemberSignature Language="C#" Value="public byte[] Encrypt (byte[] rgb, bool fOAEP);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgb" Type="System.Byte[]" />
+        <Parameter Name="fOAEP" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="rgb">The data to be encrypted.</param>
+        <param name="fOAEP">True to use the OAEP padding, false to use PKCS#1 padding.</param>
+        <summary>Encrypt the provided data using the public key and the specified padding mechanism.</summary>
+        <returns>An array of bytes containing the encrypted data.</returns>
+        <remarks>
+          <para>RSA isn't normally used to do bulk encryption. The two main reasons are length restriction (public key size and padding limit the maximum length of data that can be encrypted in a single operation) and performance (as RSA is very slow compared to most symmetric ciphers).</para>
+          <para>The following example shows how to combine the use of RSA and a symmetric cipher, Rjindael, to "quickly" encrypt data of an unlimited length.</para>
+          <example>
+            <code lang="C#">
+static byte[] Encrypt (RSA rsa, byte[] input) 
+{
+     // by default this will create a 128 bits AES (Rijndael) object
+     SymmetricAlgorithm sa = SymmetricAlgorithm.Create ();
+     ICryptoTransform ct = sa.CreateEncryptor ();
+     byte[] encrypt = ct.TransformFinalBlock (input, 0, input.Length);
+
+     RSAPKCS1KeyExchangeFormatter fmt = new RSAPKCS1KeyExchangeFormatter (rsa);
+     byte[] keyex = fmt.CreateKeyExchange (sa.Key);
+
+     // return the key exchange, the IV (public) and encrypted data
+     byte[] result = new byte [keyex.Length + sa.IV.Length + encrypt.Length];
+     Buffer.BlockCopy (keyex, 0, result, 0, keyex.Length);
+     Buffer.BlockCopy (sa.IV, 0, result, keyex.Length, sa.IV.Length);
+     Buffer.BlockCopy (encrypt, 0, result, keyex.Length + sa.IV.Length, encrypt.Length);
+     return result;
+}
+  </code>
+          </example>
+          <para>Interoperability warning: Microsoft CryptoAPI only supports OAEP since Windows XP.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EncryptValue">
+      <MemberSignature Language="C#" Value="public override byte[] EncryptValue (byte[] rgb);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgb" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rgb">The data to be encrypted. </param>
+        <summary>Raw (unpadded) encryption using the RSA public key.</summary>
+        <returns>An array of bytes containing the encrypted data.</returns>
+        <remarks>
+          <para>Note: This method is implemented in Mono but isn't supported in the Microsoft .NET framework. There are good reason for this:</para>
+          <list type="bullet">
+            <item>
+              <term>Mono requires the method to implement the RSA Formatter and Deformatter classes.</term>
+            </item>
+            <item>
+              <term>Microsoft's CryptoAPI doesn't support direct RSA encryption/decryption.</term>
+            </item>
+            <item>
+              <term>You shouldn't be using them anyway!!! as this isn't the way to encrypt using RSA. You need to apply padding before encrypting (and remove it when decrypting). Not doing so is both dangerous (non secure) and very slow.</term>
+            </item>
+          </list>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExportCspBlob">
+      <MemberSignature Language="C#" Value="public byte[] ExportCspBlob (bool includePrivateParameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="includePrivateParameters" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="includePrivateParameters">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ExportParameters">
+      <MemberSignature Language="C#" Value="public override System.Security.Cryptography.RSAParameters ExportParameters (bool includePrivateParameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.RSAParameters</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="includePrivateParameters" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="includePrivateParameters">True to include private parameters; otherwise, false.</param>
+        <summary>Export the instance key into a <see cref="T:System.Security.Cryptography.RSAParameters" /> structure.</summary>
+        <returns>a RSAParameters structure contaning each parameters of the key.</returns>
+        <remarks>You are responsable to zeroize the private key (<see cref="T:System.Security.Cryptography.RSAParameters" /> parameters <see cref="M:System.Security.Cryptography.RSAParameters.D" />, <see cref="M:System.Security.Cryptography.RSAParameters.P" />, <see cref="M:System.Security.Cryptography.RSAParameters.Q" />, <see cref="M:System.Security.Cryptography.RSAParameters.DP" />, <see cref="M:System.Security.Cryptography.RSAParameters.DQ" /> and <see cref="M:System.Security.Cryptography.RSAParameters.InverseQ" />) if you export it from the instance.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~RSACryptoServiceProvider ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ImportCspBlob">
+      <MemberSignature Language="C#" Value="public void ImportCspBlob (byte[] keyBlob);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keyBlob" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="keyBlob">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ImportParameters">
+      <MemberSignature Language="C#" Value="public override void ImportParameters (System.Security.Cryptography.RSAParameters parameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Security.Cryptography.RSAParameters" />
+      </Parameters>
+      <Docs>
+        <param name="parameters">A RSAParameters containing the RSA key parameters.</param>
+        <summary>Import the key from the <see cref="T:System.Security.Cryptography.DSAParameters" /> structure into the current instance.</summary>
+        <remarks>Parameters D, P and Q are required to import an RSA private key. Parameters DP, DQ and InverseQ will be used for the Chinese Remainder Theorem (CRT) optimization if available.
+</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="KeyExchangeAlgorithm">
+      <MemberSignature Language="C#" Value="public override string KeyExchangeAlgorithm { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Return the common, but unique, name when using this algorithm for key exchange.</summary>
+        <value>RSA-PKCS1-KeyEx</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="KeySize">
+      <MemberSignature Language="C#" Value="public override int KeySize { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Return the key length (in bits) of the current key.</summary>
+        <value>The size (in bits) of the current key.</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PersistKeyInCsp">
+      <MemberSignature Language="C#" Value="public bool PersistKeyInCsp { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Specify if the current key pair is persisted into a Cryptographic Service Provider (CSP)</summary>
+        <value>True if the key is persisted, false otherwise.</value>
+        <remarks>If specified Mono:: key pair persistance mechanism will kept the keys on disk. A <see cref="T:System.Security.Cryptography.CspParameters" /> must been specified in the constructor to allow key persistance.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PublicOnly">
+      <MemberSignature Language="C#" Value="public bool PublicOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SignatureAlgorithm">
+      <MemberSignature Language="C#" Value="public override string SignatureAlgorithm { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Return the common, but unique, name when using this algorithm for signature.</summary>
+        <value>http://www.w3.org/2000/09/xmldsig#rsa-sha1</value>
+        <remarks>This value comes from the W3 "XML-Signature Syntax and Processing" specification available at http://www.w3.org/TR/xmldsig-core/</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SignData">
+      <MemberSignature Language="C#" Value="public byte[] SignData (byte[] buffer, object halg);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="halg" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">The data buffer to be hashed then signed. </param>
+        <param name="halg">An object representing the hash algorithm to be used. The object can either be:
+<list type="bullet"><item><term>a <see cref="T:System.String" /> representing the hash algorithm name. The hash object will then be created using <see cref="T:System.Security.Cryptography.HashAlgorithm" />.<see cref="M:System.Security.Cryptography.HashAlgorithm.Create" /> (<see cref="T:System.String" />).</term></item><item><term>a <see cref="T:System.Security.Cryptography.HashAlgorithm" /> instance that will be directly used.</term></item><item><term>a <see cref="T:System.Type" /> representing the hash algorithm. The hash object will then be created using <see cref="T:System.Activator" />.<see cref="M:System.Activator.CreateInstance" /> (<see cref="T:System.Type" />).</term></item></list></param>
+        <summary>Process the specified hash algorithm on the complete buffer specified then sign it's result.</summary>
+        <returns>The signature value of the processed buffer.</returns>
+        <remarks>This method can work with ANY configured (OID in machine.config) HashAlgorithm descendant.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SignData">
+      <MemberSignature Language="C#" Value="public byte[] SignData (System.IO.Stream inputStream, object halg);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputStream" Type="System.IO.Stream" />
+        <Parameter Name="halg" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="inputStream">The data stream to be hashed then signed.</param>
+        <param name="halg">An object representing the hash algorithm to be used. The object can either be:
+<list type="bullet"><item><term>a <see cref="T:System.String" /> representing the hash algorithm name. The hash object will then be created using <see cref="T:System.Security.Cryptography.HashAlgorithm" />.<see cref="M:System.Security.Cryptography.HashAlgorithm.Create" /> (<see cref="T:System.String" />).</term></item><item><term>a <see cref="T:System.Security.Cryptography.HashAlgorithm" /> instance that will be directly used.</term></item><item><term>a <see cref="T:System.Type" /> representing the hash algorithm. The hash object will then be created using <see cref="T:System.Activator" />.<see cref="M:System.Activator.CreateInstance" /> (<see cref="T:System.Type" />).</term></item></list></param>
+        <summary>Process the specified hash algorithm on the stream then sign it's result.</summary>
+        <returns>The signature value of the processed buffer.</returns>
+        <remarks>This method can work with ANY configured (OID in machine.config) HashAlgorithm descendant.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SignData">
+      <MemberSignature Language="C#" Value="public byte[] SignData (byte[] buffer, int offset, int count, object halg);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="halg" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">The data buffer to be hashed then signed. </param>
+        <param name="offset">To be added: an object of type 'int'</param>
+        <param name="count">To be added: an object of type 'int'</param>
+        <param name="halg">An object representing the hash algorithm to be used. The object can either be:
+<list type="bullet"><item><term>a <see cref="T:System.String" /> representing the hash algorithm name. The hash object will then be created using <see cref="T:System.Security.Cryptography.HashAlgorithm" />.<see cref="M:System.Security.Cryptography.HashAlgorithm.Create" /> (<see cref="T:System.String" />).</term></item><item><term>a <see cref="T:System.Security.Cryptography.HashAlgorithm" /> instance that will be directly used.</term></item><item><term>a <see cref="T:System.Type" /> representing the hash algorithm. The hash object will then be created using <see cref="T:System.Activator" />.<see cref="M:System.Activator.CreateInstance" /> (<see cref="T:System.Type" />).</term></item></list></param>
+        <summary>Process the specified hash algorithm on a subset of the buffer specified then sign it's result.</summary>
+        <returns>The signature value of the processed buffer.</returns>
+        <remarks>This method can work with ANY configured (OID in machine.config) HashAlgorithm descendant.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SignHash">
+      <MemberSignature Language="C#" Value="public byte[] SignHash (byte[] rgbHash, string str);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgbHash" Type="System.Byte[]" />
+        <Parameter Name="str" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="rgbHash">The hash to be signed. </param>
+        <param name="str">OID for the hash algorithm using in the signature.</param>
+        <summary>Sign the specified hash value.</summary>
+        <returns>The signature value of the processed buffer.</returns>
+        <remarks>This method is LIMITED to SHA1 and MD5 like the MS framework 1.0 and 1.1 because there's no method to get a hash algorithm from an OID. However there's no such limit when using the RSAPKCS1[De]Formatter class.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UseMachineKeyStore">
+      <MemberSignature Language="C#" Value="public static bool UseMachineKeyStore { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Specified if, by default, the key store for persistance should be the machine store (default is the user store).</summary>
+        <value>True if the machine key store is used by default, false otherwise.</value>
+        <remarks>Keys kept in the machine store are readable by every user on the system.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VerifyData">
+      <MemberSignature Language="C#" Value="public bool VerifyData (byte[] buffer, object halg, byte[] signature);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="halg" Type="System.Object" />
+        <Parameter Name="signature" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">The data buffer to be hashed then verified. </param>
+        <param name="halg">An object representing the hash algorithm to be used. The object can either be:
+<list type="bullet"><item><term>a <see cref="T:System.String" /> representing the hash algorithm name. The hash object will then be created using <see cref="T:System.Security.Cryptography.HashAlgorithm" />.<see cref="M:System.Security.Cryptography.HashAlgorithm.Create" /> (<see cref="T:System.String" />).</term></item><item><term>a <see cref="T:System.Security.Cryptography.HashAlgorithm" /> instance that will be directly used.</term></item><item><term>a <see cref="T:System.Type" /> representing the hash algorithm. The hash object will then be created using <see cref="T:System.Activator" />.<see cref="M:System.Activator.CreateInstance" /> (<see cref="T:System.Type" />).</term></item></list></param>
+        <param name="signature">An array of bytes containing the RSA signature of the specified hash.</param>
+        <summary>Process the specified hash algorithm on the complete buffer specified then verify it's signature. </summary>
+        <returns>True if the signature can be verified, false otherwise.</returns>
+        <remarks>This method can work with ANY configured (OID in machine.config) HashAlgorithm descendant.
+</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VerifyHash">
+      <MemberSignature Language="C#" Value="public bool VerifyHash (byte[] rgbHash, string str, byte[] rgbSignature);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgbHash" Type="System.Byte[]" />
+        <Parameter Name="str" Type="System.String" />
+        <Parameter Name="rgbSignature" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rgbHash">The hash to be verified.</param>
+        <param name="str">OID for the hash algorithm using in the signature.</param>
+        <param name="rgbSignature">An array of bytes containing the RSA signature of the specified hash.</param>
+        <summary>Verify the signature using the specified hash value. </summary>
+        <returns>True if the signature can be verified, false otherwise.</returns>
+        <remarks>This method is LIMITED to SHA1 and MD5 like the MS framework 1.0 and 1.1 because there's no method to get a hash algorithm from an OID.  However there's no such limit when using the RSAPKCS1[De]Formatter class.
+</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

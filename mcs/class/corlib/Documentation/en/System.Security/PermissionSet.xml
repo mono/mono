@@ -1,0 +1,1131 @@
+<Type Name="PermissionSet" FullName="System.Security.PermissionSet" FullNameSP="System_Security_PermissionSet" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable PermissionSet extends System.Object implements System.Collections.ICollection, System.Collections.IEnumerable" />
+  <TypeSignature Language="C#" Value="public class PermissionSet : System.Collections.ICollection, System.Runtime.Serialization.IDeserializationCallback, System.Security.ISecurityEncodable, System.Security.IStackWalk" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.ICollection</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.IDeserializationCallback</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Security.ISecurityEncodable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Security.IStackWalk</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Represents a collection that can contain different kinds of permissions and perform security
+      operations.</para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">Use <see cref="T:System.Security.PermissionSet" />
+to perform operations on different permission types as
+a group.</block>
+      </para>
+      <para>The XML encoding of a <see cref="T:System.Security.PermissionSet" /> instance is defined below in EBNF format. The
+   following conventions are used: </para>
+      <list type="bullet">
+        <item>
+          <term>
+            <para> All non-literals in the grammar below are shown in normal
+         type.</para>
+          </term>
+        </item>
+        <item>
+          <term>
+            <para> All literals are in bold font. </para>
+          </term>
+        </item>
+      </list>
+      <para> The following meta-language symbols are used: </para>
+      <list type="bullet">
+        <item>
+          <term>
+         
+         '*' represents a meta-language symbol suffixing an
+         expression that can appear zero or more times.</term>
+        </item>
+        <item>
+          <term>
+         
+         '?' represents a meta-language symbol suffixing an
+         expression that can appear zero or one time.</term>
+        </item>
+        <item>
+          <term>
+         
+         '+' represents a meta-language symbol suffixing an
+         expression that can appear one or more times.</term>
+        </item>
+        <item>
+          <term>
+         
+         '(',')' is used to group literals, non-literals or a
+         mixture of literals and non-literals.</term>
+        </item>
+        <item>
+          <term>
+         
+         '|' denotes an exclusive disjunction between two
+         expressions.</term>
+        </item>
+        <item>
+          <term>
+         
+         '::= ' denotes a production rule where a left hand
+         non-literal is replaced by a right hand expression containing literals,
+         non-literals or both.</term>
+        </item>
+      </list>
+      <para> The XML encoding of a <see cref="T:System.Security.PermissionSet" />
+instance is as follows:</para>
+      <c>
+        <para>PermissionSet::=</para>
+        <para>(</para>
+        <para>
+          <see langword="&lt;PermissionSet" />
+        </para>
+        <para>
+          <see langword="class=&quot;System.Security.PermissionSet&quot; " />
+        </para>
+        <para>
+          <see langword="version=&quot;1&quot; Unrestricted=&quot;true&quot;/&gt;" />
+        </para>
+        <para>)</para>
+        <para>|</para>
+        <para>(</para>
+        <para>
+          <see langword="&lt;PermissionSet" />
+        </para>
+        <para>
+          <see langword="class=&quot;System.Security.PermissionSet&quot; " />
+        </para>
+        <para>
+          <see langword="version=&quot;1&quot;&gt;" />
+        </para>
+        <para>DnsPermissionXML ? </para>
+        <para>SocketPermissionXML ? </para>
+        <para>WebPermissionXML ? </para>
+        <para>EnvironmentPermissionXML ? </para>
+        <para>FileIOPermissionXML ? </para>
+        <para>ReflectionPermissionXML ?</para>
+        <para>SecurityPermissionXML ? </para>
+        <para>CustomPermissionXML *</para>
+        <para>
+          <see langword="&lt;/PermissionSet&gt;" />
+        </para>
+        <para>)</para>
+      </c>
+      <para> CustomPermissionXML represents any custom permission. The XML encoding for custom permissions makes use of the following symbols:</para>
+      <para> ClassName is the name of the class implementing the
+   permission.</para>
+      <para> AssemblyName is the name of the assembly that contains
+   the class implementing the permission.</para>
+      <para> Version is the version number indicating the
+   version of the assembly implementing the permission.</para>
+      <para> StrongNamePublicKeyToken is the strong name public key token constituting the
+   strong name of the assembly that implements the permission.</para>
+      <para> version is version information for the custom permission. Format and content
+   are defined by the author of the custom permission.</para>
+      <para> PermissionAttributes is any attribute and attribute value on the <see cref="T:System.Security.IPermission" /> element used by the 
+permission to represent a particular permission state, for example,
+unrestricted=
+"true".
+Format and content are defined by the author of the
+custom permission.</para>
+      <para> PermissionXML is any valid XML used by the permission to
+   represent permission state. Format and content are defined by the author of the custom
+   permission.</para>
+      <para>The XML encoding of a custom permission instance is as
+   follows:</para>
+      <c>
+        <para>CustomPermissionXML ::=</para>
+        <para>
+          <see langword="&lt;IPermission class=&quot;" />
+        </para>
+        <para>ClassName<see langword="," /></para>
+        <para>AssemblyName<see langword="," /></para>
+        <para>
+          <see langword="Version=" />Version<see langword="," /></para>
+        <para>
+          <see langword="Culture=neutral," />
+        </para>
+        <para>
+          <see langword="PublicKeyToken=" />StrongNamePublicKeyToken<see langword="&quot;" /></para>
+        <para>
+          <see langword="version=&quot;" />version<see langword="&quot;" /></para>
+        <para>(PermissionAttributes)*</para>
+        <para>&gt;</para>
+        <para>(PermissionXML)?</para>
+        <para>
+          <see langword="&lt;/IPermission&gt;" />
+        </para>
+      </c>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Security.Permissions.PermissionState state)" />
+      <MemberSignature Language="C#" Value="public PermissionSet (System.Security.Permissions.PermissionState state);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="state" Type="System.Security.Permissions.PermissionState" />
+      </Parameters>
+      <Docs>
+        <param name="state">
+          <para>A <see cref="T:System.Security.Permissions.PermissionState" /> value. This value is either <see cref="F:System.Security.Permissions.PermissionState.None" /> or <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> , to specify fully restricted or fully unrestricted access. </para>
+        </param>
+        <summary>
+          <para> Constructs a new instance of the <see cref="T:System.Security.PermissionSet" /> class with the
+   specified
+   value.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">The
+      new instance contains no permissions. To add a permission to the
+      new instance, use <see cref="M:System.Security.PermissionSet.AddPermission(System.Security.IPermission)" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="state" /> is not a valid <see cref="T:System.Security.Permissions.PermissionState" /> value.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Security.PermissionSet permSet)" />
+      <MemberSignature Language="C#" Value="public PermissionSet (System.Security.PermissionSet permSet);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="permSet" Type="System.Security.PermissionSet" />
+      </Parameters>
+      <Docs>
+        <param name="permSet">The <see cref="T:System.Security.PermissionSet" /> instance with which to initialize the values of the new instance, or <see langword="null" /> to initialize an empty permission set.</param>
+        <summary>
+          <para> Constructs a new instance of the <see cref="T:System.Security.PermissionSet" /> class with the
+ values of the specified <see cref="T:System.Security.PermissionSet" /> instance. </para>
+        </summary>
+        <remarks>
+          <para>If <paramref name="permSet" /> is not <see langword="null" /> , the new instance is
+ initialized with copies of the objects in <paramref name="permSet" />, not references
+ to those objects. If <paramref name="permSet" /> is <see langword="null" />, the new instance contains no
+ permissions.</para>
+          <para>
+            <block subset="none" type="note"> To add a permission to an
+ empty <see cref="T:System.Security.PermissionSet" /> ,
+ use <see cref="M:System.Security.PermissionSet.AddPermission(System.Security.IPermission)" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="permSet" /> is not <see langword="null" /> and is not an instance of <see cref="T:System.Security.PermissionSet" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddPermission">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.IPermission AddPermission(class System.Security.IPermission perm)" />
+      <MemberSignature Language="C#" Value="public System.Security.IPermission AddPermission (System.Security.IPermission perm);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.IPermission</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="perm" Type="System.Security.IPermission" />
+      </Parameters>
+      <Docs>
+        <param name="perm">The <see cref="T:System.Security.IPermission" /> object to add.</param>
+        <summary>
+          <para> Adds the specified <see cref="T:System.Security.IPermission" /> object to
+   the current instance if that permission does not already exist in the current instance.</para>
+        </summary>
+        <returns>
+          <para>If <paramref name="perm" /> is <see langword="null" />,
+   returns <see langword="null" /> . If a permission of the same type as
+<paramref name="perm" /> already exists in the current instance, the union of the existing 
+   permission and <paramref name="perm" /> is added to the current instance and is returned.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">The <see cref="T:System.Security.IPermission" /> is added if <paramref name="perm" /> is not
+<see langword="null" /> and a permission of the same type as <paramref name="perm" /> does 
+   not already exist in the current instance.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+   add permission objects to the current instance.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="perm" /> is not a <see cref="T:System.Security.IPermission" /> object.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Assert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Assert()" />
+      <MemberSignature Language="C#" Value="public void Assert ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Asserts that calling code can access the resources identified by the permissions contained in the current
+      instance through the code that calls this method, even if callers have not been
+      granted permission to access the resource. </para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is the only way to assert multiple permissions at the same time
+      within a frame because only a single assert can be active on a frame at one
+      time; subsequent asserts will result in an exception.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to insure that all callers can access
+      a set of secured resources.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">
+          <para>The asserting code does not have sufficient permission to call this method.</para>
+          <para>-or-</para>
+          <para>This method was called with permissions already asserted for the current stack frame.</para>
+        </exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">Requires permission to perform the assertion security operation. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.Assertion" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContainsNonCodeAccessPermissions">
+      <MemberSignature Language="C#" Value="public bool ContainsNonCodeAccessPermissions ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertPermissionSet">
+      <MemberSignature Language="C#" Value="public static byte[] ConvertPermissionSet (string inFormat, byte[] inData, string outFormat);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inFormat" Type="System.String" />
+        <Parameter Name="inData" Type="System.Byte[]" />
+        <Parameter Name="outFormat" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="inFormat">To be added.</param>
+        <param name="inData">To be added.</param>
+        <param name="outFormat">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.PermissionSet Copy()" />
+      <MemberSignature Language="C#" Value="public virtual System.Security.PermissionSet Copy ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.PermissionSet</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a new <see cref="T:System.Security.PermissionSet" /> containing copies of the objects in the current instance.</para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.Security.PermissionSet" /> that is value equal to the current instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method creates
+      copies of the permission objects in the current instance, and adds them to the new instance.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method calls
+   the <see cref="T:System.Security.PermissionSet" />
+   constructor that takes a <see cref="T:System.Security.PermissionSet" /> argument,
+   and passes the current instance as that parameter.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+   create a new <see cref="T:System.Security.PermissionSet" /> instance containing permissions that are identical to the permissions contained in
+   the current instance.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void CopyTo(class System.Array array, int32 index)" />
+      <MemberSignature Language="C#" Value="public virtual void CopyTo (Array array, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Array" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">The destination <see cref="T:System.Array" /> .</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based starting position in the array at which to begin copying.</param>
+        <summary>
+          <para>Copies the permission objects in the current instance to the specified
+      location in the specified <see cref="T:System.Array" /> .</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is
+      implemented to support the <see cref="T:System.Collections.ICollection" /> interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default
+      implementation uses the <see cref="M:System.Array.SetValue(System.Object,System.Int32)" />(<see cref="T:System.Object" />, <see cref="T:System.Int32" />) method to add the value to the array.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this 
+      method to customize the manner in which elements are added to <paramref name=" array" />
+      . </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="array" /> has more than one dimension.</exception>
+        <exception cref="T:System.IndexOutOfRangeException">
+          <paramref name="index" /> is outside the range of allowable values for <paramref name="array" />.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="ILASM" Value=".property int32 ICollection.Count { public hidebysig virtual abstract specialname int32 get_ICollection.Count() }" />
+      <MemberSignature Language="C#" Value="public virtual int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.Collections.ICollection" /> interface. [Note: For more information, see <see cref="M:System.Collections.ICollection.Count" />.]</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Demand">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Demand()" />
+      <MemberSignature Language="C#" Value="public void Demand ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Forces a <see cref="T:System.Security.SecurityException" /> if all callers do 
+   not have the permissions specified by the objects
+   contained in the current instance.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>The permission check for <see cref="M:System.Security.PermissionSet.Demand" /> begins with the
+      immediate caller of the code that calls this method and continues until all
+      callers have been checked or a caller has been found that is not granted the
+      demanded permission, in which case a <see cref="T:System.Security.SecurityException" /> exception is thrown. </para>
+            <para>If the current instance is empty, a call to <see cref="M:System.Security.PermissionSet.Demand" /> succeeds.</para>
+          </block>
+          <para>
+            <block subset="none" type="usage">Use this
+   method to ensure in a single operation that all callers have all permissions contained in a permission set.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">A caller does not have the permission specified by the current instance.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Deny">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Deny()" />
+      <MemberSignature Language="C#" Value="public void Deny ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Denies access to the resources secured by the objects contained in the current instance through the
+      code that calls this method.</para>
+        </summary>
+        <remarks>
+          <para>This is the only way to deny multiple permissions at the
+      same time within a frame because only a single deny can be active on a frame at
+      one time; subsequent denies will result in an exception.</para>
+          <block subset="none" type="behaviors">
+            <para>This method is required to prevent
+         callers from accessing all resources protected by the objects in the
+         current instance even if the callers had been granted permission to access them.</para>
+            <para> A call to <see cref="M:System.Security.PermissionSet.Deny" />
+   is effective until the calling code returns.</para>
+          </block>
+          <para>
+            <block subset="none" type="usage">Use this method to force
+   all security checks for the objects contained in the current instance to
+   fail.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">
+          <para>A previous call to <see langword="Deny" /> has already restricted the permissions for the current stack frame.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="FromXml">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void FromXml(class System.Security.SecurityElement et)" />
+      <MemberSignature Language="C#" Value="public virtual void FromXml (System.Security.SecurityElement et);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="et" Type="System.Security.SecurityElement" />
+      </Parameters>
+      <Docs>
+        <param name="et">
+          <para>A <see cref="T:System.Security.SecurityElement" /> instance containing the XML encoding to use to reconstruct the state of a <see cref="T:System.Security.PermissionSet" /> object.</para>
+        </param>
+        <summary>
+          <para>Reconstructs the state of a <see cref="T:System.Security.PermissionSet" /> object using the specified XML
+   encoding.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">For the XML
+      encoding for this class, see
+      the <see cref="T:System.Security.PermissionSet" /> class page.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">When this call completes, the
+      objects in the current instance are required to be identical to the objects in the <see cref="T:System.Security.PermissionSet" />
+      encoded in
+   <paramref name=" et" /> .</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this method
+      to reconstruct subclasses of <see cref="T:System.Security.PermissionSet" /> .</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Applications do
+      not typically call this method; it is called by the system.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="et" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="et" /> does not contain an XML encoding for a <see cref="T:System.Security.PermissionSet" /> instance.</para>
+          <para>-or-</para>
+          <para>An error occurred while reconstructing <paramref name="et" /> .</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Collections.IEnumerator GetEnumerator()" />
+      <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns an enumerator used to iterate
+      over the permissions in the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Collections.IEnumerator" /> object
+   for the permissions of the
+   set.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method is implemented to support
+      the <see cref="T:System.Collections.ICollection" /> interface, which supports the <see cref="T:System.Collections.IEnumerable" />
+      interface.</block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this method to customize
+      the enumerator returned by this method.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetPermission">
+      <MemberSignature Language="C#" Value="public System.Security.IPermission GetPermission (Type permClass);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.IPermission</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="permClass" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="permClass">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Intersect">
+      <MemberSignature Language="C#" Value="public System.Security.PermissionSet Intersect (System.Security.PermissionSet other);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.PermissionSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.Security.PermissionSet" />
+      </Parameters>
+      <Docs>
+        <param name="other">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsEmpty">
+      <MemberSignature Language="C#" Value="public bool IsEmpty ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public virtual bool IsReadOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSubsetOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool IsSubsetOf(class System.Security.PermissionSet target)" />
+      <MemberSignature Language="C#" Value="public bool IsSubsetOf (System.Security.PermissionSet target);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="System.Security.PermissionSet" />
+      </Parameters>
+      <Docs>
+        <param name="target">
+          <para>A <see cref="T:System.Security.PermissionSet" /> instance that is to be tested for the subset relationship. </para>
+        </param>
+        <summary>
+          <para> Determines whether the current instance is a subset of
+      the specified object.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the current instance is a subset of <paramref name="target" />;
+   otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The current instance is a subset <paramref name="target" /> if all demands that succeed
+      for the current instance also succeed for <paramref name="target" />. That is, the current
+      instance is a subset of <paramref name="target" /> if <paramref name="target" /> contains at least the
+      permissions contained in the current instance.</para>
+            <para>If this method returns <see langword="true" /> , the current instance does not
+   describe a level of access to a set of resources that is not already described
+   by <paramref name="target" />. </para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to determine if the all
+   permissions contained in the current instance are also contained in
+<paramref name="target" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSynchronized">
+      <MemberSignature Language="ILASM" Value=".property bool ICollection.IsSynchronized { public hidebysig virtual abstract specialname bool get_ICollection.IsSynchronized() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsSynchronized { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.Collections.ICollection" /> interface. [Note: For more information, see <see cref="M:System.Collections.ICollection.IsSynchronized" />.]</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsUnrestricted">
+      <MemberSignature Language="C#" Value="public bool IsUnrestricted ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PermitOnly">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void PermitOnly()" />
+      <MemberSignature Language="C#" Value="public void PermitOnly ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Specifies that only the resources described by the current
+      instance can be accessed by calling code, even if the code has
+      been granted permission to access other resources.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>
+              <see cref="M:System.Security.PermissionSet.PermitOnly" /> is similar to
+   <see cref="M:System.Security.PermissionSet.Deny" /> in that both methods cause access
+      to fail where it might otherwise succeed. The difference is that <see cref="M:System.Security.PermissionSet.Deny" /> specifies permissions for which
+      to refuse access, while <see cref="M:System.Security.PermissionSet.PermitOnly" /><see langword=" " />specifies the only permissions that will succeed.</para>
+            <para>This is the only way to permit multiple permissions at the same time within a stack
+      frame because only a single permit at a time can be active on a frame;
+      subsequent permits will result in an exception.</para>
+          </block>
+          <block subset="none" type="behaviors">
+            <para> Callers are required to
+      be prevented from accessing resources not secured by the contents of the current
+      instance, even if a caller has been granted permission to access such resources.</para>
+            <para>A <see cref="M:System.Security.PermissionSet.PermitOnly" /> is in effect until the calling
+   code returns to its caller.</para>
+          </block>
+          <para>
+            <block subset="none" type="usage">Use this method to limit access to a
+   specified set of resources.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Security.SecurityException">
+          <para>A previous call to <see langword="PermitOnly" /> has already set the permissions for the current stack frame.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemovePermission">
+      <MemberSignature Language="C#" Value="public System.Security.IPermission RemovePermission (Type permClass);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.IPermission</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="permClass" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="permClass">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RevertAssert">
+      <MemberSignature Language="C#" Value="public static void RevertAssert ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetPermission">
+      <MemberSignature Language="C#" Value="public System.Security.IPermission SetPermission (System.Security.IPermission perm);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.IPermission</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="perm" Type="System.Security.IPermission" />
+      </Parameters>
+      <Docs>
+        <param name="perm">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SyncRoot">
+      <MemberSignature Language="ILASM" Value=".property object ICollection.SyncRoot { public hidebysig virtual abstract specialname object get_ICollection.SyncRoot() }" />
+      <MemberSignature Language="C#" Value="public virtual object SyncRoot { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.Collections.ICollection" /> interface. [Note: For more information, see <see cref="M:System.Collections.ICollection.SyncRoot" />.]</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.Serialization.IDeserializationCallback.OnDeserialization">
+      <MemberSignature Language="C#" Value="void IDeserializationCallback.OnDeserialization (object sender);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a <see cref="T:System.String" /> representation of the state
+   of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" />
+containing the XML representation of the state of the current instance.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.Object.ToString" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <example>
+          <para>The following example displays the XML that encodes the 
+      state of a <see cref="T:System.Security.PermissionSet" />
+      .</para>
+          <code lang="C#">
+using System;
+using System.Security;
+using System.Security.Permissions;
+
+public class PermissionSetToStringExample {
+  public static void Main() {
+
+    PermissionSet ps = new PermissionSet(PermissionState.Unrestricted);
+    Console.WriteLine(ps.ToString());
+  }
+}
+
+			</code>
+          <para>The output is</para>
+          <para>&lt;PermissionSet class="System.Security.PermissionSet" version="1"
+         Unrestricted="true"/&gt;</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToXml">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.SecurityElement ToXml()" />
+      <MemberSignature Language="C#" Value="public virtual System.Security.SecurityElement ToXml ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.SecurityElement</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns the XML encoding of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Security.SecurityElement" /> containing an XML encoding of the state of the
+   current instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this method to return an
+      object containing the XML encoding for types derived from <see cref="T:System.Security.PermissionSet" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">This method is called by the
+      system.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Union">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.PermissionSet Union(class System.Security.PermissionSet other)" />
+      <MemberSignature Language="C#" Value="public System.Security.PermissionSet Union (System.Security.PermissionSet other);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.PermissionSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.Security.PermissionSet" />
+      </Parameters>
+      <Docs>
+        <param name="other">A <see cref="T:System.Security.PermissionSet" /> instance to be combined with the current instance.</param>
+        <summary>
+          <para> Returns a <see cref="T:System.Security.PermissionSet" /> object that is the union of the current instance and
+   the specified object.</para>
+        </summary>
+        <returns>
+          <para> A new <see cref="T:System.Security.PermissionSet" /> instance that represents the
+   union of the current instance and <paramref name="other" />. If the current
+   instance or <paramref name="other" /> is unrestricted, returns a <see cref="T:System.Security.PermissionSet" />
+   instance that is unrestricted.</para>
+        </returns>
+        <remarks>
+          <para>The result of a call to <see cref="M:System.Security.PermissionSet.Union(System.Security.PermissionSet)" /><see langword=" " />is a new <see cref="T:System.Security.PermissionSet" />
+instance that represents all the operations represented by the current instance
+as well as all the operations represented by <paramref name="other" /> . If either set is
+unrestricted, the union is unrestricted, as well.</para>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+   create a <see cref="T:System.Security.PermissionSet" /> instance that contains all of the permissions
+   of the current instance and <paramref name=" other" /> .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

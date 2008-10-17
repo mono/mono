@@ -1,0 +1,253 @@
+<Type Name="ArgIterator" FullName="System.ArgIterator">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public struct ArgIterator" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>This class is used to acess variable arguments on methods that use the __arglist calling convention.</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ArgIterator (RuntimeArgumentHandle arglist);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="arglist" Type="System.RuntimeArgumentHandle" />
+      </Parameters>
+      <Docs>
+        <param name="arglist">The handle to the argument list, as obtained by the special compiler __arglist expression.</param>
+        <summary>Creates an ArgIterator from a RuntimeArgumentHandle.</summary>
+        <remarks>Here is an example of a routine that uses the __arglist calling conventions:
+
+
+<example><code lang="C#">
+using System;
+
+class ArgIteratorDemo {
+
+        static int AddABunchOfInts (__arglist)
+        {
+                int result = 0;
+
+                System.ArgIterator iter = new System.ArgIterator (__arglist);
+                int argCount = iter.GetRemainingCount();
+
+                for (int i = 0; i &lt; argCount; i++) {
+                        System.TypedReference typedRef = iter.GetNextArg();
+                        result += (int)TypedReference.ToObject( typedRef );
+                }
+
+                return result;
+        }
+
+        static void Main (string[] args)
+        {
+                int result = AddABunchOfInts (__arglist ( 2, 3, 4 ));
+                Console.WriteLine ("Answer: {0}", result);
+	}
+}
+  </code></example></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ArgIterator (RuntimeArgumentHandle arglist, void* ptr);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="arglist" Type="System.RuntimeArgumentHandle" />
+        <Parameter Name="ptr" Type="System.Void*" />
+      </Parameters>
+      <Docs>
+        <param name="arglist">The argument list, as obtained by the special compiler keyword __arglist.</param>
+        <param name="ptr">Overrides the starting address for computing parameters.</param>
+        <summary>Initialize an ArgIterator using a base address.</summary>
+        <remarks>Here is an example of a routine that uses the __arglist calling conventions:
+
+
+<example><code lang="C#">
+using System;
+
+class ArgIteratorDemo {
+
+        static int AddABunchOfInts (__arglist)
+        {
+                int result = 0;
+
+                System.ArgIterator iter = new System.ArgIterator (__arglist);
+                int argCount = iter.GetRemainingCount();
+
+                for (int i = 0; i &lt; argCount; i++) {
+                        System.TypedReference typedRef = iter.GetNextArg();
+                        result += (int)TypedReference.ToObject( typedRef );
+                }
+
+                return result;
+        }
+
+        static void Main (string[] args)
+        {
+                int result = AddABunchOfInts (__arglist ( 2, 3, 4 ));
+                Console.WriteLine ("Answer: {0}", result);
+	}
+}
+  </code></example></remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="End">
+      <MemberSignature Language="C#" Value="public void End ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Finishes iterating over the arguments.</summary>
+        <remarks>Invalidates the ArgIterator instance, from this point on operations will throw an exception.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="o" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="o">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetNextArg">
+      <MemberSignature Language="C#" Value="public TypedReference GetNextArg ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TypedReference</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the next argument.</summary>
+        <returns>Returns the next argument as a <see cref="T:System.TypedReference" />.</returns>
+        <remarks>This advances the position of the argument iterator.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetNextArg">
+      <MemberSignature Language="C#" Value="public TypedReference GetNextArg (RuntimeTypeHandle rth);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TypedReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rth" Type="System.RuntimeTypeHandle" />
+      </Parameters>
+      <Docs>
+        <param name="rth">To be added: an object of type 'RuntimeTypeHandle'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'TypedReference'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetNextArgType">
+      <MemberSignature Language="C#" Value="public RuntimeTypeHandle GetNextArgType ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.RuntimeTypeHandle</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the type of the next argument.</summary>
+        <returns>To be added: an object of type 'RuntimeTypeHandle'</returns>
+        <remarks>This does not advance the current position in the iterator.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRemainingCount">
+      <MemberSignature Language="C#" Value="public int GetRemainingCount ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the number of remaining arguments to be processed.</summary>
+        <returns>The count of arguments remaining to be processed.</returns>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

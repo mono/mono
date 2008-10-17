@@ -1,0 +1,18 @@
+<Namespace Name="System.IO" FullName="System.IO" FullNameSP="System.IO" Maintainer="Mono">
+  <Docs>
+    <summary>
+    	The System.IO namespace contains classes for reading and writing data from streams and interacting with the filesystem.
+    </summary>
+    <remarks>
+		<para>The System.IO namespace contains classes for reading and writing binary data from streams, reading and writing character data from readers and writers, and interacting with the file system in a platform-independent manner.</para>
+		
+		<para>The <see cref="T:System.IO.Stream"/> class is the abstract base class of all streams, which provide a common mechanism for reading and writing binary data.  <see cref="T:System.IO.Stream"/>s support sequential reading or writing or both, and can also support random access.  <see cref="T:System.IO.Stream"/>s can be used synchronously and asynchronously.</para>
+	
+		<para>There are three standard <see cref="T:System.IO.Stream"/> implementations.  The <see cref="T:System.IO.FileStream"/> class provides stream access to a file on the local file system.  The <see cref="T:System.IO.MemoryStream"/> class provides stream access to a byte array in memory.  The <see cref="T:System.IO.BufferedStream"/> wraps another stream, providing buffered access to the underlying data, which can be used to improve performance.  The <see cref="T:System.IO.BinaryReader"/> and <see cref="T:System.IO.BinaryWriter"/> classes provide convenience functions for reading and writing primitive types to and from steams.</para>
+		
+		<para><see cref="T:System.IO.TextReader"/> provides a sequential stream of characters or strings, and <see cref="T:System.IO.TextWriter"/> is a target for writing a sequential stream of chacters or strings.  The <see cref="T:System.IO.StreamReader"/> and <see cref="T:System.IO.StreamWriter"/> classes provide character-based access to a <see cref="T:System.IO.Stream"/> using a specified encoding.  The <see cref="T:System.IO.StringReader"/> provides a reader for the character data in a <see cref="T:System.String"/>, and the <see cref="T:System.IO.StringWriter"/> provides a writer to <see cref="T:System.Text.StringBuffer"/>s.	</para>
+		
+		<para>The remaining classes provide access to the local file system.  The <see cref="T:System.IO.Directory"/> and <see cref="T:System.IO.File"/> classes contain static methods for manipulating directories and files, respectively.  <see cref="T:System.IO.DirectoryInfo"/> and <see cref="T:System.IO.FileInfo"/> objects actually represent files and folders on the file system (actually paths to files and folders which may or may not exist).  They contain instance methods similar to <see cref="T:System.IO.Directory"/> and <see cref="T:System.IO.File"/>.  The <see cref="T:System.IO.Path"/> class contains static methods for manipulating paths on the local file system in a platform-independent manner.</para>
+    </remarks>
+  </Docs>
+</Namespace>

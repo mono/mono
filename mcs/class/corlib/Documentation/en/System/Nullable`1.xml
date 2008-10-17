@@ -1,0 +1,388 @@
+<Type Name="Nullable&lt;T&gt;" FullName="System.Nullable&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public struct Nullable&lt;T&gt; where T : struct" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T">
+      <Constraints>
+        <ParameterAttribute>DefaultConstructorConstraint</ParameterAttribute>
+        <ParameterAttribute>NotNullableValueTypeConstraint</ParameterAttribute>
+        <BaseTypeName>System.ValueType</BaseTypeName>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>
+      <para>Represents a nullable value type. An instance of <see cref="T:System.Nullable&lt;T&gt; " />can contain a value of type <see langword="T " />or an indication that the instance contains no value. Upon boxing, if it contains no value, it will be converted to the null reference; otherwise, it will be converted to a boxed T. [Note: Because of the constraint on the generic parameter, <see langword="T " />cannot be of type <see cref="T:System.Nullable&lt;U&gt; " /> for any <see langword="U" />. end note]</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.Nullable&lt;T&gt;" /> value type represents a value of a given type <see langword="T" /> or an indication that the instance contains no value. Such a nullable type is useful in a variety of situations, such as in denoting nullable columns in a database table or optional attributes in an XML element. The runtime transforms <see cref="T:System.Nullable&lt;T&gt;" />instances without values into true nulls when performing a box operation; instances with values are transformed into boxed <see langword="T" />'s containing the <see cref="T:System.Nullable&lt;T&gt;" />'s Value.</para>
+      <para>An instance of <see cref="T:System.Nullable&lt;T&gt;" /> has two properties, <see cref="T:System.Nullable&lt;T&gt;.HasValue" /> and <see cref="T:System.Nullable&lt;T&gt;.Value" />. <see cref="T:System.Nullable&lt;T&gt;.HasValue" /> is used to determine whether the current instance currently has a value. It returns <see langword="true" /> or <see langword="false" />, and never throws an exception. <see cref="T:System.Nullable&lt;T&gt;.Value" /> returns the current value of the instance, provided it has one (i.e., <see cref="T:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="true" />); otherwise, it throws an exception.</para>
+      <para>In addition to the above properties, there is a pair of methods, both overloads of <see cref="M:System.Nullable&lt;T&gt;.GetValueOrDefault" />. The version taking no arguments returns the instance's current value, if it has one; otherwise, it returns the default value of type <see langword="T" />. The version taking an argument of type <see langword="T" /> returns the instance's current value, if it has one; otherwise, it returns the default value argument passed to it.</para>
+      <para>Applying <see cref="M:System.Nullable&lt;T&gt;.HasValue" /> to an instance that has the default initial value, causes false to be returned.</para>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Nullable (T value);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="value" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="value">The initial value of the new instance.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of       <see cref="T:System.Nullable&lt;T&gt;" /> giving it the specified initial value.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">Once this constructor has executed, applying <see cref="P:System.Nullable&lt;T&gt;.HasValue" />  to the new instance returns <see langword="true" />.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object other);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="other">To be added.</param>
+        <summary>
+          <para>Determines whether the current instance and the specified
+      <see cref="T:System.Object" /> represent the same type and value.</para>
+        </summary>
+        <returns>
+          <para>The following table defines the conditions under which the return value is <see langword="true" /> or <see langword="false" />:</para>
+          <list type="table">
+            <listheader>
+              <term>Returned Value</term>
+              <description>HasValue Condition</description>
+              <description>obj.HasValue Condition</description>
+            </listheader>
+            <item>
+              <term>
+                <see langword="false" />
+              </term>
+              <description>The current instance and <paramref name="obj" /> have different types.</description>
+              <description>The current instance and <paramref name="obj" /> have different types.</description>
+            </item>
+            <item>
+              <term>
+                <see langword="true" />
+              </term>
+              <description>
+                <see langword="false" />
+              </description>
+              <description>
+                <paramref name="obj" /> is <see langword="null" />.</description>
+            </item>
+            <item>
+              <term>
+                <see langword="false" />
+              </term>
+              <description>
+                <see langword="true" />
+              </description>
+              <description>
+                <paramref name="obj" /> is <see langword="null" />.</description>
+            </item>
+            <item>
+              <term>
+                <see langword="true" />
+              </term>
+              <description>
+                <see langword="false" />
+              </description>
+              <description>
+                <see langword="false" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see langword="false" />
+              </term>
+              <description>
+                <see langword="false" />
+              </description>
+              <description>
+                <see langword="true" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see langword="false" />
+              </term>
+              <description>
+                <see langword="true" />
+              </description>
+              <description>
+                <see langword="false" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see langword="Value.Equals(" />
+                <paramref name="obj" />
+                <see langword=".Value)" />
+              </term>
+              <description>
+                <see langword="true" />
+              </description>
+              <description>
+                <see langword="true" />
+              </description>
+            </item>
+          </list>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method
+      overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>If <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="true" />, a  <see cref="T:System.Int32" /> containing the hash code for the value of the current instance is returned; otherwise, 0 is returned.</para>
+        </returns>
+        <remarks>
+          <para> The algorithm used to generate the hash code is unspecified. </para>
+          <para>
+            <block subset="none" type="note">This method
+      overrides <see cref="M:System.Object.GetHashCode" />.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetValueOrDefault">
+      <MemberSignature Language="C#" Value="public T GetValueOrDefault ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns the value of the current instance, or if it has none, returns the default value for the type <see langword="T" />.</para>
+        </summary>
+        <returns>
+          <para>A value of type <see langword="T" />, which is either the value of the current instance, or if it has none, the default value for the type <see langword="T" /> (i.e., all-bits-zero).</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <see cref="M:System.Nullable&lt;T&gt;.GetValueOrDefault" />
+              <see langword="(T)" /> allows a value other than the default value to be returned if the current instance contains no value.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetValueOrDefault">
+      <MemberSignature Language="C#" Value="public T GetValueOrDefault (T defaultValue);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="defaultValue" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="defaultValue">To be added.</param>
+        <summary>
+          <para>Returns the value of the current instance, or if it has none, returns <paramref name="alternateDefaultValue" />.</para>
+        </summary>
+        <returns>
+          <para>A value of type <see langword="T" />, which is either the value of the current instance, or if it has none, the value of <paramref name="alternateDefaultValue" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+              <see cref="M:System.Nullable&lt;T&gt;.GetValueOrDefault" />
+              <see langword="()" /> allows the default value for type <see langword="T" />  to be returned if the current instance contains no value.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasValue">
+      <MemberSignature Language="C#" Value="public bool HasValue { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Indicates whether the current instance contains a value.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the current instance contains a value; otherwise <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>If <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="true" />, the instance contains a value, and <see cref="P:System.Nullable&lt;T&gt;.Value" /> returns that value.</para>
+            <para>If <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="false" />, the instance contains no value, and an attempt to read <see cref="P:System.Nullable&lt;T&gt;.Value" /> results in a <see cref="T:System.InvalidOperationException " />exception. A call to <see cref="M:System.Nullable&lt;T&gt;.Value.GetValueOrDefault" /> returns the default value. </para>
+            <para>This property is read-only.</para>
+          </block>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static T op_Explicit (Nullable&lt;T&gt; value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Nullable&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Nullable&lt;T&gt;" />  value to convert to type <see langword="T" />.</param>
+        <summary>
+          <para>Perform an explicit conversion of a    <see cref="T:System.Nullable&lt;T&gt;" />  value to type <see langword="T" />.</para>
+        </summary>
+        <returns>The value, if any, of the specified nullable value. Otherwise, a <see cref="T:System.InvalidOperationException" /> is thrown.</returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">The conversion implemented by this method corresponds exactly to obtaining the value of the <see cref="P:System.Nullable&lt;T&gt;.Value" /> property.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="System.InvalidOperationException">
+          <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="false" />.</exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static Nullable&lt;T&gt; op_Implicit (T value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see langword="T" />  value to convert to <see cref="T:System.Nullable&lt;T&gt;" />.</param>
+        <summary>
+          <para>Perform an implicit conversion of a    <see langword="T" />  value to   <see cref="T:System.Nullable&lt;T&gt;" />.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Nullable&lt;T&gt;" /> with the specified value.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">The conversion implemented by this method corresponds exactly to invoking the <see cref="M:System.Nullable&lt;T&gt;" /><see langword="(T)" /> constructor.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>If <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is true, <see cref="P:System.Nullable&lt;T&gt;.Value.ToString" /><see langword="()" /> is returned; otherwise, <see cref="F:System.String.Empty" /> is returned.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method
+   overrides <see cref="M:System.Object.ToString" />.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public T Value { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets the value, if any, of the current instance.</para>
+        </summary>
+        <value>
+          <para>The value of the current instance.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>If <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="true" />, the instance contains a value, and <see cref="P:System.Nullable&lt;T&gt;.Value" /> returns that value.</para>
+            <para>If <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="false" />, the instance contains no value, and an attempt to read <see cref="P:System.Nullable&lt;T&gt;.Value" /> results in an exception. </para>
+            <para>This property is read-only.</para>
+          </block>
+        </remarks>
+        <since version=".NET 2.0" />
+        <exception cref="System.InvalidOperationException">
+          <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="false" />.</exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

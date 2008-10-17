@@ -1,0 +1,304 @@
+<Type Name="StringReader" FullName="System.IO.StringReader" FullNameSP="System_IO_StringReader" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable StringReader extends System.IO.TextReader" />
+  <TypeSignature Language="C#" Value="public class StringReader : System.IO.TextReader" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.IO.TextReader</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Implements a <see cref="T:System.IO.TextReader" />
+that reads from a string.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string s)" />
+      <MemberSignature Language="C#" Value="public StringReader (string s);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to be initialized to.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StringReader" /> class
+   that
+   reads from the specified string.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
+      <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Closes the <see cref="T:System.IO.StringReader" />
+.</para>
+        </summary>
+        <remarks>
+          <para>Following a call to <see cref="M:System.IO.StringReader.Close" /> , other <see cref="T:System.IO.StringReader" /> methods on the current instance will throw an exception.</para>
+          <block subset="none" type="note">
+            <para>This version of <see cref="M:System.IO.StringReader.Close" /> is equivalent to <see cref="M:System.IO.StringReader.Dispose(System.Boolean)" />(<see langword="true" />).</para>
+            <para>This method overrides <see cref="M:System.IO.Stream.Close" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool disposing)" />
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">
+          <see langword="true" /> to release both managed and unmanaged resources; <see langword="false" /> to release only unmanaged resources.</param>
+        <summary>
+          <para>Releases system resources used by the current 
+      instance.</para>
+        </summary>
+        <remarks>
+          <para>When the <paramref name="disposing" /> parameter is <see langword="true" />, this method
+   releases all resources held by any managed objects that this <see cref="T:System.IO.StringReader" />
+   references. This method invokes the <see langword="Dispose()" /> method of each
+   referenced object.</para>
+          <para>
+            <block subset="none" type="note">
+              <see cref="M:System.IO.StringReader.Dispose(System.Boolean)" /> can be called multiple
+times by other objects. When overriding <see cref="M:System.IO.StringReader.Dispose(System.Boolean)" />(<see cref="T:System.Boolean" />), be careful not
+to reference objects that have been previously disposed in an earlier call to
+<see cref="M:System.IO.StringReader.Dispose(System.Boolean)" /> .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Peek">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Peek()" />
+      <MemberSignature Language="C#" Value="public override int Peek ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns the next available character but does not advance the reader's position
+      in the underlying string.</para>
+        </summary>
+        <returns>
+          <para>The next character to be read as a <see cref="T:System.Int32" /> , or -1 if no more characters are
+   available.</para>
+        </returns>
+        <remarks>
+          <para>The current position of the <see cref="T:System.IO.StringReader" /> is not changed by this operation.</para>
+          <block subset="none" type="note">
+            <para>This method returns -1 is when the end of the underlying string is reached
+      because a Unicode character can contain only values between hexadecimal 0x0000
+      to 0xFFFF (0 to 65535).</para>
+            <para>This method overrides <see cref="M:System.IO.TextReader.Peek" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current reader is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Read()" />
+      <MemberSignature Language="C#" Value="public override int Read ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Reads the next character from the input string and advances the character position by one character.</para>
+        </summary>
+        <returns>
+          <para>The next character from the underlying string as a 
+   <see cref="T:System.Int32" /> , or -1 if no more
+      characters are available.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method returns -1 is when the end of the underlying string is reached
+         because a Unicode character can contain only values between hexadecimal 0x0000
+         to 0xFFFF (0 to 65535).</para>
+            <para>This method overrides <see cref="M:System.IO.TextReader.Read" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current reader is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Read(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public override int Read (char[] buffer, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Char" /> array. When this method returns, contains the specified character array with the values between <paramref name="index" /> and <paramref name="(index + count - 1)" /> replaced by the characters read from the current source.</param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the starting index in the buffer.</param>
+        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of characters to read.</param>
+        <summary>
+          <para>Reads a block of characters from the input string.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing the total number of characters read into the
+   buffer, or zero if the end of the underlying string has been reached.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.IO.TextReader.Read" qualify="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer " /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">(<paramref name="index" /> + <paramref name="count" /> ) &gt; <paramref name="buffer" /><see langword="." />Length.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="index " />&lt; 0<paramref name=" " /></para>
+          <para>
+            <paramref name="-" /> or-</para>
+          <para>
+            <paramref name="count " /> &lt; 0.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">The current reader is closed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadLine()" />
+      <MemberSignature Language="C#" Value="public override string ReadLine ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Reads a line from the underlying string.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing the next line from the underlying string, or
+<see langword="null " />
+if the end of
+the underlying string is reached.
+</para>
+        </returns>
+        <remarks>
+          <para> A line is defined as a
+      sequence of characters followed by a carriage return (0x000d), a line feed (0x000a),
+      or a carriage return immediately followed by a line feed. The resulting string
+      does not contain the terminating character(s).</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.IO.TextReader.ReadLine" qualify="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current reader is closed.</exception>
+        <exception cref="T:System.OutOfMemoryException">There is insufficient memory to allocate a buffer for the returned string.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadToEnd">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadToEnd()" />
+      <MemberSignature Language="C#" Value="public override string ReadToEnd ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns the underlying string
+      from the current position to the end.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing the content from the current position to the end of the underlying
+   string.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.IO.TextReader.ReadToEnd" qualify="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current reader is closed.</exception>
+        <exception cref="T:System.OutOfMemoryException">There is insufficient memory to allocate a buffer for the returned string.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

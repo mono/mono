@@ -1,0 +1,885 @@
+<Type Name="PropertyInfo" FullName="System.Reflection.PropertyInfo" FullNameSP="System_Reflection_PropertyInfo" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable PropertyInfo extends System.Reflection.MemberInfo" />
+  <TypeSignature Language="C#" Value="public abstract class PropertyInfo : System.Reflection.MemberInfo, System.Runtime.InteropServices._PropertyInfo" />
+  <MemberOfLibrary>Reflection</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations. </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Reflection.MemberInfo</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.InteropServices._PropertyInfo</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._PropertyInfo))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Provides access to property
+      metadata.</para>
+    </summary>
+    <remarks>
+      <para> A property
+      is a named aspect of an object's state whose value is typically accessible
+      through <see langword="Get" /> and <see langword="Set" /> accessors. <block subset="none" type="note">Properties can be read-only, in which case the  <see langword="Set" /> accessor is not available.</block></para>
+      <para> Several methods in this class assume that the <see langword="Get" />
+and <see langword="Set" />
+accessors of a property have certain formats. The signatures of the
+accessors are required to match the following conventions:</para>
+      <list type="bullet">
+        <item>
+          <term>
+      
+      The return type of the <see langword="Get" /> accessor and the last
+      argument of the <see langword="Set" /> accessor are required to be identical to the
+      type of the property reflected by the current instance.</term>
+        </item>
+        <item>
+          <term>
+      
+      The <see langword="Get" /> and <see langword="Set" /> accessors are required to have the same number, type, and order of
+      indices.</term>
+        </item>
+      </list>
+      <para>If this format is not followed, the behavior of
+   the <see cref="M:System.Reflection.PropertyInfo.GetValue(System.Object,System.Object[])" /> and <see cref="M:System.Reflection.PropertyInfo.SetValue(System.Object,System.Object,System.Object[])" />
+   methods is undefined.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected PropertyInfo ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs a new instance of the <see cref="T:System.Reflection.PropertyInfo" /> class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Attributes">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Reflection.PropertyAttributes Attributes { public hidebysig virtual abstract specialname valuetype System.Reflection.PropertyAttributes get_Attributes() }" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.PropertyAttributes Attributes { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.PropertyAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the attributes of the property reflected by the
+      current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Reflection.PropertyAttributes" /> value that specifies the attributes of
+   the property reflected by the current instance.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This property is read-only.</para>
+            <para>This property
+         gets a <see cref="T:System.Reflection.PropertyAttributes" /> value that
+         indicates the attributes set in the metadata of the property reflected by
+         the current instance.</para>
+          </block>
+          <para>
+            <block subset="none" type="usage">Use this property
+      to determine if the property reflected by the current instance has
+      a special name or a default value.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanRead">
+      <MemberSignature Language="ILASM" Value=".property bool CanRead { public hidebysig virtual abstract specialname bool get_CanRead() }" />
+      <MemberSignature Language="C#" Value="public abstract bool CanRead { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the property
+   reflected by the current instance has a <see langword="Get" /> accessor.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the
+   property reflected by the current instance has a <see langword="Get" />
+   accessor;
+   otherwise, <see langword="false" />
+   .</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This property is read-only.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanWrite">
+      <MemberSignature Language="ILASM" Value=".property bool CanWrite { public hidebysig virtual abstract specialname bool get_CanWrite() }" />
+      <MemberSignature Language="C#" Value="public abstract bool CanWrite { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the property
+   reflected by the current instance has a <see langword="Set" /> accessor.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the
+   property reflected by the current instance has a <see langword="Set" />
+   accessor;
+   otherwise, <see langword="false" />
+   .</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This property is read-only.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAccessors">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo[] GetAccessors()" />
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo[] GetAccessors ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns an array whose elements reflect the public
+   <see langword="Get" /> , <see langword="Set" />, and other
+      accessors of the property reflected by the current
+      instance.</para>
+        </summary>
+        <returns>
+          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects that reflect the public 
+<see langword="Get" />, <see langword="Set" />, and other 
+   accessors of
+   the property reflected by the current instance, if found; otherwise, returns
+   an array with zero elements.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Reflection.PropertyInfo.GetAccessors" />(<see langword="false" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAccessors">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo[] GetAccessors(bool nonPublic)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo[] GetAccessors (bool nonPublic);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nonPublic" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="nonPublic">A <see cref="T:System.Boolean" /> value that indicates whether non-public accessors will be included in the return value. Specify <see langword="true" /> to include the non-public accessors; otherwise, specify <see langword="false" /> .</param>
+        <summary>
+          <para>Returns an array whose elements reflect the public and,
+      if specified, non-public <see langword="Get" />, <see langword="Set" />, and other
+      accessors of the property reflected by the
+      current instance.</para>
+        </summary>
+        <returns>
+          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects whose elements reflect the
+<see langword="Get" />, <see langword="Set" />, and other accessors of the property 
+   reflected by the current instance. If <paramref name="nonPublic" /> is
+<see langword="true" />, this array contains public and non-public 
+   accessors. If
+<paramref name="nonPublic" /> is <see langword="false" />, this array contains only public accessors. 
+   If no
+   accessors with the specified visibility are found, returns
+   an array with zero elements.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetConstantValue">
+      <MemberSignature Language="C#" Value="public virtual object GetConstantValue ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetGetMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetGetMethod()" />
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetGetMethod ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns the public <see langword="Get" /> accessor for the property reflected
+   by the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the public
+<see langword="Get" /> accessor for the property reflected by the current 
+   instance. Returns <see langword="null" /> if no public <see langword="Get" />
+   accessor exists.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetGetMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetGetMethod(bool nonPublic)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetGetMethod (bool nonPublic);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nonPublic" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="nonPublic">
+          <para>A <see cref="T:System.Boolean" /> value that indicates whether a non-public <see langword="Get" /> accessor will be returned. Specify <see langword="true" /> to allow a non-public accessor; otherwise, specify <see langword="false" />.</para>
+        </param>
+        <summary>
+          <para> Returns the public possibly or, if specified, the non-public <see langword="Get" /> accessor for the property reflected by the current instance.</para>
+        </summary>
+        <returns>
+          <para>If <paramref name="nonPublic" /> is <see langword="true" />, returns
+   a <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the
+<see langword="Get" /> 
+accessor for the property reflected by the current instance if that accessor
+exists. If
+<paramref name="nonPublic " />is <see langword="false" /> and the <see langword="Get" /> accessor is non-public, or <paramref name="nonPublic" /> 
+is <see langword="true" /> but no <see langword="Get" /> accessor exists for the property reflected by
+the current instance, returns <see langword="null" />
+.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.MethodAccessException">
+          <paramref name="nonPublic" /> is <see langword="true" />, the <see langword="Get" /> accessor for the property reflected by the current instance is non-public, and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" /> to reflect on non-public methods.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetIndexParameters">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.ParameterInfo[] GetIndexParameters()" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.ParameterInfo[] GetIndexParameters ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ParameterInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns an array of the indexers of the property reflected by the current instance.</para>
+        </summary>
+        <returns>
+          <para> An array
+      of <see cref="T:System.Reflection.ParameterInfo" /> objects that reflect the indexers
+      of the property reflected by the current instance. If no indexers exist for
+      the property reflected by the current instance,
+      returns an array with zero elements.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.MethodAccessException">The property reflected by the current instance is visible, but its <see langword="Get" /> and <see langword="Set" /> accessors are not, and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" />.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetOptionalCustomModifiers">
+      <MemberSignature Language="C#" Value="public virtual Type[] GetOptionalCustomModifiers ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRawConstantValue">
+      <MemberSignature Language="C#" Value="public virtual object GetRawConstantValue ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRequiredCustomModifiers">
+      <MemberSignature Language="C#" Value="public virtual Type[] GetRequiredCustomModifiers ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSetMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetSetMethod()" />
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetSetMethod ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns the public <see langword="Set" /> accessor for the property reflected
+   by the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the public
+<see langword="Set" /> accessor for the property reflected by the current 
+   instance. Returns <see langword="null" /> if no public <see langword="Set" />
+   accessor exists.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Reflection.PropertyInfo.GetSetMethod" />(<see langword="false" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSetMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetSetMethod(bool nonPublic)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetSetMethod (bool nonPublic);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nonPublic" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="nonPublic">
+          <para>A <see cref="T:System.Boolean" /> value that indicates whether a non-public <see langword="Set" /> accessor will be returned. Specify <see langword="true" /> to allow a non-public accessor; otherwise, specify <see langword="false" />.</para>
+        </param>
+        <summary>
+          <para>Returns the public possibly or, if specified, the non-public <see langword="Set" /> accessor
+   for the property reflected by the current instance.</para>
+        </summary>
+        <returns>
+          <para>If <paramref name="nonPublic" /> is <see langword="true" />, returns a <see cref="T:System.Reflection.MethodInfo" />
+instance that reflects the <see langword="Set" /> accessor
+for the property reflected by the current instance if that accessor exists. If
+<paramref name="nonPublic " />is <see langword="false" /> and the <see langword="Set" /> accessor is non-public, or <paramref name="nonPublic" /> 
+is <see langword="true" />
+but no <see langword="Set" /> accessor exists for the property
+reflected by the current instance, returns <see langword="null" /> .</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.MethodAccessException">
+          <paramref name="nonPublic" /> is <see langword="true" />, the <see langword="Set" /> accessor for the property reflected by the current instance is non-public, and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" /> to reflect on non-public methods.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual object GetValue(object obj, class System.Object[] index)" />
+      <MemberSignature Language="C#" Value="public virtual object GetValue (object obj, object[] index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="index" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The object whose property value will be returned. Specify <see langword="null" /> to invoke a static <see langword="Get" /> accessor of a property.</param>
+        <param name="index">An array of objects that is an index of values for indexed properties. This value is required to be <see langword="null" /> for non-indexed properties.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Returns the value of the property reflected by the current instance in the
+      specified object, using the specified index values. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Object" /> that contains the property value for <paramref name="obj" /> .</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="index " />does not contain the exact type of arguments needed.</para>
+          <para> -or-</para>
+          <para> The <see langword="Get" /> accessor of the property reflected by the current instance is not found.</para>
+        </exception>
+        <exception cref="T:System.MethodAccessException">The <see langword="Get" /> accessor of the property reflected by the current instance is non-public and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" /> to reflect on non-public methods.</exception>
+        <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
+        <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract object GetValue(object obj, valuetype System.Reflection.BindingFlags invokeAttr, class System.Reflection.Binder binder, class System.Object[] index, class System.Globalization.CultureInfo culture)" />
+      <MemberSignature Language="C#" Value="public abstract object GetValue (object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] index, System.Globalization.CultureInfo culture);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="invokeAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="binder" Type="System.Reflection.Binder" />
+        <Parameter Name="index" Type="System.Object[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The object whose property value is returned. Specify <see langword="null" /> to invoke a static <see langword="Get" /> accessor on the property reflected by the current instance. </param>
+        <param name="invokeAttr">A <see cref="T:System.Reflection.BindingFlags" /> value that controls the binding process. <block subset="none" type="note">Specify <see cref="F:System.Reflection.BindingFlags.Public" /> or <see cref="F:System.Reflection.BindingFlags.NonPublic" />, and <see cref="F:System.Reflection.BindingFlags.Instance" /> or <see cref="F:System.Reflection.BindingFlags.Static" />; or this method will not invoke any <see langword="get" /> accessors of the property reflected by the current instance.</block></param>
+        <param name="binder">A <see cref="T:System.Reflection.Binder" /> that enables the binding, coercion of argument types, invocation of members, and retrieval of <see cref="T:System.Reflection.MemberInfo" /> objects via reflection. If <paramref name="binder" /> is <see langword="null" /> , the default binder is used.</param>
+        <param name="index">An array of objects that is an index or values for indexed properties. This value is required to be <see langword="null" /> for non-indexed properties. </param>
+        <param name="culture">
+          <para>The only defined value for this parameter is <see langword="null" /> .</para>
+        </param>
+        <param name="invokeAttr">To be added.</param>
+        <param name="binder">To be added.</param>
+        <param name="index">To be added.</param>
+        <param name="culture">To be added.</param>
+        <summary>
+          <para>Returns the value of the property that is reflected by the current instance in the specified object
+      and corresponds to the specified criteria.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Object" /> that
+   contains the property value for <paramref name="obj" /> .</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="index " /> does not contain the exact type of arguments needed.</para>
+          <para>-or-</para>
+          <para>The <see langword="Get" /> accessor of the property reflected by the current instance was not found.</para>
+        </exception>
+        <exception cref="T:System.MethodAccessException">The <see langword="Get" /> accessor of the property reflected by the current instance is non-public and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" /> to reflect on non-public methods.</exception>
+        <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
+        <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSpecialName">
+      <MemberSignature Language="C#" Value="public bool IsSpecialName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MemberType">
+      <MemberSignature Language="C#" Value="public override System.Reflection.MemberTypes MemberType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MemberTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PropertyType">
+      <MemberSignature Language="ILASM" Value=".property class System.Type PropertyType { public hidebysig virtual abstract specialname class System.Type get_PropertyType() }" />
+      <MemberSignature Language="C#" Value="public abstract Type PropertyType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the type of the property reflected by the current instance.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Type" /> that represents the
+   type of the
+   property reflected by the current instance.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This property is read-only.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void SetValue(object obj, object value, class System.Object[] index)" />
+      <MemberSignature Language="C#" Value="public virtual void SetValue (object obj, object value, object[] index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="index" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The object whose property value is returned. Specify <see langword="null" /> to invoke a static <see langword="Set" /> accessor on the property reflected by the current instance.</param>
+        <param name="value">A object that contains the new value for the property.</param>
+        <param name="index">An array of objects that is an index or values for indexed properties. This value is required to be <see langword="null" /> for non-indexed properties. </param>
+        <param name="value">To be added.</param>
+        <param name="index">To be added.</param>
+        <summary>
+          <para>Sets the value of the property reflected by the current instance on the
+      specified object, using the specified index values. </para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="index " /> does not contain the exact type of arguments needed.</para>
+          <para>-or-</para>
+          <para> The <see langword="Set" /> accessor of the property reflected by the current instance was not found.</para>
+        </exception>
+        <exception cref="T:System.MethodAccessException">The <see langword="Set" /> accessor of the property reflected by the current instance is non-public and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" /> to reflect on non-public methods.</exception>
+        <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
+        <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void SetValue(object obj, object value, valuetype System.Reflection.BindingFlags invokeAttr, class System.Reflection.Binder binder, class System.Object[] index, class System.Globalization.CultureInfo culture)" />
+      <MemberSignature Language="C#" Value="public abstract void SetValue (object obj, object value, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] index, System.Globalization.CultureInfo culture);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="invokeAttr" Type="System.Reflection.BindingFlags" />
+        <Parameter Name="binder" Type="System.Reflection.Binder" />
+        <Parameter Name="index" Type="System.Object[]" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The object whose property value is returned. Specify <see langword="null" /> to invoke a static <see langword="Set" /> accessor on the property reflected by the current instance. </param>
+        <param name="value">A object that contains the new value for the property. </param>
+        <param name="invokeAttr">A <see cref="T:System.Reflection.BindingFlags" /> value that controls the binding process. <block subset="none" type="note">Specify <see cref="F:System.Reflection.BindingFlags.Public" /> or <see cref="F:System.Reflection.BindingFlags.NonPublic" />, and <see cref="F:System.Reflection.BindingFlags.Instance" /> or <see cref="F:System.Reflection.BindingFlags.Static" />; otherwise, this method will not invoke any <see langword="Set" /> accessors of the property reflected by the current instance.</block></param>
+        <param name="binder">A <see cref="T:System.Reflection.Binder" /> that enables the binding, coercion of argument types, invocation of members, and retrieval of <see cref="T:System.Reflection.MemberInfo" /> objects via reflection. If <paramref name="binder" /> is <see langword="null" /> , the default binder is used. </param>
+        <param name="index">An array of objects that is an index or values for indexed properties. This value is required to be <see langword="null" /> for non-indexed properties. </param>
+        <param name="culture">
+          <para>The only defined value for this parameter is <see langword="null" /> .</para>
+        </param>
+        <param name="value">To be added.</param>
+        <summary>
+          <para>Sets the value of the property that is reflected by the current instance on the specified objects and
+      corresponds to the specified properties. </para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The <paramref name="index " /> array does not contain the exact type of arguments needed. <para>The <see langword="Set" /> accessor of the property reflected by the current instance is not found.</para></exception>
+        <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
+        <exception cref="T:System.MethodAccessException">The <see langword="Set" /> accessor of the property reflected by the current instance is non-public and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" /> to reflect on non-public methods.</exception>
+        <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._PropertyInfo.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _PropertyInfo.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="rgszNames" Type="System.IntPtr" />
+        <Parameter Name="cNames" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="rgDispId" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="riid">To be added.</param>
+        <param name="rgszNames">To be added.</param>
+        <param name="cNames">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="rgDispId">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._PropertyInfo.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _PropertyInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="iTInfo" Type="System.UInt32" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="ppTInfo" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="iTInfo">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="ppTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._PropertyInfo.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _PropertyInfo.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcTInfo" Type="System.UInt32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pcTInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._PropertyInfo.Invoke">
+      <MemberSignature Language="C#" Value="void _PropertyInfo.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dispIdMember" Type="System.UInt32" />
+        <Parameter Name="riid" Type="System.Guid&amp;" RefType="ref" />
+        <Parameter Name="lcid" Type="System.UInt32" />
+        <Parameter Name="wFlags" Type="System.Int16" />
+        <Parameter Name="pDispParams" Type="System.IntPtr" />
+        <Parameter Name="pVarResult" Type="System.IntPtr" />
+        <Parameter Name="pExcepInfo" Type="System.IntPtr" />
+        <Parameter Name="puArgErr" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dispIdMember">To be added.</param>
+        <param name="riid">To be added.</param>
+        <param name="lcid">To be added.</param>
+        <param name="wFlags">To be added.</param>
+        <param name="pDispParams">To be added.</param>
+        <param name="pVarResult">To be added.</param>
+        <param name="pExcepInfo">To be added.</param>
+        <param name="puArgErr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

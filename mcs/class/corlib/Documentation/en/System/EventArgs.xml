@@ -1,0 +1,86 @@
+<Type Name="EventArgs" FullName="System.EventArgs" FullNameSP="System_EventArgs" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable EventArgs extends System.Object" />
+  <TypeSignature Language="C#" Value="public class EventArgs" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>
+        <see langword="EventArgs" /> is the
+   base class
+   for classes containing event data.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>This class contains no event data; it is used by events
+         that do not pass state information to an event handler when an event is raised.
+         If the event handler requires state information, the application must create a
+         subclass of this class to hold the data. For example, the <see cref="T:System.AssemblyLoadEventArgs" />
+         class is used to hold the data for assembly load events, and contains a <see cref="T:System.Reflection.Assembly" qualify="true" />
+         object that describes the loaded assembly.</para>
+        <para>For details on events, see <see cref="T:System.EventHandler" />.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public EventArgs ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs a new instance of the
+ <see langword="EventArgs" /> class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Empty">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.EventArgs Empty" />
+      <MemberSignature Language="C#" Value="public static readonly EventArgs Empty;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventArgs</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a new <see cref="T:System.EventArgs" /> instance for use with events that have no state information.
+   </para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>Accessing this field is equivalent to calling the <see cref="T:System.EventArgs" /> constructor.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

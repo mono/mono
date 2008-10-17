@@ -1,0 +1,1056 @@
+<Type Name="BitArray" FullName="System.Collections.BitArray">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class BitArray : ICloneable, System.Collections.ICollection" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.ICollection</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>The BItArray class implements a collection of Boolean values. There are several different constructors for initializing a new BitArray object.</summary>
+    <remarks>The <see cref="T:System.Collections.BitArray" /> implements an array of Boolean values as a collection.
+A BitArray can be resized by setting the <see cref="M:System.Collections.BitArray.Length" /> property.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BitArray (bool[] values);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="values" Type="System.Boolean[]" />
+      </Parameters>
+      <Docs>
+        <param name="values">A <see cref="T:System.Boolean" /> array.</param>
+        <summary>Constructs and initializes a new instance of the <see cref="T:System.Collections.BitArray" /> class
+where the inital values are set by the <see cref="T:System.Boolean" /> array.</summary>
+        <remarks>
+          <para>
+The size of the new BItArray will be the same as the Length of the Boolean array.
+</para>
+          <example>
+            <code lang="C#">
+using System;
+using System.Collections;
+
+        public class BitArrayFromBoolArray
+        {
+                public static void Main ()
+                {
+                        BitArray bitArray = new BitArray (new bool [] {true, true, false, false, true});
+                        Console.WriteLine ("bitArray.Count: {0}", bitArray.Count);
+                        for (int i = 0; i &lt; bitArray.Count; i++)
+                                Console.WriteLine ("bitArray [{0}]: {1}", i, bitArray [i]);
+                }
+        }
+
+  </code>
+          </example>
+          <para>
+Compiling and running the above example generates the following output:
+</para>
+          <para>
+            <c>bitArray.Count: 5</c>
+          </para>
+          <para>
+            <c>bitArray [0]: True</c>
+          </para>
+          <para>
+            <c>bitArray [1]: True</c>
+          </para>
+          <para>
+            <c>bitArray [2]: False</c>
+          </para>
+          <para>
+            <c>bitArray [3]: False</c>
+          </para>
+          <para>
+            <c>bitArray [4]: True</c>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BitArray (byte[] bytes);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">An Array of Bytes.</param>
+        <summary>Constructs and initializes a new instance of the <see cref="T:System.Collections.BitArray" /> class
+where the inital values are set by the <see cref="T:System.Byte" /> array.</summary>
+        <remarks>
+          <para>
+When using this constructor the new instance will allows have a Count that is 8 (i.e. the length of 1 Byte) times the length of the Byte array.
+</para>
+          <example>
+            <code lang="C#">
+using System;
+using System.Collections;
+
+
+        public class BitArrayFromByteArray
+        {
+                public static void Main ()
+                {
+                        BitArray bitArray = new BitArray (new byte [] {byte.Parse ("25")});
+                        Console.WriteLine ("bitArray.Count: {0}", bitArray.Count);
+                        for (int i = 0; i &lt; bitArray.Count; i++)
+                                Console.WriteLine ("bitArray [{0}]: {1}", i, bitArray [i]);
+                }
+        }
+  </code>
+          </example>
+          <para>
+Compiling and running the above example generates the following output:
+</para>
+          <para>
+            <c>bitArray.Count: 8</c>
+          </para>
+          <para>
+            <c>bitArray [0]: True</c>
+          </para>
+          <para>
+            <c>bitArray [1]: False</c>
+          </para>
+          <para>
+            <c>bitArray [2]: False</c>
+          </para>
+          <para>
+            <c>bitArray [3]: True</c>
+          </para>
+          <para>
+            <c>bitArray [4]: True</c>
+          </para>
+          <para>
+            <c>bitArray [5]: False</c>
+          </para>
+          <para>
+            <c>bitArray [6]: False</c>
+          </para>
+          <para>
+            <c>bitArray [7]: False</c>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BitArray (System.Collections.BitArray bits);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="bits" Type="System.Collections.BitArray" />
+      </Parameters>
+      <Docs>
+        <param name="bits">The BItArray to copy.</param>
+        <summary>
+          <para>
+Constructs and initializes a new instance of the <see cref="T:System.Collections.BitArray" /> class
+from an existing <see cref="T:System.Collections.BitArray" />.
+</para>
+        </summary>
+        <remarks>
+          <example>
+            <code lang="C#">
+using System;
+using System.Collections;
+
+        public class BitArrayFromBitArray
+        {
+                public static void Main ()
+                {
+                        BitArray bitArray = new BitArray (new bool [] {true, true, false, false, true});
+                        BitArray newBitArray = new BitArray (bitArray);
+                        Console.WriteLine ("bitArray.Count: {0}", bitArray.Count);
+                        for (int i = 0; i &lt; bitArray.Count; i++) {
+                                Console.Write ("bitArray [{0}]: {1}", i, bitArray [i]);
+                                Console.WriteLine ("\tnewBitArray [{0}]: {1}", i, newBitArray [i]);
+                        }
+                }
+        }
+  </code>
+          </example>
+          <para>
+Compiling and running the above example generates the following output:
+</para>
+          <para>
+            <c>bitArray.Count: 5</c>
+          </para>
+          <para>
+            <c>bitArray [0]: True        newBitArray [0]: True</c>
+          </para>
+          <para>
+            <c>bitArray [1]: True        newBitArray [1]: True</c>
+          </para>
+          <para>
+            <c>bitArray [2]: False      newBitArray [2]: False</c>
+          </para>
+          <para>
+            <c>bitArray [3]: False      newBitArray [3]: False</c>
+          </para>
+          <para>
+            <c>bitArray [4]: True       newBitArray [4]: True</c>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BitArray (int length);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">The Length (Count) of the new BItArray.</param>
+        <summary>Constructs and initializes a new instance of the <see cref="T:System.Collections.BitArray" /> class
+with the specified Count and
+where the inital values are all set to <c>false</c>.</summary>
+        <remarks>
+          <para>
+The initial value of all Bits is false.
+</para>
+          <example>
+            <code lang="C#">
+using System;
+using System.Collections;
+
+        public class BitArrayFromInt
+        {
+                public static void Main ()
+                {
+                        BitArray bitArray = new BitArray (7);
+                        Console.WriteLine ("bitArray.Count: {0}", bitArray.Count);
+                        for (int i = 0; i &lt; bitArray.Count; i++)
+                                Console.WriteLine ("bitArray [{0}]: {1}", i, bitArray [i]);
+                }
+        }
+  </code>
+          </example>
+          <para>
+Compiling and running the above example generates the following output:
+</para>
+          <para>
+            <c>bitArray.Count: 7</c>
+          </para>
+          <para>
+            <c>bitArray [0]: False</c>
+          </para>
+          <para>
+            <c>bitArray [1]: False</c>
+          </para>
+          <para>
+            <c>bitArray [2]: False</c>
+          </para>
+          <para>
+            <c>bitArray [3]: False</c>
+          </para>
+          <para>
+            <c>bitArray [4]: False</c>
+          </para>
+          <para>
+            <c>bitArray [5]: False</c>
+          </para>
+          <para>
+            <c>bitArray [6]: False</c>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BitArray (int[] values);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="values" Type="System.Int32[]" />
+      </Parameters>
+      <Docs>
+        <param name="values">To be added: an object of type 'int []'</param>
+        <summary>
+          <para>
+Constructs and initializes a instance of the <see cref="T:System.Collections.BitArray" /> class from an array of ints.
+The first value in the int array sets the leaset significant bits of the bit array.
+</para>
+        </summary>
+        <remarks>
+          <para>
+The int at index 0 of the int array sets the least significant bits of the <see cref="T:System.Collections.BItArray" />.
+The bits of the  <see cref="T:System.Collections.BItArray" /> are set using the two's complement value of the <see cref="T:System.Int32" /> integers.
+</para>
+          <example>
+            <code lang="C#">
+using System;
+using System.Collections;
+
+        public class BitArrayFromInt
+        {
+                public static void Main ()
+                {
+                        BitArray bitArray = new BitArray (new int [] {-1, 0});
+                        Console.WriteLine ("bitArray.Count: {0}", bitArray.Count);
+                        for (int i = 0; i &lt; bitArray.Count; i += 8) {
+                                Console.WriteLine ("bitArray [{0}]: {1}", i, bitArray [i]);
+                                Console.WriteLine ("bitArray [{0}]: {1}", i + 7, bitArray [i + 7]);
+                        }
+                }
+        }
+  </code>
+          </example>
+          <para>
+Compiling and running the above example generates the following output:
+</para>
+          <para>
+            <c>bitArray.Count: 64</c>
+          </para>
+          <para>
+            <c>bitArray [0]: True</c>
+          </para>
+          <para>
+            <c>bitArray [7]: True</c>
+          </para>
+          <para>
+            <c>bitArray [8]: True</c>
+          </para>
+          <para>
+            <c>bitArray [15]: True</c>
+          </para>
+          <para>
+            <c>bitArray [16]: True</c>
+          </para>
+          <para>
+            <c>bitArray [23]: True</c>
+          </para>
+          <para>
+            <c>bitArray [24]: True</c>
+          </para>
+          <para>
+            <c>bitArray [31]: True</c>
+          </para>
+          <para>
+            <c>bitArray [32]: False</c>
+          </para>
+          <para>
+            <c>bitArray [39]: False</c>
+          </para>
+          <para>
+            <c>bitArray [40]: False</c>
+          </para>
+          <para>
+            <c>bitArray [47]: False</c>
+          </para>
+          <para>
+            <c>bitArray [48]: False</c>
+          </para>
+          <para>
+            <c>bitArray [55]: False</c>
+          </para>
+          <para>
+            <c>bitArray [56]: False</c>
+          </para>
+          <para>
+            <c>bitArray [63]: False</c>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BitArray (int length, bool defaultValue);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="length" Type="System.Int32" />
+        <Parameter Name="defaultValue" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="length">The Length (Count) of the new BItArray.</param>
+        <param name="defaultValue">The initial value of all Bits.</param>
+        <summary>Constructs and initializes a new instance of the <see cref="T:System.Collections.BitArray" /> class
+with the specified Count and all values initialized to either true or false.</summary>
+        <remarks>
+          <example>
+            <code lang="C#">
+using System;
+using System.Collections;
+
+        public class BitArrayFromIntWithDefault
+        {
+                public static void Main ()
+                {
+                        BitArray bitArray = new BitArray (7, true);
+                        Console.WriteLine ("bitArray.Count: {0}", bitArray.Count);
+                        for (int i = 0; i &lt; bitArray.Count; i++)
+                                Console.WriteLine ("bitArray [{0}]: {1}", i, bitArray [i]);
+                }
+        }
+  </code>
+          </example>
+          <para>Compiling and running the above example generates the following output:</para>
+          <para>
+            <c>bitArray.Count: 7</c>
+          </para>
+          <para>
+            <c>bitArray [0]: True</c>
+          </para>
+          <para>
+            <c>bitArray [1]: True</c>
+          </para>
+          <para>
+            <c>bitArray [2]: True</c>
+          </para>
+          <para>
+            <c>bitArray [3]: True</c>
+          </para>
+          <para>
+            <c>bitArray [4]: True</c>
+          </para>
+          <para>
+            <c>bitArray [5]: True</c>
+          </para>
+          <para>
+            <c>bitArray [6]: True</c>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="And">
+      <MemberSignature Language="C#" Value="public System.Collections.BitArray And (System.Collections.BitArray value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.BitArray</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Collections.BitArray" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Collections.BitArray" /> to <c>And</c> with the current instance.</param>
+        <summary>Performs a bitwise And on two <see cref="T:System.Collections.BitArray" /> instances.</summary>
+        <returns>A BitAray whose bit values are the bitwise <c>And</c> of the BItArray instance and the argument BitArray.</returns>
+        <remarks>
+          <para>
+The result of the <c>And</c> operation overwrites the original instance.
+</para>
+          <para>
+The two BitArrays must be the same length. If they are not an <see cref="T:System.ArgumentException" /> will be thrown.
+</para>
+          <example>
+            <code lang="C#">
+using System;
+using System.Collections;
+using System.Text;
+
+        public class BitArrayAnd
+        {
+                public static void Main ()
+                {
+                        BitArray leftOperand = new BitArray (new byte [] {byte.Parse ("9")});
+                        BitArray rightOperand = new BitArray (new byte [] {byte.Parse ("10")});
+                        BitArrayOut.PrintBitArray (leftOperand, " And ");
+                        BitArrayOut.PrintBitArray (rightOperand, " = ");
+                        leftOperand.And (rightOperand);
+                        BitArrayOut.PrintBitArray (leftOperand, "\n");
+                }
+        }
+
+        public static class BitArrayOut
+        {
+                internal static void PrintBitArray (BitArray bitArray)
+                {
+                        Console.Write (BitArrayToString (bitArray));
+                }
+
+                internal static void PrintBitArray (BitArray bitArray, string symbol)
+                {
+                        PrintBitArray (bitArray);
+                        Console.Write (symbol);
+                }
+
+                private static string BitArrayToString (BitArray bitArray)
+                {
+                        StringBuilder stringBuilder = new StringBuilder ();
+                        for (int i = bitArray.Count - 1; i &gt; -1; i--) {
+                                char digit = bitArray[i] ? '1' : '0';
+                                stringBuilder.Append (digit);
+                        }
+
+                        return stringBuilder.ToString();
+                }
+        }
+  </code>
+          </example>
+          <para>
+Compiling and running the above example generates the following output:
+</para>
+          <para>
+            <c>
+00001001 And 00001010 = 00001000
+</c>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.Object" /> that is a copy of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Object" /> that is a copy of the current
+   instance.</para>
+        </returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (Array array, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Array" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from the current instance. The <see cref="P:System.Array.Length" qualify="true" /> of this array is greater than or equal to the sum of <paramref name="arrayIndex" /> and the <see cref="P:System.Collections.BitArray.Count" /> of the current instance. </param>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the first index of <paramref name="array" /> to which the elements of the current instance are copied. This value is greater than or equal to zero, and less than <paramref name="array" />.Length. </param>
+        <summary>
+          <para> Copies the elements from the current instance to the
+      specified <see cref="T:System.Array" />
+      , starting at the specified index of the array.</para>
+        </summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the number of elements contained in the current instance.
+</summary>
+        <value>
+          <para> A <see cref="T:System.Int32" /> that specifies the number of elements contained in the current
+   instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <see cref="P:System.Collections.BItArray.Count" /> is the number of elements that are
+   contained by the <see cref="T:System.Collections.BitArray" />.
+</para>
+          <para>
+The <see cref="P:System.Collections.BItArray.Count" />  is equal to <see cref="M:System.Collections.BitArray.Length" />.
+</para>
+          <para>
+            <block subset="none" type="note">This property is implemented to support
+   the <see cref="T:System.Collections.ICollection" /> interface.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Get">
+      <MemberSignature Language="C#" Value="public bool Get (int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the element to return.</param>
+        <summary>Get the specified element from the <see cref="T:System.Collections.BitArray" />.</summary>
+        <returns>Returns the value of the specified element.</returns>
+        <remarks>If the index is out of range a <see cref="T:System.ArgumentOutOfRangeException" /> will be thrown.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" /> for the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the current instance.</para>
+        </returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a value indicating whether the current instance is read-only.</para>
+        </summary>
+        <value>
+          <para>
+The value of this property is always <c>false</c>.
+</para>
+        </value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSynchronized">
+      <MemberSignature Language="C#" Value="public bool IsSynchronized { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets a value indicating whether access to the current
+      instance is synchronized (thread-safe).</para>
+        </summary>
+        <value>
+          <para>
+The value of this property is always <c>false</c>.
+</para>
+        </value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public bool this[int index] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index of the element in the current instance to get or set. This value must be greater than or equal to 0, and less than the <see cref="P:System.Collections.BitArray.Count" /> of the current instance.</param>
+        <summary>
+          <para> Gets or sets the element at the specified index of the current instance.</para>
+        </summary>
+        <value>
+          <para>The element at the specified index of the current instance.</para>
+        </value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="C#" Value="public int Length { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Gets or Sets the number of elements contained in the current instance.
+Setting the Length causes the BitArray to be resized.</summary>
+        <value>
+          <para> A <see cref="T:System.Int32" /> that specifies the number of elements contained in the current
+   instance.</para>
+        </value>
+        <remarks>
+          <para>
+            <see cref="P:System.Collections.BItArray.Length" /> is the number of elements that are
+   contained by the <see cref="T:System.Collections.BitArray" />.
+</para>
+          <para>
+The <see cref="P:System.Collections.BItArray.Length" />  is equal to <see cref="M:System.Collections.BitArray.Count" />.
+</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Not">
+      <MemberSignature Language="C#" Value="public System.Collections.BitArray Not ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.BitArray</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Negates all of the bits in a <see cref="T:System.Collections.BitArray" />.</summary>
+        <returns>A BitAray whose bit values are the negation of the BItArray instance.</returns>
+        <remarks>
+          <para>
+The result of the <c>Not</c> operation overwrites the original instance.
+</para>
+          <example>
+            <code lang="C#">
+using System;
+using System.Collections;
+using System.Text;
+
+        public class BitArrayNot
+        {
+                public static void Main ()
+                {
+                        BitArray bitArray = new BitArray (new bool [] {true, false, false, true});
+                        Console.Write ("bitArray:       ");
+                        BitArrayOut.PrintBitArray (bitArray, "\n");
+                        Console.Write ("bitArray.Not(): ");
+                        bitArray.Not ();
+                        BitArrayOut.PrintBitArray (bitArray, "\n");
+                }
+        }
+
+        public static class BitArrayOut
+        {
+                internal static void PrintBitArray (BitArray bitArray)
+                {
+                        Console.Write (BitArrayToString (bitArray));
+                }
+
+                internal static void PrintBitArray (BitArray bitArray, string symbol)
+                {
+                        PrintBitArray (bitArray);
+                        Console.Write (symbol);
+                }
+
+                private static string BitArrayToString (BitArray bitArray)
+                {
+                        StringBuilder stringBuilder = new StringBuilder ();
+                        for (int i = bitArray.Count - 1; i &gt; -1; i--) {
+                                char digit = bitArray[i] ? '1' : '0';
+                                stringBuilder.Append (digit);
+                        }
+
+                        return stringBuilder.ToString();
+                }
+        }
+  </code>
+          </example>
+          <para>Compiling and running the above example generates the following output:</para>
+          <para>
+            <c>bitArray:       1001</c>
+          </para>
+          <para>
+            <c>bitArray.Not(): 0110</c>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Or">
+      <MemberSignature Language="C#" Value="public System.Collections.BitArray Or (System.Collections.BitArray value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.BitArray</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Collections.BitArray" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Collections.BitArray" /> to <c>Or</c> with the current instance.</param>
+        <summary>Performs a bitwise <c>Or</c> of two <see cref="T:System.Collections.BitArray" /> instances.</summary>
+        <returns>A BitAray whose bit values are the bitwise <c>Or</c> of the BItArray instance and the argument BitArray.</returns>
+        <remarks>
+          <para>
+The result of the <c>Or</c> operation overwrites the original instance.
+</para>
+          <para>
+The two BitArrays must be the same length. If they are not an <see cref="T:System.ArgumentException" /> will be thrown.
+</para>
+          <example>
+            <code lang="C#">
+using System;
+using System.Collections;
+
+        public class BitArrayOr
+        {
+                public static void Main ()
+                {
+                        BitArray leftOperand = new BitArray (new bool [] {true, false, false, true});
+                        BitArray rightOperand = new BitArray (new bool [] {true, false, true, false});
+                        BitArrayOut.PrintBitArray (leftOperand, " Or ");
+                        BitArrayOut.PrintBitArray (rightOperand, " = ");
+                        leftOperand.Or(rightOperand);
+                        BitArrayOut.PrintBitArray (leftOperand, "\n");
+                }
+        }
+
+        public static class BitArrayOut
+        {
+                internal static void PrintBitArray (BitArray bitArray)
+                {
+                        Console.Write (BitArrayToString (bitArray));
+                }
+
+                internal static void PrintBitArray (BitArray bitArray, string symbol)
+                {
+                        PrintBitArray (bitArray);
+                        Console.Write (symbol);
+                }
+
+                private static string BitArrayToString (BitArray bitArray)
+                {
+                        StringBuilder stringBuilder = new StringBuilder ();
+                        for (int i = bitArray.Count - 1; i &gt; -1; i--) {
+                                char digit = bitArray[i] ? '1' : '0';
+                                stringBuilder.Append (digit);
+                        }
+
+                        return stringBuilder.ToString();
+                }
+        }
+  </code>
+          </example>
+          <para>
+Compiling and running the above example generates the following output:
+</para>
+          <para>
+            <c>
+1001 Or 0101 = 1101
+</c>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Set">
+      <MemberSignature Language="C#" Value="public void Set (int index, bool value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="value" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the element to be set.</param>
+        <param name="value">The value to set the indexed element to.</param>
+        <summary>Sets the specified element of the <see cref="T:System.Collections.BitArray" /> to the value specified.</summary>
+        <remarks>If the index is out of range a <see cref="T:System.ArgumentOutOfRangeException" /> will be thrown.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetAll">
+      <MemberSignature Language="C#" Value="public void SetAll (bool value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+          <c>true</c> or <c>false</c>, all elements of the <see cref="T:System.Collections.BitArray" /> will be set to this value.</param>
+        <summary>Sets all the elements of the <see cref="T:System.Collections.BitArray" /> to either <c>true</c> or <c>false</c>.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SyncRoot">
+      <MemberSignature Language="C#" Value="public object SyncRoot { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>Gets an object that can be used to synchronize access to
+      the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Object" /> that can be used to synchronize access to the
+   current instance.</para>
+        </value>
+        <remarks>
+          <para>
+An instance of the <see cref="T:System.Collections.BItArray" /> class should be synchronized using this property
+and not directly using the instance.
+Using this property ensures the correct operation of derived classes.
+</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Xor">
+      <MemberSignature Language="C#" Value="public System.Collections.BitArray Xor (System.Collections.BitArray value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.BitArray</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Collections.BitArray" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Collections.BitArray" /> to <c>Xor</c> with the current instance.</param>
+        <summary>Performs a bitwise <c>Xor</c> of two BitArray instances.</summary>
+        <returns>A BitAray whose bit values are the bitwise <c>Xor</c> of the BItArray instance and the argument BitArray.</returns>
+        <remarks>
+          <para>
+The result of the <c>Xor</c> operation overwrites the original instance.
+</para>
+          <para>
+The two BitArrays must be the same length. If they are not an <see cref="T:System.ArgumentException" /> will be thrown.
+</para>
+          <example>
+            <code lang="C#">
+using System;
+using System.Collections;
+using System.Text;
+
+        public class BitArrayXor
+        {
+                public static void Main ()
+                {
+                        BitArray leftOperand = new BitArray (new bool [] {true, false, false, true});
+                        BitArray rightOperand = new BitArray (new bool [] {true, false, true, false});
+                        BitArrayOut.PrintBitArray (leftOperand, " Xor ");
+                        BitArrayOut.PrintBitArray (rightOperand, " = ");
+                        leftOperand.Xor (rightOperand);
+                        BitArrayOut.PrintBitArray (leftOperand, "\n");
+                }
+        }
+
+        public static class BitArrayOut
+        {
+                internal static void PrintBitArray (BitArray bitArray)
+                {
+                        Console.Write (BitArrayToString (bitArray));
+                }
+
+                internal static void PrintBitArray (BitArray bitArray, string symbol)
+                {
+                        PrintBitArray (bitArray);
+                        Console.Write (symbol);
+                }
+
+                private static string BitArrayToString (BitArray bitArray)
+                {
+                        StringBuilder stringBuilder = new StringBuilder ();
+                        for (int i = bitArray.Count - 1; i &gt; -1; i--) {
+                                char digit = bitArray[i] ? '1' : '0';
+                                stringBuilder.Append (digit);
+                        }
+
+                        return stringBuilder.ToString();
+                }
+        }
+  </code>
+          </example>
+          <para>Compiling and running the above example generates the following output:</para>
+          <para>
+            <c>1001 Xor 0101 = 1100</c>
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

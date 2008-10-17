@@ -1,0 +1,242 @@
+<Type Name="NativeObjectSecurity" FullName="System.Security.AccessControl.NativeObjectSecurity">
+  <TypeSignature Language="C#" Value="public abstract class NativeObjectSecurity : System.Security.AccessControl.CommonObjectSecurity" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Security.AccessControl.CommonObjectSecurity</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected NativeObjectSecurity (bool isContainer, System.Security.AccessControl.ResourceType resourceType);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="isContainer" Type="System.Boolean" />
+        <Parameter Name="resourceType" Type="System.Security.AccessControl.ResourceType" />
+      </Parameters>
+      <Docs>
+        <param name="isContainer">To be added.</param>
+        <param name="resourceType">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected NativeObjectSecurity (bool isContainer, System.Security.AccessControl.ResourceType resourceType, System.Runtime.InteropServices.SafeHandle handle, System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="isContainer" Type="System.Boolean" />
+        <Parameter Name="resourceType" Type="System.Security.AccessControl.ResourceType" />
+        <Parameter Name="handle" Type="System.Runtime.InteropServices.SafeHandle" />
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+      </Parameters>
+      <Docs>
+        <param name="isContainer">To be added.</param>
+        <param name="resourceType">To be added.</param>
+        <param name="handle">To be added.</param>
+        <param name="includeSections">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected NativeObjectSecurity (bool isContainer, System.Security.AccessControl.ResourceType resourceType, System.Security.AccessControl.NativeObjectSecurity.ExceptionFromErrorCode exceptionFromErrorCode, object exceptionContext);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="isContainer" Type="System.Boolean" />
+        <Parameter Name="resourceType" Type="System.Security.AccessControl.ResourceType" />
+        <Parameter Name="exceptionFromErrorCode" Type="System.Security.AccessControl.NativeObjectSecurity+ExceptionFromErrorCode" />
+        <Parameter Name="exceptionContext" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="isContainer">To be added.</param>
+        <param name="resourceType">To be added.</param>
+        <param name="exceptionFromErrorCode">To be added.</param>
+        <param name="exceptionContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected NativeObjectSecurity (bool isContainer, System.Security.AccessControl.ResourceType resourceType, string name, System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="isContainer" Type="System.Boolean" />
+        <Parameter Name="resourceType" Type="System.Security.AccessControl.ResourceType" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+      </Parameters>
+      <Docs>
+        <param name="isContainer">To be added.</param>
+        <param name="resourceType">To be added.</param>
+        <param name="name">To be added.</param>
+        <param name="includeSections">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected NativeObjectSecurity (bool isContainer, System.Security.AccessControl.ResourceType resourceType, System.Runtime.InteropServices.SafeHandle handle, System.Security.AccessControl.AccessControlSections includeSections, System.Security.AccessControl.NativeObjectSecurity.ExceptionFromErrorCode exceptionFromErrorCode, object exceptionContext);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="isContainer" Type="System.Boolean" />
+        <Parameter Name="resourceType" Type="System.Security.AccessControl.ResourceType" />
+        <Parameter Name="handle" Type="System.Runtime.InteropServices.SafeHandle" />
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+        <Parameter Name="exceptionFromErrorCode" Type="System.Security.AccessControl.NativeObjectSecurity+ExceptionFromErrorCode" />
+        <Parameter Name="exceptionContext" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="isContainer">To be added.</param>
+        <param name="resourceType">To be added.</param>
+        <param name="handle">To be added.</param>
+        <param name="includeSections">To be added.</param>
+        <param name="exceptionFromErrorCode">To be added.</param>
+        <param name="exceptionContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected NativeObjectSecurity (bool isContainer, System.Security.AccessControl.ResourceType resourceType, string name, System.Security.AccessControl.AccessControlSections includeSections, System.Security.AccessControl.NativeObjectSecurity.ExceptionFromErrorCode exceptionFromErrorCode, object exceptionContext);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="isContainer" Type="System.Boolean" />
+        <Parameter Name="resourceType" Type="System.Security.AccessControl.ResourceType" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+        <Parameter Name="exceptionFromErrorCode" Type="System.Security.AccessControl.NativeObjectSecurity+ExceptionFromErrorCode" />
+        <Parameter Name="exceptionContext" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="isContainer">To be added.</param>
+        <param name="resourceType">To be added.</param>
+        <param name="name">To be added.</param>
+        <param name="includeSections">To be added.</param>
+        <param name="exceptionFromErrorCode">To be added.</param>
+        <param name="exceptionContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Persist">
+      <MemberSignature Language="C#" Value="protected override sealed void Persist (System.Runtime.InteropServices.SafeHandle handle, System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handle" Type="System.Runtime.InteropServices.SafeHandle" />
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <param name="includeSections">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Persist">
+      <MemberSignature Language="C#" Value="protected override sealed void Persist (string name, System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="includeSections">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Persist">
+      <MemberSignature Language="C#" Value="protected void Persist (System.Runtime.InteropServices.SafeHandle handle, System.Security.AccessControl.AccessControlSections includeSections, object exceptionContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handle" Type="System.Runtime.InteropServices.SafeHandle" />
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+        <Parameter Name="exceptionContext" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <param name="includeSections">To be added.</param>
+        <param name="exceptionContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Persist">
+      <MemberSignature Language="C#" Value="protected void Persist (string name, System.Security.AccessControl.AccessControlSections includeSections, object exceptionContext);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+        <Parameter Name="exceptionContext" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="includeSections">To be added.</param>
+        <param name="exceptionContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

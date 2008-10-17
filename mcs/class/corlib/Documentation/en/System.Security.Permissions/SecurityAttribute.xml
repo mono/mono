@@ -1,0 +1,144 @@
+<Type Name="SecurityAttribute" FullName="System.Security.Permissions.SecurityAttribute" FullNameSP="System_Security_Permissions_SecurityAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract serializable SecurityAttribute extends System.Attribute" />
+  <TypeSignature Language="C#" Value="public abstract class SecurityAttribute : Attribute" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Constructor | System.AttributeTargets.Method, AllowMultiple=true, Inherited=false)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> This is the base class for attributes used by the
+ security system.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action)" />
+      <MemberSignature Language="C#" Value="protected SecurityAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
+      </Parameters>
+      <Docs>
+        <param name="action">A <see cref="T:System.Security.Permissions.SecurityAction" /> value.</param>
+        <summary>
+          <para> Constructs and initializes a new instance of <see cref="T:System.Security.Permissions.SecurityAttribute" />
+with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="action" /> is not a valid <see cref="T:System.Security.Permissions.SecurityAction" /> value. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Action">
+      <MemberSignature Language="C#" Value="public System.Security.Permissions.SecurityAction Action { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.SecurityAction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreatePermission">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Security.IPermission CreatePermission()" />
+      <MemberSignature Language="C#" Value="public abstract System.Security.IPermission CreatePermission ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.IPermission</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.Security.IPermission" /> object that contains the security information of the
+   current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Security.IPermission" /> object.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">Returns an instance of
+      the permission type that corresponds to the current attribute. The
+      returned object contains the security information of the current attribute.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this
+      method to create an instance of the permission type that corresponds to the
+      current attribute. For example, the <see langword="CreatePermission" />
+      implementation of <see cref="T:System.Security.Permissions.SecurityPermissionAttribute" /> creates an instance of the
+   <see cref="T:System.Security.Permissions.SecurityPermission" />
+   class.</block>
+          </para>
+          <block subset="none" type="usage">
+            <para> Security information specified
+      using attributes is stored in metadata. The security information in the metadata is created using the permission object returned by
+      this method.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unrestricted">
+      <MemberSignature Language="ILASM" Value=".property bool Unrestricted { public hidebysig specialname instance bool get_Unrestricted() public hidebysig specialname instance void set_Unrestricted(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool Unrestricted { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets
+      full (unrestricted) permission to the resource protected by the current instance.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if full access
+   to the protected resource
+   is declared or is being set; otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

@@ -1,0 +1,196 @@
+<Type Name="CharEnumerator" FullName="System.CharEnumerator" FullNameSP="System_CharEnumerator" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable CharEnumerator extends System.Object implements System.ICloneable, System.Collections.IEnumerator" />
+  <TypeSignature Language="C#" Value="public sealed class CharEnumerator : ICloneable, System.Collections.Generic.IEnumerator&lt;char&gt;" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerator&lt;System.Char&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Supports iteration over and provides read-only access to
+      the individual characters in a <see cref="T:System.String" />.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.CharEnumerator" /> is used to support the <see langword="foreach" /> statement of the C# programming
+      
+      language.</para>
+        <para>Several independent instances of <see cref="T:System.CharEnumerator" /> across
+   one or more threads can have access to a single instance of <see cref="T:System.String" />.</para>
+        <para>For more information regarding the use of an enumerator,
+   see <see cref="T:System.Collections.IEnumerator" />.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Clone">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object Clone()" />
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Creates a copy of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Object" /> with the same state as the current instance.</para>
+        </returns>
+        <remarks>
+          <para>The return value is a <see cref="T:System.Object" /> containing a copy of the state of the
+   current instance when this method is invoked. This <see cref="T:System.Object" /> must be cast explicitly to a <see cref="T:System.CharEnumerator" /> to be
+   made usable as one.</para>
+          <block subset="none" type="note">
+            <para>This method is useful for saving the state of a <see cref="T:System.CharEnumerator" /> object
+   while iterating through the characters of a <see cref="T:System.String" /> .</para>
+            <para>This method is implemented to support the <see cref="T:System.ICloneable" />
+interface.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Current">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Char Current { public hidebysig specialname instance valuetype System.Char get_Current() }" />
+      <MemberSignature Language="C#" Value="public char Current { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the element in the <see cref="T:System.String" /> over which the current instance is
+   positioned.</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.Char" /> in the <see cref="T:System.String" /> over which the current instance is
+   positioned.</para>
+        </value>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The current instance is positioned before the first element or after the last element of the <see cref="T:System.String" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MoveNext">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual bool MoveNext()" />
+      <MemberSignature Language="C#" Value="public bool MoveNext ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Advances the current instance to the next element of the
+   <see cref="T:System.String" /> if and
+      only if the current instance is not already placed beyond the final element of
+      the <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the enumerator was successfully
+   advanced to the next element; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>If the enumerator is positioned after the final element
+      of the <see cref="T:System.String" />
+      when this method is called, the current instance remains in its current position
+      and <see langword="false" /> is returned.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual void Reset()" />
+      <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Repositions the current instance to its initial
+      position, immediately before the first character in the <see cref="T:System.String" />.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerator.Current">
+      <MemberSignature Language="C#" Value="object System.Collections.IEnumerator.Current { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Implemented to support the <see cref="T:System.Collections.IEnumerator" /> interface. [Note: For more information, see <see cref="M:System.Collections.IEnumerator.Current" />.]</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

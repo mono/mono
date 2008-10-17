@@ -1,0 +1,52 @@
+<Type Name="IEquatable&lt;T&gt;" FullName="System.IEquatable&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public interface IEquatable&lt;T&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Interfaces />
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>
+      <para>Defines generalized equality methods that a value type or class implements to create a type-specific equality method.</para>
+    </summary>
+    <remarks>
+      <para>This interface is implemented by types whose values can be ordered; for example, the numeric and string classes.</para>
+    </remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (T other);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="other">To be added.</param>
+        <summary>
+          <para>Determines whether the specified object is equal to the current object.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the specified object is equal to the current object; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">It is up to the implementation to define equality.</block>
+          </para>
+        </remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

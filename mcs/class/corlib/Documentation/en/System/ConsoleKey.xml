@@ -1,0 +1,2033 @@
+<Type Name="ConsoleKey" FullName="System.ConsoleKey">
+  <TypeSignature Language="C#" Value="public enum ConsoleKey" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="A">
+      <MemberSignature Language="C#" Value="A" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="Add" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Applications">
+      <MemberSignature Language="C#" Value="Applications" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Attention">
+      <MemberSignature Language="C#" Value="Attention" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B">
+      <MemberSignature Language="C#" Value="B" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Backspace">
+      <MemberSignature Language="C#" Value="Backspace" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BrowserBack">
+      <MemberSignature Language="C#" Value="BrowserBack" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BrowserFavorites">
+      <MemberSignature Language="C#" Value="BrowserFavorites" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BrowserForward">
+      <MemberSignature Language="C#" Value="BrowserForward" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BrowserHome">
+      <MemberSignature Language="C#" Value="BrowserHome" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BrowserRefresh">
+      <MemberSignature Language="C#" Value="BrowserRefresh" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BrowserSearch">
+      <MemberSignature Language="C#" Value="BrowserSearch" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BrowserStop">
+      <MemberSignature Language="C#" Value="BrowserStop" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="C">
+      <MemberSignature Language="C#" Value="C" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="Clear" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CrSel">
+      <MemberSignature Language="C#" Value="CrSel" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D">
+      <MemberSignature Language="C#" Value="D" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D0">
+      <MemberSignature Language="C#" Value="D0" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D1">
+      <MemberSignature Language="C#" Value="D1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D2">
+      <MemberSignature Language="C#" Value="D2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D3">
+      <MemberSignature Language="C#" Value="D3" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D4">
+      <MemberSignature Language="C#" Value="D4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D5">
+      <MemberSignature Language="C#" Value="D5" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D6">
+      <MemberSignature Language="C#" Value="D6" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D7">
+      <MemberSignature Language="C#" Value="D7" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D8">
+      <MemberSignature Language="C#" Value="D8" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="D9">
+      <MemberSignature Language="C#" Value="D9" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Decimal">
+      <MemberSignature Language="C#" Value="Decimal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Delete">
+      <MemberSignature Language="C#" Value="Delete" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Divide">
+      <MemberSignature Language="C#" Value="Divide" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DownArrow">
+      <MemberSignature Language="C#" Value="DownArrow" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="E">
+      <MemberSignature Language="C#" Value="E" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="End">
+      <MemberSignature Language="C#" Value="End" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Enter">
+      <MemberSignature Language="C#" Value="Enter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EraseEndOfFile">
+      <MemberSignature Language="C#" Value="EraseEndOfFile" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Escape">
+      <MemberSignature Language="C#" Value="Escape" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Execute">
+      <MemberSignature Language="C#" Value="Execute" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExSel">
+      <MemberSignature Language="C#" Value="ExSel" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F">
+      <MemberSignature Language="C#" Value="F" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F1">
+      <MemberSignature Language="C#" Value="F1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F10">
+      <MemberSignature Language="C#" Value="F10" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F11">
+      <MemberSignature Language="C#" Value="F11" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F12">
+      <MemberSignature Language="C#" Value="F12" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F13">
+      <MemberSignature Language="C#" Value="F13" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F14">
+      <MemberSignature Language="C#" Value="F14" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F15">
+      <MemberSignature Language="C#" Value="F15" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F16">
+      <MemberSignature Language="C#" Value="F16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F17">
+      <MemberSignature Language="C#" Value="F17" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F18">
+      <MemberSignature Language="C#" Value="F18" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F19">
+      <MemberSignature Language="C#" Value="F19" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F2">
+      <MemberSignature Language="C#" Value="F2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F20">
+      <MemberSignature Language="C#" Value="F20" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F21">
+      <MemberSignature Language="C#" Value="F21" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F22">
+      <MemberSignature Language="C#" Value="F22" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F23">
+      <MemberSignature Language="C#" Value="F23" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F24">
+      <MemberSignature Language="C#" Value="F24" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F3">
+      <MemberSignature Language="C#" Value="F3" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F4">
+      <MemberSignature Language="C#" Value="F4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F5">
+      <MemberSignature Language="C#" Value="F5" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F6">
+      <MemberSignature Language="C#" Value="F6" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F7">
+      <MemberSignature Language="C#" Value="F7" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F8">
+      <MemberSignature Language="C#" Value="F8" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F9">
+      <MemberSignature Language="C#" Value="F9" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="G">
+      <MemberSignature Language="C#" Value="G" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="H">
+      <MemberSignature Language="C#" Value="H" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Help">
+      <MemberSignature Language="C#" Value="Help" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Home">
+      <MemberSignature Language="C#" Value="Home" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="I">
+      <MemberSignature Language="C#" Value="I" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="C#" Value="Insert" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="J">
+      <MemberSignature Language="C#" Value="J" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="K">
+      <MemberSignature Language="C#" Value="K" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="L">
+      <MemberSignature Language="C#" Value="L" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LaunchApp1">
+      <MemberSignature Language="C#" Value="LaunchApp1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LaunchApp2">
+      <MemberSignature Language="C#" Value="LaunchApp2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LaunchMail">
+      <MemberSignature Language="C#" Value="LaunchMail" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LaunchMediaSelect">
+      <MemberSignature Language="C#" Value="LaunchMediaSelect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LeftArrow">
+      <MemberSignature Language="C#" Value="LeftArrow" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LeftWindows">
+      <MemberSignature Language="C#" Value="LeftWindows" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="M">
+      <MemberSignature Language="C#" Value="M" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MediaNext">
+      <MemberSignature Language="C#" Value="MediaNext" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MediaPlay">
+      <MemberSignature Language="C#" Value="MediaPlay" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MediaPrevious">
+      <MemberSignature Language="C#" Value="MediaPrevious" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MediaStop">
+      <MemberSignature Language="C#" Value="MediaStop" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Multiply">
+      <MemberSignature Language="C#" Value="Multiply" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="N">
+      <MemberSignature Language="C#" Value="N" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoName">
+      <MemberSignature Language="C#" Value="NoName" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NumPad0">
+      <MemberSignature Language="C#" Value="NumPad0" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NumPad1">
+      <MemberSignature Language="C#" Value="NumPad1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NumPad2">
+      <MemberSignature Language="C#" Value="NumPad2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NumPad3">
+      <MemberSignature Language="C#" Value="NumPad3" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NumPad4">
+      <MemberSignature Language="C#" Value="NumPad4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NumPad5">
+      <MemberSignature Language="C#" Value="NumPad5" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NumPad6">
+      <MemberSignature Language="C#" Value="NumPad6" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NumPad7">
+      <MemberSignature Language="C#" Value="NumPad7" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NumPad8">
+      <MemberSignature Language="C#" Value="NumPad8" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NumPad9">
+      <MemberSignature Language="C#" Value="NumPad9" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O">
+      <MemberSignature Language="C#" Value="O" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Oem1">
+      <MemberSignature Language="C#" Value="Oem1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Oem102">
+      <MemberSignature Language="C#" Value="Oem102" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Oem2">
+      <MemberSignature Language="C#" Value="Oem2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Oem3">
+      <MemberSignature Language="C#" Value="Oem3" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Oem4">
+      <MemberSignature Language="C#" Value="Oem4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Oem5">
+      <MemberSignature Language="C#" Value="Oem5" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Oem6">
+      <MemberSignature Language="C#" Value="Oem6" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Oem7">
+      <MemberSignature Language="C#" Value="Oem7" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Oem8">
+      <MemberSignature Language="C#" Value="Oem8" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OemClear">
+      <MemberSignature Language="C#" Value="OemClear" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OemComma">
+      <MemberSignature Language="C#" Value="OemComma" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OemMinus">
+      <MemberSignature Language="C#" Value="OemMinus" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OemPeriod">
+      <MemberSignature Language="C#" Value="OemPeriod" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OemPlus">
+      <MemberSignature Language="C#" Value="OemPlus" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="P">
+      <MemberSignature Language="C#" Value="P" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pa1">
+      <MemberSignature Language="C#" Value="Pa1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Packet">
+      <MemberSignature Language="C#" Value="Packet" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PageDown">
+      <MemberSignature Language="C#" Value="PageDown" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PageUp">
+      <MemberSignature Language="C#" Value="PageUp" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pause">
+      <MemberSignature Language="C#" Value="Pause" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Play">
+      <MemberSignature Language="C#" Value="Play" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Print">
+      <MemberSignature Language="C#" Value="Print" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrintScreen">
+      <MemberSignature Language="C#" Value="PrintScreen" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Process">
+      <MemberSignature Language="C#" Value="Process" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Q">
+      <MemberSignature Language="C#" Value="Q" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="R">
+      <MemberSignature Language="C#" Value="R" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RightArrow">
+      <MemberSignature Language="C#" Value="RightArrow" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RightWindows">
+      <MemberSignature Language="C#" Value="RightWindows" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S">
+      <MemberSignature Language="C#" Value="S" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Select">
+      <MemberSignature Language="C#" Value="Select" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Separator">
+      <MemberSignature Language="C#" Value="Separator" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sleep">
+      <MemberSignature Language="C#" Value="Sleep" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Spacebar">
+      <MemberSignature Language="C#" Value="Spacebar" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Subtract">
+      <MemberSignature Language="C#" Value="Subtract" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="T">
+      <MemberSignature Language="C#" Value="T" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Tab">
+      <MemberSignature Language="C#" Value="Tab" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="U">
+      <MemberSignature Language="C#" Value="U" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UpArrow">
+      <MemberSignature Language="C#" Value="UpArrow" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="V">
+      <MemberSignature Language="C#" Value="V" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VolumeDown">
+      <MemberSignature Language="C#" Value="VolumeDown" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VolumeMute">
+      <MemberSignature Language="C#" Value="VolumeMute" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VolumeUp">
+      <MemberSignature Language="C#" Value="VolumeUp" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="W">
+      <MemberSignature Language="C#" Value="W" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="X">
+      <MemberSignature Language="C#" Value="X" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Y">
+      <MemberSignature Language="C#" Value="Y" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Z">
+      <MemberSignature Language="C#" Value="Z" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Zoom">
+      <MemberSignature Language="C#" Value="Zoom" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

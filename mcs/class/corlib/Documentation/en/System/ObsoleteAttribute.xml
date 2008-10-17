@@ -1,0 +1,220 @@
+<Type Name="ObsoleteAttribute" FullName="System.ObsoleteAttribute" FullNameSP="System_ObsoleteAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable ObsoleteAttribute extends System.Attribute" />
+  <TypeSignature Language="C#" Value="public sealed class ObsoleteAttribute : Attribute" />
+  <MemberOfLibrary>BCL</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Event | System.AttributeTargets.Interface | System.AttributeTargets.Delegate, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Indicates that the target of the current attribute will be
+      removed in future versions of the assembly in which the target
+      is contained.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para> Marking an
+         item as obsolete provides consumers of that item the information that the item
+         will be not be available in future versions of the assembly in
+         which it is contained. A <see cref="T:System.ObsoleteAttribute" /> has a <see cref="P:System.ObsoleteAttribute.Message" /> property that can be used to suggest alternative ways of
+         obtaining the functionality provided by the item, i.e. a workaround. This class also has a <see cref="P:System.ObsoleteAttribute.IsError" /> property that designates whether a
+         compiler will treat usage of the obsolete item as an error. If this property
+         is <see langword="false" />, the compiler will issue a warning if
+         the obsolete item is used and the compiler
+         supports the generation of such warnings.</para>
+        <para>This attribute can be applied to any valid attribute target
+         except assemblies, parameters, and return values. For a complete list
+         of valid attribute targets, see <see cref="T:System.AttributeTargets" /> .</para>
+      </block>
+    </remarks>
+    <example>
+      <para>The following example demonstrates the usage of <see cref="T:System.ObsoleteAttribute" /> to
+   generate a compile-time warning.</para>
+      <code lang="C#">
+   
+using System;
+
+public class ObsoleteAttributeExample {
+
+  [ObsoleteAttribute("OldMethod is being removed: use NewMethod in future versions.")]
+  public static void OldMethod() {
+
+    //Execute some code here
+  }
+
+  public static void Main() { 
+
+    OldMethod();
+  }
+}
+</code>
+      <para>An example compile-time result is</para>
+      <para>
+        <c>ObsoleteAttributeExample.cs(8,4):
+   warning CS0618: 'ObsoleteAttributeExample.OldMethod()' is obsolete: 'OldMethod is
+   being removed: use NewMethod in future versions.'</c>
+      </para>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public ObsoleteAttribute ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.ObsoleteAttribute" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor is equivalent to <see cref="T:System.ObsoleteAttribute" />(<see langword="null" />, <see langword="false" /> 
+). The compiler does not
+treat an item with this attribute as an error.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public ObsoleteAttribute (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">The <see cref="T:System.String" /> that contains suggested workarounds.</param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.ObsoleteAttribute" /> class with the specified
+<see cref="T:System.String" /> 
+that
+contains suggested workarounds.</para>
+        </summary>
+        <remarks>
+          <para>This constructor is equivalent to <see cref="T:System.ObsoleteAttribute" /> (<paramref name="message" /> , <see langword="false" /> ). The compiler does
+   not treat an item with this attribute as an error.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, bool error)" />
+      <MemberSignature Language="C#" Value="public ObsoleteAttribute (string message, bool error);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="error" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that contains suggested workarounds.</param>
+        <param name="error">A <see cref="T:System.Boolean" /> that indicates whether the compiler treats usage of the target of the current instance as an error.</param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.ObsoleteAttribute" /> class with a <see cref="T:System.String" /> that contains
+   suggested workarounds and a <see cref="T:System.Boolean" /> that indicates whether the compiler
+   treats usage of the target of the current instance as an error.</para>
+        </summary>
+        <remarks>
+          <para>Respectively, the <see cref="P:System.ObsoleteAttribute.Message" /> property and the <see cref="P:System.ObsoleteAttribute.IsError" /> property of the new instance are initialized as
+<paramref name="message" /> and <paramref name="error" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsError">
+      <MemberSignature Language="ILASM" Value=".property bool IsError { public hidebysig specialname instance bool get_IsError() }" />
+      <MemberSignature Language="C#" Value="public bool IsError { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Boolean" /> that indicates 
+ whether the compiler treats usage of the target of the current
+ instance as an error.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the 
+ compiler treats usage of the target
+ of the current instance
+ as an error; otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The default value of this property is <see langword="false" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="ILASM" Value=".property string Message { public hidebysig specialname instance string get_Message() }" />
+      <MemberSignature Language="C#" Value="public string Message { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.String" /> that contains
+   suggested workarounds for the target of the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that contains
+   suggested workarounds
+   for the target of the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The current instance contains a suggested workaround message if and only if
+      such a message was specified when the current instance was constructed. If
+      no workaround was specified for the current instance, the value of
+      this property is <see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>
