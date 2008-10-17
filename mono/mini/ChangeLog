@@ -1,5 +1,18 @@
 2008-10-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-ops.h: Add packed int shuffle.
+	
+	* cpu-x86.md: Same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Same.
+
+	* simd-intrinsics.c (vector4ui_intrinsics): Add compare equal,
+	extract mask, max, min, shuffle.
+
+	* simd-intrinsics.c (vector8us_intrinsics): Add max and min.
+
+2008-10-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Tests for new methods in Vector8us.
 
 2008-10-17  Mark Probst  <mark.probst@gmail.com>
