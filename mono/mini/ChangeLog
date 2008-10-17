@@ -1,3 +1,7 @@
+2008-10-17  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): "refanytype" produces a
+	RuntimeTypeHandle, not a TypedReference.
 
 Fri Oct 17 14:40:50 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
