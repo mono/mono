@@ -1,0 +1,83 @@
+<Type Name="RelaxngMergedProvider" FullName="Commons.Xml.Relaxng.RelaxngMergedProvider">
+  <TypeSignature Language="C#" Value="public class RelaxngMergedProvider : Commons.Xml.Relaxng.RelaxngDatatypeProvider" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Docs>
+    <summary>A <see cref="Commons.Xml.Relaxng.RelaxngDatatypeProvider" /> implementation that is used to merge multiple data provider identified by its datatype library names.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Base>
+    <BaseTypeName>Commons.Xml.Relaxng.RelaxngDatatypeProvider</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Reflection.DefaultMember(MemberName="Item")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Members>
+    <Member MemberName="GetDatatype">
+      <MemberSignature Language="C#" Value="public override Commons.Xml.Relaxng.RelaxngDatatype GetDatatype (string name, string ns, Commons.Xml.Relaxng.RelaxngParamList parameters);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Relaxng.RelaxngDatatype</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="parameters" Type="Commons.Xml.Relaxng.RelaxngParamList" />
+      </Parameters>
+      <Docs>
+        <summary>Returns data types using contained datatype providers.</summary>
+        <param name="name">a <see cref="T:System.String" /> that represents the local type name.</param>
+        <param name="ns">a <see cref="T:System.String" /> that represents the namespace (datatype library).</param>
+        <param name="parameters">a <see cref="T:Commons.Xml.Relaxng.RelaxngParamList" />; The parameters for this type.</param>
+        <returns>a <see cref="T:Commons.Xml.Relaxng.RelaxngDatatype" /></returns>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RelaxngMergedProvider ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>The default constructor.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultProvider">
+      <MemberSignature Language="C#" Value="public static Commons.Xml.Relaxng.RelaxngMergedProvider DefaultProvider { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Relaxng.RelaxngMergedProvider</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The default provider used by <see cref="M:Commons.Xml.Relaxng.RelaxngPattern.Read" />. This provider support default namespace types ("string" and "token") and XML Schema datatypes (identified by the namespace http://www.w3.org/2001/XMLSchema-datatypes ).</summary>
+        <value>a <see cref="T:Commons.Xml.Relaxng.RelaxngMergedProvider" /></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public Commons.Xml.Relaxng.RelaxngDatatypeProvider Item[string ns] { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Relaxng.RelaxngDatatypeProvider</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <summary>This indexer is used to get or set each <see cref="T:Commons.Xml.Relaxng.RelaxngDatatypeProvider" /> instance indexed by the parameter datatype library URI.</summary>
+        <param name="ns">a <see cref="T:System.String" /> that indicates the datatype library namespace.</param>
+        <value>a <see cref="T:Commons.Xml.Relaxng.RelaxngDatatypeProvider" /> that is identified by the namespace. Returns null if no datatype provider is registered by this provider.</value>
+        <remarks>Note that returned <see cref="T:Commons.Xml.Relaxng.RelaxngDatatypeProvider" /> does not always support the datatypes indicated by the datatype library URI. <see cref="M:Commons.Xml.Relaxng.RelaxngDatatypeProvider.GetDatatype" /> is not always bound to certain datatype library.
+		</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

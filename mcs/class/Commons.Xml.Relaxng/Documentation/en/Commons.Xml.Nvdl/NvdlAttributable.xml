@@ -1,0 +1,38 @@
+<Type Name="NvdlAttributable" FullName="Commons.Xml.Nvdl.NvdlAttributable">
+  <TypeSignature Language="C#" Value="public class NvdlAttributable : Commons.Xml.Nvdl.NvdlElementBase" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Commons.Xml.Nvdl.NvdlElementBase</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NvdlAttributable ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>The default constructor.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Foreign">
+      <MemberSignature Language="C#" Value="public System.Collections.ArrayList Foreign { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ArrayList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Holds the all foreign attributes.</summary>
+        <value>A list that holds the entire foreign attributes.</value>
+        <remarks>This list holds the entire foreign attributes. Here "foreign" means those attributes whose namespace URI is neither empty nor NVDL structure namespace (see <see cref="F:Commons.Xml.Nvdl.Nvdl.NvdlNamespace" />). </remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>Represents an abstract NVDL element that can hold foreign attribute.</summary>
+    <remarks>This class represents an abstract NVDL element that can hold foreign attribute. Here "foreign" means those attributes whose namespace URI is neither empty nor NVDL structure namespace (see <see cref="F:Commons.Xml.Nvdl.Nvdl.NvdlNamespace" />). For the entire NVDL grammar, see http://www.asahi-net.or.jp/~eb2m-mrt/dsdl/fcd/nvdl-fcd.pdf .</remarks>
+  </Docs>
+</Type>

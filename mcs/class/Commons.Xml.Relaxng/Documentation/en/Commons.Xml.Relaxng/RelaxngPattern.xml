@@ -1,0 +1,145 @@
+<Type Name="RelaxngPattern" FullName="Commons.Xml.Relaxng.RelaxngPattern">
+  <TypeSignature Language="C#" Value="public abstract class RelaxngPattern : Commons.Xml.Relaxng.RelaxngElementBase" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Docs>
+    <summary>Represents an abstract RELAX NG pattern. All RELAX NG patterns derive from this class.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Base>
+    <BaseTypeName>Commons.Xml.Relaxng.RelaxngElementBase</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public static Commons.Xml.Relaxng.RelaxngPattern Read (System.Xml.XmlReader xmlReader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Relaxng.RelaxngPattern</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlReader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <summary>Reads a RELAX NG pattern from XmlReader. This method equals to the call to Read (xmlReader, RelaxngMergedProvider.DefaultProvider).</summary>
+        <param name="xmlReader">a <see cref="T:System.Xml.XmlReader" /></param>
+        <returns>a <see cref="T:Commons.Xml.Relaxng.RelaxngPattern" /></returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public static Commons.Xml.Relaxng.RelaxngPattern Read (System.Xml.XmlReader xmlReader, Commons.Xml.Relaxng.RelaxngDatatypeProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Relaxng.RelaxngPattern</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlReader" Type="System.Xml.XmlReader" />
+        <Parameter Name="provider" Type="Commons.Xml.Relaxng.RelaxngDatatypeProvider" />
+      </Parameters>
+      <Docs>
+        <summary>Reads a RELAX NG pattern from XmlReader, using specified data type provider (see <see cref="T:Commons.Xml.Relaxng.RelaxngDatatypeProvider" /> for the detail).</summary>
+        <param name="xmlReader">a <see cref="T:System.Xml.XmlReader" /> that holds the target RELAX NG grammar XML.</param>
+        <param name="provider">a <see cref="T:Commons.Xml.Relaxng.RelaxngDatatypeProvider" /></param>
+        <returns>a <see cref="T:Commons.Xml.Relaxng.RelaxngPattern" /></returns>
+        <remarks>This method is not designed to read RELAX NG compact syntax. To parse RELAX NG compact syntax, use <see cref="T:Commons.Xml.Relaxng.Rnc.RncParser" />.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Compile">
+      <MemberSignature Language="C#" Value="public void Compile ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Compiles the pattern and checks if the pattern object contains any errors or not.</summary>
+        <remarks>This method is anyways called internally before being used in <see cref="T:Commons.Xml.Relaxng.RelaxngValidatingReader" />.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected RelaxngPattern ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>The constructor that is intended to be used internally.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PatternType">
+      <MemberSignature Language="C#" Value="public abstract Commons.Xml.Relaxng.RelaxngPatternType PatternType { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Relaxng.RelaxngPatternType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Represents the pattern type of this instance.</summary>
+        <value>a <see cref="T:Commons.Xml.Relaxng.RelaxngPatternType" /></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DataProvider">
+      <MemberSignature Language="C#" Value="public Commons.Xml.Relaxng.RelaxngDatatypeProvider DataProvider { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Relaxng.RelaxngDatatypeProvider</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the data type provider for this pattern instance. See <see cref="T:Commons.Xml.Relaxng.RelaxngDatatypeProvider" /> for the detail.</summary>
+        <value>a <see cref="T:Commons.Xml.Relaxng.RelaxngDatatypeProvider" /></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteCompact">
+      <MemberSignature Language="C#" Value="public void WriteCompact (System.IO.TextWriter writer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteCompact">
+      <MemberSignature Language="C#" Value="public void WriteCompact (System.IO.TextWriter writer, System.Xml.XmlNamespaceManager res);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+        <Parameter Name="res" Type="System.Xml.XmlNamespaceManager" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="XmlResolver">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlResolver XmlResolver { set; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlResolver</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

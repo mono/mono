@@ -1,0 +1,29 @@
+<Type Name="XsdDatatypeProvider" FullName="Commons.Xml.Relaxng.XmlSchema.XsdDatatypeProvider">
+  <TypeSignature Language="C#" Value="public class XsdDatatypeProvider : Commons.Xml.Relaxng.RelaxngDatatypeProvider" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Commons.Xml.Relaxng.RelaxngDatatypeProvider</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName="Instance">
+      <MemberSignature Language="C#" Value="public static Commons.Xml.Relaxng.XmlSchema.XsdDatatypeProvider Instance { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Relaxng.XmlSchema.XsdDatatypeProvider</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

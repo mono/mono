@@ -1,0 +1,31 @@
+<Type Name="XsdPrimitiveType" FullName="Commons.Xml.Relaxng.XmlSchema.XsdPrimitiveType">
+  <TypeSignature Language="C#" Value="public class XsdPrimitiveType : Commons.Xml.Relaxng.RelaxngDatatype" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Commons.Xml.Relaxng.RelaxngDatatype</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XsdPrimitiveType (string name, System.Xml.Schema.XmlSchemaDatatype xstype);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="xstype" Type="System.Xml.Schema.XmlSchemaDatatype" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="xstype">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

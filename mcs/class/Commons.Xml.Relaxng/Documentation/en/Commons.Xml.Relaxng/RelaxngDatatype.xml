@@ -1,0 +1,129 @@
+<Type Name="RelaxngDatatype" FullName="Commons.Xml.Relaxng.RelaxngDatatype">
+  <TypeSignature Language="C#" Value="public abstract class RelaxngDatatype" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Docs>
+    <summary>This type represents an abstract datatype that is being used in "data" and "value" elements' validation.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public abstract object Parse (string text, System.Xml.XmlReader reader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <summary>Validates the value string and returns the validated typed object, being supplied context information by XmlReader as a context holder.</summary>
+        <param name="text">a <see cref="T:System.String" /> that represents a value being parsed.</param>
+        <param name="reader">a <see cref="T:System.Xml.XmlReader" /> that is used as a context holder.</param>
+        <returns>a <see cref="T:System.Object" /> that represents the validated value. This method <strong>must</strong> return null if the value was invalid. It is recommended that implementations return <see cref="P:System.DBNull.Value" /> for explicit NULL value.</returns>
+        <remarks>The context represented by the XmlReader parameter is used for example to acquire namespace URI using <see cref="M:System.Xml.XmlREader.LookupNamespace" />.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="C#" Value="public virtual bool Compare (object o1, object o2);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="o1" Type="System.Object" />
+        <Parameter Name="o2" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <summary>Compares two "values" that would be used in "value" constraint check.</summary>
+        <param name="o1">a <see cref="T:System.Object" /> that is being compared.</param>
+        <param name="o2">a <see cref="T:System.Object" /> that is being compared.</param>
+        <returns>True if equals. False if not equals.</returns>
+        <remarks>The default implementation Parses the values into objects and compares as objects.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CompareString">
+      <MemberSignature Language="C#" Value="public virtual bool CompareString (string s1, string s2, System.Xml.XmlReader reader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s1" Type="System.String" />
+        <Parameter Name="s2" Type="System.String" />
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <summary>Compares two "value strings" that would be used in "value" constraint check.</summary>
+        <param name="s1">a <see cref="T:System.String" /> that is being compared.</param>
+        <param name="s2">a <see cref="T:System.String" /> that is being compared.</param>
+        <param name="reader">a <see cref="T:System.Xml.XmlReader" /></param>
+        <returns>True if equals. False if not equals.</returns>
+        <remarks>The default implementation converts the values into objects and calls Compare method.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsValid">
+      <MemberSignature Language="C#" Value="public virtual bool IsValid (string text, System.Xml.XmlReader reader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <summary>Validates the argument string.</summary>
+        <param name="text">a <see cref="T:System.String" /> that represents a value being parsed.</param>
+        <param name="reader">a <see cref="T:System.Xml.XmlReader" /> that is used as a context holder.</param>
+        <returns>True if valid. False if invalid.</returns>
+        <remarks>The default implementation calls Parse() and checks if the return value is null or not.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected RelaxngDatatype ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>The protected constructor.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public abstract string Name { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Represents the local part of this type's name.</summary>
+        <value>a <see cref="T:System.String" /></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NamespaceURI">
+      <MemberSignature Language="C#" Value="public abstract string NamespaceURI { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Represents the namespace part of this type's name (datatype library name).</summary>
+        <value>a <see cref="T:System.String" /></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

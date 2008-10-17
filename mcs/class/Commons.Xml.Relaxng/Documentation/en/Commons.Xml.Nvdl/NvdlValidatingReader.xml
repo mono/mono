@@ -1,0 +1,76 @@
+<Type Name="NvdlValidatingReader" FullName="Commons.Xml.Nvdl.NvdlValidatingReader">
+  <TypeSignature Language="C#" Value="public class NvdlValidatingReader : Commons.Xml.XmlDefaultReader" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Commons.Xml.XmlDefaultReader</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NvdlValidatingReader (System.Xml.XmlReader reader, Commons.Xml.Nvdl.NvdlRules rules);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="rules" Type="Commons.Xml.Nvdl.NvdlRules" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="rules">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NvdlValidatingReader (System.Xml.XmlReader reader, Commons.Xml.Nvdl.NvdlRules rules, System.Xml.XmlResolver resolver);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="rules" Type="Commons.Xml.Nvdl.NvdlRules" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="rules">To be added.</param>
+        <param name="resolver">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NvdlValidatingReader (System.Xml.XmlReader reader, Commons.Xml.Nvdl.NvdlRules rules, System.Xml.XmlResolver resolver, Commons.Xml.Nvdl.NvdlConfig config);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="rules" Type="Commons.Xml.Nvdl.NvdlRules" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+        <Parameter Name="config" Type="Commons.Xml.Nvdl.NvdlConfig" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="rules">To be added.</param>
+        <param name="resolver">To be added.</param>
+        <param name="config">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ActionStarted">
+      <MemberSignature Language="C#" Value="public event Commons.Xml.Nvdl.NvdlMessageEventHandler ActionStarted;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Nvdl.NvdlMessageEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

@@ -1,0 +1,36 @@
+<Type Name="RelaxngInference+InferenceOption" FullName="Commons.Xml.Relaxng.Inference.RelaxngInference+InferenceOption">
+  <TypeSignature Language="C#" Value="public enum InferenceOption" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Members>
+    <Member MemberName="Restricted">
+      <MemberSignature Language="C#" Value="Restricted" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Relaxng.Inference.RelaxngInference+InferenceOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Relaxed">
+      <MemberSignature Language="C#" Value="Relaxed" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Relaxng.Inference.RelaxngInference+InferenceOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

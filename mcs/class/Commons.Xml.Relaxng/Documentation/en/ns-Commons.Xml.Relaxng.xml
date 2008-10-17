@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="utf-8"?>
+<masterdoc assembly="Commons.Xml.Relaxng">
+    <class name="RelaxngDatatype" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngDatatype()" argnames="" />
+        <property name="Name" propertytype="System.String" />
+        <property name="NamespaceURI" propertytype="System.String" />
+        <method name="Parse(System.String, System.Xml.XmlReader)" argnames="text, reader" returntype="System.Object" />
+        <method name="Compare(System.Object, System.Object)" argnames="o1, o2" returntype="System.Boolean" />
+        <method name="CompareString(System.String, System.String, System.Xml.XmlReader)" argnames="s1, s2, reader" returntype="System.Boolean" />
+        <method name="IsValid(System.String, System.Xml.XmlReader)" argnames="text, reader" returntype="System.Boolean" />
+    </class>
+    <class name="RelaxngDatatypeProvider" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngDatatypeProvider()" argnames="" />
+        <method name="GetDatatype(System.String, System.String, Commons.Xml.Relaxng.RelaxngParamList)" argnames="name, ns, parameters" returntype="Commons.Xml.Relaxng.RelaxngDatatype" />
+    </class>
+    <class name="RelaxngString" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngString()" argnames="" />
+        <property name="Instance" propertytype="Commons.Xml.Relaxng.RelaxngString" />
+        <property name="Name" propertytype="System.String" />
+        <property name="NamespaceURI" propertytype="System.String" />
+        <method name="IsValid(System.String, System.Xml.XmlReader)" argnames="text, reader" returntype="System.Boolean" />
+        <method name="Parse(System.String, System.Xml.XmlReader)" argnames="text, reader" returntype="System.Object" />
+        <method name="Compare(System.Object, System.Object)" argnames="o1, o2" returntype="System.Boolean" />
+    </class>
+    <class name="RelaxngToken" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngToken()" argnames="" />
+        <property name="Instance" propertytype="Commons.Xml.Relaxng.RelaxngToken" />
+        <property name="Name" propertytype="System.String" />
+        <property name="NamespaceURI" propertytype="System.String" />
+        <method name="IsValid(System.String, System.Xml.XmlReader)" argnames="text, reader" returntype="System.Boolean" />
+        <method name="Parse(System.String, System.Xml.XmlReader)" argnames="text, reader" returntype="System.Object" />
+        <method name="Compare(System.Object, System.Object)" argnames="o1, o2" returntype="System.Boolean" />
+    </class>
+    <class name="RelaxngException" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngException()" argnames="" />
+        <constructor name="RelaxngException(System.String)" argnames="message" />
+        <constructor name="RelaxngException(System.String, System.Exception)" argnames="message, innerException" />
+    </class>
+    <class name="RelaxngElementBase" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngElementBase()" argnames="" />
+        <property name="IsCompiled" propertytype="System.Boolean" />
+        <property name="LineNumber" propertytype="System.Int32" />
+        <property name="LinePosition" propertytype="System.Int32" />
+        <property name="BaseUri" propertytype="System.String" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="write" returntype="System.Void" />
+    </class>
+    <class name="RelaxngPattern" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngPattern()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="DataProvider" propertytype="Commons.Xml.Relaxng.RelaxngDatatypeProvider" />
+        <property name="StartPattern" propertytype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="Read(System.Xml.XmlReader)" argnames="xmlReader" returntype="Commons.Xml.Relaxng.RelaxngPattern" />
+        <method name="Read(System.Xml.XmlReader, Commons.Xml.Relaxng.RelaxngDatatypeProvider)" argnames="xmlReader, provider" returntype="Commons.Xml.Relaxng.RelaxngPattern" />
+        <method name="Compile()" argnames="" returntype="System.Void" />
+    </class>
+    <class name="RelaxngGrammar" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngGrammar()" argnames="" />
+        <field name="NamespaceURI" />
+        <property name="ParentGrammar" propertytype="Commons.Xml.Relaxng.RelaxngGrammar" />
+        <property name="Provider" propertytype="Commons.Xml.Relaxng.RelaxngDatatypeProvider" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="Starts" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <property name="Defines" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <property name="Includes" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <property name="Divs" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <property name="IncludedUris" propertytype="System.Collections.Hashtable" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngMergedProvider" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngMergedProvider()" argnames="" />
+        <property name="DefaultProvider" propertytype="Commons.Xml.Relaxng.RelaxngMergedProvider" />
+        <property name="Item" propertytype="Commons.Xml.Relaxng.RelaxngDatatypeProvider" />
+        <method name="GetDatatype(System.String, System.String, Commons.Xml.Relaxng.RelaxngParamList)" argnames="name, ns, parameters" returntype="Commons.Xml.Relaxng.RelaxngDatatype" />
+    </class>
+    <class name="RelaxngNameClassList" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngNameClassList()" argnames="" />
+        <property name="Item" propertytype="Commons.Xml.Relaxng.RelaxngNameClass" />
+        <method name="Add(Commons.Xml.Relaxng.RelaxngNameClass)" argnames="p" returntype="System.Void" />
+        <method name="Insert(System.Int32, Commons.Xml.Relaxng.RelaxngNameClass)" argnames="pos, p" returntype="System.Void" />
+        <method name="Remove(Commons.Xml.Relaxng.RelaxngNameClass)" argnames="p" returntype="System.Void" />
+    </class>
+    <class name="RelaxngNameClass" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngNameClass()" argnames="" />
+    </class>
+    <class name="RelaxngAnyName" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngAnyName()" argnames="" />
+        <property name="Except" propertytype="Commons.Xml.Relaxng.RelaxngExceptNameClass" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngNsName" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngNsName()" argnames="" />
+        <property name="Namespace" propertytype="System.String" />
+        <property name="Except" propertytype="Commons.Xml.Relaxng.RelaxngExceptNameClass" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngName" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngName()" argnames="" />
+        <constructor name="RelaxngName(System.String, System.String)" argnames="ncname, ns" />
+        <property name="LocalName" propertytype="System.String" />
+        <property name="Namespace" propertytype="System.String" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngNameChoice" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngNameChoice()" argnames="" />
+        <property name="Children" propertytype="Commons.Xml.Relaxng.RelaxngNameClassList" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngExceptNameClass" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngExceptNameClass()" argnames="" />
+        <property name="Names" propertytype="Commons.Xml.Relaxng.RelaxngNameClassList" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngSingleContentPattern" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngSingleContentPattern()" argnames="" />
+        <property name="Patterns" propertytype="Commons.Xml.Relaxng.RelaxngPatternList" />
+    </class>
+    <class name="RelaxngBinaryContentPattern" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngBinaryContentPattern()" argnames="" />
+        <property name="Patterns" propertytype="Commons.Xml.Relaxng.RelaxngPatternList" />
+    </class>
+    <class name="RelaxngStart" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngStart()" argnames="" />
+        <property name="Combine" propertytype="System.String" />
+        <property name="Pattern" propertytype="Commons.Xml.Relaxng.RelaxngPattern" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngDefine" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngDefine()" argnames="" />
+        <property name="Patterns" propertytype="Commons.Xml.Relaxng.RelaxngPatternList" />
+        <property name="Combine" propertytype="System.String" />
+        <property name="Name" propertytype="System.String" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngInclude" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngInclude()" argnames="" />
+        <property name="Href" propertytype="System.String" />
+        <property name="Starts" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <property name="Defines" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <property name="Divs" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <property name="NSContext" propertytype="System.String" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngDiv" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngDiv()" argnames="" />
+        <property name="Starts" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <property name="Defines" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <property name="Includes" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <property name="Divs" propertytype="Commons.Xml.Relaxng.RelaxngGrammarContentList" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngPatternList" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngPatternList()" argnames="" />
+        <property name="Item" propertytype="Commons.Xml.Relaxng.RelaxngPattern" />
+        <method name="Add(Commons.Xml.Relaxng.RelaxngPattern)" argnames="p" returntype="System.Void" />
+        <method name="Insert(System.Int32, Commons.Xml.Relaxng.RelaxngPattern)" argnames="pos, p" returntype="System.Void" />
+        <method name="Remove(Commons.Xml.Relaxng.RelaxngPattern)" argnames="p" returntype="System.Void" />
+    </class>
+    <class name="RelaxngGrammarContentList" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngGrammarContentList()" argnames="" />
+        <property name="Item" propertytype="Commons.Xml.Relaxng.IGrammarContent" />
+        <method name="Add(Commons.Xml.Relaxng.IGrammarContent)" argnames="p" returntype="System.Void" />
+        <method name="Insert(System.Int32, Commons.Xml.Relaxng.IGrammarContent)" argnames="pos, p" returntype="System.Void" />
+        <method name="Remove(Commons.Xml.Relaxng.IGrammarContent)" argnames="p" returntype="System.Void" />
+    </class>
+    <class name="RelaxngNotAllowed" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngNotAllowed()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngEmpty" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngEmpty()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngText" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngText()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngDataSupport" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngDataSupport()" argnames="" />
+        <property name="Type" propertytype="System.String" />
+        <property name="DatatypeLibrary" propertytype="System.String" />
+    </class>
+    <class name="RelaxngData" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngData()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ParamList" propertytype="Commons.Xml.Relaxng.RelaxngParamList" />
+        <property name="Except" propertytype="Commons.Xml.Relaxng.RelaxngExcept" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngValue" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngValue()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="Value" propertytype="System.String" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngList" namespace="Commons.Xml.Relaxng">
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngElement" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngElement()" argnames="" />
+        <property name="NameClass" propertytype="Commons.Xml.Relaxng.RelaxngNameClass" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngAttribute" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngAttribute()" argnames="" />
+        <property name="Pattern" propertytype="Commons.Xml.Relaxng.RelaxngPattern" />
+        <property name="NameClass" propertytype="Commons.Xml.Relaxng.RelaxngNameClass" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngRef" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngRef()" argnames="" />
+        <property name="Name" propertytype="System.String" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngParentRef" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngParentRef()" argnames="" />
+        <property name="Name" propertytype="System.String" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngExternalRef" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngExternalRef()" argnames="" />
+        <property name="Href" propertytype="System.String" />
+        <property name="NSContext" propertytype="System.String" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngOneOrMore" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngOneOrMore()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngZeroOrMore" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngZeroOrMore()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngOptional" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngOptional()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngMixed" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngMixed()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngChoice" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngChoice()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngGroup" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngGroup()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngInterleave" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngInterleave()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngParam" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngParam()" argnames="" />
+        <constructor name="RelaxngParam(System.String, System.String)" argnames="name, value" />
+        <property name="Name" propertytype="System.String" />
+        <property name="Value" propertytype="System.String" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngParamList" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngParamList()" argnames="" />
+        <property name="Item" propertytype="Commons.Xml.Relaxng.RelaxngParam" />
+        <method name="Add(Commons.Xml.Relaxng.RelaxngParam)" argnames="p" returntype="System.Void" />
+        <method name="Insert(System.Int32, Commons.Xml.Relaxng.RelaxngParam)" argnames="pos, p" returntype="System.Void" />
+        <method name="Remove(Commons.Xml.Relaxng.RelaxngParam)" argnames="p" returntype="System.Void" />
+    </class>
+    <class name="RelaxngExcept" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngExcept()" argnames="" />
+        <property name="Patterns" propertytype="Commons.Xml.Relaxng.RelaxngPatternList" />
+        <method name="Write(System.Xml.XmlWriter)" argnames="writer" returntype="System.Void" />
+    </class>
+    <class name="RelaxngValidatingReader" namespace="Commons.Xml.Relaxng">
+        <constructor name="RelaxngValidatingReader(System.Xml.XmlReader)" argnames="reader" />
+        <constructor name="RelaxngValidatingReader(System.Xml.XmlReader, System.Xml.XmlReader)" argnames="reader, grammarXml" />
+        <constructor name="RelaxngValidatingReader(System.Xml.XmlReader, System.Xml.XmlReader, Commons.Xml.Relaxng.RelaxngDatatypeProvider)" argnames="reader, grammarXml, provider" />
+        <constructor name="RelaxngValidatingReader(System.Xml.XmlReader, Commons.Xml.Relaxng.RelaxngPattern)" argnames="reader, pattern" />
+        <property name="CurrentStateXml" propertytype="System.String" />
+        <property name="PreviousStateXml" propertytype="System.String" />
+        <method name="Read()" argnames="" returntype="System.Boolean" />
+    </class>
+    <interface name="IGrammarContent" namespace="Commons.Xml.Relaxng" />
+    <enum name="RelaxngPatternType" namespace="Commons.Xml.Relaxng">
+        <field name="Empty" />
+        <field name="NotAllowed" />
+        <field name="Text" />
+        <field name="Choice" />
+        <field name="Interleave" />
+        <field name="Group" />
+        <field name="OneOrMore" />
+        <field name="List" />
+        <field name="Data" />
+        <field name="DataExcept" />
+        <field name="Value" />
+        <field name="Attribute" />
+        <field name="Element" />
+        <field name="After" />
+        <field name="Ref" />
+        <field name="Grammar" />
+        <field name="ZeroOrMore" />
+        <field name="Mixed" />
+        <field name="Optional" />
+        <field name="ExternalRef" />
+        <field name="ParentRef" />
+    </enum>
+    <interface name="yyDebug" namespace="Commons.Xml.Relaxng.Rnc.yydebug">
+        <method name="push(System.Int32, System.Object)" argnames="state, value" returntype="System.Void" />
+        <method name="lex(System.Int32, System.Int32, System.String, System.Object)" argnames="state, token, name, value" returntype="System.Void" />
+        <method name="shift(System.Int32, System.Int32, System.Int32)" argnames="from, to, errorFlag" returntype="System.Void" />
+        <method name="pop(System.Int32)" argnames="state" returntype="System.Void" />
+        <method name="discard(System.Int32, System.Int32, System.String, System.Object)" argnames="state, token, name, value" returntype="System.Void" />
+        <method name="reduce(System.Int32, System.Int32, System.Int32, System.String, System.Int32)" argnames="from, to, rule, text, len" returntype="System.Void" />
+        <method name="shift(System.Int32, System.Int32)" argnames="from, to" returntype="System.Void" />
+        <method name="accept(System.Object)" argnames="value" returntype="System.Void" />
+        <method name="error(System.String)" argnames="message" returntype="System.Void" />
+        <method name="reject()" argnames="" returntype="System.Void" />
+    </interface>
+    <class name="yyException" namespace="Commons.Xml.Relaxng.Rnc.yyParser">
+        <constructor name="yyException(System.String)" argnames="message" />
+    </class>
+    <interface name="yyInput" namespace="Commons.Xml.Relaxng.Rnc.yyParser">
+        <method name="advance()" argnames="" returntype="System.Boolean" />
+        <method name="token()" argnames="" returntype="System.Int32" />
+        <method name="value()" argnames="" returntype="System.Object" />
+    </interface>
+    <class name="XmlDefaultReader" namespace="Commons.Xml">
+        <constructor name="XmlDefaultReader(System.Xml.XmlReader)" argnames="reader" />
+        <property name="Reader" propertytype="System.Xml.XmlReader" />
+        <property name="LineNumber" propertytype="System.Int32" />
+        <property name="LinePosition" propertytype="System.Int32" />
+        <property name="NodeType" propertytype="System.Xml.XmlNodeType" />
+        <property name="Name" propertytype="System.String" />
+        <property name="LocalName" propertytype="System.String" />
+        <property name="NamespaceURI" propertytype="System.String" />
+        <property name="Prefix" propertytype="System.String" />
+        <property name="HasValue" propertytype="System.Boolean" />
+        <property name="Depth" propertytype="System.Int32" />
+        <property name="Value" propertytype="System.String" />
+        <property name="BaseURI" propertytype="System.String" />
+        <property name="IsEmptyElement" propertytype="System.Boolean" />
+        <property name="IsDefault" propertytype="System.Boolean" />
+        <property name="QuoteChar" propertytype="System.Char" />
+        <property name="XmlLang" propertytype="System.String" />
+        <property name="XmlSpace" propertytype="System.Xml.XmlSpace" />
+        <property name="AttributeCount" propertytype="System.Int32" />
+        <property name="EOF" propertytype="System.Boolean" />
+        <property name="ReadState" propertytype="System.Xml.ReadState" />
+        <property name="NameTable" propertytype="System.Xml.XmlNameTable" />
+        <property name="Item" propertytype="System.String" />
+        <property name="Item" propertytype="System.String" />
+        <property name="Item" propertytype="System.String" />
+        <method name="GetAttribute(System.String)" argnames="name" returntype="System.String" />
+        <method name="GetAttribute(System.String, System.String)" argnames="localName, namespaceURI" returntype="System.String" />
+        <method name="GetAttribute(System.Int32)" argnames="i" returntype="System.String" />
+        <method name="HasLineInfo()" argnames="" returntype="System.Boolean" />
+        <method name="MoveToAttribute(System.String)" argnames="name" returntype="System.Boolean" />
+        <method name="MoveToAttribute(System.String, System.String)" argnames="localName, namespaceURI" returntype="System.Boolean" />
+        <method name="MoveToAttribute(System.Int32)" argnames="i" returntype="System.Void" />
+        <method name="MoveToFirstAttribute()" argnames="" returntype="System.Boolean" />
+        <method name="MoveToNextAttribute()" argnames="" returntype="System.Boolean" />
+        <method name="MoveToElement()" argnames="" returntype="System.Boolean" />
+        <method name="Close()" argnames="" returntype="System.Void" />
+        <method name="Read()" argnames="" returntype="System.Boolean" />
+        <method name="ReadString()" argnames="" returntype="System.String" />
+        <method name="ReadInnerXml()" argnames="" returntype="System.String" />
+        <method name="ReadOuterXml()" argnames="" returntype="System.String" />
+        <method name="LookupNamespace(System.String)" argnames="prefix" returntype="System.String" />
+        <method name="ResolveEntity()" argnames="" returntype="System.Void" />
+        <method name="ReadAttributeValue()" argnames="" returntype="System.Boolean" />
+    </class>
+    <class name="RdpPattern" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpPattern()" argnames="" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <method name="MakeChoice(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p1, p2" returntype="Commons.Xml.Relaxng.Derivative.RdpChoice" />
+        <method name="MakeGroup(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p1, p2" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="MakeInterleave(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p1, p2" returntype="Commons.Xml.Relaxng.Derivative.RdpInterleave" />
+        <method name="MakeAfter(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p1, p2" returntype="Commons.Xml.Relaxng.Derivative.RdpAfter" />
+        <method name="MakeOneOrMore(Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p" returntype="Commons.Xml.Relaxng.Derivative.RdpOneOrMore" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="ListDeriv(System.String[], System.Int32, System.Xml.XmlReader)" argnames="list, index, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="Choice(Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="Group(Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="Interleave(Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="After(Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="ApplyAfter(Commons.Xml.Relaxng.Derivative.RdpApplyAfterHandler)" argnames="h" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagOpenDeriv(System.String, System.String)" argnames="name, ns" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="AttDeriv(System.String, System.String, System.String, System.Xml.XmlReader)" argnames="name, ns, value, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="ValueMatch(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="System.Boolean" />
+        <method name="StartTagCloseDeriv()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="OneOrMore()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="EndTagDeriv()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpNameClass" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpNameClass()" argnames="" />
+        <property name="NameClassType" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClassType" />
+        <method name="Contains(System.String, System.String)" argnames="name, ns" returntype="System.Boolean" />
+    </class>
+    <class name="RdpAnyName" namespace="Commons.Xml.Relaxng.Derivative">
+        <property name="Instance" propertytype="Commons.Xml.Relaxng.Derivative.RdpAnyName" />
+        <property name="NameClassType" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClassType" />
+        <method name="Contains(System.String, System.String)" argnames="name, ns" returntype="System.Boolean" />
+    </class>
+    <class name="RdpAnyNameExcept" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpAnyNameExcept(Commons.Xml.Relaxng.Derivative.RdpNameClass)" argnames="except" />
+        <property name="NameClassType" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClassType" />
+        <property name="ExceptNameClass" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClass" />
+        <method name="Contains(System.String, System.String)" argnames="name, ns" returntype="System.Boolean" />
+    </class>
+    <class name="RdpNsName" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpNsName(System.String)" argnames="ns" />
+        <property name="NameClassType" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClassType" />
+        <property name="NamespaceURI" propertytype="System.String" />
+        <method name="Contains(System.String, System.String)" argnames="name, ns" returntype="System.Boolean" />
+    </class>
+    <class name="RdpNsNameExcept" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpNsNameExcept(System.String, Commons.Xml.Relaxng.Derivative.RdpNameClass)" argnames="ns, except" />
+        <property name="NameClassType" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClassType" />
+        <property name="ExceptNameClass" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClass" />
+        <method name="Contains(System.String, System.String)" argnames="name, ns" returntype="System.Boolean" />
+    </class>
+    <class name="RdpName" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpName(System.String, System.String)" argnames="local, ns" />
+        <property name="NameClassType" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClassType" />
+        <property name="NamespaceURI" propertytype="System.String" />
+        <property name="LocalName" propertytype="System.String" />
+        <method name="Contains(System.String, System.String)" argnames="name, ns" returntype="System.Boolean" />
+    </class>
+    <class name="RdpNameClassChoice" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpNameClassChoice(Commons.Xml.Relaxng.Derivative.RdpNameClass, Commons.Xml.Relaxng.Derivative.RdpNameClass)" argnames="l, r" />
+        <property name="NameClassType" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClassType" />
+        <property name="LValue" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClass" />
+        <property name="RValue" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClass" />
+        <method name="Contains(System.String, System.String)" argnames="name, ns" returntype="System.Boolean" />
+    </class>
+    <class name="RdpParamList" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpParamList()" argnames="" />
+    </class>
+    <class name="RdpParam" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpParam(System.String, System.String)" argnames="localName, value" />
+        <property name="Value" propertytype="System.String" />
+        <property name="LocalName" propertytype="System.String" />
+    </class>
+    <class name="RdpDatatype" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpDatatype(System.String, System.String, Commons.Xml.Relaxng.RelaxngParamList, Commons.Xml.Relaxng.RelaxngDatatypeProvider)" argnames="ns, localName, parameters, provider" />
+        <property name="NamespaceURI" propertytype="System.String" />
+        <property name="LocalName" propertytype="System.String" />
+        <method name="IsAllowed(System.String, System.Xml.XmlReader)" argnames="value, reader" returntype="System.Boolean" />
+        <method name="IsTypeEqual(System.String, System.String, System.Xml.XmlReader)" argnames="s1, s2, reader" returntype="System.Boolean" />
+    </class>
+    <class name="RdpEmpty" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpEmpty()" argnames="" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="Instance" propertytype="Commons.Xml.Relaxng.Derivative.RdpEmpty" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+    </class>
+    <class name="RdpNotAllowed" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpNotAllowed()" argnames="" />
+        <property name="Instance" propertytype="Commons.Xml.Relaxng.Derivative.RdpNotAllowed" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <method name="ApplyAfter(Commons.Xml.Relaxng.Derivative.RdpApplyAfterHandler)" argnames="h" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpText" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpText()" argnames="" />
+        <property name="Instance" propertytype="Commons.Xml.Relaxng.Derivative.RdpText" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpAbstractBinary" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpAbstractBinary(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="l, r" />
+        <property name="LValue" propertytype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <property name="RValue" propertytype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+    </class>
+    <class name="RdpChoice" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpChoice(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="l, r" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="ApplyAfter(Commons.Xml.Relaxng.Derivative.RdpApplyAfterHandler)" argnames="handler" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagOpenDeriv(System.String, System.String)" argnames="name, ns" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="AttDeriv(System.String, System.String, System.String, System.Xml.XmlReader)" argnames="name, ns, value, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagCloseDeriv()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="EndTagDeriv()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpInterleave" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpInterleave(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="l, r" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagOpenDeriv(System.String, System.String)" argnames="name, ns" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="AttDeriv(System.String, System.String, System.String, System.Xml.XmlReader)" argnames="name, ns, value, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagCloseDeriv()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpGroup" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpGroup(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="l, r" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagOpenDeriv(System.String, System.String)" argnames="name, ns" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="AttDeriv(System.String, System.String, System.String, System.Xml.XmlReader)" argnames="name, ns, value, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagCloseDeriv()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpAbstractSingleContent" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpAbstractSingleContent(Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p" />
+        <property name="Child" propertytype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpOneOrMore" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpOneOrMore(Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="AttDeriv(System.String, System.String, System.String, System.Xml.XmlReader)" argnames="name, ns, value, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagOpenDeriv(System.String, System.String)" argnames="name, ns" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagCloseDeriv()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpList" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpList(Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpData" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpData(Commons.Xml.Relaxng.Derivative.RdpDatatype)" argnames="dt" />
+        <property name="Datatype" propertytype="Commons.Xml.Relaxng.Derivative.RdpDatatype" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpDataExcept" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpDataExcept(Commons.Xml.Relaxng.Derivative.RdpDatatype, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="dt, except" />
+        <property name="Except" propertytype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpValue" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpValue(Commons.Xml.Relaxng.Derivative.RdpDatatype, System.String)" argnames="dt, value" />
+        <property name="Datatype" propertytype="Commons.Xml.Relaxng.Derivative.RdpDatatype" />
+        <property name="Value" propertytype="System.String" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpAttribute" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpAttribute(Commons.Xml.Relaxng.Derivative.RdpNameClass, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="nameClass, p" />
+        <property name="NameClass" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClass" />
+        <property name="Children" propertytype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <method name="AttDeriv(System.String, System.String, System.String, System.Xml.XmlReader)" argnames="name, ns, value, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagCloseDeriv()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpElement" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpElement(Commons.Xml.Relaxng.Derivative.RdpNameClass, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="nameClass, p" />
+        <property name="NameClass" propertytype="Commons.Xml.Relaxng.Derivative.RdpNameClass" />
+        <property name="Children" propertytype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <property name="ContentType" propertytype="Commons.Xml.Relaxng.Derivative.RdpContentType" />
+        <method name="StartTagOpenDeriv(System.String, System.String)" argnames="name, ns" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpAfter" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpAfter(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="l, r" />
+        <property name="Nullable" propertytype="System.Boolean" />
+        <property name="PatternType" propertytype="Commons.Xml.Relaxng.RelaxngPatternType" />
+        <method name="TextDeriv(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagOpenDeriv(System.String, System.String)" argnames="name, ns" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="ApplyAfter(Commons.Xml.Relaxng.Derivative.RdpApplyAfterHandler)" argnames="handler" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="AttDeriv(System.String, System.String, System.String, System.Xml.XmlReader)" argnames="name, ns, value, reader" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="StartTagCloseDeriv()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="EndTagDeriv()" argnames="" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </class>
+    <class name="RdpUtil" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpUtil()" argnames="" />
+        <field name="WhitespaceChars" />
+    </class>
+    <delegate name="RdpApplyAfterHandler" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpApplyAfterHandler(System.Object, System.IntPtr)" argnames="object, method" />
+        <method name="Invoke(Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="BeginInvoke(Commons.Xml.Relaxng.Derivative.RdpPattern, System.AsyncCallback, System.Object)" argnames="p, callback, object" returntype="System.IAsyncResult" />
+        <method name="EndInvoke(System.IAsyncResult)" argnames="result" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </delegate>
+    <delegate name="RdpBinaryFunction" namespace="Commons.Xml.Relaxng.Derivative">
+        <constructor name="RdpBinaryFunction(System.Object, System.IntPtr)" argnames="object, method" />
+        <method name="Invoke(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern)" argnames="p1, p2" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+        <method name="BeginInvoke(Commons.Xml.Relaxng.Derivative.RdpPattern, Commons.Xml.Relaxng.Derivative.RdpPattern, System.AsyncCallback, System.Object)" argnames="p1, p2, callback, object" returntype="System.IAsyncResult" />
+        <method name="EndInvoke(System.IAsyncResult)" argnames="result" returntype="Commons.Xml.Relaxng.Derivative.RdpPattern" />
+    </delegate>
+    <enum name="RdpContentType" namespace="Commons.Xml.Relaxng.Derivative">
+        <field name="Invalid" />
+        <field name="Empty" />
+        <field name="Complex" />
+        <field name="Simple" />
+    </enum>
+    <enum name="RdpNameClassType" namespace="Commons.Xml.Relaxng.Derivative">
+        <field name="None" />
+        <field name="AnyName" />
+        <field name="AnyNameExcept" />
+        <field name="NsName" />
+        <field name="NsNameExcept" />
+        <field name="Name" />
+        <field name="NameClassChoice" />
+    </enum>
+    <class name="XsdDatatypeProvider" namespace="Commons.Xml.Relaxng.XmlSchema">
+        <property name="Instance" propertytype="Commons.Xml.Relaxng.XmlSchema.XsdDatatypeProvider" />
+        <method name="GetDatatype(System.String, System.String, Commons.Xml.Relaxng.RelaxngParamList)" argnames="name, ns, parameters" returntype="Commons.Xml.Relaxng.RelaxngDatatype" />
+    </class>
+    <class name="XsdPrimitiveType" namespace="Commons.Xml.Relaxng.XmlSchema">
+        <constructor name="XsdPrimitiveType(System.String, System.Xml.Schema.XmlSchemaDatatype)" argnames="name, xstype" />
+        <property name="Name" propertytype="System.String" />
+        <property name="NamespaceURI" propertytype="System.String" />
+        <method name="Parse(System.String, System.Xml.XmlReader)" argnames="text, reader" returntype="System.Object" />
+    </class>
+    <class name="XsdQNameWrapper" namespace="Commons.Xml.Relaxng.XmlSchema">
+        <constructor name="XsdQNameWrapper()" argnames="" />
+        <property name="Name" propertytype="System.String" />
+        <property name="NamespaceURI" propertytype="System.String" />
+        <method name="Parse(System.String, System.Xml.XmlReader)" argnames="s, reader" returntype="System.Object" />
+    </class>
+    <class name="RncParser" namespace="Commons.Xml.Relaxng.Rnc">
+        <constructor name="RncParser(System.Xml.XmlNameTable)" argnames="nameTable" />
+        <field name="ErrorOutput" />
+        <field name="debug" />
+        <field name="yyFinal" />
+        <field name="yyRule" />
+        <field name="yyNames" />
+        <field name="yyMax" />
+        <field name="yyDgoto" />
+        <field name="yySindex" />
+        <field name="yyRindex" />
+        <field name="yyGindex" />
+        <field name="yyTable" />
+        <field name="yyCheck" />
+        <property name="Line" propertytype="System.Int32" />
+        <property name="Column" propertytype="System.Int32" />
+        <property name="DefaultNamespace" propertytype="System.String" />
+        <method name="ParseRnc(System.IO.TextReader)" argnames="reader" returntype="Commons.Xml.Relaxng.RelaxngPattern" />
+        <method name="ParseRnc(System.IO.TextReader, System.Xml.XmlNameTable)" argnames="reader, nameTable" returntype="Commons.Xml.Relaxng.RelaxngPattern" />
+        <method name="Parse(System.IO.TextReader)" argnames="source" returntype="Commons.Xml.Relaxng.RelaxngPattern" />
+        <method name="yyerror(System.String)" argnames="message" returntype="System.Void" />
+        <method name="yyerror(System.String, System.String[])" argnames="message, expected" returntype="System.Void" />
+        <method name="yyname(System.Int32)" argnames="token" returntype="System.String" />
+        <method name="yyExpecting(System.Int32)" argnames="state" returntype="System.String[]" />
+        <method name="yyparse(Commons.Xml.Relaxng.Rnc.yyParser.yyInput, System.Object)" argnames="yyLex, yyd" returntype="System.Object" />
+        <method name="yyDefault(System.Object)" argnames="first" returntype="System.Object" />
+        <method name="yyparse(Commons.Xml.Relaxng.Rnc.yyParser.yyInput)" argnames="yyLex" returntype="System.Object" />
+    </class>
+</masterdoc>

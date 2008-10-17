@@ -1,0 +1,26 @@
+<Type Name="NvdlCancelAction" FullName="Commons.Xml.Nvdl.NvdlCancelAction">
+  <TypeSignature Language="C#" Value="public class NvdlCancelAction : Commons.Xml.Nvdl.NvdlAction" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Commons.Xml.Nvdl.NvdlAction</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NvdlCancelAction ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>The default constructor.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>Represents an NVDL "cancelNestedAction" element.</summary>
+    <remarks>This class represents NVDL "cancelNestedAction" element. For the entire NVDL grammar, see http://www.asahi-net.or.jp/~eb2m-mrt/dsdl/fcd/nvdl-fcd.pdf .</remarks>
+  </Docs>
+</Type>

@@ -1,0 +1,71 @@
+<Type Name="NvdlConfig" FullName="Commons.Xml.Nvdl.NvdlConfig">
+  <TypeSignature Language="C#" Value="public class NvdlConfig" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NvdlConfig ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddProvider">
+      <MemberSignature Language="C#" Value="public void AddProvider (Commons.Xml.Nvdl.NvdlValidationProvider provider);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="Commons.Xml.Nvdl.NvdlValidationProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetGenerator">
+      <MemberSignature Language="C#" Value="public Commons.Xml.Nvdl.NvdlValidatorGenerator GetGenerator (Commons.Xml.Nvdl.NvdlValidate validate, string inheritSchemaType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Nvdl.NvdlValidatorGenerator</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="validate" Type="Commons.Xml.Nvdl.NvdlValidate" />
+        <Parameter Name="inheritSchemaType" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="validate">To be added.</param>
+        <param name="inheritSchemaType">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="XmlResolver">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlResolver XmlResolver { set; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlResolver</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

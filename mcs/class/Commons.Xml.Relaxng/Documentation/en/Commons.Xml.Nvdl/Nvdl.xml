@@ -1,0 +1,50 @@
+<Type Name="Nvdl" FullName="Commons.Xml.Nvdl.Nvdl">
+  <TypeSignature Language="C#" Value="public class Nvdl" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public const string Namespace;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Represents the namespace URI for NVDL grammar.</summary>
+        <remarks>The value is http://purl.oclc.org/dsdl/nvdl/ns/structure/1.0 .</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BuiltInValidationNamespace">
+      <MemberSignature Language="C#" Value="public const string BuiltInValidationNamespace;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Represents the namespace URI for built-in NVDL validation.</summary>
+        <remarks>The value is http://purl.oclc.org/dsdl/nvdl/ns/predefinedSchema/1.0 .</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InstanceNamespace">
+      <MemberSignature Language="C#" Value="public const string InstanceNamespace;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Represents the namespace URI for NVDL instance.</summary>
+        <remarks>The value is http://purl.oclc.org/dsdl/nvdl/ns/instance/1.0 .</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>Holds constants for several NVDL related namespace URIs.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

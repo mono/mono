@@ -1,0 +1,330 @@
+<Type Name="RelaxngValidatingReader" FullName="Commons.Xml.Relaxng.RelaxngValidatingReader">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public class RelaxngValidatingReader : Commons.Xml.XmlDefaultReader" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Docs>
+    <summary>An implementation that validates XML document against RELAX NG pattern.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Base>
+    <BaseTypeName>Commons.Xml.XmlDefaultReader</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Members>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public override bool Read ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Overrides the target XmlReader's <see cref="M:System.Xml.XmlReader.Read" /> and validates the reader against the target grammar. </summary>
+        <returns>a <see cref="T:System.Boolean" /></returns>
+        <remarks>
+          <para>
+		When the XML node consumed by this method was invalid in the context of the target pattern, <see cref="T:Commons.Xml.Relaxng.RelaxngException" /> will be thrown.
+		</para>
+          <para>
+		The exception does not contain any location of the target grammar element, since RELAX NG grammar supports non-deterministic content model.
+		</para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RelaxngValidatingReader (System.Xml.XmlReader reader);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <summary>The target XmlReader that is being validated.</summary>
+        <param name="reader">a <see cref="T:System.Xml.XmlReader" /></param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RelaxngValidatingReader (System.Xml.XmlReader reader, System.Xml.XmlReader grammarXml);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="grammarXml" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">a <see cref="T:System.Xml.XmlReader" /> that is being validated.</param>
+        <param name="grammarXml">To be added.</param>
+        <summary>Creates a new instance of this validating reader. This method equals to the call to new RelaxngValidatingReader (reader, grammarXml, RelaxngMergedProvider.DefaultProvider).</summary>
+        <summary>Creates a new instance of this validating reader.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RelaxngValidatingReader (System.Xml.XmlReader reader, System.Xml.XmlReader grammarXml, Commons.Xml.Relaxng.RelaxngDatatypeProvider provider);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="grammarXml" Type="System.Xml.XmlReader" />
+        <Parameter Name="provider" Type="Commons.Xml.Relaxng.RelaxngDatatypeProvider" />
+      </Parameters>
+      <Docs>
+        <summary>Creates a new instance of this validating reader.</summary>
+        <param name="reader">a <see cref="T:System.Xml.XmlReader" /> that is being validated.</param>
+        <param name="grammarXml">a <see cref="T:System.Xml.XmlReader" /> that contains the RELAX NG pattern that is being compiled and being used to validate.</param>
+        <param name="provider">a <see cref="T:Commons.Xml.Relaxng.RelaxngDatatypeProvider" /> that is used to compile the pattern.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RelaxngValidatingReader (System.Xml.XmlReader reader, Commons.Xml.Relaxng.RelaxngPattern pattern);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="pattern" Type="Commons.Xml.Relaxng.RelaxngPattern" />
+      </Parameters>
+      <Docs>
+        <summary>Creates a new instance of this validating reader.</summary>
+        <param name="reader">a <see cref="T:System.Xml.XmlReader" /> that is being validated.</param>
+        <param name="pattern">a <see cref="T:Commons.Xml.Relaxng.RelaxngPattern" /> that is used to validate the XmlReader.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCurrentState">
+      <MemberSignature Language="C#" Value="public object GetCurrentState ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AfterOpenStartTag">
+      <MemberSignature Language="C#" Value="public object AfterOpenStartTag (object stateObject, string localName, string ns);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <param name="localName">To be added.</param>
+        <param name="ns">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenStartTag">
+      <MemberSignature Language="C#" Value="public bool OpenStartTag (object stateObject, string localName, string ns);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <param name="localName">To be added.</param>
+        <param name="ns">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AfterAttribute">
+      <MemberSignature Language="C#" Value="public object AfterAttribute (object stateObject, string localName, string ns);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <param name="localName">To be added.</param>
+        <param name="ns">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Attribute">
+      <MemberSignature Language="C#" Value="public bool Attribute (object stateObject, string localName, string ns);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <param name="localName">To be added.</param>
+        <param name="ns">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AfterCloseStartTag">
+      <MemberSignature Language="C#" Value="public object AfterCloseStartTag (object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CloseStartTag">
+      <MemberSignature Language="C#" Value="public bool CloseStartTag (object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AfterEndTag">
+      <MemberSignature Language="C#" Value="public object AfterEndTag (object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndTag">
+      <MemberSignature Language="C#" Value="public bool EndTag (object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetElementLabels">
+      <MemberSignature Language="C#" Value="public System.Collections.ICollection GetElementLabels (object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ICollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAttributeLabels">
+      <MemberSignature Language="C#" Value="public System.Collections.ICollection GetAttributeLabels (object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ICollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emptiable">
+      <MemberSignature Language="C#" Value="public bool Emptiable (object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="stateObject">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReportDetails">
+      <MemberSignature Language="C#" Value="public bool ReportDetails { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RoughLabelCheck">
+      <MemberSignature Language="C#" Value="public bool RoughLabelCheck { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

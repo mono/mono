@@ -1,0 +1,77 @@
+<Type Name="NvdlActionList" FullName="Commons.Xml.Nvdl.NvdlActionList">
+  <TypeSignature Language="C#" Value="public class NvdlActionList : System.Collections.CollectionBase" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Collections.CollectionBase</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Reflection.DefaultMember(MemberName="Item")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NvdlActionList ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>The default constructor.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (Commons.Xml.Nvdl.NvdlAction item);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="Commons.Xml.Nvdl.NvdlAction" />
+      </Parameters>
+      <Docs>
+        <param name="item">NVDL "action" element to add.</param>
+        <summary>Adds an "action" to this collection.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public void Remove (Commons.Xml.Nvdl.NvdlAction item);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="Commons.Xml.Nvdl.NvdlAction" />
+      </Parameters>
+      <Docs>
+        <param name="item">Target NVDL "action" item to remove.</param>
+        <summary>Removes an NVDL "action" from this collection.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public Commons.Xml.Nvdl.NvdlAction Item[int i] { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Commons.Xml.Nvdl.NvdlAction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="i" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="i">Index to the target "action".</param>
+        <summary>Gets or sets the target "action" element.</summary>
+        <value>The target "action" element.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>Typed collection for <see cref="T:Commons.Xml.Nvdl.NvdlAction" />.</summary>
+    <remarks>This class is a collection for <see cref="T:Commons.Xml.Nvdl.NvdlAction" />.</remarks>
+  </Docs>
+</Type>

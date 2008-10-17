@@ -1,0 +1,26 @@
+<Type Name="NvdlAttach" FullName="Commons.Xml.Nvdl.NvdlAttach">
+  <TypeSignature Language="C#" Value="public class NvdlAttach : Commons.Xml.Nvdl.NvdlResultAction" />
+  <AssemblyInfo>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Commons.Xml.Nvdl.NvdlResultAction</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NvdlAttach ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>The default constructor.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>Represents an NVDL "attach" element.</summary>
+    <remarks>This class represents NVDL "attach" element. For the entire NVDL grammar, see http://www.asahi-net.or.jp/~eb2m-mrt/dsdl/fcd/nvdl-fcd.pdf .</remarks>
+  </Docs>
+</Type>
