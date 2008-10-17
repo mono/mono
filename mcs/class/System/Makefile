@@ -66,7 +66,9 @@ CYCLIC_DEP_FILES :=
 # define cyclic-dep
 # # Note the '$$' -- those are to be delayed till the eval
 # CYCLIC_DEPS += $1
+# ifndef USE_BOOT_COMPILE
 # FILE_$2 := $$(wildcard ../lib/$(PROFILE)/$1)
+# endif
 # ifdef FILE_$2
 # CYCLIC_DEP_FILES += $$(FILE_$2)
 # LIB_MCS_FLAGS += -d:$2 -r:$1
@@ -76,7 +78,9 @@ CYCLIC_DEP_FILES :=
 ifneq (2.1, $(FRAMEWORK_VERSION))
 # $(eval $(call cyclic-dep,System.Xml.dll,XML_DEP))
 CYCLIC_DEPS += System.Xml.dll
+ifndef USE_BOOT_COMPILE
 FILE_XML_DEP := $(wildcard ../lib/$(PROFILE)/System.Xml.dll)
+endif
 ifdef FILE_XML_DEP
 CYCLIC_DEP_FILES += $(FILE_XML_DEP)
 LIB_MCS_FLAGS += -d:XML_DEP -r:System.Xml.dll
@@ -87,7 +91,9 @@ endif
 ifeq (2.0, $(FRAMEWORK_VERSION))
 # $(eval $(call cyclic-dep,Mono.Security.dll,SECURITY_DEP))
 CYCLIC_DEPS += Mono.Security.dll
+ifndef USE_BOOT_COMPILE
 FILE_SECURITY_DEP := $(wildcard ../lib/$(PROFILE)/Mono.Security.dll)
+endif
 ifdef FILE_SECURITY_DEP
 CYCLIC_DEP_FILES += $(FILE_SECURITY_DEP)
 LIB_MCS_FLAGS += -d:SECURITY_DEP -r:Mono.Security.dll
@@ -95,7 +101,9 @@ endif
 
 # $(eval $(call cyclic-dep,System.Configuration.dll,CONFIGURATION_DEP))
 CYCLIC_DEPS += System.Configuration.dll
+ifndef USE_BOOT_COMPILE
 FILE_CONFIGURATION_DEP := $(wildcard ../lib/$(PROFILE)/System.Configuration.dll)
+endif
 ifdef FILE_CONFIGURATION_DEP
 CYCLIC_DEP_FILES += $(FILE_CONFIGURATION_DEP)
 LIB_MCS_FLAGS += -d:CONFIGURATION_DEP -r:System.Configuration.dll
@@ -107,10 +115,12 @@ MISSING_DEPS := $(filter-out $(notdir $(CYCLIC_DEP_FILES)), $(CYCLIC_DEPS))
 ifdef MISSING_DEPS
 NO_SIGN_ASSEMBLY = yes
 NO_INSTALL = yes
-all-local: echo-warning
-.PHONY: echo-warning
-echo-warning:
+all-local: handle-missing-deps
+.PHONY: handle-missing-deps
+handle-missing-deps:
 	@echo "** Warning: System.dll built without parts that depend on: $(MISSING_DEPS)"
+	@for f in $(MISSING_DEPS:%=../lib/$(PROFILE)/%); do \
+	  test ! -f $$f || { echo "   purging stale $$f"; rm -f $$f; }; done
 endif
 
 include ../../build/library.make

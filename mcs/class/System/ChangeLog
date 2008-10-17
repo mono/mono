@@ -1,3 +1,13 @@
+2008-10-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	Make robust to 'make clean; make'
+	* Makefile (CYCLIC_DEPS): If we're using BOOT_COMPILE, don't
+	bother looking for cyclic dependencies -- they'll fail to load
+	even if the dlls exist.
+	(handle-missing-deps): Rename from 'echo-warning'.  Remove cyclic
+	dependencies for real, if they exist.
+	Reported by Jonathan Pryor.
+
 2008-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added ConfigXmlDocumentTest.cs.
