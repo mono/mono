@@ -15,7 +15,7 @@ net_2_0_SUBDIRS = \
 net_2_1_raw_SUBDIRS = compiler-tester
 net_2_1_SUBDIRS = compiler-tester tuner
 
-DIST_ONLY_SUBDIRS = xbuild sgen mconfig nunitreport sqlsharp csharp csharplib
+DIST_ONLY_SUBDIRS = xbuild sgen mconfig nunitreport sqlsharp csharp csharplib mono-shlib-cop
 
 include ../build/rules.make
 

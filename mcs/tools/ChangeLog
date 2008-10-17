@@ -1,5 +1,9 @@
 2008-10-16  Jonathan Pryor <jpryor@novell.com>
 
+	* Makefile (DIST_ONLY_SUBDIRS): Add mono-shlib-cop; fixes the build.
+
+2008-10-16  Jonathan Pryor <jpryor@novell.com>
+
 	* Makefile (SUBDIRS, net_2_0_SUBDIRS): Move mono-shlib-cop to 
 	  net_2_0_SUBDIRS so that it can use Mono.Options...
 
