@@ -1,0 +1,39 @@
+<Type Name="PropertyPosition" FullName="Microsoft.Build.BuildEngine.PropertyPosition">
+  <TypeSignature Language="C#" Value="public enum PropertyPosition" />
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Build.Engine</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Members>
+    <Member MemberName="UseExistingOrCreateAfterLastImport">
+      <MemberSignature Language="C#" Value="UseExistingOrCreateAfterLastImport" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.BuildEngine.PropertyPosition</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="UseExistingOrCreateAfterLastPropertyGroup">
+      <MemberSignature Language="C#" Value="UseExistingOrCreateAfterLastPropertyGroup" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.BuildEngine.PropertyPosition</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
+</Type>

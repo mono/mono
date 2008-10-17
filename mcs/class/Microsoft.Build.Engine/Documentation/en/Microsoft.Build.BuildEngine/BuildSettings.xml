@@ -1,0 +1,44 @@
+<Type Name="BuildSettings" FullName="Microsoft.Build.BuildEngine.BuildSettings">
+  <TypeSignature Language="C#" Value="public enum BuildSettings" />
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Build.Engine</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Members>
+    <Member MemberName="DoNotResetPreviouslyBuiltTargets">
+      <MemberSignature Language="C#" Value="DoNotResetPreviouslyBuiltTargets" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.BuildEngine.BuildSettings</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.BuildEngine.BuildSettings</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
+</Type>

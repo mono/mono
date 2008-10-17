@@ -1,0 +1,392 @@
+<Type Name="ConsoleLogger" FullName="Microsoft.Build.BuildEngine.ConsoleLogger">
+  <TypeSignature Language="C#" Value="public class ConsoleLogger : Microsoft.Build.Framework.ILogger" />
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Build.Engine</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>Microsoft.Build.Framework.ILogger</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ConsoleLogger ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ConsoleLogger (Microsoft.Build.Framework.LoggerVerbosity verbosity);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="verbosity" Type="Microsoft.Build.Framework.LoggerVerbosity" />
+      </Parameters>
+      <Docs>
+        <param name="verbosity">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ConsoleLogger (Microsoft.Build.Framework.LoggerVerbosity verbosity, Microsoft.Build.BuildEngine.WriteHandler write, Microsoft.Build.BuildEngine.ColorSetter colorSet, Microsoft.Build.BuildEngine.ColorResetter colorReset);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="verbosity" Type="Microsoft.Build.Framework.LoggerVerbosity" />
+        <Parameter Name="write" Type="Microsoft.Build.BuildEngine.WriteHandler" />
+        <Parameter Name="colorSet" Type="Microsoft.Build.BuildEngine.ColorSetter" />
+        <Parameter Name="colorReset" Type="Microsoft.Build.BuildEngine.ColorResetter" />
+      </Parameters>
+      <Docs>
+        <param name="verbosity">To be added.</param>
+        <param name="write">To be added.</param>
+        <param name="colorSet">To be added.</param>
+        <param name="colorReset">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="ApplyParameter">
+      <MemberSignature Language="C#" Value="public void ApplyParameter (string parameterName, string parameterValue);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameterName" Type="System.String" />
+        <Parameter Name="parameterValue" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="parameterName">To be added.</param>
+        <param name="parameterValue">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildFinishedHandler">
+      <MemberSignature Language="C#" Value="public void BuildFinishedHandler (object sender, Microsoft.Build.Framework.BuildFinishedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.BuildFinishedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildStartedHandler">
+      <MemberSignature Language="C#" Value="public void BuildStartedHandler (object sender, Microsoft.Build.Framework.BuildStartedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.BuildStartedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="CustomEventHandler">
+      <MemberSignature Language="C#" Value="public void CustomEventHandler (object sender, Microsoft.Build.Framework.CustomBuildEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.CustomBuildEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="ErrorHandler">
+      <MemberSignature Language="C#" Value="public void ErrorHandler (object sender, Microsoft.Build.Framework.BuildErrorEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.BuildErrorEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="public virtual void Initialize (Microsoft.Build.Framework.IEventSource eventSource);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventSource" Type="Microsoft.Build.Framework.IEventSource" />
+      </Parameters>
+      <Docs>
+        <param name="eventSource">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="MessageHandler">
+      <MemberSignature Language="C#" Value="public void MessageHandler (object sender, Microsoft.Build.Framework.BuildMessageEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.BuildMessageEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="Parameters">
+      <MemberSignature Language="C#" Value="public string Parameters { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="ProjectFinishedHandler">
+      <MemberSignature Language="C#" Value="public void ProjectFinishedHandler (object sender, Microsoft.Build.Framework.ProjectFinishedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.ProjectFinishedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="ProjectStartedHandler">
+      <MemberSignature Language="C#" Value="public void ProjectStartedHandler (object sender, Microsoft.Build.Framework.ProjectStartedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.ProjectStartedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="ShowSummary">
+      <MemberSignature Language="C#" Value="public bool ShowSummary { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="Shutdown">
+      <MemberSignature Language="C#" Value="public virtual void Shutdown ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="SkipProjectStartedText">
+      <MemberSignature Language="C#" Value="public bool SkipProjectStartedText { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="TargetFinishedHandler">
+      <MemberSignature Language="C#" Value="public void TargetFinishedHandler (object sender, Microsoft.Build.Framework.TargetFinishedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.TargetFinishedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="TargetStartedHandler">
+      <MemberSignature Language="C#" Value="public void TargetStartedHandler (object sender, Microsoft.Build.Framework.TargetStartedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.TargetStartedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="TaskFinishedHandler">
+      <MemberSignature Language="C#" Value="public void TaskFinishedHandler (object sender, Microsoft.Build.Framework.TaskFinishedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.TaskFinishedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="TaskStartedHandler">
+      <MemberSignature Language="C#" Value="public void TaskStartedHandler (object sender, Microsoft.Build.Framework.TaskStartedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.TaskStartedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="Verbosity">
+      <MemberSignature Language="C#" Value="public Microsoft.Build.Framework.LoggerVerbosity Verbosity { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.LoggerVerbosity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="WarningHandler">
+      <MemberSignature Language="C#" Value="public void WarningHandler (object sender, Microsoft.Build.Framework.BuildWarningEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="args" Type="Microsoft.Build.Framework.BuildWarningEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteHandler">
+      <MemberSignature Language="C#" Value="protected Microsoft.Build.BuildEngine.WriteHandler WriteHandler { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.BuildEngine.WriteHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
+</Type>

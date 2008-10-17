@@ -1,0 +1,82 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Microsoft.Build.Engine" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.0.0.1")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("Microsoft.Build.Engine.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTrademark("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) 2005 Marek Sieradzki")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO CLI")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("Marek Sieradzki")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyConfiguration("Development version")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("Microsoft.Build.Engine.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Microsoft.Build.Engine.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Microsoft.Build.BuildEngine">
+      <Type Name="BuildItem" />
+      <Type Name="BuildItemGroupCollection" />
+      <Type Name="BuildItemGroup" />
+      <Type Name="BuildProperty" />
+      <Type Name="BuildPropertyGroupCollection" />
+      <Type Name="BuildPropertyGroup" />
+      <Type Name="BuildTask" />
+      <Type Name="ConsoleLogger" />
+      <Type Name="Engine" />
+      <Type Name="FileLogger" />
+      <Type Name="Import" />
+      <Type Name="ImportCollection" />
+      <Type Name="InternalLoggerException" />
+      <Type Name="InvalidProjectFileException" />
+      <Type Name="Project" />
+      <Type Name="TargetCollection" />
+      <Type Name="Target" />
+      <Type Name="UsingTask" />
+      <Type Name="UsingTaskCollection" />
+      <Type Name="Utilities" />
+      <Type Name="ColorResetter" />
+      <Type Name="ColorSetter" />
+      <Type Name="WriteHandler" />
+      <Type Name="BuildSettings" />
+      <Type Name="PropertyPosition" />
+    </Namespace>
+  </Types>
+  <Title>Microsoft.Build.Engine</Title>
+</Overview>

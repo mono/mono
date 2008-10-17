@@ -1,0 +1,431 @@
+<Type Name="Engine" FullName="Microsoft.Build.BuildEngine.Engine">
+  <TypeSignature Language="C#" Value="public class Engine" />
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Build.Engine</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Engine ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Engine (string binPath);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="binPath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="binPath">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BinPath">
+      <MemberSignature Language="C#" Value="public string BinPath { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildEnabled">
+      <MemberSignature Language="C#" Value="public bool BuildEnabled { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProject">
+      <MemberSignature Language="C#" Value="public bool BuildProject (Microsoft.Build.BuildEngine.Project project);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="project" Type="Microsoft.Build.BuildEngine.Project" />
+      </Parameters>
+      <Docs>
+        <param name="project">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProject">
+      <MemberSignature Language="C#" Value="public bool BuildProject (Microsoft.Build.BuildEngine.Project project, string targetName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="project" Type="Microsoft.Build.BuildEngine.Project" />
+        <Parameter Name="targetName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="project">To be added.</param>
+        <param name="targetName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProject">
+      <MemberSignature Language="C#" Value="public bool BuildProject (Microsoft.Build.BuildEngine.Project project, string[] targetNames);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="project" Type="Microsoft.Build.BuildEngine.Project" />
+        <Parameter Name="targetNames" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="project">To be added.</param>
+        <param name="targetNames">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProject">
+      <MemberSignature Language="C#" Value="public bool BuildProject (Microsoft.Build.BuildEngine.Project project, string[] targetNames, System.Collections.IDictionary targetOutputs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="project" Type="Microsoft.Build.BuildEngine.Project" />
+        <Parameter Name="targetNames" Type="System.String[]" />
+        <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="project">To be added.</param>
+        <param name="targetNames">To be added.</param>
+        <param name="targetOutputs">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProject">
+      <MemberSignature Language="C#" Value="public bool BuildProject (Microsoft.Build.BuildEngine.Project project, string[] targetNames, System.Collections.IDictionary targetOutputs, Microsoft.Build.BuildEngine.BuildSettings buildFlags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="project" Type="Microsoft.Build.BuildEngine.Project" />
+        <Parameter Name="targetNames" Type="System.String[]" />
+        <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
+        <Parameter Name="buildFlags" Type="Microsoft.Build.BuildEngine.BuildSettings" />
+      </Parameters>
+      <Docs>
+        <param name="project">To be added.</param>
+        <param name="targetNames">To be added.</param>
+        <param name="targetOutputs">To be added.</param>
+        <param name="buildFlags">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProjectFile">
+      <MemberSignature Language="C#" Value="public bool BuildProjectFile (string projectFile);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="projectFile" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="projectFile">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProjectFile">
+      <MemberSignature Language="C#" Value="public bool BuildProjectFile (string projectFile, string targetName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="projectFile" Type="System.String" />
+        <Parameter Name="targetName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="projectFile">To be added.</param>
+        <param name="targetName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProjectFile">
+      <MemberSignature Language="C#" Value="public bool BuildProjectFile (string projectFile, string[] targetNames);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="projectFile" Type="System.String" />
+        <Parameter Name="targetNames" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="projectFile">To be added.</param>
+        <param name="targetNames">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProjectFile">
+      <MemberSignature Language="C#" Value="public bool BuildProjectFile (string projectFile, string[] targetNames, Microsoft.Build.BuildEngine.BuildPropertyGroup globalProperties);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="projectFile" Type="System.String" />
+        <Parameter Name="targetNames" Type="System.String[]" />
+        <Parameter Name="globalProperties" Type="Microsoft.Build.BuildEngine.BuildPropertyGroup" />
+      </Parameters>
+      <Docs>
+        <param name="projectFile">To be added.</param>
+        <param name="targetNames">To be added.</param>
+        <param name="globalProperties">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProjectFile">
+      <MemberSignature Language="C#" Value="public bool BuildProjectFile (string projectFile, string[] targetNames, Microsoft.Build.BuildEngine.BuildPropertyGroup globalProperties, System.Collections.IDictionary targetOutputs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="projectFile" Type="System.String" />
+        <Parameter Name="targetNames" Type="System.String[]" />
+        <Parameter Name="globalProperties" Type="Microsoft.Build.BuildEngine.BuildPropertyGroup" />
+        <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="projectFile">To be added.</param>
+        <param name="targetNames">To be added.</param>
+        <param name="globalProperties">To be added.</param>
+        <param name="targetOutputs">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildProjectFile">
+      <MemberSignature Language="C#" Value="public bool BuildProjectFile (string projectFile, string[] targetNames, Microsoft.Build.BuildEngine.BuildPropertyGroup globalProperties, System.Collections.IDictionary targetOutputs, Microsoft.Build.BuildEngine.BuildSettings buildFlags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="projectFile" Type="System.String" />
+        <Parameter Name="targetNames" Type="System.String[]" />
+        <Parameter Name="globalProperties" Type="Microsoft.Build.BuildEngine.BuildPropertyGroup" />
+        <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
+        <Parameter Name="buildFlags" Type="Microsoft.Build.BuildEngine.BuildSettings" />
+      </Parameters>
+      <Docs>
+        <param name="projectFile">To be added.</param>
+        <param name="targetNames">To be added.</param>
+        <param name="globalProperties">To be added.</param>
+        <param name="targetOutputs">To be added.</param>
+        <param name="buildFlags">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="CreateNewProject">
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.Project CreateNewProject ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.BuildEngine.Project</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetLoadedProject">
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.Project GetLoadedProject (string projectFullFileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.BuildEngine.Project</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="projectFullFileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="projectFullFileName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="GlobalEngine">
+      <MemberSignature Language="C#" Value="public static Microsoft.Build.BuildEngine.Engine GlobalEngine { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.BuildEngine.Engine</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="GlobalProperties">
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildPropertyGroup GlobalProperties { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.BuildEngine.BuildPropertyGroup</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="OnlyLogCriticalEvents">
+      <MemberSignature Language="C#" Value="public bool OnlyLogCriticalEvents { set; get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="RegisterLogger">
+      <MemberSignature Language="C#" Value="public void RegisterLogger (Microsoft.Build.Framework.ILogger logger);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="logger" Type="Microsoft.Build.Framework.ILogger" />
+      </Parameters>
+      <Docs>
+        <param name="logger">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="UnloadAllProjects">
+      <MemberSignature Language="C#" Value="public void UnloadAllProjects ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="UnloadProject">
+      <MemberSignature Language="C#" Value="public void UnloadProject (Microsoft.Build.BuildEngine.Project project);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="project" Type="Microsoft.Build.BuildEngine.Project" />
+      </Parameters>
+      <Docs>
+        <param name="project">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="UnregisterAllLoggers">
+      <MemberSignature Language="C#" Value="public void UnregisterAllLoggers ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="Version">
+      <MemberSignature Language="C#" Value="public static Version Version { get; };" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
+</Type>
