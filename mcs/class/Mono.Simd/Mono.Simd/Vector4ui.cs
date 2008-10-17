@@ -115,11 +115,6 @@ namespace Mono.Simd
 			return res;
 		}
 
-		public static unsafe Vector4ui Average (Vector4ui v1, Vector4ui v2)
-		{
-			return new Vector4ui ((v1.x + v2.x + 1) >> 1, (v1.y + v2.y + 1) >> 1, (v1.z + v2.z + 1) >> 1, (v1.w + v2.w + 1) >> 1);
-		}
-
 		public static unsafe Vector4ui Max (Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (System.Math.Max (v1.x, v2.x), System.Math.Max (v1.y, v2.y), System.Math.Max (v1.z, v2.z), System.Math.Max (v1.w, v2.w));
