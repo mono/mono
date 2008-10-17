@@ -1,0 +1,365 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.Design" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComCompatibleVersion(1, 0, 3300, 0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.Design.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.Design.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.Design.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System.ComponentModel.Design">
+      <Type Name="ActiveDesignSurfaceChangedEventArgs" Kind="Class" />
+      <Type Name="ActiveDesignSurfaceChangedEventHandler" Kind="Delegate" />
+      <Type Name="ArrayEditor" Kind="Class" />
+      <Type Name="BinaryEditor" Kind="Class" />
+      <Type Name="ByteViewer" Kind="Class" />
+      <Type Name="CollectionEditor" Kind="Class" />
+      <Type Name="ComponentActionsType" Kind="Enumeration" />
+      <Type Name="ComponentDesigner" Kind="Class" />
+      <Type Name="DateTimeEditor" Kind="Class" />
+      <Type Name="DesignerActionHeaderItem" Kind="Class" />
+      <Type Name="DesignerActionItem" Kind="Class" />
+      <Type Name="DesignerActionItemCollection" Kind="Class" />
+      <Type Name="DesignerActionList" Kind="Class" />
+      <Type Name="DesignerActionListCollection" Kind="Class" />
+      <Type Name="DesignerActionListsChangedEventArgs" Kind="Class" />
+      <Type Name="DesignerActionListsChangedEventHandler" Kind="Delegate" />
+      <Type Name="DesignerActionListsChangedType" Kind="Enumeration" />
+      <Type Name="DesignerActionMethodItem" Kind="Class" />
+      <Type Name="DesignerActionPropertyItem" Kind="Class" />
+      <Type Name="DesignerActionService" Kind="Class" />
+      <Type Name="DesignerActionTextItem" Kind="Class" />
+      <Type Name="DesignerActionUIService" Kind="Class" />
+      <Type Name="DesignerActionUIStateChangeEventArgs" Kind="Class" />
+      <Type Name="DesignerActionUIStateChangeEventHandler" Kind="Delegate" />
+      <Type Name="DesignerActionUIStateChangeType" Kind="Enumeration" />
+      <Type Name="DesignerCommandSet" Kind="Class" />
+      <Type Name="DesignSurface" Kind="Class" />
+      <Type Name="DesignSurfaceCollection" Kind="Class" />
+      <Type Name="DesignSurfaceEventArgs" Kind="Class" />
+      <Type Name="DesignSurfaceEventHandler" Kind="Delegate" />
+      <Type Name="DesignSurfaceManager" Kind="Class" />
+      <Type Name="DisplayMode" Kind="Enumeration" />
+      <Type Name="EventBindingService" Kind="Class" />
+      <Type Name="ExceptionCollection" Kind="Class" />
+      <Type Name="IComponentDesignerDebugService" Kind="Interface" />
+      <Type Name="IComponentDesignerStateService" Kind="Interface" />
+      <Type Name="InheritanceService" Kind="Class" />
+      <Type Name="LoadedEventArgs" Kind="Class" />
+      <Type Name="LoadedEventHandler" Kind="Delegate" />
+      <Type Name="LocalizationExtenderProvider" Kind="Class" />
+      <Type Name="MenuCommandsChangedEventArgs" Kind="Class" />
+      <Type Name="MenuCommandsChangedEventHandler" Kind="Delegate" />
+      <Type Name="MenuCommandsChangedType" Kind="Enumeration" />
+      <Type Name="MenuCommandService" Kind="Class" />
+      <Type Name="MultilineStringEditor" Kind="Class" />
+      <Type Name="ObjectSelectorEditor" Kind="Class" />
+      <Type Name="ObjectSelectorEditor+Selector" Kind="Class" />
+      <Type Name="ObjectSelectorEditor+SelectorNode" Kind="Class" />
+      <Type Name="UndoEngine" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ComponentModel.Design.Data">
+      <Type Name="DataSourceDescriptor" Kind="Class" />
+      <Type Name="DataSourceDescriptorCollection" Kind="Class" />
+      <Type Name="DataSourceGroup" Kind="Class" />
+      <Type Name="DataSourceGroupCollection" Kind="Class" />
+      <Type Name="DataSourceProviderService" Kind="Class" />
+      <Type Name="DesignerDataColumn" Kind="Class" />
+      <Type Name="DesignerDataConnection" Kind="Class" />
+      <Type Name="DesignerDataParameter" Kind="Class" />
+      <Type Name="DesignerDataRelationship" Kind="Class" />
+      <Type Name="DesignerDataSchemaClass" Kind="Class" />
+      <Type Name="DesignerDataStoredProcedure" Kind="Class" />
+      <Type Name="DesignerDataTable" Kind="Class" />
+      <Type Name="DesignerDataTableBase" Kind="Class" />
+      <Type Name="DesignerDataView" Kind="Class" />
+      <Type Name="IDataEnvironment" Kind="Interface" />
+      <Type Name="IDesignerDataSchema" Kind="Interface" />
+      <Type Name="QueryBuilderMode" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.ComponentModel.Design.Serialization">
+      <Type Name="BasicDesignerLoader" Kind="Class" />
+      <Type Name="CodeDomComponentSerializationService" Kind="Class" />
+      <Type Name="CodeDomDesignerLoader" Kind="Class" />
+      <Type Name="CodeDomLocalizationModel" Kind="Enumeration" />
+      <Type Name="CodeDomLocalizationProvider" Kind="Class" />
+      <Type Name="CodeDomSerializer" Kind="Class" />
+      <Type Name="CodeDomSerializerBase" Kind="Class" />
+      <Type Name="CodeDomSerializerException" Kind="Class" />
+      <Type Name="CollectionCodeDomSerializer" Kind="Class" />
+      <Type Name="DesignerSerializationManager" Kind="Class" />
+      <Type Name="ExpressionContext" Kind="Class" />
+      <Type Name="ICodeDomDesignerReload" Kind="Interface" />
+      <Type Name="MemberCodeDomSerializer" Kind="Class" />
+      <Type Name="ObjectStatementCollection" Kind="Class" />
+      <Type Name="RootContext" Kind="Class" />
+      <Type Name="SerializeAbsoluteContext" Kind="Class" />
+      <Type Name="StatementContext" Kind="Class" />
+      <Type Name="TypeCodeDomSerializer" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Data.Design">
+      <Type Name="MethodSignatureGenerator" Kind="Class" />
+      <Type Name="ParameterGenerationOption" Kind="Enumeration" />
+      <Type Name="TypedDataSetGenerator" Kind="Class" />
+      <Type Name="TypedDataSetGenerator+GenerateOption" Kind="Enumeration" />
+      <Type Name="TypedDataSetGeneratorException" Kind="Class" />
+      <Type Name="TypedDataSetSchemaImporterExtension" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Diagnostics.Design">
+      <Type Name="LogConverter" Kind="Class" />
+      <Type Name="ProcessDesigner" Kind="Class" />
+      <Type Name="ProcessModuleDesigner" Kind="Class" />
+      <Type Name="ProcessThreadDesigner" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Messaging.Design">
+      <Type Name="MessageDesigner" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Resources.Tools">
+      <Type Name="StronglyTypedResourceBuilder" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceProcess.Design">
+      <Type Name="ServiceControllerDesigner" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Web.UI.Design">
+      <Type Name="AppSettingsExpressionEditor" Kind="Class" />
+      <Type Name="CalendarDataBindingHandler" Kind="Class" />
+      <Type Name="ClientScriptItem" Kind="Class" />
+      <Type Name="ClientScriptItemCollection" Kind="Class" />
+      <Type Name="ColorBuilder" Kind="Class" />
+      <Type Name="ConnectionStringEditor" Kind="Class" />
+      <Type Name="ConnectionStringsExpressionEditor" Kind="Class" />
+      <Type Name="ContainerControlDesigner" Kind="Class" />
+      <Type Name="ContentDefinition" Kind="Class" />
+      <Type Name="ContentDesignerState" Kind="Enumeration" />
+      <Type Name="ControlDesigner" Kind="Class" />
+      <Type Name="ControlDesignerState" Kind="Class" />
+      <Type Name="ControlLocation" Kind="Enumeration" />
+      <Type Name="ControlParser" Kind="Class" />
+      <Type Name="ControlPersister" Kind="Class" />
+      <Type Name="DataBindingCollectionConverter" Kind="Class" />
+      <Type Name="DataBindingCollectionEditor" Kind="Class" />
+      <Type Name="DataBindingHandler" Kind="Class" />
+      <Type Name="DataBindingValueUIHandler" Kind="Class" />
+      <Type Name="DataColumnSelectionConverter" Kind="Class" />
+      <Type Name="DataFieldConverter" Kind="Class" />
+      <Type Name="DataMemberConverter" Kind="Class" />
+      <Type Name="DataSetFieldSchema" Kind="Class" />
+      <Type Name="DataSetSchema" Kind="Class" />
+      <Type Name="DataSetViewSchema" Kind="Class" />
+      <Type Name="DataSourceBooleanViewSchemaConverter" Kind="Class" />
+      <Type Name="DataSourceConverter" Kind="Class" />
+      <Type Name="DataSourceDesigner" Kind="Class" />
+      <Type Name="DataSourceViewSchemaConverter" Kind="Class" />
+      <Type Name="DesignerAutoFormat" Kind="Class" />
+      <Type Name="DesignerAutoFormatCollection" Kind="Class" />
+      <Type Name="DesignerAutoFormatStyle" Kind="Class" />
+      <Type Name="DesignerDataSourceView" Kind="Class" />
+      <Type Name="DesignerHierarchicalDataSourceView" Kind="Class" />
+      <Type Name="DesignerObject" Kind="Class" />
+      <Type Name="DesignerRegion" Kind="Class" />
+      <Type Name="DesignerRegionCollection" Kind="Class" />
+      <Type Name="DesignerRegionMouseEventArgs" Kind="Class" />
+      <Type Name="DesignTimeData" Kind="Class" />
+      <Type Name="DesignTimeResourceProviderFactory" Kind="Class" />
+      <Type Name="EditableDesignerRegion" Kind="Class" />
+      <Type Name="ExpressionEditor" Kind="Class" />
+      <Type Name="ExpressionEditorSheet" Kind="Class" />
+      <Type Name="ExpressionsCollectionConverter" Kind="Class" />
+      <Type Name="ExpressionsCollectionEditor" Kind="Class" />
+      <Type Name="HierarchicalDataSourceConverter" Kind="Class" />
+      <Type Name="HierarchicalDataSourceDesigner" Kind="Class" />
+      <Type Name="HtmlControlDesigner" Kind="Class" />
+      <Type Name="HtmlIntrinsicControlDesigner" Kind="Class" />
+      <Type Name="HyperLinkDataBindingHandler" Kind="Class" />
+      <Type Name="IContentResolutionService" Kind="Interface" />
+      <Type Name="IControlDesignerBehavior" Kind="Interface" />
+      <Type Name="IControlDesignerTag" Kind="Interface" />
+      <Type Name="IControlDesignerView" Kind="Interface" />
+      <Type Name="IDataBindingSchemaProvider" Kind="Interface" />
+      <Type Name="IDataSourceDesigner" Kind="Interface" />
+      <Type Name="IDataSourceFieldSchema" Kind="Interface" />
+      <Type Name="IDataSourceProvider" Kind="Interface" />
+      <Type Name="IDataSourceSchema" Kind="Interface" />
+      <Type Name="IDataSourceViewSchema" Kind="Interface" />
+      <Type Name="IDesignTimeResourceProviderFactoryService" Kind="Interface" />
+      <Type Name="IDesignTimeResourceWriter" Kind="Interface" />
+      <Type Name="IDocumentProjectItem" Kind="Interface" />
+      <Type Name="IFolderProjectItem" Kind="Interface" />
+      <Type Name="IHierarchicalDataSourceDesigner" Kind="Interface" />
+      <Type Name="IHtmlControlDesignerBehavior" Kind="Interface" />
+      <Type Name="ImageUrlEditor" Kind="Class" />
+      <Type Name="IProjectItem" Kind="Interface" />
+      <Type Name="ITemplateEditingFrame" Kind="Interface" />
+      <Type Name="ITemplateEditingService" Kind="Interface" />
+      <Type Name="IWebAdministrationService" Kind="Interface" />
+      <Type Name="IWebApplication" Kind="Interface" />
+      <Type Name="IWebFormReferenceManager" Kind="Interface" />
+      <Type Name="IWebFormsBuilderUIService" Kind="Interface" />
+      <Type Name="IWebFormsDocumentService" Kind="Interface" />
+      <Type Name="MailFileEditor" Kind="Class" />
+      <Type Name="MdbDataFileEditor" Kind="Class" />
+      <Type Name="ReadWriteControlDesigner" Kind="Class" />
+      <Type Name="ResourceExpressionEditor" Kind="Class" />
+      <Type Name="ResourceExpressionEditorSheet" Kind="Class" />
+      <Type Name="SkinIDTypeConverter" Kind="Class" />
+      <Type Name="SupportsPreviewControlAttribute" Kind="Class" />
+      <Type Name="TemplatedControlDesigner" Kind="Class" />
+      <Type Name="TemplatedEditableDesignerRegion" Kind="Class" />
+      <Type Name="TemplateDefinition" Kind="Class" />
+      <Type Name="TemplateEditingService" Kind="Class" />
+      <Type Name="TemplateEditingVerb" Kind="Class" />
+      <Type Name="TemplateGroup" Kind="Class" />
+      <Type Name="TemplateGroupCollection" Kind="Class" />
+      <Type Name="TemplateModeChangedEventArgs" Kind="Class" />
+      <Type Name="TextControlDesigner" Kind="Class" />
+      <Type Name="TextDataBindingHandler" Kind="Class" />
+      <Type Name="TransactedChangeCallback" Kind="Delegate" />
+      <Type Name="TypeSchema" Kind="Class" />
+      <Type Name="UrlBuilder" Kind="Class" />
+      <Type Name="UrlBuilderOptions" Kind="Enumeration" />
+      <Type Name="UrlEditor" Kind="Class" />
+      <Type Name="UserControlDesigner" Kind="Class" />
+      <Type Name="UserControlFileEditor" Kind="Class" />
+      <Type Name="ViewEvent" Kind="Class" />
+      <Type Name="ViewEventArgs" Kind="Class" />
+      <Type Name="ViewEventHandler" Kind="Delegate" />
+      <Type Name="ViewFlags" Kind="Enumeration" />
+      <Type Name="ViewRendering" Kind="Class" />
+      <Type Name="WebControlToolboxItem" Kind="Class" />
+      <Type Name="WebFormsDesignerActionService" Kind="Class" />
+      <Type Name="WebFormsReferenceManager" Kind="Class" />
+      <Type Name="WebFormsRootDesigner" Kind="Class" />
+      <Type Name="XmlDataFileEditor" Kind="Class" />
+      <Type Name="XmlDocumentSchema" Kind="Class" />
+      <Type Name="XmlFileEditor" Kind="Class" />
+      <Type Name="XmlUrlEditor" Kind="Class" />
+      <Type Name="XsdSchemaFileEditor" Kind="Class" />
+      <Type Name="XslTransformFileEditor" Kind="Class" />
+      <Type Name="XslUrlEditor" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Web.UI.Design.WebControls">
+      <Type Name="AdRotatorDesigner" Kind="Class" />
+      <Type Name="BaseDataBoundControlDesigner" Kind="Class" />
+      <Type Name="BaseDataListComponentEditor" Kind="Class" />
+      <Type Name="BaseDataListDesigner" Kind="Class" />
+      <Type Name="BaseValidatorDesigner" Kind="Class" />
+      <Type Name="ButtonDesigner" Kind="Class" />
+      <Type Name="CalendarAutoFormatDialog" Kind="Class" />
+      <Type Name="CalendarDesigner" Kind="Class" />
+      <Type Name="CheckBoxDesigner" Kind="Class" />
+      <Type Name="DataBoundControlDesigner" Kind="Class" />
+      <Type Name="DataListComponentEditor" Kind="Class" />
+      <Type Name="DataProviderNameConverter" Kind="Class" />
+      <Type Name="DataSourceIDConverter" Kind="Class" />
+      <Type Name="HyperLinkDesigner" Kind="Class" />
+      <Type Name="LabelDesigner" Kind="Class" />
+      <Type Name="LinkButtonDesigner" Kind="Class" />
+      <Type Name="ListControlDataBindingHandler" Kind="Class" />
+      <Type Name="PanelDesigner" Kind="Class" />
+      <Type Name="RegexEditorDialog" Kind="Class" />
+      <Type Name="RegexTypeEditor" Kind="Class" />
+      <Type Name="RepeaterDesigner" Kind="Class" />
+      <Type Name="TableCellsCollectionEditor" Kind="Class" />
+      <Type Name="TableDesigner" Kind="Class" />
+      <Type Name="TableRowsCollectionEditor" Kind="Class" />
+      <Type Name="XmlDesigner" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Windows.Forms.Design">
+      <Type Name="AnchorEditor" Kind="Class" />
+      <Type Name="AxImporter" Kind="Class" />
+      <Type Name="AxImporter+IReferenceResolver" Kind="Interface" />
+      <Type Name="AxImporter+Options" Kind="Class" />
+      <Type Name="AxParameterData" Kind="Class" />
+      <Type Name="AxWrapperGen" Kind="Class" />
+      <Type Name="BorderSidesEditor" Kind="Class" />
+      <Type Name="ComponentDocumentDesigner" Kind="Class" />
+      <Type Name="ComponentTray" Kind="Class" />
+      <Type Name="ControlDesigner" Kind="Class" />
+      <Type Name="ControlDesigner+ControlDesignerAccessibleObject" Kind="Class" />
+      <Type Name="DesignerOptions" Kind="Class" />
+      <Type Name="DockEditor" Kind="Class" />
+      <Type Name="DocumentDesigner" Kind="Class" />
+      <Type Name="DocumentDesigner+DesignerViewFrame" Kind="Class" />
+      <Type Name="EventHandlerService" Kind="Class" />
+      <Type Name="FileNameEditor" Kind="Class" />
+      <Type Name="FolderNameEditor" Kind="Class" />
+      <Type Name="ImageListCodeDomSerializer" Kind="Class" />
+      <Type Name="ImageListImageEditor" Kind="Class" />
+      <Type Name="IMenuEditorService" Kind="Interface" />
+      <Type Name="MaskDescriptor" Kind="Class" />
+      <Type Name="MenuCommands" Kind="Class" />
+      <Type Name="ParentControlDesigner" Kind="Class" />
+      <Type Name="ScrollableControlDesigner" Kind="Class" />
+      <Type Name="SelectionRules" Kind="Enumeration" />
+      <Type Name="ShortcutKeysEditor" Kind="Class" />
+      <Type Name="WindowsFormsDesignerOptionService" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Windows.Forms.Design.Behavior">
+      <Type Name="Adorner" Kind="Class" />
+      <Type Name="Behavior" Kind="Class" />
+      <Type Name="BehaviorDragDropEventArgs" Kind="Class" />
+      <Type Name="BehaviorDragDropEventHandler" Kind="Delegate" />
+      <Type Name="BehaviorService" Kind="Class" />
+      <Type Name="BehaviorServiceAdornerCollection" Kind="Class" />
+      <Type Name="BehaviorServiceAdornerCollectionEnumerator" Kind="Class" />
+      <Type Name="ComponentGlyph" Kind="Class" />
+      <Type Name="ControlBodyGlyph" Kind="Class" />
+      <Type Name="Glyph" Kind="Class" />
+      <Type Name="GlyphCollection" Kind="Class" />
+      <Type Name="GlyphSelectionType" Kind="Enumeration" />
+      <Type Name="SnapLine" Kind="Class" />
+      <Type Name="SnapLinePriority" Kind="Enumeration" />
+      <Type Name="SnapLineType" Kind="Enumeration" />
+    </Namespace>
+  </Types>
+  <Title>System.Design</Title>
+</Overview>
