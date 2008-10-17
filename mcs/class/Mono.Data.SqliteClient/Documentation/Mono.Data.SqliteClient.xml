@@ -1,0 +1,71 @@
+<Namespace Name="Mono.Data.SqliteClient">
+  <Docs>
+    <summary>The Mono.Data.SqliteClient provides a data adapter for the Sqlite (www.sqlite.org) database, versions 2 and 3.</summary>
+    <remarks><para>This assemby provides a wrapper around the native Sqlite library from www.sqlite.org.  The Sqlite library must be separately installed to access Sqlite databases.</para>
+
+<para>
+SQLite has a notable oddity: table cell data does not retain what kind of data it was. Everything is stored as either a long, double, string, or blob. And in SQLite version 2, everything is stored as a string. So you need to be careful about avoiding casting values returned by SQLite without checking the type of the value returned.</para>
+
+<para>See <see cref="P:Mono.Data.SqliteClient.SqliteConnection.ConnectionString" /> for information on the connection string format for this data provider.</para>
+
+
+<example>
+  <code lang="C#">using System;
+ using System.Data;
+ using Mono.Data.SqliteClient;
+ 
+ public class Test
+ {
+    public static void Main(string[] args)
+    {
+       string connectionString = "URI=file:SqliteTest.db";
+       IDbConnection dbcon;
+       dbcon = (IDbConnection) new SqliteConnection(connectionString);
+       dbcon.Open();
+       IDbCommand dbcmd = dbcon.CreateCommand();
+       // requires a table to be created named employee
+       // with columns firstname and lastname
+       // such as,
+       //        CREATE TABLE employee (
+       //           firstname varchar(32),
+       //           lastname varchar(32));
+       string sql =
+          "SELECT firstname, lastname " +
+          "FROM employee";
+       dbcmd.CommandText = sql;
+       IDataReader reader = dbcmd.ExecuteReader();
+       while(reader.Read()) {
+            string FirstName = reader.GetString (0);
+            string LastName = reader.GetString (1);
+            Console.WriteLine("Name: " +
+                FirstName + " " + LastName);
+       }
+       // clean up
+       reader.Close();
+       reader = null;
+       dbcmd.Dispose();
+       dbcmd = null;
+       dbcon.Close();
+       dbcon = null;
+    }
+ }</code>
+</example>
+
+<para>To build and run the example:</para>
+<list type="bullet">
+  <item>
+    <term>Save the example to a file, such as, TestExample.cs</term>
+  </item>
+  <item>
+    <term>Build using Mono C# compiler: <code>mcs TestExample.cs -r:System.Data.dll -r:Mono.Data.SqliteClient.dll</code></term>
+  </item>
+  <item>
+    <term>To run the example: <code>mono TestExample.exe</code></term>
+  </item>
+</list>
+
+
+
+</remarks>
+  </Docs>
+</Namespace>

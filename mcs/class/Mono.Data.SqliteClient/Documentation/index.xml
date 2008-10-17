@@ -1,0 +1,26 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Mono.Data.SqliteClient" Version="1.0.5000.0" />
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Mono.Data.SqliteClient">
+      <Type Name="SqliteCommand" />
+      <Type Name="SqliteConnection" />
+      <Type Name="SqliteDataAdapter" />
+      <Type Name="SqliteDataReader" />
+      <Type Name="SqliteParameter" />
+      <Type Name="SqliteParameterCollection" />
+      <Type Name="SqliteRowUpdatedEventArgs" />
+      <Type Name="SqliteRowUpdatingEventArgs" />
+      <Type Name="SqliteTransaction" />
+      <Type Name="SqliteRowUpdatedEventHandler" />
+      <Type Name="SqliteRowUpdatingEventHandler" />
+      <Type Name="SqliteSyntaxException" />
+      <Type Name="SqliteExecutionException" />
+      <Type Name="SqliteBusyException" />
+    </Namespace>
+  </Types>
+  <Title>Mono.Data.SqliteClient</Title>
+</Overview>
