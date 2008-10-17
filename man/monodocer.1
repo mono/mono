@@ -1,0 +1,692 @@
+.\" 
+.\" monodocer manual page.
+.\" (C) 2006 Jonathan Pryor
+.\" Author:
+.\"   Jonathan Pryor (jonpryor@vt.edu)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH "monodocer" 1
+.SH NAME
+monodocer \- ECMA Documentation Format Support
+.SH SYNOPSIS
+.B monodocer
+[OPTIONS]*
+.SH OPTIONS
+.TP
+.I \-assembly:ASSEMBLY
+.I ASSEMBLY
+is a .NET assembly to generate documentation stubs for.
+.Sp
+Specify a file path or the name of a GAC'd assembly.
+.TP
+.I \-delete
+Allow monodocer to delete members from documentation files.  
+The only members deleted are for members which are no longer present within
+the assembly.
+.Sp
+If a type is no longer present, the documentation file is
+.I not
+deleted, but is instead
+.I renamed
+to have a
+.B .remove 
+extension.
+.TP
+.I \-?, \-help
+Show program argument information.
+.TP
+.I \-ignoremembers
+Do not update members.
+.Sp
+This will add documentation stubs for added types, but will
+.I not
+add or remove documentation for any members of any type (including any added
+types).
+.TP
+.I \-importslashdoc:FILE
+.I FILE
+is an XML file generated with the 
+.B /doc:FILE
+C# compiler flag (e.g.
+.I mcs -doc:foo.xml foo.cs
+).  Import the member documentation contained within
+.I FILE
+into the documentation format used by monodoc.
+.TP
+.I \-name:NAME
+.I NAME
+is the name of the project this documentation is for.
+.Sp
+This sets the 
+.I /Overview/Title
+element within the 
+.I index.xml
+file created at the directory specified by
+.I -path
+\&.
+This is used by some programs for title information (e.g.
+.I monodocs2html
+).
+.TP
+.I \-namespace:NAMESPACE
+Only update the types within the namespace
+.I NAMESPACE
+\&.
+.TP
+.I \-overrides
+Include overridden methods in documentation.
+.Sp
+This normally isn't necessary, as the Mono Documentation Browser will provide a
+link to the base type members anyway, as will
+.I monodocs2html
+if the base type is within the same assembly.
+.TP
+.I \-path:OUTPUT_DIR
+.I OUTPUT_DIR
+is the directory which will contain the new/updated documentation stubs.
+.TP
+.I \-pretty
+Indent the XML files nicely.
+.TP
+.I \-since:SINCE
+Create a <since/> element for added types and members with the value 
+.I SINCE
+\&.
+.Sp
+For example, when given
+.I -since:"Gtk# 2.4"
+an element will be inserted into the 
+.I Docs
+element for all added types and type members:
+.nf
+	<since version="Gtk# 2.4" />
+.fi
+The Mono Documentation Browser and 
+.I monodocs2html
+will use this element to specify in which version a member was added.
+.TP
+.I \-type:TYPE
+Only create/update documentation for the type
+.I TYPE
+\&.
+.TP
+.I \-updateto:PATH
+When updating documentation, write the updated documentation files into the
+directory 
+.I PATH
+\&.
+.TP
+.I \-V, \-version
+Display version and licensing information.
+.PP
+.SH DESCRIPTION
+\fBmonodocer\fR has been obsoleted by \fBmdoc\fR(1).  See the
+\fBmdoc-update\fR(1) man page.
+.PP
+.I monodocer
+is a program that creates XML documentation stubs in the ECMA Documentation
+Format.  It does not rely on documentation found within the source code.
+.PP
+The advantages are:
+.TP
+.I *
+.B Code readability.
+Good documentation is frequently (a) verbose, and (b)
+filled with examples.  (For comparison, compare Microsoft .NET Framework
+documentation, which is often a page or more of docs for each member, to
+JavaDoc documentation, which can often be a sentence for each member.)
+.Sp
+Inserting good documentation into the source code can frequently bloat the
+source file, as the documentation can be longer than the actual method that is
+being documented.
+.TP
+.I *
+.B Localization.
+In-source documentation formats (such as 
+.B /doc
+) have no support for multiple human languages.  If you need to support more
+than one human language for documentation purposes, 
+.I monodocer
+is useful as it permits each language to get its own directory, and 
+.I monodocer
+can add types/members for each separate documentation directory.
+.TP
+.I *
+.B Administration.
+It's not unusual to have separate documentation and development teams.  It's
+also possible that the documentation team will have minimal experience with
+the programming language being used.  In such circumstances, inline
+documentation is not desirable as the documentation team could inadvertantly
+insert an error into the source code while updating the documentation.
+Alternatively, you may not want the documentation team to have access to the
+source code for security reasons.
+.I monodocer
+allows the documentation to be kept 
+.I completely
+separate and distinct from the source code used to create the assembly.
+.PP
+To turn the 
+.I monodocer 
+documentation into something that can be consumed by the Mono
+Documentation Browser (the desktop help browser, or the web interface
+for it) it is necessary to compile the documentation into a packed
+format.  This is done with the mdassembler tool, for example, you
+could use this toolchain like this:
+.nf
+
+	$ monodocer -assembly:MyWidgets -path:generated_docs
+	$ mdassembler --ecma generated_docs -out:MyWidgets
+
+.fi
+The above would generate a MyWidgets.zip and a MyWidgets.tree that can
+then be installed in the system.   In addition to the two files (.zip
+and .tree) you must provide a .sources file which describes where in
+the help system the documentation should be hooked up, it is a very
+simple XML file, like this:
+.nf
+
+<?xml version="1.0"?>
+<monodoc>
+  <source provider="ecma" basefile="MyWidgets" path="classlib-gnome"/>
+</monodoc>
+
+.fi
+The above configuration file describes that the documentation is in
+ECMA format (the compiled version) that the base file name is
+MyWidgets and that it should be hooked up in the "classlib-gnome" part
+of the tree.   If you want to look at the various nodes defined in the
+documentation, you can look at monodoc.xml file which is typically
+installed in /usr/lib/monodoc/monodoc.xml.   
+.PP
+Once you have all of your files (.zip, .tree and .sources) you can
+install them into the system with the following command:
+.nf
+
+        $ cp MyWidgets.tree MyWidgets.zip MyWidgets.source `pkg-config monodoc --variable sourcesdir`
+  
+.fi
+The above will copy the files into the directory that Monodoc has
+registered (you might need root permissions to do this).   The actual
+directory is returned by the 
+.I pkg-config 
+invocation.
+.SH STRING ID FORMAT
+String IDs are used to refer to a type or member of a type.  String IDs are
+documented in ECMA-334 3rd Edition, Annex E.3.1.  They consist of a 
+.I member type prefix
+, the full type name (namespace + name, separated by '.'), possibly followed
+by the member name and other information.
+.PP
+Member type prefixes:
+.TP
+.I "E:"
+The String ID refers to an event.  The event name follows the type name:
+.I E:System.AppDomain.AssemblyLoad
+.TP
+.I "F:"
+The String ID refers to a field.  The field name follows the type name:
+.I F:System.Runtime.InteropServices.DllImportAttribute.SetLastError
+.TP
+.I "M:"
+Refers to a constructor or method.  Constructors append 
+.I .ctor
+to the type name, while methods append the method name (with an optional count
+of the number of generic parameters).
+.Sp
+If the constructor or method take arguments, these are listed within
+paranthesis after the constructor/method name:
+.Sp
+.I M:System.Object..ctor
+,
+.I M:System.String..ctor(System.Char[])
+,
+.I M:System.String.Concat(System.Object)
+,
+.I M:System.Array.Sort``1(``0[])
+,
+.I M:System.Collections.Generic.List`1..ctor
+,
+.I M:System.Collections.Generic.List`1.Add(`0)
+\&.
+.TP
+.I "N:"
+Refers to a namespace, e.g.
+.I N:System
+.TP
+.I "P:"
+Refers to a property.  If the property is an indexer or takes parameters, 
+the parameter types are appended to the property name and enclosed with
+paranthesis:
+.I P:System.String.Length
+,
+.I P:System.String.Chars(System.Int32)
+\&.
+.TP
+.I "T:"
+The String ID refers to a type, with the number of generic types appended:
+.I T:System.String
+,
+.I T:System.Collections.Generic.List`1
+.PP
+To make matters more interesting, generic types & members have two
+representations: the "unbound" representation (shown in examples above), in
+which class names have the count of generic parameters appended to their name.
+There is also a "bound" representation, in which the binding of generic
+parameters is listed within '{' and '}'.
+.PP
+.B Unbound:
+.I T:System.Collections.Generic.List`1
+,
+.I T:System.Collections.Generic.Dictionary`2
+\&.
+.PP
+.B Bound:
+.I T:System.Collections.Generic.List{System.Int32}
+.I T:System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.Predicate{System.String}}}
+\&.
+.PP
+As you can see, bound variants can be arbitrarily complex (just like
+generics).
+.PP
+Furthermore, if a generic parameter is bound to the generic parameter of a
+type or method, the "index" of the type/method's generic parameter is used 
+as the binding, so given
+.nf
+	class FooType {
+	  public static void Foo<T> (System.Predicate<T> predicate) {}
+	}
+.fi
+The String ID for this method is
+.I M:FooType.Foo``1(System.Predicate{``0})
+, as 
+.I ``0
+is the 0th generic parameter index which is bound to 
+.I System.Predicate<T>
+\&.
+.SH DOCUMENTATION FORMAT
+.I monodocer
+generates documentation similar to the Ecma documentation format, as described 
+in ECMA-335 3rd Edition, Partition IV, Chapter 7.
+.PP
+The principal difference from the ECMA format is that each type gets its own
+file, within a directory identical to the namespace of the type.
+.PP
+Most of the information within the documentation should
+.I not
+be edited.  This includes the type name (
+.I /Type/@FullName
+), implemented interfaces (
+.I /Type/Interfaces
+), member information (
+.I /Type/Members/Member/@MemberName
+,
+.I /Type/Members/Member/MemberSignature
+,
+.I /Type/Members/Member/MemberType
+,
+.I /Type/Members/Member/Parameters
+, etc.).
+.PP
+What 
+.I should
+be modified are all elements with the text
+.I To be added.
+, which are present under the 
+.I //Docs
+elements (e.g. 
+.I /Type/Docs
+,
+.I /Type/Members/Member/Docs
+).  The contents of the
+.I Docs
+element is
+.I identical
+in semantics and structure to the inline C# documentation format, consisting
+of these elements (listed in ECMA-334 3rd Edition, Annex E, Section 2).  The
+following are used within the element descriptions:
+.TP
+.I CREF
+Refers to a class (or member) reference, and is a string in the format
+described above in the
+.I STRING ID FORMAT
+section.
+.TP
+.I TEXT
+Non-XML text, and XML should not be nested.
+.I
+.TP
+.I XML
+Only XML elements should be nested (which indirectly may contain text), but
+non-whitespace text should not be an immediate child node.
+.TP
+.I XML_TEXT
+Free-form text and XML, so that other XML elements may be nested.
+.PP
+The following elements are used in documentation:
+.TP
+.I <block subset="SUBSET" type="TYPE">XML_TEXT</block>
+Create a block of text, similar in concept to a paragraph, but is used to
+create divisions within the text.  To some extent, a <block/> is equivalent to
+the HTML <h2/> tag.
+.Sp
+.I SUBSET
+should always be the value
+.I "none"
+\&.
+.Sp
+.I TYPE
+specifies the heading and formatting to use.  Recognized types are:
+.Sp
+.I behaviors
+Creates a section with the heading
+.I Operation
+\&.
+.Sp
+.I note
+Creates a section with the heading 
+.I Note:
+\&.
+.Sp
+.I overrides
+Creates a section with the heading
+.I Note to Inheritors
+\&.
+.Sp
+.I usage
+Creates a section with the heading
+.I Usage
+\&.
+.TP
+.I <c>XML_TEXT</c>
+Set text in a code-like font (similar to the HTML <tt/> element).
+.TP
+.I <code lang="LANGUAGE">TEXT</code>
+Display multiple lines of text in a code-like font (similar to the HTML <pre/>
+element).
+.I LANGUAGE
+is the language this code block is for.  For example, if
+.I LANGUAGE
+is 
+.B C#
+, then 
+.I TEXT
+will get syntax highlighting for the C# language within the Mono Documentation
+Browser.
+.TP
+.I <example>XML_TEXT</example>
+Indicates an example that should be displayed specially.  For example:
+.nf
+	<example>
+	  <para>An introductory paragraph.</para>
+	  <code lang="C#">
+	    class Example {
+	      public static void Main ()
+	      {
+	        System.Console.WriteLine ("Hello, World!");
+	      }
+	    }
+	  </code>
+	</example>
+.fi
+.TP
+.I <exception cref="CREF">XML_TEXT</exception>
+Identifies an exception that can be thrown by the documented member.
+.Sp
+.I <exception/>
+is a top-level element, and should be nested directly under the 
+.I <Docs/>
+element.
+.Sp
+.I CREF
+is the exception type that is thrown, while
+.I XML_TEXT
+contains the circumstances that would cause 
+.I CREF
+to be thrown.
+.nf
+	<exception cref="T:System.ArgumentNullException">
+	  <paramref name="foo" /> was <see langword="null" />.
+	</exception>
+.fi
+.TP
+.I <list>XML</list>
+Create a list or table of items.  
+.I <list/>
+makes use of nested
+.I <item>XML</item>
+,
+.I <listheader>XML</listheader>
+,
+.I <term>XML_TEXT</term>
+, and
+.I <description>XML_TEXT</description>
+elements.
+.Sp
+.I Lists
+have the syntax:
+.nf
+	<list type="bullet"> <!-- or type="number" -->
+	  <item><term>Bullet 1</term></item>
+	  <item><term>Bullet 2</term></item>
+	  <item><term>Bullet 3</term></item>
+	</list>
+.fi
+.Sp
+.I Tables
+have the syntax:
+.nf
+	<list type="table">
+	  <listheader> <!-- listheader bolds this row -->
+	    <term>Column 1</term>
+	    <description>Column 2</description>
+	    <description>Column 3</description>
+	  </listheader>
+	  <item>
+	    <term>Item 1-A</term>
+	    <description>Item 1-B</description>
+	    <description>Item 1-C</description>
+	  </item>
+	  <item>
+	    <term>Item 2-A</term>
+	    <description>Item 2-B</description>
+	    <description>Item 2-C</description>
+	  </item>
+	</list>
+.fi
+.TP
+.I <para>XML_TEXT</para>
+Insert a paragraph of
+.I XML_TEXT
+ .
+This is for use within other tags, such as 
+.I <example/>
+,
+.I <remarks/>
+,
+.I <returns/>
+,
+.I <term/>
+and 
+.I <description/>
+(see 
+.I <list/>
+, above), and most other elements.
+.Sp
+For example,
+.nf
+	<para>This is a paragraph of text.</para>
+.fi
+.TP
+.I <param name="NAME">XML_TEXT</param>
+.I <param/>
+is a top-level element, and should be nested directly under the 
+.I <Docs/>
+element.
+.Sp
+Describes the parameter
+.I NAME
+of the current constructor, method, or property:
+.nf
+	<param name="count">
+	  A <see cref="T:System.Int32" /> containing the number
+	  of widgets to process.
+	</param>
+.fi
+.TP
+.I <paramref name="NAME" />
+Indicates that
+.I NAME
+is a parameter.
+.Sp
+This usually renders 
+.I NAME
+as italic text, so it is frequently (ab)used as an equivalent to the
+HTML <i/> element.  See the 
+.I <exception/>
+documentation (above) for an example.
+.TP
+.I <permission cref="CREF">XML_TEXT</permission>
+Documentes the security accessibility requirements of the current member.
+.Sp
+.I <permission/>
+is a top-level element, and should be nested directly under the 
+.I <Docs/>
+element.
+.Sp
+.I CREF
+is a type reference to the security permission required, while
+.I XML_TEXT
+is a description of why the permission is required.
+.nf
+	<permission cref="T:System.Security.Permissions.FileIOPermission">
+	  Requires permission for reading and writing files. See 
+	  <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />, 
+	  <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" />.
+	</permission>
+.fi
+.TP
+.I <remarks>XML_TEXT</remarks>
+Contains detailed information about a member.
+.Sp
+.I <remarks/>
+is a top-level element, and should be nested directly under the 
+.I <Docs/>
+element.
+.nf
+	<remarks>Insert detailed information here.</remarks>
+.fi
+.TP
+.I <returns>XML_TEXT</returns>
+.Sp
+.I <remarks/>
+is a top-level element, and should be nested directly under the 
+.I <Docs/>
+element.
+.Sp
+Describes the return value of a method:
+.nf
+	<returns>
+	  A <see cref="T:System.Boolean" /> specifying whether 
+	  or not the process can access 
+	  <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" />.
+	</returns>
+.fi
+.TP
+.I <see cref="CREF" />
+Creates a link to the specified member within the current text:
+.nf
+	<see cref="M:Some.Namespace.With.Type.Method" />
+.fi
+.TP
+.I <seealso cref="CREF" />
+.Sp
+.I <seealso/>
+is a top-level element, and should be nested directly under the 
+.I <Docs/>
+element.
+.Sp
+Allows an entry to be generated for the 
+.I See Also
+subclause.  Use 
+.I <see/>
+to specify a link from within text.
+.nf
+	<seealso cref="P:System.Exception.Message" />
+.fi
+.TP
+.I <since version="VERSION" />
+.Sp
+.I <since/>
+is a top-level element, and should be nested directly under the 
+.I <Docs/>
+element.
+.Sp
+Permits specification of which version introduced the specified type or
+member.
+.nf
+	<since version="Gtk# 2.4" />
+.fi
+.TP
+.I <summary>DESCRIPTION</summary>
+.Sp
+.I <summary/>
+is a top-level element, and should be nested directly under the 
+.I <Docs/>
+element.
+.Sp
+Provides a (brief!) overview about a type or type member.
+.Sp
+This is usually displayed as part of a class declaration, and should be a
+reasonably short description of the type/member.  Use
+.I <remarks/>
+for more detailed information.
+.TP
+.I <typeparam name="NAME">DESCRPITION</typeparam>
+.I <typeparam/>
+is a top-level element, and should be nested directly under the 
+.I <Docs/>
+element.
+.Sp
+This is used to describe type parameter for a generic type or generic method.
+.Sp
+.I NAME
+is the name of the type parameter, while
+.I DESCRIPTION
+contains a description of the parameter (what it's used for, what restrictions
+it must meet, etc.).
+.nf
+	<typeparam name="T">The type of the underlying collection</typeparam>
+.fi
+.TP
+.I <typeparamref>
+Used to indicate that a word is a type parameter, for use within other text
+blocks (e.g. within 
+.I <para/>
+).
+.nf
+	<para>If <typeparamref name="T" /> is a struct, then...</para>
+.fi
+.TP
+.I <value>DESCRIPTION</value>
+.I <value/>
+is a top-level element, and should be nested directly under the 
+.I <Docs/>
+element.
+.Sp
+Allows a property to be described.
+.nf
+	<value>
+	  A <see cref="T:System.String" /> containing a widget name.
+	</value>
+.fi
+.PP
+.SH SEE ALSO
+mdassembler(1), mdcs2ecma(1), mdnormalizer(1), mdvalidator(1), monodocs2html(1)
+.SH MAILING LISTS
+.TP
+Visit http://lists.ximian.com/mailman/listinfo/mono-docs-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com for details
