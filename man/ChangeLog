@@ -1,3 +1,7 @@
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile: Add man pages added from monodoc/man...
+
 2008-10-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mono.1 : svn.myrealbox -> anonsvn.mono-project .

@@ -1,7 +1,57 @@
-man_MANS = mcs.1 mono.1 monostyle.1 mono-config.5 sqlsharp.1 oldmono.1 ilasm.1 \
-	   csharp.1 cert2spc.1 cilc.1 genxs.1 wsdl.1 disco.1 soapsuds.1 makecert.1 mono-cil-strip.1 \
-	   chktrust.1 setreg.1 sn.1 secutil.1 signcode.1 certmgr.1 monop.1 xsd.1 gacutil.1 \
-	   macpack.1 mkbundle.1 dtd2xsd.1 permview.1 prj2make.1 mono-service.1 mono-shlib-cop.1 \
-	   al.1 mozroots.1 mono-xmltool.1 sgen.1 httpcfg.1 vbnc.1 resgen.1 monolinker.1 mconfig.1
+man_MANS = \
+	al.1                  \
+	caspol.1              \
+	cert2spc.1            \
+	certmgr.1             \
+	chktrust.1            \
+	cilc.1                \
+	csharp.1              \
+	disco.1               \
+	dtd2xsd.1             \
+	gacutil.1             \
+	genxs.1               \
+	httpcfg.1             \
+	ilasm.1               \
+	macpack.1             \
+	makecert.1            \
+	mconfig.1             \
+	mcs.1                 \
+	mdassembler.1         \
+	mdcs2ecma.1           \
+	mdnormalizer.1        \
+	mdoc.1                \
+	mdoc-assemble.1       \
+	mdoc-export-html.1    \
+	mdoc-export-msxdoc.1  \
+	mdoc-update.1         \
+	mdoc-validate.1       \
+	mdvalidator.1         \
+	mkbundle.1            \
+	mono.1                \
+	mono-cil-strip.1      \
+	monodocer.1           \
+	monodocs2html.1       \
+	monolinker.1          \
+	monop.1               \
+	mono-service.1        \
+	mono-shlib-cop.1      \
+	monostyle.1           \
+	mono-xmltool.1        \
+	mozroots.1            \
+	oldmono.1             \
+	permview.1            \
+	prj2make.1            \
+	resgen.1              \
+	secutil.1             \
+	setreg.1              \
+	sgen.1                \
+	signcode.1            \
+	sn.1                  \
+	soapsuds.1            \
+	sqlsharp.1            \
+	vbnc.1                \
+	wsdl.1                \
+	wsdl2.1               \
+	xsd.1
 
 EXTRA_DIST = $(man_MANS)
