@@ -1,5 +1,9 @@
 2008-10-17  Marek Safar  <marek.safar@gmail.com>
 
+	* generic.cs, anonymous.cs: Simplified GetDeclarations.
+
+2008-10-17  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs: More precise cast parsing.
 
 2008-10-16  Martin Baulig  <martin@ximian.com>

@@ -133,7 +133,7 @@ namespace Mono.CSharp {
 			if (generic != null) {
 				args = new TypeArguments (loc);
 				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
-					args.Add (new SimpleName (tparam.Name, loc));
+					args.Add (new TypeParameterName (tparam.Name, null, loc));
 			}
 
 			return new MemberName (tname, args, loc);
@@ -1626,11 +1626,13 @@ namespace Mono.CSharp {
 			string name = ClassNamePrefix + types_counter++;
 
 			SimpleName [] t_args = new SimpleName [parameters.Count];
+			TypeParameterName [] t_params = new TypeParameterName [parameters.Count];
 			Parameter [] ctor_params = new Parameter [parameters.Count];
 			for (int i = 0; i < parameters.Count; ++i) {
 				AnonymousTypeParameter p = (AnonymousTypeParameter) parameters [i];
 
 				t_args [i] = new SimpleName ("<" + p.Name + ">__T", p.Location);
+				t_params [i] = new TypeParameterName (t_args [i].Name, null, p.Location);
 				ctor_params [i] = new Parameter (t_args [i], p.Name, 0, null, p.Location);
 			}
 
@@ -1639,7 +1641,7 @@ namespace Mono.CSharp {
 			// named upon properties names
 			//
 			AnonymousTypeClass a_type = new AnonymousTypeClass (parent.NamespaceEntry.SlaveDeclSpace,
-				new MemberName (name, new TypeArguments (loc, t_args), loc), parameters, loc);
+				new MemberName (name, new TypeArguments (loc, t_params), loc), parameters, loc);
 
 			if (parameters.Count > 0)
 				a_type.SetParameterInfo (null);

@@ -1106,33 +1106,10 @@ namespace Mono.CSharp {
 			args.AddRange (new_args.args);
 		}
 
-		/// <summary>
-		///   We're used during the parsing process: the parser can't distinguish
-		///   between type parameters and type arguments.  Because of that, the
-		///   parser creates a `MemberName' with `TypeArguments' for both cases and
-		///   in case of a generic type definition, we call GetDeclarations().
-		/// </summary>
+		// TODO: Should be deleted
 		public TypeParameterName[] GetDeclarations ()
 		{
-			TypeParameterName[] ret = new TypeParameterName [args.Count];
-			for (int i = 0; i < args.Count; i++) {
-				TypeParameterName name = args [i] as TypeParameterName;
-				if (name != null) {
-					ret [i] = name;
-					continue;
-				}
-				SimpleName sn = args [i] as SimpleName;
-				if (sn != null && !sn.HasTypeArguments) {
-					ret [i] = new TypeParameterName (sn.Name, null, sn.Location);
-					continue;
-				}
-
-				Expression expr = (Expression) args [i];
-				// TODO: Wrong location
-				Report.Error (81, Location, "Type parameter declaration must be an identifier not a type");
-				ret [i] = new TypeParameterName (expr.GetSignatureForError (), null, expr.Location);
-			}
-			return ret;
+			return (TypeParameterName[]) args.ToArray (typeof (TypeParameterName));
 		}
 
 		/// <summary>
@@ -1164,23 +1141,6 @@ namespace Mono.CSharp {
 			get {
 				return dimension > 0;
 			}
-		}
-
-		public override string ToString ()
-		{
-			StringBuilder s = new StringBuilder ();
-
-			int count = Count;
-			for (int i = 0; i < count; i++){
-				//
-				// FIXME: Use TypeManager.CSharpname once we have the type
-				//
-				if (args != null)
-					s.Append (args [i].ToString ());
-				if (i+1 < count)
-					s.Append (",");
-			}
-			return s.ToString ();
 		}
 
 		public string GetSignatureForError()
