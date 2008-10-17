@@ -35,8 +35,6 @@ EXTRA_DISTFILES = \
 
 PROGRAM = mdoc.exe
 
-EXTRA_DISTFILES = test.cs
-
 include ../../build/executable.make
 
 $(PROGRAM) : monodocer1.exe Makefile
