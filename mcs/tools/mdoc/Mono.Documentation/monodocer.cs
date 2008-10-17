@@ -70,7 +70,7 @@ class MDocUpdaterOptions
 #if NET_1_0
 	[Option("Include overridden methods in documentation.")]
 #endif
-	public bool overrides = false;
+	public bool overrides = true;
 
 #if NET_1_0
 	[Option("Don't update members.")]
@@ -105,7 +105,7 @@ class MDocUpdaterOptions
 #if NET_1_0
 	[Option("Indent the XML files nicely.")]
 #endif
-	public bool pretty = false;
+	public bool pretty = true;
 	
 #if NET_1_0
 	[Option("Create a <since/> element for added types/members with the value {since}.")]

@@ -1,5 +1,11 @@
 2008-10-17  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/monodocer.cs: -overrides & -pretty should default 
+	  to true.  (Not a major change, as mdoc.exe already did this, so it
+	  really only impacts monodocer1.exe, which is internal...)
+
+2008-10-17  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/monodocer.cs: Only provide a Main() method and
 	  use Mono.GetOptions when targeting .NET 1.0 (i.e. monodocer1.exe).
 
