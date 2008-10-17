@@ -1,3 +1,8 @@
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* Documentation/en/**: Move to appropriate assembly-specific 
+	  directories.
+
 2008-01-23  Raja R Harinath  <harinath@hurrynot.org>
 
 	* mocks/Makefile (install-symlink, uninstall-symlink): New.  In the
