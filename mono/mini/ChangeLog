@@ -1,3 +1,9 @@
+
+Fri Oct 17 12:00:51 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* simd-methods.h, simd-intrinsics.c: debloat method names and
+	prepare for no relocations.
+
 2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-ops.h: Add packed min/equal and sum of absolute differences.
