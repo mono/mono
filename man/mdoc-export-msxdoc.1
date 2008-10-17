@@ -1,0 +1,37 @@
+.\" 
+.\" mdoc-export-msxdoc manual page.
+.\" (C) 2008 Novell, Inc.
+.\" Author:
+.\"   Jonathan Pryor (jpryor@novell.com)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH "mdoc-export-msxdoc" 1
+.SH NAME
+mdoc export-msxdoc \- Convert \fBmdoc\fR(5) XML to Microsoft XML Documentation
+.SH SYNOPSIS
+\fBmdoc export-msxdoc\fR [OPTION]* DIRECTORIES
+.SH DESCRIPTION
+\fBmdoc export-msxdoc\fR creates \fIMicrosoft XML Documentation\fR 
+(as produced by \fIcsc /doc\fR) from the 
+\fBmdoc\fR(5)-formatted documentation XML files within \fIDIRECTORIES\fR.
+.SH OPTIONS
+.TP
+\fB\-o\fR, \fB\-\-out\fR=\fIFILE\fR
+The XML file to generate.
+.Sp
+If not specified, a set of files matching the
+\fI//AssemblyInfo/AssemblyName\fR values within the documentation will be
+used.
+.Sp
+Use \fB-\fR to write to standard output.
+.TP
+\fB\-h\fR, \fB\-?\fR, \fB\-\-help\fR
+Display a help message and exit.
+.SH MAILING LISTS
+.TP
+Visit http://lists.ximian.com/mailman/listinfo/mono-docs-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com/mdoc for details
