@@ -1,0 +1,49 @@
+<Type Name="IOrderedEnumerable&lt;TElement&gt;" FullName="System.Linq.IOrderedEnumerable&lt;TElement&gt;">
+  <TypeSignature Language="C#" Value="public interface IOrderedEnumerable&lt;TElement&gt; : System.Collections.Generic.IEnumerable&lt;TElement&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>3.5.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TElement" />
+  </TypeParameters>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;TElement&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="TElement">To be added.</typeparam>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateOrderedEnumerable&lt;TKey&gt;">
+      <MemberSignature Language="C#" Value="public System.Linq.IOrderedEnumerable&lt;TElement&gt; CreateOrderedEnumerable&lt;TKey&gt; (Func&lt;TElement,TKey&gt; selector, System.Collections.Generic.IComparer&lt;TKey&gt; comparer, bool descending);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.IOrderedEnumerable&lt;TElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="selector" Type="System.Func&lt;TElement,TKey&gt;" />
+        <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
+        <Parameter Name="descending" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TKey">To be added.</typeparam>
+        <param name="selector">To be added.</param>
+        <param name="comparer">To be added.</param>
+        <param name="descending">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <TypeParameters>
+        <TypeParameter Name="TKey" />
+      </TypeParameters>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,17 @@
+<Type Name="IOrderedQueryable" FullName="System.Linq.IOrderedQueryable">
+  <TypeSignature Language="C#" Value="public interface IOrderedQueryable : System.Linq.IQueryable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>3.5.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Linq.IQueryable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>
