@@ -1,3 +1,9 @@
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs/Makefile: Assemble documentation.
+	* docs/cs-errors.config: Update to refer to correct directory.
+	* docs/mono-tools.config: Man pages are in mono/man now...
+
 2008-10-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* README: Update after the profile changes.
