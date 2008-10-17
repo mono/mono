@@ -1,3 +1,12 @@
+2008-10-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-x86.h, mini-x86.c, exceptions-x86.c: Align stack on all
+	platforms, with definable stack alignment value.  Set to 16 now
+	for all platforms.
+
+	* mini.c, mini.h, driver.c: Command line option for disabling
+	stack alignment.
+
 2008-10-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Tests for new methods in Vector4ui.
