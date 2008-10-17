@@ -65,7 +65,6 @@ scripts_1_0 = \
 	monolinker$(SCRIPT_SUFFIX)		\
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
 	mono-api-diff$(SCRIPT_SUFFIX) 		\
-	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
 	mono-xmltool$(SCRIPT_SUFFIX)		\
 	mozroots$(SCRIPT_SUFFIX)		\
 	permview$(SCRIPT_SUFFIX)		\
@@ -92,6 +91,7 @@ scripts_2_0 = \
 	mconfig$(SCRIPT_SUFFIX)			\
 	mkbundle2$(SCRIPT_SUFFIX)		\
 	mono-api-info2$(SCRIPT_SUFFIX) 		\
+	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
 	monop2$(SCRIPT_SUFFIX) 			\
 	resgen2$(SCRIPT_SUFFIX)			\
 	wsdl2$(SCRIPT_SUFFIX)			\
