@@ -1,0 +1,112 @@
+<Type Name="X509Certificate2UI" FullName="System.Security.Cryptography.X509Certificates.X509Certificate2UI">
+  <TypeSignature Language="C#" Value="public sealed class X509Certificate2UI" />
+  <AssemblyInfo>
+    <AssemblyName>System.Security</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="DisplayCertificate">
+      <MemberSignature Language="C#" Value="public static void DisplayCertificate (System.Security.Cryptography.X509Certificates.X509Certificate2 certificate);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="certificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate2" />
+      </Parameters>
+      <Docs>
+        <param name="certificate">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DisplayCertificate">
+      <MemberSignature Language="C#" Value="public static void DisplayCertificate (System.Security.Cryptography.X509Certificates.X509Certificate2 certificate, IntPtr hwndParent);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="certificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate2" />
+        <Parameter Name="hwndParent" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="certificate">To be added.</param>
+        <param name="hwndParent">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SelectFromCollection">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection (System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate2Collection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="certificates" Type="System.Security.Cryptography.X509Certificates.X509Certificate2Collection" />
+        <Parameter Name="title" Type="System.String" />
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="selectionFlag" Type="System.Security.Cryptography.X509Certificates.X509SelectionFlag" />
+      </Parameters>
+      <Docs>
+        <param name="certificates">To be added.</param>
+        <param name="title">To be added.</param>
+        <param name="message">To be added.</param>
+        <param name="selectionFlag">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SelectFromCollection">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection (System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag, IntPtr hwndParent);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate2Collection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="certificates" Type="System.Security.Cryptography.X509Certificates.X509Certificate2Collection" />
+        <Parameter Name="title" Type="System.String" />
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="selectionFlag" Type="System.Security.Cryptography.X509Certificates.X509SelectionFlag" />
+        <Parameter Name="hwndParent" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="certificates">To be added.</param>
+        <param name="title">To be added.</param>
+        <param name="message">To be added.</param>
+        <param name="selectionFlag">To be added.</param>
+        <param name="hwndParent">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

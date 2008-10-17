@@ -1,0 +1,153 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.Security" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.Security.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.Security.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.Security.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System.Security.Cryptography">
+      <Type Name="CryptographicAttributeObject" Kind="Class" />
+      <Type Name="CryptographicAttributeObjectCollection" Kind="Class" />
+      <Type Name="CryptographicAttributeObjectEnumerator" Kind="Class" />
+      <Type Name="DataProtectionScope" Kind="Enumeration" />
+      <Type Name="MemoryProtectionScope" Kind="Enumeration" />
+      <Type Name="ProtectedData" Kind="Class" />
+      <Type Name="ProtectedMemory" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Security.Cryptography.Pkcs">
+      <Type Name="AlgorithmIdentifier" Kind="Class" />
+      <Type Name="CmsRecipient" Kind="Class" />
+      <Type Name="CmsRecipientCollection" Kind="Class" />
+      <Type Name="CmsRecipientEnumerator" Kind="Class" />
+      <Type Name="CmsSigner" Kind="Class" />
+      <Type Name="ContentInfo" Kind="Class" />
+      <Type Name="EnvelopedCms" Kind="Class" />
+      <Type Name="KeyAgreeKeyChoice" Kind="Enumeration" />
+      <Type Name="KeyAgreeRecipientInfo" Kind="Class" />
+      <Type Name="KeyTransRecipientInfo" Kind="Class" />
+      <Type Name="Pkcs9AttributeObject" Kind="Class" />
+      <Type Name="Pkcs9ContentType" Kind="Class" />
+      <Type Name="Pkcs9DocumentDescription" Kind="Class" />
+      <Type Name="Pkcs9DocumentName" Kind="Class" />
+      <Type Name="Pkcs9MessageDigest" Kind="Class" />
+      <Type Name="Pkcs9SigningTime" Kind="Class" />
+      <Type Name="PublicKeyInfo" Kind="Class" />
+      <Type Name="RecipientInfo" Kind="Class" />
+      <Type Name="RecipientInfoCollection" Kind="Class" />
+      <Type Name="RecipientInfoEnumerator" Kind="Class" />
+      <Type Name="RecipientInfoType" Kind="Enumeration" />
+      <Type Name="SignedCms" Kind="Class" />
+      <Type Name="SignerInfo" Kind="Class" />
+      <Type Name="SignerInfoCollection" Kind="Class" />
+      <Type Name="SignerInfoEnumerator" Kind="Class" />
+      <Type Name="SubjectIdentifier" Kind="Class" />
+      <Type Name="SubjectIdentifierOrKey" Kind="Class" />
+      <Type Name="SubjectIdentifierOrKeyType" Kind="Enumeration" />
+      <Type Name="SubjectIdentifierType" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Security.Cryptography.X509Certificates">
+      <Type Name="X509Certificate2UI" Kind="Class" />
+      <Type Name="X509SelectionFlag" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Security.Cryptography.Xml">
+      <Type Name="CipherData" Kind="Class" />
+      <Type Name="CipherReference" Kind="Class" />
+      <Type Name="DataObject" Kind="Class" />
+      <Type Name="DataReference" Kind="Class" />
+      <Type Name="DSAKeyValue" Kind="Class" />
+      <Type Name="EncryptedData" Kind="Class" />
+      <Type Name="EncryptedKey" Kind="Class" />
+      <Type Name="EncryptedReference" Kind="Class" />
+      <Type Name="EncryptedType" Kind="Class" />
+      <Type Name="EncryptedXml" Kind="Class" />
+      <Type Name="EncryptionMethod" Kind="Class" />
+      <Type Name="EncryptionProperty" Kind="Class" />
+      <Type Name="EncryptionPropertyCollection" Kind="Class" />
+      <Type Name="IRelDecryptor" Kind="Interface" />
+      <Type Name="KeyInfo" Kind="Class" />
+      <Type Name="KeyInfoClause" Kind="Class" />
+      <Type Name="KeyInfoEncryptedKey" Kind="Class" />
+      <Type Name="KeyInfoName" Kind="Class" />
+      <Type Name="KeyInfoNode" Kind="Class" />
+      <Type Name="KeyInfoRetrievalMethod" Kind="Class" />
+      <Type Name="KeyInfoX509Data" Kind="Class" />
+      <Type Name="KeyReference" Kind="Class" />
+      <Type Name="Reference" Kind="Class" />
+      <Type Name="ReferenceList" Kind="Class" />
+      <Type Name="RSAKeyValue" Kind="Class" />
+      <Type Name="Signature" Kind="Class" />
+      <Type Name="SignedInfo" Kind="Class" />
+      <Type Name="SignedXml" Kind="Class" />
+      <Type Name="Transform" Kind="Class" />
+      <Type Name="TransformChain" Kind="Class" />
+      <Type Name="X509IssuerSerial" Kind="Structure" />
+      <Type Name="XmlDecryptionTransform" Kind="Class" />
+      <Type Name="XmlDsigBase64Transform" Kind="Class" />
+      <Type Name="XmlDsigC14NTransform" Kind="Class" />
+      <Type Name="XmlDsigC14NWithCommentsTransform" Kind="Class" />
+      <Type Name="XmlDsigEnvelopedSignatureTransform" Kind="Class" />
+      <Type Name="XmlDsigExcC14NTransform" Kind="Class" />
+      <Type Name="XmlDsigExcC14NWithCommentsTransform" Kind="Class" />
+      <Type Name="XmlDsigXPathTransform" Kind="Class" />
+      <Type Name="XmlDsigXsltTransform" Kind="Class" />
+      <Type Name="XmlLicenseTransform" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Security.Permissions">
+      <Type Name="DataProtectionPermission" Kind="Class" />
+      <Type Name="DataProtectionPermissionAttribute" Kind="Class" />
+      <Type Name="DataProtectionPermissionFlags" Kind="Enumeration" />
+    </Namespace>
+  </Types>
+  <Title>System.Security</Title>
+</Overview>

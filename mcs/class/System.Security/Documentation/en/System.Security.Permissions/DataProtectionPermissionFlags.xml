@@ -1,0 +1,106 @@
+<Type Name="DataProtectionPermissionFlags" FullName="System.Security.Permissions.DataProtectionPermissionFlags">
+  <TypeSignature Language="C#" Value="public enum DataProtectionPermissionFlags" />
+  <AssemblyInfo>
+    <AssemblyName>System.Security</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="AllFlags">
+      <MemberSignature Language="C#" Value="AllFlags" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.DataProtectionPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoFlags">
+      <MemberSignature Language="C#" Value="NoFlags" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.DataProtectionPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProtectData">
+      <MemberSignature Language="C#" Value="ProtectData" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.DataProtectionPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProtectMemory">
+      <MemberSignature Language="C#" Value="ProtectMemory" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.DataProtectionPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnprotectData">
+      <MemberSignature Language="C#" Value="UnprotectData" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.DataProtectionPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnprotectMemory">
+      <MemberSignature Language="C#" Value="UnprotectMemory" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.DataProtectionPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

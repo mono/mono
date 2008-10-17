@@ -1,0 +1,39 @@
+<Type Name="IRelDecryptor" FullName="System.Security.Cryptography.Xml.IRelDecryptor">
+  <TypeSignature Language="C#" Value="public interface IRelDecryptor" />
+  <AssemblyInfo>
+    <AssemblyName>System.Security</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Decrypt">
+      <MemberSignature Language="C#" Value="public System.IO.Stream Decrypt (System.Security.Cryptography.Xml.EncryptionMethod encryptionMethod, System.Security.Cryptography.Xml.KeyInfo keyInfo, System.IO.Stream toDecrypt);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="encryptionMethod" Type="System.Security.Cryptography.Xml.EncryptionMethod" />
+        <Parameter Name="keyInfo" Type="System.Security.Cryptography.Xml.KeyInfo" />
+        <Parameter Name="toDecrypt" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="encryptionMethod">To be added.</param>
+        <param name="keyInfo">To be added.</param>
+        <param name="toDecrypt">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

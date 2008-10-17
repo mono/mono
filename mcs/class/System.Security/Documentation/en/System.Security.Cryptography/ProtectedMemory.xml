@@ -1,0 +1,60 @@
+<Type Name="ProtectedMemory" FullName="System.Security.Cryptography.ProtectedMemory">
+  <TypeSignature Language="C#" Value="public sealed class ProtectedMemory" />
+  <AssemblyInfo>
+    <AssemblyName>System.Security</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Protect">
+      <MemberSignature Language="C#" Value="public static void Protect (byte[] userData, System.Security.Cryptography.MemoryProtectionScope scope);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="userData" Type="System.Byte[]" />
+        <Parameter Name="scope" Type="System.Security.Cryptography.MemoryProtectionScope" />
+      </Parameters>
+      <Docs>
+        <param name="userData">To be added.</param>
+        <param name="scope">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unprotect">
+      <MemberSignature Language="C#" Value="public static void Unprotect (byte[] encryptedData, System.Security.Cryptography.MemoryProtectionScope scope);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="encryptedData" Type="System.Byte[]" />
+        <Parameter Name="scope" Type="System.Security.Cryptography.MemoryProtectionScope" />
+      </Parameters>
+      <Docs>
+        <param name="encryptedData">To be added.</param>
+        <param name="scope">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

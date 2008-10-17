@@ -1,0 +1,66 @@
+<Type Name="ProtectedData" FullName="System.Security.Cryptography.ProtectedData">
+  <TypeSignature Language="C#" Value="public sealed class ProtectedData" />
+  <AssemblyInfo>
+    <AssemblyName>System.Security</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Protect">
+      <MemberSignature Language="C#" Value="public static byte[] Protect (byte[] userData, byte[] optionalEntropy, System.Security.Cryptography.DataProtectionScope scope);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="userData" Type="System.Byte[]" />
+        <Parameter Name="optionalEntropy" Type="System.Byte[]" />
+        <Parameter Name="scope" Type="System.Security.Cryptography.DataProtectionScope" />
+      </Parameters>
+      <Docs>
+        <param name="userData">To be added.</param>
+        <param name="optionalEntropy">To be added.</param>
+        <param name="scope">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unprotect">
+      <MemberSignature Language="C#" Value="public static byte[] Unprotect (byte[] encryptedData, byte[] optionalEntropy, System.Security.Cryptography.DataProtectionScope scope);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="encryptedData" Type="System.Byte[]" />
+        <Parameter Name="optionalEntropy" Type="System.Byte[]" />
+        <Parameter Name="scope" Type="System.Security.Cryptography.DataProtectionScope" />
+      </Parameters>
+      <Docs>
+        <param name="encryptedData">To be added.</param>
+        <param name="optionalEntropy">To be added.</param>
+        <param name="scope">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>
