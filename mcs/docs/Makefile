@@ -7,17 +7,21 @@ DISTFILES = \
 	compiler.txt                \
 	control-flow-analysis.txt   \
 	cs-errors.config            \
+	mono-tools.config           \
+	monodoc.xml                 \
+	new-anonymous-design.txt    \
+	order.txt                   \
+	$(DOC_SOURCE_FILES)         \
+	$(shell find ecma334 -name \*.xml)
+
+DOC_SOURCE_FILES = \
 	cs-errors.source            \
 	ecma334.source              \
-	mono-tools.config           \
 	mono-tools.source           \
 	Mono.source                 \
 	netdocs.source              \
-	new-anonymous-design.txt    \
 	Novell.source               \
-	nunit-docs.source           \
-	order.txt                   \
-	$(shell find ecma334 -name \*.xml)
+	nunit-docs.source
 
 ASSEMBLED_DOCS = \
 	cs-errors.tree cs-errors.zip      \
@@ -27,6 +31,10 @@ ASSEMBLED_DOCS = \
 	netdocs.tree netdocs.zip          \
 	Novell.tree Novell.zip            \
 	nunit-docs.tree nunit-docs.zip
+
+MONODOC_SOURCES_INSTALL_FILES = \
+	$(ASSEMBLED_DOCS)             \
+	$(DOC_SOURCE_FILES)
 
 CLEAN_FILES += $(ASSEMBLED_DOCS)
 
@@ -39,11 +47,16 @@ clean-local:
 
 dist-local: dist-default
 
+MONODOC_INSTALL_DIR = $(mono_libdir)/monodoc
+
 install-local:
-	@:
+	$(MKINSTALLDIRS) $(MONODOC_INSTALL_DIR) $(MONODOC_INSTALL_DIR)/sources
+	$(INSTALL_DATA) $(MONODOC_SOURCES_INSTALL_FILES) $(MONODOC_INSTALL_DIR)/sources
+	$(INSTALL_DATA) monodoc.xml $(MONODOC_INSTALL_DIR)
 
 uninstall-local:
-	@:
+	-rm -f $(MONODOC_INSTALL_DIR)/monodoc.xml
+	-rm -f $(addprefix $(MONODOC_INSTALL_DIR)/sources/,$(MONODOC_SOURCES_INSTALL_FILES))
 
 NETDOCS_DIRS = \
 	$(topdir)/class/corlib/Documentation/en                       \
