@@ -3,14 +3,14 @@ SUBDIRS = \
 	al cilc corcompare culevel ictool mono-xsd security wsdl genxs \
 	disco soapsuds browsercaps-updater monop gacutil linker	tuner cil-strip \
 	resgen macpack mkbundle dtd2rng dtd2xsd mjs prj2make mono-service \
-	mono-shlib-cop compiler-tester mono-xmltool installvst installutil
+	compiler-tester mono-xmltool installvst installutil
 
 net_1_1_bootstrap_SUBDIRS = gacutil security resgen culevel
 net_2_0_bootstrap_SUBDIRS = resgen
 
 net_2_0_SUBDIRS = \
 	al corcompare csharp mono-xsd wsdl compiler-tester monop xbuild resgen \
-	mono-service mkbundle sgen security mconfig installutil nunitreport sqlsharp \
+	mono-service mono-shlib-cop mkbundle sgen security mconfig installutil nunitreport sqlsharp \
 	gacutil csharplib
 net_2_1_raw_SUBDIRS = compiler-tester
 net_2_1_SUBDIRS = compiler-tester tuner
