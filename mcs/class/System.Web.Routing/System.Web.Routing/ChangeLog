@@ -1,3 +1,8 @@
+2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UrlPattern.cs : fixed pattern match for such string that has
+	  suffix. (DynamicData uses it.)
+
 2008-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RouteValueDictionary.cs : object argument is actually for

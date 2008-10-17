@@ -136,12 +136,14 @@ namespace System.Web.Routing
 						int end = t.IndexOf ('}', start + 1);
 						int next = t.IndexOf ('{', end + 1);
 						string key = t.Substring (start + 1, end - start - 1);
+						string nextToken = next < 0 ? t.Substring (end + 1) : t.Substring (end + 1, next - end - 1);
+						int vnext = nextToken.Length > 0 ? v.IndexOf (nextToken, vfrom + 1, StringComparison.Ordinal) : -1;
+
 						if (next < 0) {
-							tmp.Add (key, vfrom == 0 ? v : v.Substring (vfrom));
-							vfrom = v.Length;
+							var vs = vnext < 0 ? v.Substring (vfrom) : v.Substring (vfrom, vnext - vfrom);
+							tmp.Add (key, vs);
+							vfrom = vs.Length;
 						} else {
-							string nextToken = t.Substring (end + 1, next - end - 1);
-							int vnext = v.IndexOf (nextToken, vfrom + 1, StringComparison.Ordinal);
 							if (vnext < 0)
 								return null; // mismatch
 							tmp.Add (key, v.Substring (vfrom, vnext - vfrom));
