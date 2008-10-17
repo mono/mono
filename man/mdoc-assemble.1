@@ -1,0 +1,190 @@
+.\" 
+.\" mdoc assemble manual page.
+.\" (C) 2008 Novell, Inc.
+.\" Author:
+.\"   Jonathan Pryor (jpryor@novell.com)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH "mdoc-assemble" 1
+.SH NAME
+mdoc assemble \- Compile documentation for use in \fBmonodoc\fR(1)
+.SH SYNOPSIS
+.B mdoc assemble
+[OPTIONS]+
+PATHS+
+.SH DESCRIPTION
+\fBmdoc assemble\fR creates \fI.tree\fR and \fI.zip\fR files from \fIPATHS\fR
+for use in the \fBmonodoc\fR(1) documentation browser.
+.PP
+The input files must have a supported \fIformat\fR, specified with the
+\fI--format\fR option.
+.PP
+The \fI.tree\fR and \fI.zip\fR files are copied into \fBmonodoc\fR's 
+\fIsources\fR directory, alongside a \fI.source\fR file which is used by 
+\fBmonodoc\fR(1) to specify where the documentation should be displayed.
+.PP
+The \fI.source\fR file has the following format:
+.nf
+
+  <?xml version="1.0"?>
+  <monodoc>
+    <source provider="PROVIDER" basefile="BASEFILE" path="PATH" />
+  </monodoc>
+
+.fi
+The \fI/monodoc/source/@provider\fR attribute specifies which format provider
+should be used when reading the \fI.tree\fR and \fI.zip\fR files; this
+\fImust\fR correspond to one of the \fI--format\fR values.
+.PP
+The \fI/monodoc/source/@basefile\fR attribute specifies the filename prefix 
+for the documentation files.  This must be the same prefix as used with the 
+\fI\-\-out\fR parameter.  There should be \fIno\fR filename extension on this 
+value.
+.PP
+The \fI/monodoc/source/@path\fR attribute specifies the parent node in 
+\fBmonodoc\fR(1)'s tree view where the documentation will be inserted.
+See the \fI$MONO_INSTALL_PREFIX/lib/monodoc/monodoc.xml\fR
+file for a list of \fIPATH\fR values (the \fI//node/@name\fR values).
+.PP
+Once the \fIBASEFILE.source\fR has been written, the documentation can be
+installed so that \fBmonodoc\fR(1) will display the documentation with the
+command:
+.nf
+
+  cp BASEFILE.source BASEFILE.tree BASEFILE.zip \\
+    `pkg-config monodoc --variable=sourcesdir`
+
+.fi
+.SH OPTIONS
+.TP
+\fB\-f\fR, \fB\-\-format\fR=\fIFORMAT\fR
+Specifies the documentation format used within \fIPATHS\fR.  Valid
+\fIFORMAT\fR values include:
+\fIecma\fR,
+\fIecmaspec\fR,
+\fIerror\fR,
+\fIhb\fR,
+\fIman\fR,
+\fIsimple\fR, and
+\fIxhtml\fR.
+.Sp
+See the \fIFORMATS\fR section below for more information about these formats.
+.Sp
+The default format (if none is specifed) is \fIecma\fR.
+.Sp
+The \fI\-\-format\fR option may be interleaved with \fIPATHS\fR to
+change the format used for the remaining parameters (until the next
+\fI\-\-format\fR option is seen), e.g.:
+.nf
+
+  mdoc assemble -o PREFIX A B --format=man C D --format=xhtml E
+
+.fi
+will assemble directories \fIA\fR and \fIB\fR with the \fIecma\fR format,
+files \fIC\fR and \fID\fR with the \fIman\fR formt, and directory
+\fIE\fR with the \fIxhtml\fR format.
+.TP
+\fB\-o\fR, \fB\-\-out\fR=\fIPREFIX\fR
+Specify the output file prefix.  \fBmdoc assemble\fR creates the files
+\fIPREFIX.zip\fR and \fIPREFIX.tree\fR.
+.TP
+\fB\-h\fR, \fB\-?\fR, \fB\-\-help\fR
+Display a help message and exit.
+.SH "FORMATS"
+The following documentation formats are supported:
+.SS ecma
+The \fIMono ECMA Documentation Format\fR, an XML documentation format with one 
+file per type.
+.PP
+See the \fBmdoc\fR(5) man page for more information.
+.SS ecmaspec
+The \fIMono ECMA Specification Documentation Format\fR.
+This is not the format you're looking for; it is the format used to represent 
+the ECMA-334 (C#) standard within \fBmonodoc\fR(1).  It is not used to display 
+class library documentation; for class library documentation, use the
+.B ecma
+format.
+.SS error
+The \fIError Documentation Format\fR is used to present detailed error 
+messages, and is used in \fBmonodoc\fR(1)'s "C# Compiler Error Reference"
+tree.  
+.PP
+In this format, \fIPATHS\fR is a configuration file, containing the XML:
+.nf
+
+    <ErrorProviderConfig>
+        <FilesPath>../../mcs/errors</FilesPath>
+        <Match>cs????*.cs</Match>
+        <ErrorNumSubstringStart>2</ErrorNumSubstringStart>
+        <ErrorNumSubstringLength>4</ErrorNumSubstringLength>
+        <FriendlyFormatString>CS{0:0###}</FriendlyFormatString>
+    </ErrorProviderConfig>
+
+.fi
+The elements mean:
+.TP
+.I /ErrorProviderConfig/FilesPath
+Specifies where to look for files.
+.TP
+.I /ErrorProviderConfig/Match
+Specifies the filename pattern to look for within the
+\fI/ErrorProviderConfig/FilesPath\fR directory.
+.TP
+.I /ErrorProviderConfig/ErrorNumSubstringStart
+Specifies where within the filename the error number starts.
+.TP
+.I /ErrorProviderConfig/ErrorNumSubstringLength
+Specifies how many characters after
+\fI/ErrorProviderConfig/ErrorNumSubstringStart\fR to use for the error number.
+.TP
+.I /ErrorProviderConfig/FriendlyFormatString
+Specifies the formatting/display of the node in the \fBmonodoc\fR(1) tree.
+.PP
+For each file found, it is converted to HTML with C# syntax coloring applied.
+.SS simple
+The \fISimple Documentation Format\fR file format recursively adds all files
+and directories underneath \fIPATHS\fR.  When displayed, HTML files are
+displayed as-is.  Text files are converted into HTML by translating each 
+newline into an HTML \fI<br>\fR element.  No other file type is supported.
+.SS man
+The \fIMan Page Documentation Format\fR displays groff man pages.  (This is
+\fInot\fR a full groff parser, and only handles the man page constructs used
+within the mono man pages.)
+.PP
+\fIPATHS\fR is a set of XML files containing:
+.nf
+
+  <?xml version="1.0"?>
+  <manpages>
+    <manpage name="NAME" page="FILE" />
+  </manpages>
+
+.fi
+There may be multiple \fI//manpage\fR elements within the root \fI/manpage\fR
+element.
+.PP
+The \fI/manpages/manpage/@name\fR attribute contains the display name for the
+tree view node, which is also the URL of the man page when using
+\fBmonodoc\fR(1)'s \fILookup URL\fR command (before prefixing with a
+\fIman:\fR prefix).  Thus, if \fI/manpages/manpage/@name\fR contains
+\fImono(1)\fR, then \fIman:mono(1)\fR can be used in the \fILookup URL\fR
+command to view the \fImono(1)\fR man page.
+.PP
+The \fI/manpages/manpage/@page\fR attribute is the filename that contains the
+man page.  If this file does not exist, then \fI/manpages/manpage/@name\fR
+will not be displayed within the tree view.
+.SS xhtml
+The XHTML provider interprets \fIPATHS\fR as a Windows Help file XHTML TOC
+file and looks for referenced documents to create the help source.
+.SH SEE ALSO
+\fBmdoc\fR(1), 
+\fBmdoc\fR(5), 
+\fBmonodoc\fR(1)
+.SH MAILING LISTS
+.TP
+Visit http://lists.ximian.com/mailman/listinfo/mono-docs-list for details.
+.SH WEB SITE
+See also: http://www.mono-project.com/mdoc
