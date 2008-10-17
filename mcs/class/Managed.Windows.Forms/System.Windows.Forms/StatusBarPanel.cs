@@ -59,6 +59,24 @@ namespace System.Windows.Forms {
 #endif
 		#endregion	// Local Variables
 
+		#region UIA Framework Events
+#if NET_2_0
+		static object UIATextChangedEvent = new object ();
+
+		internal event EventHandler UIATextChanged {
+			add { Events.AddHandler (UIATextChangedEvent, value); }
+			remove { Events.RemoveHandler (UIATextChangedEvent, value); }
+		}
+
+		internal void OnUIATextChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIATextChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+		#endregion
+
 		#region Constructors
 		public StatusBarPanel ()
 		{
@@ -194,6 +212,11 @@ namespace System.Windows.Forms {
 			set { 
 				text = value; 
 				InvalidateContents ();
+
+#if NET_2_0
+				// UIA Framework Event: Text Changed
+				OnUIATextChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
