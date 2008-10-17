@@ -1,0 +1,22 @@
+<Type Name="AssemblyAdder" FullName="Mono.GetOptions.Useful.AssemblyAdder">
+  <TypeSignature Language="C#" Value="public delegate void AssemblyAdder(Assembly loadedAssembly);" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.GetOptions</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="loadedAssembly" Type="System.Reflection.Assembly" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="loadedAssembly">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

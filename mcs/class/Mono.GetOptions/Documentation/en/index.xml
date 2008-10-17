@@ -1,0 +1,67 @@
+<Overview>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Mono">
+      <Type Name="AboutAttribute" Kind="Class" />
+      <Type Name="AdditionalInfoAttribute" Kind="Class" />
+      <Type Name="AuthorAttribute" Kind="Class" />
+      <Type Name="IsPartOfPackageAttribute" Kind="Class" />
+      <Type Name="ReportBugsToAttribute" Kind="Class" />
+      <Type Name="UsageComplementAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.GetOptions">
+      <Type Name="ArgumentProcessorAttribute" Kind="Class" />
+      <Type Name="ErrorReporter" Kind="Delegate" />
+      <Type Name="KillOptionAttribute" Kind="Class" />
+      <Type Name="OptionAttribute" Kind="Class" />
+      <Type Name="OptionList" Kind="Class" />
+      <Type Name="Options" Kind="Class" />
+      <Type Name="OptionsParsingMode" Kind="Enumeration" />
+      <Type Name="WhatToDoNext" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="Mono.GetOptions.Useful">
+      <Type Name="AssemblyAdder" Kind="Delegate" />
+      <Type Name="CommonCompilerOptions" Kind="Class" />
+      <Type Name="CommonCompilerOptions2" Kind="Class" />
+      <Type Name="FileToCompile" Kind="Structure" />
+      <Type Name="InternalCompilerErrorReportAction" Kind="Enumeration" />
+      <Type Name="ModuleAdder" Kind="Delegate" />
+      <Type Name="TargetType" Kind="Enumeration" />
+    </Namespace>
+  </Types>
+  <Title>Mono.GetOptions</Title>
+  <Assemblies>
+    <Assembly Name="Mono.GetOptions" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTrademark("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(C)2002,2003,2004,2005 Rafael Teixeira")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("Mono")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyConfiguration("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("Command line arguments parsing library")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Mono.GetOptions")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+</Overview>

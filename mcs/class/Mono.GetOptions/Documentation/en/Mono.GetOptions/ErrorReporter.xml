@@ -1,0 +1,24 @@
+<Type Name="ErrorReporter" FullName="Mono.GetOptions.ErrorReporter">
+  <TypeSignature Language="C#" Value="public delegate void ErrorReporter(int num, string msg);" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.GetOptions</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="num" Type="System.Int32" />
+    <Parameter Name="msg" Type="System.String" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="num">To be added.</param>
+    <param name="msg">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

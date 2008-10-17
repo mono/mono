@@ -1,0 +1,59 @@
+<Type Name="InternalCompilerErrorReportAction" FullName="Mono.GetOptions.Useful.InternalCompilerErrorReportAction">
+  <TypeSignature Language="C#" Value="public enum InternalCompilerErrorReportAction" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.GetOptions</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="none">
+      <MemberSignature Language="C#" Value="none" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.GetOptions.Useful.InternalCompilerErrorReportAction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="prompt">
+      <MemberSignature Language="C#" Value="prompt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.GetOptions.Useful.InternalCompilerErrorReportAction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="send">
+      <MemberSignature Language="C#" Value="send" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.GetOptions.Useful.InternalCompilerErrorReportAction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>
