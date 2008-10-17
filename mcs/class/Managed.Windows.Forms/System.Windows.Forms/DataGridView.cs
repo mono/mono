@@ -138,6 +138,13 @@ namespace System.Windows.Forms {
 		DataGridViewHeaderCell pressed_header_cell;
 		DataGridViewHeaderCell entered_header_cell;
 
+		// For column/row resizing via mouse
+		private bool column_resize_active = false;
+		private bool row_resize_active = false;
+		private int resize_band = -1;
+		private int resize_band_start = 0;
+		private int resize_band_delta = 0;
+		
 		public DataGridView ()
 		{
 			SetStyle (ControlStyles.Opaque, true);
@@ -3961,6 +3968,10 @@ namespace System.Windows.Forms {
 		protected override void OnMouseClick (MouseEventArgs e)
 		{
 			base.OnMouseClick(e);
+			
+			if (column_resize_active || row_resize_active)
+				return;
+				
 			//Console.WriteLine("Mouse: Clicks: {0}; Delta: {1}; X: {2}; Y: {3};", e.Clicks, e.Delta, e.X, e.Y);
 			HitTestInfo hit = HitTest (e.X, e.Y);
 
@@ -4142,6 +4153,38 @@ namespace System.Windows.Forms {
 			DataGridViewRow row = null;
 			Rectangle cellBounds;
 
+			if (hitTest.Type == DataGridViewHitTestType.ColumnHeader && MouseOverColumnResize (hitTest.ColumnIndex, e.X)) {
+				if (e.Clicks == 2) {
+					EndEdit ();
+					AutoResizeColumn (hitTest.ColumnIndex);
+					return;
+				}
+				
+				resize_band = hitTest.ColumnIndex;
+				column_resize_active = true;
+				resize_band_start = e.X;
+				resize_band_delta = 0;
+				EndEdit ();
+				DrawVerticalResizeLine (resize_band_start);
+				return;
+			}
+
+			if (hitTest.Type == DataGridViewHitTestType.RowHeader && MouseOverRowResize (hitTest.RowIndex, e.Y)) {
+				if (e.Clicks == 2) {
+					EndEdit ();
+					AutoResizeRow (hitTest.RowIndex);
+					return;
+				}
+
+				resize_band = hitTest.RowIndex;
+				row_resize_active = true;
+				resize_band_start = e.Y;
+				resize_band_delta = 0;
+				EndEdit ();
+				DrawHorizontalResizeLine (resize_band_start);
+				return;
+			}
+
 			if (hitTest.Type == DataGridViewHitTestType.Cell) {
 				cellBounds = GetCellDisplayRectangle (hitTest.ColumnIndex, hitTest.RowIndex, false);
 				OnCellMouseDown (new DataGridViewCellMouseEventArgs (hitTest.ColumnIndex, hitTest.RowIndex, e.X - cellBounds.X, e.Y - cellBounds.Y, e));
@@ -4200,7 +4243,30 @@ namespace System.Windows.Forms {
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
 			base.OnMouseMove (e);
-			
+
+			if (column_resize_active) {
+				// Erase the old line
+				DrawVerticalResizeLine (resize_band_start + resize_band_delta);
+
+				resize_band_delta = e.X - resize_band_start;
+
+				// Draw the new line
+				DrawVerticalResizeLine (resize_band_start + resize_band_delta);
+				return;
+			}
+
+			if (row_resize_active) {
+				// Erase the old line
+				DrawHorizontalResizeLine (resize_band_start + resize_band_delta);
+
+				resize_band_delta = e.Y - resize_band_start;
+
+				// Draw the new line
+				DrawHorizontalResizeLine (resize_band_start + resize_band_delta);
+				return;
+			}
+
+			Cursor new_cursor = Cursors.Default;
 			HitTestInfo hit = this.HitTest (e.X, e.Y);
 			
 			if (hit.Type == DataGridViewHitTestType.Cell) {
@@ -4259,6 +4325,9 @@ namespace System.Windows.Forms {
 
 				EnteredHeaderCell = new_cell;
 
+				if (MouseOverRowResize (hit.RowIndex, e.Y))
+					new_cursor = Cursors.HSplit;
+
 				// Check if we have moved into an error icon area
 				Rectangle icon = new_cell.InternalErrorIconsBounds;
 
@@ -4296,9 +4365,12 @@ namespace System.Windows.Forms {
 				}
 			
 			} else {
-				if (hit.Type == DataGridViewHitTestType.ColumnHeader)
+				if (hit.Type == DataGridViewHitTestType.ColumnHeader) {
 					EnteredHeaderCell = Columns [hit.ColumnIndex].HeaderCell;
-				else
+					
+					if (MouseOverColumnResize (hit.ColumnIndex, e.X))
+						new_cursor = Cursors.VSplit;
+				} else
 					EnteredHeaderCell = null;
 
 				// We have left the cell area
@@ -4307,12 +4379,36 @@ namespace System.Windows.Forms {
 					hover_cell = null;
 				}
 			}
+			
+			Cursor = new_cursor;
 		}
 
 		protected override void OnMouseUp (MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
 
+			if (column_resize_active) {
+				column_resize_active = false;
+				
+				if (resize_band_delta + Columns[resize_band].Width < 0)
+					resize_band_delta = -Columns[resize_band].Width;
+
+				Columns[resize_band].Width = Math.Max (resize_band_delta + Columns[resize_band].Width, Columns[resize_band].MinimumWidth);
+				Invalidate ();
+				return;
+			}
+
+			if (row_resize_active) {
+				row_resize_active = false;
+
+				if (resize_band_delta + Rows[resize_band].Height < 0)
+					resize_band_delta = -Rows[resize_band].Height;
+
+				Rows[resize_band].Height = Math.Max (resize_band_delta + Rows[resize_band].Height, Rows[resize_band].MinimumHeight);
+				Invalidate ();
+				return;
+			}
+		
 			HitTestInfo hit = this.HitTest (e.X, e.Y);
 
 			if (hit.Type == DataGridViewHitTestType.Cell) {
@@ -5525,9 +5621,9 @@ namespace System.Windows.Forms {
 						continue;
 				}
 				
-				Rectangle cell_rect = GetCellDisplayRectangle (index, i, false);
-				
-				result = Math.Max (result, cell_rect.Width);
+				int cell_width = Rows[i].Cells[index].PreferredSize.Width;
+
+				result = Math.Max (result, cell_width);
 			}
 			
 			return result;
@@ -5909,6 +6005,44 @@ namespace System.Windows.Forms {
 		{
 			ClearBinding ();
 			DoBinding ();
+		}
+
+		private bool MouseOverColumnResize (int col, int mousex)
+		{
+			if (!allowUserToResizeColumns)
+				return false;
+				
+			Rectangle col_bounds = GetCellDisplayRectangle (col, 0, false);
+
+			if (mousex >= col_bounds.Right - 4 && mousex <= col_bounds.Right)
+				return true;
+
+			return false;
+		}
+
+		private bool MouseOverRowResize (int row, int mousey)
+		{
+			if (!allowUserToResizeRows)
+				return false;
+
+			Rectangle row_bounds = GetCellDisplayRectangle (0, row, false);
+
+			if (mousey >= row_bounds.Bottom - 4 && mousey <= row_bounds.Bottom)
+				return true;
+
+			return false;
+		}
+
+		private void DrawVerticalResizeLine (int x)
+		{
+			Rectangle splitter = new Rectangle (x, Bounds.Y + 3 + (ColumnHeadersVisible ? ColumnHeadersHeight : 0), 1, Bounds.Height - 3 - (ColumnHeadersVisible ? ColumnHeadersHeight : 0));
+			XplatUI.DrawReversibleRectangle (Handle, splitter, 2);
+		}
+
+		private void DrawHorizontalResizeLine (int y)
+		{
+			Rectangle splitter = new Rectangle (Bounds.X + 3 + (RowHeadersVisible ? RowHeadersWidth : 0), y, Bounds.Width - 3 + (RowHeadersVisible ? RowHeadersWidth : 0), 1);
+			XplatUI.DrawReversibleRectangle (Handle, splitter, 2);
 		}
 
 		#region Stuff for ToolTips

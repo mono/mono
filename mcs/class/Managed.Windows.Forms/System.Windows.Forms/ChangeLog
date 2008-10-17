@@ -1,3 +1,13 @@
+2008-10-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Add the ability to resize columns and rows with
+	the mouse.  Also support double-clicking to autoresize.
+	* DataGridViewColumn.cs: Invalidate the grid if a column's width changes.
+	* DataGridViewRow.cs: Invalidate the grid if a row's height changes.
+	* DataGridViewTextBoxCell.cs: Add 1 to preferred width so ellipsis
+	isn't shown on autoresize.
+	[Fixes bug #420193]
+
 2008-10-17  Mario Carrion <mcarrion@novell.com>
 
 	* ComboBox.cs: Remove UIAListbox.

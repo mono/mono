@@ -172,7 +172,7 @@ namespace System.Windows.Forms {
 			if (o != null) {
 				Size s = DataGridViewCell.MeasureTextSize (graphics, o.ToString (), cellStyle.Font, TextFormatFlags.Default);
 				s.Height = Math.Max (s.Height, 20);
-				s.Width += 1;
+				s.Width += 2;
 				return s;
 			} else
 				return new Size (21, 20);

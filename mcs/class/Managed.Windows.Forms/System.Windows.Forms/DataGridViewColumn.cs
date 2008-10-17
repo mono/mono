@@ -417,7 +417,8 @@ Example */
 						throw new ArgumentOutOfRangeException("Width is less than MinimumWidth");
 					}
 					width = value;
-					if (DataGridView != null) {
+					if (DataGridView != null)  {
+						DataGridView.Invalidate ();
 						DataGridView.OnColumnWidthChanged(new DataGridViewColumnEventArgs(this));
 					}
 

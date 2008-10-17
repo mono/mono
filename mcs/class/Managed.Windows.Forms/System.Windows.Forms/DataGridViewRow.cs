@@ -198,6 +198,7 @@ namespace System.Windows.Forms
 					}
 					height = value;
 					if (DataGridView != null) {
+						DataGridView.Invalidate ();
 						DataGridView.OnRowHeightChanged(new DataGridViewRowEventArgs(this));
 					}
 				}
@@ -626,8 +627,10 @@ namespace System.Windows.Forms
 		{
 			this.height = height;
 			
-			if (DataGridView != null)
+			if (DataGridView != null) {
+				DataGridView.Invalidate ();
 				DataGridView.OnRowHeightChanged (new DataGridViewRowEventArgs (this));
+			}
 		}
 
 		// If the user sets AutoSizeRowMode to None, reset every row to its explicit height
