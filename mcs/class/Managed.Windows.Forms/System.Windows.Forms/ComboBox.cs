@@ -848,10 +848,6 @@ namespace System.Windows.Forms
 			get { return textbox_ctrl; }
 		}
 
-		internal ListBox UIAListBox {
-			get { return listbox_ctrl; }
-		}
-
 		#endregion UIA Framework Properties
 
 		#region Public Methods
