@@ -1,0 +1,70 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Microsoft.Build.Utilities" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("Microsoft.Build.Utilities.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("Microsoft.Build.Utilities.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Microsoft.Build.Utilities.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Microsoft.Build.Utilities">
+      <Type Name="AppDomainIsolatedTask" Kind="Class" />
+      <Type Name="CommandLineBuilder" Kind="Class" />
+      <Type Name="HostObjectInitializationStatus" Kind="Enumeration" />
+      <Type Name="Logger" Kind="Class" />
+      <Type Name="TargetDotNetFrameworkVersion" Kind="Enumeration" />
+      <Type Name="Task" Kind="Class" />
+      <Type Name="TaskItem" Kind="Class" />
+      <Type Name="TaskLoggingHelper" Kind="Class" />
+      <Type Name="ToolLocationHelper" Kind="Class" />
+      <Type Name="ToolTask" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>Microsoft.Build.Utilities</Title>
+</Overview>

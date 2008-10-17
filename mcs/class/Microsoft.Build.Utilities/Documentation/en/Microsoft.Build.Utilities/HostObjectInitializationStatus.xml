@@ -1,0 +1,73 @@
+<Type Name="HostObjectInitializationStatus" FullName="Microsoft.Build.Utilities.HostObjectInitializationStatus">
+  <TypeSignature Language="C#" Value="public enum HostObjectInitializationStatus" />
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Build.Utilities</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="NoActionReturnFailure">
+      <MemberSignature Language="C#" Value="NoActionReturnFailure" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Utilities.HostObjectInitializationStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoActionReturnSuccess">
+      <MemberSignature Language="C#" Value="NoActionReturnSuccess" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Utilities.HostObjectInitializationStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UseAlternateToolToExecute">
+      <MemberSignature Language="C#" Value="UseAlternateToolToExecute" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Utilities.HostObjectInitializationStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UseHostObjectToExecute">
+      <MemberSignature Language="C#" Value="UseHostObjectToExecute" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Utilities.HostObjectInitializationStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

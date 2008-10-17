@@ -1,0 +1,452 @@
+<Type Name="CommandLineBuilder" FullName="Microsoft.Build.Utilities.CommandLineBuilder">
+  <TypeSignature Language="C#" Value="public class CommandLineBuilder" />
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Build.Utilities</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CommandLineBuilder ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendFileNameIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendFileNameIfNotNull (Microsoft.Build.Framework.ITaskItem fileItem);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileItem" Type="Microsoft.Build.Framework.ITaskItem" />
+      </Parameters>
+      <Docs>
+        <param name="fileItem">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendFileNameIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendFileNameIfNotNull (string fileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendFileNamesIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendFileNamesIfNotNull (Microsoft.Build.Framework.ITaskItem[] fileItems, string delimiter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileItems" Type="Microsoft.Build.Framework.ITaskItem[]" />
+        <Parameter Name="delimiter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileItems">To be added.</param>
+        <param name="delimiter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendFileNamesIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendFileNamesIfNotNull (string[] fileNames, string delimiter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileNames" Type="System.String[]" />
+        <Parameter Name="delimiter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileNames">To be added.</param>
+        <param name="delimiter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendFileNameWithQuoting">
+      <MemberSignature Language="C#" Value="protected void AppendFileNameWithQuoting (string fileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendSpaceIfNotEmpty">
+      <MemberSignature Language="C#" Value="protected void AppendSpaceIfNotEmpty ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendSwitch">
+      <MemberSignature Language="C#" Value="public void AppendSwitch (string switchName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="switchName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="switchName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendSwitchIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendSwitchIfNotNull (string switchName, Microsoft.Build.Framework.ITaskItem parameter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="switchName" Type="System.String" />
+        <Parameter Name="parameter" Type="Microsoft.Build.Framework.ITaskItem" />
+      </Parameters>
+      <Docs>
+        <param name="switchName">To be added.</param>
+        <param name="parameter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendSwitchIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendSwitchIfNotNull (string switchName, string parameter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="switchName" Type="System.String" />
+        <Parameter Name="parameter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="switchName">To be added.</param>
+        <param name="parameter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendSwitchIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendSwitchIfNotNull (string switchName, Microsoft.Build.Framework.ITaskItem[] parameters, string delimiter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="switchName" Type="System.String" />
+        <Parameter Name="parameters" Type="Microsoft.Build.Framework.ITaskItem[]" />
+        <Parameter Name="delimiter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="switchName">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <param name="delimiter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendSwitchIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendSwitchIfNotNull (string switchName, string[] parameters, string delimiter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="switchName" Type="System.String" />
+        <Parameter Name="parameters" Type="System.String[]" />
+        <Parameter Name="delimiter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="switchName">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <param name="delimiter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendSwitchUnquotedIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendSwitchUnquotedIfNotNull (string switchName, Microsoft.Build.Framework.ITaskItem parameter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="switchName" Type="System.String" />
+        <Parameter Name="parameter" Type="Microsoft.Build.Framework.ITaskItem" />
+      </Parameters>
+      <Docs>
+        <param name="switchName">To be added.</param>
+        <param name="parameter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendSwitchUnquotedIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendSwitchUnquotedIfNotNull (string switchName, string parameter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="switchName" Type="System.String" />
+        <Parameter Name="parameter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="switchName">To be added.</param>
+        <param name="parameter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendSwitchUnquotedIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendSwitchUnquotedIfNotNull (string switchName, Microsoft.Build.Framework.ITaskItem[] parameters, string delimiter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="switchName" Type="System.String" />
+        <Parameter Name="parameters" Type="Microsoft.Build.Framework.ITaskItem[]" />
+        <Parameter Name="delimiter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="switchName">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <param name="delimiter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendSwitchUnquotedIfNotNull">
+      <MemberSignature Language="C#" Value="public void AppendSwitchUnquotedIfNotNull (string switchName, string[] parameters, string delimiter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="switchName" Type="System.String" />
+        <Parameter Name="parameters" Type="System.String[]" />
+        <Parameter Name="delimiter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="switchName">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <param name="delimiter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendTextUnquoted">
+      <MemberSignature Language="C#" Value="protected void AppendTextUnquoted (string textToAppend);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="textToAppend" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="textToAppend">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendTextWithQuoting">
+      <MemberSignature Language="C#" Value="protected void AppendTextWithQuoting (string textToAppend);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="textToAppend" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="textToAppend">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CommandLine">
+      <MemberSignature Language="C#" Value="protected System.Text.StringBuilder CommandLine { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.StringBuilder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsQuotingRequired">
+      <MemberSignature Language="C#" Value="protected virtual bool IsQuotingRequired (string parameter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="parameter">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VerifyThrowNoEmbeddedDoubleQuotes">
+      <MemberSignature Language="C#" Value="protected virtual void VerifyThrowNoEmbeddedDoubleQuotes (string switchName, string parameter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="switchName" Type="System.String" />
+        <Parameter Name="parameter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="switchName">To be added.</param>
+        <param name="parameter">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

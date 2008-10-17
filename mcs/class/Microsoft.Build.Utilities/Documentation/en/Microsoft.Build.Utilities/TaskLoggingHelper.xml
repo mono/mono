@@ -1,0 +1,972 @@
+<Type Name="TaskLoggingHelper" FullName="Microsoft.Build.Utilities.TaskLoggingHelper">
+  <TypeSignature Language="C#" Value="public class TaskLoggingHelper : MarshalByRefObject" />
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Build.Utilities</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.MarshalByRefObject</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public TaskLoggingHelper (Microsoft.Build.Framework.ITask taskInstance);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="taskInstance" Type="Microsoft.Build.Framework.ITask" />
+      </Parameters>
+      <Docs>
+        <param name="taskInstance">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BuildEngine">
+      <MemberSignature Language="C#" Value="protected Microsoft.Build.Framework.IBuildEngine BuildEngine { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.IBuildEngine</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExtractMessageCode">
+      <MemberSignature Language="C#" Value="public string ExtractMessageCode (string message, out string messageWithoutCodePrefix);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="messageWithoutCodePrefix" Type="System.String&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="messageWithoutCodePrefix">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FormatResourceString">
+      <MemberSignature Language="C#" Value="public virtual string FormatResourceString (string resourceName, object[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="resourceName" Type="System.String" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="resourceName">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FormatString">
+      <MemberSignature Language="C#" Value="public virtual string FormatString (string unformatted, object[] args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="unformatted" Type="System.String" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="unformatted">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasLoggedErrors">
+      <MemberSignature Language="C#" Value="public bool HasLoggedErrors { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HelpKeywordPrefix">
+      <MemberSignature Language="C#" Value="public string HelpKeywordPrefix { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogCommandLine">
+      <MemberSignature Language="C#" Value="public void LogCommandLine (string commandLine);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="commandLine" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="commandLine">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogCommandLine">
+      <MemberSignature Language="C#" Value="public void LogCommandLine (Microsoft.Build.Framework.MessageImportance importance, string commandLine);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="importance" Type="Microsoft.Build.Framework.MessageImportance" />
+        <Parameter Name="commandLine" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="importance">To be added.</param>
+        <param name="commandLine">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogError">
+      <MemberSignature Language="C#" Value="public void LogError (string message, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogError">
+      <MemberSignature Language="C#" Value="public void LogError (string subcategory, string errorCode, string helpKeyword, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subcategory" Type="System.String" />
+        <Parameter Name="errorCode" Type="System.String" />
+        <Parameter Name="helpKeyword" Type="System.String" />
+        <Parameter Name="file" Type="System.String" />
+        <Parameter Name="lineNumber" Type="System.Int32" />
+        <Parameter Name="columnNumber" Type="System.Int32" />
+        <Parameter Name="endLineNumber" Type="System.Int32" />
+        <Parameter Name="endColumnNumber" Type="System.Int32" />
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="subcategory">To be added.</param>
+        <param name="errorCode">To be added.</param>
+        <param name="helpKeyword">To be added.</param>
+        <param name="file">To be added.</param>
+        <param name="lineNumber">To be added.</param>
+        <param name="columnNumber">To be added.</param>
+        <param name="endLineNumber">To be added.</param>
+        <param name="endColumnNumber">To be added.</param>
+        <param name="message">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogErrorFromException">
+      <MemberSignature Language="C#" Value="public void LogErrorFromException (Exception e);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="e">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogErrorFromException">
+      <MemberSignature Language="C#" Value="public void LogErrorFromException (Exception e, bool showStackTrace);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.Exception" />
+        <Parameter Name="showStackTrace" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="e">To be added.</param>
+        <param name="showStackTrace">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogErrorFromResources">
+      <MemberSignature Language="C#" Value="public void LogErrorFromResources (string messageResourceName, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="messageResourceName" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="messageResourceName">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogErrorFromResources">
+      <MemberSignature Language="C#" Value="public void LogErrorFromResources (string subcategoryResourceName, string errorCode, string helpKeyword, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string messageResourceName, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subcategoryResourceName" Type="System.String" />
+        <Parameter Name="errorCode" Type="System.String" />
+        <Parameter Name="helpKeyword" Type="System.String" />
+        <Parameter Name="file" Type="System.String" />
+        <Parameter Name="lineNumber" Type="System.Int32" />
+        <Parameter Name="columnNumber" Type="System.Int32" />
+        <Parameter Name="endLineNumber" Type="System.Int32" />
+        <Parameter Name="endColumnNumber" Type="System.Int32" />
+        <Parameter Name="messageResourceName" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="subcategoryResourceName">To be added.</param>
+        <param name="errorCode">To be added.</param>
+        <param name="helpKeyword">To be added.</param>
+        <param name="file">To be added.</param>
+        <param name="lineNumber">To be added.</param>
+        <param name="columnNumber">To be added.</param>
+        <param name="endLineNumber">To be added.</param>
+        <param name="endColumnNumber">To be added.</param>
+        <param name="messageResourceName">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogErrorWithCodeFromResources">
+      <MemberSignature Language="C#" Value="public void LogErrorWithCodeFromResources (string messageResourceName, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="messageResourceName" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="messageResourceName">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogErrorWithCodeFromResources">
+      <MemberSignature Language="C#" Value="public void LogErrorWithCodeFromResources (string subcategoryResourceName, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string messageResourceName, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subcategoryResourceName" Type="System.String" />
+        <Parameter Name="file" Type="System.String" />
+        <Parameter Name="lineNumber" Type="System.Int32" />
+        <Parameter Name="columnNumber" Type="System.Int32" />
+        <Parameter Name="endLineNumber" Type="System.Int32" />
+        <Parameter Name="endColumnNumber" Type="System.Int32" />
+        <Parameter Name="messageResourceName" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="subcategoryResourceName">To be added.</param>
+        <param name="file">To be added.</param>
+        <param name="lineNumber">To be added.</param>
+        <param name="columnNumber">To be added.</param>
+        <param name="endLineNumber">To be added.</param>
+        <param name="endColumnNumber">To be added.</param>
+        <param name="messageResourceName">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogExternalProjectFinished">
+      <MemberSignature Language="C#" Value="public void LogExternalProjectFinished (string message, string helpKeyword, string projectFile, bool succeeded);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="helpKeyword" Type="System.String" />
+        <Parameter Name="projectFile" Type="System.String" />
+        <Parameter Name="succeeded" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="helpKeyword">To be added.</param>
+        <param name="projectFile">To be added.</param>
+        <param name="succeeded">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogExternalProjectStarted">
+      <MemberSignature Language="C#" Value="public void LogExternalProjectStarted (string message, string helpKeyword, string projectFile, string targetNames);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="helpKeyword" Type="System.String" />
+        <Parameter Name="projectFile" Type="System.String" />
+        <Parameter Name="targetNames" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="helpKeyword">To be added.</param>
+        <param name="projectFile">To be added.</param>
+        <param name="targetNames">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogMessage">
+      <MemberSignature Language="C#" Value="public void LogMessage (string message, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogMessage">
+      <MemberSignature Language="C#" Value="public void LogMessage (Microsoft.Build.Framework.MessageImportance importance, string message, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="importance" Type="Microsoft.Build.Framework.MessageImportance" />
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="importance">To be added.</param>
+        <param name="message">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogMessageFromResources">
+      <MemberSignature Language="C#" Value="public void LogMessageFromResources (string messageResourceName, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="messageResourceName" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="messageResourceName">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogMessageFromResources">
+      <MemberSignature Language="C#" Value="public void LogMessageFromResources (Microsoft.Build.Framework.MessageImportance importance, string messageResourceName, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="importance" Type="Microsoft.Build.Framework.MessageImportance" />
+        <Parameter Name="messageResourceName" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="importance">To be added.</param>
+        <param name="messageResourceName">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogMessageFromText">
+      <MemberSignature Language="C#" Value="public bool LogMessageFromText (string lineOfText, Microsoft.Build.Framework.MessageImportance importance);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="lineOfText" Type="System.String" />
+        <Parameter Name="importance" Type="Microsoft.Build.Framework.MessageImportance" />
+      </Parameters>
+      <Docs>
+        <param name="lineOfText">To be added.</param>
+        <param name="importance">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogMessagesFromFile">
+      <MemberSignature Language="C#" Value="public bool LogMessagesFromFile (string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogMessagesFromFile">
+      <MemberSignature Language="C#" Value="public bool LogMessagesFromFile (string filename, Microsoft.Build.Framework.MessageImportance messageImportance);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="messageImportance" Type="Microsoft.Build.Framework.MessageImportance" />
+      </Parameters>
+      <Docs>
+        <param name="filename">To be added.</param>
+        <param name="messageImportance">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogMessagesFromStream">
+      <MemberSignature Language="C#" Value="public bool LogMessagesFromStream (System.IO.TextReader stream, Microsoft.Build.Framework.MessageImportance messageImportance);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.TextReader" />
+        <Parameter Name="messageImportance" Type="Microsoft.Build.Framework.MessageImportance" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <param name="messageImportance">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogWarning">
+      <MemberSignature Language="C#" Value="public void LogWarning (string message, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogWarning">
+      <MemberSignature Language="C#" Value="public void LogWarning (string subcategory, string warningCode, string helpKeyword, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subcategory" Type="System.String" />
+        <Parameter Name="warningCode" Type="System.String" />
+        <Parameter Name="helpKeyword" Type="System.String" />
+        <Parameter Name="file" Type="System.String" />
+        <Parameter Name="lineNumber" Type="System.Int32" />
+        <Parameter Name="columnNumber" Type="System.Int32" />
+        <Parameter Name="endLineNumber" Type="System.Int32" />
+        <Parameter Name="endColumnNumber" Type="System.Int32" />
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="subcategory">To be added.</param>
+        <param name="warningCode">To be added.</param>
+        <param name="helpKeyword">To be added.</param>
+        <param name="file">To be added.</param>
+        <param name="lineNumber">To be added.</param>
+        <param name="columnNumber">To be added.</param>
+        <param name="endLineNumber">To be added.</param>
+        <param name="endColumnNumber">To be added.</param>
+        <param name="message">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogWarningFromException">
+      <MemberSignature Language="C#" Value="public void LogWarningFromException (Exception e);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="e">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogWarningFromException">
+      <MemberSignature Language="C#" Value="public void LogWarningFromException (Exception e, bool showStackTrace);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.Exception" />
+        <Parameter Name="showStackTrace" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="e">To be added.</param>
+        <param name="showStackTrace">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogWarningFromResources">
+      <MemberSignature Language="C#" Value="public void LogWarningFromResources (string messageResourceName, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="messageResourceName" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="messageResourceName">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogWarningFromResources">
+      <MemberSignature Language="C#" Value="public void LogWarningFromResources (string subcategoryResourceName, string warningCode, string helpKeyword, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string messageResourceName, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subcategoryResourceName" Type="System.String" />
+        <Parameter Name="warningCode" Type="System.String" />
+        <Parameter Name="helpKeyword" Type="System.String" />
+        <Parameter Name="file" Type="System.String" />
+        <Parameter Name="lineNumber" Type="System.Int32" />
+        <Parameter Name="columnNumber" Type="System.Int32" />
+        <Parameter Name="endLineNumber" Type="System.Int32" />
+        <Parameter Name="endColumnNumber" Type="System.Int32" />
+        <Parameter Name="messageResourceName" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="subcategoryResourceName">To be added.</param>
+        <param name="warningCode">To be added.</param>
+        <param name="helpKeyword">To be added.</param>
+        <param name="file">To be added.</param>
+        <param name="lineNumber">To be added.</param>
+        <param name="columnNumber">To be added.</param>
+        <param name="endLineNumber">To be added.</param>
+        <param name="endColumnNumber">To be added.</param>
+        <param name="messageResourceName">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogWarningWithCodeFromResources">
+      <MemberSignature Language="C#" Value="public void LogWarningWithCodeFromResources (string messageResourceName, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="messageResourceName" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="messageResourceName">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogWarningWithCodeFromResources">
+      <MemberSignature Language="C#" Value="public void LogWarningWithCodeFromResources (string subcategoryResourceName, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string messageResourceName, object[] messageArgs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subcategoryResourceName" Type="System.String" />
+        <Parameter Name="file" Type="System.String" />
+        <Parameter Name="lineNumber" Type="System.Int32" />
+        <Parameter Name="columnNumber" Type="System.Int32" />
+        <Parameter Name="endLineNumber" Type="System.Int32" />
+        <Parameter Name="endColumnNumber" Type="System.Int32" />
+        <Parameter Name="messageResourceName" Type="System.String" />
+        <Parameter Name="messageArgs" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="subcategoryResourceName">To be added.</param>
+        <param name="file">To be added.</param>
+        <param name="lineNumber">To be added.</param>
+        <param name="columnNumber">To be added.</param>
+        <param name="endLineNumber">To be added.</param>
+        <param name="endColumnNumber">To be added.</param>
+        <param name="messageResourceName">To be added.</param>
+        <param name="messageArgs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TaskName">
+      <MemberSignature Language="C#" Value="protected string TaskName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TaskResources">
+      <MemberSignature Language="C#" Value="public System.Resources.ResourceManager TaskResources { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Resources.ResourceManager</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>
