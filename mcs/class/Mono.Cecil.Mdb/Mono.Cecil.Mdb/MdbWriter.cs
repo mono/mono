@@ -99,7 +99,7 @@ namespace Mono.Cecil.Mdb {
 			file = document;
 		}
 
-		public void Write (MethodBody body, byte [][] variables)
+		public void Write (MethodBody body)
 		{
 			SourceMethod meth = new SourceMethod (body.Method);
 
@@ -124,12 +124,12 @@ namespace Mono.Cecil.Mdb {
 				builder.MarkSequencePoint (offsets [i], file.CompilationUnit.SourceFile,
 							   startRows [i], startCols [i], false);
 
-			MarkVariables (body, variables);
+			MarkVariables (body);
 
 			m_writer.CloseMethod ();
 		}
 
-		void MarkVariables (MethodBody body, byte [][] variables)
+		void MarkVariables (MethodBody body)
 		{
 			for (int i = 0; i < body.Variables.Count; i++) {
 				VariableDefinition var = body.Variables [i];

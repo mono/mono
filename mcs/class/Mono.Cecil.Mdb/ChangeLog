@@ -1,15 +1,19 @@
+2008-10-17  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Mdb/MdbWriter.cs: Adjust to Cecil changes.
+
 2008-06-07  Martin Baulig  <martin@ximian.com>
 
 	* Mono.Cecil.Mdb/MdbReader.cs: Reflect latest symbol
-	reader changes.	
+	reader changes.
 
 	* Mono.Cecil.Mdb/MdbWriter.cs: Reflect latest symbol
-	writer changes.	
+	writer changes.
 
 2008-05-28  Martin Baulig  <martin@ximian.com>
 
 	* Mono.Cecil.Mdb/MdbReader.cs: Reflect latest symbol
-	reader changes.	
+	reader changes.
 
 2008-05-05  Martin Baulig  <martin@ximian.com>
 
@@ -21,14 +25,14 @@
 
 2008-04-19  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* Mono.Cecil.Mdb/MdbReader.cs: Update wrt interface change (i.e. 
-	Read now provide a Dictionary to reuse the existing Hashtable 
+	* Mono.Cecil.Mdb/MdbReader.cs: Update wrt interface change (i.e.
+	Read now provide a Dictionary to reuse the existing Hashtable
 	between	offsets and instructions).
 
 2008-04-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil.Mdb/MdbReader.cs:
-		Make sure we set variables names even if the scope 
+		Make sure we set variables names even if the scope
 		information is missing.
 
 2007-08-28  Jb Evain  <jbevain@novell.com>
