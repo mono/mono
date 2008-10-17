@@ -598,24 +598,25 @@ namespace Mono.CSharp
 		
 		int TokenizeOpenParens ()
 		{
-			int ntoken = -1;
 			int ptoken;
-			bool cast_posible = false;
-			bool cast_not = false;
-			bool has_star = false;
+			current_token = -1;
+
+			int bracket_level = 0;
+			bool is_type = false;
+			bool can_be_type = false;
 			
 			while (true) {
-				ptoken = ntoken;
-				ntoken = xtoken ();
+				ptoken = current_token;
+				token ();
 
-				switch (ntoken) {
+				switch (current_token) {
 				case Token.CLOSE_PARENS:
-					ntoken = xtoken ();
+					token ();
 					
 					//
-					// Token is a lambda
+					// Expression inside parens is lambda, (int i) => 
 					//
-					if (ntoken == Token.ARROW) {
+					if (current_token == Token.ARROW) {
 						if (RootContext.Version <= LanguageVersion.ISO_2)
 							Report.FeatureIsNotAvailable (Location, "lambda expressions");
 
@@ -623,24 +624,16 @@ namespace Mono.CSharp
 					}
 
 					//
-					// Token is possible cast, parser will decide later
+					// Expression inside parens is single type, (int[])
 					//
-					if (cast_posible && !cast_not) {
-						switch (ntoken) {
-						//
-						// Indirection is a special
-						// cast: (int*)&a;
-						// binary: (C)&a;
-						//
-						case Token.BITWISE_AND:
-						case Token.OP_INC:
-						case Token.OP_DEC:
-						case Token.PLUS:
-						case Token.MINUS:
-							if (!has_star)
-								break;
-							return Token.OPEN_PARENS_CAST;
+					if (is_type)
+						return Token.OPEN_PARENS_CAST;
 
+					//
+					// Expression is possible cast, look at next token, (T)null
+					//
+					if (can_be_type) {
+						switch (current_token) {
 						case Token.OPEN_PARENS:
 						case Token.BANG:
 						case Token.TILDE:
@@ -688,8 +681,10 @@ namespace Mono.CSharp
 					return Token.OPEN_PARENS;
 					
 				case Token.DOT:
+				case Token.DOUBLE_COLON:
 					if (ptoken != Token.IDENTIFIER && ptoken != Token.OP_GENERICS_GT)
 						goto default;
+
 					continue;
 
 				case Token.IDENTIFIER:
@@ -699,16 +694,13 @@ namespace Mono.CSharp
 					case Token.COMMA:
 					case Token.DOUBLE_COLON:
 					case -1:
-						cast_posible = true;
+						if (bracket_level == 0)
+							can_be_type = true;
 						continue;
 					default:
-						cast_not = true;
+						can_be_type = is_type = false;
 						continue;
 					}
-
-				case Token.STAR:
-					has_star = true;
-					continue;
 
 				case Token.OBJECT:
 				case Token.STRING:
@@ -726,21 +718,39 @@ namespace Mono.CSharp
 				case Token.ULONG:
 				case Token.CHAR:
 				case Token.VOID:
-				case Token.OP_GENERICS_GT:
-				case Token.OP_GENERICS_LT:
-				case Token.INTERR_NULLABLE:
-				case Token.OPEN_BRACKET:
-				case Token.CLOSE_BRACKET:
+					if (bracket_level == 0)
+						is_type = true;
+					continue;
+
 				case Token.COMMA:
-				case Token.DOUBLE_COLON:
-					cast_posible = true;
+					if (bracket_level == 0) {
+						bracket_level = 100;
+						can_be_type = is_type = false;
+					}
+					continue;
+
+				case Token.OP_GENERICS_LT:
+				case Token.OPEN_BRACKET:
+					if (bracket_level++ == 0)
+						is_type = true;
+					continue;
+
+				case Token.OP_GENERICS_GT:
+				case Token.CLOSE_BRACKET:
+					--bracket_level;
+					continue;
+
+				case Token.INTERR_NULLABLE:
+				case Token.STAR:
+					if (bracket_level == 0)
+						is_type = true;
 					continue;
 
 				case Token.REF:
 				case Token.OUT:
-					cast_not = true;
+					can_be_type = is_type = false;
 					continue;
-					
+
 				default:
 					return Token.OPEN_PARENS;
 				}
@@ -2448,6 +2458,8 @@ namespace Mono.CSharp
 						case Token.WHILE:
 						case Token.USING:
 						case Token.DEFAULT:
+						case Token.DELEGATE:
+						case Token.OP_GENERICS_GT:
 							return Token.OPEN_PARENS;
 						}
 
