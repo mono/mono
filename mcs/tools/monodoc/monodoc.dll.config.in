@@ -1,0 +1,3 @@
+<config>
+        <path docsPath="@monodoc_refdir@" />
+</config>
