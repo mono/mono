@@ -66,7 +66,6 @@ namespace System.Web.DynamicData
 		{
 		}
 
-		[MonoTODO]
 		public MetaModel Model { get; internal set; }
 
 		[MonoTODO]
@@ -87,10 +86,19 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("cache handler")]
 		IHttpHandler IRouteHandler.GetHttpHandler (RequestContext requestContext)
 		{
-			throw new NotImplementedException ();
+			if (requestContext == null)
+				throw new ArgumentNullException ("requestContext");
+			RouteData rd = requestContext.RouteData;
+			DynamicDataRoute dr = rd.Route as DynamicDataRoute;
+			if (dr == null)
+				throw new ArgumentException ("The argument RequestContext does not have DynamicDataRoute in its RouteData");
+			var action = dr.GetActionFromRouteData (rd);
+			var mt = dr.GetTableFromRouteData (rd);
+
+			return CreateHandler (dr, mt, action);
 		}
 	}
 }

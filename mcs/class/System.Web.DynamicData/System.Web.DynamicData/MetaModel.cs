@@ -47,16 +47,22 @@ namespace System.Web.DynamicData
 	{
 		static MetaModel default_model;
 		static Exception registration_exception;
+		static Dictionary<Type,MetaModel> registered_models = new Dictionary<Type,MetaModel> ();
 
 		public static MetaModel Default {
 			get { return default_model; }
 			internal set { default_model = value; }
 		}
 
-		[MonoTODO]
 		public static MetaModel GetModel (Type contextType)
 		{
-			throw new NotImplementedException ();
+			if (contextType == null)
+				throw new ArgumentNullException ("contextType");
+
+			MetaModel m;
+			if (registered_models.TryGetValue (contextType, out m))
+				return m;
+			throw new ArgumentException (String.Format ("Type '{0}' is not registered as a MetaModel", contextType));
 		}
 
 		public static void ResetRegistrationException ()
@@ -96,12 +102,11 @@ namespace System.Web.DynamicData
 		{
 			if (uniqueTableName == null)
 				throw new ArgumentNullException ("uniqueTableName");
-			if (provider != null)
-				foreach (var t in Tables)
-					if (t.Name == uniqueTableName) {
-						table = t;
-						return true;
-					}
+			foreach (var t in Tables)
+				if (t.Name == uniqueTableName) {
+					table = t;
+					return true;
+				}
 			table = null;
 			return false;
 		}
@@ -157,8 +162,8 @@ namespace System.Web.DynamicData
 			if (contextType == null)
 				throw new ArgumentNullException ("contextType");
 			CheckRegistrationError ();
-Activator.CreateInstance (contextType);
 			RegisterContext (() => Activator.CreateInstance (contextType), configuration);
+			registered_models [contextType] = this;
 		}
 
 		public void RegisterContext (Func<object> contextFactory, ContextConfiguration configuration)

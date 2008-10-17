@@ -1,3 +1,10 @@
+2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DynamicDataRouteTest.cs, TestStubTypes.cs: new tests.
+	* MetaModelTest.cs : fixed test namespace and type aliases.
+	  Now that this test does not always run first, remove run-order-
+	  dependent assertions. Added some more assertions.
+
 2008-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MetaModelTest.cs : initial checkin.

@@ -45,7 +45,10 @@ using System.Web.DynamicData;
 using System.Web.DynamicData.ModelProviders;
 using NUnit.Framework;
 
-namespace System.Web.DynamicData
+using MetaModel = System.Web.DynamicData.MetaModel;
+using MetaTable = System.Web.DynamicData.MetaTable;
+
+namespace MonoTests.System.Web.DynamicData
 {
 	[TestFixture]
 	public class MetaModelTest
@@ -53,9 +56,13 @@ namespace System.Web.DynamicData
 		[Test]
 		public void Default ()
 		{
-			Assert.IsNull (MetaModel.Default, "#1");
+			// other tests create MetaModel and set Default and this test does not always run first, so it does not make sense anymore.
+			//Assert.IsNull (MetaModel.Default, "#1");
+			bool isFirst = (MetaModel.Default == null);
 			var m = new MetaModel (); // it automatically fills Default
-			Assert.AreEqual (m, MetaModel.Default, "#2");
+			if (isFirst)
+				Assert.AreEqual (m, MetaModel.Default, "#2");
+
 			Assert.IsNotNull (m.Tables, "#3");
 			Assert.IsNotNull (m.VisibleTables, "#4");
 			Assert.IsNotNull (m.FieldTemplateFactory, "#5");
@@ -116,6 +123,7 @@ namespace System.Web.DynamicData
 				m.RegisterContext (typeof (MyDataContext1));
 				Assert.AreEqual (0, m.Tables.Count, "#1-1");
 				Assert.AreEqual (0, m.VisibleTables.Count, "#1-2");
+				Assert.IsNotNull (MetaModel.GetModel (typeof (MyDataContext1)), "#2");
 			} finally {
 				MetaModel.ResetRegistrationException ();
 			}
@@ -136,6 +144,9 @@ namespace System.Web.DynamicData
 				Assert.AreEqual ("FooTable", t.DisplayName, "#2-2");
 				// FIXME: test it too.
 				//Assert.AreEqual ("FooTable", t.DataContextPropertyName, "#2-3");
+				// ListActionPath property somehow requires live HttpContext.
+				//Assert.AreEqual ("FooTable/List", t.ListActionPath, "#2-4");
+
 				Assert.AreEqual ("FooTable", t.Provider.Name, "#3-1");
 			} finally {
 				MetaModel.ResetRegistrationException ();
@@ -189,6 +200,10 @@ namespace System.Web.DynamicData
 		}
 
 		public Table<Foo> FooTable { get { return GetTable<Foo> (); } }
+	}
+
+	class MyDataContext3 : MyDataContext2
+	{
 	}
 
 	[Table (Name = "dbo...FooTable")]

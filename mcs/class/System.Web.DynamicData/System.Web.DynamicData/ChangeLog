@@ -1,3 +1,8 @@
+2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DynamicDataRouteHandler.cs, DynamicDataRoute.cs, MetaTable.cs,
+	  MetaModel.cs : ongoing implementation.
+
 2008-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DynamicDataManager.cs, DynamicDataRoute.cs,

@@ -43,39 +43,50 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DynamicDataRoute : Route
 	{
-		[MonoTODO]
 		public DynamicDataRoute (string url)
 			: base (url, null)
 		{
+			Model = MetaModel.Default;
+			RouteHandler = new DynamicDataRouteHandler ();
 		}
 
 		public string Action { get; set; }
 
 		public MetaModel Model { get; set; }
 
-		[MonoTODO]
-		public DynamicDataRouteHandler RouteHandler { get; set; }
+		public DynamicDataRouteHandler RouteHandler { 
+			get { return (DynamicDataRouteHandler) base.RouteHandler; }
+			set { base.RouteHandler = value; }
+		}
 
 		public string Table { get; set; }
 
 		public string ViewName { get; set; }
 
-		[MonoTODO]
 		public string GetActionFromRouteData (RouteData routeData)
 		{
-			throw new NotImplementedException ();
+			if (routeData == null)
+				throw new ArgumentNullException ("routeData");
+			return routeData.GetRequiredString ("Action");
 		}
 
-		[MonoTODO]
 		public override RouteData GetRouteData (HttpContextBase httpContext)
 		{
-			throw new NotImplementedException ();
+			var rd = base.GetRouteData (httpContext);
+foreach (var p in rd.Values) Console.Error.WriteLine ("{0} -> {1}", p.Key, p.Value);
+			// FIXME: something to do here?
+			return rd;
 		}
 
-		[MonoTODO]
 		public MetaTable GetTableFromRouteData (RouteData routeData)
 		{
-			throw new NotImplementedException ();
+			if (routeData == null)
+				throw new ArgumentNullException ("routeData");
+			var t = routeData.GetRequiredString ("Table");
+			if (Model == null)
+				throw new InvalidOperationException ("MetaModel must be set to the DynamicDataRoute before retrieving MetaTable");
+			MetaTable mt;
+			return Model.GetTable (t);
 		}
 
 		[MonoTODO]

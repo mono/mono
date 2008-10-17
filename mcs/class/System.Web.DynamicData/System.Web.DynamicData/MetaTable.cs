@@ -59,7 +59,8 @@ namespace System.Web.DynamicData
 			Columns = new ReadOnlyCollection<MetaColumn> (l);
 
 			DisplayName = Name;
-			ListActionPath = String.Concat (DisplayName, "/", PageAction.List, ".aspx");
+
+			// FIXME: fill more properties.
 		}
 
 		MetaModel model;
@@ -95,8 +96,9 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public bool IsReadOnly { get; private set; }
 
-		[MonoTODO]
-		public string ListActionPath { get; private set; }
+		public string ListActionPath {
+			get { return GetActionPath ("List"); }
+		}
 
 		public MetaModel Model {
 			get { return model; }
@@ -128,7 +130,8 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public string GetActionPath (string action)
 		{
-			throw new NotImplementedException ();
+			return String.Concat (DisplayName, "/", action, ".aspx");
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
