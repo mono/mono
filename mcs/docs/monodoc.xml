@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<node label="Mono Documentation" name="root:">
+  <node label="Class Library" name="classlib"/>
+  <node label="Mono Libraries" name="classlib-mono"/>
+  <node label="Gnome Libraries" name="classlib-gnome"/>
+  <node label="Mozilla Libraries" name="classlib-gecko"/>
+  <node label="Novell Libraries" name="classlib-novell"/>
+  <node label="MonoDevelop IDE" name="md">
+    <node label="API Reference" name="monodevelop" />
+    <node label="Extension Point Reference" name="monodevelop-extension-guide" />
+  </node>
+  <node label="Moonlight/Silverlight" name="moonlight"/>
+  <node label="C# Language Specification" name="ecmaspec" />
+  <node label="C# Compiler Error Reference" name="cs-errors" />
+  <node label="Mono Development Tools" name="dev-tools">
+    <node label="Mono Debugger" name="debugger"/>
+  </node>
+  <node label="Mono Embedding" name="embed"/>
+  <node label="Various" name="various">
+    <node label="DiaCanvas Libraries" name="classlib-diacanvas"/>
+    <node label="NUnit Libraries" name="classlib-nunit"/>
+    <node label="Tao" name="tao"/>
+  </node>
+</node>
