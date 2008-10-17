@@ -1,0 +1,62 @@
+<Type Name="Color" FullName="Mono.DocTest.Color">
+  <TypeSignature Language="C#" Value="public enum Color" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Possible colors</summary>
+    <remarks>
+      <see cref="T:Mono.DocTest.Color" />.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Blue">
+      <MemberSignature Language="C#" Value="Blue" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.DocTest.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Insert Blue summary here</summary>
+        <remarks>
+          <c>F:Mono.DocTest.Color.Blue</c>.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Green">
+      <MemberSignature Language="C#" Value="Green" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.DocTest.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Insert Green summary here</summary>
+        <remarks>
+          <c>F:Mono.DocTest.Color.Green</c>.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Red">
+      <MemberSignature Language="C#" Value="Red" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.DocTest.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Insert Red summary here</summary>
+        <remarks>
+          <c>F:Mono.DocTest.Color.Red</c>.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

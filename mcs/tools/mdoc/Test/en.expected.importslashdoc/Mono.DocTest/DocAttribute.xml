@@ -1,0 +1,46 @@
+<Type Name="DocAttribute" FullName="Mono.DocTest.DocAttribute">
+  <TypeSignature Language="C#" Value="public class DocAttribute : Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.All)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>
+      <para>
+            cref=<c>T:Mono.DocTest.DocAttribute</c>.
+            </para>
+      <code lang="C#" src="../DocTest.cs#DocAttribute Example">[Doc ("documented class")]
+class Example {
+	[Doc ("documented field")] public string field;
+}
+</code>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DocAttribute (string docs);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="docs" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="docs">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

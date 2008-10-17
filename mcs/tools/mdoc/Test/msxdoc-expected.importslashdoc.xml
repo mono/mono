@@ -1,0 +1,807 @@
+<doc>
+    <assembly>
+        <name>DocTest</name>
+    </assembly>
+    <members>
+        <member name="T:NoNamespace">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="C:NoNamespace">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Color">
+            <summary>Possible colors</summary>
+            <remarks>
+                <see cref="T:Mono.DocTest.Color" />.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Color.Blue">
+            <summary>Insert Blue summary here</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Color.Blue</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Color.Green">
+            <summary>Insert Green summary here</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Color.Green</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Color.Red">
+            <summary>Insert Red summary here</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Color.Red</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.DocAttribute">
+            <summary>To be added.</summary>
+            <remarks>
+                <para>
+            cref=<c>T:Mono.DocTest.DocAttribute</c>.
+            </para>
+                <code lang="C#" src="../DocTest.cs#DocAttribute Example">[Doc ("documented class")]
+class Example {
+	[Doc ("documented field")] public string field;
+}
+</code>
+            </remarks>
+        </member>
+        <member name="C:Mono.DocTest.DocAttribute(System.String)">
+            <param name="docs">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.DocValueType">
+            <summary>Process interface</summary>
+            <remarks>
+                <c>T:Mono.DocTest.DocValueType</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.DocValueType.M(System.Int32)">
+            <param name="i">A <see cref="T:System.Int32" />.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" />.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.DocValueType.total">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.DocValueType.total</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.IProcess">
+            <summary>Process interface</summary>
+            <remarks>
+                <c>T:Mono.DocTest.IProcess</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.UseLists">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.UseLists</c>.</remarks>
+        </member>
+        <member name="C:Mono.DocTest.UseLists">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.UseLists.GetValues``1(``0)">
+            <typeparam name="T">Something</typeparam>
+            <param name="value">A <c>T</c>.</param>
+            <summary>To be added.</summary>
+            <returns>A <see cref="T:Mono.DocTest.Generic.MyList`1" /> instance.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.UseLists.GetValues``1(``0)</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.UseLists.Process(Mono.DocTest.Generic.MyList{System.Int32})">
+            <param name="list">A <see cref="T:Mono.DocTest.Generic.MyList{System.Int32}" />.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.UseLists.Process(Mono.DocTest.MyList{System.Int32})</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})">
+            <param name="list">Another <see cref="T:Mono.DocTest.Generic.MyList{System.Int32}" />.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <para>
+                    <c>M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})</c>.</para>
+                <para>
+                    <see cref="M:System.Collections.Generic.List{System.Int32}.Remove(`0)" />
+                </para>
+            </remarks>
+        </member>
+        <member name="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})">
+            <param name="list">A <see cref="T:Mono.DocTest.Generic.MyList{System.Predicate{System.Int32}}" />.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})">
+            <typeparam name="T">Something Else</typeparam>
+            <param name="list">A <see cref="T:Mono.DocTest.Generic.MyList{System.Predicate{``0}}" />.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.UseLists.UseHelper``3(Mono.DocTest.Generic.MyList{``0}+Helper{``1,``2})">
+            <typeparam name="T">To be added.</typeparam>
+            <typeparam name="U">To be added.</typeparam>
+            <typeparam name="V">To be added.</typeparam>
+            <param name="helper">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Widget">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget</c>.</remarks>
+            <altmember cref="P:Mono.DocTest.Widget.Item(System.Int32)" />
+            <extra>Some extra tag value</extra>
+        </member>
+        <member name="C:Mono.DocTest.Widget">
+            <summary>To be added.</summary>
+            <remarks>
+                <para>
+                    <c>C:Mono.DocTest.Widget</c>.</para>
+                <para>
+                    <c>M:Mono.DocTest.Widget.#ctor</c>.</para>
+                <para>
+                    <see cref="C:Mono.DocTest.Widget(System.String)" />
+                </para>
+                <para>
+                    <see cref="C:Mono.DocTest.Widget(System.Converter{System.String,System.String})" />
+                </para>
+            </remarks>
+        </member>
+        <member name="C:Mono.DocTest.Widget(System.Converter{System.String,System.String})">
+            <param name="c">A <see cref="T:System.Converter{System.String,System.String}" />.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <para>
+                    <c>C:Mono.DocTest.Widget(System.Converter{System.String,System.String})</c>.</para>
+            </remarks>
+        </member>
+        <member name="C:Mono.DocTest.Widget(System.String)">
+            <param name="s">A <see cref="T:System.String" />.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <para>
+                    <c>C:Mono.DocTest.Widget(System.String)</c>.</para>
+                <para>
+                    <c>M:Mono.DocTest.Widget.#ctor(System.String)</c>.</para>
+            </remarks>
+        </member>
+        <member name="E:Mono.DocTest.Widget.AnEvent">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>E:Mono.DocTest.Widget.AnEvent</c>.</remarks>
+        </member>
+        <member name="E:Mono.DocTest.Widget.AnotherEvent">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>E:Mono.DocTest.Widget.AnotherEvent</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.array1">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.array1</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.array2">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.array2</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.classCtorError">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.classCtorError</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.defaultColor">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.defaultColor</c>.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Widget.Height">
+            <summary>To be added.</summary>
+            <value>A <see cref="T:System.Int64" /> value...</value>
+            <remarks>
+                <c>P:Mono.DocTest.Widget.Height</c>.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Widget.Item(System.Int32)">
+            <param name="i">TODO</param>
+            <summary>To be added.</summary>
+            <value>A <see cref="T:System.Int32" /> instance.</value>
+            <remarks>
+                <c>P:Mono.DocTest.Widget.Item(System.Int32)</c>.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Widget.Item(System.String,System.Int32)">
+            <param name="s">Some <see cref="T:System.String" />.</param>
+            <param name="i">I love <see cref="T:System.Int32" />s.</param>
+            <summary>To be added.</summary>
+            <value>A <see cref="T:System.Int32" /> instance.</value>
+            <remarks>
+                <c>P:Mono.DocTest.Widget.Item(System.String,System.Int32)</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.M0">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.M0</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.M1(System.Char,System.Single@,Mono.DocTest.DocValueType@)">
+            <param name="c">A <see cref="T:System.Char" />.</param>
+            <param name="f">A <see cref="T:System.Single" />.</param>
+            <param name="v">A <see cref="T:Mono.DocTest.DocValueType" />.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.M1(System.Char,System.Signle@,Mono.DocTest.DocValueType@)</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.M2(System.Int16[],System.Int32[,],System.Int64[][])">
+            <param name="x1">A <see cref="T:System.Int16" /> array.</param>
+            <param name="x2">A <see cref="T:System.Int32" /> array.</param>
+            <param name="x3">A <see cref="T:System.Int64" /> array.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.M2(System.Int16[],System.Int32[0:,0:],System.Int64[][])</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.M3(System.Int64[][],Mono.DocTest.Widget[,,][])">
+            <param name="x3">Another <see cref="T:System.Int64" /> array.</param>
+            <param name="x4">A <see cref="T:Mono.DocTest.Widget" /> array.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.M3(System.Int64[][],Mono.DocTest.Widget[0:,0:,0:][])</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.M4(System.Char*,Mono.DocTest.Color**)">
+            <param name="pc">A <see cref="T:System.Char" /> pointer.</param>
+            <param name="ppf">A <see cref="T:Mono.DocTest.Color" /> pointer.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.M4(System.Char*,Mono.DocTest.Color**)</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.M5(System.Void*,System.Double*[,][])">
+            <param name="pv">A <see cref="T:System.Void" /> pointer.</param>
+            <param name="pd">A <see cref="T:System.Double" /> array.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.M5(System.Void*,System.Double*[0:,0:][])</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.M6(System.Int32,System.Object[])">
+            <param name="i">Yet another <see cref="T:System.Int32" />.</param>
+            <param name="args">An <see cref="T:System.Object" /> array.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.M6(System.Int32,System.Object[])</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.message">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.message</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.monthlyAverage">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.monthlyAverage</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.op_Addition(Mono.DocTest.Widget,Mono.DocTest.Widget)">
+            <param name="x1">Yet Another <see cref="T:Mono.DocTest.Widget" />.</param>
+            <param name="x2">Yay, <see cref="T:Mono.DocTest.Widget" />s.</param>
+            <summary>To be added.</summary>
+            <returns>A <see cref="T:Mono.DocTest.Widget" /> instance (2).</returns>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.op_Addition(Mono.DocTest.Widget,Mono.DocTest.Widget)</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.op_Explicit(Mono.DocTest.Widget)~System.Int32">
+            <param name="x">
+                <see cref="T:Mono.DocTest.Widget" />s are fun!.</param>
+            <summary>To be added.</summary>
+            <returns>A <see cref="T:System.Int32" /> instance.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.op_Explicit(Mono.DocTest.Widget)~System.Int32</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.op_Implicit(Mono.DocTest.Widget)~System.Int64">
+            <param name="x">
+                <c>foo</c>; <see cref="T:Mono.DocTest.Widget" />.</param>
+            <summary>To be added.</summary>
+            <returns>A <see cref="T:System.Int64" /> instance.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.op_Implicit(Mono.DocTest.Widget)~System.Int64</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.op_UnaryPlus(Mono.DocTest.Widget)">
+            <param name="x">Another <see cref="T:Mono.DocTest.Widget" />.</param>
+            <summary>To be added.</summary>
+            <returns>A <see cref="T:Mono.DocTest.Widget" /> instance.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.op_UnaryPlus(Mono.DocTest.Widget)</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.pCount">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.pCount</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.PI">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.PI</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.ppValues">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.ppValues</c>.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Widget.Width">
+            <summary>To be added.</summary>
+            <value>A <see cref="T:System.Int32" /> value...</value>
+            <remarks>
+                <c>P:Mono.DocTest.Widget.Width</c>.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Widget.X">
+            <summary>To be added.</summary>
+            <value>A <see cref="T:System.Int16" /> value...</value>
+            <remarks>
+                <c>P:Mono.DocTest.Widget.X</c>.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Widget.Y">
+            <summary>To be added.</summary>
+            <value>A <see cref="T:System.Double" /> value...</value>
+            <remarks>
+                <c>P:Mono.DocTest.Widget.Y</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Widget+Del">
+            <param name="i">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.Del</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Widget+Direction">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.Direction</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget+Direction.East">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.Direction.East</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget+Direction.North">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.Direction.North</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget+Direction.South">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.Direction.South</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget+Direction.West">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.Direction.West</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Widget+IMenuItem">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.IMenuItem</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Widget+NestedClass">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.NestedClass</c>.</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Widget+NestedClass">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget+NestedClass.M(System.Int32)">
+            <param name="i">Some <see cref="T:System.Int32" />.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.NestedClass.M(System.Int32)</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget+NestedClass.value">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.NestedClass.value</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Widget.NestedClass`1">
+            <typeparam name="T">To be added.</typeparam>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.NestedClass`1</c>.</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Widget.NestedClass`1">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.NestedClass`1.M(`0System`0.`0Int32`0)">
+            <param name="i">Another <see cref="T:System.Int32" />.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.NestedClass`1.M(System.Int32)</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.NestedClass`1.value">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.NestedClass`1.value</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Generic.Extensions">
+            <summary>extension methods!</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Generic.Extensions</c>
+            </remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.Extensions.Bar``1(Mono.DocTest.Generic.IFoo{``0},System.String)">
+            <typeparam name="T">To be added.</typeparam>
+            <param name="self">To be added.</param>
+            <param name="s">To be added.</param>
+            <summary>
+                <see cref="T:Mono.DocTest.Generic.IFoo`1" /> extension method</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Generic.Extensions.Bar``1</c>
+            </remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.Extensions.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <typeparam name="T">To be added.</typeparam>
+            <param name="self">To be added.</param>
+            <param name="a">To be added.</param>
+            <summary>
+                <see cref="T:System.Collections.Generic.IEnumerable`1" /> extension method</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Generic.Extensions.ForEach``1</c>
+            </remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.Extensions.ToDouble(System.Collections.Generic.IEnumerable{System.Int32})">
+            <param name="list">To be added.</param>
+            <summary>
+                <see cref="T:System.Collections.Generic.IEnumerable{System.Int32}" />
+            extension method.
+            </summary>
+            <returns>To be added.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.Generic.Extensions.ToDouble</c>
+            </remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.Extensions.ToDouble``1(``0)">
+            <typeparam name="T">To be added.</typeparam>
+            <param name="val">To be added.</param>
+            <summary>
+                <see cref="T:Mono.DocTest.Generic.IFoo`1" /> extension method.
+            </summary>
+            <returns>To be added.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.Generic.Extensions.ToDouble</c>
+            </remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.Extensions.ToEnumerable``1(``0)">
+            <typeparam name="T">To be added.</typeparam>
+            <param name="self">To be added.</param>
+            <summary>
+                <c>System.Object</c> extension method</summary>
+            <returns>To be added.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.Generic.Extensions.ToEnumerable``1</c>
+            </remarks>
+        </member>
+        <member name="T:Mono.DocTest.Generic.Func`2">
+            <typeparam name="TArg">argument type, with attributes!</typeparam>
+            <typeparam name="TRet">return type, with attributes!</typeparam>
+            <param name="a">To be added.</param>
+            <summary>To be added.</summary>
+            <value>To be added.</value>
+            <remarks>
+                <c>T:Mono.DocTest.Generic.Func`2</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Generic.GenericBase`1">
+            <typeparam name="U">Insert <c>text</c> here.</typeparam>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Generic.GenericBase`1</c>.</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Generic.GenericBase`1">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.GenericBase`1.BaseMethod``1(`0S`0)">
+            <typeparam name="S">Insert more <c>text</c> here.</typeparam>
+            <param name="genericParameter">Something</param>
+            <summary>To be added.</summary>
+            <returns>The default value.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.GenericBase`1.BaseMethod``1(``0)</c>.</remarks>
+        </member>
+        <member name="F:Mono.DocTest.Generic.GenericBase`1.ConstField1">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.GenericBase`1.ConstField1</c>
+            </remarks>
+        </member>
+        <member name="E:Mono.DocTest.Generic.GenericBase`1.MyEvent">
+            <summary>To be added.</summary>
+            <remarks>E:Mono.DocTest.Generic.GenericBase`1.MyEvent</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.GenericBase`1.op_Explicit(`0Mono`0.`0DocTest`0.`0Generic`0.`0GenericBase`0{`0U`0})~`0U`0">
+            <param name="list">Insert description here</param>
+            <summary>To be added.</summary>
+            <returns>The default value for <typeparamref name="U" />.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.GenericBase`1.op_Explicit(Mono.DocTest.GenericBase{`0})~`0</c>
+            </remarks>
+        </member>
+        <member name="F:Mono.DocTest.Generic.GenericBase`1.StaticField1">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.GenericBase`1.StaticField1</c>
+            </remarks>
+        </member>
+        <member name="T:Mono.DocTest.Generic.GenericBase`1.FooEventArgs">
+            <summary>To be added.</summary>
+            <remarks>T:Mono.DocTest.Generic.GenericBase`1.FooEventArgs</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Generic.GenericBase`1.FooEventArgs">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Generic.IFoo`1">
+            <typeparam name="T">T generic param</typeparam>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.IFoo`1</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.IFoo`1.Method``1(`0T`0,`0U`0)">
+            <typeparam name="U">U generic param</typeparam>
+            <param name="t">To be added.</param>
+            <param name="u">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>
+                <c>T:Mono.DocTest.IFoo`1.Method``1(`0,``0)</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Generic.MyList`1">
+            <typeparam name="T">I'm Dying Here!</typeparam>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Generic.MyList`1</c>.</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Generic.MyList`1">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`1.GetEnumerator">
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`1.GetEnumerator</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`1.GetHelper``2">
+            <typeparam name="U">To be added.</typeparam>
+            <typeparam name="V">To be added.</typeparam>
+            <summary>To be added.</summary>
+            <returns>
+                <see langword="null" />.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.Generic.MyList`1.GetHelper``2</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`1.Method``1(T,``0)">
+            <typeparam name="U">Method generic parameter</typeparam>
+            <param name="t">Class generic type</param>
+            <param name="u">Method generic type</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`1.Method``1(`0,``0)</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`1.RefMethod``1(T@,``0@)">
+            <typeparam name="U">To be added.</typeparam>
+            <param name="t">To be added.</param>
+            <param name="u">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`1.Test(T)">
+            <param name="t">tko</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`1.Test(`0)</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`1.UseHelper``2(Mono.DocTest.Generic.MyList{T}+Helper{``0,``1})">
+            <typeparam name="U">To be added.</typeparam>
+            <typeparam name="V">To be added.</typeparam>
+            <param name="helper">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Generic.MyList`1.Helper`2">
+            <typeparam name="U">Seriously!</typeparam>
+            <typeparam name="V">Too <c>many</c> docs!</typeparam>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.MyList`1.Helper`2</c>.</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Generic.MyList`1.Helper`2">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`1.Helper`2.UseT(```210T`2``21`2```210`2``21`2,```210U`2``21`2```210`2``21`2,```210V`2``21`2```210`2``21`2)">
+            <param name="a">Ako</param>
+            <param name="b">bko</param>
+            <param name="c">cko</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`1.Helper`2.UseT(`0,`1,`2)</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Generic.MyList`2">
+            <typeparam name="A">Ako generic param</typeparam>
+            <typeparam name="B">Bko generic param</typeparam>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.MyList`2</c>.</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Generic.MyList`2">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.CopyTo(A[],System.Int32)">
+            <param name="array">To be added.</param>
+            <param name="arrayIndex">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Generic.MyList`2.Count">
+            <summary>To be added.</summary>
+            <value>A <see cref="T:System.Int32" />.</value>
+            <remarks>
+                <c>P:Mono.DocTest.MyList`2.Count</c>.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Generic.MyList`2.Current">
+            <summary>To be added.</summary>
+            <value>The current value.</value>
+            <remarks>
+                <c>P:Mono.DocTest.MyList`2.Current</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.Dispose">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.Dispose</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.Foo">
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>M:Mono.DocTest.Generic.MyList`2.Foo</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.GetEnumerator">
+            <summary>To be added.</summary>
+            <returns>A <see cref="T:System.Collections.Generic.List{`0}.Enumerator" />.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.GetEnumerator</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.Mono#DocTest#Generic#IFoo{A}#Method``1(A,``0)">
+            <typeparam name="U">To be added.</typeparam>
+            <param name="a">To be added.</param>
+            <param name="u">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.MoveNext">
+            <summary>To be added.</summary>
+            <returns>
+                <see cref="T:System.Boolean" />
+            </returns>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.MoveNext</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.Reset">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.Reset</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Add(A)">
+            <param name="item">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Clear">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Contains(A)">
+            <param name="item">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#IsReadOnly">
+            <summary>To be added.</summary>
+            <value>To be added.</value>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Remove(A)">
+            <param name="item">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#IEnumerable{A}#GetEnumerator">
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#IEnumerator{A}#Current">
+            <summary>To be added.</summary>
+            <value>To be added.</value>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#IEnumerable#GetEnumerator">
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Generic.MyList`2.System#Collections#IEnumerator#Current">
+            <summary>To be added.</summary>
+            <value>To be added.</value>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:System.Action`1">
+            <typeparam name="T">To be added.</typeparam>
+            <param name="obj">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:System.Action`1</c>
+            </remarks>
+        </member>
+        <member name="T:System.Array">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="C:System.Array">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:System.Array.AsReadOnly``1(``0[])">
+            <typeparam name="T">To be added.</typeparam>
+            <param name="array">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})">
+            <typeparam name="TInput">To be added.</typeparam>
+            <typeparam name="TOutput">To be added.</typeparam>
+            <param name="array">To be added.</param>
+            <param name="converter">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:System.Array.Resize``1(``0[]@,System.Int32)">
+            <typeparam name="T">To be added.</typeparam>
+            <param name="array">To be added.</param>
+            <param name="newSize">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:System.AsyncCallback">
+            <param name="ar">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:System.Environment">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:System.Environment</c>
+            </remarks>
+        </member>
+        <member name="M:System.Environment.GetFolderPath(System.Environment+SpecialFolder)">
+            <param name="folder">
+            A <see cref="T:System.Environment+SpecialFolder" /> instance.
+            </param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>
+                <c>M:System.Environment.GetFolderPath(System.Environment+SpecialFolder)</c>
+            </remarks>
+        </member>
+        <member name="T:System.Environment+SpecialFolder">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:System.Environment+SpecialFolder</c>
+            </remarks>
+        </member>
+    </members>
+</doc>

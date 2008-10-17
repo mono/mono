@@ -1,0 +1,14 @@
+<Type Name="Widget+IMenuItem" FullName="Mono.DocTest.Widget+IMenuItem">
+  <TypeSignature Language="C#" Value="public interface Widget.IMenuItem" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>
+      <c>T:Mono.DocTest.Widget.IMenuItem</c>.</remarks>
+  </Docs>
+  <Members />
+</Type>

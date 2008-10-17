@@ -1,0 +1,9 @@
+XmlSchema error: Invalid start element: :c XML URI: tools/DocTest/en.expected.importslashdoc/index.xml . Line 180, Position 14.
+XmlSchema error: Invalid end element: summary XML URI: tools/DocTest/en.expected.importslashdoc/index.xml . Line 180, Position 52.
+XmlSchema error: Invalid start element: :extra XML URI: tools/DocTest/en.expected.importslashdoc/Mono.DocTest/Widget.xml . Line 24, Position 6.
+XmlSchema error: Element declaration for extra is missing. XML URI: tools/DocTest/en.expected.importslashdoc/Mono.DocTest/Widget.xml . Line 24, Position 6.
+XmlSchema error: Invalid start element: :altmember XML URI: tools/DocTest/en.expected.importslashdoc/Mono.DocTest/Widget.xml . Line 25, Position 6.
+XmlSchema error: Invalid end element: Docs XML URI: tools/DocTest/en.expected.importslashdoc/Mono.DocTest/Widget.xml . Line 26, Position 5.
+XmlSchema error: Invalid start element: :c XML URI: tools/DocTest/en.expected.importslashdoc/Mono.DocTest.Generic/Extensions.xml . Line 176, Position 12.
+XmlSchema error: Invalid end element: summary XML URI: tools/DocTest/en.expected.importslashdoc/Mono.DocTest.Generic/Extensions.xml . Line 176, Position 50.
+Total validation errors: 8

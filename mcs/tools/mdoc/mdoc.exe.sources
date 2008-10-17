@@ -1,0 +1,9 @@
+../../class/Mono.Options/Mono.Options/Options.cs
+Mono.Documentation/assembler.cs
+Mono.Documentation/mdoc.cs
+Mono.Documentation/monodocer.cs
+Mono.Documentation/monodocs2html.cs
+Mono.Documentation/monodocs2slashdoc.cs
+Mono.Documentation/normalize.cs
+Mono.Documentation/validate.cs
+Mono.Documentation/XhtmlWriter.cs

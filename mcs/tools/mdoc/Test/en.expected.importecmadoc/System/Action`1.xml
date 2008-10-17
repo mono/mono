@@ -1,0 +1,31 @@
+<Type Name="Action&lt;T&gt;" FullName="System.Action&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public delegate void Action&lt;T&gt;(T obj);" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="obj" Type="T" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <param name="obj">The object on which to perform an action.</param>
+    <summary>
+      <para> Represents the method that performs an action on the specified object.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>This delegate is used by the method <see cref="M:System.Array.ForEach" /><see langword="(T[], Action&lt;T&gt;)" />, and in <see cref="T:System.Collections.Generic.List&lt;T&gt;" /> to perform an action on each element of the collection.</para>
+      </block>
+    </remarks>
+  </Docs>
+</Type>
