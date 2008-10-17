@@ -11002,6 +11002,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-420.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Test(System.Object, System.Object, System.Object[])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test(System.Object, System.Object[])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>43</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
