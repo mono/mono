@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<clause number="24.1.2" title="Positional and named parameters">
+  <paragraph>Attribute classes can have positional parameters and named parameters. Each public instance constructor for an attribute class defines a valid sequence of positional parameters for that attribute class. Each  non-static public read-write field and property for an attribute class defines a named parameter for the attribute class. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+[AttributeUsage(AttributeTargets.Class)]  
+public class HelpAttribute: Attribute  
+{  
+   public HelpAttribute(string url) {  // url is a positional parameter  
+      ...  
+   }  
+   public string Topic {  // Topic is a named parameter  
+      get {...}  
+      set {...}  
+   }  
+   public string Url { get {...} }  
+}  
+]]></code_example>defines an attribute class named HelpAttribute that has one positional parameter (string url) and one named parameter (string Topic). Although it is non-static and public, the property Url does not define a named parameter, since it is not read-write. </example>
+  </paragraph>
+  <paragraph>
+    <example>This attribute class might be used as follows: <code_example><![CDATA[
+[Help("http://www.mycompany.com/.../Class1.htm")]  
+class Class1 {  
+}  
+[Help("http://www.mycompany.com/.../Misc.htm", Topic ="Class2")]  
+class Class2 {  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

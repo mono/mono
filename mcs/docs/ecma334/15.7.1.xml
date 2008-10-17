@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<clause number="15.7.1" title="The if statement">
+  <paragraph>The if statement selects a statement for execution based on the value of a boolean expression. <grammar_production><name><non_terminal where="15.7.1">if-statement</non_terminal></name> : <rhs><keyword>if</keyword><terminal>(</terminal><non_terminal where="15.7.1">boolean-expression</non_terminal><terminal>)</terminal><non_terminal where="15">embedded-statement</non_terminal></rhs><rhs><keyword>if</keyword><terminal>(</terminal><non_terminal where="15.7.1">boolean-expression</non_terminal><terminal>)</terminal><non_terminal where="15">embedded-statement</non_terminal><keyword>else</keyword><non_terminal where="15">embedded-statement</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="15.7.1">boolean-expression</non_terminal></name> : <rhs><non_terminal where="14.14">expression</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>An else part is associated with the lexically nearest preceding if that is allowed by the syntax. <example>[Example: Thus, an if statement of the form <code_example><![CDATA[
+if (x) if (y) F(); else G();  
+]]></code_example>is equivalent to <code_example><![CDATA[
+if (x) {  
+   if (y) {  
+      F();  
+   }  
+   else {  
+      G();  
+   }  
+}  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>An if statement is executed as follows: <list><list_item> The <non_terminal where="15.7.1">boolean-expression</non_terminal> (<hyperlink>14.16</hyperlink>) is evaluated. </list_item><list_item> If the boolean expression yields true, control is transferred to the first embedded statement. When and if control reaches the end point of that statement, control is transferred to the end point of the if statement. </list_item><list_item> If the boolean expression yields false and if an else part is present, control is transferred to the second embedded statement. When and if control reaches the end point of that statement, control is transferred to the end point of the if statement. </list_item><list_item> If the boolean expression yields false and if an else part is not present, control is transferred to the end point of the if statement. </list_item></list></paragraph>
+  <paragraph>The first embedded statement of an if statement is reachable if the if statement is reachable and the boolean expression does not have the constant value false. </paragraph>
+  <paragraph>The second embedded statement of an if statement, if present, is reachable if the if statement is reachable and the boolean expression does not have the constant value true. </paragraph>
+  <paragraph>The end point of an if statement is reachable if the end point of at least one of its embedded statements is reachable. In addition, the end point of an if statement with no else part is reachable if the if statement is reachable and the boolean expression does not have the constant value true. </paragraph>
+</clause>

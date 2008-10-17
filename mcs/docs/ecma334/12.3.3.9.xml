@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.9" title="For statements">
+  <paragraph>Definite assignment checking for a for statement of the form: <code_example><![CDATA[
+for (for-initializer; for-condition; for-iterator) embedded-statement  
+]]></code_example>is done as if the statement were written: <code_example><![CDATA[
+{  
+   for-initializer;  
+   while (for-condition) {  
+      embedded-statement;  
+      for-iterator;  
+   }  
+}  
+]]></code_example></paragraph>
+  <paragraph>If the <non_terminal where="15.8.3">for-condition</non_terminal> is omitted from the for statement, then evaluation of definite assignment proceeds as if <non_terminal where="15.8.3">for-condition</non_terminal> were replaced with true in the above expansion. </paragraph>
+</clause>

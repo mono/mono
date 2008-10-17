@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<clause number="20.4.5" title="Abstract classes and interfaces">
+  <paragraph>Like a non-abstract class, an abstract class must provide implementations of all members of the interfaces that are listed in the base class list of the class. However, an abstract class is permitted to map interface methods onto abstract methods. <example>[Example: For example <code_example><![CDATA[
+interface IMethods  
+{  
+   void F();  
+   void G();  
+}  
+abstract class C: IMethods  
+{  
+   public abstract void F();  
+   public abstract void G();  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Here, the implementation of IMethods maps F and G onto abstract methods, which must be overridden in non-abstract classes that derive from C. end example]</example>
+  </paragraph>
+  <paragraph>Note that explicit interface member implementations cannot be abstract, but explicit interface member implementations are of course permitted to call abstract methods. <example>[Example: For example <code_example><![CDATA[
+interface IMethods  
+{  
+   void F();  
+   void G();  
+}  
+abstract class C: IMethods  
+{  
+   void IMethods.F() { FF(); }  
+   void IMethods.G() { GG(); }  
+   protected abstract void FF();  
+   protected abstract void GG();  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Here, non-abstract classes that derive from C would be required to override FF and GG, thus providing the actual implementation of IMethods. end example]</example>
+  </paragraph>
+</clause>

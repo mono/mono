@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<clause number="17.5.8" title="Method body">
+  <paragraph>The <non_terminal where="17.5">method-body</non_terminal> of a method declaration consists of either a block or a semicolon. </paragraph>
+  <paragraph>Abstract and external method declarations do not provide a method implementation, so their method bodies simply consist of a semicolon. For any other method, the method body is a block (<hyperlink>15.2</hyperlink>) that contains the statements to execute when that method is invoked. </paragraph>
+  <paragraph>When the return type of a method is <keyword>void</keyword>, return statements (<hyperlink>15.9.4</hyperlink>) in that method's body are not permitted to specify an expression. If execution of the method body of a <keyword>void</keyword> method completes normally (that is, control flows off the end of the method body), that method simply returns to its caller. </paragraph>
+  <paragraph>When the return type of a method is not <keyword>void</keyword>, each return statement in that method body must specify an expression of a type that is implicitly convertible to the return type. The endpoint of the method body of a value-returning method must not be reachable. In other words, in a value-returning method, control is not permitted to flow off the end of the method body. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   public int F() {}     // Error, return value required  
+   public int G() {  
+      return 1;  
+   }  
+   public int H(bool b) {  
+      if (b) {  
+         return 1;  
+      }  
+      else {  
+         return 0;  
+      }  
+   }  
+}  
+]]></code_example>the value-returning F method results in a compile-time error because control can flow off the end of the method body. The G and H methods are correct because all possible execution paths end in a return statement that specifies a return value. end example]</example>
+  </paragraph>
+</clause>

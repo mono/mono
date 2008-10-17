@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="12.3.1" title="Initially assigned variables">
+  <paragraph>The following categories of variables are classified as initially assigned: <list><list_item> Static variables. </list_item><list_item> Instance variables of class instances. </list_item><list_item> Instance variables of initially assigned struct variables. </list_item><list_item> Array elements. </list_item><list_item> Value parameters. </list_item><list_item> Reference parameters. </list_item><list_item> Variables declared in a catch clause, a foreach statement, or a using statement. </list_item></list></paragraph>
+</clause>

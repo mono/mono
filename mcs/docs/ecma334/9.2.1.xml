@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="9.2.1" title="Lexical grammar">
+  <paragraph>The lexical grammar of C# is presented in <hyperlink>9.3</hyperlink>, <hyperlink>9.4</hyperlink>, and <hyperlink>9.5</hyperlink>. The terminal symbols of the lexical grammar are the characters of the Unicode character set, and the lexical grammar specifies how characters are combined to form tokens (<hyperlink>9.4</hyperlink>), white space (<hyperlink>9.3.3</hyperlink>), comments (<hyperlink>9.3.2</hyperlink>), and pre-processing directives (<hyperlink>9.5</hyperlink>). </paragraph>
+  <paragraph>Every source file in a C# program must conform to the input production of the lexical grammar (<hyperlink>9.3</hyperlink>). </paragraph>
+</clause>

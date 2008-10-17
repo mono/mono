@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<clause number="17.7.1" title="Field-like events">
+  <paragraph>Within the program text of the class or struct that contains the declaration of an event, certain events can be used like fields. To be used in this way, an event must not be abstract or extern, and must not explicitly include <non_terminal where="17.7">event-accessor-declarations</non_terminal>. Such an event can be used in any context that permits a field. The field contains a delegate (<hyperlink>22</hyperlink>), which refers to the list of event handlers that have been added to the event. If no event handlers have been added, the field contains null. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+public delegate void EventHandler(object sender, EventArgs e);  
+public class Button: Control  
+{  
+   public event EventHandler Click;  
+   protected void OnClick(EventArgs e) {  
+      if (Click != null) Click(this, e);  
+   }  
+   public void Reset() {  
+      Click = null;  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Click is used as a field within the Button class. As the example demonstrates, the field can be examined, modified, and used in delegate invocation expressions. The OnClick method in the Button class &quot;raises&quot; the Click event. The notion of raising an event is precisely equivalent to invoking the delegate represented by the event-thus, there are no special language constructs for raising events. Note that the delegate invocation is preceded by a check that ensures the delegate is non-null. </example>
+  </paragraph>
+  <paragraph>
+    <example>Outside the declaration of the Button class, the Clickmember can only be used on the left-hand side of the += and -= operators, as in <code_example><![CDATA[
+b.Click += new EventHandler(...);  
+]]></code_example>which appends a delegate to the invocation list of the Click event, and <code_example><![CDATA[
+b.Click -= new EventHandler(...);  
+]]></code_example>which removes a delegate from the invocation list of the Click event. end example]</example>
+  </paragraph>
+  <paragraph>When compiling a field-like event, the compiler automatically creates storage to hold the delegate, and creates accessors for the event that add or remove event handlers to the delegate field. In order to be  thread-safe, the addition or removal operations are done while holding the lock (<hyperlink>15.12</hyperlink>) on the containing object for an instance event, or the type object (<hyperlink>14.5.11</hyperlink>) for a static event. </paragraph>
+  <paragraph>
+    <note>[Note: Thus, an instance event declaration of the form: <code_example><![CDATA[
+class X {  
+   public event D Ev;  
+}  
+]]></code_example>could be compiled to something equivalent to: <code_example><![CDATA[
+class X {  
+   private D __Ev;  // field to hold the delegate  
+   public event D Ev {  
+      add {  
+         lock(this) { __Ev = __Ev + value; }  
+      }  
+      remove {  
+         lock(this) { __Ev = __Ev - value; }  
+      }  
+   }  
+}  
+]]></code_example></note>
+  </paragraph>
+  <paragraph>
+    <note>Within the class X, references to Ev are compiled to reference the hidden field __Ev instead. The name &quot;__Ev&quot; is arbitrary; the hidden field could have any name or no name at all. </note>
+  </paragraph>
+  <paragraph>
+    <note>Similarly, a static event declaration of the form: <code_example><![CDATA[
+class X {  
+   public static event D Ev;  
+}  
+]]></code_example>could be compiled to something equivalent to: <code_example><![CDATA[
+class X {  
+   private static D __Ev;  // field to hold the delegate  
+   public static event D Ev {  
+      add {  
+         lock(typeof(X)) { __Ev = __Ev + value; }  
+      }  
+      remove {  
+         lock(typeof(X)) { __Ev = __Ev - value; }  
+      }  
+   }  
+}  
+]]></code_example>end note]</note>
+  </paragraph>
+</clause>

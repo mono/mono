@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="17.2.7.3" title="Member Names Reserved for Indexers">
+  <paragraph>For an indexer (<hyperlink>17.8</hyperlink>) of type T with parameter-list L, the following signatures are reserved: <code_example><![CDATA[
+T get_Item(L);  
+void set_Item(L, T value);  
+]]></code_example></paragraph>
+  <paragraph>Both signatures are reserved, even if the indexer is read-only or write-only. </paragraph>
+</clause>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<clause number="14.6.2" title="Unary minus operator">
+  <paragraph>For an operation of the form -x, unary operator overload resolution (<hyperlink>14.2.3</hyperlink>) is applied to select a specific operator implementation. The operand is converted to the parameter type of the selected operator, and the type of the result is the return type of the operator. The predefined negation operators are: <list><list_item> Integer negation: <code_example><![CDATA[
+int operator -(int x);  
+long operator -(long x);  
+]]></code_example></list_item></list></paragraph>
+  <paragraph>The result is computed by subtracting x from zero. In a checked context, if the value of x is the maximum negative <keyword>int</keyword> or <keyword>long</keyword>, a System.OverflowException is thrown. In an unchecked context, if the value of x is the maximum negative <keyword>int</keyword> or <keyword>long</keyword>, the result is that same value and the overflow is not reported. If the operand of the negation operator is of type <keyword>uint</keyword>, it is converted to type <keyword>long</keyword>, and the type of the result is <keyword>long</keyword>. An exception is the rule that permits the <keyword>int</keyword> value <unicode>8722</unicode>2147483648 (<unicode>8722</unicode>2<super>31</super>) to be written as a <keyword>decimal</keyword> integer literal (<hyperlink>9.4.4.2</hyperlink>). If the operand of the negation operator is of type <keyword>ulong</keyword>, a compile-time error occurs. An exception is the rule that permits the <keyword>long</keyword> value <unicode>8722</unicode>9223372036854775808 (<unicode>8722</unicode>2<super>63</super>) to be written as a <keyword>decimal</keyword> integer literal (<hyperlink>9.4.4.2</hyperlink>). <list><list_item> Floating-point negation: <code_example><![CDATA[
+float operator -(float x);  
+double operator -(double x);  
+]]></code_example></list_item></list></paragraph>
+  <paragraph>The result is the value of x with its sign inverted. If x is NaN, the result is also NaN. <list><list_item> Decimal negation: <code_example><![CDATA[
+decimal operator -(decimal x);  
+]]></code_example></list_item></list></paragraph>
+  <paragraph>The result is computed by subtracting x from zero. Decimal negation is equivalent to using the unary minus operator of type System.Decimal. </paragraph>
+</clause>

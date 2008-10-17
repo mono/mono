@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<clause number="25.2" title="Pointer types">
+  <paragraph>In an unsafe context, a type (<hyperlink>11</hyperlink>) may be a <non_terminal where="25.2">pointer-type</non_terminal> as well as a <non_terminal where="11.1">value-type</non_terminal> or a <non_terminal where="11.2">reference-type</non_terminal>. <grammar_production><name>type</name> : <rhs><non_terminal where="11.1">value-type</non_terminal></rhs><rhs><non_terminal where="11.2">reference-type</non_terminal></rhs></grammar_production><non_terminal where="25.2">pointer-type</non_terminal> A <non_terminal where="25.2">pointer-type</non_terminal> is written as an <non_terminal where="25.2">unmanaged-type</non_terminal> or the keyword <keyword>void</keyword>, followed by a * token: <grammar_production><name><non_terminal where="25.2">pointer-type</non_terminal></name> : <rhs><non_terminal where="25.2">unmanaged-type</non_terminal><terminal>*</terminal></rhs><rhs><keyword>void</keyword><terminal>*</terminal></rhs></grammar_production><grammar_production><name><non_terminal where="25.2">unmanaged-type</non_terminal></name> : <rhs><non_terminal where="11">type</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>The type specified before the * in a pointer type is called the referent type of the pointer type. It represents the type of the variable to which a value of the pointer type points. </paragraph>
+  <paragraph>Unlike references (values of reference types), pointers are not tracked by the garbage collector-the garbage collector has no knowledge of pointers and the data to which they point. For this reason a pointer is not permitted to point to a reference or to a struct that contains references, and the referent type of a pointer must be an <non_terminal where="25.2">unmanaged-type</non_terminal>. </paragraph>
+  <paragraph>An <non_terminal where="25.2">unmanaged-type</non_terminal> is any type that isn't a <non_terminal where="11.2">reference-type</non_terminal> and doesn't contain <non_terminal where="11.2">reference-type</non_terminal> fields at any level of nesting. In other words, an <non_terminal where="25.2">unmanaged-type</non_terminal> is one of the following: <list><list_item><keyword>sbyte</keyword>, <keyword>byte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>int</keyword>, <keyword>uint</keyword>, <keyword>long</keyword>, <keyword>ulong</keyword>, <keyword>char</keyword>, <keyword>float</keyword>, <keyword>double</keyword>, <keyword>decimal</keyword>, or <keyword>bool</keyword>. </list_item><list_item> Any <non_terminal where="11.1">enum-type</non_terminal>. </list_item><list_item> Any <non_terminal where="25.2">pointer-type</non_terminal>. </list_item><list_item> Any user-defined <non_terminal where="11.1">struct-type</non_terminal> that contains fields of <non_terminal where="25.2">unmanaged-type</non_terminal>s only. </list_item></list></paragraph>
+  <paragraph>The intuitive rule for mixing of pointers and references is that referents of references (objects) are permitted to contain pointers, but referents of pointers are not permitted to contain references. </paragraph>
+  <paragraph>
+    <example>[Example: Some examples of pointer types are given in the table below: <table_line>Example Description </table_line>
+<table_line>byte* Pointer to <keyword>byte</keyword> </table_line>
+<table_line>char* Pointer to <keyword>char</keyword> </table_line>
+<table_line>int** Pointer to pointer to <keyword>int</keyword> </table_line>
+<table_line>int*[] Single-dimensional array of pointers to <keyword>int</keyword> </table_line>
+<table_line>void* Pointer to unknown type </table_line>
+end example]</example>
+  </paragraph>
+  <paragraph>For a given implementation, all pointer types must have the same size and representation. </paragraph>
+  <paragraph>
+    <note>[Note: Unlike C and C++, when multiple pointers are declared in the same declaration, in C# the * is written along with the underlying type only, not as a prefix punctuator on each pointer name. For example: <code_example><![CDATA[
+int* pi, pj;  // NOT as int *pi, *pj;  
+]]></code_example>end note]</note>
+  </paragraph>
+  <paragraph>The value of a pointer having type T* represents the address of a variable of type T. The pointer indirection operator * (<hyperlink>25.5.1</hyperlink>) may be used to access this variable. For example, given a variable P of type int*, the expression *P denotes the <keyword>int</keyword> variable found at the address contained in P. </paragraph>
+  <paragraph>Like an object reference, a pointer may be null. Applying the indirection operator to a null pointer results in implementation-defined behavior. A pointer with value null is represented by all-bits-zero. </paragraph>
+  <paragraph>The void* type represents a pointer to an unknown type. Because the referent type is unknown, the indirection operator cannot be applied to a pointer of type void*, nor can any arithmetic be performed on such a pointer. However, a pointer of type void* can be cast to any other pointer type (and vice versa). </paragraph>
+  <paragraph>Pointer types are a separate category of types. Unlike reference types and value types, pointer types do not inherit from object and no conversions exist between pointer types and object. In particular, boxing and unboxing (<hyperlink>11.3</hyperlink>) are not supported for pointers. However, conversions are permitted between different pointer types and between pointer types and the integral types. This is described in <hyperlink>25.4</hyperlink>. </paragraph>
+  <paragraph>A <non_terminal where="25.2">pointer-type</non_terminal> may be used as the type of a volatile field (<hyperlink>17.4.3</hyperlink>). </paragraph>
+  <paragraph>
+    <note>[Note: Although pointers can be passed as ref or out parameters, doing so can cause undefined behavior, since the pointer may well be set to point to a local variable which no longer exists when the called method returns, or the fixed object to which it used to point, is no longer fixed. For example: <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static int value = 20;  
+   
+   unsafe static void F(out int* pi1, ref int* pi2) {  
+      int i = 10;  
+      pi1 = &i;  
+      
+      fixed (int* pj = &value) {  
+         // ...  
+         pi2 = pj;  
+      }  
+   }  
+   
+   static void Main() {  
+      int i = 10;  
+      unsafe {  
+         int* px1;  
+         int* px2 = &i;  
+         
+         F(out px1, ref px2);  
+         Console.WriteLine("*px1 = {0}, *px2 = {1}",  
+         *px1, *px2);  // undefined behavior  
+      }  
+   }  
+}  
+]]></code_example>end note]</note>
+  </paragraph>
+  <paragraph>A method can return a value of some type, and that type can be a pointer. <example>[Example: For example, when given a pointer to a contiguous sequence of ints, that sequence's element count, and some other <keyword>int</keyword> value, the following method returns the address of that value in that sequence, if a match occurs; otherwise it returns null: <code_example><![CDATA[
+unsafe static int* Find(int* pi, int size, int value) {  
+   for (int i = 0; i < size; ++i) {  
+      if (*pi == value) {  
+         return pi;  
+      }  
+      ++pi;  
+   }  
+   return null;  
+}  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>In an unsafe context, several constructs are available for operating on pointers: <list><list_item> The * operator may be used to perform pointer indirection (<hyperlink>25.5.1</hyperlink>). </list_item><list_item> The -&gt; operator may be used to access a member of a struct through a pointer (<hyperlink>25.5.2</hyperlink>). </list_item><list_item> The [] operator may be used to index a pointer (<hyperlink>25.5.3</hyperlink>). </list_item><list_item> The &amp; operator may be used to obtain the address of a variable (<hyperlink>25.5.4</hyperlink>). </list_item><list_item> The ++ and  --operators may be used to increment and decrement pointers (<hyperlink>25.5.5</hyperlink>). </list_item><list_item> The + and  -operators may be used to perform pointer arithmetic (<hyperlink>25.5.6</hyperlink>). </list_item><list_item> The ==, !=, &lt;, &gt;, &lt;=, and =&gt; operators may be used to compare pointers (<hyperlink>25.5.7</hyperlink>). </list_item><list_item> The stackalloc operator may be used to allocate memory from the call stack (<hyperlink>25.7</hyperlink>). </list_item><list_item> The fixed statement may be used to temporarily fix a variable so its address can be obtained (<hyperlink>25.6</hyperlink>). </list_item></list></paragraph>
+</clause>

@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<clause number="8.2" title="Types" informative="true">
+  <paragraph>C# supports two kinds of types: value types and reference types. Value types include simple types (e.g., <keyword>char</keyword>, <keyword>int</keyword>, and <keyword>float</keyword>), enum types, and struct types. Reference types include class types, interface types, delegate types, and array types. </paragraph>
+  <paragraph>Value types differ from reference types in that variables of the value types directly contain their data, whereas variables of the reference types store references to objects. With reference types, it is possible for two variables to reference the same object, and thus possible for operations on one variable to affect the object referenced by the other variable. With value types, the variables each have their own copy of the data, and it is not possible for operations on one to affect the other. </paragraph>
+  <paragraph>The example <code_example><![CDATA[
+using System;  
+class Class1  
+{  
+   public int Value = 0;  
+}  
+class Test  
+{  
+   static void Main() {  
+      int val1 = 0;  
+      int val2 = val1;  
+      val2 = 123;  
+      Class1 ref1 = new Class1();  
+      Class1 ref2 = ref1;  
+      ref2.Value = 123;  
+      Console.WriteLine("Values: {0}, {1}", val1, val2);  
+      Console.WriteLine("Refs: {0}, {1}", ref1.Value, ref2.Value);  
+   }  
+}  
+]]></code_example>shows this difference. The output produced is <code_example><![CDATA[
+Values: 0, 123  
+Refs: 123, 123  
+]]></code_example></paragraph>
+  <paragraph>The assignment to the local variable val1 does not impact the local variable val2 because both local variables are of a value type (the type <keyword>int</keyword>) and each local variable of a value type has its own storage. In contrast, the assignment ref2.Value = 123; affects the object that both ref1 and ref2 reference. </paragraph>
+  <paragraph>The lines <code_example><![CDATA[
+Console.WriteLine("Values: {0}, {1}", val1, val2);  
+Console.WriteLine("Refs: {0}, {1}", ref1.Value, ref2.Value);  
+]]></code_example>deserve further comment, as they demonstrate some of the string formatting behavior of Console.WriteLine, which, in fact, takes a variable number of arguments. The first argument is a string, which may contain numbered placeholders like {0} and {1}. Each placeholder refers to a trailing argument with {0} referring to the second argument, {1} referring to the third argument, and so on. Before the output is sent to the console, each placeholder is replaced with the formatted value of its corresponding argument. </paragraph>
+  <paragraph>Developers can define new value types through enum and struct declarations, and can define new reference types via class, interface, and delegate declarations. The example <code_example><![CDATA[
+using System;  
+public enum Color  
+{  
+   Red, Blue, Green  
+}  
+public struct Point   
+{   
+   public int x, y;   
+}  
+public interface IBase  
+{  
+   void F();  
+}  
+public interface IDerived: IBase  
+{  
+   void G();  
+}  
+public class A  
+{  
+   protected virtual void H() {  
+      Console.WriteLine("A.H");  
+   }  
+}  
+public class B: A, IDerived   
+{  
+   public void F() {  
+      Console.WriteLine("B.F, implementation of IDerived.F");  
+   }  
+   public void G() {  
+      Console.WriteLine("B.G, implementation of IDerived.G");  
+   }  
+   override protected void H() {  
+      Console.WriteLine("B.H, override of A.H");  
+   }  
+}  
+public delegate void EmptyDelegate();  
+]]></code_example>shows an example of each kind of type declaration. Later sections describe type declarations in detail. </paragraph>
+</clause>

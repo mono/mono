@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<clause number="25.6" title="The fixed statement">
+  <paragraph>In an unsafe context, the <non_terminal where="15">embedded-statement</non_terminal> (<hyperlink>15</hyperlink>) production permits an additional construct, the fixed statement, which is used to &quot;fix&quot; a moveable variable such that its address remains constant for the duration of the statement. <grammar_production><name><non_terminal where="15">embedded-statement</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><non_terminal where="25.6">fixed-statement</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="25.6">fixed-statement</non_terminal></name> : <rhs><keyword>fixed</keyword><terminal>(</terminal><non_terminal where="25.2">pointer-type</non_terminal><non_terminal where="25.6">fixed-pointer-declarators</non_terminal><terminal>)</terminal><non_terminal where="15">embedded-statement</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="25.6">fixed-pointer-declarator</non_terminal>s</name> : <rhs><non_terminal where="25.6">fixed-pointer-declarator</non_terminal></rhs><rhs><non_terminal where="25.6">fixed-pointer-declarators</non_terminal><terminal>,</terminal><non_terminal where="25.6">fixed-pointer-declarator</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="25.6">fixed-pointer-declarator</non_terminal></name> : <rhs><non_terminal where="9.4.2">identifier</non_terminal><terminal>=</terminal><non_terminal where="25.6">fixed-pointer-initializer</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="25.6">fixed-pointer-initializer</non_terminal></name> : <rhs><terminal>&amp;</terminal><non_terminal where="12.4">variable-reference</non_terminal></rhs><rhs><non_terminal where="14.14">expression</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>Each <non_terminal where="25.6">fixed-pointer-declarator</non_terminal> declares a local variable of the given <non_terminal where="25.2">pointer-type</non_terminal> and initializes that local variable with the address computed by the corresponding <non_terminal where="25.6">fixed-pointer-initializer</non_terminal>. A local variable declared in a fixed statement is accessible in any <non_terminal where="25.6">fixed-pointer-initializer</non_terminal>s occurring to the right of that variable's declaration, and in the <non_terminal where="15">embedded-statement</non_terminal> of the fixed statement. A local variable declared by a fixed statement is considered read-only. A compile-time error occurs if the embedded statement attempts to modify this local variable (via assignment or the ++ and  --operators) or pass it as a ref or out parameter. </paragraph>
+  <paragraph>A <non_terminal where="25.6">fixed-pointer-initializer</non_terminal> can be one of the following: <list><list_item> The token &quot;&amp;&quot; followed by a <non_terminal where="12.4">variable-reference</non_terminal> (<hyperlink>12.3.3</hyperlink>) to a moveable variable (<hyperlink>25.3</hyperlink>) of an unmanaged type T, provided the type T* is implicitly convertible to the pointer type given in the fixed statement. In this case, the initializer computes the address of the given variable, and the variable is guaranteed to remain at a fixed address for the duration of the fixed statement. </list_item><list_item> An expression of an <non_terminal where="19.1">array-type</non_terminal> with elements of an unmanaged type T, provided the type T* is implicitly convertible to the pointer type given in the fixed statement. In this case, the initializer computes the address of the first element in the array, and the entire array is guaranteed to remain at a fixed address for the duration of the fixed statement. The behavior of the fixed statement is implementation-defined if the array expression is null or if the array has zero elements. </list_item><list_item> An expression of type string, provided the type char* is implicitly convertible to the pointer type given in the fixed statement. In this case, the initializer computes the address of the first character in the string, and the entire string is guaranteed to remain at a fixed address for the duration of the fixed statement. The behavior of the fixed statement is implementation-defined if the string expression is null. </list_item></list></paragraph>
+  <paragraph>For each address computed by a <non_terminal where="25.6">fixed-pointer-initializer</non_terminal> the fixed statement ensures that the variable referenced by the address is not subject to relocation or disposal by the garbage collector for the duration of the fixed statement. For example, if the address computed by a <non_terminal where="25.6">fixed-pointer-initializer</non_terminal> references a field of an object or an element of an array instance, the fixed statement guarantees that the containing object instance is not relocated or disposed of during the lifetime of the statement. </paragraph>
+  <paragraph>It is the programmer's responsibility to ensure that pointers created by fixed statements do not survive beyond execution of those statements. For example, when pointers created by fixed statements are passed to external APIs, it is the programmer's responsibility to ensure that the APIs retain no memory of these pointers. </paragraph>
+  <paragraph>Fixed objects may cause fragmentation of the heap (because they can't be moved). For that reason, objects should be fixed only when absolutely necessary and then only for the shortest amount of time possible. <example>[Example: The example <code_example><![CDATA[
+class Test  
+{  
+   static int x;  
+   int y;  
+   unsafe static void F(int* p) {  
+      *p = 1;  
+   }  
+   static void Main() {  
+      Test t = new Test();  
+      int[] a = new int[10];  
+      unsafe {  
+         fixed (int* p = &x) F(p);  
+         fixed (int* p = &t.y) F(p);  
+         fixed (int* p = &a[0]) F(p);  
+         fixed (int* p = a) F(p);  
+      }  
+   }  
+}  
+]]></code_example>demonstrates several uses of the fixed statement. The first statement fixes and obtains the address of a static field, the second statement fixes and obtains the address of an instance field, and the third statement fixes and obtains the address of an array element. In each case it would have been an error to use the regular &amp; operator since the variables are all classified as moveable variables. </example></paragraph>
+  <paragraph>
+    <example>The third and fourth fixed statements in the example above produce identical results. In general, for an array instance a, specifying &amp;a[0] in a fixed statement is the same as simply specifying a. </example>
+  </paragraph>
+  <paragraph>
+    <example>Here's another example of the fixed statement, this time using string: <code_example><![CDATA[
+class Test  
+{  
+   static string name = "xx";  
+   
+   unsafe static void F(char* p) {  
+      for (int i = 0; p[i] != '\0'; ++i)  
+      Console.WriteLine(p[i]);  
+   }  
+   
+   static void Main() {  
+      unsafe {  
+         fixed (char* p = name) F(p);  
+         fixed (char* p = "xx") F(p);  
+      }  
+   }  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+  <paragraph>In an unsafe context array elements of single-dimensional arrays are stored in increasing index order, starting with index 0 and ending with index Length  -1. For multi-dimensional arrays, array elements are stored such that the indices of the rightmost dimension are increased first, then the next left dimension, and so on to the left. </paragraph>
+  <paragraph>Within a fixed statement that obtains a pointer p to an array instance a, the pointer values ranging from p to p + a.Length  -1 represent addresses of the elements in the array. Likewise, the variables ranging from p[0] to p[a.Length  -1] represent the actual array elements. Given the way in which arrays are stored , we can treat an array of any dimension as though it were linear. <example>[Example: For example. <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      int[,,] a = new int[2,3,4];  
+      unsafe {  
+         fixed (int* p = a) {  
+            for (int i = 0; i < a.Length; ++i)  // treat as linear  
+            p[i] = i;  
+         }  
+      }  
+      
+      for (int i = 0; i < 2; ++i)  
+      for (int j = 0; j < 3; ++j) {  
+         for (int k = 0; k < 4; ++k)  
+         Console.Write("[{0},{1},{2}] = {3,2} ", i, j, k,  
+         a[i,j,k]);  
+         Console.WriteLine();  
+      }  
+   }  
+}  
+]]></code_example>which produces the output: <code_example><![CDATA[
+[0,0,0] =  0 [0,0,1] =  1 [0,0,2] =  2 [0,0,3] =  3  
+[0,1,0] =  4 [0,1,1] =  5 [0,1,2] =  6 [0,1,3] =  7  
+[0,2,0] =  8 [0,2,1] =  9 [0,2,2] = 10 [0,2,3] = 11  
+[1,0,0] = 12 [1,0,1] = 13 [1,0,2] = 14 [1,0,3] = 15  
+[1,1,0] = 16 [1,1,1] = 17 [1,1,2] = 18 [1,1,3] = 19  
+[1,2,0] = 20 [1,2,1] = 21 [1,2,2] = 22 [1,2,3] = 23  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class Test  
+{  
+   unsafe static void Fill(int* p, int count, int value) {  
+      for (; count != 0; count--) *p++ = value;  
+   }  
+   static void Main() {  
+      int[] a = new int[100];  
+      unsafe {  
+         fixed (int* p = a) Fill(p, 100, -1);  
+      }  
+   }  
+}  
+]]></code_example>a fixed statement is used to fix an array so its address can be passed to a method that takes a pointer. end example]</example>
+  </paragraph>
+  <paragraph>A char* value produced by fixing a string instance always points to a null-terminated string. Within a fixed statement that obtains a pointer p to a string instance s, the pointer values ranging from p to p + s.Length  -1 represent addresses of the characters in the string, and the pointer value p + s.Length always points to a null character (the character with value '\0'). </paragraph>
+  <paragraph>Modifying objects of managed type through fixed pointers can result in undefined behavior. <note>[Note: For example, because strings are immutable, it is the programmer's responsibility to ensure that the characters referenced by a pointer to a fixed string are not modified. end note]</note> </paragraph>
+  <paragraph>
+    <note>[Note: The automatic null-termination of strings is particularly convenient when calling external APIs that expect &quot;C-style&quot; strings. Note, however, that a string instance is permitted to contain null characters. If such null characters are present, the string will appear truncated when treated as a null-terminated char*. end note]</note>
+  </paragraph>
+</clause>

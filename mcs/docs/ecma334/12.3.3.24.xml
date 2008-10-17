@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.24" title="|| expressions">
+  <paragraph>For an expression expr of the form expr-first || expr-second: <list><list_item> The definite assignment state of v before expr-first is the same as the definite assignment state of v before expr. </list_item><list_item> The definite assignment state of v before expr-second is definitely assigned if the state of v after expr-first is either definitely assigned or &quot;definitely assigned after false expression&quot;. Otherwise, it is not definitely assigned. </list_item><list_item> The definite assignment statement of v after expr is determined by: </list_item><list><list_item> If the state of v after expr-first is definitely assigned, then the state of v after expr is definitely assigned. </list_item><list_item> Otherwise, if the state of v after expr-second is definitely assigned, and the state of v after expr-first is &quot;definitely assigned after true expression&quot;, then the state of v after expr is definitely assigned. </list_item><list_item> Otherwise, if the state of v after expr-second is definitely assigned or &quot;definitely assigned after false expression&quot;, then the state of v after expr is &quot;definitely assigned after false expression&quot;. </list_item><list_item> Otherwise, if the state of v after expr-first is &quot;definitely assigned after true expression&quot;, and the state of v after expr-second is &quot;definitely assigned after true expression&quot;, then the state of v after expr is &quot;definitely assigned after true expression&quot;. </list_item><list_item> Otherwise, the state of v after expr is not definitely assigned. </list_item></list></list></paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   static void G(int x, int y) {  
+      int i;  
+      if (x >= 0 || (i = y) >= 0) {  
+         // i not definitely assigned  
+      }  
+      else {  
+         // i definitely assigned  
+      }  
+      // i not definitely assigned  
+   }  
+}  
+]]></code_example>the variable i is considered definitely assigned in one of the embedded statements of an if statement but not in the other. In the if statement in method G, the variable i is definitely assigned in the second embedded statement because execution of the expression (i = y) always precedes execution of this embedded statement. In contrast, the variable i is not definitely assigned in the first embedded statement, since x &gt;= 0 might have tested false, resulting in the variable i's being unassigned. end example]</example>
+  </paragraph>
+</clause>

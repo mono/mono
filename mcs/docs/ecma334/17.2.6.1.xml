@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="17.2.6.1" title="Fully qualified name">
+  <paragraph>The fully qualified name (<hyperlink>10.8.1</hyperlink>) for a nested type is S.N where S is the fully qualified name of the type in which type N is declared. </paragraph>
+</clause>

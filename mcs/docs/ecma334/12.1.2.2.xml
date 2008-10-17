@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="12.1.2.2" title="Instance variables in structs">
+  <paragraph>An instance variable of a struct has exactly the same lifetime as the struct variable to which it belongs. In other words, when a variable of a struct type comes into existence or ceases to exist, so too do the instance variables of the struct. </paragraph>
+  <paragraph>The initial assignment state of an instance variable of a struct is the same as that of the containing struct variable. In other words, when a struct variable is considered initially assigned, so too are its instance variables, and when a struct variable is considered initially unassigned, its instance variables are likewise unassigned. </paragraph>
+</clause>

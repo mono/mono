@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<clause number="24.4.3" title="The Obsolete attribute">
+  <paragraph>The attribute Obsolete is used to mark types and members of types that should no longer be used. <code_example><![CDATA[
+using System;  
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |  
+AttributeTargets.Enum | AttributeTargets.Interface |  
+AttributeTargets.Delegate | AttributeTargets.Method |  
+AttributeTargets.Constructor | AttributeTargets.Property |  
+AttributeTargets.Field | AttributeTargets.Event)]  
+public class ObsoleteAttribute: Attribute  
+{  
+   public ObsoleteAttribute() {...}  
+   public ObsoleteAttribute(string message) {...}  
+   public ObsoleteAttribute(string message, bool error) {...}  
+   public string Message { get {...} }  
+   public bool IsError{ get {...} }  
+}  
+]]></code_example></paragraph>
+  <paragraph>If a program uses a type or member that is decorated with the Obsolete attribute, then the compiler shall issue a warning or error in order to alert the developer, so the offending code can be fixed. Specifically, the compiler shall issue a warning if no error parameter is provided, or if the error parameter is provided and has the value false. The compiler shall issue a compile-time error if the error parameter is specified and has the value true. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+[Obsolete("This class is obsolete; use class B instead")]  
+class A  
+{  
+   public void F() {}  
+}  
+class B  
+{  
+   public void F() {}  
+}  
+class Test  
+{  
+   static void Main() {  
+      A a = new A(); // warning  
+      a.F();  
+   }  
+}  
+]]></code_example>the class A is decorated with the Obsolete attribute. Each use of A in Main results in a warning that includes the specified message, &quot;This class is obsolete; use class B instead.&quot; end example]</example>
+    <table_line/>
+  </paragraph>
+</clause>

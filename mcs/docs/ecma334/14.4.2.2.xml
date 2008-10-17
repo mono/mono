@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="14.4.2.2" title="Better function member">
+  <paragraph>Given an argument list A with a set of argument types A1, A2, ..., AN and two applicable function members MP and MQ with parameter types P1, P2, ..., PN and Q1, Q2, ..., QN, MP is defined to be a better function member than MQ if <list><list_item> for each argument, the implicit conversion from AX to PX is not worse than the implicit conversion from AX to QX, and </list_item><list_item> for at least one argument, the conversion from AX to PX is better than the conversion from AX to QX. </list_item></list></paragraph>
+  <paragraph>When performing this evaluation, if MP or MQ is applicable in its expanded form, then PX or QX refers to a parameter in the expanded form of the parameter list. </paragraph>
+</clause>

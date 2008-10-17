@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<clause number="17.10.6" title="Optional instance constructor parameters">
+  <paragraph>
+    <note>[Note: The this(...) form of constructor initializer is commonly used in conjunction with overloading to implement optional instance constructor parameters. In the example <code_example><![CDATA[
+class Text  
+{  
+   public Text(): this(0, 0, null) {}  
+   public Text(int x, int y): this(x, y, null) {}  
+   public Text(int x, int y, string s) {  
+      // Actual constructor implementation  
+   }  
+}  
+]]></code_example>the first two instance constructors merely provide the default values for the missing arguments. Both use a this(...) constructor initializer to invoke the third instance constructor, which actually does the work of initializing the new instance. The effect is that of optional constructor parameters: <code_example><![CDATA[
+Text t1 = new Text();          // Same as Text(0, 0, null)  
+Text t2 = new Text(5, 10);       // Same as Text(5, 10, null)  
+Text t3 = new Text(5, 20, "Hello");  
+]]></code_example>end note]</note>
+  </paragraph>
+</clause>

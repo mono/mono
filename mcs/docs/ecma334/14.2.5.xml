@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="14.2.5" title="Candidate user-defined operators">
+  <paragraph>Given a type T and an operation operator op(A), where op is an overloadable operator and A is an argument list, the set of candidate user-defined operators provided by T for operator op(A) is determined as follows: <list><list_item> For all operator op declarations in T, if at least one operator is applicable (<hyperlink>14.4.2.1</hyperlink>) with respect to the argument list A, then the set of candidate operators consists of all applicable operator op declarations in T. </list_item><list_item> Otherwise, if T is object, the set of candidate operators is empty. </list_item><list_item> Otherwise, the set of candidate operators provided by T is the set of candidate operators provided by the direct base class of T. </list_item></list></paragraph>
+</clause>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="13.1.1" title="Identity conversion">
+  <paragraph>An identity conversion converts from any type to the same type. This conversion exists only such that an entity that already has a required type can be said to be convertible to that type. </paragraph>
+</clause>

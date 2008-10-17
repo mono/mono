@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<clause number="18.3.1" title="Value semantics">
+  <paragraph>Structs are value types (<hyperlink>11.1</hyperlink>) and are said to have value semantics. Classes, on the other hand, are reference types (<hyperlink>11.2</hyperlink>) and are said to have reference semantics. </paragraph>
+  <paragraph>A variable of a struct type directly contains the data of the struct, whereas a variable of a class type contains a reference to the data, the latter known as an object. </paragraph>
+  <paragraph>With classes, it is possible for two variables to reference the same object, and thus possible for operations on one variable to affect the object referenced by the other variable. With structs, the variables each have their own copy of the data, and it is not possible for operations on one to affect the other. Furthermore, because structs are not reference types, it is not possible for values of a struct type to be null. </paragraph>
+  <paragraph>
+    <example>[Example: Given the declaration <code_example><![CDATA[
+struct Point  
+{  
+   public int x, y;  
+   public Point(int x, int y) {  
+      this.x = x;  
+      this.y = y;  
+   }  
+}  
+]]></code_example>the code fragment <code_example><![CDATA[
+Point a = new Point(10, 10);  
+Point b = a;  
+a.x = 100;  
+System.Console.WriteLine(b.x);  
+]]></code_example>outputs the value 10. The assignment of a to b creates a copy of the value, and b is thus unaffected by the assignment to a.x. Had Point instead been declared as a class, the output would be 100 because a and b would reference the same object. end example]</example>
+  </paragraph>
+</clause>

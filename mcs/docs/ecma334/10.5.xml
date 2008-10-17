@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="10.5" title="Member access">
+  <paragraph>Declarations of members allow control over member access. The accessibility of a member is established by the declared accessibility (<hyperlink>10.5.1</hyperlink>) of the member combined with the accessibility of the immediately containing type, if any. </paragraph>
+  <paragraph>When access to a particular member is allowed, the member is said to be accessible. Conversely, when access to a particular member is disallowed, the member is said to be inaccessible. Access to a member is permitted when the textual location in which the access takes place is included in the accessibility domain (<hyperlink>10.5.2</hyperlink>) of the member. </paragraph>
+</clause>

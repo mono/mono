@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="24" title="Attributes">
+  <paragraph>
+    <note>[Note: Much of the C# language enables the programmer to specify declarative information about the entities defined in the program. For example, the accessibility of a method in a class is specified by decorating it with the <non_terminal where="17.5">method-modifier</non_terminal>s public, protected, internal, and private. end note]</note>
+  </paragraph>
+  <paragraph>C# enables programmers to invent new kinds of declarative information, called attributes. Programmers can then attach attributes to various program entities, and retrieve attribute information in a run-time environment. <note>[Note: For instance, a framework might define a HelpAttribute attribute that can be placed on certain program elements (such as classes and methods) to provide a mapping from those program elements to their documentation. end note]</note> </paragraph>
+  <paragraph>Attributes are defined through the declaration of attribute classes (<hyperlink>24.1</hyperlink>), which may have positional and named parameters (<hyperlink>24.1.2</hyperlink>). Attributes are attached to entities in a C# program using attribute specifications (<hyperlink>24.2</hyperlink>), and can be retrieved at run-time as attribute instances (<hyperlink>24.3</hyperlink>). </paragraph>
+</clause>

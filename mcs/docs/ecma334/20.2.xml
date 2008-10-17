@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<clause number="20.2" title="Interface members">
+  <paragraph>The members of an interface are the members inherited from the base interfaces and the members declared by the interface itself. <grammar_production><name><non_terminal where="20.2">interface-member-declaration</non_terminal>s</name> : <rhs><non_terminal where="20.2">interface-member-declaration</non_terminal></rhs><rhs><non_terminal where="20.2">interface-member-declarations</non_terminal><non_terminal where="20.2">interface-member-declaration</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="20.2">interface-member-declaration</non_terminal></name> : <rhs><non_terminal where="20.2.1">interface-method-declaration</non_terminal></rhs><rhs><non_terminal where="20.2.2">interface-property-declaration</non_terminal></rhs><rhs><non_terminal where="20.2.3">interface-event-declaration</non_terminal></rhs><rhs><non_terminal where="20.2.4">interface-indexer-declaration</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>An interface declaration may declare zero or more members. The members of an interface must be methods, properties, events, or indexers. An interface cannot contain constants, fields, operators, instance constructors, destructors, or types, nor can an interface contain static members of any kind. </paragraph>
+  <paragraph>All interface members implicitly have public access. It is a compile-time error for interface member declarations to include any modifiers. In particular, interface members cannot be declared with the modifiers abstract, public, protected, internal, private, virtual, override, or static. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+public delegate void StringListEvent(IStringList sender);  
+public interface IStringList  
+{  
+   void Add(string s);  
+   int Count { get; }  
+   event StringListEvent Changed;  
+   string this[int index] { get; set; }  
+}  
+]]></code_example>declares an interface that contains one each of the possible kinds of members: A method, a property, an event, and an indexer. end example]</example>
+  </paragraph>
+  <paragraph>An <non_terminal where="20.1">interface-declaration</non_terminal> creates a new declaration space (<hyperlink>10.3</hyperlink>), and the <non_terminal where="20.2">interface-member-declaration</non_terminal>s immediately contained by the <non_terminal where="20.1">interface-declaration</non_terminal> introduce new members into this declaration space. The following rules apply to interface-member-declarations: <list><list_item> The name of a method must differ from the names of all properties and events declared in the same interface. In addition, the signature (<hyperlink>10.6</hyperlink>) of a method must differ from the signatures of all other methods declared in the same interface. </list_item><list_item> The name of a property or event must differ from the names of all other members declared in the same interface. </list_item><list_item> The signature of an indexer must differ from the signatures of all other indexers declared in the same interface. </list_item></list></paragraph>
+  <paragraph>The inherited members of an interface are specifically not part of the declaration space of the interface. Thus, an interface is allowed to declare a member with the same name or signature as an inherited member. When this occurs, the derived interface member is said to hide the base interface member. Hiding an inherited member is not considered an error, but it does cause the compiler to issue a warning. To suppress the warning, the declaration of the derived interface member must include a new modifier to indicate that the derived member is intended to hide the base member. This topic is discussed further in <hyperlink>10.7.1.2</hyperlink>. </paragraph>
+  <paragraph>If a new modifier is included in a declaration that doesn't hide an inherited member, a warning is issued to that effect. This warning is suppressed by removing the new modifier. </paragraph>
+</clause>

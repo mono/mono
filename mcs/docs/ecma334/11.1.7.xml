@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="11.1.7" title="The bool type">
+  <paragraph>The <keyword>bool</keyword> type represents boolean logical quantities. The possible values of type <keyword>bool</keyword> are true and false. </paragraph>
+  <paragraph>No standard conversions exist between <keyword>bool</keyword> and other types. In particular, the <keyword>bool</keyword> type is distinct and separate from the integral types, and a <keyword>bool</keyword> value cannot be used in place of an integral value, and vice versa. </paragraph>
+  <paragraph>
+    <note>[Note: In the C and C++ languages, a zero integral or floating-point value, or a null pointer can be converted to the boolean value false, and a non-zero integral or floating-point value, or a non-null pointer can be converted to the boolean value true. In C#, such conversions are accomplished by explicitly comparing an integral or floating-point value to zero, or by explicitly comparing an object reference to null. end note]</note>
+  </paragraph>
+</clause>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="10.2" title="Application termination">
+  <paragraph>Application termination returns control to the execution environment. </paragraph>
+  <paragraph>If the return type of the application's entry point method is <keyword>int</keyword>, the value returned serves as the application's termination status code. The purpose of this code is to allow communication of success or failure to the execution environment. </paragraph>
+  <paragraph>If the return type of the entry point method is <keyword>void</keyword>, reaching the right brace (<symbol>}</symbol>) which terminates that method, or executing a return statement that has no expression, results in a termination status code of 0. </paragraph>
+  <paragraph>Prior to an application's termination, destructors for all of its objects that have not yet been garbage collected are called, unless such cleanup has been suppressed (by a call to the library method GC.SuppressFinalize, for example). </paragraph>
+</clause>

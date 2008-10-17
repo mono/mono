@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="18.1.2" title="Struct interfaces">
+  <paragraph>A struct declaration may include a <non_terminal where="18.1.2">struct-interfaces</non_terminal> specification, in which case the struct is said to implement the given interface types. <grammar_production><name><non_terminal where="18.1.2">struct-interfaces</non_terminal></name> : <rhs><terminal>:</terminal><non_terminal where="17.1.2">interface-type-list</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>Interface implementations are discussed further in <hyperlink>20.4</hyperlink>. </paragraph>
+</clause>

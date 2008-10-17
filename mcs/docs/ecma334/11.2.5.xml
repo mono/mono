@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="11.2.5" title="Array types">
+  <paragraph>An array is a data structure that contains zero or more variables which are accessed through computed indices. The variables contained in an array, also called the elements of the array, are all of the same type, and this type is called the element type of the array. </paragraph>
+  <paragraph>Array types are described in <hyperlink>19</hyperlink>. </paragraph>
+</clause>

@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="11.2.2" title="The object type">
+  <paragraph>The object class type is the ultimate base class of all other types. Every type in C# directly or indirectly derives from the object class type. </paragraph>
+  <paragraph>The keyword object is simply an alias for the predefined class System.Object. </paragraph>
+</clause>

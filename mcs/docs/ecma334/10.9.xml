@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<clause number="10.9" title="Automatic memory management">
+  <paragraph>C# employs automatic memory management, which frees developers from manually allocating and freeing the memory occupied by objects. Automatic memory management policies are implemented by a garbage collector. The memory management life cycle of an object is as follows: </paragraph>
+  <paragraph>1 When the object is created, memory is allocated for it, the constructor is run, and the object is considered live. </paragraph>
+  <paragraph>2 If the object, or any part of it, cannot be accessed by any possible continuation of execution, other than the running of destructors, the object is considered no longer in use, and it becomes eligible for destruction. <note>[Note: Implementations may choose to analyze code to determine which references to an object may be used in the future. For instance, if a local variable that is in scope is the only existing reference to an object, but that local variable is never referred to in any possible continuation of execution from the current execution point in the procedure, an implementation may (but is not required to) treat the object as no longer in use. end note]</note> </paragraph>
+  <paragraph>3 Once the object is eligible for destruction, at some unspecified later time the destructor (<hyperlink>17.12</hyperlink>) (if any) for the object is run. Unless overridden by explicit calls, the destructor for the object is run once only. </paragraph>
+  <paragraph>4 Once the destructor for an object is run, if that object, or any part of it, cannot be accessed by any possible continuation of execution, including the running of destructors, the object is considered inaccessible and the object becomes eligible for collection. </paragraph>
+  <paragraph>5 Finally, at some time after the object becomes eligible for collection, the garbage collector frees the memory associated with that object. </paragraph>
+  <paragraph>The garbage collector maintains information about object usage, and uses this information to make memory management decisions, such as where in memory to locate a newly created object, when to relocate an object, and when an object is no longer in use or inaccessible. </paragraph>
+  <paragraph>Like other languages that assume the existence of a garbage collector, C# is designed so that the garbage collector may implement a wide range of memory management policies. For instance, C# does not require that destructors be run or that objects be collected as soon as they are eligible, or that destructors be run in any particular order, or on any particular thread. </paragraph>
+  <paragraph>The behavior of the garbage collector can be controlled, to some degree, via static methods on the class System.GC. This class can be used to request a collection to occur, destructors to be run (or not run), and so forth. </paragraph>
+  <paragraph>
+    <example>[Example: Since the garbage collector is allowed wide latitude in deciding when to collect objects and run destructors, a conforming implementation may produce output that differs from that shown by the following code. The program <code_example><![CDATA[
+using System;  
+class A  
+{  
+   ~A() {  
+      Console.WriteLine("Destruct instance of A");  
+   }  
+}  
+class B  
+{  
+   object Ref;  
+   public B(object o) {  
+      Ref = o;  
+   }  
+   ~B() {  
+      Console.WriteLine("Destruct instance of B");  
+   }  
+}  
+class Test  
+{  
+   static void Main() {  
+      B b = new B(new A());  
+      b = null;  
+      GC.Collect();  
+      GC.WaitForPendingFinalizers();  
+   }  
+}  
+]]></code_example>creates an instance of class A and an instance of class B. These objects become eligible for garbage collection when the variable b is assigned the value null, since after this time it is impossible for any  user-written code to access them. The output could be either <code_example><![CDATA[
+Destruct instance of A  
+Destruct instance of B  
+]]></code_example>or <code_example><![CDATA[
+Destruct instance of B  
+Destruct instance of A  
+]]></code_example>because the language imposes no constraints on the order in which objects are garbage collected. </example>
+  </paragraph>
+  <paragraph>
+    <example>In subtle cases, the distinction between &quot;eligible for destruction&quot; and &quot;eligible for collection&quot; can be important. For example, <code_example><![CDATA[
+using System;  
+class A  
+{  
+   ~A() {  
+      Console.WriteLine("Destruct instance of A");  
+   }  
+   public void F() {  
+      Console.WriteLine("A.F");  
+      Test.RefA = this;  
+   }  
+}  
+class B  
+{  
+   public A Ref;  
+   ~B() {  
+      Console.WriteLine("Destruct instance of B");  
+      Ref.F();  
+   }  
+}  
+class Test  
+{  
+   public static A RefA;  
+   public static B RefB;  
+   static void Main() {  
+      RefB = new B();  
+      RefA = new A();  
+      RefB.Ref = RefA;  
+      RefB = null;  
+      RefA = null;  
+      // A and B now eligible for destruction  
+      GC.Collect();  
+      GC.WaitForPendingFinalizers();  
+      // B now eligible for collection, but A is not  
+      if (RefA != null)  
+      Console.WriteLine("RefA is not null");  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>In the above program, if the garbage collector chooses to run the destructor of A before the destructor of B, then the output of this program might be: <code_example><![CDATA[
+Destruct instance of A  
+Destruct instance of B  
+A.F  
+RefA is not null  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Note that although the instance of A was not in use and A's destructor was run, it is still possible for methods of A (in this case, F) to be called from another destructor. Also, note that running of a destructor may cause an object to become usable from the mainline program again. In this case, the running of B's destructor caused an instance of A that was previously not in use to become accessible from the live reference RefA. After the call to WaitForPendingFinalizers, the instance of B is eligible for collection, but the instance of A is not, because of the reference RefA. </example>
+  </paragraph>
+  <paragraph>
+    <example>To avoid confusion and unexpected behavior, it is generally a good idea for destructors to only perform cleanup on data stored in their object's own fields, and not to perform any actions on referenced objects or static fields. end example]</example>
+  </paragraph>
+</clause>

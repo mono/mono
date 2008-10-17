@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.26" title="?: expressions">
+  <paragraph>For an expression expr of the form expr-cond ? expr-true : expr-false: <list><list_item> The definite assignment state of v before expr-cond is the same as the state of v before expr. </list_item><list_item> The definite assignment state of v before expr-true is definitely assigned if and only if the state of v after expr-cond is definitely assigned or &quot;definitely assigned after true expression&quot;. </list_item><list_item> The definite assignment state of v before expr-false is definitely assigned if and only if the state of v after expr-cond is definitely assigned or &quot;definitely assigned after false expression&quot;. </list_item></list></paragraph>
+</clause>

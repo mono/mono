@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<clause number="10.7.1.2" title="Hiding through inheritance">
+  <paragraph>Name hiding through inheritance occurs when classes or structs redeclare names that were inherited from base classes. This type of name hiding takes one of the following forms: <list><list_item> A constant, field, property, event, or type introduced in a class or struct hides all base class members with the same name. </list_item><list_item> A method introduced in a class or struct hides all non-method base class members with the same name, and all base class methods with the same signature (method name and parameter count, modifiers, and types). </list_item><list_item> An indexer introduced in a class or struct hides all base class indexers with the same signature (parameter count and types). </list_item></list></paragraph>
+  <paragraph>The rules governing operator declarations (<hyperlink>17.9</hyperlink>) make it impossible for a derived class to declare an operator with the same signature as an operator in a base class. Thus, operators never hide one another. </paragraph>
+  <paragraph>Contrary to hiding a name from an outer scope, hiding an accessible name from an inherited scope causes a warning to be reported. <example>[Example: In the example <code_example><![CDATA[
+class Base  
+{  
+   public void F() {}  
+}  
+class Derived: Base  
+{  
+   public void F() {}    // Warning, hiding an inherited name  
+}  
+]]></code_example>the declaration of F in Derived causes a warning to be reported. Hiding an inherited name is specifically not an error, since that would preclude separate evolution of base classes. For example, the above situation might have come about because a later version of Base introduced an F method that wasn't present in an earlier version of the class. Had the above situation been an error, then any change made to a base class in a separately versioned class library could potentially cause derived classes to become invalid. end example]</example> </paragraph>
+  <paragraph>The warning caused by hiding an inherited name can be eliminated through use of the new modifier: <example>[Example: <code_example><![CDATA[
+class Base  
+{  
+   public void F() {}  
+}  
+class Derived: Base  
+{  
+   new public void F() {}  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>The new modifier indicates that the F in Derived is &quot;new&quot;, and that it is indeed intended to hide the inherited member. end example]</example>
+  </paragraph>
+  <paragraph>A declaration of a new member hides an inherited member only within the scope of the new member. </paragraph>
+  <paragraph>
+    <example>[Example: <code_example><![CDATA[
+class Base  
+{  
+   public static void F() {}  
+}  
+class Derived: Base  
+{  
+   new private static void F() {}  // Hides Base.F in Derived only  
+}  
+class MoreDerived: Derived  
+{  
+   static void G() { F(); }      // Invokes Base.F  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>In the example above, the declaration of F in Derived hides the F that was inherited from Base, but since the new F in Derived has private access, its scope does not extend to MoreDerived. Thus, the call F() in MoreDerived.G is valid and will invoke Base.F. end example]</example>
+  </paragraph>
+</clause>

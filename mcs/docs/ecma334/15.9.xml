@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<clause number="15.9" title="Jump statements">
+  <paragraph>Jump statements unconditionally transfer control. <grammar_production><name><non_terminal where="15.9">jump-statement</non_terminal></name> : <rhs><non_terminal where="15.9.1">break-statement</non_terminal></rhs><rhs><non_terminal where="15.9.2">continue-statement</non_terminal></rhs><rhs><non_terminal where="15.9.3">goto-statement</non_terminal></rhs><rhs><non_terminal where="15.9.4">return-statement</non_terminal></rhs><rhs><non_terminal where="15.9.5">throw-statement</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>The location to which a jump statement transfers control is called the target of the jump statement. </paragraph>
+  <paragraph>When a jump statement occurs within a block, and the target of that jump statement is outside that block, the jump statement is said to exit the block. While a jump statement may transfer control out of a block, it can never transfer control into a block. </paragraph>
+  <paragraph>Execution of jump statements is complicated by the presence of intervening try statements. In the absence of such try statements, a jump statement unconditionally transfers control from the jump statement to its target. In the presence of such intervening try statements, execution is more complex. If the jump statement exits one or more try blocks with associated finally blocks, control is initially transferred to the finally block of the innermost try statement. When and if control reaches the end point of a finally block, control is transferred to the finally block of the next enclosing try statement. This process is repeated until the finally blocks of all intervening try statements have been executed. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      while (true) {  
+         try {  
+            try {  
+               Console.WriteLine("Before break");  
+               break;  
+            }  
+            finally {  
+               Console.WriteLine("Innermost finally block");  
+            }  
+         }  
+         finally {  
+            Console.WriteLine("Outermost finally block");  
+         }  
+      }  
+      Console.WriteLine("After break");  
+   }  
+}  
+]]></code_example>the finally blocks associated with two try statements are executed before control is transferred to the target of the jump statement. </example>
+  </paragraph>
+  <paragraph>
+    <example>The output produced is as follows: <code_example><![CDATA[
+Before break  
+Innermost finally block  
+Outermost finally block  
+After break  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

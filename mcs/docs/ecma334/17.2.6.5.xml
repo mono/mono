@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<clause number="17.2.6.5" title="Access to private and protected members of the containing type">
+  <paragraph>A nested type has access to all of the members that are accessible to its containing type, including members of the containing type that have private and protected declared accessibility. <example>[Example: The example <code_example><![CDATA[
+using System;  
+class C   
+{  
+   private static void F() {  
+      Console.WriteLine("C.F");  
+   }  
+   public class Nested   
+   {  
+      public static void G() {  
+         F();  
+      }  
+   }  
+}  
+class Test   
+{  
+   static void Main() {  
+      C.Nested.G();  
+   }  
+}  
+]]></code_example>shows a class C that contains a nested class Nested. Within Nested, themethod G calls the static method F defined in C, and F has private declared accessibility. end example]</example> </paragraph>
+  <paragraph>A nested type also may access protected members defined in a base type of its containing type. <example>[Example: In the example <code_example><![CDATA[
+using System;  
+class Base   
+{  
+   protected void F() {  
+      Console.WriteLine("Base.F");  
+   }  
+}  
+class Derived: Base   
+{  
+   public class Nested   
+   {  
+      public void G() {  
+         Derived d = new Derived();  
+         d.F();    // ok  
+      }  
+   }  
+}  
+class Test   
+{  
+   static void Main() {  
+      Derived.Nested n = new Derived.Nested();  
+      n.G();  
+   }  
+}  
+]]></code_example>the nested class Derived.Nested accesses the protected method F defined in Derived's base class, Base, by calling through an instance of Derived. end example]</example> </paragraph>
+</clause>

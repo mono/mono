@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="12.1.1" title="Static variables">
+  <paragraph>A field declared with the static modifier is called a static variable. A static variable comes into existence before execution of the static constructor (<hyperlink>17.11</hyperlink>) for its containing type, and ceases to exist when the associated application domain ceases to exist.. </paragraph>
+  <paragraph>The initial value of a static variable is the default value (<hyperlink>12.2</hyperlink>) of the variable's type. </paragraph>
+  <paragraph>For the purposes of definite assignment checking, a static variable is considered initially assigned. </paragraph>
+</clause>

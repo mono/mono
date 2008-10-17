@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<clause number="10.6" title="Signatures and overloading">
+  <paragraph>Methods, instance constructors, indexers, and operators are characterized by their signatures: <list><list_item> The signature of a method consists of the name of the method and the type and kind (value, reference, or output) of each of its formal parameters, considered in the order left to right. The signature of a method specifically does not include the return type, nor does it include the params modifier that may be specified for the right-most parameter. </list_item><list_item> The signature of an instance constructor consists of the type and kind (value, reference, or output) of each of its formal parameters, considered in the order left to right. The signature of an instance constructor specifically does not include the params modifier that may be specified for the right-most parameter. </list_item><list_item> The signature of an indexer consists of the type of each of its formal parameters, considered in the order left to right. The signature of an indexer specifically does not include the element type. </list_item><list_item> The signature of an operator consists of the name of the operator and the type of each of its formal parameters, considered in the order left to right. The signature of an operator specifically does not include the result type. </list_item></list></paragraph>
+  <paragraph>Signatures are the enabling mechanism for overloading of members in classes, structs, and interfaces: <list><list_item> Overloading of methods permits a class, struct, or interface to declare multiple methods with the same name, provided their signatures are unique within that class, struct, or interface. </list_item><list_item> Overloading of instance constructors permits a class or struct to declare multiple instance constructors, provided their signatures are unique within that class or struct. </list_item><list_item> Overloading of indexers permits a class, struct, or interface to declare multiple indexers, provided their signatures are unique within that class, struct, or interface. </list_item><list_item> Overloading of operators permits a class or struct to declare multiple operators with the same name, provided their signatures are unique within that class or struct. </list_item></list></paragraph>
+  <paragraph>
+    <example>[Example: The following example shows a set of overloaded method declarations along with their signatures. <code_example><![CDATA[
+interface ITest  
+{  
+   void F();              // F()  
+   void F(int x);      // F(int)  
+   void F(ref int x);     // F(ref int)  
+   void F(out int x);     // F(out int)  
+   void F(int x, int y);      // F(int, int)  
+   int F(string s);      // F(string)  
+   int F(int x);            // F(int)        error   
+   void F(string[] a);     // F(string[])  
+   void F(params string[] a);   // F(string[])   error  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Note that any ref and out parameter modifiers (<hyperlink>17.5.1</hyperlink>) are part of a signature. Thus, F(<keyword>int</keyword>), F(ref <keyword>int</keyword>), and F(out <keyword>int</keyword>) are all unique signatures. Also, note that the return type and the params modifier are not part of a signature, so it is not possible to overload solely based on return type or on the inclusion or exclusion of the params modifier. As such, the declarations of the methods F(<keyword>int</keyword>) and F(params string[]) identified above, result in a compile-time error. end example]</example>
+  </paragraph>
+</clause>

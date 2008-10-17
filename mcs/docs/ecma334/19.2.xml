@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="19.2" title="Array creation">
+  <paragraph>Array instances are created by <non_terminal where="14.5.10.2">array-creation-expression</non_terminal>s (<hyperlink>14.5.10.2</hyperlink>) or by field or local variable declarations that include an <non_terminal where="19.6">array-initializer</non_terminal> (<hyperlink>19.6</hyperlink>). </paragraph>
+  <paragraph>When an array instance is created, the rank and length of each dimension are established and then remain constant for the entire lifetime of the instance. In other words, it is not possible to change the rank of an existing array instance, nor is it possible to resize its dimensions. </paragraph>
+  <paragraph>An array instance is always of an array type. The System.Array type is an abstract type that cannot be instantiated. </paragraph>
+  <paragraph>Elements of arrays created by <non_terminal where="14.5.10.2">array-creation-expression</non_terminal>s are always initialized to their default value (<hyperlink>12.2</hyperlink>). </paragraph>
+</clause>

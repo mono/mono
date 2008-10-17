@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<clause number="17.5.7" title="External methods">
+  <paragraph>When a method declaration includes an extern modifier, the method is said to be an external method. External methods are implemented externally, typically using a language other than C#. Because an external method declaration provides no actual implementation, the <non_terminal where="17.5">method-body</non_terminal> of an external method simply consists of a semicolon. </paragraph>
+  <paragraph>The mechanism by which linkage to an external method is achieved, is implementation-defined. </paragraph>
+  <paragraph>
+    <example>[Example: The following example demonstrates the use of the extern modifier in combination with a DllImport attribute that specifies the name of the external library in which the method is implemented: <code_example><![CDATA[
+using System.Text;  
+using System.Security.Permissions;  
+using System.Runtime.InteropServices;  
+class Path  
+{  
+   [DllImport("kernel32", SetLastError=true)]  
+   static extern bool CreateDirectory(string name, SecurityAttribute sa);  
+   [DllImport("kernel32", SetLastError=true)]  
+   static extern bool RemoveDirectory(string name);  
+   [DllImport("kernel32", SetLastError=true)]  
+   static extern int GetCurrentDirectory(int bufSize, StringBuilder buf);  
+   [DllImport("kernel32", SetLastError=true)]  
+   static extern bool SetCurrentDirectory(string name);  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

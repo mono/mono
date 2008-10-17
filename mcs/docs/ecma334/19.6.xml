@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<clause number="19.6" title="Array initializers">
+  <paragraph>Array initializers may be specified in field declarations (<hyperlink>17.4</hyperlink>), local variable declarations (<hyperlink>15.5.1</hyperlink>), and array creation expressions (<hyperlink>14.5.10.2</hyperlink>): <grammar_production><name><non_terminal where="19.6">array-initializer</non_terminal></name> : <rhs><terminal>{</terminal><non_terminal where="19.6">variable-initializer-list</non_terminal><opt/><terminal>}</terminal></rhs><rhs><terminal>{</terminal><non_terminal where="19.6">variable-initializer-list</non_terminal><terminal>,</terminal><terminal>}</terminal></rhs></grammar_production><grammar_production><name><non_terminal where="19.6">variable-initializer-list</non_terminal></name> : <rhs><non_terminal where="19.6">variable-initializer</non_terminal></rhs><rhs><non_terminal where="19.6">variable-initializer-list</non_terminal><terminal>,</terminal><non_terminal where="19.6">variable-initializer</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="19.6">variable-initializer</non_terminal></name> : <rhs><non_terminal where="14.14">expression</non_terminal></rhs><rhs><non_terminal where="19.6">array-initializer</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>An array initializer consists of a sequence of variable initializers, enclosed by &quot;{&quot;and &quot;}&quot; tokens and separated by &quot;,&quot; tokens. Each variable initializer is an expression or, in the case of a multi-dimensional array, a nested array initializer. </paragraph>
+  <paragraph>The context in which an array initializer is used determines the type of the array being initialized. In an array creation expression, the array type immediately precedes the initializer. In a field or variable declaration, the array type is the type of the field or variable being declared. When an array initializer is used in a field or variable declaration, <example>[Example: such as: <code_example><![CDATA[
+int[] a = {0, 2, 4, 6, 8};  
+]]></code_example>end example]</example> it is simply shorthand for an equivalent array creation expression: <example>[Example: <code_example><![CDATA[
+int[] a = new int[] {0, 2, 4, 6, 8};  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>For a single-dimensional array, the array initializer must consist of a sequence of expressions that are assignment compatible with the element type of the array. The expressions initialize array elements in increasing order, starting with the element at index zero. The number of expressions in the array initializer determines the length of the array instance being created. <example>[Example: For example, the array initializer above creates an int[] instance of length 5 and then initializes the instance with the following values: <code_example><![CDATA[
+a[0] = 0; a[1] = 2; a[2] = 4; a[3] = 6; a[4] = 8;  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>For a multi-dimensional array, the array initializer must have as many levels of nesting as there are dimensions in the array. The outermost nesting level corresponds to the leftmost dimension and the innermost nesting level corresponds to the rightmost dimension. The length of each dimension of the array is determined by the number of elements at the corresponding nesting level in the array initializer. For each nested array initializer, the number of elements must be the same as the other array initializers at the same level. <example>[Example: The example: <code_example><![CDATA[
+int[,] b = {{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}};  
+]]></code_example>creates a two-dimensional array with a length of five for the leftmost dimension and a length of two for the rightmost dimension: <code_example><![CDATA[
+int[,] b = new int[5, 2];  
+]]></code_example>and then initializes the array instance with the following values: <code_example><![CDATA[
+b[0, 0] = 0; b[0, 1] = 1;  
+b[1, 0] = 2; b[1, 1] = 3;  
+b[2, 0] = 4; b[2, 1] = 5;  
+b[3, 0] = 6; b[3, 1] = 7;  
+b[4, 0] = 8; b[4, 1] = 9;  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>When an array creation expression includes both explicit dimension lengths and an array initializer, the lengths must be constant expressions and the number of elements at each nesting level must match the corresponding dimension length. <example>[Example: Here are some examples: <code_example><![CDATA[
+int i = 3;  
+int[] x = new int[3] {0, 1, 2};    // OK  
+int[] y = new int[i] {0, 1, 2};    // Error, i not a constant  
+int[] z = new int[3] {0, 1, 2, 3};  // Error, length/initializer mismatch  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Here, the initializer for y results in a compile-time error because the dimension length expression is not a constant, and the initializer for z results in a compile-time error because the length and the number of elements in the initializer do not agree. end example]</example>
+  </paragraph>
+</clause>

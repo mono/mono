@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<clause number="8.6" title="Statements" informative="true">
+  <paragraph>C# borrows most of its statements directly from C and C++, though there are some noteworthy additions and modifications. The table below lists the kinds of statements that can be used, and provides an example for each. <table_line>Statement Example </table_line>
+<table_line>Statement lists and block </table_line>
+<table_line>statements </table_line>
+<table_line>static <keyword>void</keyword> Main() <symbol>{</symbol> </table_line>
+<table_line>F(); </table_line>
+<table_line>G(); </table_line>
+<table_line><symbol>{</symbol></table_line>
+<table_line>H(); </table_line>
+<table_line>I(); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>Labeled statements and goto </table_line>
+<table_line>statements </table_line>
+<table_line>static <keyword>void</keyword> Main(string[] args) <symbol>{</symbol> </table_line>
+<table_line>if (args.Length == 0) </table_line>
+<table_line>goto done; </table_line>
+<table_line>Console.WriteLine(args.Length); </table_line>
+<table_line/>
+<table_line>done: </table_line>
+<table_line>Console.WriteLine(&quot;Done&quot;); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>Local constant declarations static <keyword>void</keyword> Main() <symbol>{</symbol> </table_line>
+<table_line>const <keyword>float</keyword> pi = 3.14f; </table_line>
+<table_line>const <keyword>int</keyword> r = 123; </table_line>
+<table_line>Console.WriteLine(pi * r * r); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>Local variable declarations static <keyword>void</keyword> Main() <symbol>{</symbol> </table_line>
+<table_line><keyword>int</keyword> a; </table_line>
+<table_line><keyword>int</keyword> b = 2, c = 3; </table_line>
+<table_line>a = 1; </table_line>
+<table_line>Console.WriteLine(a + b + c); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>Expression statements static <keyword>int</keyword> F(<keyword>int</keyword> a, <keyword>int</keyword> b) <symbol>{</symbol> </table_line>
+<table_line>return a + b; </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>static <keyword>void</keyword> Main() <symbol>{</symbol> </table_line>
+<table_line>F(1, 2); // Expression statement </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>if statements static <keyword>void</keyword> Main(string[] args) <symbol>{</symbol> </table_line>
+<table_line>if (args.Length == 0) </table_line>
+<table_line>Console.WriteLine(&quot;No args&quot;); </table_line>
+<table_line>else </table_line>
+<table_line>Console.WriteLine(&quot;Args&quot;); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>switch statements static <keyword>void</keyword> Main(string[] args) <symbol>{</symbol> </table_line>
+<table_line>switch (args.Length) <symbol>{</symbol> </table_line>
+<table_line>case 0: </table_line>
+<table_line>Console.WriteLine(&quot;No args&quot;); </table_line>
+<table_line>break; </table_line>
+<table_line>case 1: </table_line>
+<table_line>Console.WriteLine(&quot;One arg &quot;); </table_line>
+<table_line>break; </table_line>
+<table_line>default: </table_line>
+<table_line><keyword>int</keyword> n = args.Length; </table_line>
+<table_line>Console.WriteLine(&quot;{0} args&quot;, n); </table_line>
+<table_line>break; </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>while statements static <keyword>void</keyword> Main(string[] args) <symbol>{</symbol> </table_line>
+<table_line><keyword>int</keyword> i = 0; </table_line>
+<table_line>while (i &lt; args.Length) <symbol>{</symbol> </table_line>
+<table_line>Console.WriteLine(args[i]); </table_line>
+<table_line>i++; </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>do statements static <keyword>void</keyword> Main() <symbol>{</symbol> </table_line>
+<table_line>string s; </table_line>
+<table_line>do <symbol>{</symbol> s = Console.ReadLine(); <symbol>}</symbol> </table_line>
+<table_line>while (s != &quot;Exit&quot;); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>for statements static <keyword>void</keyword> Main(string[] args) <symbol>{</symbol> </table_line>
+<table_line>for (<keyword>int</keyword> i = 0; i &lt; args.Length; i++) </table_line>
+<table_line>Console.WriteLine(args[i]); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>foreach statements static <keyword>void</keyword> Main(string[] args) <symbol>{</symbol> </table_line>
+<table_line>foreach (string s in args) </table_line>
+<table_line>Console.WriteLine(s); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>break statements static <keyword>void</keyword> Main(string[] args) <symbol>{</symbol> </table_line>
+<table_line><keyword>int</keyword> i = 0; </table_line>
+<table_line>while (true) <symbol>{</symbol> </table_line>
+<table_line>if (i == args.Length) </table_line>
+<table_line>break; </table_line>
+<table_line>Console.WriteLine(args[i++]); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>continue statements static <keyword>void</keyword> Main(string[] args) <symbol>{</symbol> </table_line>
+<table_line><keyword>int</keyword> i = 0; </table_line>
+<table_line>while (true) <symbol>{</symbol> </table_line>
+<table_line>Console.WriteLine(args[i++]); </table_line>
+<table_line>if (i &lt; args.Length) </table_line>
+<table_line>continue; </table_line>
+<table_line>break; </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>return statements static <keyword>int</keyword> F(<keyword>int</keyword> a, <keyword>int</keyword> b) <symbol>{</symbol> </table_line>
+<table_line>return a + b; </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>static <keyword>void</keyword> Main() <symbol>{</symbol> </table_line>
+<table_line>Console.WriteLine(F(1, 2)); </table_line>
+<table_line>return; </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>throw statements and try </table_line>
+<table_line>statements </table_line>
+<table_line>static <keyword>int</keyword> F(<keyword>int</keyword> a, <keyword>int</keyword> b) <symbol>{</symbol> </table_line>
+<table_line>if (b == 0) </table_line>
+<table_line>throw new Exception(&quot;Divide by zero&quot;); </table_line>
+<table_line>return a / b; </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>static <keyword>void</keyword> Main() <symbol>{</symbol> </table_line>
+<table_line>try <symbol>{</symbol> </table_line>
+<table_line>Console.WriteLine(F(5, 0)); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>catch(Exception e) <symbol>{</symbol> </table_line>
+<table_line>Console.WriteLine(&quot;Error&quot;); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>checked and unchecked </table_line>
+<table_line>statements </table_line>
+<table_line>static <keyword>void</keyword> Main() <symbol>{</symbol> </table_line>
+<table_line><keyword>int</keyword> x = Int32.MaxValue; </table_line>
+<table_line>Console.WriteLine(x + 1); // Overflow </table_line>
+<table_line>checked <symbol>{</symbol> </table_line>
+<table_line>Console.WriteLine(x + 1); // Exception </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>unchecked <symbol>{</symbol> </table_line>
+<table_line>Console.WriteLine(x + 1); // Overflow </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line/>
+<table_line>lock statements static <keyword>void</keyword> Main() <symbol>{</symbol> </table_line>
+<table_line>A a = ...; </table_line>
+<table_line>lock(a) <symbol>{</symbol> </table_line>
+<table_line>a.P = a.P + 1; </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line>using statements static <keyword>void</keyword> Main() <symbol>{</symbol> </table_line>
+<table_line>using (Resource r = new Resource()) <symbol>{</symbol> </table_line>
+<table_line>r.F(); </table_line>
+<table_line><symbol>}</symbol></table_line>
+<table_line><symbol>}</symbol></table_line>
+</paragraph>
+</clause>

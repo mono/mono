@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<clause number="17.5.4" title="Override methods">
+  <paragraph>When an instance method declaration includes an override modifier, the method is said to be an override method. An override method overrides an inherited virtual method with the same signature. Whereas a virtual method declaration introduces a new method, an override method declaration specializes an existing inherited virtual method by providing a new implementation of that method. </paragraph>
+  <paragraph>The method overridden by an override declaration is known as the overridden base method. For an override method M declared in a class C, the overridden base method is determined by examining each base class of C, starting with the direct base class of C and continuing with each successive direct base class, until an accessible method with the same signature as M is located. For the purposes of locating the overridden base method, a method is considered accessible if it is public, if it is protected, if it is protected internal, or if it is internal and declared in the same program as C. </paragraph>
+  <paragraph>A compile-time error occurs unless all of the following are true for an override declaration: <list><list_item> An overridden base method can be located as described above. </list_item><list_item> The overridden base method is a virtual, abstract, or override method. In other words, the overridden base method cannot be static or non-virtual. </list_item><list_item> The overridden base method is not a sealed method. </list_item><list_item> The override declaration and the overridden base method have the same declared accessibility. In other words, an override declaration cannot change the accessibility of the virtual method. </list_item></list></paragraph>
+  <paragraph>An override declaration can access the overridden base method using a <non_terminal where="14.5.8">base-access</non_terminal> (<hyperlink>14.5.8</hyperlink>). <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   int x;  
+   public virtual void PrintFields() {  
+      Console.WriteLine("x = {0}", x);  
+   }  
+}  
+class B: A  
+{  
+   int y;  
+   public override void PrintFields() {  
+      base.PrintFields();  
+      Console.WriteLine("y = {0}", y);  
+   }  
+}  
+]]></code_example>the base.PrintFields() invocation in B invokes the PrintFields method declared in A. A  <non_terminal where="14.5.8">base-access</non_terminal> disables the virtual invocation mechanism and simply treats the base method as a non-virtual method. </example></paragraph>
+  <paragraph>
+    <example>Had the invocation in B been written ((A)this).PrintFields(), it would recursively invoke the PrintFields method declared in B, not the one declared in A, since PrintFields is virtual and the  run-time type of ((A)this) is B. end example]</example>
+  </paragraph>
+  <paragraph>Only by including an override modifier can a method override another method. In all other cases, a method with the same signature as an inherited method simply hides the inherited method. <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   public virtual void F() {}  
+}  
+class B: A  
+{  
+   public virtual void F() {}   // Warning, hiding inherited F()  
+}  
+]]></code_example>the F method in B does not include an override modifier and therefore does not override the F method in A. Rather, the F method in B hides the method in A, and a warning is reported because the declaration does not include a new modifier. end example]</example> </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   public virtual void F() {}  
+}  
+class B: A  
+{  
+   new private void F() {}     // Hides A.F within B  
+}  
+class C: B  
+{  
+   public override void F() {}  // Ok, overrides A.F  
+}  
+]]></code_example>the F method in B hides the virtual F method inherited from A. Since the new F in B has private access, its scope only includes the class body of B and does not extend to C. Therefore, the declaration of F in C is permitted to override the F inherited from A. end example]</example>
+  </paragraph>
+</clause>

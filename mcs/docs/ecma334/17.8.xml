@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<clause number="17.8" title="Indexers">
+  <paragraph>An indexer is a member that enables an object to be indexed in the same way as an array. Indexers are declared using indexer-declarations: <grammar_production><name><non_terminal where="17.8">indexer-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><non_terminal where="17.8">indexer-modifiers</non_terminal><opt/><non_terminal where="17.8">indexer-declarator</non_terminal><terminal>{</terminal><non_terminal where="17.6.2">accessor-declarations</non_terminal><terminal>}</terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.8">indexer-modifier</non_terminal>s</name> : <rhs><non_terminal where="17.8">indexer-modifier</non_terminal></rhs><rhs><non_terminal where="17.8">indexer-modifiers</non_terminal><non_terminal where="17.8">indexer-modifier</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.8">indexer-modifier</non_terminal></name> : <rhs><keyword>new</keyword></rhs><rhs><keyword>public</keyword></rhs><rhs><keyword>protected</keyword></rhs><rhs><keyword>internal</keyword></rhs><rhs><keyword>private</keyword></rhs><rhs><keyword>virtual</keyword></rhs><rhs><keyword>sealed</keyword></rhs><rhs><keyword>override</keyword></rhs><rhs><keyword>abstract</keyword></rhs><rhs><keyword>extern</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.8">indexer-declarator</non_terminal></name> : <rhs><non_terminal where="11">type</non_terminal><keyword>this</keyword><terminal>[</terminal><non_terminal where="17.5.1">formal-parameter-list</non_terminal><terminal>]</terminal></rhs><rhs><non_terminal where="11">type</non_terminal><non_terminal where="11.2">interface-type</non_terminal><terminal>.</terminal><keyword>this</keyword><terminal>[</terminal><non_terminal where="17.5.1">formal-parameter-list</non_terminal><terminal>]</terminal></rhs></grammar_production></paragraph>
+  <paragraph>An <non_terminal where="17.8">indexer-declaration</non_terminal> may include a set of attributes (<hyperlink>24</hyperlink>) and a valid combination of the four access modifiers (<hyperlink>17.2.3</hyperlink>), the new (<hyperlink>17.2.2</hyperlink>), virtual (<hyperlink>17.5.3</hyperlink>), override (<hyperlink>17.5.4</hyperlink>), sealed (<hyperlink>17.5.5</hyperlink>), abstract (<hyperlink>17.5.6</hyperlink>), and extern (<hyperlink>17.5.7</hyperlink>) modifiers. </paragraph>
+  <paragraph>Indexer declarations are subject to the same rules as method declarations (<hyperlink>17.5</hyperlink>) with regard to valid combinations of modifiers, with the one exception being that the static modifier is not permitted on an indexer declaration. </paragraph>
+  <paragraph>The modifiers virtual, override, and abstract are mutually exclusive except in one case. The abstract and override modifiers may be used together so that an abstract indexer can override a virtual one. </paragraph>
+  <paragraph>The type of an indexer declaration specifies the element type of the indexer introduced by the declaration. Unless the indexer is an explicit interface member implementation, the type is followed by the keyword this. For an explicit interface member implementation, the type is followed by an <non_terminal where="11.2">interface-type</non_terminal>, a &quot;.&quot;, and the keyword this. Unlike other members, indexers do not have user-defined names. </paragraph>
+  <paragraph>The <non_terminal where="17.5.1">formal-parameter-list</non_terminal> specifies the parameters of the indexer. The formal parameter list of an indexer corresponds to that of a method (<hyperlink>17.5.1</hyperlink>), except that at least one parameter must be specified, and that the ref and out parameter modifiers are not permitted. </paragraph>
+  <paragraph>The type of an indexer and each of the types referenced in the <non_terminal where="17.5.1">formal-parameter-list</non_terminal> must be at least as accessible as the indexer itself (<hyperlink>10.5.4</hyperlink>). </paragraph>
+  <paragraph>The <non_terminal where="17.6.2">accessor-declarations</non_terminal> (<hyperlink>17.6.2</hyperlink>), which must be enclosed in &quot;{&quot; and &quot;}&quot; tokens, declare the accessors of the indexer. The accessors specify the executable statements associated with reading and writing indexer elements. </paragraph>
+  <paragraph>Even though the syntax for accessing an indexer element is the same as that for an array element, an indexer element is not classified as a variable. Thus, it is not possible to pass an indexer element as a ref or out argument. </paragraph>
+  <paragraph>The <non_terminal where="17.5.1">formal-parameter-list</non_terminal> of an indexer defines the signature (<hyperlink>10.6</hyperlink>) of the indexer. Specifically, the signature of an indexer consists of the number and types of its formal parameters. The element type and names of the formal parameters are not part of an indexer's signature. </paragraph>
+  <paragraph>The signature of an indexer must differ from the signatures of all other indexers declared in the same class. </paragraph>
+  <paragraph>Indexers and properties are very similar in concept, but differ in the following ways: <list><list_item> A property is identified by its name, whereas an indexer is identified by its signature. </list_item><list_item> A property is accessed through a <non_terminal where="14.5.2">simple-name</non_terminal> (<hyperlink>14.5.2</hyperlink>) or a <non_terminal where="14.5.4">member-access</non_terminal> (<hyperlink>14.5.4</hyperlink>), whereas an indexer element is accessed through an <non_terminal where="14.5.6">element-access</non_terminal> (<hyperlink>14.5.6.2</hyperlink>). </list_item><list_item> A property can be a static member, whereas an indexer is always an instance member. </list_item><list_item> A get accessor of a property corresponds to a method with no parameters, whereas a get accessor of an indexer corresponds to a method with the same formal parameter list as the indexer. </list_item><list_item> A set accessor of a property corresponds to a method with a single parameter named value, whereas a set accessor of an indexer corresponds to a method with the same formal parameter list as the indexer, plus an additional parameter named value. </list_item><list_item> It is a compile-time error for an indexer accessor to declare a local variable with the same name as an indexer parameter. </list_item><list_item> In an overriding property declaration, the inherited property is accessed using the syntax base.P, where P is the property name. In an overriding indexer declaration, the inherited indexer is accessed using the syntax base[E], where E is a comma-separated list of expressions. </list_item></list></paragraph>
+  <paragraph>Aside from these differences, all rules defined in <hyperlink>17.6.2</hyperlink> and <hyperlink>17.6.3</hyperlink> apply to indexer accessors as well as to property accessors. </paragraph>
+  <paragraph>When an indexer declaration includes an extern modifier, the indexer is said to be an external indexer. Because an external indexer declaration provides no actual implementation, each of its  <non_terminal where="17.6.2">accessor-declarations</non_terminal> consists of a semicolon. </paragraph>
+  <paragraph>
+    <example>[Example: The example below declares a BitArray class that implements an indexer for accessing the individual bits in the bit array. <code_example><![CDATA[
+using System;  
+class BitArray  
+{  
+   int[] bits;  
+   int length;  
+   public BitArray(int length) {  
+      if (length < 0) throw new ArgumentException();  
+      bits = new int[((length - 1) >> 5) + 1];  
+      this.length = length;  
+   }  
+   public int Length {  
+      get { return length; }  
+   }  
+   public bool this[int index] {  
+      get {  
+         if (index < 0 || index >= length) {  
+            throw new IndexOutOfRangeException();  
+         }  
+         return (bits[index >> 5] & 1 << index) != 0;  
+      }  
+      set {  
+         if (index < 0 || index >= length) {  
+            throw new IndexOutOfRangeException();  
+         }  
+         if (value) {  
+            bits[index >> 5] |= 1 << index;  
+         }  
+         else {  
+            bits[index >> 5] &= ~(1 << index);  
+         }  
+      }  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>An instance of the BitArray class consumes substantially less memory than a corresponding bool[] (since each value of the former occupies only one bit instead of the latter's one <keyword>byte</keyword>), but it permits the same operations as a bool[]. </example>
+  </paragraph>
+  <paragraph>
+    <example>The following CountPrimes class uses a BitArray and the classical &quot;sieve&quot; algorithm to compute the number of primes between 1 and a given maximum: <code_example><![CDATA[
+class CountPrimes  
+{  
+   static int Count(int max) {  
+      BitArray flags = new BitArray(max + 1);  
+      int count = 1;  
+      for (int i = 2; i <= max; i++) {  
+         if (!flags[i]) {  
+            for (int j = i * 2; j <= max; j += i) flags[j] = true;  
+            count++;  
+         }  
+      }  
+      return count;  
+   }  
+   static void Main(string[] args) {  
+      int max = int.Parse(args[0]);  
+      int count = Count(max);  
+      Console.WriteLine("Found {0} primes between 1 and {1}", count,  
+      max);  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Note that the syntax for accessing elements of the BitArray is precisely the same as for a bool[]. end example]</example>
+  </paragraph>
+  <paragraph>
+    <example>[Example: The following example shows a 26<unicode>215</unicode>10 grid class that has an indexer with two parameters. The first parameter is required to be an  upper-or lowercase letter in the range A-Z, and the second is required to be an integer in the range 0-9. <code_example><![CDATA[
+using System;  
+class Grid  
+{  
+   const int NumRows = 26;  
+   const int NumCols = 10;  
+   int[,] cells = new int[NumRows, NumCols];  
+   
+   public int this[char c, int colm]  
+   {  
+      get {  
+         c = Char.ToUpper(c);  
+         if (c < 'A' || c > 'Z') {  
+            throw new ArgumentException();  
+         }  
+         if (colm < 0 || colm >= NumCols) {  
+            throw new IndexOutOfRangeException();  
+         }  
+         return cells[c - 'A', colm];  
+      }  
+      set {  
+         c = Char.ToUpper(c);  
+         if (c < 'A' || c > 'Z') {  
+            throw new ArgumentException();  
+         }  
+         if (colm < 0 || colm >= NumCols) {  
+            throw new IndexOutOfRangeException();  
+         }  
+         cells[c - 'A', colm] = value;  
+      }  
+   }  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

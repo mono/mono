@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<clause number="14.9.8" title="Delegate equality operators">
+  <paragraph>Every delegate type implicitly provides the following predefined comparison operators: : <code_example><![CDATA[
+bool operator ==(System.Delegate x, System.Delegate y);  
+bool operator !=(System.Delegate x, System.Delegate y);  
+]]></code_example></paragraph>
+  <paragraph>Two delegate instances are considered equal as follows: <list><list_item> If either of the delegate instances is null, they are equal if and only if both are null. </list_item><list_item> If either of the delegate instances has an invocation list (<hyperlink>22.1</hyperlink>) containing one entry, they are equal if and only if the other also has an invocation list containing one entry, and either: </list_item><list><list_item> Both refer to the same static method, or </list_item><list_item> Both refer to the same non-static method on the same target object. </list_item></list><list_item> If either of the delegate instances has an invocation list containing two or more entries, those instances are equal if and only if their invocation lists are the same length, and each entry in one's invocation list is equal to the corresponding entry, in order, in the other's invocation list. </list_item></list></paragraph>
+  <paragraph>Note that delegates of different types can be considered equal by the above definition, as <keyword>long</keyword> as they have the same return type and parameter types. </paragraph>
+</clause>

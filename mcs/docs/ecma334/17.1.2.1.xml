@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<clause number="17.1.2.1" title="Base classes">
+  <paragraph>When a <non_terminal where="11.2">class-type</non_terminal> is included in the <non_terminal where="17.1.2">class-base</non_terminal>, it specifies the direct base class of the class being declared. If a class declaration has no <non_terminal where="17.1.2">class-base</non_terminal>, or if the <non_terminal where="17.1.2">class-base</non_terminal> lists only interface types, the direct base class is assumed to be object. A class inherits members from its direct base class, as described in <hyperlink>17.2.1</hyperlink>. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class A {}  
+class B: A {}  
+]]></code_example>class A is said to be the direct base class of B, and B is said to be derived from A. Since A does not explicitly specify a direct base class, its direct base class is implicitly object. end example]</example>
+  </paragraph>
+  <paragraph>The direct base class of a class type must be at least as accessible as the class type itself (<hyperlink>10.5.4</hyperlink>). For example, it is a compile-time error for a public class to derive from a private or internal class. </paragraph>
+  <paragraph>The direct base class of a class type must not be any of the following types: System.Array, System.Delegate, System.Enum, or System.ValueType. </paragraph>
+  <paragraph>The base classes of a class are the direct base class and its base classes. In other words, the set of base classes is the transitive closure of the direct base class relationship. <note>[Note: Referring to the example above, the base classes of B are A and object. end note]</note> </paragraph>
+  <paragraph>Except for class object, every class has exactly one direct base class. The object class has no direct base class and is the ultimate base class of all other classes. </paragraph>
+  <paragraph>When a class B derives from a class A, it is a compile-time error for A to depend on B. A class directly depends on its direct base class (if any) and directly depends on the class within which it is immediately nested (if any). Given this definition, the complete set of classes upon which a class depends is the transitive closure of the directly depends on relationship. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+class A: B {}  
+class B: C {}  
+class C: A {}  
+]]></code_example>is in error because the classes circularly depend on themselves. Likewise, the example <code_example><![CDATA[
+class A: B.C {}  
+class B: A  
+{  
+   public class C {}  
+}  
+]]></code_example>results in a compile-time error because A depends on B.C (its direct base class), which depends on B (its immediately enclosing class), which circularly depends on A. end example]</example>
+  </paragraph>
+  <paragraph>Note that a class does not depend on the classes that are nested within it. <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   class B: A {}  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>B depends on A (because A is both its direct base class and its immediately enclosing class), but A does not depend on B (since B is neither a base class nor an enclosing class of A). Thus, the example is valid. end example]</example>
+  </paragraph>
+  <paragraph>It is not possible to derive from a sealed class. <example>[Example: In the example <code_example><![CDATA[
+sealed class A {}  
+class B: A {}      // Error, cannot derive from a sealed class  
+]]></code_example>class B results in a compile-time error because it attempts to derive from the sealed class A. end example]</example> </paragraph>
+</clause>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.3" title="Expression statements">
+  <paragraph>For an expression statement stmt that consists of the expression expr: <list><list_item> v has the same definite assignment state at the beginning of expr as at the beginning of stmt. </list_item><list_item> If v if definitely assigned at the end of expr, it is definitely assigned at the end point of stmt; otherwise; it is not definitely assigned at the end point of stmt. </list_item></list></paragraph>
+</clause>

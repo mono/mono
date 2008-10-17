@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<clause number="9.5.3" title="Declaration directives">
+  <paragraph>The declaration directives are used to define or undefine conditional compilation symbols. <grammar_production><name><non_terminal where="9.5.3">pp-declaration</non_terminal></name> :: <rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>#</terminal><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>define</terminal><non_terminal where="9.3.3">whitespace</non_terminal><non_terminal where="9.5.1">conditional-symbol</non_terminal><non_terminal where="9.5.3">pp-new-line</non_terminal></rhs><rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>#</terminal><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>undef</terminal><non_terminal where="9.3.3">whitespace</non_terminal><non_terminal where="9.5.1">conditional-symbol</non_terminal><non_terminal where="9.5.3">pp-new-line</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.3">pp-new-line</non_terminal></name> :: <rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><non_terminal where="9.3.2">single-line-comment</non_terminal><opt/><non_terminal where="9.3.1">new-line</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>The processing of a <symbol>#define</symbol> directive causes the given conditional compilation symbol to become defined, starting with the source line that follows the directive. Likewise, the processing of an <symbol>#undef</symbol> directive causes the given conditional compilation symbol to become undefined, starting with the source line that follows the directive. </paragraph>
+  <paragraph>Any <symbol>#define</symbol> and <symbol>#undef</symbol> directives in a source file must occur before the first token (<hyperlink>9.4</hyperlink>) in the source file; otherwise a compile-time error occurs. In intuitive terms, <symbol>#define</symbol> and <symbol>#undef</symbol> directives must precede any &quot;real code&quot; in the source file. </paragraph>
+  <paragraph>
+    <example>[Example: The example: <code_example><![CDATA[
+#define Enterprise  
+#if Professional || Enterprise  
+#define Advanced  
+#endif  
+namespace Megacorp.Data  
+{  
+   #if Advanced  
+   class PivotTable {...}  
+   #endif  
+}  
+]]></code_example>is valid because the <symbol>#define</symbol> directives precede the first token (the namespace keyword) in the source file. end example]</example>
+  </paragraph>
+  <paragraph>
+    <example>[Example: The following example results in a compile-time error because a <symbol>#define</symbol> follows real code: <code_example><![CDATA[
+#define A  
+namespace N  
+{  
+   #define B  
+   #if B  
+   class Class1 {}  
+   #endif  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+  <paragraph>A <symbol>#define</symbol> may define a conditional compilation symbol that is already defined, without there being any intervening <symbol>#undef</symbol> for that symbol. <example>[Example: The example below defines a conditional compilation symbol A and then defines it again. <code_example><![CDATA[
+#define A  
+#define A  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>For compilers that allow conditional compilation symbols to be defined as compilation options, an alternative way for such redefinition to occur is to define the symbol as a compiler option as well as in the source. end example]</example>
+  </paragraph>
+  <paragraph>A <symbol>#undef</symbol> may &quot;undefine&quot; a conditional compilation symbol that is not defined. <example>[Example: The example below defines a conditional compilation symbol A and then undefines it twice; although the second <symbol>#undef</symbol> has no effect, it is still valid. <code_example><![CDATA[
+#define A  
+#undef A  
+#undef A  
+]]></code_example>end example]</example> </paragraph>
+</clause>

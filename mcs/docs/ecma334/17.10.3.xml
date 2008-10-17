@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<clause number="17.10.3" title="Constructor execution">
+  <paragraph>Variable initializers are transformed into assignment statements, and these assignment statements are executed before the invocation of the base class instance constructor. This ordering ensures that all instance fields are initialized by their variable initializers before any statements that have access to that instance are executed. <example>[Example: For example: <code_example><![CDATA[
+using System;  
+class A  
+{  
+   public A() {  
+      PrintFields();  
+   }  
+   public virtual void PrintFields() {}  
+}  
+class B: A  
+{  
+   int x = 1;  
+   int y;  
+   public B() {  
+      y = -1;  
+   }  
+   public override void PrintFields() {  
+      Console.WriteLine("x = {0}, y = {1}", x, y);  
+   }  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>When new B() is used to create an instance of B, the following output is produced: <code_example><![CDATA[
+x = 1, y = 0  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>The value of x is 1 because the variable initializer is executed before the base class instance constructor is invoked. However, the value of y is 0 (the default value of an <keyword>int</keyword>) because the assignment to y is not executed until after the base class constructor returns. </example>
+  </paragraph>
+  <paragraph>
+    <example>It is useful to think of instance variable initializers and constructor initializers as statements that are automatically inserted before the <non_terminal where="17.10">constructor-body</non_terminal>. The example <code_example><![CDATA[
+using System;  
+using System.Collections;  
+class A  
+{  
+   int x = 1, y = -1, count;  
+   public A() {  
+      count = 0;  
+   }  
+   public A(int n) {  
+      count = n;  
+   }  
+}  
+class B: A  
+{  
+   double sqrt2 = Math.Sqrt(2.0);  
+   ArrayList items = new ArrayList(100);  
+   int max;  
+   public B(): this(100) {  
+      items.Add("default");  
+   }  
+   public B(int n): base(n - 1) {  
+      max = n;  
+   }  
+}  
+]]></code_example>contains several variable initializers; it also contains constructor initializers of both forms (base and this). The example corresponds to the code shown below, where each comment indicates an automatically inserted statement (the syntax used for the automatically inserted constructor invocations isn't valid, but merely serves to illustrate the mechanism). <code_example><![CDATA[
+using System.Collections;  
+class A  
+{  
+   int x, y, count;  
+   public A() {  
+      x = 1;         // Variable initializer  
+      y = -1;         // Variable initializer  
+      object();        // Invoke object() constructor  
+      count = 0;  
+   }  
+   public A(int n) {  
+      x = 1;         // Variable initializer  
+      y = -1;         // Variable initializer  
+      object();        // Invoke object() constructor  
+      count = n;  
+   }  
+}  
+class B: A  
+{  
+   double sqrt2;  
+   ArrayList items;  
+   int max;  
+   public B(): this(100) {  
+      B(100);         // Invoke B(int) constructor  
+      items.Add("default");  
+   }  
+   public B(int n): base(n - 1) {  
+      sqrt2 = Math.Sqrt(2.0);   // Variable initializer  
+      items = new ArrayList(100);  // Variable initializer  
+      A(n - 1);        // Invoke A(int) constructor  
+      max = n;  
+   }  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

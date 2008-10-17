@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="18.3.9" title="Destructors">
+  <paragraph>A struct is not permitted to declare a destructor. </paragraph>
+</clause>

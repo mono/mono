@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<clause number="8.7.11" title="Inheritance" informative="true">
+  <paragraph>Classes support single inheritance, and the type object is the ultimate base class for all classes. </paragraph>
+  <paragraph>The classes shown in earlier examples all implicitly derive from object. The example <code_example><![CDATA[
+using System;  
+class A  
+{  
+   public void F() { Console.WriteLine("A.F"); }  
+}  
+]]></code_example>shows a class A that implicitly derives from object. The example <code_example><![CDATA[
+class B: A  
+{  
+   public void G() { Console.WriteLine("B.G"); }  
+}  
+class Test  
+{  
+   static void Main() {  
+      B b = new B();  
+      b.F();    // Inherited from A  
+      b.G();      // Introduced in B  
+      
+      A a = b;     // Treat a B as an A  
+      a.F();  
+   }  
+}  
+]]></code_example>shows a class B that derives from A. The class B inherits A's F method, and introduces a G method of its own. </paragraph>
+  <paragraph>Methods, properties, and indexers can be virtual, which means that their implementation can be overridden in derived classes. The example <code_example><![CDATA[
+using System;  
+class A  
+{  
+   public virtual void F() { Console.WriteLine("A.F"); }  
+}  
+class B: A  
+{  
+   public override void F() {   
+      base.F();  
+      Console.WriteLine("B.F");   
+   }  
+}  
+class Test  
+{  
+   static void Main() {  
+      B b = new B();  
+      b.F();  
+      A a = b;   
+      a.F();  
+   }  
+}   
+]]></code_example>shows a class A with a virtual method F, and a class B that overrides F. The overriding method in B contains a call, base.F(), which calls the overridden method in A. </paragraph>
+  <paragraph>A class can indicate that it is incomplete, and is intended only as a base class for other classes, by including the modifier abstract. Such a class is called an abstract class. An abstract class can specify abstract members-members that a non-abstract derived class must implement. The example <code_example><![CDATA[
+using System;  
+abstract class A  
+{  
+   public abstract void F();  
+}  
+class B: A  
+{  
+   public override void F() { Console.WriteLine("B.F"); }  
+}  
+class Test  
+{  
+   static void Main() {  
+      B b = new B();  
+      b.F();  
+      A a = b;  
+      a.F();  
+   }  
+}  
+]]></code_example>introduces an abstract method F in the abstract class A. The non-abstract class B provides an implementation for this method. </paragraph>
+</clause>

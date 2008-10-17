@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.7" title="While statements">
+  <paragraph>For a while statement stmt of the form: <code_example><![CDATA[
+while (expr) while-body  
+]]></code_example><list><list_item> v has the same definite assignment state at the beginning of expr as at the beginning of stmt. </list_item><list_item> If v is definitely assigned at the end of expr, then it is definitely assigned on the control flow transfer to while-body and to the end point of stmt. </list_item><list_item> If v has the state &quot;definitely assigned after true expression&quot; at the end of expr, then it is definitely assigned on the control flow transfer to while-body, but not definitely assigned at the end-point of stmt. </list_item><list_item> If v has the state &quot;definitely assigned after false expression&quot; at the end of expr, then it is definitely assigned on the control flow transfer to the end point of stmt. </list_item></list></paragraph>
+</clause>

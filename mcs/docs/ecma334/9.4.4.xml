@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="9.4.4" title="Literals">
+  <paragraph>A literal is a source code representation of a value. <grammar_production><name>literal</name> :: <rhs><non_terminal where="9.4.4.1">boolean-literal</non_terminal></rhs><rhs><non_terminal where="9.4.4.2">integer-literal</non_terminal></rhs><rhs><non_terminal where="9.4.4.3">real-literal</non_terminal></rhs><rhs><non_terminal where="9.4.4.4">character-literal</non_terminal></rhs><rhs><non_terminal where="9.4.4.5">string-literal</non_terminal></rhs><rhs><non_terminal where="9.4.4.6">null-literal</non_terminal></rhs></grammar_production></paragraph>
+</clause>

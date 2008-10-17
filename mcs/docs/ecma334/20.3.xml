@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<clause number="20.3" title="Fully qualified interface member names">
+  <paragraph>An interface member is sometimes referred to by its fully qualified name. The fully qualified name of an interface member consists of the name of the interface in which the member is declared, followed by a dot, followed by the name of the member. The fully qualified name of a member references the interface in which the member is declared. <example>[Example: For example, given the declarations <code_example><![CDATA[
+interface IControl  
+{  
+   void Paint();  
+}  
+interface ITextBox: IControl  
+{  
+   void SetText(string text);  
+}  
+]]></code_example>the fully qualified name of Paint is IControl.Paint and the fully qualified name of SetText is ITextBox.SetText. In the example above, it is not possible to refer to Paint as ITextBox.Paint. end example]</example> </paragraph>
+  <paragraph>When an interface is part of a namespace, the fully qualified name of an interface member includes the namespace name. <example>[Example: For example <code_example><![CDATA[
+namespace System  
+{  
+   public interface ICloneable  
+   {  
+      object Clone();  
+   }  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Here, the fully qualified name of the Clone method is System.ICloneable.Clone. end example]</example>
+  </paragraph>
+</clause>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="12.1.5" title="Reference parameters">
+  <paragraph>A parameter declared with a ref modifier is a reference parameter. </paragraph>
+  <paragraph>A reference parameter does not create a new storage location. Instead, a reference parameter represents the same storage location as the variable given as the argument in the function member invocation. Thus, the value of a reference parameter is always the same as the underlying variable. </paragraph>
+  <paragraph>The following definite assignment rules apply to reference parameters. <note>[Note: The rules for output parameters are different, and are described in <hyperlink>12.1.6</hyperlink>. end note]</note> <list><list_item> A variable must be definitely assigned (<hyperlink>12.3</hyperlink>) before it can be passed as a reference parameter in a function member invocation. </list_item><list_item> Within a function member, a reference parameter is considered initially assigned. </list_item></list></paragraph>
+  <paragraph>Within an instance method or instance accessor of a struct type, the this keyword behaves exactly as a reference parameter of the struct type (<hyperlink>14.5.7</hyperlink>). </paragraph>
+</clause>

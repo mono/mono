@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<clause number="8.10" title="Delegates" informative="true">
+  <paragraph>Delegates enable scenarios that some other languages have addressed with function pointers. However, unlike function pointers, delegates are object-oriented and type-safe. </paragraph>
+  <paragraph>A delegate declaration defines a class that is derived from the class System.Delegate. A delegate instance encapsulates one or more methods, each of which is referred to as a callable entity. For instance methods, a callable entity consists of an instance and a method on that instance. For static methods, a callable entity consists of just a method. Given a delegate instance and an appropriate set of arguments, one can invoke all of that delegate instance's methods with that set of arguments. </paragraph>
+  <paragraph>An interesting and useful property of a delegate instance is that it does not know or care about the classes of the methods it encapsulates; all that matters is that those methods be compatible (<hyperlink>22.1</hyperlink>) with the delegate's type. This makes delegates perfectly suited for &quot;anonymous&quot; invocation. This is a powerful capability. </paragraph>
+  <paragraph>There are three steps in defining and using delegates: declaration, instantiation, and invocation. Delegates are declared using delegate declaration syntax. The example <code_example><![CDATA[
+delegate void SimpleDelegate();  
+]]></code_example>declares a delegate named SimpleDelegate that takes no arguments and returns no result. </paragraph>
+  <paragraph>The example <code_example><![CDATA[
+class Test  
+{  
+   static void F() {  
+      System.Console.WriteLine("Test.F");  
+   }  
+   static void Main() {  
+      SimpleDelegate d = new SimpleDelegate(F);  
+      d();  
+   }  
+}  
+]]></code_example>creates a SimpleDelegate instance and then immediately calls it. </paragraph>
+  <paragraph>There is not much point in instantiating a delegate for a method and then immediately calling that method via the delegate, as it would be simpler to call the method directly. Delegates really show their usefulness when their anonymity is used. The example <code_example><![CDATA[
+void MultiCall(SimpleDelegate d, int count) {  
+   for (int i = 0; i < count; i++) {  
+      d();  
+   }  
+}  
+]]></code_example>shows a MultiCall method that repeatedly calls a SimpleDelegate. The MultiCall method doesn't know or care about the type of the target method for the SimpleDelegate, what accessibility that method has, or whether or not that method is static. All that matters is that the target method is compatible (<hyperlink>22.1</hyperlink>) with SimpleDelegate. </paragraph>
+</clause>

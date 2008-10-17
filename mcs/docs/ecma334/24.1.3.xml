@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="24.1.3" title="Attribute parameter types">
+  <paragraph>The types of positional and named parameters for an attribute class are limited to the attribute parameter types, which are: <list><list_item> One of the following types: <keyword>bool</keyword>, <keyword>byte</keyword>, <keyword>char</keyword>, <keyword>double</keyword>, <keyword>float</keyword>, <keyword>int</keyword>, <keyword>long</keyword>, <keyword>short</keyword>, string. </list_item><list_item> The type object. </list_item><list_item> The type System.Type. </list_item><list_item> An enum type, provided it has public accessibility and the types in which it is nested (if any) also have public accessibility. </list_item><list_item> Single-dimensional arrays of the above types. </list_item></list></paragraph>
+</clause>

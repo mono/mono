@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<clause number="9.5.7" title="Line directives">
+  <paragraph>Line directives may be used to alter the line numbers and source file names that are reported by the compiler in output such as warnings and errors. </paragraph>
+  <paragraph>
+    <note>[Note: Line directives are most commonly used in meta-programming tools that generate C# source code from some other text input. end note]</note>
+    <grammar_production><name><non_terminal where="9.5.7">pp-line</non_terminal></name> :: <rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>#</terminal><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>line</terminal><non_terminal where="9.3.3">whitespace</non_terminal><non_terminal where="9.5.7">line-indicator</non_terminal><non_terminal where="9.5.3">pp-new-line</non_terminal></rhs></grammar_production>
+    <grammar_production><name><non_terminal where="9.5.7">line-indicator</non_terminal></name> :: <rhs><non_terminal where="9.4.4.2">decimal-digits</non_terminal><non_terminal where="9.3.3">whitespace</non_terminal><non_terminal where="9.5.7">file-name</non_terminal></rhs><rhs><non_terminal where="9.4.4.2">decimal-digits</non_terminal></rhs><rhs><terminal>default</terminal></rhs></grammar_production>
+    <grammar_production><name><non_terminal where="9.5.7">file-name</non_terminal></name> :: <rhs><terminal>&quot;</terminal><non_terminal where="9.5.7">file-name-characters</non_terminal><terminal>&quot;</terminal></rhs></grammar_production>
+    <grammar_production><name><non_terminal where="9.5.7">file-name-character</non_terminal>s</name> :: <rhs><non_terminal where="9.5.7">file-name-character</non_terminal></rhs><rhs><non_terminal where="9.5.7">file-name-characters</non_terminal><non_terminal where="9.5.7">file-name-character</non_terminal></rhs></grammar_production>
+    <grammar_production><name><non_terminal where="9.5.7">file-name-character</non_terminal></name> :: <rhs>Any character except &quot; (U+0022), and <non_terminal where="9.3.1">new-line</non_terminal> </rhs></grammar_production>
+  </paragraph>
+  <paragraph>When no <symbol>#line</symbol> directives are present, the compiler reports true line numbers and source file names in its output. When processing a <symbol>#line</symbol> directive that includes a <non_terminal where="9.5.7">line-indicator</non_terminal> that is not default, the compiler treats the line after the directive as having the given line number (and file name, if specified). </paragraph>
+  <paragraph>A <symbol>#line</symbol> default directive reverses the effect of all preceding <symbol>#line</symbol> directives. The compiler reports true line information for subsequent lines, precisely as if no <symbol>#line</symbol> directives had been processed. </paragraph>
+  <paragraph>
+    <note>[Note: Note that a <non_terminal where="9.5.7">file-name</non_terminal> differs from a regular string literal in that escape characters are not processed; the '\' character simply designates an ordinary back-slash character within a <non_terminal where="9.5.7">file-name</non_terminal>. end note]</note>
+  </paragraph>
+</clause>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<clause number="8.2.2" title="Conversions" informative="true">
+  <paragraph>The predefined types also have predefined conversions. For instance, conversions exist between the predefined types <keyword>int</keyword> and <keyword>long</keyword>. C# differentiates between two kinds of conversions: implicit conversions and explicit conversions. Implicit conversions are supplied for conversions that can safely be performed without careful scrutiny. For instance, the conversion from <keyword>int</keyword> to <keyword>long</keyword> is an implicit conversion. This conversion always succeeds, and never results in a loss of information. The following example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      int intValue = 123;  
+      long longValue = intValue;  
+      Console.WriteLine("{0}, {1}", intValue, longValue);  
+   }  
+}  
+]]></code_example>implicitly converts an <keyword>int</keyword> to a <keyword>long</keyword>. </paragraph>
+  <paragraph>In contrast, explicit conversions are performed with a cast expression. The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      long longValue = Int64.MaxValue;  
+      int intValue = (int) longValue;  
+      Console.WriteLine("(int) {0} = {1}", longValue, intValue);  
+   }  
+}  
+]]></code_example>uses an explicit conversion to convert a <keyword>long</keyword> to an <keyword>int</keyword>. The output is: <code_example><![CDATA[
+(int) 9223372036854775807 = -1  
+]]></code_example>because an overflow occurs. Cast expressions permit the use of both implicit and explicit conversions. </paragraph>
+</clause>

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<clause number="17.2.7.1" title="Member Names Reserved for Properties">
+  <paragraph>For a property P (<hyperlink>17.6</hyperlink>) of type T, the following signatures are reserved: <code_example><![CDATA[
+T get_P();  
+void set_P(T value);  
+]]></code_example></paragraph>
+  <paragraph>Both signatures are reserved, even if the property is read-only or write-only. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+using System;  
+class A {  
+   public int P {  
+      get { return 123; }  
+   }  
+}  
+class B: A {  
+   new public int get_P() {  
+      return 456;  
+   }  
+   new public void set_P(int value) {  
+   }  
+}  
+class Test  
+{  
+   static void Main() {  
+      B b = new B();  
+      A a = b;  
+      Console.WriteLine(a.P);  
+      Console.WriteLine(b.P);  
+      Console.WriteLine(b.get_P());  
+   }  
+}  
+]]></code_example>a class A defines a read-only property P, thus reserving signatures for get_P and set_P methods. A class B derives from A and hides both of these reserved signatures. The example produces the output: <code_example><![CDATA[
+123  
+123  
+456  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

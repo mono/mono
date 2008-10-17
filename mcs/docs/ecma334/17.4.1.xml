@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<clause number="17.4.1" title="Static and instance fields">
+  <paragraph>When a field declaration includes a static modifier, the fields introduced by the declaration are static fields. When no static modifier is present, the fields introduced by the declaration are instance fields. </paragraph>
+  <paragraph>Static fields and instance fields are two of the several kinds of variables (<hyperlink>12</hyperlink>) supported by C#, and at times they are referred to as static variables and instance variables, respectively. </paragraph>
+  <paragraph>A static field is not part of a specific instance; instead, it identifies exactly one storage location. No matter how many instances of a class are created, there is only ever one copy of a static field for the associated application domain. </paragraph>
+  <paragraph>An instance field belongs to an instance. Specifically, every instance of a class contains a separate set of all the instance fields of that class. </paragraph>
+  <paragraph>When a field is referenced in a <non_terminal where="14.5.4">member-access</non_terminal> (<hyperlink>14.5.4</hyperlink>) of the form E.M, if M is a static field, E must denote a type that has a field M, and if M is an instance field, E must denote an instance of a type that has a field M. </paragraph>
+  <paragraph>The differences between static and instance members are discussed further in <hyperlink>17.2.5</hyperlink>. </paragraph>
+</clause>

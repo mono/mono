@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<clause number="7" title="General description" informative="true">
+  <paragraph>This clause is informative. </paragraph>
+  <paragraph>This ECMA Standard is intended to be used by implementers, academics, and application programmers. As such, it contains a considerable amount of explanatory material that, strictly speaking, is not necessary in a formal language specification. </paragraph>
+  <paragraph>This standard is divided into the following subdivisions: </paragraph>
+  <paragraph>1 Front matter (clauses 1-7); </paragraph>
+  <paragraph>2 Language overview (clause 8); </paragraph>
+  <paragraph>3 The language syntax, constraints, and semantics (clauses 9-25); </paragraph>
+  <paragraph>4 Annexes </paragraph>
+  <paragraph>Examples are provided to illustrate possible forms of the constructions described. References are used to refer to related clauses. Notes are provided to give advice or guidance to implementers or programmers. Annexes provide additional information and summarize the information contained in this ECMA Standard. </paragraph>
+  <paragraph>Clauses 2-5, 9-24, the beginning of 25, and the beginning of D form a normative part of this standard; all of clause 25 with the exception of the beginning is conditionally normative; and Brief history, clauses 1, 6-8, annexes A, B, C, and most of D, notes, examples, and the index are informative. </paragraph>
+  <paragraph>Except for whole clauses or annexes that are identified as being informative, informative text that is contained within normative text is indicated in two ways: </paragraph>
+  <paragraph>1 <example>[Example: The following example... code fragment, possibly with some narrative...end example]</example> </paragraph>
+  <paragraph>2 <note>[Note: narrative... end note]</note> </paragraph>
+  <paragraph>End of informative text. </paragraph>
+</clause>

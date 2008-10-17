@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="10.4.3" title="Enumeration members">
+  <paragraph>The members of an enumeration are the constants declared in the enumeration and the members inherited from class object. </paragraph>
+</clause>

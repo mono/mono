@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<clause number="8.7.2" title="Fields" informative="true">
+  <paragraph>A field is a member that represents a variable associated with an object or class. The example <code_example><![CDATA[
+class Color  
+{  
+   internal ushort redPart;  
+   internal ushort bluePart;  
+   internal ushort greenPart;  
+   public Color(ushort red, ushort blue, ushort green) {  
+      redPart = red;  
+      bluePart = blue;  
+      greenPart = green;  
+   }  
+   public static Color Red = new Color(0xFF, 0, 0);  
+   public static Color Blue = new Color(0, 0xFF, 0);  
+   public static Color Green = new Color(0, 0, 0xFF);  
+   public static Color White = new Color(0xFF, 0xFF, 0xFF);  
+}  
+]]></code_example>shows a Color class that has internal instance fields named redPart, bluePart, and greenPart, and static fields named Red, Blue, Green, and White The use of static fields in this manner is not ideal. The fields are initialized at some point before they are used, but after this initialization there is nothing to stop a client from changing them. Such a modification could cause unpredictable errors in other programs that use Color and assume that the values do not change. Readonly fields can be used to prevent such problems. Assignments to a readonly field can only occur as part of the declaration, or in an instance constructor or static constructor in the same class. A static readonly field can be assigned in a static constructor, and a non-static readonly field can be assigned in an instance constructor. Thus, the Color class can be enhanced by adding the modifier readonly to the static fields: <code_example><![CDATA[
+class Color  
+{  
+   internal ushort redPart;  
+   internal ushort bluePart;  
+   internal ushort greenPart;  
+   public Color(ushort red, ushort blue, ushort green) {  
+      redPart = red;  
+      bluePart = blue;  
+      greenPart = green;  
+   }  
+   public static readonly Color Red = new Color(0xFF, 0, 0);  
+   public static readonly Color Blue = new Color(0, 0xFF, 0);  
+   public static readonly Color Green = new Color(0, 0, 0xFF);  
+   public static readonly Color White = new Color(0xFF, 0xFF, 0xFF);  
+}  
+]]></code_example></paragraph>
+</clause>

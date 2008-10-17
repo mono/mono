@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<clause number="16.1" title="Compilation units">
+  <paragraph>A <non_terminal where="16.1">compilation-unit</non_terminal> defines the overall structure of a source file. A compilation unit consists of zero or more <non_terminal where="16.3">using-directive</non_terminal>s followed by zero or more <non_terminal where="24.2">global-attributes</non_terminal> followed by zero or more  <non_terminal where="16.4">namespace-member-declaration</non_terminal>s. <grammar_production><name><non_terminal where="16.1">compilation-unit</non_terminal></name> : <rhs><non_terminal where="16.3">using-directives</non_terminal><opt/><non_terminal where="24.2">global-attributes</non_terminal><opt/><non_terminal where="16.4">namespace-member-declarations</non_terminal><opt/></rhs></grammar_production></paragraph>
+  <paragraph>A C# program consists of one or more compilation units, each contained in a separate source file. When a C# program is compiled, all of the compilation units are processed together. Thus, compilation units can depend on each other, possibly in a circular fashion. </paragraph>
+  <paragraph>The <non_terminal where="16.3">using-directive</non_terminal>s of a compilation unit affect the <non_terminal where="24.2">global-attributes</non_terminal> and <non_terminal where="16.4">namespace-member-declaration</non_terminal>s of that compilation unit, but have no effect on other compilation units. </paragraph>
+  <paragraph>The <non_terminal where="24.2">global-attributes</non_terminal> (<hyperlink>24</hyperlink>) of a compilation unit permit the specification of attributes for the target assembly. Assemblies act as physical containers for types. </paragraph>
+  <paragraph>The <non_terminal where="16.4">namespace-member-declaration</non_terminal>s of each compilation unit of a program contribute members to a single declaration space called the global namespace. <example>[Example: For example: File A.cs: <code_example><![CDATA[
+class A {}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>File B.cs: <code_example><![CDATA[
+class B {}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>The two compilation units contribute to the single global namespace, in this case declaring two classes with the fully qualified names A and B. Because the two compilation units contribute to the same declaration space, it would have been an error if each contained a declaration of a member with the same name. end example]</example>
+  </paragraph>
+</clause>

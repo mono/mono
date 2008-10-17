@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.12" title="Return statements">
+  <paragraph>For a statement stmt of the form <code_example><![CDATA[
+return expr ;   
+]]></code_example><list><list_item> The definite assignment state of v at the beginning of expr is the same as the definite assignment state of v at the beginning of stmt. </list_item><list_item> If v is an output parameter, then it must be definitely assigned either: </list_item><list><list_item> after expr </list_item><list_item> or at the end of the finally block of a try-finally or try-catch-finally that encloses the return statement. </list_item></list></list></paragraph>
+</clause>

@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<clause number="8.7.3" title="Methods" informative="true">
+  <paragraph>A method is a member that implements a computation or action that can be performed by an object or class. Methods have a (possibly empty) list of formal parameters, a return value (unless the method's <non_terminal where="17.5">return-type</non_terminal> is <keyword>void</keyword>), and are either static or non-static. Static methods are accessed through the class. Non-static methods, which are also called instance methods, are accessed through instances of the class. The example <code_example><![CDATA[
+using System;  
+public class Stack  
+{  
+   public static Stack Clone(Stack s) {...}  
+   public static Stack Flip(Stack s) {...}  
+   public object Pop() {...}  
+   public void Push(object o) {...}  
+   public override string ToString() {...}  
+   ...  
+}  
+class Test  
+{  
+   static void Main() {  
+      Stack s = new Stack();  
+      for (int i = 1; i < 10; i++)  
+      s.Push(i);  
+      Stack flipped = Stack.Flip(s);  
+      Stack cloned = Stack.Clone(s);  
+      Console.WriteLine("Original stack: " + s.ToString());  
+      Console.WriteLine("Flipped stack: " + flipped.ToString());  
+      Console.WriteLine("Cloned stack: " + cloned.ToString());  
+   }  
+}  
+]]></code_example>shows a Stack that has several static methods (Clone and Flip) and several instance methods (Pop, Push, and ToString). </paragraph>
+  <paragraph>Methods can be overloaded, which means that multiple methods may have the same name so long as they have unique signatures. The signature of a method consists of the name of the method and the number, modifiers, and types of its formal parameters. The signature of a method does not include the return type. The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void F() {  
+      Console.WriteLine("F()");  
+   }  
+   static void F(object o) {  
+      Console.WriteLine("F(object)");  
+   }  
+   static void F(int value) {  
+      Console.WriteLine("F(int)");  
+   }  
+   static void F(ref int value) {  
+      Console.WriteLine("F(ref int)");  
+   }  
+   static void F(int a, int b) {  
+      Console.WriteLine("F(int, int)");  
+   }  
+   static void F(int[] values) {  
+      Console.WriteLine("F(int[])");  
+   }  
+   static void Main() {  
+      F();  
+      F(1);  
+      int i = 10;  
+      F(ref i);  
+      F((object)1);  
+      F(1, 2);  
+      F(new int[] {1, 2, 3});  
+   }  
+}  
+]]></code_example>shows a class with a number of methods called F. The output produced is <code_example><![CDATA[
+F()  
+F(int)  
+F(ref int)  
+F(object)  
+F(int, int)  
+F(int[])  
+]]></code_example></paragraph>
+</clause>

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<clause number="18.3.8" title="Constructors">
+  <paragraph>Unlike a class, a struct is not permitted to declare a parameterless instance constructor. Instead, every struct implicitly has a parameterless instance constructor, which always returns the value that results from setting all value type fields to their default value and all reference type fields to null (<hyperlink>11.1.1</hyperlink>). A struct can declare instance constructors having parameters. <example>[Example: For example <code_example><![CDATA[
+struct Point  
+{  
+   int x, y;  
+   public Point(int x, int y) {  
+      this.x = x;  
+      this.y = y;  
+   }  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Given the above declaration, the statements <code_example><![CDATA[
+Point p1 = new Point();  
+Point p2 = new Point(0, 0);  
+]]></code_example>both create a Point with x and y initialized to zero. end example]</example>
+  </paragraph>
+  <paragraph>A struct instance constructor is not permitted to include a constructor initializer of the form base(...). </paragraph>
+  <paragraph>The this variable of a struct instance constructor corresponds to an out parameter of the struct type, and similar to an out parameter, this must be definitely assigned (<hyperlink>12.3</hyperlink>) at every location where the constructor returns. <example>[Example: Consider the instance constructor implementation below: <code_example><![CDATA[
+struct Point  
+{  
+   int x, y;  
+   public int X {  
+      set { x = value; }  
+   }  
+   public int Y {  
+      set { y = value; }  
+   }  
+   public Point(int x, int y) {  
+      X = x;    // error, this is not yet definitely assigned  
+      Y = y;    // error, this is not yet definitely assigned  
+   }  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>No instance member function (including the set accessors for the properties X and Y) can be called until all fields of the struct being constructed have been definitely assigned. Note, however, that if Point were a class instead of a struct, the instance constructor implementation would be permitted. end example]</example>
+  </paragraph>
+</clause>

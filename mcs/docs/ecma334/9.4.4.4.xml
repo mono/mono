@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<clause number="9.4.4.4" title="Character literals">
+  <paragraph>A character literal represents a single character, and usually consists of a character in quotes, as in 'a'. <grammar_production><name><non_terminal where="9.4.4.4">character-literal</non_terminal></name> :: <rhs><terminal>'</terminal><non_terminal where="9.4.4.4">character</non_terminal><terminal>'</terminal></rhs></grammar_production><grammar_production><name>character</name> :: <rhs><non_terminal where="9.4.4.4">single-character</non_terminal></rhs><rhs><non_terminal where="9.4.4.4">simple-escape-sequence</non_terminal></rhs><rhs><non_terminal where="9.4.4.4">hexadecimal-escape-sequence</non_terminal></rhs><rhs><non_terminal where="9.4.1">unicode-escape-sequence</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.4.4.4">single-character</non_terminal></name> :: <rhs>Any character except ' (U+0027), \ (U+005C), and <non_terminal where="9.3.2">new-line-character</non_terminal> </rhs></grammar_production><grammar_production><name><non_terminal where="9.4.4.4">simple-escape-sequence</non_terminal></name> :: one of <rhs><terminal>\'</terminal><terminal>\&quot;</terminal><terminal>\\</terminal><terminal>\0</terminal><terminal>\a</terminal><terminal>\b</terminal><terminal>\f</terminal><terminal>\n</terminal><terminal>\r</terminal><terminal>\t</terminal><terminal>\v</terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.4.4.4">hexadecimal-escape-sequence</non_terminal></name> :: <rhs><terminal>\x</terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><opt/><non_terminal where="9.4.4.2">hex-digit</non_terminal><opt/><non_terminal where="9.4.4.2">hex-digit</non_terminal><opt/></rhs></grammar_production></paragraph>
+  <paragraph>
+    <note>[Note: A character that follows a backslash character (\) in a character must be one of the following characters: ', &quot;, \, 0, a, b, f, n, r, t, u, U, x, v. Otherwise, a compile-time error occurs. end note]</note>
+  </paragraph>
+  <paragraph>A hexadecimal escape sequence represents a single Unicode character, with the value formed by the hexadecimal number following &quot;\x&quot;. </paragraph>
+  <paragraph>If the value represented by a character literal is greater than U+FFFF, a compile-time error occurs. </paragraph>
+  <paragraph>A Unicode character escape sequence (<hyperlink>9.4.1</hyperlink>) in a character literal must be in the range U+0000 to U+FFFF. </paragraph>
+  <paragraph>A simple escape sequence represents a Unicode character encoding, as described in the table below. <table_line>Escape </table_line>
+<table_line>sequence </table_line>
+<table_line>Character </table_line>
+<table_line>name </table_line>
+<table_line>Unicode </table_line>
+<table_line>encoding </table_line>
+<table_line>\' Single quote 0x0027 </table_line>
+<table_line>\&quot; Double quote 0x0022 </table_line>
+<table_line>\\ Backslash 0x005C </table_line>
+<table_line>\0 Null 0x0000 </table_line>
+<table_line>\a Alert 0x0007 </table_line>
+<table_line>\b Backspace 0x0008 </table_line>
+<table_line>\f Form feed 0x000C </table_line>
+<table_line>\n New line 0x000A </table_line>
+<table_line>\r Carriage return 0x000D </table_line>
+<table_line>\t Horizontal tab 0x0009 </table_line>
+<table_line>\v Vertical tab 0x000B </table_line>
+</paragraph>
+  <paragraph>The type of a <non_terminal where="9.4.4.4">character-literal</non_terminal> is <keyword>char</keyword>. </paragraph>
+</clause>

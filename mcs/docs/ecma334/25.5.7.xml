@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<clause number="25.5.7" title="Pointer comparison">
+  <paragraph>In an unsafe context, the ==, !=, &lt;, &gt;, &lt;=, and =&gt; operators (<hyperlink>14.9</hyperlink>) can be applied to values of all pointer types. The pointer comparison operators are: <code_example><![CDATA[
+bool operator ==(void* x, void* y);  
+bool operator !=(void* x, void* y);  
+bool operator <(void* x, void* y);  
+bool operator >(void* x, void* y);  
+bool operator <=(void* x, void* y);  
+bool operator >=(void* x, void* y);  
+]]></code_example></paragraph>
+  <paragraph>Because an implicit conversion exists from any pointer type to the void* type, operands of any pointer type can be compared using these operators. The comparison operators compare the addresses given by the two operands as if they were unsigned integers. </paragraph>
+</clause>

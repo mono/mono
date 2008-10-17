@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<clause number="8.11" title="Enums" informative="true">
+  <paragraph>An enum type declaration defines a type name for a related group of symbolic constants. Enums are used for &quot;multiple choice&quot; scenarios, in which a runtime decision is made from a fixed number of choices that are known at compile-time. </paragraph>
+  <paragraph>The example <code_example><![CDATA[
+enum Color   
+{  
+   Red,  
+   Blue,  
+   Green  
+}  
+class Shape  
+{  
+   public void Fill(Color color) {  
+      switch(color) {  
+         case Color.Red:  
+         ...  
+         break;  
+         case Color.Blue:  
+         ...  
+         break;  
+         case Color.Green:  
+         ...  
+         break;  
+         default:  
+         break;  
+      }  
+   }  
+}  
+]]></code_example>shows a Color enum and a method that uses this enum. The signature of the Fill method makes it clear that the shape can be filled with one of the given colors. </paragraph>
+  <paragraph>The use of enums is superior to the use of integer constants-as is common in languages without  enums-because the use of enums makes the code more readable and self-documenting. The self-documenting nature of the code also makes it possible for the development tool to assist with code writing and other &quot;designer&quot; activities. For example, the use of Color rather than <keyword>int</keyword> for a parameter type enables smart code editors to suggest Color values. </paragraph>
+</clause>

@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<clause number="17.11" title="Static constructors">
+  <paragraph>A static constructor is a member that implements the actions required to initialize a class. Static constructors are declared using static-constructor-declarations: <grammar_production><name><non_terminal where="17.11">static-constructor-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><non_terminal where="17.11">static-constructor-modifiers</non_terminal><non_terminal where="9.4.2">identifier</non_terminal><terminal>(</terminal><terminal>)</terminal><non_terminal where="17.11">static-constructor-body</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.11">static-constructor-modifiers</non_terminal></name> : <rhs><keyword>extern</keyword><opt/><keyword>static</keyword></rhs><rhs><keyword>static</keyword><keyword>extern</keyword><opt/></rhs></grammar_production><grammar_production><name><non_terminal where="17.11">static-constructor-body</non_terminal></name> : <rhs><non_terminal where="15.2">block</non_terminal></rhs><rhs><terminal>;</terminal></rhs></grammar_production></paragraph>
+  <paragraph>A <non_terminal where="17.11">static-constructor-declaration</non_terminal> may include a set of attributes (<hyperlink>24</hyperlink>) and an extern modifier (<hyperlink>17.5.7</hyperlink>). </paragraph>
+  <paragraph>The identifier of a <non_terminal where="17.11">static-constructor-declaration</non_terminal> must name the class in which the static constructor is declared. If any other name is specified, a compile-time error occurs. </paragraph>
+  <paragraph>When a static constructor declaration includes an extern modifier, the static constructor is said to be an external static constructor. Because an external static constructor declaration provides no actual implementation, its <non_terminal where="17.11">static-constructor-body</non_terminal> consists of a semicolon. For all other static constructor declarations, the <non_terminal where="17.11">static-constructor-body</non_terminal> consists of a block, which specifies the statements to execute in order to initialize the class. This corresponds exactly to the <non_terminal where="17.5">method-body</non_terminal> of a static method with a <keyword>void</keyword> return type (<hyperlink>17.5.8</hyperlink>). </paragraph>
+  <paragraph>Static constructors are not inherited, and cannot be called directly. </paragraph>
+  <paragraph>The static constructor for a class executes at most once in a given application domain. The execution of a static constructor is triggered by the first of the following events to occur within an application domain: <list><list_item> An instance of the class is created. </list_item><list_item> Any of the static members of the class are referenced. </list_item></list></paragraph>
+  <paragraph>If a class contains the Main method (<hyperlink>10.1</hyperlink>) in which execution begins, the static constructor for that class executes before the Main method is called. If a class contains any static fields with initializers, those initializers are executed in textual order immediately prior to executing the static constructor. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      A.F();  
+      B.F();  
+   }  
+}  
+class A  
+{  
+   static A() {  
+      Console.WriteLine("Init A");  
+   }  
+   public static void F() {  
+      Console.WriteLine("A.F");  
+   }  
+}  
+class B  
+{  
+   static B() {  
+      Console.WriteLine("Init B");  
+   }  
+   public static void F() {  
+      Console.WriteLine("B.F");  
+   }  
+}  
+]]></code_example>must produce the output: <code_example><![CDATA[
+Init A  
+A.F  
+Init B  
+B.F  
+]]></code_example>because the execution of A's static constructor is triggered by the call to A.F, and the execution of B's static constructor is triggered by the call to B.F. end example]</example>
+  </paragraph>
+  <paragraph>It is possible to construct circular dependencies that allow static fields with variable initializers to be observed in their default value state. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+class A  
+{  
+   public static int X;  
+   static A() { X = B.Y + 1;}  
+}  
+class B  
+{  
+   public static int Y = A.X + 1;  
+   static B() {}  
+   static void Main() {  
+      Console.WriteLine("X = {0}, Y = {1}", A.X, B.Y);  
+   }  
+}  
+]]></code_example>produces the output <code_example><![CDATA[
+X = 1, Y = 2  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>To execute the Main method, the system first runs the initializer for B.Y, prior to class B's static constructor. </example>
+  </paragraph>
+  <paragraph>
+    <example>Y's initializer causes A's static constructor to be run because the value of A.X is referenced. The static constructor of A in turn proceeds to compute the value of X, and in doing so fetches the default value of Y, which is zero. A.X is thus initialized to 1. The process of running A's static field initializers and static constructor then completes, returning to the calculation of the initial value of Y, the result of which becomes 2. end example]</example>
+  </paragraph>
+</clause>

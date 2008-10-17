@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="17.7.3" title="Static and instance events">
+  <paragraph>When an event declaration includes a static modifier, the event is said to be a static event. When no static modifier is present, the event is said to be an instance event. </paragraph>
+  <paragraph>A static event is not associated with a specific instance, and it is a compile-time error to refer to this in the accessors of a static event. </paragraph>
+  <paragraph>An instance event is associated with a given instance of a class, and this instance can be accessed as this (<hyperlink>14.5.7</hyperlink>) in the accessors of that event. </paragraph>
+  <paragraph>When an event is referenced in a <non_terminal where="14.5.4">member-access</non_terminal> (<hyperlink>14.5.4</hyperlink>) of the form E.M, if M is a static event, E must denote a type, and if M is an instance event, E must denote an instance. </paragraph>
+  <paragraph>The differences between static and instance members are discussed further in <hyperlink>17.2.5</hyperlink>. </paragraph>
+</clause>

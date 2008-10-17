@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<clause number="8.2.3" title="Array types" informative="true">
+  <paragraph>Arrays may be single-dimensional or multi-dimensional. Both &quot;rectangular&quot; and &quot;jagged&quot; arrays are supported. </paragraph>
+  <paragraph>Single-dimensional arrays are the most common type. The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      int[] arr = new int[5];  
+      for (int i = 0; i < arr.Length; i++)  
+      arr[i] = i * i;  
+      for (int i = 0; i < arr.Length; i++)  
+      Console.WriteLine("arr[{0}] = {1}", i, arr[i]);  
+   }  
+}  
+]]></code_example>creates a single-dimensional array of <keyword>int</keyword> values, initializes the array elements, and then prints each of them out. The output produced is: <code_example><![CDATA[
+arr[0] = 0  
+arr[1] = 1  
+arr[2] = 4  
+arr[3] = 9  
+arr[4] = 16  
+]]></code_example></paragraph>
+  <paragraph>The type int[] used in the previous example is an array type. Array types are written using a  <non_terminal where="19.1">non-array-type</non_terminal> followed by one or more rank specifiers. The example <code_example><![CDATA[
+class Test  
+{  
+   static void Main() {  
+      int[] a1;    // single-dimensional array of int  
+      int[,] a2;    // 2-dimensional array of int  
+      int[,,] a3;   // 3-dimensional array of int  
+      int[][] j2;     // "jagged" array: array of (array of int)  
+      int[][][] j3;    // array of (array of (array of int))  
+   }  
+}  
+]]></code_example>shows a variety of local variable declarations that use array types with <keyword>int</keyword> as the element type. </paragraph>
+  <paragraph>Array types are reference types, and so the declaration of an array variable merely sets aside space for the reference to the array. Array instances are actually created via array initializers and array creation expressions. The example <code_example><![CDATA[
+class Test  
+{  
+   static void Main() {  
+      int[] a1 = new int[] {1, 2, 3};  
+      int[,] a2 = new int[,] {{1, 2, 3}, {4, 5, 6}};  
+      int[,,] a3 = new int[10, 20, 30];  
+      int[][] j2 = new int[3][];  
+      j2[0] = new int[] {1, 2, 3};  
+      j2[1] = new int[] {1, 2, 3, 4, 5, 6};  
+      j2[2] = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9};  
+   }  
+}  
+]]></code_example>shows a variety of array creation expressions. The variables a1, a2 and a3 denote rectangular arrays, and the variable j2 denotes a jagged array. It should be no surprise that these terms are based on the shapes of the arrays. Rectangular arrays always have a rectangular shape. Given the length of each dimension of the array, its rectangular shape is clear. For example, the lengths of a3's three dimensions are 10, 20, and 30, respectively, and it is easy to see that this array contains 10*20*30 elements. </paragraph>
+  <paragraph>In contrast, the variable j2 denotes a &quot;jagged&quot; array, or an &quot;array of arrays&quot;. Specifically, j2 denotes an array of an array of <keyword>int</keyword>, or a single-dimensional array of type int[]. Each of these int[] variables can be initialized individually, and this allows the array to take on a jagged shape. The example gives each of the int[] arrays a different length. Specifically, the length of j2[0] is 3, the length of j2[1] is 6, and the length of j2[2] is 9. </paragraph>
+  <paragraph>
+    <note>[Note: In C++, an array declared as <keyword>int</keyword> x[3][5][7] would be considered a three dimensional rectangular array, while in C#, the declaration int[][][] declares a jagged array type. end note]</note>
+  </paragraph>
+  <paragraph>The element type and shape of an array-including whether it is jagged or rectangular, and the number of dimensions it has-are part of its type. On the other hand, the size of the array-as represented by the length of each of its dimensions-is not part of an array's type. This split is made clear in the language syntax, as the length of each dimension is specified in the array creation expression rather than in the array type. For instance the declaration <code_example><![CDATA[
+int[,,] a3 = new int[10, 20, 30];  
+]]></code_example>has an array type of int[,,] and an array creation expression of new int[10, 20, 30]. </paragraph>
+  <paragraph>For local variable and field declarations, a shorthand form is permitted so that it is not necessary to re-state the array type. For instance, the example <code_example><![CDATA[
+int[] a1 = new int[] {1, 2, 3};  
+]]></code_example>can be shortened to <code_example><![CDATA[
+int[] a1 = {1, 2, 3};  
+]]></code_example>without any change in program semantics. </paragraph>
+  <paragraph>The context in which an array initializer such as {1, 2, 3} is used determines the type of the array being initialized. The example <code_example><![CDATA[
+class Test  
+{  
+   static void Main() {  
+      short[] a = {1, 2, 3};  
+      int[] b = {1, 2, 3};  
+      long[] c = {1, 2, 3};  
+   }  
+}  
+]]></code_example>shows that the same array initializer syntax can be used for several different array types. Because context is required to determine the type of an array initializer, it is not possible to use an array initializer in an expression context without explicitly stating the type of the array. </paragraph>
+</clause>

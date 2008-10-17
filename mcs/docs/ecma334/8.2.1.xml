@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<clause number="8.2.1" title="Predefined types" informative="true">
+  <paragraph>C# provides a set of predefined types, most of which will be familiar to C and C++ developers. </paragraph>
+  <paragraph>The predefined reference types are object and string. The type object is the ultimate base type of all other types. The type string is used to represent Unicode string values. Values of type string are immutable. </paragraph>
+  <paragraph>The predefined value types include signed and unsigned integral types, floating-point types, and the types <keyword>bool</keyword>, <keyword>char</keyword>, and <keyword>decimal</keyword>. The signed integral types are <keyword>sbyte</keyword>, <keyword>short</keyword>, <keyword>int</keyword>, and long; the unsigned integral types are <keyword>byte</keyword>, <keyword>ushort</keyword>, <keyword>uint</keyword>, and ulong; and the floating-point types are <keyword>float</keyword> and <keyword>double</keyword>. </paragraph>
+  <paragraph>The <keyword>bool</keyword> type is used to represent boolean values: values that are either true or false. The inclusion of <keyword>bool</keyword> makes it easier to write self-documenting code, and also helps eliminate the all-too-common C++ coding error in which a developer mistakenly uses &quot;=&quot; when &quot;==&quot; should have been used. In C#, the example <code_example><![CDATA[
+int i = ...;  
+F(i);  
+if (i = 0)  // Bug: the test should be (i == 0)  
+G();  
+]]></code_example>results in a compile-time error because the expression i = 0 is of type <keyword>int</keyword>, and if statements require an expression of type <keyword>bool</keyword>. </paragraph>
+  <paragraph>The <keyword>char</keyword> type is used to represent Unicode characters. A variable of type <keyword>char</keyword> represents a single 16-bit Unicode character. </paragraph>
+  <paragraph>The <keyword>decimal</keyword> type is appropriate for calculations in which rounding errors caused by floating point representations are unacceptable. Common examples include financial calculations such as tax computations and currency conversions. The <keyword>decimal</keyword> type provides 28 significant digits. </paragraph>
+  <paragraph>The table below lists the predefined types, and shows how to write literal values for each of them. <table_line>Type Description Example </table_line>
+<table_line>object The ultimate base type of all other types object o = null; </table_line>
+<table_line>string String type; a string is a sequence of Unicode </table_line>
+<table_line>characters </table_line>
+<table_line>string s = &quot;hello&quot;; </table_line>
+<table_line><keyword>sbyte</keyword> 8-bit signed integral type <keyword>sbyte</keyword> val = 12; </table_line>
+<table_line><keyword>short</keyword> 16-bit signed integral type <keyword>short</keyword> val = 12; </table_line>
+<table_line><keyword>int</keyword> 32-bit signed integral type <keyword>int</keyword> val = 12; </table_line>
+<table_line><keyword>long</keyword> 64-bit signed integral type <keyword>long</keyword> val1 = 12; </table_line>
+<table_line><keyword>long</keyword> val2 = 34L; </table_line>
+<table_line><keyword>byte</keyword> 8-bit unsigned integral type <keyword>byte</keyword> val1 = 12; </table_line>
+<table_line><keyword>ushort</keyword> 16-bit unsigned integral type <keyword>ushort</keyword> val1 = 12; </table_line>
+<table_line><keyword>uint</keyword> 32-bit unsigned integral type <keyword>uint</keyword> val1 = 12; </table_line>
+<table_line><keyword>uint</keyword> val2 = 34U; </table_line>
+<table_line><keyword>ulong</keyword> 64-bit unsigned integral type <keyword>ulong</keyword> val1 = 12; </table_line>
+<table_line><keyword>ulong</keyword> val2 = 34U; </table_line>
+<table_line><keyword>ulong</keyword> val3 = 56L; </table_line>
+<table_line><keyword>ulong</keyword> val4 = 78UL; </table_line>
+<table_line><keyword>float</keyword> Single-precision floating point type <keyword>float</keyword> val = 1.23F; </table_line>
+<table_line><keyword>double</keyword> Double-precision floating point type <keyword>double</keyword> val1 = 1.23; </table_line>
+<table_line><keyword>double</keyword> val2 = 4.56D; </table_line>
+<table_line><keyword>bool</keyword> Boolean type; a <keyword>bool</keyword> value is either true or false <keyword>bool</keyword> val1 = true; </table_line>
+<table_line><keyword>bool</keyword> val2 = false; </table_line>
+<table_line><keyword>char</keyword> Character type; a <keyword>char</keyword> value is a Unicode character <keyword>char</keyword> val = 'h'; </table_line>
+<table_line><keyword>decimal</keyword> Precise <keyword>decimal</keyword> type with 28 significant digits <keyword>decimal</keyword> val = 1.23M; </table_line>
+</paragraph>
+  <paragraph>Each of the predefined types is shorthand for a system-provided type. For example, the keyword <keyword>int</keyword> refers to the struct System.Int32. As a matter of style, use of the keyword is favored over use of the complete system type name. </paragraph>
+  <paragraph>Predefined value types such as <keyword>int</keyword> are treated specially in a few ways but are for the most part treated exactly like other structs. Operator overloading enables developers to define new struct types that behave much like the predefined value types. For instance, a Digit struct can support the same mathematical operations as the predefined integral types, and can define conversions between Digit and predefined types. </paragraph>
+  <paragraph>The predefined types employ operator overloading themselves. For example, the comparison operators == and != have different semantics for different predefined types: <list><list_item> Two expressions of type <keyword>int</keyword> are considered equal if they represent the same integer value. </list_item><list_item> Two expressions of type object are considered equal if both refer to the same object, or if both are null. </list_item><list_item> Two expressions of type string are considered equal if the string instances have identical lengths and identical characters in each character position, or if both are null. </list_item></list></paragraph>
+  <paragraph>The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      string s = "Test";  
+      string t = string.Copy(s);  
+      Console.WriteLine(s == t);  
+      Console.WriteLine((object)s == (object)t);  
+   }  
+}  
+]]></code_example>produces the output <code_example><![CDATA[
+True  
+False  
+]]></code_example>because the first comparison compares two expressions of type string, and the second comparison compares two expressions of type object. </paragraph>
+</clause>

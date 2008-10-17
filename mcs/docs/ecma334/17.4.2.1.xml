@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<clause number="17.4.2.1" title="Using static readonly fields for constants">
+  <paragraph>A static readonly field is useful when a symbolic name for a constant value is desired, but when the type of the value is not permitted in a const declaration, or when the value cannot be computed at  compile-time. <example>[Example: In the example <code_example><![CDATA[
+public class Color  
+{  
+   public static readonly Color Black = new Color(0, 0, 0);  
+   public static readonly Color White = new Color(255, 255, 255);  
+   public static readonly Color Red = new Color(255, 0, 0);  
+   public static readonly Color Green = new Color(0, 255, 0);  
+   public static readonly Color Blue = new Color(0, 0, 255);  
+   private byte red, green, blue;  
+   public Color(byte r, byte g, byte b) {  
+      red = r;  
+      green = g;  
+      blue = b;  
+   }  
+}  
+]]></code_example>the Black, White, Red, Green, and Blue members cannot be declared as const members because their values cannot be computed at compile-time. However, declaring them static readonly instead has much the same effect. end example]</example> </paragraph>
+</clause>

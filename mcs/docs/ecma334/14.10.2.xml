@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<clause number="14.10.2" title="Enumeration logical operators">
+  <paragraph>Every enumeration type E implicitly provides the following predefined logical operators: <code_example><![CDATA[
+E operator &(E x, E y);  
+E operator |(E x, E y);  
+E operator ^(E x, E y);  
+]]></code_example></paragraph>
+  <paragraph>The result of evaluating x op y, where x and y are expressions of an enumeration type E with an underlying type U, and op is one of the logical operators, is exactly the same as evaluating (E)((U)x op (U)y). In other words, the enumeration type logical operators simply perform the logical operation on the underlying type of the two operands. </paragraph>
+</clause>

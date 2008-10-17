@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<clause number="8.7.4" title="Properties" informative="true">
+  <paragraph>A property is a member that provides access to a characteristic of an object or a class. Examples of properties include the length of a string, the size of a font, the caption of a window, the name of a customer, and so on. Properties are a natural extension of fields. Both are named members with associated types, and the syntax for accessing fields and properties is the same. However, unlike fields, properties do not denote storage locations. Instead, properties have accessors that specify the statements to be executed when their values are read or written. </paragraph>
+  <paragraph>Properties are defined with property declarations. The first part of a property declaration looks quite similar to a field declaration. The second part includes a get accessor and/or a set accessor. In the example below, the Button class defines a Caption property. <code_example><![CDATA[
+public class Button   
+{  
+   private string caption;  
+   public string Caption {  
+      get {  
+         return caption;  
+      }  
+      set {  
+         caption = value;  
+         Repaint();  
+      }  
+   }  
+}  
+]]></code_example></paragraph>
+  <paragraph>Properties that can be both read and written, such as Caption, include both get and set accessors. The get accessor is called when the property's value is read; the set accessor is called when the property's value is written. In a set accessor, the new value for the property is made available via an implicit parameter named value. </paragraph>
+  <paragraph>The declaration of properties is relatively straightforward, but the real value of properties is seen when they are used. For example, the Caption property can be read and written in the same way that fields can be read and written: <code_example><![CDATA[
+Button b = new Button();  
+b.Caption = "ABC";    // set; causes repaint  
+string s = b.Caption;  // get  
+b.Caption += "DEF";    // get & set; causes repaint  
+]]></code_example></paragraph>
+</clause>

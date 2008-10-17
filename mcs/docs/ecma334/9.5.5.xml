@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<clause number="9.5.5" title="Diagnostic directives">
+  <paragraph>The diagnostic directives are used to explicitly generate error and warning messages that are reported in the same way as other compile-time errors and warnings. <grammar_production><name><non_terminal where="9.5.5">pp-diagnostic</non_terminal></name> :: <rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>#</terminal><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>error</terminal><non_terminal where="9.5.5">pp-message</non_terminal></rhs><rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>#</terminal><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>warning</terminal><non_terminal where="9.5.5">pp-message</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.5">pp-message</non_terminal></name> :: <rhs><non_terminal where="9.3.1">new-line</non_terminal></rhs><rhs><non_terminal where="9.3.3">whitespace</non_terminal><non_terminal where="9.3.2">input-characters</non_terminal><opt/><non_terminal where="9.3.1">new-line</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+#warning Code review needed before check-in  
+#if Debug && Retail  
+#error A build can't be both debug and retail  
+#endif  
+class Test {...}  
+]]></code_example>always produces a warning (&quot;Code review needed before check-in&quot;), and produces a compile-time error if the pre-processing identifiers Debug and Retail are both defined. Note that a <non_terminal where="9.5.5">pp-message</non_terminal> can contain arbitrary text; specifically, it need not contain well-formed tokens, as shown by the single quote in the word can't. end example]</example>
+  </paragraph>
+</clause>

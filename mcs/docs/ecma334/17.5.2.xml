@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="17.5.2" title="Static and instance methods">
+  <paragraph>When a method declaration includes a static modifier, that method is said to be a static method. When no static modifier is present, the method is said to be an instance method. </paragraph>
+  <paragraph>A static method does not operate on a specific instance, and it is a compile-time error to refer to this in a static method. </paragraph>
+  <paragraph>An instance method operates on a given instance of a class, and that instance can be accessed as this (<hyperlink>14.5.7</hyperlink>). </paragraph>
+  <paragraph>When a method is referenced in a <non_terminal where="14.5.4">member-access</non_terminal> (<hyperlink>14.5.4</hyperlink>) of the form E.M, if M is a static method, E must denote a type that has a method M, and if M is an instance method, E must denote an instance of a type that has a method M. </paragraph>
+  <paragraph>The differences between static and instance members are discussed further in <hyperlink>17.2.5</hyperlink>. </paragraph>
+</clause>

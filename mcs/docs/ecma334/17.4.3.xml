@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<clause number="17.4.3" title="Volatile fields">
+  <paragraph>When a <non_terminal where="17.4">field-declaration</non_terminal> includes a volatile modifier, the fields introduced by that declaration are volatile fields. For non-volatile fields, optimization techniques that reorder instructions can lead to unexpected and unpredictable results in multi-threaded programs that access fields without synchronization such as that provided by the <non_terminal where="15.12">lock-statement</non_terminal> (<hyperlink>15.12</hyperlink>). These optimizations can be performed by the compiler, by the runtime system, or by hardware. For volatile fields, such reordering optimizations are restricted: <list><list_item> A read of a volatile field is called a volatile read. A volatile read has &quot;acquire semantics&quot;; that is, it is guaranteed to occur prior to any references to memory that occur after it in the instruction sequence. </list_item><list_item> A write of a volatile field is called a volatile write. A volatile write has &quot;release semantics&quot;; that is, it is guaranteed to happen after any memory references prior to the write instruction in the instruction sequence. </list_item></list></paragraph>
+  <paragraph>These restrictions ensure that all threads will observe volatile writes performed by any other thread in the order in which they were performed. A conforming implementation is not required to provide a single total ordering of volatile writes as seen from all threads of execution. The type of a volatile field must be one of the following: <list><list_item> A <non_terminal where="11.2">reference-type</non_terminal>. </list_item><list_item> The type <keyword>byte</keyword>, <keyword>sbyte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>int</keyword>, <keyword>uint</keyword>, <keyword>char</keyword>, <keyword>float</keyword>, or <keyword>bool</keyword>. </list_item><list_item> An <non_terminal where="11.1">enum-type</non_terminal> having an enum base type of <keyword>byte</keyword>, <keyword>sbyte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>int</keyword>, or <keyword>uint</keyword>. </list_item></list></paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+using System.Threading;  
+class Test  
+{  
+   public static int result;  
+   public static volatile bool finished;  
+   static void Thread2() {  
+      result = 143;  
+      finished = true;  
+   }  
+   static void Main() {  
+      finished = false;  
+      // Run Thread2() in a new thread  
+      new Thread(new ThreadStart(Thread2)).Start();  
+      // Wait for Thread2 to signal that it has a result by setting  
+      // finished to true.  
+      for (;;) {  
+         if (finished) {  
+            Console.WriteLine("result = {0}", result);  
+            return;  
+         }  
+      }  
+   }  
+}  
+]]></code_example>produces the output: <code_example><![CDATA[
+result = 143  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>In this example, the method Main starts a new thread that runs the method Thread2. This method stores a value into a non-volatile field called result, then stores true in the volatile field finished. The main thread waits for the field finished to be set to true, then reads the field result. Since result has been declared volatile, the main thread must read the value 143 from the field result. If the field finished had not been declared volatile, then it would be permissible for the store to result to be visible to the main thread after the store to finished, and hence for the main thread to read the value 0 from the field result. Declaring finished as a volatile field prevents any such inconsistency. end example]</example>
+  </paragraph>
+</clause>

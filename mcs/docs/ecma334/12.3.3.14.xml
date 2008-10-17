@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.14" title="Try-finally statements">
+  <paragraph>For a try statement stmt of the form: <code_example><![CDATA[
+try try-block finally finally-block  
+]]></code_example><list><list_item> The definite assignment state of v at the beginning of try-block is the same as the definite assignment state of v at the beginning of stmt. </list_item><list_item> The definite assignment state of v at the beginning of finally-block is the same as the definite assignment state of v at the beginning of stmt. </list_item><list_item> The definite assignment state of v at the end-point of stmt is definitely assigned if (and only if) either: </list_item><list><list_item> v is definitely assigned at the end-point of try-block </list_item><list_item> v is definitely assigned at the end-point of finally-block </list_item></list></list></paragraph>
+  <paragraph>If a control flow transfer (for example, a goto statement) is made that begins within try-block, and ends outside of try-block, then v is also considered definitely assigned on that control flow transfer if v is definitely assigned at the end-point of finally-block. (This is not an only if-if v is definitely assigned for another reason on this control flow transfer, then it is still considered definitely assigned.) </paragraph>
+</clause>

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<clause number="17.3" title="Constants">
+  <paragraph>A constant is a class member that represents a constant value: a value that can be computed at compile-time. A <non_terminal where="17.3">constant-declaration</non_terminal> introduces one or more constants of a given type. <grammar_production><name><non_terminal where="17.3">constant-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><non_terminal where="17.3">constant-modifiers</non_terminal><opt/><keyword>const</keyword><non_terminal where="11">type</non_terminal><non_terminal where="17.3">constant-declarators</non_terminal><terminal>;</terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.3">constant-modifier</non_terminal>s</name> : <rhs><non_terminal where="17.3">constant-modifier</non_terminal></rhs><rhs><non_terminal where="17.3">constant-modifiers</non_terminal><non_terminal where="17.3">constant-modifier</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.3">constant-modifier</non_terminal></name> : <rhs><keyword>new</keyword></rhs><rhs><keyword>public</keyword></rhs><rhs><keyword>protected</keyword></rhs><rhs><keyword>internal</keyword></rhs><rhs><keyword>private</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.3">constant-declarator</non_terminal>s</name> : <rhs><non_terminal where="17.3">constant-declarator</non_terminal></rhs><rhs><non_terminal where="17.3">constant-declarators</non_terminal><terminal>,</terminal><non_terminal where="17.3">constant-declarator</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.3">constant-declarator</non_terminal></name> : <rhs><non_terminal where="9.4.2">identifier</non_terminal><terminal>=</terminal><non_terminal where="14.15">constant-expression</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>A <non_terminal where="17.3">constant-declaration</non_terminal> may include a set of attributes (<hyperlink>24</hyperlink>), a new modifier (<hyperlink>17.2.2</hyperlink>), and a valid combination of the four access modifiers (<hyperlink>17.2.3</hyperlink>). The attributes and modifiers apply to all of the members declared by the <non_terminal where="17.3">constant-declaration</non_terminal>. Even though constants are considered static members, a  <non_terminal where="17.3">constant-declaration</non_terminal> neither requires nor allows a static modifier. It is an error for the same modifier to appear multiple times in a constant declaration. </paragraph>
+  <paragraph>The type of a <non_terminal where="17.3">constant-declaration</non_terminal> specifies the type of the members introduced by the declaration. The type is followed by a list of <non_terminal where="17.3">constant-declarator</non_terminal>s, each of which introduces a new member. A <non_terminal where="17.3">constant-declarator</non_terminal> consists of an identifier that names themember, followed by an &quot;=&quot; token, followed by a  <non_terminal where="14.15">constant-expression</non_terminal> (<hyperlink>14.15</hyperlink>) that gives the value of the member. </paragraph>
+  <paragraph>The type specified in a constant declaration must be <keyword>sbyte</keyword>, <keyword>byte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>int</keyword>, <keyword>uint</keyword>, <keyword>long</keyword>, <keyword>ulong</keyword>, <keyword>char</keyword>, <keyword>float</keyword>, <keyword>double</keyword>, <keyword>decimal</keyword>, <keyword>bool</keyword>, string, an <non_terminal where="11.1">enum-type</non_terminal>, or a <non_terminal where="11.2">reference-type</non_terminal>. Each  <non_terminal where="14.15">constant-expression</non_terminal> must yield a value of the target type or of a type that can be converted to the target type by an implicit conversion (<hyperlink>13.1</hyperlink>). </paragraph>
+  <paragraph>The type of a constant must be at least as accessible as the constant itself (<hyperlink>10.5.4</hyperlink>). </paragraph>
+  <paragraph>The value of a constant is obtained in an expression using a <non_terminal where="14.5.2">simple-name</non_terminal> (<hyperlink>14.5.2</hyperlink>) or a <non_terminal where="14.5.4">member-access</non_terminal> (<hyperlink>14.5.4</hyperlink>). </paragraph>
+  <paragraph>A constant can itself participate in a <non_terminal where="14.15">constant-expression</non_terminal>. Thus, a constant may be used in any construct that requires a <non_terminal where="14.15">constant-expression</non_terminal>. <note>[Note: Examples of such constructs include case labels, goto case statements, enum member declarations, attributes, and other constant declarations. end note]</note> </paragraph>
+  <paragraph>
+    <note>[Note: As described in <hyperlink>14.15</hyperlink>, a <non_terminal where="14.15">constant-expression</non_terminal> is an expression that can be fully evaluated at  compile-time. Since the only way to create a non-null value of a <non_terminal where="11.2">reference-type</non_terminal> other than string is to apply the new operator, and since the new operator is not permitted in a <non_terminal where="14.15">constant-expression</non_terminal>, the only possible value for constants of <non_terminal where="11.2">reference-type</non_terminal>s other than string is null. end note]</note>
+  </paragraph>
+  <paragraph>When a symbolic name for a constant value is desired, but when the type of that value is not permitted in a constant declaration, or when the value cannot be computed at compile-time by a <non_terminal where="14.15">constant-expression</non_terminal>, a readonly field (<hyperlink>17.4.2</hyperlink>) may be used instead. <note>[Note: The versioning semantics of const and readonly differ (<hyperlink>17.4.2.2</hyperlink>). end note]</note> </paragraph>
+  <paragraph>A constant declaration that declares multiple constants is equivalent to multiple declarations of single constants with the same attributes, modifiers, and type. <example>[Example: For example <code_example><![CDATA[
+class A  
+{  
+   public const double X = 1.0, Y = 2.0, Z = 3.0;  
+}  
+]]></code_example>is equivalent to <code_example><![CDATA[
+class A  
+{  
+   public const double X = 1.0;  
+   public const double Y = 2.0;  
+   public const double Z = 3.0;  
+}  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>Constants are permitted to depend on other constants within the same program as <keyword>long</keyword> as the dependencies are not of a circular nature. The compiler automatically arranges to evaluate the constant declarations in the appropriate order. <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   public const int X = B.Z + 1;  
+   public const int Y = 10;  
+}  
+class B  
+{  
+   public const int Z = A.Y + 1;  
+}  
+]]></code_example>the compiler first evaluates A.Y, then evaluates B.Z, and finally evaluates A.X, producing the values 10, 11, and 12. end example]</example> Constant declarations may depend on constants from other programs, but such dependencies are only possible in one direction. <example>[Example: Referring to the example above, if A and B were declared in separate programs, it would be possible for A.X to depend on B.Z, but B.Z could then not simultaneously depend on A.Y. end example]</example> </paragraph>
+</clause>

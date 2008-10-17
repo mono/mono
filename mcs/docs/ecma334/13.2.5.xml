@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="13.2.5" title="User-defined explicit conversions">
+  <paragraph>A user-defined explicit conversion consists of an optional standard explicit conversion, followed by execution of a user-defined implicit or explicit conversion operator, followed by another optional standard explicit conversion. The exact rules for evaluating user-defined conversions are described in <hyperlink>13.4.4</hyperlink>. </paragraph>
+</clause>

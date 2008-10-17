@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<clause number="8.12" title="Namespaces and assemblies" informative="true">
+  <paragraph>The programs presented so far have stood on their own except for dependence on a few system-provided classes such as System.Console. It is far more common, however, for real-world applications to consist of several different pieces, each compiled separately. For example, a corporate application might depend on several different components, including some developed internally and some purchased from independent software vendors. </paragraph>
+  <paragraph>Namespaces and assemblies enable this component-based system. Namespaces provide a logical organizational system. Namespaces are used both as an &quot;internal&quot; organization system for a program, and as an &quot;external&quot; organization system-a way of presenting program elements that are exposed to other programs. </paragraph>
+  <paragraph>Assemblies are used for physical packaging and deployment. An assembly may contain types, the executable code used to implement these types, and references to other assemblies. </paragraph>
+  <paragraph>To demonstrate the use of namespaces and assemblies, this section revisits the &quot;hello, world&quot; program presented earlier, and splits it into two pieces: a class library that provides messages and a console application that displays them. </paragraph>
+  <paragraph>The class library will contain a single class named HelloMessage. The example <code_example><![CDATA[
+// HelloLibrary.cs  
+namespace CSharp.Introduction  
+{  
+   public class HelloMessage  
+   {  
+      public string Message {  
+         get {  
+            return "hello, world";  
+         }  
+      }  
+   }  
+}  
+]]></code_example>shows the HelloMessage class in a namespace named CSharp.Introduction. The HelloMessage class provides a read-only property named Message. Namespaces can nest, and the declaration <code_example><![CDATA[
+namespace CSharp.Introduction  
+{...}  
+]]></code_example>is shorthand for two levels of namespace nesting: <code_example><![CDATA[
+namespace CSharp  
+{  
+   namespace Introduction  
+   {...}  
+}   
+]]></code_example></paragraph>
+  <paragraph>The next step in the componentization of &quot;hello, world&quot; is to write a console application that uses the HelloMessage class. The fully qualified name for the  class-CSharp.Introduction.HelloMessage-could be used, but this name is quite long and unwieldy. An easier way is to use a using namespace directive, which makes it possible to use all of the types in a namespace without qualification. The example <code_example><![CDATA[
+// HelloApp.cs  
+using CSharp.Introduction;  
+class HelloApp  
+{  
+   static void Main() {  
+      HelloMessage m = new HelloMessage();  
+      System.Console.WriteLine(m.Message);  
+   }  
+}  
+]]></code_example>shows a using namespace directive that refers to the CSharp.Introduction namespace. The occurrences of HelloMessage are shorthand for CSharp.Introduction.HelloMessage. </paragraph>
+  <paragraph>C# also enables the definition and use of aliases. A using alias directive defines an alias for a type. Such aliases can be useful in situation in which name collisions occur between two class libraries, or when a small number of types from a much larger namespace are being used. The example <code_example><![CDATA[
+using MessageSource = CSharp.Introduction.HelloMessage;  
+]]></code_example>shows a using alias directive that defines MessageSource as an alias for the HelloMessage class. </paragraph>
+  <paragraph>The code we have written can be compiled into a class library containing the class HelloMessage and an application containing the class HelloApp. The details of this compilation step might differ based on the compiler or tool being used. A command-line compiler might enable compilation of a class library and an application that uses that library with the following command-line invocations: <code_example><![CDATA[
+csc /target:library HelloLibrary.cs   
+csc /reference:HelloLibrary.dll HelloApp.cs  
+]]></code_example>which produce a class library named HelloLibrary.dll and an application named HelloApp.exe. </paragraph>
+</clause>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<clause number="10.7.1.1" title="Hiding through nesting">
+  <paragraph>Name hiding through nesting can occur as a result of nesting namespaces or types within namespaces, as a result of nesting types within classes or structs, and as a result of parameter and local variable declarations. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   int i = 0;  
+   void F() {  
+      int i = 1;  
+   }  
+   void G() {  
+      i = 1;  
+   }  
+}  
+]]></code_example>within the F method, the instance variable i is hidden by the local variable i, but within the G method, i still refers to the instance variable. end example]</example>
+  </paragraph>
+  <paragraph>When a name in an inner scope hides a name in an outer scope, it hides all overloaded occurrences of that name. <example>[Example: In the example <code_example><![CDATA[
+class Outer  
+{  
+   static void F(int i) {}  
+   static void F(string s) {}  
+   class Inner  
+   {  
+      void G() {  
+         F(1);    // Invokes Outer.Inner.F  
+         F("Hello");  // Error  
+      }  
+      static void F(long l) {}  
+   }  
+}  
+]]></code_example>the call F(1) invokes the F declared in Inner because all outer occurrences of F are hidden by the inner declaration. For the same reason, the call F(&quot;Hello&quot;) results in a compile-time error. end example]</example> </paragraph>
+</clause>

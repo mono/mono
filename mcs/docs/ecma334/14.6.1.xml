@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<clause number="14.6.1" title="Unary plus operator">
+  <paragraph>For an operation of the form +x, unary operator overload resolution (<hyperlink>14.2.3</hyperlink>) is applied to select a specific operator implementation. The operand is converted to the parameter type of the selected operator, and the type of the result is the return type of the operator. The predefined unary plus operators are: <code_example><![CDATA[
+int operator +(int x);  
+uint operator +(uint x);  
+long operator +(long x);  
+ulong operator +(ulong x);  
+float operator +(float x);  
+double operator +(double x);  
+decimal operator +(decimal x);  
+]]></code_example></paragraph>
+  <paragraph>For each of these operators, the result is simply the value of the operand. </paragraph>
+</clause>

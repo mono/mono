@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="14.6" title="Unary expressions">
+  <paragraph>
+    <grammar_production><name><non_terminal where="14.6">unary-expression</non_terminal></name> : <rhs><non_terminal where="14.5">primary-expression</non_terminal></rhs><rhs><terminal>+</terminal><non_terminal where="14.6">unary-expression</non_terminal></rhs><rhs><terminal>-</terminal><non_terminal where="14.6">unary-expression</non_terminal></rhs><rhs><terminal>!</terminal><non_terminal where="14.6">unary-expression</non_terminal></rhs><rhs><terminal>~</terminal><non_terminal where="14.6">unary-expression</non_terminal></rhs><rhs><terminal>*</terminal><non_terminal where="14.6">unary-expression</non_terminal></rhs><rhs><terminal>&amp;</terminal><non_terminal where="14.6">unary-expression</non_terminal></rhs><rhs><non_terminal where="14.6.5">pre-increment-expression</non_terminal></rhs><rhs><non_terminal where="14.6.5">pre-decrement-expression</non_terminal></rhs><rhs><non_terminal where="14.6.6">cast-expression</non_terminal></rhs></grammar_production>
+  </paragraph>
+</clause>

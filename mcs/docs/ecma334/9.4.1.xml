@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<clause number="9.4.1" title="Unicode escape sequences">
+  <paragraph>A Unicode escape sequence represents a Unicode character. Unicode escape sequences are processed in identifiers (<hyperlink>9.4.2</hyperlink>), regular string literals (<hyperlink>9.4.4.5</hyperlink>), and character literals (<hyperlink>9.4.4.4</hyperlink>). A Unicode character escape is not processed in any other location (for example, to form an operator, punctuator, or keyword). <grammar_production><name><non_terminal where="9.4.1">unicode-escape-sequence</non_terminal></name> :: <rhs><terminal>\u</terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal></rhs><rhs><terminal>\U</terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal><non_terminal where="9.4.4.2">hex-digit</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>A Unicode escape sequence represents the single Unicode character formed by the hexadecimal number following the &quot;\u&quot; or &quot;\U&quot; characters. Since C# uses a 16-bit encoding of Unicode characters in characters and string values, a Unicode character in the range U+10000 to U+10FFFF is represented using two Unicode surrogate characters. Unicode characters with code points above 0x10FFFF are not supported. </paragraph>
+  <paragraph>Multiple translations are not performed. For instance, the string literal &quot;\u005Cu005C&quot; is equivalent to &quot;\u005C&quot; rather than &quot;\&quot;. <note>[Note: The Unicode value \u005C is the character &quot;\&quot;. end note]</note> </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+class Class1  
+{  
+   static void Test(bool \u0066) {  
+      char c = '\u0066';  
+      if (\u0066)  
+      System.Console.WriteLine(c.ToString());  
+   }     
+}  
+]]></code_example>shows several uses of \u0066, which is the escape sequence for the letter &quot;f&quot;. The program is equivalent to <code_example><![CDATA[
+class Class1  
+{  
+   static void Test(bool f) {  
+      char c = 'f';  
+      if (f)  
+      System.Console.WriteLine(c.ToString());  
+   }     
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="13.1.3" title="Implicit enumeration conversions">
+  <paragraph>An implicit enumeration conversion permits the <non_terminal where="9.4.4.2">decimal-integer-literal</non_terminal> 0 to be converted to any <non_terminal where="11.1">enum-type</non_terminal>. </paragraph>
+</clause>

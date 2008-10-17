@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="12.2" title="Default values">
+  <paragraph>The following categories of variables are automatically initialized to their default values: <list><list_item> Static variables. </list_item><list_item> Instance variables of class instances. </list_item><list_item> Array elements. </list_item></list></paragraph>
+  <paragraph>The default value of a variable depends on the type of the variable and is determined as follows: <list><list_item> For a variable of a <non_terminal where="11.1">value-type</non_terminal>, the default value is the same as the value computed by the value-type's default constructor (<hyperlink>11.1.1</hyperlink>). </list_item><list_item> For a variable of a <non_terminal where="11.2">reference-type</non_terminal>, the default value is null. </list_item></list></paragraph>
+  <paragraph>
+    <note>[Note: Initialization to default values is typically done by having the memory manager or garbage collector initialize memory to all-bits-zero before it is allocated for use. For this reason, it is convenient to use  all-bits-zero to represent the null reference. end note]</note>
+  </paragraph>
+</clause>

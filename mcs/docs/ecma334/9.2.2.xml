@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="9.2.2" title="Syntactic grammar">
+  <paragraph>The syntactic grammar of C# is presented in the chapters and appendices that follow this chapter. The terminal symbols of the syntactic grammar are the tokens defined by the lexical grammar, and the syntactic grammar specifies how tokens are combined to form C# programs. </paragraph>
+  <paragraph>Every source file in a C# program must conform to the <non_terminal where="16.1">compilation-unit</non_terminal> production (<hyperlink>16.1</hyperlink>) of the syntactic grammar. </paragraph>
+</clause>

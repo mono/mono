@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<clause number="17.5.3" title="Virtual methods">
+  <paragraph>When an instance method declaration includes a virtual modifier, that method is said to be a virtual method. When no virtual modifier is present, the method is said to be a non-virtual method. </paragraph>
+  <paragraph>The implementation of a non-virtual method is invariant: The implementation is the same whether the method is invoked on an instance of the class in which it is declared or an instance of a derived class. In contrast, the implementation of a virtual method can be superseded by derived classes. The process of superseding the implementation of an inherited virtual method is known as overriding that method (<hyperlink>17.5.4</hyperlink>). </paragraph>
+  <paragraph>In a virtual method invocation, the run-time type of the instance for which that invocation takes place determines the actual method implementation to invoke. In a non-virtual method invocation, the  compile-time type of the instance is the determining factor. In precise terms, when a method named N is invoked with an argument list A on an instance with a compile-time type C and a run-time type R (where R is either C or a class derived from C), the invocation is processed as follows: <list><list_item> First, overload resolution is applied to C, N, and A, to select a specific method M from the set of methods declared in and inherited by C. This is described in <hyperlink>14.5.5.1</hyperlink>. </list_item><list_item> Then, if M is a non-virtual method, M is invoked. </list_item><list_item> Otherwise, M is a virtual method, and the most derived implementation of M with respect to R is invoked. </list_item></list></paragraph>
+  <paragraph>For every virtual method declared in or inherited by a class, there exists a most derived implementation of the method with respect to that class. The most derived implementation of a virtual method M with respect to a class R is determined as follows: <list><list_item> If R contains the introducing virtual declaration of M, then this is the most derived implementation of M. </list_item><list_item> Otherwise, if R contains an override of M, then this is the most derived implementation of M. </list_item><list_item> Otherwise, the most derived implementation of M is the same as that of the direct base class of R. </list_item></list></paragraph>
+  <paragraph>
+    <example>[Example: The following example illustrates the differences between virtual and non-virtual methods: <code_example><![CDATA[
+using System;  
+class A  
+{  
+   public void F() { Console.WriteLine("A.F"); }  
+   public virtual void G() { Console.WriteLine("A.G"); }  
+}  
+class B: A  
+{  
+   new public void F() { Console.WriteLine("B.F"); }  
+   public override void G() { Console.WriteLine("B.G"); }  
+}  
+class Test  
+{  
+   static void Main() {  
+      B b = new B();  
+      A a = b;  
+      a.F();  
+      b.F();  
+      a.G();  
+      b.G();  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>In the example, A introduces a non-virtual method F and a virtual method G. The class B introduces a new non-virtual method F, thus hiding the inherited F, and also overrides the inherited method G. The example produces the output: <code_example><![CDATA[
+A.F  
+B.F  
+B.G  
+B.G  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Notice that the statement a.G() invokes B.G, not A.G. This is because the run-time type of the instance (which is B), not the compile-time type of the instance (which is A), determines the actual method implementation to invoke. end example]</example>
+  </paragraph>
+  <paragraph>Because methods are allowed to hide inherited methods, it is possible for a class to contain several virtual methods with the same signature. This does not present an ambiguity problem, since all but the most derived method are hidden. <example>[Example: In the example <code_example><![CDATA[
+using System;  
+class A  
+{  
+   public virtual void F() { Console.WriteLine("A.F"); }  
+}  
+class B: A  
+{  
+   public override void F() { Console.WriteLine("B.F"); }  
+}  
+class C: B  
+{  
+   new public virtual void F() { Console.WriteLine("C.F"); }  
+}  
+class D: C  
+{  
+   public override void F() { Console.WriteLine("D.F"); }  
+}  
+class Test  
+{  
+   static void Main() {  
+      D d = new D();  
+      A a = d;  
+      B b = d;  
+      C c = d;  
+      a.F();  
+      b.F();  
+      c.F();  
+      d.F();  
+   }  
+}  
+]]></code_example>the C and D classes contain two virtual methods with the same signature: The one introduced by A and the one introduced by C. The method introduced by C hides the method inherited from A. Thus, the override declaration in D overrides the method introduced by C, and it is not possible for D to override the method introduced by A. The example produces the output: <code_example><![CDATA[
+B.F  
+B.F  
+D.F  
+D.F  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Note that it is possible to invoke the hidden virtual method by accessing an instance of D through a less derived type in which the method is not hidden. end example]</example>
+  </paragraph>
+</clause>

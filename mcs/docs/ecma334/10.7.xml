@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<clause number="10.7" title="Scopes">
+  <paragraph>The scope of a name is the region of program text within which it is possible to refer to the entity declared by the name without qualification of the name. Scopes can be nested, and an inner scope may redeclare the meaning of a name from an outer scope. <note>[Note: This does not, however, remove the restriction imposed by <hyperlink>10.3</hyperlink> that within a nested block it is not possible to declare a local variable with the same name as a local variable in an enclosing block. end note]</note> The name from the outer scope is then said to be hidden in the region of program text covered by the inner scope, and access to the outer name is only possible by qualifying the name. <list><list_item> The scope of a namespace member declared by a <non_terminal where="16.4">namespace-member-declaration</non_terminal> (<hyperlink>16.4</hyperlink>) with no enclosing <non_terminal where="16.2">namespace-declaration</non_terminal> is the entire program text. </list_item><list_item> The scope of a namespace member declared by a <non_terminal where="16.4">namespace-member-declaration</non_terminal> within a  <non_terminal where="16.2">namespace-declaration</non_terminal> whose fully qualified name is N, is the <non_terminal where="16.2">namespace-body</non_terminal> of every <non_terminal where="16.2">namespace-declaration</non_terminal> whose fully qualified name is N or starts with N, followed by a period. </list_item><list_item> The scope of a name defined or imported by a <non_terminal where="16.3">using-directive</non_terminal> (<hyperlink>16.3</hyperlink>) extends over the  <non_terminal where="16.4">namespace-member-declaration</non_terminal>s of the <non_terminal where="16.1">compilation-unit</non_terminal> or <non_terminal where="16.2">namespace-body</non_terminal> in which the <non_terminal where="16.3">using-directive</non_terminal> occurs. A <non_terminal where="16.3">using-directive</non_terminal> may make zero or more namespace or type names available within a particular  <non_terminal where="16.1">compilation-unit</non_terminal> or <non_terminal where="16.2">namespace-body</non_terminal>, but does not contribute any new members to the underlying declaration space. In other words, a <non_terminal where="16.3">using-directive</non_terminal> is not transitive, but, rather, affects only the <non_terminal where="16.1">compilation-unit</non_terminal> or  <non_terminal where="16.2">namespace-body</non_terminal> in which it occurs. </list_item><list_item> The scope of a member declared by a <non_terminal where="17.2">class-member-declaration</non_terminal> (<hyperlink>17.2</hyperlink>) is the <non_terminal where="17.1.3">class-body</non_terminal> in which the declaration occurs. In addition, the scope of a class member extends to the <non_terminal where="17.1.3">class-body</non_terminal> of those derived classes that are included in the accessibility domain (<hyperlink>10.5.2</hyperlink>) of the member. </list_item><list_item> The scope of a member declared by a <non_terminal where="18.2">struct-member-declaration</non_terminal> (<hyperlink>18.2</hyperlink>) is the <non_terminal where="18.1.3">struct-body</non_terminal> in which the declaration occurs. </list_item><list_item> The scope of a member declared by an <non_terminal where="21.3">enum-member-declaration</non_terminal> (<hyperlink>21.3</hyperlink>) is the <non_terminal where="21.1">enum-body</non_terminal> in which the declaration occurs. </list_item><list_item> The scope of a parameter declared in a <non_terminal where="17.5">method-declaration</non_terminal> (<hyperlink>17.5</hyperlink>) is the <non_terminal where="17.5">method-body</non_terminal> of that  <non_terminal where="17.5">method-declaration</non_terminal>. </list_item><list_item> The scope of a parameter declared in an <non_terminal where="17.8">indexer-declaration</non_terminal> (<hyperlink>17.8</hyperlink>) is the <non_terminal where="17.6.2">accessor-declarations</non_terminal> of that <non_terminal where="17.8">indexer-declaration</non_terminal>. </list_item><list_item> The scope of a parameter declared in an <non_terminal where="17.9">operator-declaration</non_terminal> (<hyperlink>17.9</hyperlink>) is the block of that  <non_terminal where="17.9">operator-declaration</non_terminal>. </list_item><list_item> The scope of a parameter declared in a <non_terminal where="17.10">constructor-declaration</non_terminal> (<hyperlink>17.10</hyperlink>) is the <non_terminal where="17.10">constructor-initializer</non_terminal> and block of that <non_terminal where="17.10">constructor-declaration</non_terminal>. </list_item><list_item> The scope of a label declared in a <non_terminal where="15.4">labeled-statement</non_terminal> (<hyperlink>15.4</hyperlink>) is the block in which the declaration occurs. </list_item><list_item> The scope of a local variable declared in a <non_terminal where="15.5.1">local-variable-declaration</non_terminal> (<hyperlink>15.5.1</hyperlink>) is the block in which the declaration occurs. </list_item><list_item> The scope of a local variable declared in a <non_terminal where="15.7.2">switch-block</non_terminal> of a switch statement (<hyperlink>15.7.2</hyperlink>) is the  <non_terminal where="15.7.2">switch-block</non_terminal>. </list_item><list_item> The scope of a local variable declared in a <non_terminal where="15.8.3">for-initializer</non_terminal> of a for statement (<hyperlink>15.8.3</hyperlink>) is the  <non_terminal where="15.8.3">for-initializer</non_terminal>, the <non_terminal where="15.8.3">for-condition</non_terminal>, the <non_terminal where="15.8.3">for-iterator</non_terminal>, and the contained statement of the for statement. </list_item><list_item> The scope of a local constant declared in a <non_terminal where="15.5.2">local-constant-declaration</non_terminal> (<hyperlink>15.5.2</hyperlink>) is the block in which the declaration occurs. It is a compile-time error to refer to a local constant in a textual position that precedes its <non_terminal where="17.3">constant-declarator</non_terminal>. </list_item></list></paragraph>
+  <paragraph>Within the scope of a namespace, class, struct, or enumeration member it is possible to refer to the member in a textual position that precedes the declaration of the member. <example>[Example: For example <code_example><![CDATA[
+class A  
+{  
+   void F() {  
+      i = 1;  
+   }  
+   int i = 0;  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Here, it is valid for F to refer to i before it is declared. end example]</example>
+  </paragraph>
+  <paragraph>Within the scope of a local variable, it is a compile-time error to refer to the local variable in a textual position that precedes the <non_terminal where="15.5.1">local-variable-declarator</non_terminal> of the local variable. <example>[Example: For example <code_example><![CDATA[
+class A  
+{  
+   int i = 0;  
+   void F() {  
+      i = 1;      // Error, use precedes declaration  
+      int i;  
+      i = 2;  
+   }  
+   void G() {  
+      int j = (j = 1);    // Valid  
+   }  
+   void H() {  
+      int a = 1, b = ++a;  // Valid  
+   }  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>In the F method above, the first assignment to i specifically does not refer to the field declared in the outer scope. Rather, it refers to the local variable and it results in a compile-time error because it textually precedes the declaration of the variable. In the G method, the use of j in the initializer for the declaration of j is valid because the use does not precede the <non_terminal where="15.5.1">local-variable-declarator</non_terminal>. In the H method, a subsequent <non_terminal where="15.5.1">local-variable-declarator</non_terminal> correctly refers to a local variable declared in an earlier <non_terminal where="15.5.1">local-variable-declarator</non_terminal> within the same <non_terminal where="15.5.1">local-variable-declaration</non_terminal>. end example]</example>
+  </paragraph>
+  <paragraph>
+    <note>[Note: The scoping rules for local variables are designed to guarantee that the meaning of a name used in an expression context is always the same within a block. If the scope of a local variable were to extend only from its declaration to the end of the block, then in the example above, the first assignment would assign to the instance variable and the second assignment would assign to the local variable. In certain situations but not in the exampe above, this could lead to a compile-time error if the statements of the block were later to be rearranged.) </note>
+  </paragraph>
+  <paragraph>
+    <note>The meaning of a name within a block may differ based on the context in which the name is used. In the example <code_example><![CDATA[
+using System;  
+class A {}  
+class Test  
+{  
+   static void Main() {  
+      string A = "hello, world";  
+      string s = A;         // expression context  
+      Type t = typeof(A);       // type context  
+      Console.WriteLine(s);      // writes "hello, world"  
+      Console.WriteLine(t.ToString());  // writes "Type: A"  
+   }  
+}  
+]]></code_example>the name A is used in an expression context to refer to the local variable A and in a type context to refer to the class A. end note]</note>
+  </paragraph>
+</clause>

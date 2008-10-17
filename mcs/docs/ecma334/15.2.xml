@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<clause number="15.2" title="Blocks">
+  <paragraph>A block permits multiple statements to be written in contexts where a single statement is allowed. <grammar_production><name>block</name> : <rhs><terminal>{</terminal><non_terminal where="15.2.1">statement-list</non_terminal><opt/><terminal>}</terminal></rhs></grammar_production></paragraph>
+  <paragraph>A block consists of an optional <non_terminal where="15.2.1">statement-list</non_terminal> (<hyperlink>15.2.1</hyperlink>), enclosed in braces. If the statement list is omitted, the block is said to be empty. </paragraph>
+  <paragraph>A block may contain declaration statements (<hyperlink>15.5</hyperlink>). The scope of a local variable or constant declared in a block is the block. </paragraph>
+  <paragraph>Within a block, the meaning of a name used in an expression context must always be the same (<hyperlink>14.5.2.1</hyperlink>). </paragraph>
+  <paragraph>A block is executed as follows: <list><list_item> If the block is empty, control is transferred to the end point of the block. </list_item><list_item> If the block is not empty, control is transferred to the statement list. When and if control reaches the end point of the statement list, control is transferred to the end point of the block. </list_item></list></paragraph>
+  <paragraph>The statement list of a block is reachable if the block itself is reachable. </paragraph>
+  <paragraph>The end point of a block is reachable if the block is empty or if the end point of the statement list is reachable. </paragraph>
+</clause>

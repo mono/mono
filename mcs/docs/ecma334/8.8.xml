@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<clause number="8.8" title="Structs" informative="true">
+  <paragraph>The list of similarities between classes and structs is long-structs can implement interfaces, and can have the same kinds of members as classes. Structs differ from classes in several important ways, however: structs are value types rather than reference types, and inheritance is not supported for structs. Struct values are stored &quot;on the stack&quot; or &quot;in-line&quot;. Careful programmers can sometimes enhance performance through judicious use of structs. </paragraph>
+  <paragraph>For example, the use of a struct rather than a class for a Point can make a large difference in the number of memory allocations performed at run time. The program below creates and initializes an array of 100 points. With Point implemented as a class, 101 separate objects are instantiated-one for the array and one each for the 100 elements. <code_example><![CDATA[
+class Point  
+{  
+   public int x, y;  
+   public Point(int x, int y) {  
+      this.x = x;  
+      this.y = y;  
+   }  
+}  
+class Test  
+{  
+   static void Main() {  
+      Point[] points = new Point[100];  
+      for (int i = 0; i < 100; i++)  
+      points[i] = new Point(i, i*i);  
+   }  
+}  
+]]></code_example></paragraph>
+  <paragraph>If Point is instead implemented as a struct, as in <code_example><![CDATA[
+struct Point  
+{  
+   public int x, y;  
+   public Point(int x, int y) {  
+      this.x = x;  
+      this.y = y;  
+   }  
+}  
+]]></code_example>only one object is instantiated-the one for the array. The Point instances are allocated in-line within the array. This optimization can be misused. Using structs instead of classes can also make an application run slower or take up more memory, as passing a struct instance by value causes a copy of that struct to be created. </paragraph>
+</clause>

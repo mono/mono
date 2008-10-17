@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="10.4" title="Members">
+  <paragraph>Namespaces and types have members. <note>[Note: The members of an entity are generally available through the use of a qualified name that starts with a reference to the entity, followed by a &quot;.&quot; token, followed by the name of the member. end note]</note> </paragraph>
+  <paragraph>Members of a type are either declared in the type or inherited from the base class of the type. When a type inherits from a base class, all members of the base class, except instance constructors, destructors, and static constructors become members of the derived type. The declared accessibility of a base class member does not control whether the member is inherited-inheritance extends to any member that isn't an instance constructor, static constructor, or destructor. However, an inherited member may not be accessible in a derived type, either because of its declared accessibility (<hyperlink>10.5.1</hyperlink>) or because it is hidden by a declaration in the type itself (<hyperlink>10.7.1.2</hyperlink>). </paragraph>
+</clause>

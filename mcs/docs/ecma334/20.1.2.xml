@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<clause number="20.1.2" title="Base interfaces">
+  <paragraph>An interface can inherit from zero or more interfaces, which are called the explicit base interfaces of the interface. When an interface has one or more explicit base interfaces, then in the declaration of that interface, the interface identifier is followed by a colon and a comma-separated list of base interface identifiers. <grammar_production><name><non_terminal where="20.1.2">interface-base</non_terminal></name> : <rhs><terminal>:</terminal><non_terminal where="17.1.2">interface-type-list</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>The explicit base interfaces of an interface must be at least as accessible as the interface itself (<hyperlink>10.5.4</hyperlink>). </paragraph>
+  <paragraph>
+    <note>[Note: For example, it is a compile-time error to specify a private or internal interface in the  <non_terminal where="20.1.2">interface-base</non_terminal> of a public interface. end note]</note>
+  </paragraph>
+  <paragraph>It is a compile-time error for an interface to directly or indirectly inherit from itself. </paragraph>
+  <paragraph>The base interfaces of an interface are the explicit base interfaces and their base interfaces. In other words, the set of base interfaces is the complete transitive closure of the explicit base interfaces, their explicit base interfaces, and so on. An interface inherits all members of its base interfaces. <example>[Example: In the example <code_example><![CDATA[
+interface IControl  
+{  
+   void Paint();  
+}  
+interface ITextBox: IControl  
+{  
+   void SetText(string text);  
+}  
+interface IListBox: IControl  
+{  
+   void SetItems(string[] items);  
+}  
+interface IComboBox: ITextBox, IListBox {}  
+]]></code_example>the base interfaces of IComboBox are IControl, ITextBox, and IListBox. In other words, the IComboBox interface above inherits members SetText and SetItems as well as Paint. end example]</example> </paragraph>
+  <paragraph>A class or struct that implements an interface also implicitly implements all of the interface's base interfaces. </paragraph>
+</clause>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.13" title="Try-catch statements">
+  <paragraph>For a statement stmt of the form: <code_example><![CDATA[
+try try-block   
+catch(...) catch-block-1  
+...  
+catch(...) catch-block-n  
+
+]]></code_example><list><list_item> The definite assignment state of v at the beginning of try-block is the same as the definite assignment state of v at the beginning of stmt. </list_item><list_item> The definite assignment state of v at the beginning of catch-block-i (for any i) is the same as the definite assignment state of v at the beginning of stmt. </list_item><list_item> The definite assignment state of v at the end-point of stmt is definitely assigned if (and only if) v is definitely assigned at the end-point of try-block and every catch-block-i (for every i from 1 to n). </list_item></list></paragraph>
+</clause>

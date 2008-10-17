@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="10.4.5" title="Interface members">
+  <paragraph>The members of an interface are the members declared in the interface and in all base interfaces of the interface, and the members inherited from class object. </paragraph>
+</clause>

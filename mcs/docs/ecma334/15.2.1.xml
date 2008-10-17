@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="15.2.1" title="Statement lists">
+  <paragraph>A statement list consists of one or more statements written in sequence. Statement lists occur in blocks (<hyperlink>15.2</hyperlink>) and in <non_terminal where="15.7.2">switch-block</non_terminal>s (<hyperlink>15.7.2</hyperlink>). <grammar_production><name><non_terminal where="15.2.1">statement-list</non_terminal></name> : <rhs><non_terminal where="15">statement</non_terminal></rhs><rhs><non_terminal where="15.2.1">statement-list</non_terminal><non_terminal where="15">statement</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>A statement list is executed by transferring control to the first statement. When and if control reaches the end point of a statement, control is transferred to the next statement. When and if control reaches the end point of the last statement, control is transferred to the end point of the statement list. </paragraph>
+  <paragraph>A statement in a statement list is reachable if at least one of the following is true: <list><list_item> The statement is the first statement and the statement list itself is reachable. </list_item><list_item> The end point of the preceding statement is reachable. </list_item><list_item> The statement is a labeled statement and the label is referenced by a reachable goto statement. </list_item></list></paragraph>
+  <paragraph>The end point of a statement list is reachable if the end point of the last statement in the list is reachable. </paragraph>
+</clause>

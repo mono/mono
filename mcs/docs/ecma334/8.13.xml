@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<clause number="8.13" title="Versioning" informative="true">
+  <paragraph>Versioning is the process of evolving a component over time in a compatible manner. A new version of a component is source compatible with a previous version if code that depends on the previous version can, when recompiled, work with the new version. In contrast, a new version of a component is binary compatible if an application that depended on the old version can, without recompilation, work with the new version. </paragraph>
+  <paragraph>Most languages do not support binary compatibility at all, and many do little to facilitate source compatibility. In fact, some languages contain flaws that make it impossible, in general, to evolve a class over time without breaking at least some client code. </paragraph>
+  <paragraph>As an example, consider the situation of a base class author who ships a class named Base. In the first version, Base contains no method F. A component named Derived derives from Base, and introduces an F. This Derived class, along with the class Base on which it depends, is released to customers, who deploy to numerous clients and servers. <code_example><![CDATA[
+// Author A  
+namespace A   
+{  
+   public class Base   // version 1  
+   {  
+   }  
+}  
+// Author B  
+namespace B  
+{  
+   class Derived: A.Base  
+   {  
+      public virtual void F() {  
+         System.Console.WriteLine("Derived.F");   
+      }  
+   }  
+}  
+]]></code_example></paragraph>
+  <paragraph>So far, so good, but now the versioning trouble begins. The author of Base produces a new version, giving it its own method F. <code_example><![CDATA[
+// Author A  
+namespace A   
+{  
+   public class Base   // version 2  
+   {  
+      public virtual void F() {    // added in version 2  
+         System.Console.WriteLine("Base.F");   
+      }  
+   }  
+}  
+]]></code_example></paragraph>
+  <paragraph>This new version of Base should be both source and binary compatible with the initial version. (If it weren't possible to simply add a method then a base class could never evolve.) Unfortunately, the new F in Base makes the meaning of Derived's F unclear. Did Derived mean to override Base's F? This seems unlikely, since when Derived was compiled, Base did not even have an F! Further, if Derived's F does override Base's F, then it must adhere to the contract specified by Base-a contract that was unspecified when Derived was written. In some cases, this is impossible. For example, Base's F might require that overrides of it always call the base. Derived's F could not possibly adhere to such a contract. </paragraph>
+  <paragraph>C# addresses this versioning problem by requiring developers to state their intent clearly. In the original code example, the code was clear, since Base did not even have an F. Clearly, Derived's F is intended as a new method rather than an override of a base method, since no base method named F exists. </paragraph>
+  <paragraph>If Base adds an F and ships a new version, then the intent of a binary version of Derived is still  clear-Derived's F is semantically unrelated, and should not be treated as an override. </paragraph>
+  <paragraph>However, when Derived is recompiled, the meaning is unclear-the author of Derived may intend its F to override Base's F, or to hide it. Since the intent is unclear, the compiler produces a warning, and by default makes Derived's F hide Base's F. This course of action duplicates the semantics for the case in which Derived is not recompiled. The warning that is generated alerts Derived's author to the presence of the F method in Base. </paragraph>
+  <paragraph>If Derived's F is semantically unrelated to Base's F, then Derived's author can express this intent-and, in effect, turn off the warning-by using the new keyword in the declaration of F. <code_example><![CDATA[
+// Author A  
+namespace A   
+{  
+   public class Base   // version 2  
+   {  
+      public virtual void F() { // added in version 2  
+         System.Console.WriteLine("Base.F");   
+      }  
+   }  
+}  
+// Author B  
+namespace B  
+{  
+   class Derived: A.Base  // version 2a: new  
+   {  
+      new public virtual void F() {  
+         System.Console.WriteLine("Derived.F");   
+      }  
+   }  
+}  
+]]></code_example></paragraph>
+  <paragraph>On the other hand, Derived's author might investigate further, and decide that Derived's F should override Base's F. This intent can be specified by using the override keyword, as shown below. <code_example><![CDATA[
+// Author A  
+namespace A   
+{  
+   public class Base     // version 2  
+   {  
+      public virtual void F() { // added in version 2  
+         System.Console.WriteLine("Base.F");   
+      }  
+   }  
+}  
+// Author B  
+namespace B  
+{  
+   class Derived: A.Base  // version 2b: override  
+   {  
+      public override void F() {  
+         base.F();  
+         System.Console.WriteLine("Derived.F");   
+      }  
+   }  
+}  
+]]></code_example></paragraph>
+  <paragraph>The author of Derived has one other option, and that is to change the name of F, thus completely avoiding the name collision. Although this change would break source and binary compatibility for Derived, the importance of this compatibility varies depending on the scenario. If Derived is not exposed to other programs, then changing the name of F is likely a good idea, as it would improve the readability of the program-there would no longer be any confusion about the meaning of F. </paragraph>
+</clause>

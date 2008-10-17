@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<clause number="9.1" title="Programs">
+  <paragraph>A C# program consists of one or more source files, known formally as compilation units (<hyperlink>16.1</hyperlink>). A source file is an ordered sequence of Unicode characters. Source files typically have a one-to-one correspondence with files in a file system, but this correspondence is not required. </paragraph>
+  <paragraph>Conceptually speaking, a program is compiled using three steps: </paragraph>
+  <paragraph>1 Transformation, which converts a file from a particular character repertoire and encoding scheme into a sequence of Unicode characters. </paragraph>
+  <paragraph>2 Lexical analysis, which translates a stream of Unicode input characters into a stream of tokens. </paragraph>
+  <paragraph>3 Syntactic analysis, which translates the stream of tokens into executable code. </paragraph>
+  <paragraph>Conforming implementations must accept Unicode source files encoded with the UTF-8 encoding form (as defined by the Unicode standard), and transform them into a sequence of Unicode characters. Implementations may choose to accept and transform additional character encoding schemes (such as  UTF-16, UTF-32, or non-Unicode character mappings). </paragraph>
+  <paragraph>
+    <note>[Note: It is beyond the scope of this standard to define how a file using a character representation other than Unicode might be transformed into a sequence of Unicode characters. During such transformation, however, it is recommended that the usual line-separating character (or sequence) in the other character set be translated to the two-character sequence consisting of the Unicode carriage-return character followed by Unicode line-feed character. For the most part this transformation will have no visible effects; however, it will affect the interpretation of verbatim string literal tokens (<hyperlink>9.4.4.5</hyperlink>). The purpose of this recommendation is to allow a verbatim string literal to produce the same character sequence when its source file is moved between systems that support differing non-Unicode character sets, in particular, those using differing character sequences for line-separation. end note]</note>
+  </paragraph>
+</clause>

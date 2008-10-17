@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<clause number="17.6.2" title="Accessors">
+  <paragraph>The <non_terminal where="17.6.2">accessor-declarations</non_terminal> of a property specify the executable statements associated with reading and writing that property. <grammar_production><name><non_terminal where="17.6.2">accessor-declarations</non_terminal></name> : <rhs><non_terminal where="17.6.2">get-accessor-declaration</non_terminal><non_terminal where="17.6.2">set-accessor-declaration</non_terminal><opt/></rhs><rhs><non_terminal where="17.6.2">set-accessor-declaration</non_terminal><non_terminal where="17.6.2">get-accessor-declaration</non_terminal><opt/></rhs></grammar_production><grammar_production><name><non_terminal where="17.6.2">get-accessor-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><terminal>get</terminal><non_terminal where="17.6.2">accessor-body</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.6.2">set-accessor-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><terminal>set</terminal><non_terminal where="17.6.2">accessor-body</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.6.2">accessor-body</non_terminal></name> : <rhs><non_terminal where="15.2">block</non_terminal></rhs><rhs><terminal>;</terminal></rhs></grammar_production></paragraph>
+  <paragraph>The accessor declarations consist of a <non_terminal where="17.6.2">get-accessor-declaration</non_terminal>, a <non_terminal where="17.6.2">set-accessor-declaration</non_terminal>, or both. Each accessor declaration consists of the token get or set followed by an <non_terminal where="17.6.2">accessor-body</non_terminal>. For abstract and extern properties, the <non_terminal where="17.6.2">accessor-body</non_terminal> for each accessor specified is simply a semicolon. For the accessors of any non-abstract, non-extern property, the <non_terminal where="17.6.2">accessor-body</non_terminal> is a block which specifies the statements to be executed when the corresponding accessor is invoked. </paragraph>
+  <paragraph>A get accessor corresponds to a parameterless method with a return value of the property type. Except as the target of an assignment, when a property is referenced in an expression, the get accessor of the property is invoked to compute the value of the property (<hyperlink>14.1.1</hyperlink>). The body of a get accessor must conform to the rules for value-returning methods described in <hyperlink>17.5.8</hyperlink>. In particular, all return statements in the body of a get accessor must specify an expression that is implicitly convertible to the property type. Furthermore, the endpoint of a get accessor must not be reachable. </paragraph>
+  <paragraph>A set accessor corresponds to a method with a single value parameter of the property type and a <keyword>void</keyword> return type. The implicit parameter of a set accessor is always named value. When a property is referenced as the target of an assignment (<hyperlink>14.13</hyperlink>), or as the operand of ++ or  (<hyperlink>14.5.9</hyperlink>, --14.6.5), the set accessor is invoked with an argument (whose value is that of the right-hand side of the assignment or the operand of the ++ or  --operator) that provides the new value (<hyperlink>14.13.1</hyperlink>). The body of a set accessor must conform to the rules for <keyword>void</keyword> methods described in <hyperlink>17.5.8</hyperlink>. In particular, return statements in the set accessor body are not permitted to specify an expression. Since a set accessor implicitly has a parameter named value, it is a compile-time error for a local variable declaration in a set accessor to have that name. </paragraph>
+  <paragraph>Based on the presence or absence of the get and set accessors, a property is classified as follows: <list><list_item> A property that includes both a get accessor and a set accessor is said to be a read-write property. </list_item><list_item> A property that has only a get accessor is said to be a read-only property. It is a compile-time error for a read-only property to be the target of an assignment. </list_item><list_item> A property that has only a set accessor is said to be a write-only property. Except as the target of an assignment, it is a compile-time error to reference a write-only property in an expression. <note>[Note: The  pre-and postfix ++ and  --operators cannot be applied to write-only properties, since these operators read the old value of their operand before they write the new one. end note]</note> </list_item></list></paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+public class Button: Control  
+{  
+   private string caption;  
+   public string Caption {  
+      get {  
+         return caption;  
+      }  
+      set {  
+         if (caption != value) {  
+            caption = value;  
+            Repaint();  
+         }  
+      }  
+   }  
+   public override void Paint(Graphics g, Rectangle r) {  
+      // Painting code goes here  
+   }  
+}  
+]]></code_example>the Button control declares a public Caption property. The get accessor of the Caption property returns the string stored in the private caption field. The set accessor checks if the new value is different from the current value, and if so, it stores the new value and repaints the control. Properties often follow the pattern shown above: The get accessor simply returns a value stored in a private field, and the set accessor modifies that private field and then performs any additional actions required to fully update the state of the object. </example>
+  </paragraph>
+  <paragraph>
+    <example>Given the Button class above, the following is an example of use of the Caption property: <code_example><![CDATA[
+Button okButton = new Button();  
+okButton.Caption = "OK";      // Invokes set accessor  
+string s = okButton.Caption;    // Invokes get accessor  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Here, the set accessor is invoked by assigning a value to the property, and the get accessor is invoked by referencing the property in an expression. end example]</example>
+  </paragraph>
+  <paragraph>The get and set accessors of a property are not distinct members, and it is not possible to declare the accessors of a property separately. <note>[Note: As such, it is not possible for the two accessors of a read-write property to have different accessibility. end note]</note> <example>[Example: The example <code_example><![CDATA[
+class A  
+{  
+   private string name;  
+   public string Name {       // Error, duplicate member name  
+      get { return name; }  
+   }  
+   public string Name {       // Error, duplicate member name  
+      set { name = value; }  
+   }  
+}  
+]]></code_example>does not declare a single read-write property. Rather, it declares two properties with the same name, one read-only and one write-only. Since two members declared in the same class cannot have the same name, the example causes a compile-time error to occur. end example]</example> </paragraph>
+  <paragraph>When a derived class declares a property by the same name as an inherited property, the derived property hides the inherited property with respect to both reading and writing. <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   public int P {  
+      set {...}  
+   }  
+}  
+class B: A  
+{  
+   new public int P {  
+      get {...}  
+   }  
+}  
+]]></code_example>the P property in B hides the P property in A with respect to both reading and writing. Thus, in the statements <code_example><![CDATA[
+B b = new B();  
+b.P = 1;     // Error, B.P is read-only  
+((A)b).P = 1;  // Ok, reference to A.P  
+]]></code_example>the assignment to b.P causes a compile-time error to be reported, since the read-only P property in B hides the write-only P property in A. Note, however, that a cast can be used to access the hidden P property. end example]</example> </paragraph>
+  <paragraph>Unlike public fields, properties provide a separation between an object's internal state and its public interface. <example>[Example: Consider the example: <code_example><![CDATA[
+class Label  
+{  
+   private int x, y;  
+   private string caption;  
+   public Label(int x, int y, string caption) {  
+      this.x = x;  
+      this.y = y;  
+      this.caption = caption;  
+   }  
+   public int X {  
+      get { return x; }  
+   }  
+   public int Y {  
+      get { return y; }  
+   }  
+   public Point Location {  
+      get { return new Point(x, y); }  
+   }  
+   public string Caption {  
+      get { return caption; }  
+   }  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Here, the Label class uses two <keyword>int</keyword> fields, x and y, to store its location. The location is publicly exposed both as an X and a Y property and as a Location property of type Point. If, in a future version of Label, it becomes more convenient to store the location as a Point internally, the change can be made without affecting the public interface of the class: <code_example><![CDATA[
+class Label  
+{  
+   private Point location;  
+   private string caption;  
+   public Label(int x, int y, string caption) {  
+      this.location = new Point(x, y);  
+      this.caption = caption;  
+   }  
+   public int X {  
+      get { return location.x; }  
+   }  
+   public int Y {  
+      get { return location.y; }  
+   }  
+   public Point Location {  
+      get { return location; }  
+   }  
+   public string Caption {  
+      get { return caption; }  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Had x and y instead been public readonly fields, it would have been impossible to make such a change to the Label class. end example]</example>
+  </paragraph>
+  <paragraph>
+    <note>[Note: Exposing state through properties is not necessarily any less efficient than exposing fields directly. In particular, when a property is non-virtual and contains only a small amount of code, the execution environment may replace calls to accessors with the actual code of the accessors. This process is known as inlining, and it makes property access as efficient as field access, yet preserves the increased flexibility of properties. end note]</note>
+  </paragraph>
+  <paragraph>
+    <example>[Example: Since invoking a get accessor is conceptually equivalent to reading the value of a field, it is considered bad programming style for get accessors to have observable side-effects. In the example <code_example><![CDATA[
+class Counter  
+{  
+   private int next;  
+   public int Next {  
+      get { return next++; }  
+   }  
+}  
+]]></code_example>the value of the Next property depends on the number of times the property has previously been accessed. </example>
+  </paragraph>
+  <paragraph>
+    <example>Thus, accessing the property produces an observable side effect, and the property should be implemented as a method instead. end example]</example>
+  </paragraph>
+  <paragraph>
+    <note>[Note: The &quot;no side-effects&quot; convention for get accessors doesn't mean that get accessors should always be written to simply return values stored in fields. Indeed, get accessors often compute the value of a property by accessing multiple fields or invoking methods. However, a properly designed get accessor performs no actions that cause observable changes in the state of the object. end note]</note>
+  </paragraph>
+  <paragraph>Properties can be used to delay initialization of a resource until the moment it is first referenced. <example>[Example: For example: <code_example><![CDATA[
+using System.IO;  
+public class Console  
+{  
+   private static TextReader reader;  
+   private static TextWriter writer;  
+   private static TextWriter error;  
+   public static TextReader In {  
+      get {  
+         if (reader == null) {  
+            reader = new StreamReader(Console.OpenStandardInput());  
+         }  
+         return reader;  
+      }  
+   }  
+   public static TextWriter Out {  
+      get {  
+         if (writer == null) {  
+            writer = new StreamWriter(Console.OpenStandardOutput());  
+         }  
+         return writer;  
+      }  
+   }  
+   public static TextWriter Error {  
+      get {  
+         if (error == null) {  
+            error = new StreamWriter(Console.OpenStandardError());  
+         }  
+         return error;  
+      }  
+   }  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>The Console class contains three properties, In, Out, and Error, that represent the standard input, output, and error devices, respectively. By exposing these members as properties, the Console class can delay their initialization until they are actually used. For example, upon first referencing the Out property, as in <code_example><![CDATA[
+Console.Out.WriteLine("hello, world");  
+]]></code_example>the underlying TextWriter for the output device is created. But if the application makes no reference to the In and Error properties, then no objects are created for those devices. end example]</example>
+  </paragraph>
+</clause>

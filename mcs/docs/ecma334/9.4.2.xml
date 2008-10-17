@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<clause number="9.4.2" title="Identifiers">
+  <paragraph>The rules for identifiers given in this section correspond exactly to those recommended by the Unicode Standard Annex 15 except that underscore is allowed as an initial character (as is traditional in the C programming language), Unicode escape sequences are permitted in identifiers, and the &quot;@&quot; character is allowed as a prefix to enable keywords to be used as identifiers. <grammar_production><name>identifier</name> :: <rhs><non_terminal where="9.4.2">available-identifier</non_terminal></rhs><rhs><terminal>@</terminal><non_terminal where="9.4.2">identifier-or-keyword</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.4.2">available-identifier</non_terminal></name> :: <rhs>An <non_terminal where="9.4.2">identifier-or-keyword</non_terminal> that is not a <non_terminal where="9.4.3">keyword</non_terminal> </rhs></grammar_production><grammar_production><name><non_terminal where="9.4.2">identifier-or-keyword</non_terminal></name> :: <rhs><non_terminal where="9.4.2">identifier-start-character</non_terminal><non_terminal where="9.4.2">identifier-part-characters</non_terminal><opt/></rhs></grammar_production><grammar_production><name><non_terminal where="9.4.2">identifier-start-character</non_terminal></name> :: <rhs><non_terminal where="9.4.2">letter-character</non_terminal></rhs><rhs>_ (the underscore character U+005F) </rhs></grammar_production><grammar_production><name><non_terminal where="9.4.2">identifier-part-character</non_terminal>s</name> :: <rhs><non_terminal where="9.4.2">identifier-part-character</non_terminal></rhs><rhs><non_terminal where="9.4.2">identifier-part-characters</non_terminal><non_terminal where="9.4.2">identifier-part-character</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.4.2">identifier-part-character</non_terminal></name> :: <rhs><non_terminal where="9.4.2">letter-character</non_terminal></rhs><rhs><non_terminal where="9.4.2">decimal-digit-character</non_terminal></rhs><rhs><non_terminal where="9.4.2">connecting-character</non_terminal></rhs><rhs><non_terminal where="9.4.2">combining-character</non_terminal></rhs><rhs><non_terminal where="9.4.2">formatting-character</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.4.2">letter-character</non_terminal></name> :: <rhs>A Unicode character of classes Lu, Ll, Lt, Lm, Lo, or Nl </rhs><rhs>A <non_terminal where="9.4.1">unicode-escape-sequence</non_terminal> representing a character of classes Lu, Ll, Lt, Lm, Lo, or Nl </rhs></grammar_production><grammar_production><name><non_terminal where="9.4.2">combining-character</non_terminal></name> :: <rhs>A Unicode character of classes Mn or Mc </rhs><rhs>A <non_terminal where="9.4.1">unicode-escape-sequence</non_terminal> representing a character of classes Mn or Mc </rhs></grammar_production><grammar_production><name><non_terminal where="9.4.2">decimal-digit-character</non_terminal></name> :: <rhs>A Unicode character of the class Nd </rhs><rhs>A <non_terminal where="9.4.1">unicode-escape-sequence</non_terminal> representing a character of the class Nd </rhs></grammar_production><grammar_production><name><non_terminal where="9.4.2">connecting-character</non_terminal></name> :: <rhs>A Unicode character of the class Pc </rhs><rhs>A <non_terminal where="9.4.1">unicode-escape-sequence</non_terminal> representing a character of the class Pc </rhs></grammar_production><grammar_production><name><non_terminal where="9.4.2">formatting-character</non_terminal></name> :: <rhs>A Unicode character of the class Cf </rhs><rhs>A <non_terminal where="9.4.1">unicode-escape-sequence</non_terminal> representing a character of the class Cf </rhs></grammar_production></paragraph>
+  <paragraph>
+    <note>[Note: For information on the Unicode character classes mentioned above, see The Unicode Standard, Verson 3.0, 4-5. end note]</note>
+  </paragraph>
+  <paragraph>
+    <example>[Example: Examples of valid identifiers include &quot;identifier1&quot;, &quot;_identifier2&quot;, and &quot;@if&quot;. end example]</example>
+  </paragraph>
+  <paragraph>An identifier in a conforming program must be in the canonical format defined by Unicode Normalization Form C, as defined by Unicode Standard Annex 15. The behavior when encountering an identifier not in Normalization Form C is implementation-defined; however, a diagnostic is not required. </paragraph>
+  <paragraph>The prefix &quot;@&quot; enables the use of keywords as identifiers, which is useful when interfacing with other programming languages. The character @ is not actually part of the identifier, so the identifier might be seen in other languages as a normal identifier, without the prefix. An identifier with an @ prefix is called a verbatim identifier. <note>[Note: Use of the @ prefix for identifiers that are not keywords is permitted, but strongly discouraged as a matter of style. end note]</note> </paragraph>
+  <paragraph>
+    <example>[Example: The example: <code_example><![CDATA[
+class @class  
+{  
+   public static void @static(bool @bool) {  
+      if (@bool)  
+      System.Console.WriteLine("true");  
+      else  
+      System.Console.WriteLine("false");  
+   }    
+}  
+class Class1  
+{  
+   static void M() {  
+      cl\u0061ss.st\u0061tic(true);  
+   }  
+}  
+]]></code_example>defines a class named &quot;class&quot; with a static method named &quot;static&quot; that takes a parameter named &quot;bool&quot;. Note that since Unicode escapes are not permitted in keywords, the token &quot;cl\u0061ss&quot; is an identifier, and is the same identifier as &quot;@class&quot;. end example]</example>
+  </paragraph>
+  <paragraph>Two identifiers are considered the same if they are identical after the following transformations are applied, in order: <list><list_item> The prefix &quot;@&quot;, if used, is removed. </list_item><list_item> Each <non_terminal where="9.4.1">unicode-escape-sequence</non_terminal> is transformed into its corresponding Unicode character. </list_item><list_item> Any <non_terminal where="9.4.2">formatting-character</non_terminal>s are removed. </list_item></list></paragraph>
+  <paragraph>Identifiers containing two consecutive underscore characters (U+005F) are reserved for use by the implementation; however, no diagnostic is required if such an identifier is defined. <note>[Note: For example, an implementation might provide extended keywords that begin with two underscores. end note]</note> </paragraph>
+</clause>

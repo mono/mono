@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="15.7" title="Selection statements">
+  <paragraph>Selection statements select one of a number of possible statements for execution based on the value of some expression. <grammar_production><name><non_terminal where="15.7">selection-statement</non_terminal></name> : <rhs><non_terminal where="15.7.1">if-statement</non_terminal></rhs><rhs><non_terminal where="15.7.2">switch-statement</non_terminal></rhs></grammar_production></paragraph>
+</clause>

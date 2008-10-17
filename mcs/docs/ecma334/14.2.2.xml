@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<clause number="14.2.2" title="Operator overloading">
+  <paragraph>All unary and binary operators have predefined implementations that are automatically available in any expression. In addition to the predefined implementations, user-defined implementations can be introduced by including operator declarations in classes and structs (<hyperlink>17.9</hyperlink>). User-defined operator implementations always take precedence over predefined operator implementations: Only when no applicable user-defined operator implementations exist will the predefined operator implementations be considered. </paragraph>
+  <paragraph>The overloadable unary operators are: <code_example><![CDATA[
++   -   !   ~   ++   --   true   false  
+]]></code_example></paragraph>
+  <paragraph>
+    <note>[Note: Although true and false are not used explicitly in expressions, they are considered operators because they are invoked in several expression contexts: boolean expressions (<hyperlink>14.16</hyperlink>) and expressions involving the conditional (<hyperlink>14.12</hyperlink>), and conditional logical operators (<hyperlink>14.11</hyperlink>). end note]</note>
+  </paragraph>
+  <paragraph>The overloadable binary operators are: <code_example><![CDATA[
++   -   *   /   %   &   |   ^   <<   >>   ==   !=   >   <   >=   <=  
+]]></code_example></paragraph>
+  <paragraph>Only the operators listed above can be overloaded. In particular, it is not possible to overload member access, method invocation, or the =, &amp;&amp;, ||, ?:, checked, unchecked, new, typeof, as, and is operators. </paragraph>
+  <paragraph>When a binary operator is overloaded, the corresponding assignment operator, if any, is also implicitly overloaded. For example, an overload of operator * is also an overload of operator *=. This is described further in <hyperlink>14.13</hyperlink>. Note that the assignment operator itself (=) cannot be overloaded. An assignment always performs a simple bit-wise copy of a value into a variable. </paragraph>
+  <paragraph>Cast operations, such as (T)x, are overloaded by providing user-defined conversions (<hyperlink>13.4</hyperlink>). </paragraph>
+  <paragraph>Element access, such as a[x], is not considered an overloadable operator. Instead, user-defined indexing is supported through indexers (<hyperlink>17.8</hyperlink>). </paragraph>
+  <paragraph>In expressions, operators are referenced using operator notation, and in declarations, operators are referenced using functional notation. The following table shows the relationship between operator and functional notations for unary and binary operators. In the first entry, op denotes any overloadable unary prefix operator. In the second entry, op denotes the unary postfix ++ and  --operators. In the third entry, op denotes any overloadable binary operator. <note>[Note: For an example of overloading the ++ and  --operators see <hyperlink>17.9.1</hyperlink>. end note]</note> <table_line>Operator notation Functional notation </table_line>
+<table_line>op x operator op(x) </table_line>
+<table_line>x op operator op(x) </table_line>
+<table_line>x opy operator op(x, y) </table_line>
+</paragraph>
+  <paragraph>User-defined operator declarations always require at least one of the parameters to be of the class or struct type that contains the operator declaration. <note>[Note: Thus, it is not possible for a user-defined operator to have the same signature as a predefined operator. end note]</note> </paragraph>
+  <paragraph>User-defined operator declarations cannot modify the syntax, precedence, or associativity of an operator. </paragraph>
+  <paragraph>
+    <example>[Example: For example, the / operator is always a binary operator, always has the precedence level specified in <hyperlink>14.2.1</hyperlink>, and is always left-associative. end example]</example>
+  </paragraph>
+  <paragraph>
+    <note>[Note: While it is possible for a user-defined operator to perform any computation it pleases, implementations that produce results other than those that are intuitively expected are strongly discouraged. </note>
+  </paragraph>
+  <paragraph>
+    <note>For example, an implementation of operator == should compare the two operands for equality and return an appropriate <keyword>bool</keyword> result. end note]</note>
+  </paragraph>
+  <paragraph>The descriptions of individual operators in <hyperlink>14.5</hyperlink> through <hyperlink>14.13</hyperlink> specify the predefined implementations of the operators and any additional rules that apply to each operator. The descriptions make use of the terms unary operator overload resolution, binary operator overload resolution, and numeric promotion, definitions of which are found in the following sections. </paragraph>
+</clause>

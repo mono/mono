@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<clause number="14.9.5" title="Enumeration comparison operators">
+  <paragraph>Every enumeration type implicitly provides the following predefined comparison operators: <code_example><![CDATA[
+bool operator ==(E x, E y);  
+bool operator !=(E x, E y);  
+bool operator <(E x, E y);  
+bool operator >(E x, E y);  
+bool operator <=(E x, E y);  
+bool operator >=(E x, E y);  
+]]></code_example></paragraph>
+  <paragraph>The result of evaluating x op y, where x and y are expressions of an enumeration type E with an underlying type U, and op is one of the comparison operators, is exactly the same as evaluating ((U)x) op ((U)y). In other words, the enumeration type comparison operators simply compare the underlying integral values of the two operands. </paragraph>
+</clause>

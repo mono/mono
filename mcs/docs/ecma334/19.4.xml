@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="19.4" title="Array members">
+  <paragraph>Every array type inherits the members declared by the System.Array type. </paragraph>
+</clause>

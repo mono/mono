@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="18.3.5" title="Boxing and unboxing">
+  <paragraph>A value of a class type can be converted to type object or to an interface type that is implemented by the class simply by treating the reference as another type at compile-time. Likewise, a value of type object or a value of an interface type can be converted back to a class type without changing the reference (but of course a run-time type check is required in this case). </paragraph>
+  <paragraph>Since structs are not reference types, these operations are implemented differently for struct types. When a value of a struct type is converted to type object or to an interface type that is implemented by the struct, a boxing operation takes place. Likewise, when a value of type object or a value of an interface type is converted back to a struct type, an unboxing operation takes place. A key difference from the same operations on class types is that boxing and unboxing copies the struct value either into or out of the boxed instance. <note>[Note: Thus, following a boxing or unboxing operation, changes made to the unboxed struct are not reflected in the boxed struct. end note]</note> </paragraph>
+  <paragraph>For further details on boxing and unboxing, see <hyperlink>11.3</hyperlink>. </paragraph>
+</clause>

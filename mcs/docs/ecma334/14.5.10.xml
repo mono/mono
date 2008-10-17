@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="14.5.10" title="The new operator">
+  <paragraph>The new operator is used to create new instances of types. </paragraph>
+  <paragraph>There are three forms of new expressions: <list><list_item> Object creation expressions are used to create new instances of class types and value types. </list_item><list_item> Array creation expressions are used to create new instances of array types. </list_item><list_item> Delegate creation expressions are used to create new instances of delegate types. </list_item></list></paragraph>
+  <paragraph>The new operator implies creation of an instance of a type, but does not necessarily imply dynamic allocation of memory. In particular, instances of value types require no additional memory beyond the variables in which they reside, and no dynamic allocations occur when new is used to create instances of value types. </paragraph>
+</clause>

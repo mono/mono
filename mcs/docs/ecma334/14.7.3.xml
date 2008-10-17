@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<clause number="14.7.3" title="Remainder operator">
+  <paragraph>For an operation of the form x % y, binary operator overload resolution (<hyperlink>14.2.4</hyperlink>) is applied to select a specific operator implementation. The operands are converted to the parameter types of the selected operator, and the type of the result is the return type of the operator. </paragraph>
+  <paragraph>The predefined remainder operators are listed below. The operators all compute the remainder of the division between x and y. <list><list_item> Integer remainder: <code_example><![CDATA[
+int operator %(int x, int y);  
+uint operator %(uint x, uint y);  
+long operator %(long x, long y);  
+ulong operator %(ulong x, ulong y);  
+]]></code_example>The result of x % y is the value produced by x  -(x / y) * y. If y is zero, a System.DivideByZeroException is thrown. The remainder operator never causes an overflow. </list_item><list_item> Floating-point remainder: <code_example><![CDATA[
+float operator %(float x, float y);  
+double operator %(double x, double y);  
+]]></code_example>The following table lists the results of all possible combinations of nonzero finite values, zeros, infinities, and NaN's. In the table, x and y are positive finite values. z is the result of x % y and is computed as x  -n * y, where n is the largest possible integer that is less than or equal to x / y. This method of computing the remainder is analogous to that used for integer operands, but differs from the IEEE 754 definition (in which n is the integer closest to x / y). <table_line>+y <unicode>150</unicode>y +0 <unicode>150</unicode>0 +<infinity/> <unicode>150</unicode><infinity/> NaN </table_line>
+<table_line>+x +z +z NaN NaN x x NaN </table_line>
+<table_line><unicode>150</unicode>x <unicode>150</unicode>z <unicode>150</unicode>z NaN NaN <unicode>150</unicode>x <unicode>150</unicode>x NaN </table_line>
+<table_line>+0 +0 +0 NaN NaN +0 +0 NaN </table_line>
+<table_line><unicode>150</unicode>0 <unicode>150</unicode>0 <unicode>150</unicode>0 NaN NaN <unicode>150</unicode>0 <unicode>150</unicode>0 NaN </table_line>
+<table_line>+<infinity/> NaN NaN NaN NaN NaN NaN NaN </table_line>
+<table_line><unicode>150</unicode><infinity/> NaN NaN NaN NaN NaN NaN NaN </table_line>
+<table_line>NaN NaN NaN NaN NaN NaN NaN NaN </table_line>
+</list_item><list_item> Decimal remainder: <code_example><![CDATA[
+decimal operator %(decimal x, decimal y);  
+]]></code_example>If the value of the right operand is zero, a System.DivideByZeroException is thrown. If the resulting value is too large to represent in the <keyword>decimal</keyword> format, a System.OverflowException is thrown. If the result value is too small to represent in the <keyword>decimal</keyword> format, the result is zero. The scale of the result, before any rounding, is the same as the scale of y, and the sign of the result, if non-zero, is the same as that of x. Decimal remainder is equivalent to using the remainder operator of type System.Decimal. </list_item></list></paragraph>
+</clause>

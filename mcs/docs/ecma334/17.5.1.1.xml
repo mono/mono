@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="17.5.1.1" title="Value parameters">
+  <paragraph>A parameter declared with no modifiers is a value parameter. A value parameter corresponds to a local variable that gets its initial value from the corresponding argument supplied in the method invocation. </paragraph>
+  <paragraph>When a formal parameter is a value parameter, the corresponding argument in a method invocation must be an expression of a type that is implicitly convertible (<hyperlink>13.1</hyperlink>) to the formal parameter type. </paragraph>
+  <paragraph>A method is permitted to assign new values to a value parameter. Such assignments only affect the local storage location represented by the value parameter-they have no effect on the actual argument given in the method invocation. </paragraph>
+</clause>

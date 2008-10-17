@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<clause number="25.5.5" title="Pointer increment and decrement">
+  <paragraph>In an unsafe context, the ++ and  --operators (<hyperlink>14.5.9</hyperlink> and <hyperlink>14.6.5</hyperlink>) can be applied to pointer variables of all types except void*. Thus, for every pointer type T*, the following operators are implicitly defined: <code_example><![CDATA[
+T* operator ++(T* x);  
+T* operator --(T* x);  
+]]></code_example></paragraph>
+  <paragraph>The operators produce the same results as x+1 and x-1, respectively (<hyperlink>25.5.6</hyperlink>). In other words, for a pointer variable of type T*, the ++ operator adds sizeof(T) to the address contained in the variable, and the  --operator subtracts sizeof(T) from the address contained in the variable. </paragraph>
+  <paragraph>If a pointer increment or decrement operation overflows the domain of the pointer type, the result is implementation-defined, but no exceptions are produced. </paragraph>
+</clause>

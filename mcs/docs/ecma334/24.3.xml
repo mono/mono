@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="24.3" title="Attribute instances">
+  <paragraph>An attribute instance is an instance that represents an attribute at run-time. An attribute is defined with an attribute class, positional arguments, and named arguments. An attribute instance is an instance of the attribute class that is initialized with the positional and named arguments. </paragraph>
+  <paragraph>Retrieval of an attribute instance involves both compile-time and run-time processing, as described in the following sections. </paragraph>
+</clause>

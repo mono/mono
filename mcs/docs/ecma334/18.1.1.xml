@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="18.1.1" title="Struct modifiers">
+  <paragraph>A <non_terminal where="18.1">struct-declaration</non_terminal> may optionally include a sequence of struct modifiers: <grammar_production><name><non_terminal where="18.1.1">struct-modifier</non_terminal>s</name> : <rhs><non_terminal where="18.1.1">struct-modifier</non_terminal></rhs><rhs><non_terminal where="18.1.1">struct-modifiers</non_terminal><non_terminal where="18.1.1">struct-modifier</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="18.1.1">struct-modifier</non_terminal></name> : <rhs><keyword>new</keyword></rhs><rhs><keyword>public</keyword></rhs><rhs><keyword>protected</keyword></rhs><rhs><keyword>internal</keyword></rhs><rhs><keyword>private</keyword></rhs></grammar_production></paragraph>
+  <paragraph>It is a compile-time error for the same modifier to appear multiple times in a struct declaration. </paragraph>
+  <paragraph>The modifiers of a struct declaration have the same meaning as those of a class declaration (<hyperlink>17.1.1</hyperlink>). </paragraph>
+</clause>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<clause number="25.5.1" title="Pointer indirection">
+  <paragraph>A <non_terminal where="25.5.1">pointer-indirection-expression</non_terminal> consists of an asterisk (*) followed by a <non_terminal where="14.6">unary-expression</non_terminal>. <grammar_production><name><non_terminal where="25.5.1">pointer-indirection-expression</non_terminal></name> : <rhs><terminal>*</terminal><non_terminal where="14.6">unary-expression</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>The unary * operator denotes pointer indirection and is used to obtain the variable to which a pointer points. </paragraph>
+  <paragraph>The result of evaluating *P, where P is an expression of a pointer type T*, is a variable of type T. It is a compile-time error to apply the unary * operator to an expression of type void* or to an expression that isn't of a pointer type. </paragraph>
+  <paragraph>The effect of applying the unary * operator to a null pointer is implementation-defined. In particular, there is no guarantee that this operation throws a System.NullReferenceException. </paragraph>
+  <paragraph>If an invalid value has been assigned to the pointer, the behavior of the unary * operator is undefined. <note>[Note: Among the invalid values for dereferencing a pointer by the unary * operator are an address inappropriately aligned for the type pointed to (see example in <hyperlink>25.4</hyperlink>), and the address of a variable after the end of its lifetime. end note]</note> </paragraph>
+  <paragraph>For purposes of definite assignment analysis, a variable produced by evaluating an expression of the form *P is considered initially assigned (<hyperlink>12.3.1</hyperlink>). </paragraph>
+</clause>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="13.3.2" title="Standard explicit conversions">
+  <paragraph>The standard explicit conversions are all standard implicit conversions plus the subset of the explicit conversions for which an opposite standard implicit conversion exists. <note>[Note: In other words, if a standard implicit conversion exists from a type A to a type B, then a standard explicit conversion exists from type A to type B and from type B to type A. end note]</note> </paragraph>
+</clause>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="3" title="References" informative="true">
+  <paragraph>The following references are informative. </paragraph>
+  <paragraph>ISO/IEC 9899:1999, Programming languages  -C. </paragraph>
+  <paragraph>ISO/IEC 14882:1998, Programming languages  -C++. </paragraph>
+  <paragraph>ANSI X3.274-1996, Programming Language REXX. (This document is useful in understanding  floating-point <keyword>decimal</keyword> arithmetic rules.) </paragraph>
+  <paragraph>End of informative references. </paragraph>
+</clause>

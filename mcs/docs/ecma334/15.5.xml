@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="15.5" title="Declaration statements">
+  <paragraph>A <non_terminal where="15.5">declaration-statement</non_terminal> declares a local variable or constant. Declaration statements are permitted in blocks, but are not permitted as embedded statements. <grammar_production><name><non_terminal where="15.5">declaration-statement</non_terminal></name> : <rhs><non_terminal where="15.5.1">local-variable-declaration</non_terminal><terminal>;</terminal></rhs><rhs><non_terminal where="15.5.2">local-constant-declaration</non_terminal><terminal>;</terminal></rhs></grammar_production></paragraph>
+</clause>

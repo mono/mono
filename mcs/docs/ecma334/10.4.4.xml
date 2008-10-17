@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="10.4.4" title="Class members">
+  <paragraph>The members of a class are the members declared in the class and the members inherited from the base class (except for class object which has no base class). The members inherited from the base class include the constants, fields, methods, properties, events, indexers, operators, and types of the base class, but not the instance constructors, destructors, and static constructors of the base class. Base class members are inherited without regard to their accessibility. </paragraph>
+  <paragraph>A class declaration may contain declarations of constants, fields, methods, properties, events, indexers, operators, instance constructors, destructors, static constructors, and types. </paragraph>
+  <paragraph>The members of object and string correspond directly to the members of the class types they alias: <list><list_item> The members of object are the members of the System.Object class. </list_item><list_item> The members of string are the members of the System.String class. </list_item></list></paragraph>
+</clause>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<clause number="8.1" title="Getting started" informative="true">
+  <paragraph>The canonical &quot;hello, world&quot; program can be written as follows: <code_example><![CDATA[
+using System;  
+class Hello  
+{  
+   static void Main() {  
+      Console.WriteLine("hello, world");  
+   }  
+}  
+]]></code_example></paragraph>
+  <paragraph>The source code for a C# program is typically stored in one or more text files with a file extension of .cs, as in hello.cs. Using a command-line compiler, such a program can be compiled with a command line like <code_example><![CDATA[
+csc hello.cs  
+]]></code_example>which produces an application named hello.exe. The output produced by this application when it is run is: <code_example><![CDATA[
+hello, world  
+]]></code_example></paragraph>
+  <paragraph>Close examination of this program is illuminating: <list><list_item> The using System; directive references a namespace called System that is provided by the Common Language Infrastructure (CLI) class library. This namespace contains the Console class referred to in the Main method. Namespaces provide a hierarchical means of organizing the elements of one or more programs. A <non_terminal where="16.3">using-directive</non_terminal> enables unqualified use of the types that are members of the namespace. The &quot;hello, world&quot; program uses Console.WriteLine as shorthand for System.Console.WriteLine. </list_item><list_item> The Main method is a member of the class Hello. It has the static modifier, and so it is a method on the class Hello rather than on instances of this class. </list_item><list_item> The entry point for an application-the method that is called to begin execution-is always a static method named Main. </list_item><list_item> The &quot;hello, world&quot; output is produced using a class library. This standard does not include a class library. Instead, it references the class library provided by CLI. </list_item></list></paragraph>
+  <paragraph>For C and C++ developers, it is interesting to note a few things that do not appear in the &quot;hello, world&quot; program. <list><list_item> The program does not use a global method for Main. Methods and variables are not supported at the global level; such elements are always contained within type declarations (e.g., class and struct declarations). </list_item><list_item> The program does not use either &quot;::&quot; or &quot;-&gt;&quot; operators. The &quot;::&quot; is not an operator at all, and the &quot;-&gt;&quot; operator is used in only a small fraction of programs (which involve unsafe code). The separator &quot;.&quot; is used in compound names such as Console.WriteLine. </list_item><list_item> The program does not contain forward declarations. Forward declarations are never needed, as declaration order is not significant. </list_item><list_item> The program does not use #include to import program text. Dependencies among programs are handled symbolically rather than textually. This approach eliminates barriers between applications written using multiple languages. For example, the Console class need not be written in C#. </list_item></list></paragraph>
+</clause>

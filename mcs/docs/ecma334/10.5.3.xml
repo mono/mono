@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<clause number="10.5.3" title="Protected access for instance members">
+  <paragraph>When a protected instance member is accessed outside the program text of the class in which it is declared, and when a protected internal instance member is accessed outside the program text of the program in which it is declared, the access is required to take place through an instance of the derived class type in which the access occurs. Let B be a base class that declares a protected instance member M, and let D be a class that derives from B. Within the <non_terminal where="17.1.3">class-body</non_terminal> of D, access to M can take one of the following forms: <list><list_item> An unqualified <non_terminal where="10.8">type-name</non_terminal> or <non_terminal where="14.5">primary-expression</non_terminal> of the form M. </list_item><list_item> A <non_terminal where="14.5">primary-expression</non_terminal> of the form E.M, provided the type of E is D or a class derived from D. </list_item><list_item> A <non_terminal where="14.5">primary-expression</non_terminal> of the form base.M. </list_item></list></paragraph>
+  <paragraph>In addition to these forms of access, a derived class can access a protected instance constructor of a base class in a <non_terminal where="17.10">constructor-initializer</non_terminal> (<hyperlink>17.10.1</hyperlink>). </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+public class A  
+{  
+   protected int x;  
+   static void F(A a, B b) {  
+      a.x = 1;   // Ok  
+      b.x = 1;   // Ok  
+   }  
+}  
+public class B: A  
+{  
+   static void F(A a, B b) {  
+      a.x = 1;   // Error, must access through instance of B  
+      b.x = 1;   // Ok  
+   }  
+}  
+]]></code_example>within A, it is possible to access x through instances of both A and B, since in either case the access takes place through an instance of A or a class derived from A. However, within B, it is not possible to access x through an instance of A, since A does not derive from B. end example]</example>
+  </paragraph>
+</clause>

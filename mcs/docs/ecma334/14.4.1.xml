@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<clause number="14.4.1" title="Argument lists">
+  <paragraph>Every function member invocation includes an argument list, which provides actual values or variable references for the parameters of the function member. The syntax for specifying the argument list of a function member invocation depends on the function member category: <list><list_item> For instance constructors, methods, and delegates, the arguments are specified as an <non_terminal where="14.4.1">argument-list</non_terminal>, as described below. </list_item><list_item> For properties, the argument list is empty when invoking the get accessor, and consists of the expression specified as the right operand of the assignment operator when invoking the set accessor. </list_item><list_item> For events, the argument list consists of the expression specified as the right operand of the += or -= operator. </list_item><list_item> For indexers, the argument list consists of the expressions specified between the square brackets in the indexer access. When invoking the set accessor, the argument list additionally includes the expression specified as the right operand of the assignment operator. </list_item><list_item> For user-defined operators, the argument list consists of the single operand of the unary operator or the two operands of the binary operator. </list_item></list></paragraph>
+  <paragraph>The arguments of properties (<hyperlink>17.6</hyperlink>), events (<hyperlink>17.7</hyperlink>), indexers (<hyperlink>17.8</hyperlink>), and user-defined operators (<hyperlink>17.9</hyperlink>) are always passed as value parameters (<hyperlink>17.5.1.1</hyperlink>). Reference and output parameters are not supported for these categories of function members. </paragraph>
+  <paragraph>The arguments of an instance constructor, method, or delegate invocation are specified as an argument-list: <grammar_production><name><non_terminal where="14.4.1">argument-list</non_terminal></name> : <rhs><non_terminal where="14.4.1">argument</non_terminal></rhs><rhs><non_terminal where="14.4.1">argument-list</non_terminal><terminal>,</terminal><non_terminal where="14.4.1">argument</non_terminal></rhs></grammar_production><grammar_production><name>argument</name> : <rhs><non_terminal where="14.14">expression</non_terminal></rhs><rhs><keyword>ref</keyword><non_terminal where="12.4">variable-reference</non_terminal></rhs><rhs><keyword>out</keyword><non_terminal where="12.4">variable-reference</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>An <non_terminal where="14.4.1">argument-list</non_terminal> consists of one or more arguments, separated by commas. Each argument can take one of the following forms: <list><list_item> An expression, indicating that the argument is passed as a value parameter (<hyperlink>17.5.1.1</hyperlink>). </list_item><list_item> The keyword ref followed by a <non_terminal where="12.4">variable-reference</non_terminal> (<hyperlink>12.3.3</hyperlink>), indicating that the argument is passed as a reference parameter (<hyperlink>17.5.1.2</hyperlink>). A variable must be definitely assigned (<hyperlink>12.3</hyperlink>) before it can be passed as a reference parameter. A volatile field (<hyperlink>17.4.3</hyperlink>) cannot be passed as a reference parameter. </list_item><list_item> The keyword out followed by a <non_terminal where="12.4">variable-reference</non_terminal> (<hyperlink>12.3.3</hyperlink>), indicating that the argument is passed as an output parameter (<hyperlink>17.5.1.3</hyperlink>). A variable is considered definitely assigned (<hyperlink>12.3</hyperlink>) following a function member invocation in which the variable is passed as an output parameter. A volatile field (<hyperlink>17.4.3</hyperlink>) cannot be passed as an output parameter. </list_item></list></paragraph>
+  <paragraph>During the run-time processing of a function member invocation (<hyperlink>14.4.3</hyperlink>), the expressions or variable references of an argument list are evaluated in order, from left to right, as follows: <list><list_item> For a value parameter, the argument expression is evaluated and an implicit conversion (<hyperlink>13.1</hyperlink>) to the corresponding parameter type is performed. The resulting value becomes the initial value of the value parameter in the function member invocation. </list_item><list_item> For a reference or output parameter, the variable reference is evaluated and the resulting storage location becomes the storage location represented by the parameter in the function member invocation. If the variable reference given as a reference or output parameter is an array element of a <non_terminal where="11.2">reference-type</non_terminal>, a run-time check is performed to ensure that the element type of the array is identical to the type of the parameter. If this check fails, a System.ArrayTypeMismatchException is thrown. </list_item></list></paragraph>
+  <paragraph>Methods, indexers, and instance constructors may declare their right-most parameter to be a parameter array (<hyperlink>17.5.1.4</hyperlink>). Such function members are invoked either in their normal form or in their expanded form depending on which is applicable (<hyperlink>14.4.2.1</hyperlink>): <list><list_item> When a function member with a parameter array is invoked in its normal form, the argument given for the parameter array must be a single expression of a type that is implicitly convertible (<hyperlink>13.1</hyperlink>) to the parameter array type. In this case, the parameter array acts precisely like a value parameter. </list_item><list_item> When a function member with a parameter array is invoked in its expanded form, the invocation must specify zero or more arguments for the parameter array, where each argument is an expression of a type that is implicitly convertible (<hyperlink>13.1</hyperlink>) to the element type of the parameter array. In this case, the invocation creates an instance of the parameter array type with a length corresponding to the number of arguments, initializes the elements of the array instance with the given argument values, and uses the newly created array instance as the actual argument. </list_item></list></paragraph>
+  <paragraph>The expressions of an argument list are always evaluated in the order they are written. <example>[Example: Thus, the example <code_example><![CDATA[
+class Test  
+{  
+   static void F(int x, int y, int z) {  
+      System.Console.WriteLine("x = {0}, y = {1}, z = {2}", x, y, z);  
+   }  
+   static void Main() {  
+      int i = 0;  
+      F(i++, i++, i++);  
+   }  
+}  
+]]></code_example>produces the output <code_example><![CDATA[
+x = 0, y = 1, z = 2  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>The array covariance rules (<hyperlink>19.5</hyperlink>) permit a value of an array type A[] to be a reference to an instance of an array type B[], provided an implicit reference conversion exists from B to A. Because of these rules, when an array element of a <non_terminal where="11.2">reference-type</non_terminal> is passed as a reference or output parameter, a run-time check is required to ensure that the actual element type of the array is identical to that of the parameter. <example>[Example: In the example <code_example><![CDATA[
+class Test  
+{  
+   static void F(ref object x) {...}  
+   static void Main() {  
+      object[] a = new object[10];  
+      object[] b = new string[10];  
+      F(ref a[0]);    // Ok  
+      F(ref b[1]);   // ArrayTypeMismatchException  
+   }  
+}  
+]]></code_example>the second invocation of F causes a System.ArrayTypeMismatchException to be thrown because the actual element type of b is string and not object. end example]</example> </paragraph>
+  <paragraph>When a function member with a parameter array is invoked in its expanded form, the invocation is processed exactly as if an array creation expression with an array initializer (<hyperlink>14.5.10.2</hyperlink>) was inserted around the expanded parameters. <example>[Example: For example, given the declaration <code_example><![CDATA[
+void F(int x, int y, params object[] args);  
+]]></code_example>the following invocations of the expanded form of the method <code_example><![CDATA[
+F(10, 20);  
+F(10, 20, 30, 40);  
+F(10, 20, 1, "hello", 3.0);  
+]]></code_example>correspond exactly to <code_example><![CDATA[
+F(10, 20, new object[] {});  
+F(10, 20, new object[] {30, 40});  
+F(10, 20, new object[] {1, "hello", 3.0});  
+]]></code_example>end example]</example> In particular, note that an empty array is created when there are zero arguments given for the parameter array. </paragraph>
+</clause>

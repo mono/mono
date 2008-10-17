@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<clause number="8.7.10" title="Static constructors" informative="true">
+  <paragraph>A static constructor is a member that implements the actions required to initialize a class. Static constructors cannot have parameters, they cannot have accessibility modifiers, and they cannot be called explicitly. The static constructor for a class is called automatically. </paragraph>
+  <paragraph>The example <code_example><![CDATA[
+using Personnel.Data;  
+class Employee  
+{  
+   private static DataSet ds;  
+   static Employee() {  
+      ds = new DataSet(...);  
+   }  
+   public string Name;  
+   public decimal Salary;  
+   ...  
+}  
+]]></code_example>shows an Employee class with a static constructor that initializes a static field. </paragraph>
+</clause>

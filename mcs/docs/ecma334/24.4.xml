@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="24.4" title="Reserved attributes">
+  <paragraph>A small number of attributes affect the language in some way. These attributes include: <list><list_item> System.AttributeUsageAttribute (<hyperlink>24.4.1</hyperlink>), which is used to describe the ways in which an attribute class can be used. </list_item><list_item> System.ConditionalAttribute (<hyperlink>24.4.2</hyperlink>), which is used to define conditional methods. </list_item><list_item> System.ObsoleteAttribute (<hyperlink>24.4.3</hyperlink>), which is used to mark a member as obsolete. </list_item></list></paragraph>
+</clause>

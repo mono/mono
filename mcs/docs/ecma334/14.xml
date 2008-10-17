@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="14" title="Expressions">
+  <paragraph>An expression is a sequence of operators and operands. This chapter defines the syntax, order of evaluation of operands and operators, and meaning of expressions. </paragraph>
+</clause>

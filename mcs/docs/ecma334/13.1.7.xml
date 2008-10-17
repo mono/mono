@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="13.1.7" title="User-defined implicit conversions">
+  <paragraph>A user-defined implicit conversion consists of an optional standard implicit conversion, followed by execution of a user-defined implicit conversion operator, followed by another optional standard implicit conversion. The exact rules for evaluating user-defined conversions are described in <hyperlink>13.4.3</hyperlink>. </paragraph>
+</clause>

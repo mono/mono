@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="16" title="Namespaces">
+  <paragraph>C# programs are organized using namespaces. Namespaces are used both as an &quot;internal&quot; organization system for a program, and as an &quot;external&quot; organization system-a way of presenting program elements that are exposed to other programs. </paragraph>
+  <paragraph>Using-directives (<hyperlink>16.3</hyperlink>) are provided to facilitate the use of namespaces. </paragraph>
+</clause>

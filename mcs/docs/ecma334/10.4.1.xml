@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="10.4.1" title="Namespace members">
+  <paragraph>Namespaces and types that have no enclosing namespace are members of the global namespace. This corresponds directly to the names declared in the global declaration space. </paragraph>
+  <paragraph>Namespaces and types declared within a namespace are members of that namespace. This corresponds directly to the names declared in the declaration space of the namespace. </paragraph>
+  <paragraph>Namespaces have no access restrictions. It is not possible to declare private, protected, or internal namespaces, and namespace names are always publicly accessible. </paragraph>
+</clause>

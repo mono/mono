@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<clause number="17.4.5.1" title="Static field initialization">
+  <paragraph>The static field variable initializers of a class correspond to a sequence of assignments that are executed in the textual order in which they appear in the class declaration. If a static constructor (<hyperlink>17.11</hyperlink>) exists in the class, execution of the static field initializers occurs immediately prior to executing that static constructor. Otherwise, the static field initializers are executed at an implementation-dependent time prior to the first use of a static field of that class. <example>[Example: The example <code_example><![CDATA[
+using System;  
+class Test   
+{   
+   static void Main() {  
+      Console.WriteLine("{0} {1}", B.Y, A.X);  
+   }  
+   public static int f(string s) {  
+      Console.WriteLine(s);  
+      return 1;  
+   }  
+}  
+class A  
+{  
+   public static int X = Test.f("Init A");  
+}  
+class B  
+{  
+   public static int Y = Test.f("Init B");  
+}  
+]]></code_example>might produce either the output: <code_example><![CDATA[
+Init A  
+Init B  
+1 1  
+]]></code_example>or the output: <code_example><![CDATA[
+Init B  
+Init A  
+1 1  
+]]></code_example>because the execution of X's initializer and Y's initializer could occur in either order; they are only constrained to occur before the references to those fields. However, in the example: <code_example><![CDATA[
+using System;  
+class Test {  
+   static void Main() {  
+      Console.WriteLine("{0} {1}", B.Y, A.X);  
+   }  
+   public static int f(string s) {  
+      Console.WriteLine(s);  
+      return 1;  
+   }  
+}  
+class A  
+{  
+   static A() {}  
+   public static int X = Test.f("Init A");  
+}  
+class B  
+{  
+   static B() {}  
+   public static int Y = Test.f("Init B");  
+}  
+]]></code_example>the output must be: <code_example><![CDATA[
+Init B  
+Init A  
+1 1  
+]]></code_example>because the rules for when static constructors execute provide that B's static constructor (and hence B's static field initializers) must run before A's static constructor and field initializers. end example]</example> </paragraph>
+</clause>

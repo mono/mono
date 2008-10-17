@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<clause number="8.7.5" title="Events" informative="true">
+  <paragraph>An event is a member that enables an object or class to provide notifications. A class defines an event by providing an event declaration (which resembles a field declaration, though with an added event keyword) and an optional set of event accessors. The type of this declaration must be a delegate type. </paragraph>
+  <paragraph>An instance of a delegate type encapsulates one or more callable entities. For instance methods, a callable entity consists of an instance and a method on that instance. For static methods, a callable entity consists of just a method. Given a delegate instance and an appropriate set of arguments, one can invoke all of that delegate instance's methods with that set of arguments. </paragraph>
+  <paragraph>In the example <code_example><![CDATA[
+public delegate void EventHandler(object sender, System.EventArgs e);  
+public class Button   
+{  
+   public event EventHandler Click;  
+   public void Reset() {  
+      Click = null;  
+   }  
+}  
+]]></code_example>the Button class defines a Click event of type EventHandler. Inside the Button class, the Click member is exactly like a private field of type EventHandler. However, outside the Button class, the Click member can only be used on the left-hand side of the += and -= operators. The += operator adds a handler for the event, and the -= operator removes a handler for the event. The example <code_example><![CDATA[
+using System;  
+public class Form1   
+{  
+   public Form1() {  
+      // Add Button1_Click as an event handler for Button1's Click event  
+      Button1.Click += new EventHandler(Button1_Click);  
+   }  
+   Button Button1 = new Button();  
+   void Button1_Click(object sender, EventArgs e) {  
+      Console.WriteLine("Button1 was clicked!");  
+   }  
+   public void Disconnect() {  
+      Button1.Click -= new EventHandler(Button1_Click);  
+   }  
+}  
+]]></code_example>shows a Form1 class that adds Button1_Click as an event handler for Button1's Click event. In the Disconnect method, that event handler is removed. </paragraph>
+  <paragraph>For a simple event declaration such as <code_example><![CDATA[
+public event EventHandler Click;  
+]]></code_example>the compiler automatically provides the implementation underlying the += and -= operators. </paragraph>
+  <paragraph>An implementer who wants more control can get it by explicitly providing add and remove accessors. For example, the Button class could be rewritten as follows: <code_example><![CDATA[
+public class Button   
+{  
+   private EventHandler handler;  
+   public event EventHandler Click {  
+      add { handler += value; }  
+      
+      remove { handler -= value; }  
+   }  
+}  
+]]></code_example></paragraph>
+  <paragraph>This change has no effect on client code, but allows the Button class more implementation flexibility. For example, the event handler for Click need not be represented by a field. </paragraph>
+</clause>

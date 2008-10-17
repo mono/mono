@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<clause number="22.1" title="Delegate declarations">
+  <paragraph>A <non_terminal where="22.1">delegate-declaration</non_terminal> is a <non_terminal where="16.5">type-declaration</non_terminal> (<hyperlink>16.5</hyperlink>) that declares a new delegate type. <grammar_production><name><non_terminal where="22.1">delegate-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><non_terminal where="22.1">delegate-modifiers</non_terminal><opt/><keyword>delegate</keyword><non_terminal where="17.5">return-type</non_terminal><non_terminal where="9.4.2">identifier</non_terminal><terminal>(</terminal><non_terminal where="17.5.1">formal-parameter-list</non_terminal><opt/><terminal>)</terminal><terminal>;</terminal></rhs></grammar_production><grammar_production><name><non_terminal where="22.1">delegate-modifier</non_terminal>s</name> : <rhs><non_terminal where="22.1">delegate-modifier</non_terminal></rhs><rhs><non_terminal where="22.1">delegate-modifiers</non_terminal><non_terminal where="22.1">delegate-modifier</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="22.1">delegate-modifier</non_terminal></name> : <rhs><keyword>new</keyword></rhs><rhs><keyword>public</keyword></rhs><rhs><keyword>protected</keyword></rhs><rhs><keyword>internal</keyword></rhs><rhs><keyword>private</keyword></rhs></grammar_production>It is a compile-time error for the same modifier to appear multiple times in a delegate declaration. </paragraph>
+  <paragraph>The new modifier is only permitted on delegates declared within another type, in which case it specifies that such a delegate hides an inherited member by the same name, as described in <hyperlink>17.2.2</hyperlink>. </paragraph>
+  <paragraph>The public, protected, internal, and private modifiers control the accessibility of the delegate type. Depending on the context in which the delegate declaration occurs, some of these modifiers may not be permitted (<hyperlink>10.5.1</hyperlink>). </paragraph>
+  <paragraph>The delegate's type name is identifier. </paragraph>
+  <paragraph>The optional <non_terminal where="17.5.1">formal-parameter-list</non_terminal> specifies the parameters of the delegate, and <non_terminal where="17.5">return-type</non_terminal> indicates the return type of the delegate. A method and a delegate type are compatible if both of the following are true: <list><list_item> They have the same number or parameters, with the same types, in the same order, with the same parameter modifiers. </list_item><list_item> Their <non_terminal where="17.5">return-type</non_terminal>s are the same. </list_item></list></paragraph>
+  <paragraph>Delegate types in C# are name equivalent, not structurally equivalent. <note>[Note: However, instances of two distinct but structurally equivalent delegate types may compare as equal (<hyperlink>14.9.8</hyperlink>). end note]</note> Specifically, two different delegate types that have the same parameter lists and return type are considered different delegate types. <example>[Example: For example: <code_example><![CDATA[
+delegate int D1(int i, double d);  
+class A  
+{  
+   public static int M1(int a, double b) {...}  
+}  
+class B  
+{  
+   delegate int D2(int c, double d);  
+   public static int M1(int f, double g) {...}  
+   public static void M2(int k, double l) {...}  
+   public static int M3(int g) {...}  
+   public static void M4(int g) {...}  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>The delegate types D1 and D2 are both compatible with the methods A.M1 and B.M1, since they have the same return type and parameter list; however, these delegate types are two different types, so they are not interchangeable. The delegate types D1 and D2 are incompatible with the methods B.M2, B.M3, and B.M4, since they have different return types or parameter lists. end example]</example>
+  </paragraph>
+  <paragraph>The only way to declare a delegate type is via a <non_terminal where="22.1">delegate-declaration</non_terminal>. A delegate type is a class type that is derived from System.Delegate. Delegate types are implicitly sealed, so it is not permissible to derive any type from a delegate type. It is also not permissible to derive a non-delegate class type from System.Delegate. Note that System.Delegate is not itself a delegate type; it is a class type from which all delegate types are derived. </paragraph>
+  <paragraph>C# provides special syntax for delegate instantiation and invocation. Except for instantiation, any operation that can be applied to a class or class instance can also be applied to a delegate class or instance, respectively. In particular, it is possible to access members of the System.Delegate type via the usual member access syntax. </paragraph>
+  <paragraph>The set of methods encapsulated by a delegate instance is called an invocation list. When a delegate instance is created (<hyperlink>22.2</hyperlink>) from a single method, it encapsulates that method, and its invocation list contains only one entry. However, when two non-null delegate instances are combined, their invocation lists are concatenated-in the order left operand then right operand-to form a new invocation list, which contains two or more entries. </paragraph>
+  <paragraph>Delegates are combined using the binary + (<hyperlink>14.7.4</hyperlink>) and += operators (<hyperlink>14.13.2</hyperlink>). A delegate can be removed from a combination of delegates, using the binary  (<hyperlink>14.7.5</hyperlink>) -and -= operators (<hyperlink>14.13.2</hyperlink>). Delegates can be compared for equality (<hyperlink>14.9.8</hyperlink>). </paragraph>
+  <paragraph>
+    <example>[Example: The following example shows the instantiation of a number of delegates, and their corresponding invocation lists: <code_example><![CDATA[
+delegate void D(int x);  
+class Test  
+{  
+   public static void M1(int i) {...}  
+   public static void M2(int i) {...}  
+}  
+class Demo  
+{  
+   static void Main() {   
+      D cd1 = new D(Test.M1); // M1  
+      D cd2 = new D(Test.M2); // m2  
+      D cd3 = cd1 + cd2;    // M1 + M2  
+      D cd4 = cd3 + cd1;     // M1 + M2 + M1  
+      D cd5 = cd4 + cd3;     // M1 + M2 + M1 + M1 + M2  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>When cd1 and cd2 are instantiated, they each encapsulate one method. When cd3 is instantiated, it has an invocation list of two methods, M1 and M2, in that order. cd4's invocation list contains M1, M2, and M1, in that order. Finally, cd5's invocation list contains M1, M2, M1, M1, and M2, in that order. </example>
+  </paragraph>
+  <paragraph>
+    <example>For more examples of combining (as well as removing) delegates, see <hyperlink>22.3</hyperlink>. end example]</example>
+  </paragraph>
+</clause>

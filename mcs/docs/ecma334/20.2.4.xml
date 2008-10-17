@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="20.2.4" title="Interface indexers">
+  <paragraph>Interface indexers are declared using interface-indexer-declarations: <grammar_production><name><non_terminal where="20.2.4">interface-indexer-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><keyword>new</keyword><opt/><non_terminal where="11">type</non_terminal><keyword>this</keyword><terminal>[</terminal><non_terminal where="17.5.1">formal-parameter-list</non_terminal><terminal>]</terminal><terminal>{</terminal><non_terminal where="20.2.2">interface-accessors</non_terminal><terminal>}</terminal></rhs></grammar_production></paragraph>
+  <paragraph>The attributes, type, and <non_terminal where="17.5.1">formal-parameter-list</non_terminal> of an interface indexer declaration have the same meaning as those of an indexer declaration in a class (<hyperlink>17.8</hyperlink>). </paragraph>
+  <paragraph>The accessors of an interface indexer declaration correspond to the accessors of a class indexer declaration (<hyperlink>17.8</hyperlink>), except that the accessor body must always be a semicolon. Thus, the accessors simply indicate whether the indexer is read-write, read-only, or write-only. </paragraph>
+</clause>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="13.1.6" title="Implicit constant expression conversions">
+  <paragraph>An implicit constant expression conversion permits the following conversions: <list><list_item> A <non_terminal where="14.15">constant-expression</non_terminal> (<hyperlink>14.15</hyperlink>) of type <keyword>int</keyword> can be converted to type <keyword>sbyte</keyword>, <keyword>byte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>uint</keyword>, or <keyword>ulong</keyword>, provided the value of the <non_terminal where="14.15">constant-expression</non_terminal> is within the range of the destination type. </list_item><list_item> A <non_terminal where="14.15">constant-expression</non_terminal> of type <keyword>long</keyword> can be converted to type <keyword>ulong</keyword>, provided the value of the  <non_terminal where="14.15">constant-expression</non_terminal> is not negative. </list_item></list></paragraph>
+</clause>

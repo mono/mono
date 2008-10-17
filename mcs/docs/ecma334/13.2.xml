@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="13.2" title="Explicit conversions">
+  <paragraph>The following conversions are classified as explicit conversions: <list><list_item> All implicit conversions. </list_item><list_item> Explicit numeric conversions. </list_item><list_item> Explicit enumeration conversions. </list_item><list_item> Explicit reference conversions. </list_item><list_item> Explicit interface conversions. </list_item><list_item> Unboxing conversions. </list_item><list_item> User-defined explicit conversions. </list_item></list></paragraph>
+  <paragraph>Explicit conversions can occur in cast expressions (<hyperlink>14.6.6</hyperlink>). </paragraph>
+  <paragraph>The set of explicit conversions includes all implicit conversions. <note>[Note: This means that redundant cast expressions are allowed. end note]</note> </paragraph>
+  <paragraph>The explicit conversions that are not implicit conversions are conversions that cannot be proven to always succeed, conversions that are known to possibly lose information, and conversions across domains of types sufficiently different to merit explicit notation. </paragraph>
+</clause>

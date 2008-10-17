@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="8" title="Language Overview" informative="true">
+    <paragraph>This clause is informative. </paragraph>
+    <paragraph>C# (pronounced &quot;C Sharp&quot;) is a simple, modern, object oriented, and type-safe programming language. It will immediately be familiar to C and C++ programmers. C# combines the high productivity of Rapid Application Development (RAD) languages and the raw power of C++. </paragraph>
+    <paragraph>The rest of this chapter describes the essential features of the language. While later chapters describe rules and exceptions in a detail-oriented and sometimes mathematical manner, this chapter strives for clarity and brevity at the expense of completeness. The intent is to provide the reader with an introduction to the language that will facilitate the writing of early programs and the reading of later chapters. </paragraph>
+</clause>

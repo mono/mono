@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<clause number="17.4.2.2" title="Versioning of constants and static readonly fields">
+  <paragraph>Constants and readonly fields have different binary versioning semantics. When an expression references a constant, the value of the constant is obtained at compile-time, but when an expression references a readonly field, the value of the field is not obtained until run-time. <example>[Example: Consider an application that consists of two separate programs: <code_example><![CDATA[
+using System;  
+namespace Program1  
+{  
+   public class Utils  
+   {  
+      public static readonly int X = 1;  
+   }  
+}  
+namespace Program2  
+{  
+   class Test  
+   {  
+      static void Main() {  
+         Console.WriteLine(Program1.Utils.X);  
+      }  
+   }  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>The Program1 and Program2 namespaces denote two programs that are compiled separately. Because Program1.Utils.X is declared as a static readonly field, the value output by the Console.WriteLine statement is not known at compile-time, but rather is obtained at run-time. Thus, if the value of X is changed and Program1 is recompiled, the Console.WriteLine statement will output the new value even if Program2 isn't recompiled. However, had X been a constant, the value of X would have been obtained at the time Program2 was compiled, and would remain unaffected by changes in Program1 until Program2 is recompiled. end example]</example>
+  </paragraph>
+</clause>

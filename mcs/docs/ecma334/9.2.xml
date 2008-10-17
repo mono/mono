@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="9.2" title="Grammars">
+  <paragraph>This specification presents the syntax of the C# programming language using two grammars. The lexical grammar (<hyperlink>9.2.1</hyperlink>) defines how Unicode characters are combined to form line terminators, white space, comments, tokens, and pre-processing directives. The syntactic grammar (<hyperlink>9.2.2</hyperlink>) defines how the tokens resulting from the lexical grammar are combined to form C# programs. </paragraph>
+</clause>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.21" title="Invocation expressions and object creation expressions">
+  <paragraph>For an invocation expression expr of the form: <code_example><![CDATA[
+primary-expression (arg1, arg2, ..., argn)  
+]]></code_example>or an object creation expression of the form: <code_example><![CDATA[
+new type (arg1, arg2, ..., argn)  
+]]></code_example><list><list_item> For an invocation expression, the definite assignment state of v before <non_terminal where="14.5">primary-expression</non_terminal> is the same as the state of v before expr. </list_item><list_item> For an invocation expression, the definite assignment state of v before arg<sub>1</sub> is the same as the state of v after <non_terminal where="14.5">primary-expression</non_terminal>. </list_item><list_item> For an object creation expression, the definite assignment state of v before arg<sub>1</sub> is the same as the state of v before expr. </list_item><list_item> For each argument arg<sub>i</sub>, the definite assignment state of v after arg<sub>i</sub> is determined by the normal expression rules, ignoring any ref or out modifiers. </list_item><list_item> For each argument arg<sub>i</sub> for any i greater than one, the definite assignment state of v before arg<sub>i</sub> is the same as the state of v after arg<sub>i-1</sub>. </list_item><list_item> If the variable v is passed as an out argument (i.e., an argument of the form &quot;out v&quot;) in any of the arguments, then the state of v after expr is definitely assigned. Otherwise; the state of v after expr is the same as the state of v after arg<sub>n</sub>. </list_item></list></paragraph>
+</clause>

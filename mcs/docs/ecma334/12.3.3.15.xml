@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.15" title="Try-catch-finally statements">
+  <paragraph>Definite assignment analysis for a try-catch-finally statement of the form: <code_example><![CDATA[
+try try-block   
+catch(...) catch-block-1  
+...  
+catch(...) catch-block-n  
+finally finally-block  
+]]></code_example>is done as if the statement were a try-finally statement enclosing a try-catch statement: <code_example><![CDATA[
+try {  
+   try try-block   
+   catch(...) catch-block-1  
+   ...  
+   catch(...) catch-block-n  
+}  
+finally finally-block  
+]]></code_example></paragraph>
+  <paragraph>
+    <example>[Example: The following example demonstrates how the different blocks of a try statement (<hyperlink>15.10</hyperlink>) affect definite assignment. <code_example><![CDATA[
+class A  
+{  
+   static void F() {  
+      int i, j;  
+      try {  
+         goto LABEL:  
+         // neither i nor j definitely assigned  
+         i = 1;  
+         // i definitely assigned  
+      }  
+      catch {  
+         // neither i nor j definitely assigned  
+         i = 3;  
+         // i definitely assigned  
+      }  
+      finally {  
+         // neither i nor j definitely assigned  
+         j = 5;  
+         // j definitely assigned  
+      }  
+      // i and j definitely assigned  
+      LABEL:  
+      // j definitely assigned  
+      
+   }  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

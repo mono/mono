@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<clause number="17.7" title="Events">
+  <paragraph>An event is a member that enables an object or class to provide notifications. Clients can attach executable code for events by supplying event handlers. </paragraph>
+  <paragraph>Events are declared using event-declarations: <grammar_production><name><non_terminal where="17.7">event-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><non_terminal where="17.7">event-modifiers</non_terminal><opt/><keyword>event</keyword><non_terminal where="11">type</non_terminal><non_terminal where="17.4">variable-declarators</non_terminal><terminal>;</terminal></rhs><rhs><non_terminal where="24.2">attributes</non_terminal><opt/><non_terminal where="17.7">event-modifiers</non_terminal><opt/><keyword>event</keyword><non_terminal where="11">type</non_terminal><non_terminal where="17.6">member-name</non_terminal><terminal>{</terminal><non_terminal where="17.7">event-accessor-declarations</non_terminal><terminal>}</terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.7">event-modifier</non_terminal>s</name> : <rhs><non_terminal where="17.7">event-modifier</non_terminal></rhs><rhs><non_terminal where="17.7">event-modifiers</non_terminal><non_terminal where="17.7">event-modifier</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.7">event-modifier</non_terminal></name> : <rhs><keyword>new</keyword></rhs><rhs><keyword>public</keyword></rhs><rhs><keyword>protected</keyword></rhs><rhs><keyword>internal</keyword></rhs><rhs><keyword>private</keyword></rhs><rhs><keyword>static</keyword></rhs><rhs><keyword>virtual</keyword></rhs><rhs><keyword>sealed</keyword></rhs><rhs><keyword>override</keyword></rhs><rhs><keyword>abstract</keyword></rhs><rhs><keyword>extern</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.7">event-accessor-declarations</non_terminal></name> : <rhs><non_terminal where="17.7">add-accessor-declaration</non_terminal><non_terminal where="17.7">remove-accessor-declaration</non_terminal></rhs><rhs><non_terminal where="17.7">remove-accessor-declaration</non_terminal><non_terminal where="17.7">add-accessor-declaration</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.7">add-accessor-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><terminal>add</terminal><non_terminal where="15.2">block</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.7">remove-accessor-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><terminal>remove</terminal><non_terminal where="15.2">block</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>An <non_terminal where="17.7">event-declaration</non_terminal> may include a set of attributes (<hyperlink>24</hyperlink>) and a valid combination of the four access modifiers (<hyperlink>17.2.3</hyperlink>), the new (<hyperlink>17.2.2</hyperlink>), static (<hyperlink>17.5.2</hyperlink>, <hyperlink>17.7.3</hyperlink>), virtual (<hyperlink>17.5.3</hyperlink>, <hyperlink>17.7.4</hyperlink>), override (<hyperlink>17.5.4</hyperlink>, <hyperlink>17.7.4</hyperlink>), sealed (<hyperlink>17.5.5</hyperlink>), abstract (<hyperlink>17.5.6</hyperlink>, <hyperlink>17.7.4</hyperlink>), and extern modifiers. </paragraph>
+  <paragraph>Event declarations are subject to the same rules as method declarations (<hyperlink>17.5</hyperlink>) with regard to valid combinations of modifiers. </paragraph>
+  <paragraph>The type of an event declaration must be a <non_terminal where="11.2">delegate-type</non_terminal> (<hyperlink>11.2</hyperlink>), and that <non_terminal where="11.2">delegate-type</non_terminal> must be at least as accessible as the event itself (<hyperlink>10.5.4</hyperlink>). </paragraph>
+  <paragraph>An event declaration may include <non_terminal where="17.7">event-accessor-declarations</non_terminal>. However, if it does not, for non-extern,  non-abstract events, the compiler shall supply them automatically (<hyperlink>17.7.1</hyperlink>); for extern events, the accessors are provided externally. </paragraph>
+  <paragraph>An event declaration that omits <non_terminal where="17.7">event-accessor-declarations</non_terminal> defines one or more events-one for each of the <non_terminal where="17.4">variable-declarator</non_terminal>s. The attributes and modifiers apply to all of the members declared by such an  <non_terminal where="17.7">event-declaration</non_terminal>. </paragraph>
+  <paragraph>It is a compile-time error for an <non_terminal where="17.7">event-declaration</non_terminal> to include both the abstract modifier and  brace-delimited <non_terminal where="17.7">event-accessor-declarations</non_terminal>. </paragraph>
+  <paragraph>When an event declaration includes an extern modifier, the event is said to be an external event. Because an external event declaration provides no actual implementation, it is an error for it to include both the extern modifier and <non_terminal where="17.7">event-accessor-declarations</non_terminal>. </paragraph>
+  <paragraph>An event can be used as the left-hand operand of the += and -= operators (<hyperlink>14.13.3</hyperlink>). These operators are used, respectively, to attach event handlers to, or to remove event handlers from an event, and the access modifiers of the event control the contexts in which such operations are permitted. </paragraph>
+  <paragraph>Since += and -= are the only operations that are permitted on an event outside the type that declares the event, external code can add and remove handlers for an event, but cannot in any other way obtain or modify the underlying list of event handlers. </paragraph>
+  <paragraph>In an operation of the form x += y or x -= y, when x is an event and the reference takes place outside the type that contains the declaration of x, the result of the operation has type <keyword>void</keyword> (as opposed to having the type of x, with the value of x after the assignment). This rule prohibits external code from indirectly examining the underlying delegate of an event. </paragraph>
+  <paragraph>
+    <example>[Example: The following example shows how event handlers are attached to instances of the Button class: <code_example><![CDATA[
+public delegate void EventHandler(object sender, EventArgs e);  
+public class Button: Control  
+{  
+   public event EventHandler Click;  
+}  
+public class LoginDialog: Form  
+{  
+   Button OkButton;  
+   Button CancelButton;  
+   public LoginDialog() {  
+      OkButton = new Button(...);  
+      OkButton.Click += new EventHandler(OkButtonClick);  
+      CancelButton = new Button(...);  
+      CancelButton.Click += new EventHandler(CancelButtonClick);  
+   }  
+   void OkButtonClick(object sender, EventArgs e) {  
+      // Handle OkButton.Click event  
+   }  
+   void CancelButtonClick(object sender, EventArgs e) {  
+      // Handle CancelButton.Click event  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Here, the LoginDialog instance constructor creates two Button instances and attaches event handlers to the Click events. end example]</example>
+  </paragraph>
+</clause>

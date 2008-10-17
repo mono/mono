@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="13.1.5" title="Boxing conversions">
+  <paragraph>A boxing conversion permits any <non_terminal where="11.1">value-type</non_terminal> to be implicitly converted to the type object or to any <non_terminal where="11.2">interface-type</non_terminal> implemented by the <non_terminal where="11.1">value-type</non_terminal>. Boxing a value of a <non_terminal where="11.1">value-type</non_terminal> consists of allocating an object instance and copying the <non_terminal where="11.1">value-type</non_terminal> value into that instance. </paragraph>
+  <paragraph>Boxing conversions are described further in <hyperlink>11.3.1</hyperlink>. </paragraph>
+</clause>

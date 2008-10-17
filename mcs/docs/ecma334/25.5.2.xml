@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<clause number="25.5.2" title="Pointer member access">
+  <paragraph>A <non_terminal where="25.5.2">pointer-member-access</non_terminal> consists of a <non_terminal where="14.5">primary-expression</non_terminal>, followed by a &quot;-&gt;&quot; token, followed by an identifier. <grammar_production><name><non_terminal where="25.5.2">pointer-member-access</non_terminal></name> : <rhs><non_terminal where="14.5">primary-expression</non_terminal><terminal>-&gt;</terminal><non_terminal where="9.4.2">identifier</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>In a pointer member access of the form P-&gt;I, P must be an expression of a pointer type other than void*, and I must denote an accessible member of the type to which P points. </paragraph>
+  <paragraph>A pointer member access of the form P-&gt;I is evaluated exactly as (*P).I. For a description of the pointer indirection operator (*), see <hyperlink>25.5.1</hyperlink>. For a description of the member access operator (.), see <hyperlink>14.5.4</hyperlink>. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+struct Point  
+{  
+   public int x;  
+   public int y;  
+   public override string ToString() {  
+      return "(" + x + "," + y + ")";  
+   }  
+}  
+using System;  
+class Test  
+{  
+   static void Main() {  
+      Point point;  
+      unsafe {  
+         Point* p = &point;  
+         p->x = 10;  
+         p->y = 20;  
+         Console.WriteLine(p->ToString());  
+      }  
+   }  
+}  
+]]></code_example>the -&gt; operator is used to access fields and invoke a method of a struct through a pointer. Because the operation P-&gt;I is precisely equivalent to (*P).I, the Main method could equally well have been written: <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      Point point;  
+      unsafe {  
+         Point* p = &point;  
+         (*p).x = 10;  
+         (*p).y = 20;  
+         Console.WriteLine((*p).ToString());  
+      }  
+   }  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

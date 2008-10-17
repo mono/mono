@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<clause number="17.5.1.4" title="Parameter arrays">
+  <paragraph>A parameter declared with a params modifier is a parameter array. If a formal parameter list includes a parameter array, it must be the last parameter in the list and it must be of a single-dimensional array type. </paragraph>
+  <paragraph><example>[Example: For example, the types string[] and string[][] can be used as the type of a parameter array, but the type string[,] can not. end example]</example> It is not possible to combine the params modifier with the modifiers ref and out. </paragraph>
+  <paragraph>A parameter array permits arguments to be specified in one of two ways in a method invocation: <list><list_item> The argument given for a parameter array can be a single expression of a type that is implicitly convertible (<hyperlink>13.1</hyperlink>) to the parameter array type. In this case, the parameter array acts precisely like a value parameter. </list_item><list_item> Alternatively, the invocation can specify zero or more arguments for the parameter array, where each argument is an expression of a type that is implicitly convertible (<hyperlink>13.1</hyperlink>) to the element type of the parameter array. In this case, the invocation creates an instance of the parameter array type with a length corresponding to the number of arguments, initializes the elements of the array instance with the given argument values, and uses the newly created array instance as the actual argument. </list_item></list></paragraph>
+  <paragraph>Except for allowing a variable number of arguments in an invocation, a parameter array is precisely equivalent to a value parameter (<hyperlink>17.5.1.1</hyperlink>) of the same type. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void F(params int[] args) {  
+      Console.Write("Array contains {0} elements:", args.Length);  
+      foreach (int i in args)  
+      Console.Write(" {0}", i);  
+      Console.WriteLine();  
+   }  
+   static void Main() {  
+      int[] arr = {1, 2, 3};  
+      F(arr);  
+      F(10, 20, 30, 40);  
+      F();  
+   }  
+}  
+]]></code_example>produces the output <code_example><![CDATA[
+Array contains 3 elements: 1 2 3  
+Array contains 4 elements: 10 20 30 40  
+Array contains 0 elements:  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>The first invocation of F simply passes the array a as a value parameter. The second invocation of F automatically creates a four-element int[] with the given element values and passes that array instance as a value parameter. Likewise, the third invocation of F creates a zero-element int[] and passes that instance as a value parameter. The second and third invocations are precisely equivalent to writing: <code_example><![CDATA[
+F(new int[] {10, 20, 30, 40});  
+F(new int[] {});  
+]]></code_example>end example]</example>
+  </paragraph>
+  <paragraph>When performing overload resolution, a method with a parameter array may be applicable either in its normal form or in its expanded form (<hyperlink>14.4.2.1</hyperlink>). The expanded form of a method is available only if the normal form of the method is not applicable and only if a method with the same signature as the expanded form is not already declared in the same type. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void F(params object[] a) {  
+      Console.WriteLine("F(object[])");  
+   }  
+   static void F() {  
+      Console.WriteLine("F()");  
+   }  
+   static void F(object a0, object a1) {  
+      Console.WriteLine("F(object,object)");  
+   }  
+   static void Main() {  
+      F();  
+      F(1);  
+      F(1, 2);  
+      F(1, 2, 3);  
+      F(1, 2, 3, 4);  
+   }  
+}  
+]]></code_example>produces the output <code_example><![CDATA[
+F();  
+F(object[]);  
+F(object,object);  
+F(object[]);  
+F(object[]);  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>In the example, two of the possible expanded forms of the method with a parameter array are already included in the class as regular methods. These expanded forms are therefore not considered when performing overload resolution, and the first and third method invocations thus select the regular methods. </example>
+  </paragraph>
+  <paragraph>
+    <example>When a class declares a method with a parameter array, it is not uncommon to also include some of the expanded forms as regular methods. By doing so it is possible to avoid the allocation of an array instance that occurs when an expanded form of a method with a parameter array is invoked. end example]</example>
+  </paragraph>
+  <paragraph>When the type of a parameter array is object[], a potential ambiguity arises between the normal form of the method and the expended form for a single object parameter. The reason for the ambiguity is that an object[] is itself implicitly convertible to type object. The ambiguity presents no problem, however, since it can be resolved by inserting a cast if needed. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void F(params object[] args) {  
+      foreach (object o in args) {  
+         Console.Write(o.GetType().FullName);  
+         Console.Write(" ");  
+      }  
+      Console.WriteLine();  
+   }  
+   static void Main() {  
+      object[] a = {1, "Hello", 123.456};  
+      object o = a;  
+      F(a);  
+      F((object)a);  
+      F(o);  
+      F((object[])o);  
+   }  
+}  
+]]></code_example>produces the output <code_example><![CDATA[
+System.Int32 System.String System.Double  
+System.Object[]  
+System.Object[]  
+System.Int32 System.String System.Double  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>In the first and last invocations of F, the normal form of F is applicable because an implicit conversion exists from the argument type to the parameter type (both are of type object[]). Thus, overload resolution selects the normal form of F, and the argument is passed as a regular value parameter. In the second and third invocations, the normal form of F is not applicable because no implicit conversion exists from the argument type to the parameter type (type object cannot be implicitly converted to type object[]). However, the expanded form of F is applicable, so it is selected by overload resolution. As a result, a one-element object[] is created by the invocation, and the single element of the array is initialized with the given argument value (which itself is a reference to an object[]). end example]</example>
+  </paragraph>
+</clause>

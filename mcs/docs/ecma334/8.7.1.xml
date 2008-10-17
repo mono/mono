@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<clause number="8.7.1" title="Constants" informative="true">
+  <paragraph>A constant is a class member that represents a constant value: a value that can be computed at compile-time. Constants are permitted to depend on other constants within the same program, as long as there are no circular dependencies. The rules governing constant expressions are defined in <hyperlink>14.15</hyperlink>. The example <code_example><![CDATA[
+class Constants  
+{  
+   public const int A = 1;  
+   public const int B = A + 1;  
+}  
+]]></code_example>shows a class named Constants that has two public constants. </paragraph>
+  <paragraph>Even though constants are considered static members, a constant declaration neither requires nor allows the modifier static. Constants can be accessed through the class, as in <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      Console.WriteLine("{0}, {1}", Constants.A, Constants.B);  
+   }  
+}  
+]]></code_example>which prints out the values of Constants.A and Constants.B, respectively. </paragraph>
+</clause>

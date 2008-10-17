@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="23.2" title="The System.Exception class">
+  <paragraph>The System.Exception class is the base type of all exceptions. This class has a few notable properties that all exceptions share: <list><list_item> Message is a read-only property of type string that contains a human-readable description of the reason for the exception. </list_item><list_item> InnerException is a read-only property of type Exception. If its value is non-null, it refers to the exception that caused the current exception. (That is, the current exception was raised in a catch block handling the type InnerException.) Otherwise, its value is null, indicating that this exception was not caused by another exception. (The number of exception objects chained together in this manner can be arbitrary.) </list_item></list></paragraph>
+  <paragraph>The value of these properties can be specified in calls to the instance constructor for System.Exception. </paragraph>
+</clause>

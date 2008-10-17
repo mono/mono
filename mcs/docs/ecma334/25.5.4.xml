@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<clause number="25.5.4" title="The address-of operator">
+  <paragraph>An <non_terminal where="25.5.4">addressof-expression</non_terminal> consists of an ampersand (&amp;) followed by a <non_terminal where="14.6">unary-expression</non_terminal>. <grammar_production><name><non_terminal where="25.5.4">addressof-expression</non_terminal></name> : <rhs><terminal>&amp;</terminal><non_terminal where="14.6">unary-expression</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>Given an expression E which is of a type T and is classified as a fixed variable (<hyperlink>25.3</hyperlink>), the construct &amp;E computes the address of the variable given by E. The type of the result is T* and is classified as a value. A compile-time error occurs if E is not classified as a variable, if E is classified as a volatile field (<hyperlink>17.4.3</hyperlink>), or if E denotes a moveable variable. In the last case, a fixed statement (<hyperlink>25.6</hyperlink>) can be used to temporarily &quot;fix&quot; the variable before obtaining its address. </paragraph>
+  <paragraph>The &amp; operator does not require its argument to be definitely assigned, but following an &amp; operation, the variable to which the operator is applied is considered definitely assigned in the execution path in which the operation occurs. It is the responsibility of the programmer to ensure that correct initialization of the variable actually does take place in this situation. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      int i;  
+      unsafe {  
+         int* p = &i;  
+         *p = 123;  
+      }  
+      Console.WriteLine(i);  
+   }  
+}  
+]]></code_example>i is considered definitely assigned following the &amp;i operation used to initialize p. The assignment to *p in effect initializes i, but the inclusion of this initialization is the responsibility of the programmer, and no compile-time error would occur if the assignment was removed. end example]</example>
+  </paragraph>
+  <paragraph>
+    <note>[Note: The rules of definite assignment for the &amp; operator exist such that redundant initialization of local variables can be avoided. For example, many external APIs take a pointer to a structure which is filled in by the API. Calls to such APIs typically pass the address of a local struct variable, and without the rule, redundant initialization of the struct variable would be required. end note]</note>
+  </paragraph>
+  <paragraph>
+    <note>[Note: As stated in <hyperlink>14.5.4</hyperlink>, outside an instance constructor or static constructor for a struct or class that defines a readonly field, that field is considered a value, not a variable. As such, its address cannot be taken. </note>
+  </paragraph>
+  <paragraph>
+    <note>Similarly, the address of a constant cannot be taken. end note]</note>
+  </paragraph>
+</clause>

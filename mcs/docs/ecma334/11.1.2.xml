@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="11.1.2" title="Struct types">
+  <paragraph>A struct type is a value type that can declare constants, fields, methods, properties, indexers, operators, instance constructors, static constructors, and nested types. Struct types are described in <hyperlink>18</hyperlink>. </paragraph>
+</clause>

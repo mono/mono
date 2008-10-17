@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<clause number="8.2.4" title="Type system unification" informative="true">
+  <paragraph>C# provides a &quot;unified type system&quot;. All types-including value types-derive from the type object. It is possible to call object methods on any value, even values of &quot;primitive&quot; types such as <keyword>int</keyword>. The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      Console.WriteLine(3.ToString());  
+   }  
+}  
+]]></code_example>calls the object-defined ToString method on an integer literal, resulting in the output &quot;3&quot;. </paragraph>
+  <paragraph>The example <code_example><![CDATA[
+class Test  
+{  
+   static void Main() {  
+      int i = 123;  
+      object o = i;   // boxing  
+      int j = (int) o;  // unboxing  
+   }  
+}  
+]]></code_example>is more interesting. An <keyword>int</keyword> value can be converted to object and back again to <keyword>int</keyword>. This example shows both boxing and unboxing. When a variable of a value type needs to be converted to a reference type, an object box is allocated to hold the value, and the value is copied into the box. Unboxing is just the opposite. When an object box is cast back to its original value type, the value is copied out of the box and into the appropriate storage location. </paragraph>
+  <paragraph>This type system unification provides value types with the benefits of object-ness without introducing unnecessary overhead. For programs that don't need <keyword>int</keyword> values to act like objects, <keyword>int</keyword> values are simply 32-bit values. For programs that need <keyword>int</keyword> values to behave like objects, this capability is available on demand. This ability to treat value types as objects bridges the gap between value types and reference types that exists in most languages. For example, a Stack class can provide Push and Pop methods that take and return object values. <code_example><![CDATA[
+public class Stack  
+{  
+   public object Pop() {...}  
+   public void Push(object o) {...}  
+}  
+]]></code_example></paragraph>
+  <paragraph>Because C# has a unified type system, the Stack class can be used with elements of any type, including value types like <keyword>int</keyword>. </paragraph>
+</clause>

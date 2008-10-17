@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<clause number="15.1" title="End points and reachability">
+  <paragraph>Every statement has an end point. In intuitive terms, the end point of a statement is the location that immediately follows the statement. The execution rules for composite statements (statements that contain embedded statements) specify the action that is taken when control reaches the end point of an embedded statement. For example, when control reaches the end point of a statement in a block, control is transferred to the next statement in the block. </paragraph>
+  <paragraph>If a statement can possibly be reached by execution, the statement is said to be reachable. Conversely, if there is no possibility that a statement will be executed, the statement is said to be unreachable. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+void F() {  
+   Console.WriteLine("reachable");  
+   goto Label;  
+   Console.WriteLine("unreachable");  
+   Label:  
+   Console.WriteLine("reachable");  
+}  
+]]></code_example>the second invocation of Console.WriteLine is unreachable because there is no possibility that the statement will be executed. end example]</example>
+  </paragraph>
+  <paragraph>A warning is reported if the compiler determines that a statement is unreachable. It is specifically not an error for a statement to be unreachable. </paragraph>
+  <paragraph>
+    <note>[Note: To determine whether a particular statement or end point is reachable, the compiler performs flow analysis according to the reachability rules defined for each statement. The flow analysis takes into account the values of constant expressions (<hyperlink>14.15</hyperlink>) that control the behavior of statements, but the possible values of non-constant expressions are not considered. In other words, for purposes of control flow analysis, a  non-constant expression of a given type is considered to have any possible value of that type. </note>
+  </paragraph>
+  <paragraph>
+    <note>In the example <code_example><![CDATA[
+void F() {  
+   const int i = 1;  
+   if (i == 2) Console.WriteLine("unreachable");  
+}  
+]]></code_example>the boolean expression of the if statement is a constant expression because both operands of the == operator are constants. As the constant expression is evaluated at compile-time, producing the value false, the Console.WriteLine invocation is considered unreachable. However, if i is changed to be a local variable <code_example><![CDATA[
+void F() {  
+   int i = 1;  
+   if (i == 2) Console.WriteLine("reachable");  
+}  
+]]></code_example>the Console.WriteLine invocation is considered reachable, even though, in reality, it will never be executed. end note]</note>
+  </paragraph>
+  <paragraph>The block of a function member is always considered reachable. By successively evaluating the reachability rules of each statement in a block, the reachability of any given statement can be determined. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+void F(int x) {  
+   Console.WriteLine("start");  
+   if (x < 0) Console.WriteLine("negative");  
+}  
+]]></code_example>the reachability of the second Console.WriteLine is determined as follows: <list><list_item> The first Console.WriteLine expression statement is reachable because the block of the F method is reachable (<hyperlink>15.2</hyperlink>). </list_item><list_item> The end point of the first Console.WriteLine expression statement is reachable15.2 because that statement is reachable (<hyperlink>15.6</hyperlink> and <hyperlink>15.2</hyperlink>). </list_item><list_item> The if statement is reachable because the end point of the first Console.WriteLine expression statement is reachable (<hyperlink>15.6</hyperlink> and <hyperlink>15.2</hyperlink>). </list_item><list_item> The second Console.WriteLine expression statement is reachable because the boolean expression of the if statement does not have the constant value false. end example]</list_item></list></example>
+  </paragraph>
+  <paragraph>There are two situations in which it is a compile-time error for the end point of a statement to be reachable: <list><list_item> Because the switch statement does not permit a switch section to &quot;fall through&quot; to the next switch section, it is a compile-time error for the end point of the statement list of a switch section to be reachable. If this error occurs, it is typically an indication that a break statement is missing. </list_item><list_item> It is a compile-time error for the end point of the block of a function member that computes a value to be reachable. If this error occurs, it typically is an indication that a return statement is missing. </list_item></list></paragraph>
+</clause>

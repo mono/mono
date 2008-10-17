@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<clause number="17.7.2" title="Event accessors">
+  <paragraph>
+    <note>[Note: Event declarations typically omit <non_terminal where="17.7">event-accessor-declarations</non_terminal>, as in the Button example above. One situation for doing so involves the case in which the storage cost of one field per event is not acceptable. In such cases, a class can include <non_terminal where="17.7">event-accessor-declarations</non_terminal> and use a private mechanism for storing the list of event handlers. Similarly, in cases where the handling of an event requires access to external resources, event accessors may be used to manage these resources. end note]</note>
+  </paragraph>
+  <paragraph>The <non_terminal where="17.7">event-accessor-declarations</non_terminal> of an event specify the executable statements associated with adding and removing event handlers. </paragraph>
+  <paragraph>The accessor declarations consist of an <non_terminal where="17.7">add-accessor-declaration</non_terminal> and a <non_terminal where="17.7">remove-accessor-declaration</non_terminal>. Each accessor declaration consists of the token add or remove followed by a block. The block associated with an <non_terminal where="17.7">add-accessor-declaration</non_terminal> specifies the statements to execute when an event handler is added, and the block associated with a <non_terminal where="17.7">remove-accessor-declaration</non_terminal> specifies the statements to execute when an event handler is removed. </paragraph>
+  <paragraph>Each <non_terminal where="17.7">add-accessor-declaration</non_terminal> and <non_terminal where="17.7">remove-accessor-declaration</non_terminal> corresponds to a method with a single value parameter of the event type, and a <keyword>void</keyword> return type. The implicit parameter of an event accessor is named value. When an event is used in an event assignment, the appropriate event accessor is used. Specifically, if the assignment operator is += then the add accessor is used, and if the assignment operator is -= then the remove accessor is used. In either case, the right-hand operand of the assignment operator is used as the argument to the event accessor. The block of an <non_terminal where="17.7">add-accessor-declaration</non_terminal> or a  <non_terminal where="17.7">remove-accessor-declaration</non_terminal> must conform to the rules for <keyword>void</keyword> methods described in <hyperlink>17.5.8</hyperlink>. In particular, return statements in such a block are not permitted to specify an expression. </paragraph>
+  <paragraph>Since an event accessor implicitly has a parameter named value, it is a compile-time error for a local variable declared in an event accessor to have that name. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class Control: Component  
+{  
+   // Unique keys for events  
+   static readonly object mouseDownEventKey = new object();  
+   static readonly object mouseUpEventKey = new object();  
+   // Return event handler associated with key  
+   protected Delegate GetEventHandler(object key) {...}  
+   // Add event handler associated with key  
+   protected void AddEventHandler(object key, Delegate handler) {...}  
+   // Remove event handler associated with key  
+   protected void RemoveEventHandler(object key, Delegate handler) {...}  
+   // MouseDown event  
+   public event MouseEventHandler MouseDown {  
+      add { AddEventHandler(mouseDownEventKey, value); }  
+      remove { RemoveEventHandler(mouseDownEventKey, value); }  
+   }  
+   // MouseUp event  
+   public event MouseEventHandler MouseUp {  
+      add { AddEventHandler(mouseUpEventKey, value); }  
+      remove { RemoveEventHandler(mouseUpEventKey, value); }  
+   }  
+   // Invoke the MouseUp event  
+   protected void OnMouseUp(MouseEventArgs args) {  
+      MouseEventHandler handler;   
+      handler = (MouseEventHandler)GetEventHandler(mouseUpEventKey);  
+      if (handler != null)  
+      handler(this, args);  
+   }  
+}  
+]]></code_example>the Control class implements an internal storage mechanism for events. The AddEventHandler method associates a delegate value with a key, the GetEventHandler method returns the delegate currently associated with a key, and the RemoveEventHandler method removes a delegate as an event handler for the specified event. Presumably, the underlying storage mechanism is designed such that there is no cost for associating a null delegate value with a key, and thus unhandled events consume no storage. end example]</example>
+  </paragraph>
+</clause>

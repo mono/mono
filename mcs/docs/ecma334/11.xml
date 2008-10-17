@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="11" title="Types">
+  <paragraph>The types of the C# language are divided into two main categories: Value types and reference types. <grammar_production><name>type</name> : <rhs><non_terminal where="11.1">value-type</non_terminal></rhs><rhs><non_terminal where="11.2">reference-type</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>A third category of types, pointers, is available only in unsafe code. This is discussed further in <hyperlink>25.2</hyperlink>. </paragraph>
+  <paragraph>Value types differ from reference types in that variables of the value types directly contain their data, whereas variables of the reference types store references to their data, the latter being known as objects. With reference types, it is possible for two variables to reference the same object, and thus possible for operations on one variable to affect the object referenced by the other variable. With value types, the variables each have their own copy of the data, and it is not possible for operations on one to affect the other. </paragraph>
+  <paragraph>C#'s type system is unified such that a value of any type can be treated as an object. Every type in C# directly or indirectly derives from the object class type, and object is the ultimate base class of all types. Values of reference types are treated as objects simply by viewing the values as type object. Values of value types are treated as objects by performing boxing and unboxing operations (<hyperlink>11.3</hyperlink>). </paragraph>
+</clause>

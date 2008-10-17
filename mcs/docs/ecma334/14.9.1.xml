@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<clause number="14.9.1" title="Integer comparison operators">
+  <paragraph>The predefined integer comparison operators are: <code_example><![CDATA[
+bool operator ==(int x, int y);  
+bool operator ==(uint x, uint y);  
+bool operator ==(long x, long y);  
+bool operator ==(ulong x, ulong y);  
+bool operator !=(int x, int y);  
+bool operator !=(uint x, uint y);  
+bool operator !=(long x, long y);  
+bool operator !=(ulong x, ulong y);  
+bool operator <(int x, int y);  
+bool operator <(uint x, uint y);  
+bool operator <(long x, long y);  
+bool operator <(ulong x, ulong y);  
+bool operator >(int x, int y);  
+bool operator >(uint x, uint y);  
+bool operator >(long x, long y);  
+bool operator >(ulong x, ulong y);  
+bool operator <=(int x, int y);  
+bool operator <=(uint x, uint y);  
+bool operator <=(long x, long y);  
+bool operator <=(ulong x, ulong y);  
+bool operator >=(int x, int y);  
+bool operator >=(uint x, uint y);  
+bool operator >=(long x, long y);  
+bool operator >=(ulong x, ulong y);  
+]]></code_example></paragraph>
+  <paragraph>Each of these operators compares the numeric values of the two integer operands and returns a <keyword>bool</keyword> value that indicates whether the particular relation is true or false. </paragraph>
+</clause>

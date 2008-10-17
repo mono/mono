@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<clause number="15.13" title="The using statement">
+  <paragraph>The using statement obtains one or more resources, executes a statement, and then disposes of the resource. <grammar_production><name><non_terminal where="15.13">using-statement</non_terminal></name> : <rhs><keyword>using</keyword><terminal>(</terminal><non_terminal where="15.13">resource-acquisition</non_terminal><terminal>)</terminal><non_terminal where="15">embedded-statement</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="15.13">resource-acquisition</non_terminal></name> : <rhs><non_terminal where="15.5.1">local-variable-declaration</non_terminal></rhs><rhs><non_terminal where="14.14">expression</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>A resource is a class or struct that implements System.IDisposable, which includes a single parameterless method named Dispose. Code that is using a resource can call Dispose to indicate that the resource is no longer needed. If Dispose is not called, then automatic disposal eventually occurs as a consequence of garbage collection. </paragraph>
+  <paragraph>If the form of <non_terminal where="15.13">resource-acquisition</non_terminal> is <non_terminal where="15.5.1">local-variable-declaration</non_terminal> then the type of the  <non_terminal where="15.5.1">local-variable-declaration</non_terminal> must be System.IDisposable or a type that can be implicitly converted to System.IDisposable. If the form of <non_terminal where="15.13">resource-acquisition</non_terminal> is expression then this expression must be System.IDisposable or a type that can be implicitly converted to System.IDisposable. </paragraph>
+  <paragraph>Local variables declared in a <non_terminal where="15.13">resource-acquisition</non_terminal> are read-only, and must include an initializer. A  compile-time error occurs if the embedded statement attempts to modify these local variables (via assignment or the ++ and  --operators) or pass them as ref or out parameters. </paragraph>
+  <paragraph>A using statement is translated into three parts: acquisition, usage, and disposal. Usage of the resource is implicitly enclosed in a try statement that includes a finally clause. This finally clause disposes of the resource. If a null resource is acquired, then no call to Dispose is made, and no exception is thrown. </paragraph>
+  <paragraph>A using statement of the form <code_example><![CDATA[
+using (R r1 = new R()) {  
+   r1.F();  
+}  
+]]></code_example>is precisely equivalent to <code_example><![CDATA[
+R r1 = new R();  
+try {  
+   r1.F();  
+}  
+finally {  
+   if (r1 != null) ((IDisposable)r1).Dispose();  
+}  
+]]></code_example></paragraph>
+  <paragraph>A <non_terminal where="15.13">resource-acquisition</non_terminal> may acquire multiple resources of a given type. This is equivalent to nested using statements. A using statement of the form <code_example><![CDATA[
+using (R r1 = new R(), r2 = new R()) {  
+   r1.F();  
+   r2.F();  
+}  
+]]></code_example>is precisely equivalent to: <code_example><![CDATA[
+using (R r1 = new R())  
+using (R r2 = new R()) {  
+   r1.F();  
+   r2.F();  
+}  
+]]></code_example>which is, by expansion, precisely equivalent to: <code_example><![CDATA[
+R r1 = new R();  
+try {  
+   R r2 = new R();  
+   try {  
+      r1.F();  
+      r2.F();  
+   }  
+   finally {  
+      if (r2 != null) ((IDisposable)r2).Dispose();  
+   }  
+}  
+finally {  
+   if (r1 != null) ((IDisposable)r1).Dispose();  
+}  
+<table_line></table_line>
+]]></code_example></paragraph>
+</clause>

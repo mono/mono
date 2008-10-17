@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="22" title="Delegates">
+  <paragraph>
+    <note>[Note: Delegates enable scenarios that other languages-such as C++, Pascal, and Modula-have addressed with function pointers. Unlike C++ function pointers, however, delegates are fully object oriented, and unlike C++ pointers to member functions, delegates encapsulate both an object instance and a method. end note]</note>
+  </paragraph>
+  <paragraph>A delegate declaration defines a class that is derived from the class System.Delegate. A delegate instance encapsulates one or more methods, each of which is referred to as a callable entity. For instance methods, a callable entity consists of an instance and a method on that instance. For static methods, a callable entity consists of just a method. Given a delegate instance and an appropriate set of arguments, one can invoke all of that delegate instance's methods with that set of arguments. </paragraph>
+  <paragraph>An interesting and useful property of a delegate instance is that it does not know or care about the classes of the methods it encapsulates; all that matters is that those methods be compatible (<hyperlink>22.1</hyperlink>) with the delegate's type. This makes delegates perfectly suited for &quot;anonymous&quot; invocation. </paragraph>
+</clause>

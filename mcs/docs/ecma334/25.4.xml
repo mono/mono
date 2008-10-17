@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<clause number="25.4" title="Pointer conversions">
+  <paragraph>In an unsafe context, the set of available implicit conversions (<hyperlink>13.1</hyperlink>) is extended to include the following implicit pointer conversions: <list><list_item> From any <non_terminal where="25.2">pointer-type</non_terminal> to the type void*. </list_item><list_item> From the null type to any <non_terminal where="25.2">pointer-type</non_terminal>. </list_item></list></paragraph>
+  <paragraph>Additionally, in an unsafe context, the set of available explicit conversions (<hyperlink>13.2</hyperlink>) is extended to include the following explicit pointer conversions: <list><list_item> From any <non_terminal where="25.2">pointer-type</non_terminal> to any other <non_terminal where="25.2">pointer-type</non_terminal>. </list_item><list_item> From <keyword>sbyte</keyword>, <keyword>byte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>int</keyword>, <keyword>uint</keyword>, <keyword>long</keyword>, or <keyword>ulong</keyword> to any <non_terminal where="25.2">pointer-type</non_terminal>. </list_item><list_item> From any <non_terminal where="25.2">pointer-type</non_terminal> to <keyword>sbyte</keyword>, <keyword>byte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>int</keyword>, <keyword>uint</keyword>, <keyword>long</keyword>, or <keyword>ulong</keyword>. </list_item></list></paragraph>
+  <paragraph>Finally, in an unsafe context, the set of standard implicit conversions (<hyperlink>13.3.1</hyperlink>) includes the following pointer conversion: <list><list_item> From any <non_terminal where="25.2">pointer-type</non_terminal> to the type void*. </list_item></list></paragraph>
+  <paragraph>Conversions between two pointer types never change the actual pointer value. In other words, a conversion from one pointer type to another has no effect on the underlying address given by the pointer. </paragraph>
+  <paragraph>When one pointer type is converted to another, if the resulting pointer is not correctly aligned for the pointed-to type, the behavior is undefined if the result is dereferenced. In general, the concept &quot;correctly aligned&quot; is transitive: if a pointer to type A is correctly aligned for a pointer to type B, which, in turn, is correctly aligned for a pointer to type C, then a pointer to type A is correctly aligned for a pointer to type C. </paragraph>
+  <paragraph>
+    <example>[Example: Consider the following case in which a variable having one type is accessed via a pointer to a different type: <code_example><![CDATA[
+char c = 'A';  
+char* pc = &c;  
+void* pv = pc;  
+int* pi = (int*)pv;  
+int i = *pi;    // undefined  
+*pi = 123456;    // undefined  
+]]></code_example>end example]</example>
+  </paragraph>
+  <paragraph>When a pointer type is converted to a pointer to <keyword>byte</keyword>, the result points to the lowest addressed <keyword>byte</keyword> of the variable. Successive increments of the result, up to the size of the variable, yield pointers to the remaining bytes of that variable. <example>[Example: For example, the following method displays each of the eight bytes in a <keyword>double</keyword> as a hexadecimal value: <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      double d = 123.456e23;  
+      unsafe {  
+         byte* pb = (byte*)&d;  
+         
+         for (int i = 0; i < sizeof(double); ++i)  
+         Console.Write(" {0,2:X}", (uint)(*pb++));  
+         Console.WriteLine();  
+      }  
+   }  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Of course, the output produced depends on endianness. end example]</example>
+  </paragraph>
+  <paragraph>Mappings between pointers and integers are implementation-defined. <note>[Note: However, on  32-and 64-bit CPU architectures with a linear address space, conversions of pointers to or from integral types typically behave exactly like conversions of <keyword>uint</keyword> or <keyword>ulong</keyword> values, respectively, to or from those integral types. end note]</note> </paragraph>
+</clause>

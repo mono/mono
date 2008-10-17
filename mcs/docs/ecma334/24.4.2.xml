@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<clause number="24.4.2" title="The Conditional attribute">
+  <paragraph>The attribute Conditional enables the definition of conditional methods. The Conditional attribute indicates a condition by testing a conditional compilation symbol. Calls to a conditional method are either included or omitted depending on whether this symbol is defined at the point of the call. If the symbol is defined, the call is included; otherwise, the call is omitted. </paragraph>
+  <paragraph>A conditional method is subject to the following restrictions: <list><list_item> The conditional method must be a method in a <non_terminal where="17.1">class-declaration</non_terminal>. A compile-time error occurs if the Conditional attribute is specified on an interface method. </list_item><list_item> The conditional method must have a return type of <keyword>void</keyword>. </list_item><list_item> The conditional method must not be marked with the override modifier. A conditional method may be marked with the virtual modifier, however. Overrides of such a method are implicitly conditional, and must not be explicitly marked with a Conditional attribute. </list_item><list_item> The conditional method must not be an implementation of an interface method. Otherwise, a  compile-time error occurs. </list_item></list></paragraph>
+  <paragraph>In addition, a compile-time error occurs if a conditional method is used in a <non_terminal where="14.5.10.3">delegate-creation-expression</non_terminal>. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+#define DEBUG  
+using System;  
+using System.Diagnostics;  
+class Class1   
+{  
+   [Conditional("DEBUG")]  
+   public static void M() {  
+      Console.WriteLine("Executed Class1.M");  
+   }  
+}  
+class Class2  
+{  
+   public static void Test() {  
+      Class1.M();  
+   }  
+}  
+]]></code_example>declares Class1.M as a conditional method. Class2's Test method calls this method. Since the conditional compilation symbol DEBUG is defined, if Class2.Test is called, it will call M. If the symbol DEBUG had not been defined, then Class2.Test would not call Class1.M. end example]</example>
+  </paragraph>
+  <paragraph>It is important to note that the inclusion or exclusion of a call to a conditional method is controlled by the conditional compilation symbols at the point of the call. <example>[Example: In the example <code_example><![CDATA[
+// Begin class1.cs  
+using System;  
+using System.Diagnostics;  
+class Class1   
+{  
+   [Conditional("DEBUG")]  
+   public static void F() {  
+      Console.WriteLine("Executed Class1.F");  
+   }  
+}  
+// End class1.cs  
+
+// Begin class2.cs  
+#define DEBUG  
+class Class2  
+{  
+   public static void G() {  
+      Class1.F();    // F is called  
+   }  
+}  
+// End class2.cs  
+
+// Begin class3.cs  
+#undef DEBUG  
+class Class3  
+{  
+   public static void H() {  
+      Class1.F();    // F is not called  
+   }  
+}  
+// End class3.cs  
+]]></code_example>the classes Class2 and Class3 each contain calls to the conditional method Class1.F, which is conditional based on whether or not DEBUG is defined. Since this symbol is defined in the context of Class2 but not Class3, the call to F in Class2 is included, while the call to F in Class3 is omitted. end example]</example> </paragraph>
+  <paragraph>The use of conditional methods in an inheritance chain can be confusing. Calls made to a conditional method through base, of the form base.M, are subject to the normal conditional method call rules. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+// Begin class1.cs  
+using System;  
+using System.Diagnostics;  
+class Class1   
+{  
+   [Conditional("DEBUG")]  
+   public virtual void M() {  
+      Console.WriteLine("Class1.M executed");  
+   }  
+}  
+// End class1.cs  
+
+// Begin class2.cs  
+using System;  
+class Class2: Class1  
+{  
+   public override void M() {  
+      Console.WriteLine("Class2.M executed");  
+      base.M();       // base.M is not called!  
+   }  
+}  
+// End class2.cs  
+
+// Begin class3.cs  
+#define DEBUG  
+using System;  
+class Class3  
+{  
+   public static void Test() {  
+      Class2 c = new Class2();  
+      c.M();              // M is called  
+   }  
+}  
+// End class3.cs  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Class2 includes a call to the M defined in its base class. This call is omitted because the base method is conditional based on the presence of the symbol DEBUG, which is undefined. Thus, the method writes to the console &quot;Class2.M executed&quot; only. Judicious use of <non_terminal where="9.5.3">pp-declaration</non_terminal>s can eliminate such problems. end example]</example>
+  </paragraph>
+</clause>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="12.1.2" title="Instance variables">
+  <paragraph>A field declared without the static modifier is called an instance variable. </paragraph>
+</clause>

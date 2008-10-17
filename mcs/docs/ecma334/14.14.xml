@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="14.14" title="Expression">
+  <paragraph>An expression is either a <non_terminal where="14.12">conditional-expression</non_terminal> or an assignment. <grammar_production><name>expression</name> : <rhs><non_terminal where="14.12">conditional-expression</non_terminal></rhs><rhs><non_terminal where="14.13">assignment</non_terminal></rhs></grammar_production></paragraph>
+</clause>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<clause number="14.8" title="Shift operators">
+  <paragraph>The &lt;&lt; and &gt;&gt; operators are used to perform bit shifting operations. <grammar_production><name><non_terminal where="14.8">shift-expression</non_terminal></name> : <rhs><non_terminal where="14.7">additive-expression</non_terminal></rhs><rhs><non_terminal where="14.8">shift-expression</non_terminal><terminal>&lt;&lt;</terminal><non_terminal where="14.7">additive-expression</non_terminal></rhs><rhs><non_terminal where="14.8">shift-expression</non_terminal><terminal>&gt;&gt;</terminal><non_terminal where="14.7">additive-expression</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>For an operation of the form x &lt;&lt; count or x &gt;&gt; count, binary operator overload resolution (<hyperlink>14.2.4</hyperlink>) is applied to select a specific operator implementation. The operands are converted to the parameter types of the selected operator, and the type of the result is the return type of the operator. </paragraph>
+  <paragraph>When declaring an overloaded shift operator, the type of the first operand must always be the class or struct containing the operator declaration, and the type of the second operand must always be <keyword>int</keyword>. </paragraph>
+  <paragraph>The predefined shift operators are listed below. <list><list_item> Shift left: <code_example><![CDATA[
+int operator <<(int x, int count);  
+uint operator <<(uint x, int count);  
+long operator <<(long x, int count);  
+ulong operator <<(ulong x, int count);  
+]]></code_example>The &lt;&lt; operator shifts x left by a number of bits computed as described below. The high-order bits outside the range of the result type of x are discarded, the remaining bits are shifted left, and the low-order empty bit positions are set to zero. </list_item><list_item> Shift right: <code_example><![CDATA[
+int operator >>(int x, int count);  
+uint operator >>(uint x, int count);  
+long operator >>(long x, int count);  
+ulong operator >>(ulong x, int count);  
+]]></code_example>The &gt;&gt; operator shifts x right by a number of bits computed as described below. When x is of type <keyword>int</keyword> or <keyword>long</keyword>, the low-order bits of x are discarded, the remaining bits are shifted right, and the high-order empty bit positions are set to zero if x is non-negative and set to one if x is negative. When x is of type <keyword>uint</keyword> or <keyword>ulong</keyword>, the low-order bits of x are discarded, the remaining bits are shifted right, and the high-order empty bit positions are set to zero. </list_item></list></paragraph>
+  <paragraph>For the predefined operators, the number of bits to shift is computed as follows: <list><list_item> When the type of x is <keyword>int</keyword> or <keyword>uint</keyword>, the shift count is given by the low-order five bits of count. In other words, the shift count is computed from count &amp; 0x1F. </list_item><list_item> When the type of x is <keyword>long</keyword> or <keyword>ulong</keyword>, the shift count is given by the low-order six bits of count. In other words, the shift count is computed from count &amp; 0x3F. </list_item></list></paragraph>
+  <paragraph>If the resulting shift count is zero, the shift operators simply return the value of x. </paragraph>
+  <paragraph>Shift operations never cause overflows and produce the same results in checked and unchecked contexts. </paragraph>
+  <paragraph>When the left operand of the &gt;&gt; operator is of a signed integral type, the operator performs an arithmetic shift right wherein the value of the most significant bit (the sign bit) of the operand is propagated to the high-order empty bit positions. When the left operand of the &gt;&gt; operator is of an unsigned integral type, the operator performs a logical shift right wherein high-order empty bit positions are always set to zero. To perform the opposite operation of that inferred from the operand type, explicit casts can be used. For example, if x is a variable of type <keyword>int</keyword>, the operation unchecked((<keyword>int</keyword>)((<keyword>uint</keyword>)x &gt;&gt; y)) performs a logical shift right of x. </paragraph>
+</clause>

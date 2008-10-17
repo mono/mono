@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="9.4" title="Tokens">
+  <paragraph>There are several kinds of tokens: identifiers, keywords, literals, operators, and punctuators. White space and comments are not tokens, though they act as separators for tokens. <grammar_production><name>token</name> :: <rhs><non_terminal where="9.4.2">identifier</non_terminal></rhs><rhs><non_terminal where="9.4.3">keyword</non_terminal></rhs><rhs><non_terminal where="9.4.4.2">integer-literal</non_terminal></rhs><rhs><non_terminal where="9.4.4.3">real-literal</non_terminal></rhs><rhs><non_terminal where="9.4.4.4">character-literal</non_terminal></rhs><rhs><non_terminal where="9.4.4.5">string-literal</non_terminal></rhs><rhs><non_terminal where="9.4.5">operator-or-punctuator</non_terminal></rhs></grammar_production></paragraph>
+</clause>

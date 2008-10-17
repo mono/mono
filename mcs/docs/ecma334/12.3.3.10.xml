@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.10" title="Break, continue, and goto statements">
+  <paragraph>The definite assignment state of v on the control flow transfer caused by a break, continue, or goto statement is the same as the definite assignment state of v at the beginning of the statement. </paragraph>
+</clause>

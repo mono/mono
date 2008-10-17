@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<clause number="10.5.2" title="Accessibility domains">
+  <paragraph>The accessibility domain of a member consists of the (possibly disjoint) sections of program text in which access to the member is permitted. For purposes of defining the accessibility domain of a member, a member is said to be top-level if it is not declared within a type, and a member is said to be nested if it is declared within another type. Furthermore, the text of an assembly is defined as all source text contained in all source files of that assembly, and the source text of a type is defined as all source text contained between the opening and closing &quot;{&quot; and &quot;}&quot; tokens in the <non_terminal where="17.1.3">class-body</non_terminal>, <non_terminal where="18.1.3">struct-body</non_terminal>, <non_terminal where="20.1.3">interface-body</non_terminal>, or <non_terminal where="21.1">enum-body</non_terminal> of the type (including, possibly, types that are nested within the type). </paragraph>
+  <paragraph>The accessibility domain of a predefined type (such as object, <keyword>int</keyword>, or <keyword>double</keyword>) is unlimited. </paragraph>
+  <paragraph>The accessibility domain of a top-level type T that is declared in a program P is defined as follows: <list><list_item> If the declared accessibility of T is public, the accessibility domain of T is the program text of P and any program that references P. </list_item><list_item> If the declared accessibility of T is internal, the accessibility domain of T is the program text of P. </list_item></list></paragraph>
+  <paragraph>
+    <note>[Note: From these definitions it follows that the accessibility domain of a top-level type is always at least the program text of the program in which that type is declared. end note]</note>
+  </paragraph>
+  <paragraph>The accessibility domain of a nested member M declared in a type T within a program P, is defined as follows (noting that M itself may possibly be a type): <list><list_item> If the declared accessibility of M is public, the accessibility domain of M is the accessibility domain of T. </list_item><list_item> If the declared accessibility of M is protected internal, let D be the union of the program text of P and the program text of any type derived from T, which is declared outside P. The accessibility domain of M is the intersection of the accessibility domain of T with D. </list_item><list_item> If the declared accessibility of M is protected, let D be the union of the program text of T and the program text of any type derived from T. The accessibility domain of M is the intersection of the accessibility domain of T with D. </list_item><list_item> If the declared accessibility of M is internal, the accessibility domain of M is the intersection of the accessibility domain of T with the program text of P. </list_item><list_item> If the declared accessibility of M is private, the accessibility domain of M is the program text of T. </list_item></list></paragraph>
+  <paragraph>
+    <note>[Note: From these definitions it follows that the accessibility domain of a nested member is always at least the program text of the type in which the member is declared. Furthermore, it follows that the accessibility domain of a member is never more inclusive than the accessibility domain of the type in which the member is declared. end note]</note>
+  </paragraph>
+  <paragraph>
+    <note>[Note: In intuitive terms, when a type or member M is accessed, the following steps are evaluated to ensure that the access is permitted: <list><list_item> First, if M is declared within a type (as opposed to a compilation unit or a namespace), a compile-time error occurs if that type is not accessible. </list_item><list_item> Then, if M is public, the access is permitted. </list_item><list_item> Otherwise, if M is protected internal, the access is permitted if it occurs within the program in which M is declared, or if it occurs within a class derived from the class in which M is declared and takes place through the derived class type (<hyperlink>10.5.3</hyperlink>). </list_item><list_item> Otherwise, if M is protected, the access is permitted if it occurs within the class in which M is declared, or if it occurs within a class derived from the class in which M is declared and takes place through the derived class type (<hyperlink>10.5.3</hyperlink>). </list_item><list_item> Otherwise, if M is internal, the access is permitted if it occurs within the program in which M is declared. </list_item><list_item> Otherwise, if M is private, the access is permitted if it occurs within the type in which M is declared. </list_item><list_item> Otherwise, the type or member is inaccessible, and a compile-time error occurs. end note]</list_item></list></note>
+  </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+public class A  
+{  
+   public static int X;  
+   internal static int Y;  
+   private static int Z;  
+}  
+internal class B  
+{  
+   public static int X;  
+   internal static int Y;  
+   private static int Z;  
+   public class C  
+   {  
+      public static int X;  
+      internal static int Y;  
+      private static int Z;  
+   }  
+   private class D  
+   {  
+      public static int X;  
+      internal static int Y;  
+      private static int Z;  
+   }  
+}  
+]]></code_example>the classes and members have the following accessibility domains: <list><list_item> The accessibility domain of A and A.X is unlimited. </list_item><list_item> The accessibility domain of A.Y, B, B.X, B.Y, B.C, B.C.X, and B.C.Y is the program text of the containing program. </list_item><list_item> The accessibility domain of A.Z is the program text of A. </list_item><list_item> The accessibility domain of B.Z and B.D is the program text of B, including the program text of B.C and B.D. </list_item><list_item> The accessibility domain of B.C.Z is the program text of B.C. </list_item><list_item> The accessibility domain of B.D.X, B.D.Y, and B.D.Z is the program text of B.D. </list_item></list></example>
+  </paragraph>
+  <paragraph>
+    <example>As the example illustrates, the accessibility domain of a member is never larger than that of a containing type. For example, even though all X members have public declared accessibility, all but A.X have accessibility domains that are constrained by a containing type. end example]</example>
+  </paragraph>
+  <paragraph>As described in <hyperlink>10.4</hyperlink>, all members of a base class, except for instance constructors, destructors, and static constructors are inherited by derived types. This includes even private members of a base class. However, the accessibility domain of a private member includes only the program text of the type in which the member is declared. <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   int x;  
+   static void F(B b) {  
+      b.x = 1;   // Ok  
+   }  
+}  
+class B: A  
+{  
+   static void F(B b) {  
+      b.x = 1;   // Error, x not accessible  
+   }  
+}  
+]]></code_example>the B class inherits the private member x from the A class. Because the member is private, it is only accessible within the <non_terminal where="17.1.3">class-body</non_terminal> of A. Thus, the access to b.x succeeds in the A.F method, but fails in the B.F method. end example]</example> </paragraph>
+</clause>

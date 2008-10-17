@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<clause number="8.7.8" title="Instance constructors" informative="true">
+  <paragraph>An instance constructor is a member that implements the actions required to initialize an instance of a class. </paragraph>
+  <paragraph>The example <code_example><![CDATA[
+using System;  
+class Point  
+{  
+   public double x, y;  
+   public Point() {  
+      this.x = 0;  
+      this.y = 0;  
+   }  
+   public Point(double x, double y) {  
+      this.x = x;  
+      this.y = y;  
+   }  
+   public static double Distance(Point a, Point b) {  
+      double xdiff = a.x - b.x;  
+      double ydiff = a.y - b.y;  
+      return Math.Sqrt(xdiff * xdiff + ydiff * ydiff);  
+   }  
+   public override string ToString() {  
+      return string.Format("({0}, {1})", x, y);  
+   }  
+}  
+class Test  
+{  
+   static void Main() {  
+      Point a = new Point();  
+      Point b = new Point(3, 4);  
+      double d = Point.Distance(a, b);  
+      Console.WriteLine("Distance from {0} to {1} is {2}", a, b, d);  
+   }  
+}  
+]]></code_example>shows a Point class that provides two public instance constructors, one of which takes no arguments, while the other takes two <keyword>double</keyword> arguments. </paragraph>
+  <paragraph>If no instance constructor is supplied for a class, then an empty one with no parameters is automatically provided. </paragraph>
+</clause>

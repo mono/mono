@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<clause number="20.4.3" title="Interface implementation inheritance">
+  <paragraph>A class inherits all interface implementations provided by its base classes. </paragraph>
+  <paragraph>Without explicitly re-implementing an interface, a derived class cannot in any way alter the interface mappings it inherits from its base classes. <example>[Example: For example, in the declarations <code_example><![CDATA[
+interface IControl  
+{  
+   void Paint();  
+}  
+class Control: IControl  
+{  
+   public void Paint() {...}  
+}  
+class TextBox: Control  
+{  
+   new public void Paint() {...}  
+}  
+]]></code_example>the Paint method in TextBox hides the Paint method in Control, but it does not alter the mapping of Control.Paint onto IControl.Paint, and calls to Paint through class instances and interface instances will have the following effects <code_example><![CDATA[
+Control c = new Control();  
+TextBox t = new TextBox();  
+IControl ic = c;  
+IControl it = t;  
+c.Paint();    // invokes Control.Paint();  
+t.Paint();    // invokes TextBox.Paint();  
+ic.Paint();   // invokes Control.Paint();  
+it.Paint();   // invokes Control.Paint();  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>However, when an interface method is mapped onto a virtual method in a class, it is possible for derived classes to override the virtual method and alter the implementation of the interface. <example>[Example: For example, rewriting the declarations above to <code_example><![CDATA[
+interface IControl  
+{  
+   void Paint();  
+}  
+class Control: IControl  
+{  
+   public virtual void Paint() {...}  
+}  
+class TextBox: Control  
+{  
+   public override void Paint() {...}  
+}  
+]]></code_example>the following effects will now be observed <code_example><![CDATA[
+Control c = new Control();  
+TextBox t = new TextBox();  
+IControl ic = c;  
+IControl it = t;  
+c.Paint();    // invokes Control.Paint();  
+t.Paint();    // invokes TextBox.Paint();  
+ic.Paint();   // invokes Control.Paint();  
+it.Paint();   // invokes TextBox.Paint();  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>Since explicit interface member implementations cannot be declared virtual, it is not possible to override an explicit interface member implementation. However, it is perfectly valid for an explicit interface member implementation to call another method, and that other method can be declared virtual to allow derived classes to override it. <example>[Example: For example <code_example><![CDATA[
+interface IControl  
+{  
+   void Paint();  
+}  
+class Control: IControl  
+{  
+   void IControl.Paint() { PaintControl(); }  
+   protected virtual void PaintControl() {...}  
+}  
+class TextBox: Control  
+{  
+   protected override void PaintControl() {...}  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Here, classes derived from Control can specialize the implementation of IControl.Paint by overriding the PaintControl method. end example]</example>
+  </paragraph>
+</clause>

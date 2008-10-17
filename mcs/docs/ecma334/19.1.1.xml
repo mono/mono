@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="19.1.1" title="The System.Array type">
+  <paragraph>The type System.Array is the abstract base type of all array types. An implicit reference conversion (<hyperlink>13.1.4</hyperlink>) exists from any array type to System.Array, and an explicit reference conversion (<hyperlink>13.2.3</hyperlink>) exists from System.Array to any array type. Note that System.Array is not itself an <non_terminal where="19.1">array-type</non_terminal>. Rather, it is a <non_terminal where="11.2">class-type</non_terminal> from which all <non_terminal where="19.1">array-type</non_terminal>s are derived. </paragraph>
+  <paragraph>At run-time, a value of type System.Array can be null or a reference to an instance of any array type. </paragraph>
+</clause>

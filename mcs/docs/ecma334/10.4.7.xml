@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="10.4.7" title="Delegate members">
+  <paragraph>The members of a delegate are the members inherited from class System.Delegate. </paragraph>
+</clause>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="12.4" title="Variable references">
+  <paragraph>A <non_terminal where="12.4">variable-reference</non_terminal> is an expression that is classified as a variable. A <non_terminal where="12.4">variable-reference</non_terminal> denotes a storage location that can be accessed both to fetch the current value and to store a new value. <grammar_production><name><non_terminal where="12.4">variable-reference</non_terminal></name> : <rhs><non_terminal where="14.14">expression</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>
+    <note>[Note: In C and C++, a <non_terminal where="12.4">variable-reference</non_terminal> is known as an lvalue. end note]</note>
+  </paragraph>
+</clause>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<clause number="14.10.1" title="Integer logical operators">
+  <paragraph>The predefined integer logical operators are: <code_example><![CDATA[
+int operator &(int x, int y);  
+uint operator &(uint x, uint y);  
+long operator &(long x, long y);  
+ulong operator &(ulong x, ulong y);  
+int operator |(int x, int y);  
+uint operator |(uint x, uint y);  
+long operator |(long x, long y);  
+ulong operator |(ulong x, ulong y);  
+int operator ^(int x, int y);  
+uint operator ^(uint x, uint y);  
+long operator ^(long x, long y);  
+ulong operator ^(ulong x, ulong y);  
+]]></code_example></paragraph>
+  <paragraph>The &amp; operator computes the bitwise logical AND of the two operands, the | operator computes the bitwise logical OR of the two operands, and the ^ operator computes the bitwise logical exclusive OR of the two operands. No overflows are possible from these operations. </paragraph>
+</clause>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="24.4.1" title="The AttributeUsage attribute">
+  <paragraph>The attribute AttributeUsage is used to describe the manner in which the attribute class can be used. </paragraph>
+  <paragraph>A class that is decorated with the AttributeUsage attribute must derive from System.Attribute, either directly or indirectly. Otherwise, a compile-time error occurs. </paragraph>
+  <paragraph>
+    <note>[Note: For an example of using this attribute, see <hyperlink>24.1.1</hyperlink>. end note]</note>
+  </paragraph>
+</clause>

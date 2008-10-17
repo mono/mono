@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="15.8" title="Iteration statements">
+  <paragraph>Iteration statements repeatedly execute an embedded statement. <grammar_production><name><non_terminal where="15.8">iteration-statement</non_terminal></name> : <rhs><non_terminal where="15.8.1">while-statement</non_terminal></rhs><rhs><non_terminal where="15.8.2">do-statement</non_terminal></rhs><rhs><non_terminal where="15.8.3">for-statement</non_terminal></rhs><rhs><non_terminal where="15.8.4">foreach-statement</non_terminal></rhs></grammar_production></paragraph>
+</clause>

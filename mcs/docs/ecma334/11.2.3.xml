@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="11.2.3" title="The string type">
+  <paragraph>The string type is a sealed class type that inherits directly from object. Instances of the string class represent Unicode character strings. </paragraph>
+  <paragraph>Values of the string type can be written as string literals (<hyperlink>9.4.4</hyperlink>). </paragraph>
+  <paragraph>The keyword string is simply an alias for the predefined class System.String. </paragraph>
+</clause>

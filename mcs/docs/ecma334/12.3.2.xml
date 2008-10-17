@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="12.3.2" title="Initially unassigned variables">
+  <paragraph>The following categories of variables are classified as initially unassigned: <list><list_item> Instance variables of initially unassigned struct variables. </list_item><list_item> Output parameters, including the this variable of struct instance constructors. </list_item><list_item> Local variables, except those declared in a catch clause, a foreach statement, or a using statement. </list_item></list></paragraph>
+</clause>

@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<clause number="10.3" title="Declarations">
+  <paragraph>Declarations in a C# program define the constituent elements of the program. C# programs are organized using namespaces (<hyperlink>16</hyperlink>), which can contain type declarations and nested namespace declarations. Type declarations (<hyperlink>16.5</hyperlink>) are used to define classes (<hyperlink>17</hyperlink>), structs (<hyperlink>18</hyperlink>), interfaces (<hyperlink>20</hyperlink>), enums (<hyperlink>21</hyperlink>), and delegates (<hyperlink>22</hyperlink>). The kinds of members permitted in a type declaration depend on the form of the type declaration. For instance, class declarations can contain declarations for constants (<hyperlink>17.3</hyperlink>), fields (<hyperlink>17.4</hyperlink>), methods (<hyperlink>17.5</hyperlink>), properties (<hyperlink>17.6</hyperlink>), events (<hyperlink>17.7</hyperlink>), indexers (<hyperlink>17.8</hyperlink>), operators (<hyperlink>17.9</hyperlink>), instance constructors (<hyperlink>17.10</hyperlink>), destructors (<hyperlink>17.12</hyperlink>), static constructors (<hyperlink>17.11</hyperlink>), and nested types. </paragraph>
+  <paragraph>A declaration defines a name in the declaration space to which the declaration belongs. Except for overloaded members (<hyperlink>10.6</hyperlink>), it is a compile-time error to have two or more declarations that introduce members with the same name in a declaration space. However, no diagnostic is required if the declaration space is a namespace for the global declaration space and the conflicting declarations are in separate programs. It is never possible for a declaration space to contain different kinds of members with the same name. <example>[Example: For example, a declaration space can never contain a field and a method by the same name. end example]</example> </paragraph>
+  <paragraph>There are several different types of declaration spaces, as described in the following. <list><list_item> Within all source files of a program, <non_terminal where="16.4">namespace-member-declaration</non_terminal>s with no enclosing  <non_terminal where="16.2">namespace-declaration</non_terminal> are members of a single combined declaration space called the global declaration space. </list_item><list_item> Within all source files of a program, <non_terminal where="16.4">namespace-member-declaration</non_terminal>s within <non_terminal where="16.2">namespace-declaration</non_terminal>s that have the same fully qualified namespace name are members of a single combined declaration space. </list_item><list_item> Each class, struct, or interface declaration creates a new declaration space. Names are introduced into this declaration space through <non_terminal where="17.2">class-member-declaration</non_terminal>s, <non_terminal where="18.2">struct-member-declaration</non_terminal>s, or  <non_terminal where="20.2">interface-member-declaration</non_terminal>s. Except for overloaded instance constructor declarations and static constructor declarations, a class or struct member declaration cannot introduce a member by the same name as the class or struct. A class, struct, or interface permits the declaration of overloaded methods and indexers. Furthermore, a class or struct permits the declaration of overloaded instance constructors and operators. <example>[Example: For example, a class, struct, or interface may contain multiple method declarations with the same name, provided these method declarations differ in their signature (<hyperlink>10.6</hyperlink>). end example]</example> Note that base classes do not contribute to the declaration space of a class, and base interfaces do not contribute to the declaration space of an interface. Thus, a derived class or interface is allowed to declare a member with the same name as an inherited member. Such a member is said to hide the inherited member. </list_item><list_item> Each enumeration declaration creates a new declaration space. Names are introduced into this declaration space through <non_terminal where="21.3">enum-member-declaration</non_terminal>s. </list_item><list_item> Each block or <non_terminal where="15.7.2">switch-block</non_terminal> creates a different declaration space for local variables. Names are introduced into this declaration space through <non_terminal where="15.5.1">local-variable-declaration</non_terminal>s. If a block is the body of an instance constructor, method, or operator declaration, or a get or set accessor for an indexer declaration, the parameters declared in such a declaration are members of the block's local variable declaration space. The local variable declaration space of a block includes any nested blocks. Thus, within a nested block it is not possible to declare a local variable with the same name as a local variable in an enclosing block. </list_item><list_item> Each block or <non_terminal where="15.7.2">switch-block</non_terminal> creates a separate declaration space for labels. Names are introduced into this declaration space through <non_terminal where="15.4">labeled-statement</non_terminal>s, and the names are referenced through <non_terminal where="15.9.3">goto-statement</non_terminal>s. The label declaration space of a block includes any nested blocks. Thus, within a nested block it is not possible to declare a label with the same name as a label in an enclosing block. </list_item></list></paragraph>
+  <paragraph>The textual order in which names are declared is generally of no significance. In particular, textual order is not significant for the declaration and use of namespaces, constants, methods, properties, events, indexers, operators, instance constructors, destructors, static constructors, and types. Declaration order is significant in the following ways: <list><list_item> Declaration order for field declarations and local variable declarations determines the order in which their initializers (if any) are executed. </list_item><list_item> Local variables must be defined before they are used (<hyperlink>10.7</hyperlink>). </list_item><list_item> Declaration order for enum member declarations (<hyperlink>21.3</hyperlink>) is significant when <non_terminal where="14.15">constant-expression</non_terminal> values are omitted. </list_item></list></paragraph>
+  <paragraph>
+    <example>[Example: The declaration space of a namespace is &quot;open ended&quot;, and two namespace declarations with the same fully qualified name contribute to the same declaration space. For example <code_example><![CDATA[
+namespace Megacorp.Data  
+{  
+   class Customer  
+   {  
+      ...  
+   }  
+}  
+namespace Megacorp.Data  
+{  
+   class Order  
+   {  
+      ...  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>The two namespace declarations above contribute to the same declaration space, in this case declaring two classes with the fully qualified names Megacorp.Data.Customer and Megacorp.Data.Order. Because the two declarations contribute to the same declaration space, it would have caused a compile-time error if each contained a declaration of a class with the same name. end example]</example>
+  </paragraph>
+  <paragraph>
+    <note>[Note: As specified above, the declaration space of a block includes any nested blocks. Thus, in the following example, the F and G methods result in a compile-time error because the name i is declared in the outer block and cannot be redeclared in the inner block. However, the H and I methods are valid since the two i's are declared in separate non-nested blocks. <code_example><![CDATA[
+class A  
+{  
+   void F() {  
+      int i = 0;  
+      if (true) {  
+         int i = 1;        
+      }  
+   }  
+   void G() {  
+      if (true) {  
+         int i = 0;  
+      }  
+      int i = 1;          
+   }  
+   void H() {  
+      if (true) {  
+         int i = 0;  
+      }  
+      if (true) {  
+         int i = 1;  
+      }  
+   }  
+   void I() {  
+      for (int i = 0; i < 10; i++)  
+      H();  
+      for (int i = 0; i < 10; i++)  
+      H();  
+   }  
+}  
+]]></code_example>end note]</note>
+  </paragraph>
+</clause>

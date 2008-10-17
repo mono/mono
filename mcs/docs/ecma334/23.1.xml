@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="23.1" title="Causes of exceptions">
+  <paragraph>Exception can be thrown in two different ways. <list><list_item> A throw statement (<hyperlink>15.9.5</hyperlink>) throws an exception immediately and unconditionally. Control never reaches the statement immediately following the throw. </list_item><list_item> Certain exceptional conditions that arise during the processing of C# statements and expression cause an exception in certain circumstances when the operation cannot be completed normally. For example, an integer division operation (<hyperlink>14.7.2</hyperlink>) throws a System.DivideByZeroException if the denominator is zero. See <hyperlink>23.4</hyperlink> for a list of the various exceptions that can occur in this way. </list_item></list></paragraph>
+</clause>

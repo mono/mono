@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="12.1.6" title="Output parameters">
+  <paragraph>A parameter declared with an out modifier is an output parameter. </paragraph>
+  <paragraph>An output parameter does not create a new storage location. Instead, an output parameter represents the same storage location as the variable given as the argument in the function member invocation. Thus, the value of an output parameter is always the same as the underlying variable. </paragraph>
+  <paragraph>The following definite assignment rules apply to output parameters. <note>[Note: The rules for reference parameters are different, and are described in <hyperlink>12.1.5</hyperlink>. end note]</note> <list><list_item> A variable need not be definitely assigned before it can be passed as an output parameter in a function member invocation. </list_item><list_item> Following the normal completion of a function member invocation, each variable that was passed as an output parameter is considered assigned in that execution path. </list_item><list_item> Within a function member, an output parameter is considered initially unassigned. </list_item><list_item> Every output parameter of a function member must be definitely assigned (<hyperlink>12.3</hyperlink>) before the function member returns normally. </list_item></list></paragraph>
+  <paragraph>Within an instance constructor of a struct type, the this keyword behaves exactly as an output parameter of the struct type (<hyperlink>14.5.7</hyperlink>). </paragraph>
+</clause>

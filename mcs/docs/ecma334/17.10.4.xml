@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<clause number="17.10.4" title="Default constructors">
+  <paragraph>If a class contains no instance constructor declarations, a default instance constructor is automatically provided. That default constructor simply invokes the parameterless constructor of the direct base class. If the direct base class does not have an accessible parameterless instance constructor, a compile-time error occurs. If the class is abstract then the declared accessibility for the default constructor is protected. Otherwise, the declared accessibility for the default constructor is public. <note>[Note: Thus, the default constructor is always of the form <code_example><![CDATA[
+protected C(): base() {}  
+]]></code_example>or <code_example><![CDATA[
+public C(): base() {}  
+]]></code_example>where C is the name of the class. end note]</note> </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class Message  
+{  
+   object sender;  
+   string text;  
+}  
+]]></code_example>a default constructor is provided because the class contains no instance constructor declarations. Thus, the example is precisely equivalent to <code_example><![CDATA[
+class Message  
+{  
+   object sender;  
+   string text;  
+   public Message(): base() {}  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

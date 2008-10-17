@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<clause number="17.4.5" title="Variable initializers">
+  <paragraph>Field declarations may include <non_terminal where="19.6">variable-initializer</non_terminal>s. For static fields, variable initializers correspond to assignment statements that are executed during class initialization. For instance fields, variable initializers correspond to assignment statements that are executed when an instance of the class is created. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static double x = Math.Sqrt(2.0);  
+   int i = 100;  
+   string s = "Hello";  
+   static void Main() {  
+      Test a = new Test();  
+      Console.WriteLine("x = {0}, i = {1}, s = {2}", x, a.i, a.s);  
+   }  
+}  
+]]></code_example>produces the output <code_example><![CDATA[
+x = 1.4142135623731, i = 100, s = Hello  
+]]></code_example>because an assignment to x occurs when static field initializers execute and assignments to i and s occur when the instance field initializers execute. end example]</example>
+  </paragraph>
+  <paragraph>The default value initialization described in <hyperlink>17.4.3</hyperlink> occurs for all fields, including fields that have variable initializers. Thus, when a class is initialized, all static fields in that class are first initialized to their default values, and then the static field initializers are executed in textual order. Likewise, when an instance of a class is created, all instance fields in that instance are first initialized to their default values, and then the instance field initializers are executed in textual order. </paragraph>
+  <paragraph>It is possible for static fields with variable initializers to be observed in their default value state. <example>[Example: However, this is strongly discouraged as a matter of style. The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static int a = b + 1;  
+   static int b = a + 1;  
+   static void Main() {  
+      Console.WriteLine("a = {0}, b = {1}", a, b);  
+   }  
+}  
+]]></code_example>exhibits this behavior. Despite the circular definitions of a and b, the program is valid. It results in the output <code_example><![CDATA[
+a = 1, b = 2  
+]]></code_example>because the static fields a and b are initialized to 0 (the default value for <keyword>int</keyword>) before their initializers are executed. When the initializer for a runs, the value of b is zero, and so a is initialized to 1. When the initializer for b runs, the value of a is already 1, and so b is initialized to 2. end example]</example> </paragraph>
+</clause>

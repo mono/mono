@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="11.1.8" title="Enumeration types">
+  <paragraph>An enumeration type is a distinct type with named constants. Every enumeration type has an underlying type, which must be <keyword>byte</keyword>, <keyword>sbyte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>int</keyword>, <keyword>uint</keyword>, <keyword>long</keyword> or <keyword>ulong</keyword>. Enumeration types are defined through enumeration declarations (<hyperlink>21.1</hyperlink>). </paragraph>
+</clause>

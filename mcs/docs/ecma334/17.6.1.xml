@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="17.6.1" title="Static and instance properties">
+  <paragraph>When a property declaration includes a static modifier, the property is said to be a static property. When no static modifier is present, the property is said to be an instance property. </paragraph>
+  <paragraph>A static property is not associated with a specific instance, and it is a compile-time error to refer to this in the accessors of a static property. </paragraph>
+  <paragraph>An instance property is associated with a given instance of a class, and that instance can be accessed as this (<hyperlink>14.5.7</hyperlink>) in the accessors of that property. </paragraph>
+  <paragraph>When a property is referenced in a <non_terminal where="14.5.4">member-access</non_terminal> (<hyperlink>14.5.4</hyperlink>) of the form E.M, if M is a static property, E must denote a type that has a property M, and if M is an instance property, E must denote an instance having a property M. </paragraph>
+  <paragraph>The differences between static and instance members are discussed further in <hyperlink>17.2.5</hyperlink>. </paragraph>
+</clause>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="10.4.6" title="Array members">
+  <paragraph>The members of an array are the members inherited from class System.Array. </paragraph>
+</clause>

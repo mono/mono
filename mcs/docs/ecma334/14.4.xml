@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<clause number="14.4" title="Function members">
+  <paragraph>Function members are members that contain executable statements. Function members are always members of types and cannot be members of namespaces. C# defines the following categories of function members: <list><list_item> Methods </list_item><list_item> Properties </list_item><list_item> Events </list_item><list_item> Indexers </list_item><list_item> User-defined operators </list_item><list_item> Instance constructors </list_item><list_item> Static constructors </list_item><list_item> Destructors </list_item></list></paragraph>
+  <paragraph>Except for static constructors and destructors (which cannot be invoked explicitly), the statements contained in function members are executed through function member invocations. The actual syntax for writing a function member invocation depends on the particular function member category. </paragraph>
+  <paragraph>The argument list (<hyperlink>14.4.1</hyperlink>) of a function member invocation provides actual values or variable references for the parameters of the function member. </paragraph>
+  <paragraph>Invocations of methods, indexers, operators, and instance constructors employ overload resolution to determine which of a candidate set of function members to invoke. This process is described in <hyperlink>14.4.2</hyperlink>. </paragraph>
+  <paragraph>Once a particular function member has been identified at compile-time, possibly through overload resolution, the actual run-time process of invoking the function member is described in <hyperlink>14.4.3</hyperlink>. </paragraph>
+  <paragraph>
+    <note>[Note: The following table summarizes the processing that takes place in constructs involving the six categories of function members that can be explicitly invoked. In the table, e, x, y, and value indicate expressions classified as variables or values, T indicates an expression classified as a type, F is the simple name of a method, and P is the simple name of a property. <table_line>Construct Example Description </table_line>
+<table_line>F(x, y) Overload resolution is applied to select the best method F in the </table_line>
+<table_line>containing class or struct. The method is invoked with the </table_line>
+<table_line>argument list (x, y). If the method is not static, the </table_line>
+<table_line>instance expression is this. </table_line>
+<table_line>Method </table_line>
+<table_line>invocation </table_line>
+<table_line>T.F(x, y) Overload resolution is applied to select the best method F in the </table_line>
+<table_line>class or struct T. A compile-time error occurs if the method is </table_line>
+<table_line>not static. The method is invoked with the argument list </table_line>
+<table_line>(x, y). </table_line>
+<table_line>Construct Example Description </table_line>
+<table_line>e.F(x, y) Overload resolution is applied to select the best method F in the </table_line>
+<table_line>class, struct, or interface given by the type of e. A compile-time </table_line>
+<table_line>error occurs if the method is static. The method is invoked </table_line>
+<table_line>with the instance expression e and the argument list (x, y). </table_line>
+<table_line>P The get accessor of the property P in the containing class or </table_line>
+<table_line>struct is invoked. A compile-time error occurs if P is writeonly. </table_line>
+<table_line>If P is not static, the instance expression is this. </table_line>
+<table_line>P = value The set accessor of the property P in the containing class or </table_line>
+<table_line>struct is invoked with the argument list (value). A compiletime </table_line>
+<table_line>error occurs if P is read-only. If P is not static, the </table_line>
+<table_line>instance expression is this. </table_line>
+<table_line>T.P The get accessor of the property P in the class or struct T is </table_line>
+<table_line>invoked. A compile-time error occurs if P is not static or if P </table_line>
+<table_line>is write-only. </table_line>
+<table_line>T.P = value The set accessor of the property P in the class or struct T is </table_line>
+<table_line>invoked with the argument list (value). A compile-time error </table_line>
+<table_line>occurs if P is not static or if P is read-only. </table_line>
+<table_line>e.P The get accessor of the property P in the class, struct, or </table_line>
+<table_line>interface given by the type of e is invoked with the instance </table_line>
+<table_line>expression e. A compile-time error occurs if P is static or if </table_line>
+<table_line>P is write-only. </table_line>
+<table_line>Property </table_line>
+<table_line>access </table_line>
+<table_line>e.P = value The set accessor of the property P in the class, struct, or </table_line>
+<table_line>interface given by the type of e is invoked with the instance </table_line>
+<table_line>expression e and the argument list (value). A compile-time </table_line>
+<table_line>error occurs if P is static or if P is read-only. </table_line>
+<table_line>E += value The add accessor of the event E in the containing class or struct </table_line>
+<table_line>is invoked. If E is not static, the instance expression is this. </table_line>
+<table_line>E -= value The remove accessor of the event E in the containing class or </table_line>
+<table_line>struct is invoked. If E is not static, the instance expression is </table_line>
+<table_line>this. </table_line>
+<table_line>T.E += value The add accessor of the event E in the class or struct T is </table_line>
+<table_line>invoked. A compile-time error occurs if E is not static. </table_line>
+<table_line>T.E -= value The remove accessor of the event E in the class or struct T is </table_line>
+<table_line>invoked. A compile-time error occurs if E is not static. </table_line>
+<table_line>e.E += value The add accessor of the event E in the class, struct, or interface </table_line>
+<table_line>given by the type of e is invoked with the instance expression </table_line>
+<table_line>e. A compile-time error occurs if E is static. </table_line>
+<table_line>Event access </table_line>
+<table_line>e.E -= value The remove accessor of the event E in the class, struct, or </table_line>
+<table_line>interface given by the type of e is invoked with the instance </table_line>
+<table_line>expression e. A compile-time error occurs if E is static. </table_line>
+<table_line>Indexer </table_line>
+<table_line>access </table_line>
+<table_line>e[x, y] Overload resolution is applied to select the best indexer in the </table_line>
+<table_line>class, struct, or interface given by the type of e. The get </table_line>
+<table_line>accessor of the indexer is invoked with the instance expression </table_line>
+<table_line>e and the argument list (x, y). A compile-time error occurs if </table_line>
+<table_line>the indexer is write-only. </table_line>
+<table_line>Construct Example Description </table_line>
+<table_line>e[x, y] = value Overload resolution is applied to select the best indexer in the </table_line>
+<table_line>class, struct, or interface given by the type of e. The set </table_line>
+<table_line>accessor of the indexer is invoked with the instance expression </table_line>
+<table_line>e and the argument list (x, y, value). A compile-time error </table_line>
+<table_line>occurs if the indexer is read-only. </table_line>
+<table_line>-x Overload resolution is applied to select the best unary operator </table_line>
+<table_line>in the class or struct given by the type of x. The selected </table_line>
+<table_line>operator is invoked with the argument list (x). </table_line>
+<table_line>Operator </table_line>
+<table_line>invocation </table_line>
+<table_line>x + y Overload resolution is applied to select the best binary operator </table_line>
+<table_line>in the classes or structs given by the types of x and y. The </table_line>
+<table_line>selected operator is invoked with the argument list (x, y). </table_line>
+<table_line>Instance </table_line>
+<table_line>constructor </table_line>
+<table_line>invocation </table_line>
+<table_line>new T(x, y) Overload resolution is applied to select the best instance </table_line>
+<table_line>constructor in the class or struct T. The instance constructor is </table_line>
+<table_line>invoked with the argument list (x, y). </table_line>
+end note]</note>
+  </paragraph>
+</clause>

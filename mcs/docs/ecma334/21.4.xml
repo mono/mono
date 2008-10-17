@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="21.4" title="Enum values and operations">
+  <paragraph>Each enum type defines a distinct type; an explicit enumeration conversion (<hyperlink>13.2.2</hyperlink>) is required to convert between an enum type and an integral type, or between two enum types. The set of values that an enum type can take on is not limited by its enum members. In particular, any value of the underlying type of an enum can be cast to the enum type, and is a distinct valid value of that enum type. </paragraph>
+  <paragraph>Enum members have the type of their containing enum type (except within other enum member initializers: see <hyperlink>21.3</hyperlink>). The value of an enum member declared in enum type E with associated value v is (E)v. </paragraph>
+  <paragraph>The following operators can be used on values of enum types: ==, !=, &lt;, &gt;, &lt;=, &gt;= (<hyperlink>14.9.5</hyperlink>), + (<hyperlink>14.7.4</hyperlink>),  (<hyperlink>14.7.5</hyperlink>), -^, &amp;, | (<hyperlink>14.10.2</hyperlink>), ~ (<hyperlink>14.6.4</hyperlink>), ++,  (<hyperlink>14.5.9</hyperlink> --and <hyperlink>14.6.5</hyperlink>), and sizeof (<hyperlink>25.5.4</hyperlink>). </paragraph>
+  <paragraph>Every enum type automatically derives from the class System.Enum. Thus, inherited methods and properties of this class can be used on values of an enum type. </paragraph>
+</clause>

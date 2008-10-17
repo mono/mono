@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="13.4.1" title="Permitted user-defined conversions">
+  <paragraph>C# permits only certain user-defined conversions to be declared. In particular, it is not possible to redefine an already existing implicit or explicit conversion. A class or struct is permitted to declare a conversion from a source type S to a target type T only if all of the following are true: <list><list_item> S and T are different types. </list_item><list_item> Either S or T is the class or struct type in which the operator declaration takes place. </list_item><list_item> Neither S nor T is object or an <non_terminal where="11.2">interface-type</non_terminal>. </list_item><list_item> T is not a base class of S, and S is not a base class of T. </list_item></list></paragraph>
+  <paragraph>The restrictions that apply to user-defined conversions are discussed further in <hyperlink>17.9.3</hyperlink>. </paragraph>
+</clause>

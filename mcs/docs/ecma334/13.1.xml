@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="13.1" title="Implicit conversions">
+  <paragraph>The following conversions are classified as implicit conversions: <list><list_item> Identity conversions </list_item><list_item> Implicit numeric conversions </list_item><list_item> Implicit enumeration conversions. </list_item><list_item> Implicit reference conversions </list_item><list_item> Boxing conversions </list_item><list_item> Implicit constant expression conversions </list_item><list_item> User-defined implicit conversions </list_item></list></paragraph>
+  <paragraph>Implicit conversions can occur in a variety of situations, including function member invocations (<hyperlink>14.4.3</hyperlink>), cast expressions (<hyperlink>14.6.6</hyperlink>), and assignments (<hyperlink>14.13</hyperlink>). </paragraph>
+  <paragraph>The pre-defined implicit conversions always succeed and never cause exceptions to be thrown. <note>[Note: Properly designed user-defined implicit conversions should exhibit these characteristics as well. end note]</note> </paragraph>
+</clause>

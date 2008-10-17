@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<clause number="11.1.1" title="Default constructors">
+  <paragraph>All value types implicitly declare a public parameterless instance constructor called the default constructor. </paragraph>
+  <paragraph>The default constructor returns a zero-initialized instance known as the default value for the value type: <list><list_item> For all <non_terminal where="11.1">simple-type</non_terminal>s, the default value is the value produced by a bit pattern of all zeros: </list_item><list><list_item> For <keyword>sbyte</keyword>, <keyword>byte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>int</keyword>, <keyword>uint</keyword>, <keyword>long</keyword>, and <keyword>ulong</keyword>, the default value is 0. </list_item><list_item> For <keyword>char</keyword>, the default value is '\x0000'. </list_item><list_item> For <keyword>float</keyword>, the default value is 0.0f. </list_item><list_item> For <keyword>double</keyword>, the default value is 0.0d. </list_item><list_item> For <keyword>decimal</keyword>, the default value is 0.0m. </list_item><list_item> For <keyword>bool</keyword>, the default value is false. </list_item></list><list_item> For an <non_terminal where="11.1">enum-type</non_terminal> E, the default value is 0. </list_item><list_item> For a <non_terminal where="11.1">struct-type</non_terminal>, the default value is the value produced by setting all value type fields to their default value and all reference type fields to null. </list_item></list></paragraph>
+  <paragraph>Like any other instance constructor, the default constructor of a value type is invoked using the new operator. <note>[Note: For efficiency reasons, this requirement is not intended to actually have the implementation generate a constructor call. end note]</note> In the example below, variables i and j are both initialized to zero. <code_example><![CDATA[
+class A  
+{  
+   void F() {  
+      int i = 0;  
+      int j = new int();  
+   }  
+}  
+]]></code_example></paragraph>
+  <paragraph>Because every value type implicitly has a public parameterless instance constructor, it is not possible for a struct type to contain an explicit declaration of a parameterless constructor. A struct type is however permitted to declare parameterized instance constructors (<hyperlink>18.3.8</hyperlink>). </paragraph>
+</clause>

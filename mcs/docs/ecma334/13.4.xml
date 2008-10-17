@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="13.4" title="User-defined conversions">
+  <paragraph>C# allows the pre-defined implicit and explicit conversions to be augmented by user-defined conversions. User-defined conversions are introduced by declaring conversion operators (<hyperlink>17.9.3</hyperlink>) in class and struct types. </paragraph>
+</clause>

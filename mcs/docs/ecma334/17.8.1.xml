@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="17.8.1" title="Indexer overloading">
+  <paragraph>The indexer overload resolution rules are described in <hyperlink>14.4.2</hyperlink>. </paragraph>
+</clause>

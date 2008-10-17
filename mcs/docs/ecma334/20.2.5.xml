@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<clause number="20.2.5" title="Interface member access">
+  <paragraph>Interface members are accessed through member access (<hyperlink>14.5.4</hyperlink>) and indexer access (<hyperlink>14.5.6.2</hyperlink>) expressions of the form I.M and I[A], where I is an instance of an interface type, M is a method, property, or event of that interface type, and A is an indexer argument list. </paragraph>
+  <paragraph>For interfaces that are strictly single-inheritance (each interface in the inheritance chain has exactly zero or one direct base interface), the effects of the member lookup (<hyperlink>14.3</hyperlink>), method invocation (<hyperlink>14.5.5.1</hyperlink>), and indexer access (<hyperlink>14.5.6.2</hyperlink>) rules are exactly the same as for classes and structs: More derived members hide less derived members with the same name or signature. However, for multiple-inheritance interfaces, ambiguities can occur when two or more unrelated base interfaces declare members with the same name or signature. This section shows several examples of such situations. In all cases, explicit casts can be used to resolve the ambiguities. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+interface IList  
+{  
+   int Count { get; set; }  
+}  
+interface ICounter  
+{  
+   void Count(int i);  
+}  
+interface IListCounter: IList, ICounter {}  
+class C  
+{  
+   void Test(IListCounter x) {  
+      x.Count(1);      // Error  
+      x.Count = 1;          // Error  
+      ((IList)x).Count = 1;   // Ok, invokes IList.Count.set  
+      ((ICounter)x).Count(1);  // Ok, invokes ICounter.Count  
+   }  
+}  
+]]></code_example>the first two statements cause compile-time errors because the member lookup (<hyperlink>14.3</hyperlink>) of Count in IListCounter is ambiguous. As illustrated by the example, the ambiguity is resolved by casting x to the appropriate base interface type. Such casts have no run-time costs-they merely consist of viewing the instance as a less derived type at compile-time. end example]</example>
+  </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+interface IInteger  
+{  
+   void Add(int i);  
+}  
+interface IDouble  
+{  
+   void Add(double d);  
+}  
+interface INumber: IInteger, IDouble {}  
+class C  
+{  
+   void Test(INumber n) {  
+      n.Add(1);      // Error, both Add methods are applicable  
+      n.Add(1.0);     // Ok, only IDouble.Add is applicable  
+      ((IInteger)n).Add(1);  // Ok, only IInteger.Add is a candidate  
+      ((IDouble)n).Add(1);   // Ok, only IDouble.Add is a candidate  
+   }  
+}  
+]]></code_example>the invocation n.Add(1) is ambiguous because a method invocation (<hyperlink>14.5.5.1</hyperlink>) requires all overloaded candidate methods to be declared in the same type. However, the invocation n.Add(1.0) is permitted because only IDouble.Add is applicable. When explicit casts are inserted, there is only one candidate method, and thus no ambiguity. end example]</example>
+  </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+interface IBase  
+{  
+   void F(int i);  
+}  
+interface ILeft: IBase  
+{  
+   new void F(int i);  
+}  
+interface IRight: IBase  
+{  
+   void G();  
+}  
+interface IDerived: ILeft, IRight {}  
+class A  
+{  
+   void Test(IDerived d) {  
+      d.F(1);      // Invokes ILeft.F  
+      ((IBase)d).F(1);   // Invokes IBase.F  
+      ((ILeft)d).F(1);   // Invokes ILeft.F  
+      ((IRight)d).F(1);  // Invokes IBase.F  
+   }  
+}  
+]]></code_example>the IBase.F member is hidden by the ILeft.F member. The invocation d.F(1) thus selects ILeft.F, even though IBase.F appears to not be hidden in the access path that leads through IRight. </example>
+  </paragraph>
+  <paragraph>
+    <example>The intuitive rule for hiding in multiple-inheritance interfaces is simply this: If a member is hidden in any access path, it is hidden in all access paths. Because the access path from IDerived to ILeft to IBase hides IBase.F, the member is also hidden in the access path from IDerived to IRight to IBase. end example]</example>
+  </paragraph>
+</clause>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<clause number="25.7" title="Stack allocation">
+  <paragraph>In an unsafe context, a local variable declaration (<hyperlink>15.5.1</hyperlink>) may include a stack allocation initializer, which allocates memory from the call stack. <grammar_production><name><non_terminal where="15.5.1">local-variable-initializer</non_terminal></name> : <rhs><non_terminal where="14.14">expression</non_terminal></rhs><rhs><non_terminal where="19.6">array-initializer</non_terminal></rhs></grammar_production><non_terminal where="25.7">stackalloc-initializer</non_terminal> <grammar_production><name><non_terminal where="25.7">stackalloc-initializer</non_terminal></name> : <rhs><keyword>stackalloc</keyword><non_terminal where="25.2">unmanaged-type</non_terminal><terminal>[</terminal><non_terminal where="14.14">expression</non_terminal><terminal>]</terminal></rhs></grammar_production></paragraph>
+  <paragraph>The <non_terminal where="25.2">unmanaged-type</non_terminal> indicates the type of the items that will be stored in the newly allocated location, and the expression indicates the number of these items. Taken together, these specify the required allocation size. Since the size of a stack allocation cannot be negative, it is a compile-time error to specify the number of items as a <non_terminal where="14.15">constant-expression</non_terminal> that evaluates to a negative value. </paragraph>
+  <paragraph>A stack allocation initializer of the form stackalloc T[E] requires T to be an unmanaged type (<hyperlink>25.2</hyperlink>) and E to be an expression of type <keyword>int</keyword>. The construct allocates E * sizeof(T) bytes from the call stack and returns a pointer, of type T*, to the newly allocated block. If E is a negative value, then the behavior is undefined. If E is zero, then no allocation is made, and the pointer returned is implementation-defined. If there is not enough memory available to allocate a block of the given size, a System.StackOverflowException is thrown. </paragraph>
+  <paragraph>The content of the newly allocated memory is undefined. </paragraph>
+  <paragraph>Stack allocation initializers are not permitted in catch or finally blocks (<hyperlink>15.10</hyperlink>). </paragraph>
+  <paragraph><note>[Note: There is no way to explicitly free memory allocated using stackalloc. end note]</note> All  stack-allocated memory blocks created during the execution of a function member are automatically discarded when that function member returns. <note>[Note: This corresponds to the alloca function, an extension commonly found C and C++ implementations. end note]</note></paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static string IntToString(int value) {  
+      int n = value >= 0 ? value : -value;  
+      unsafe {  
+         char* buffer = stackalloc char[16];  
+         char* p = buffer + 16;  
+         do {  
+            *--p = (char)(n % 10 + '0');  
+            n /= 10;  
+         } while (n != 0);  
+         if (value < 0) *--p = '-';  
+         return new string(p, 0, (int)(buffer + 16 - p));  
+      }  
+   }  
+   static void Main() {  
+      Console.WriteLine(IntToString(12345));  
+      Console.WriteLine(IntToString(-999));  
+   }  
+}  
+]]></code_example>a stackalloc initializer is used in the IntToString method to allocate a buffer of 16 characters on the stack. The buffer is automatically discarded when the method returns. end example]</example>
+  </paragraph>
+</clause>

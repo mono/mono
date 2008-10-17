@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<clause number="16.2" title="Namespace declarations">
+  <paragraph>A <non_terminal where="16.2">namespace-declaration</non_terminal> consists of the keyword namespace, followed by a namespace name and body, optionally followed by a semicolon. <grammar_production><name><non_terminal where="16.2">namespace-declaration</non_terminal></name> : <rhs><keyword>namespace</keyword><non_terminal where="16.2">qualified-identifier</non_terminal><non_terminal where="16.2">namespace-body</non_terminal><terminal>;</terminal><opt/></rhs></grammar_production><grammar_production><name><non_terminal where="16.2">qualified-identifier</non_terminal></name> : <rhs><non_terminal where="9.4.2">identifier</non_terminal></rhs><rhs><non_terminal where="16.2">qualified-identifier</non_terminal><terminal>.</terminal><non_terminal where="9.4.2">identifier</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="16.2">namespace-body</non_terminal></name> : <rhs><terminal>{</terminal><non_terminal where="16.3">using-directives</non_terminal><opt/><non_terminal where="16.4">namespace-member-declarations</non_terminal><opt/><terminal>}</terminal></rhs></grammar_production></paragraph>
+  <paragraph>A <non_terminal where="16.2">namespace-declaration</non_terminal> may occur as a top-level declaration in a <non_terminal where="16.1">compilation-unit</non_terminal> or as a member declaration within another <non_terminal where="16.2">namespace-declaration</non_terminal>. When a <non_terminal where="16.2">namespace-declaration</non_terminal> occurs as a top-level declaration in a <non_terminal where="16.1">compilation-unit</non_terminal>, the namespace becomes a member of the global namespace. When a <non_terminal where="16.2">namespace-declaration</non_terminal> occurs within another <non_terminal where="16.2">namespace-declaration</non_terminal>, the inner namespace becomes a member of the outer namespace. In either case, the name of a namespace must be unique within the containing namespace. </paragraph>
+  <paragraph>Namespaces are implicitly public and the declaration of a namespace cannot include any access modifiers. </paragraph>
+  <paragraph>Within a <non_terminal where="16.2">namespace-body</non_terminal>, the optional <non_terminal where="16.3">using-directive</non_terminal>s import the names of other namespaces and types, allowing them to be referenced directly instead of through qualified names. The optional  <non_terminal where="16.4">namespace-member-declaration</non_terminal>s contribute members to the declaration space of the namespace. Note that all  <non_terminal where="16.3">using-directive</non_terminal>s must appear before any member declarations. </paragraph>
+  <paragraph>The <non_terminal where="16.2">qualified-identifier</non_terminal> of a <non_terminal where="16.2">namespace-declaration</non_terminal> may be a single identifier or a sequence of identifiers separated by &quot;.&quot; tokens. The latter form permits a program to define a nested namespace without lexically nesting several namespace declarations. <example>[Example: For example, <code_example><![CDATA[
+namespace N1.N2  
+{  
+   class A {}  
+   class B {}  
+}  
+]]></code_example>is semantically equivalent to <code_example><![CDATA[
+namespace N1  
+{  
+   namespace N2  
+   {  
+      class A {}  
+      class B {}  
+   }  
+}  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>Namespaces are open-ended, and two namespace declarations with the same fully qualified name contribute to the same declaration space (<hyperlink>10.3</hyperlink>). <example>[Example: In the example <code_example><![CDATA[
+namespace N1.N2  
+{  
+   class A {}  
+}  
+namespace N1.N2  
+{  
+   class B {}  
+}  
+]]></code_example>the two namespace declarations above contribute to the same declaration space, in this case declaring two classes with the fully qualified names N1.N2.A and N1.N2.B. Because the two declarations contribute to the same declaration space, it would have been an error if each contained a declaration of a member with the same name. end example]</example> </paragraph>
+</clause>

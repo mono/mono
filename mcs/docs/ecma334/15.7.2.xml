@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<clause number="15.7.2" title="The switch statement">
+  <paragraph>The switch statement selects for execution a statement list having an associated switch label that corresponds to the value of the switch expression. <grammar_production><name><non_terminal where="15.7.2">switch-statement</non_terminal></name> : <rhs><keyword>switch</keyword><terminal>(</terminal><non_terminal where="14.14">expression</non_terminal><terminal>)</terminal><non_terminal where="15.7.2">switch-block</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="15.7.2">switch-block</non_terminal></name> : <rhs><terminal>{</terminal><non_terminal where="15.7.2">switch-sections</non_terminal><opt/><terminal>}</terminal></rhs></grammar_production><grammar_production><name><non_terminal where="15.7.2">switch-section</non_terminal>s</name> : <rhs><non_terminal where="15.7.2">switch-section</non_terminal></rhs><rhs><non_terminal where="15.7.2">switch-sections</non_terminal><non_terminal where="15.7.2">switch-section</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="15.7.2">switch-section</non_terminal></name> : <rhs><non_terminal where="15.7.2">switch-labels</non_terminal><non_terminal where="15.2.1">statement-list</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="15.7.2">switch-label</non_terminal>s</name> : <rhs><non_terminal where="15.7.2">switch-label</non_terminal></rhs><rhs><non_terminal where="15.7.2">switch-labels</non_terminal><non_terminal where="15.7.2">switch-label</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="15.7.2">switch-label</non_terminal></name> : <rhs><keyword>case</keyword><non_terminal where="14.15">constant-expression</non_terminal><terminal>:</terminal></rhs><rhs><keyword>default</keyword><terminal>:</terminal></rhs></grammar_production></paragraph>
+  <paragraph>A <non_terminal where="15.7.2">switch-statement</non_terminal> consists of the keyword switch, followed by a parenthesized expression (called the switch expression), followed by a <non_terminal where="15.7.2">switch-block</non_terminal>. The <non_terminal where="15.7.2">switch-block</non_terminal> consists of zero or more <non_terminal where="15.7.2">switch-section</non_terminal>s, enclosed in braces. Each <non_terminal where="15.7.2">switch-section</non_terminal> consists of one or more <non_terminal where="15.7.2">switch-label</non_terminal>s followed by a <non_terminal where="15.2.1">statement-list</non_terminal> (<hyperlink>15.2.1</hyperlink>). </paragraph>
+  <paragraph>The governing type of a switch statement is established by the switch expression. If the type of the switch expression is <keyword>sbyte</keyword>, <keyword>byte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>int</keyword>, <keyword>uint</keyword>, <keyword>long</keyword>, <keyword>ulong</keyword>, <keyword>char</keyword>, string, or an <non_terminal where="11.1">enum-type</non_terminal>, then that is the governing type of the switch statement. Otherwise, exactly one user-defined implicit conversion (<hyperlink>13.4</hyperlink>) must exist from the type of the switch expression to one of the following possible governing types: <keyword>sbyte</keyword>, <keyword>byte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, <keyword>int</keyword>, <keyword>uint</keyword>, <keyword>long</keyword>, <keyword>ulong</keyword>, <keyword>char</keyword>, string. If no such implicit conversion exists, or if more than one such implicit conversion exists, a compile-time error occurs. </paragraph>
+  <paragraph>The constant expression of each case label must denote a value of a type that is implicitly convertible (<hyperlink>13.1</hyperlink>) to the governing type of the switch statement. A compile-time error occurs if two or more case labels in the same switch statement specify the same constant value. </paragraph>
+  <paragraph>There can be at most one default label in a switch statement. </paragraph>
+  <paragraph>A switch statement is executed as follows: <list><list_item> The switch expression is evaluated and converted to the governing type. </list_item><list_item> If one of the constants specified in a case label in the same switch statement is equal to the value of the switch expression, control is transferred to the statement list following the matched case label. </list_item><list_item> If none of the constants specified in case labels in the same switch statement is equal to the value of the switch expression, and if a default label is present, control is transferred to the statement list following the default label. </list_item><list_item> If none of the constants specified in case labels in the same switch statement is equal to the value of the switch expression, and if no default label is present, control is transferred to the end point of the switch statement. </list_item></list></paragraph>
+  <paragraph>If the end point of the statement list of a switch section is reachable, a compile-time error occurs. This is known as the &quot;no fall through&quot; rule. <example>[Example: The example <code_example><![CDATA[
+switch (i) {  
+   case 0:  
+   CaseZero();  
+   break;  
+   case 1:  
+   CaseOne();  
+   break;  
+   default:  
+   CaseOthers();  
+   break;  
+}  
+]]></code_example>is valid because no switch section has a reachable end point. Unlike C and C++, execution of a switch section is not permitted to &quot;fall through&quot; to the next switch section, and the example <code_example><![CDATA[
+switch (i) {  
+   case 0:  
+   CaseZero();  
+   case 1:  
+   CaseZeroOrOne();  
+   default:  
+   CaseAny();  
+}  
+]]></code_example>results in a compile-time error. When execution of a switch section is to be followed by execution of another switch section, an explicit goto case or goto default statement must be used: <code_example><![CDATA[
+switch (i) {  
+   case 0:  
+   CaseZero();  
+   goto case 1;  
+   case 1:  
+   CaseZeroOrOne();  
+   goto default;  
+   default:  
+   CaseAny();  
+   break;  
+}  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>Multiple labels are permitted in a <non_terminal where="15.7.2">switch-section</non_terminal>. <example>[Example: The example <code_example><![CDATA[
+switch (i) {  
+   case 0:  
+   CaseZero();  
+   break;  
+   case 1:  
+   CaseOne();  
+   break;  
+   case 2:  
+   default:  
+   CaseTwo();  
+   break;  
+}  
+]]></code_example>is valid. The example does not violate the &quot;no fall through&quot; rule because the labels case 2: and default: are part of the same <non_terminal where="15.7.2">switch-section</non_terminal>. end example]</example> </paragraph>
+  <paragraph>
+    <note>[Note: The &quot;no fall through&quot; rule prevents a common class of bugs that occur in C and C++ when break statements are accidentally omitted. In addition, because of this rule, the switch sections of a switch statement can be arbitrarily rearranged without affecting the behavior of the statement. For example, the sections of the switch statement above can be reversed without affecting the behavior of the statement: <code_example><![CDATA[
+switch (i) {  
+   default:  
+   CaseAny();  
+   break;  
+   case 1:  
+   CaseZeroOrOne();  
+   goto default;  
+   case 0:  
+   CaseZero();  
+   goto case 1;  
+}  
+]]></code_example>end note]</note>
+  </paragraph>
+  <paragraph>
+    <note>[Note: The statement list of a switch section typically ends in a break, goto case, or goto default statement, but any construct that renders the end point of the statement list unreachable is permitted. For example, a while statement controlled by the boolean expression true is known to never reach its end point. Likewise, a throw or return statement always transfers control elsewhere and never reaches its end point. Thus, the following example is valid: <code_example><![CDATA[
+switch (i) {  
+   case 0:  
+   while (true) F();  
+   case 1:  
+   throw new ArgumentException();  
+   case 2:  
+   return;  
+}  
+]]></code_example>end note]</note>
+  </paragraph>
+  <paragraph>
+    <example>[Example: The governing type of a switch statement may be the type string. For example: <code_example><![CDATA[
+void DoCommand(string command) {  
+   switch (command.ToLower()) {  
+      case "run":  
+      DoRun();  
+      break;  
+      case "save":  
+      DoSave();  
+      break;  
+      case "quit":  
+      DoQuit();  
+      break;  
+      default:  
+      InvalidCommand(command);  
+      break;  
+   }  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+  <paragraph>
+    <note>[Note: Like the string equality operators (<hyperlink>14.9.7</hyperlink>), the switch statement is case sensitive and will execute a given switch section only if the switch expression string exactly matches a case label constant. end note]</note>
+  </paragraph>
+  <paragraph>When the governing type of a switch statement is string, the value null is permitted as a case label constant. </paragraph>
+  <paragraph>The <non_terminal where="15.2.1">statement-list</non_terminal>s of a <non_terminal where="15.7.2">switch-block</non_terminal> may contain declaration statements (<hyperlink>15.5</hyperlink>). The scope of a local variable or constant declared in a switch block is the switch block. </paragraph>
+  <paragraph>Within a switch block, the meaning of a name used in an expression context must always be the same (<hyperlink>14.5.2.1</hyperlink>). </paragraph>
+  <paragraph>The statement list of a given switch section is reachable if the switch statement is reachable and at least one of the following is true: <list><list_item> The switch expression is a non-constant value. </list_item><list_item> The switch expression is a constant value that matches a case label in the switch section. </list_item><list_item> The switch expression is a constant value that doesn't match any case label, and the switch section contains the default label. </list_item><list_item> A switch label of the switch section is referenced by a reachable goto case or goto default statement. </list_item></list></paragraph>
+  <paragraph>The end point of a switch statement is reachable if at least one of the following is true: <list><list_item> The switch statement contains a reachable break statement that exits the switch statement. </list_item><list_item> The switch statement is reachable, the switch expression is a non-constant value, and no default label is present. </list_item><list_item> The switch statement is reachable, the switch expression is a constant value that doesn't match any case label, and no default label is present. </list_item></list></paragraph>
+</clause>

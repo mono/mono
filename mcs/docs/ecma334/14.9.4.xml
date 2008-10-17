@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<clause number="14.9.4" title="Boolean equality operators">
+  <paragraph>The predefined boolean equality operators are: <code_example><![CDATA[
+bool operator ==(bool x, bool y);  
+bool operator !=(bool x, bool y);  
+]]></code_example></paragraph>
+  <paragraph>The result of == is true if both x and y are true or if both x and y are false. Otherwise, the result is false. </paragraph>
+  <paragraph>The result of != is false if both x and y are true or if both x and y are false. Otherwise, the result is true. When the operands are of type <keyword>bool</keyword>, the != operator produces the same result as the ^ operator. </paragraph>
+</clause>

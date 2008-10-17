@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="17.9.2" title="Binary operators">
+  <paragraph>A binary operator must take two parameters, at least one of which must have the class or struct type in which the operator is declared. A binary operator can return any type. </paragraph>
+  <paragraph>The signature of a binary operator consists of the operator token (+, -, *, /, %, &amp;, |, ^, &lt;&lt;, &gt;&gt;, ==, !=, &gt;, &lt;, &gt;=, or &lt;=) and the types of the two formal parameters. The return type and the names of the formal parameters are not part of a binary operator's signature. </paragraph>
+  <paragraph>Certain binary operators require pair-wise declaration. For every declaration of either operator of a pair, there must be a matching declaration of the other operator of the pair. Two operator declarations match when they have the same return type and the same type for each parameter. The following operators require  pair-wise declaration: <list><list_item> operator == and operator != </list_item><list_item> operator &gt; and operator &lt; </list_item><list_item> operator &gt;= and operator &lt;= </list_item></list></paragraph>
+</clause>

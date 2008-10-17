@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<clause number="8.5" title="Expressions" informative="true">
+  <paragraph>C# includes unary operators, binary operators, and one ternary operator. The following table summarizes the operators, listing them in order of precedence from highest to lowest: <table_line>Section Category Operators </table_line>
+<table_line>14.5 Primary x.y f(x) a[x] x++  x--new </table_line>
+<table_line>typeof checked unchecked </table_line>
+<table_line>0 Unary +  -! ~ ++x --x (T)x </table_line>
+<table_line>14.7 Multiplicative * / % </table_line>
+<table_line>14.7 Additive +  </table_line>
+<table_line>-0 Shift &lt;&lt; &gt;&gt; </table_line>
+<table_line>14.9 Relational and </table_line>
+<table_line>type-testing </table_line>
+<table_line>&lt; &gt; &lt;= &gt;= is as </table_line>
+<table_line>14.9 Equality == != </table_line>
+<table_line>14.10 Logical AND &amp; </table_line>
+<table_line>14.10 Logical XOR ^ </table_line>
+<table_line>14.10 Logical OR | </table_line>
+<table_line>14.11 Conditional AND &amp;&amp; </table_line>
+<table_line>14.11 Conditional OR || </table_line>
+<table_line>14.12 Conditional ?: </table_line>
+<table_line>14.13 Assignment = *= /= %= += -= &lt;&lt;= &gt;&gt;= &amp;= ^= |= </table_line>
+When an expression contains multiple operators, the precedence of the operators controls the order in which the individual operators are evaluated. For example, the expression x + y * z is evaluated as x + (y * z) because the * operator has higher precedence than the + operator. </paragraph>
+  <paragraph>When an operand occurs between two operators with the same precedence, the associativity of the operators controls the order in which the operations are performed: <list><list_item> Except for the assignment operators, all binary operators are left-associative, meaning that operations are performed from left to right. For example, x + y + z is evaluated as (x + y) + z. </list_item><list_item> The assignment operators and the conditional operator (?:) are right-associative, meaning that operations are performed from right to left. For example, x = y = z is evaluated as x = (y = z). </list_item></list></paragraph>
+  <paragraph>Precedence and associativity can be controlled using parentheses. For example, x + y * z first multiplies y by z and then adds the result to x, but (x + y) * z first adds x and y and then multiplies the result by z. </paragraph>
+</clause>

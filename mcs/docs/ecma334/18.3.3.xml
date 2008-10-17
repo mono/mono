@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="18.3.3" title="Assignment">
+  <paragraph>Assignment to a variable of a struct type creates a copy of the value being assigned. This differs from assignment to a variable of a class type, which copies the reference but not the object identified by the reference. </paragraph>
+  <paragraph>Similar to an assignment, when a struct is passed as a value parameter or returned as the result of a function member, a copy of the struct is created. A struct may be passed by reference to a function member using a ref or out parameter. </paragraph>
+  <paragraph>When a property or indexer of a struct is the target of an assignment, the instance expression associated with the property or indexer access must be classified as a variable. If the instance expression is classified as a value, a compile-time error occurs. This is described in further detail in <hyperlink>14.13.1</hyperlink>. </paragraph>
+</clause>

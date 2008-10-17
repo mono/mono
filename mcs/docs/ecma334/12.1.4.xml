@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="12.1.4" title="Value parameters">
+  <paragraph>A parameter declared without a ref or out modifier is a value parameter. </paragraph>
+  <paragraph>A value parameter comes into existence upon invocation of the function member (method, instance constructor, accessor, or operator) to which the parameter belongs, and is initialized with the value of the argument given in the invocation. A value parameter ceases to exist upon return of the function member. </paragraph>
+  <paragraph>For the purpose of definite assignment checking, a value parameter is considered initially assigned. </paragraph>
+</clause>

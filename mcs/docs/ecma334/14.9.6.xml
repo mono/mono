@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<clause number="14.9.6" title="Reference type equality operators">
+  <paragraph>The predefined reference type equality operators are: <code_example><![CDATA[
+bool operator ==(object x, object y);  
+bool operator !=(object x, object y);  
+]]></code_example></paragraph>
+  <paragraph>The operators return the result of comparing the two references for equality or non-equality. </paragraph>
+  <paragraph>Since the predefined reference type equality operators accept operands of type object, they apply to all types that do not declare applicable operator == and operator != members. Conversely, any applicable user-defined equality operators effectively hide the predefined reference type equality operators. </paragraph>
+  <paragraph>The predefined reference type equality operators require the operands to be <non_terminal where="11.2">reference-type</non_terminal> values or the value null; furthermore, they require that a standard implicit conversion (<hyperlink>13.3.1</hyperlink>) exists from the type of either operand to the type of the other operand. Unless both of these conditions are true, a compile-time error occurs. <note>[Note: Notable implications of these rules are: <list><list_item> It is a compile-time error to use the predefined reference type equality operators to compare two references that are known to be different at compile-time. For example, if the compile-time types of the operands are two class types A and B, and if neither A nor B derives from the other, then it would be impossible for the two operands to reference the same object. Thus, the operation is considered a  compile-time error. </list_item><list_item> The predefined reference type equality operators do not permit value type operands to be compared. Therefore, unless a struct type declares its own equality operators, it is not possible to compare values of that struct type. </list_item><list_item> The predefined reference type equality operators never cause boxing operations to occur for their operands. It would be meaningless to perform such boxing operations, since references to the newly allocated boxed instances would necessarily differ from all other references. end note]</list_item></list></note> </paragraph>
+  <paragraph>For an operation of the form x == y or x != y, if any applicable operator == or operator != exists, the operator overload resolution (<hyperlink>14.2.4</hyperlink>) rules will select that operator instead of the predefined reference type equality operator. However, it is always possible to select the predefined reference type equality operator by explicitly casting one or both of the operands to type object. <example>[Example: The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      string s = "Test";  
+      string t = string.Copy(s);  
+      Console.WriteLine(s == t);  
+      Console.WriteLine((object)s == t);  
+      Console.WriteLine(s == (object)t);  
+      Console.WriteLine((object)s == (object)t);  
+   }  
+}  
+]]></code_example>produces the output <code_example><![CDATA[
+True  
+False  
+False  
+False  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>The s and t variables refer to two distinct string instances containing the same characters. The first comparison outputs True because the predefined string equality operator (<hyperlink>14.9.7</hyperlink>) is selected when both operands are of type string. The remaining comparisons all output False because the predefined reference type equality operator is selected when one or both of the operands are of type object. </example>
+  </paragraph>
+  <paragraph>
+    <example>Note that the above technique is not meaningful for value types. The example <code_example><![CDATA[
+class Test  
+{  
+   static void Main() {  
+      int i = 123;  
+      int j = 123;  
+      System.Console.WriteLine((object)i == (object)j);  
+   }  
+}  
+]]></code_example>outputs False because the casts create references to two separate instances of boxed <keyword>int</keyword> values. end example]</example>
+  </paragraph>
+</clause>

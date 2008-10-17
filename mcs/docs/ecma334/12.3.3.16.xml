@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.16" title="Foreach statements">
+  <paragraph>For a foreach statement stmt of the form: <code_example><![CDATA[
+foreach (type identifier in expr) embedded-statement  
+]]></code_example><list><list_item> The definite assignment state of v at the beginning of expr is the same as the state of v at the beginning of stmt. </list_item><list_item> The definite assignment state of v on the control flow transfer to <non_terminal where="15">embedded-statement</non_terminal> or to the end point of stmt is the same as the state of v at the end of expr. </list_item></list></paragraph>
+</clause>

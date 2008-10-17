@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<clause number="16.3.2" title="Using namespace directives">
+  <paragraph>A <non_terminal where="16.3.2">using-namespace-directive</non_terminal> imports the types contained in a namespace into the immediately enclosing compilation unit or namespace body, enabling the identifier of each type to be used without qualification. <grammar_production><name><non_terminal where="16.3.2">using-namespace-directive</non_terminal></name> : <rhs><keyword>using</keyword><non_terminal where="10.8">namespace-name</non_terminal><terminal>;</terminal></rhs></grammar_production></paragraph>
+  <paragraph>Within member declarations in a compilation unit or namespace body that contains a  <non_terminal where="16.3.2">using-namespace-directive</non_terminal>, the types contained in the given namespace can be referenced directly. <example>[Example: For example: <code_example><![CDATA[
+namespace N1.N2  
+{  
+   class A {}  
+}  
+namespace N3  
+{  
+   using N1.N2;  
+   class B: A {}  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Above, within member declarations in the N3 namespace, the type members of N1.N2 are directly available, and thus class N3.B derives from class N1.N2.A. end example]</example>
+  </paragraph>
+  <paragraph>A <non_terminal where="16.3.2">using-namespace-directive</non_terminal> imports the types contained in the given namespace, but specifically does not import nested namespaces. <example>[Example: In the example <code_example><![CDATA[
+namespace N1.N2  
+{  
+   class A {}  
+}  
+namespace N3  
+{  
+   using N1;  
+   class B: N2.A {}    // Error, N2 unknown  
+}  
+]]></code_example>the <non_terminal where="16.3.2">using-namespace-directive</non_terminal> imports the types contained in N1, but not the namespaces nested in N1. Thus, the reference to N2.A in the declaration of B results in a compile-time error because no members named N2 are in scope. end example]</example> </paragraph>
+  <paragraph>Unlike a <non_terminal where="16.3.1">using-alias-directive</non_terminal>, a <non_terminal where="16.3.2">using-namespace-directive</non_terminal> may import types whose identifiers are already defined within the enclosing compilation unit or namespace body. In effect, names imported by a  <non_terminal where="16.3.2">using-namespace-directive</non_terminal> are hidden by similarly named members in the enclosing compilation unit or namespace body. <example>[Example: For example: <code_example><![CDATA[
+namespace N1.N2  
+{  
+   class A {}  
+   class B {}  
+}  
+namespace N3  
+{  
+   using N1.N2;  
+   class A {}  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Here, within member declarations in the N3 namespace, A refers to N3.A rather than N1.N2.A. end example]</example>
+  </paragraph>
+  <paragraph>When more than one namespace imported by <non_terminal where="16.3.2">using-namespace-directive</non_terminal>s in the same compilation unit or namespace body contain types by the same name, references to that name are considered ambiguous. </paragraph>
+  <paragraph><example>[Example: In the example <code_example><![CDATA[
+namespace N1  
+{  
+   class A {}  
+}  
+namespace N2  
+{  
+   class A {}  
+}  
+namespace N3  
+{  
+   using N1;  
+   using N2;  
+   class B: A {}     // Error, A is ambiguous  
+}  
+]]></code_example>both N1 and N2 contain a member A, and because N3 imports both, referencing A in N3 is a compile-time error. end example]</example> In this situation, the conflict can be resolved either through qualification of references to A, or by introducing a <non_terminal where="16.3.1">using-alias-directive</non_terminal> that picks a particular A. <example>[Example: For example: <code_example><![CDATA[
+namespace N3  
+{  
+   using N1;  
+   using N2;  
+   using A = N1.A;  
+   class B: A {}     // A means N1.A  
+}  
+]]></code_example>end example]</example></paragraph>
+  <paragraph>Like a <non_terminal where="16.3.1">using-alias-directive</non_terminal>, a <non_terminal where="16.3.2">using-namespace-directive</non_terminal> does not contribute any new members to the underlying declaration space of the compilation unit or namespace, but, rather, affects only the compilation unit or namespace body in which it appears. </paragraph>
+  <paragraph>The <non_terminal where="10.8">namespace-name</non_terminal> referenced by a <non_terminal where="16.3.2">using-namespace-directive</non_terminal> is resolved in the same way as the <non_terminal where="10.8">namespace-or-type-name</non_terminal> referenced by a <non_terminal where="16.3.1">using-alias-directive</non_terminal>. Thus, <non_terminal where="16.3.2">using-namespace-directive</non_terminal>s in the same compilation unit or namespace body do not affect each other and can be written in any order. </paragraph>
+</clause>

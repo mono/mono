@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<clause number="17.10.5" title="Private constructors">
+  <paragraph>When a class declares only private instance constructors, it is not possible for other classes to derive from that class or to create instances of that class (an exception being classes nested within that class). <example>[Example: Private instance constructors are commonly used in classes that contain only static members. For example: <code_example><![CDATA[
+public class Trig  
+{  
+   private Trig() {}   // Prevent instantiation  
+   public const double PI = 3.14159265358979323846;  
+   public static double Sin(double x) {...}  
+   public static double Cos(double x) {...}  
+   public static double Tan(double x) {...}  
+}  
+]]></code_example></example></paragraph>
+  <paragraph><example>The Trig class groups related methods and constants, but is not intended to be instantiated. Therefore, it declares a single empty private instance constructor. end example]</example> At least one instance constructor must be declared to suppress the automatic generation of a default constructor. </paragraph>
+</clause>

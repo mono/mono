@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="13.2.4" title="Unboxing conversions">
+  <paragraph>An unboxing conversion permits an explicit conversion from type object to any <non_terminal where="11.1">value-type</non_terminal> or from any <non_terminal where="11.2">interface-type</non_terminal> to any <non_terminal where="11.1">value-type</non_terminal> that implements the <non_terminal where="11.2">interface-type</non_terminal>. An unboxing operation consists of first checking that the object instance is a boxed value of the given <non_terminal where="11.1">value-type</non_terminal>, and then copying the value out of the instance. </paragraph>
+  <paragraph>Unboxing conversions are described further in <hyperlink>11.3.2</hyperlink>. </paragraph>
+</clause>

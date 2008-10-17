@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<clause number="18.4.1" title="Database integer type" informative="true">
+  <paragraph>The DBInt struct below implements an integer type that can represent the complete set of values of the <keyword>int</keyword> type, plus an additional state that indicates an unknown value. A type with these characteristics is commonly used in databases. <code_example><![CDATA[
+using System;  
+public struct DBInt  
+{  
+   // The Null member represents an unknown DBInt value.  
+   public static readonly DBInt Null = new DBInt();  
+   // When the defined field is true, this DBInt represents a known value  
+   // which is stored in the value field. When the defined field is false,  
+   
+   // this DBInt represents an unknown value, and the value field is 0.  
+   int value;  
+   bool defined;  
+   // Private instance constructor. Creates a DBInt with a known value.  
+   DBInt(int value) {  
+      this.value = value;  
+      this.defined = true;  
+   }  
+   // The IsNull property is true if this DBInt represents an unknown value.  
+   
+   public bool IsNull { get { return !defined; } }  
+   // The Value property is the known value of this DBInt, or 0 if this  
+   // DBInt represents an unknown value.  
+   public int Value { get { return value; } }  
+   // Implicit conversion from int to DBInt.  
+   public static implicit operator DBInt(int x) {  
+      return new DBInt(x);  
+   }  
+   // Explicit conversion from DBInt to int. Throws an exception if the  
+   // given DBInt represents an unknown value.  
+   public static explicit operator int(DBInt x) {  
+      if (!x.defined) throw new InvalidOperationException();  
+      return x.value;  
+   }  
+   public static DBInt operator +(DBInt x) {  
+      return x;  
+   }  
+   public static DBInt operator -(DBInt x) {  
+      return x.defined? -x.value: Null;  
+   }  
+   public static DBInt operator +(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value + y.value: Null;  
+   }  
+   public static DBInt operator -(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value - y.value: Null;  
+   }  
+   public static DBInt operator *(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value * y.value: Null;  
+   }  
+   public static DBInt operator /(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value / y.value: Null;  
+   }  
+   public static DBInt operator %(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value % y.value: Null;  
+   }  
+   public static DBBool operator ==(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value == y.value: DBBool.Null;  
+   }  
+   public static DBBool operator !=(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value != y.value: DBBool.Null;  
+   }  
+   public static DBBool operator >(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value > y.value: DBBool.Null;  
+   }  
+   public static DBBool operator <(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value < y.value: DBBool.Null;  
+   }  
+   public static DBBool operator >=(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value >= y.value: DBBool.Null;  
+   }  
+   public static DBBool operator <=(DBInt x, DBInt y) {  
+      return x.defined && y.defined? x.value <= y.value: DBBool.Null;  
+   }  
+}  
+]]></code_example></paragraph>
+</clause>

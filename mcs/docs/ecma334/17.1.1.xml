@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="17.1.1" title="Class modifiers">
+  <paragraph>A <non_terminal where="17.1">class-declaration</non_terminal> may optionally include a sequence of class modifiers: <grammar_production><name><non_terminal where="17.1.1">class-modifier</non_terminal>s</name> : <rhs><non_terminal where="17.1.1">class-modifier</non_terminal></rhs><rhs><non_terminal where="17.1.1">class-modifiers</non_terminal><non_terminal where="17.1.1">class-modifier</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.1.1">class-modifier</non_terminal></name> : <rhs><keyword>new</keyword></rhs><rhs><keyword>public</keyword></rhs><rhs><keyword>protected</keyword></rhs><rhs><keyword>internal</keyword></rhs><rhs><keyword>private</keyword></rhs><rhs><keyword>abstract</keyword></rhs><rhs><keyword>sealed</keyword></rhs></grammar_production></paragraph>
+  <paragraph>It is a compile-time error for the same modifier to appear multiple times in a class declaration. </paragraph>
+  <paragraph>The new modifier is permitted on nested classes. It specifies that the class hides an inherited member by the same name, as described in <hyperlink>10.2.2</hyperlink>. It is a compile-time error for the new modifier to appear on a class declaration that is not a nested class declaration. </paragraph>
+  <paragraph>The public, protected, internal, and private modifiers control the accessibility of the class. Depending on the context in which the class declaration occurs, some of these modifiers may not be permitted (<hyperlink>10.5.1</hyperlink>). </paragraph>
+  <paragraph>The abstract and sealed modifiers are discussed in the following sections. </paragraph>
+</clause>

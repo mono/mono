@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="14.2.6.1" title="Unary numeric promotions" informative="true">
+  <paragraph>This clause is informative. </paragraph>
+  <paragraph>Unary numeric promotion occurs for the operands of the predefined +, -, and ~ unary operators. Unary numeric promotion simply consists of converting operands of type <keyword>sbyte</keyword>, <keyword>byte</keyword>, <keyword>short</keyword>, <keyword>ushort</keyword>, or <keyword>char</keyword> to type <keyword>int</keyword>. Additionally, for the unary  -operator, unary numeric promotion converts operands of type <keyword>uint</keyword> to type <keyword>long</keyword>. </paragraph>
+  <paragraph>End of informative text. </paragraph>
+</clause>

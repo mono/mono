@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<clause number="9.5" title="Pre-processing directives">
+  <paragraph>The pre-processing directives provide the ability to conditionally skip sections of source files, to report error and warning conditions, and to delineate distinct regions of source code. <note>[Note: The term &quot;pre-processing directives&quot; is used only for consistency with the C and C++ programming languages. In C#, there is no separate pre-processing step; pre-processing directives are processed as part of the lexical analysis phase. end note]</note> <grammar_production><name><non_terminal where="9.5">pp-directive</non_terminal></name> :: <rhs><non_terminal where="9.5.3">pp-declaration</non_terminal></rhs><rhs><non_terminal where="9.5.4">pp-conditional</non_terminal></rhs><rhs><non_terminal where="9.5.7">pp-line</non_terminal></rhs><rhs><non_terminal where="9.5.5">pp-diagnostic</non_terminal></rhs><rhs><non_terminal where="9.5.6">pp-region</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>The following pre-processing directives are available: <list><list_item><symbol>#define</symbol> and <symbol>#undef</symbol>, which are used to define and undefine, respectively, conditional compilation symbols (<hyperlink>9.5.3</hyperlink>). </list_item><list_item><symbol>#if</symbol>, <symbol>#elif</symbol>, <symbol>#else</symbol>, and <symbol>#endif</symbol>, which are used to conditionally skip sections of source code (<hyperlink>9.5.1</hyperlink>). </list_item><list_item><symbol>#line</symbol>, which is used to control line numbers emitted for errors and warnings (<hyperlink>9.5.7</hyperlink>). </list_item><list_item><symbol>#error</symbol> and <symbol>#warning</symbol>, which are used to issue errors and warnings, respectively (<hyperlink>9.5.5</hyperlink>). </list_item><list_item><symbol>#region</symbol> and <symbol>#endregion</symbol>, which are used to explicitly mark sections of source code (<hyperlink>9.5.6</hyperlink>). </list_item></list></paragraph>
+  <paragraph>A pre-processing directive always occupies a separate line of source code and always begins with a # character and a pre-processing directive name. White space may occur before the # character and between the # character and the directive name. </paragraph>
+  <paragraph>A source line containing a <symbol>#define</symbol>, <symbol>#undef</symbol>, <symbol>#if</symbol>, <symbol>#elif</symbol>, <symbol>#else</symbol>, <symbol>#endif</symbol>, or <symbol>#line</symbol> directive may end with a single-line comment. Delimited comments (the /* */ style of comments) are not permitted on source lines containing pre-processing directives. </paragraph>
+  <paragraph>Pre-processing directives are not tokens and are not part of the syntactic grammar of C#. However,  pre-processing directives can be used to include or exclude sequences of tokens and can in that way affect the meaning of a C# program. <example>[Example: For example, when compiled, the program <code_example><![CDATA[
+#define A  
+#undef B  
+class C  
+{  
+   #if A  
+   void F() {}  
+   #else  
+   void G() {}  
+   #endif  
+   #if B  
+   void H() {}  
+   #else  
+   void I() {}  
+   #endif  
+}  
+]]></code_example>results in the exact same sequence of tokens as the program <code_example><![CDATA[
+class C  
+{  
+   void F() {}  
+   void I() {}  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Thus, whereas lexically, the two programs are quite different, syntactically, they are identical. end example]</example>
+  </paragraph>
+</clause>

@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<clause number="16.3.1" title="Using alias directives">
+  <paragraph>A <non_terminal where="16.3.1">using-alias-directive</non_terminal> introduces an identifier that serves as an alias for a namespace or type within the immediately enclosing compilation unit or namespace body. <grammar_production><name><non_terminal where="16.3.1">using-alias-directive</non_terminal></name> : <rhs><keyword>using</keyword><non_terminal where="9.4.2">identifier</non_terminal><terminal>=</terminal><non_terminal where="10.8">namespace-or-type-name</non_terminal><terminal>;</terminal></rhs></grammar_production></paragraph>
+  <paragraph>Within member declarations in a compilation unit or namespace body that contains a <non_terminal where="16.3.1">using-alias-directive</non_terminal>, the identifier introduced by the <non_terminal where="16.3.1">using-alias-directive</non_terminal> can be used to reference the given namespace or type. </paragraph>
+  <paragraph>
+    <example>[Example: For example: <code_example><![CDATA[
+namespace N1.N2  
+{  
+   class A {}  
+}  
+namespace N3  
+{  
+   using A = N1.N2.A;  
+   class B: A {}  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Above, within member declarations in the N3 namespace, A is an alias for N1.N2.A, and thus class N3.B derives from class N1.N2.A. The same effect can be obtained by creating an alias R for N1.N2 and then referencing R.A: <code_example><![CDATA[
+namespace N3  
+{  
+   using R = N1.N2;  
+   class B: R.A {}  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+  <paragraph>The identifier of a <non_terminal where="16.3.1">using-alias-directive</non_terminal> must be unique within the declaration space of the compilation unit or namespace that immediately contains the <non_terminal where="16.3.1">using-alias-directive</non_terminal>. <example>[Example: For example: <code_example><![CDATA[
+namespace N3  
+{  
+   class A {}  
+}  
+namespace N3  
+{  
+   using A = N1.N2.A;    // Error, A already exists  
+}  
+]]></code_example></example></paragraph>
+  <paragraph><example>Above, N3 already contains a member A, so it is a compile-time error for a <non_terminal where="16.3.1">using-alias-directive</non_terminal> to use that identifier. end example]</example> Likewise, it is a compile-time error for two or more <non_terminal where="16.3.1">using-alias-directive</non_terminal>s in the same compilation unit or namespace body to declare aliases by the same name. </paragraph>
+  <paragraph>A <non_terminal where="16.3.1">using-alias-directive</non_terminal> makes an alias available within a particular compilation unit or namespace body, but it does not contribute any new members to the underlying declaration space. In other words, a  <non_terminal where="16.3.1">using-alias-directive</non_terminal> is not transitive, but, rather, affects only the compilation unit or namespace body in which it occurs. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+namespace N3  
+{  
+   using R = N1.N2;  
+}  
+namespace N3  
+{  
+   class B: R.A {}      // Error, R unknown  
+}  
+]]></code_example>the scope of the <non_terminal where="16.3.1">using-alias-directive</non_terminal> that introduces R only extends to member declarations in the namespace body in which it is contained, so R is unknown in the second namespace declaration. However, placing the <non_terminal where="16.3.1">using-alias-directive</non_terminal> in the containing compilation unit causes the alias to become available within both namespace declarations: <code_example><![CDATA[
+using R = N1.N2;  
+namespace N3  
+{  
+   class B: R.A {}  
+}  
+namespace N3  
+{  
+   class C: R.A {}  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+  <paragraph>Just like regular members, names introduced by <non_terminal where="16.3.1">using-alias-directive</non_terminal>s are hidden by similarly named members in nested scopes. <example>[Example: In the example <code_example><![CDATA[
+using R = N1.N2;  
+namespace N3  
+{  
+   class R {}  
+   class B: R.A {}    // Error, R has no member A  
+}  
+]]></code_example>the reference to R.A in the declaration of B causes a compile-time error because R refers to N3.R, not N1.N2. end example]</example> </paragraph>
+  <paragraph>The order in which <non_terminal where="16.3.1">using-alias-directive</non_terminal>s are written has no significance, and resolution of the  <non_terminal where="10.8">namespace-or-type-name</non_terminal> referenced by a <non_terminal where="16.3.1">using-alias-directive</non_terminal> is not affected by the <non_terminal where="16.3.1">using-alias-directive</non_terminal> itself or by other <non_terminal where="16.3">using-directive</non_terminal>s in the immediately containing compilation unit or namespace body. In other words, the <non_terminal where="10.8">namespace-or-type-name</non_terminal> of a <non_terminal where="16.3.1">using-alias-directive</non_terminal> is resolved as if the immediately containing compilation unit or namespace body had no <non_terminal where="16.3">using-directive</non_terminal>s. <example>[Example: In the example <code_example><![CDATA[
+namespace N1.N2 {}  
+namespace N3  
+{  
+   using R1 = N1;   // OK  
+   using R2 = N1.N2;   // OK  
+   using R3 = R1.N2;   // Error, R1 unknown  
+}  
+]]></code_example>the last <non_terminal where="16.3.1">using-alias-directive</non_terminal> results in a compile-time error because it is not affected by the first  <non_terminal where="16.3.1">using-alias-directive</non_terminal>. end example]</example> </paragraph>
+  <paragraph>A <non_terminal where="16.3.1">using-alias-directive</non_terminal> can create an alias for any namespace or type, including the namespace within which it appears and any namespace or type nested within that namespace. </paragraph>
+  <paragraph>Accessing a namespace or type through an alias yields exactly the same result as accessing that namespace or type through its declared name. <example>[Example: For example, given <code_example><![CDATA[
+namespace N1.N2  
+{  
+   class A {}  
+}  
+namespace N3  
+{  
+   using R1 = N1;  
+   using R2 = N1.N2;  
+   class B  
+   {  
+      N1.N2.A a;    // refers to N1.N2.A  
+      R1.N2.A b;    // refers to N1.N2.A  
+      R2.A c;     // refers to N1.N2.A  
+   }  
+}  
+]]></code_example>the names N1.N2.A, R1.N2.A, and R2.A are equivalent and all refer to the class whose fully qualified name is N1.N2.A. end example]</example> </paragraph>
+</clause>

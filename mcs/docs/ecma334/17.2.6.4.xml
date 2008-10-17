@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<clause number="17.2.6.4" title="this access">
+  <paragraph>A nested type and its containing type do not have a special relationship with regard to <non_terminal where="14.5.7">this-access</non_terminal> (<hyperlink>14.5.7</hyperlink>). Specifically, this within a nested type cannot be used to refer to instance members of the containing type. In cases where a nested type needs access to the instance members of its containing type, access can be provided by providing the this for the instance of the containing type as a constructor argument for the nested type. <example>[Example: The following example <code_example><![CDATA[
+using System;  
+class C   
+{  
+   int i = 123;  
+   public void F() {  
+      Nested n = new Nested(this);  
+      n.G();  
+   }  
+   public class Nested {  
+      C this_c;  
+      public Nested(C c) {  
+         this_c = c;  
+      }  
+      public void G() {  
+         Console.WriteLine(this_c.i);  
+      }  
+   }  
+}  
+class Test {  
+   static void Main() {  
+      C c = new C();  
+      c.F();  
+   }  
+}  
+]]></code_example>shows this technique. An instance of C creates an instance of Nested, and passes its own this to Nested's constructor in order to provide subsequent access to C's instance members. end example]</example> </paragraph>
+</clause>

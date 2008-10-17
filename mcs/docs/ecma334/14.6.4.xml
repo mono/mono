@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<clause number="14.6.4" title="Bitwise complement operator">
+  <paragraph>For an operation of the form ~x, unary operator overload resolution (<hyperlink>14.2.3</hyperlink>) is applied to select a specific operator implementation. The operand is converted to the parameter type of the selected operator, and the type of the result is the return type of the operator. The predefined bitwise complement operators are: <code_example><![CDATA[
+int operator ~(int x);  
+uint operator ~(uint x);  
+long operator ~(long x);  
+ulong operator ~(ulong x);  
+]]></code_example></paragraph>
+  <paragraph>For each of these operators, the result of the operation is the bitwise complement of x. </paragraph>
+  <paragraph>Every enumeration type E implicitly provides the following bitwise complement operator: <code_example><![CDATA[
+E operator ~(E x);  
+]]></code_example></paragraph>
+  <paragraph>The result of evaluating ~x, where x is an expression of an enumeration type E with an underlying type U, is exactly the same as evaluating (E)(~(U)x). </paragraph>
+</clause>

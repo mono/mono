@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.4" title="Declaration statements">
+  <paragraph>
+    <list>
+      <list_item> If stmt is a declaration statement without initializers, then v has the same definite assignment state at the end point of stmt as at the beginning of stmt. </list_item>
+      <list_item> If stmt is a declaration statement with initializers, then the definite assignment state for v is determined as if stmt were a statement list, with one assignment statement for each declaration with an initializer (in the order of declaration). </list_item>
+    </list>
+  </paragraph>
+</clause>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="18.3.2" title="Inheritance">
+  <paragraph>All struct types implicitly inherit from System.ValueType, which, in turn, inherits from class object. A struct declaration may specify a list of implemented interfaces, but it is not possible for a struct declaration to specify a base class. </paragraph>
+  <paragraph>Struct types are never abstract and are always implicitly sealed. The abstract and sealed modifiers are therefore not permitted in a struct declaration. </paragraph>
+  <paragraph>Since inheritance isn't supported for structs, the declared accessibility of a struct member cannot be protected or protected internal. </paragraph>
+  <paragraph>Function members in a struct cannot be abstract or virtual, and the override modifier is allowed only to override methods inherited from the type System.ValueType. </paragraph>
+</clause>

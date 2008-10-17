@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<clause number="24.1.1" title="Attribute usage">
+  <paragraph>The attribute AttributeUsage (<hyperlink>24.4.1</hyperlink>) is used to describe how an attribute class can be used. </paragraph>
+  <paragraph>AttributeUsage has a positional parameter (<hyperlink>24.1.2</hyperlink>) that enables an attribute class to specify the kinds of declarations on which it can be used. <example>[Example: The example <code_example><![CDATA[
+using System;  
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]  
+public class SimpleAttribute: Attribute  
+{}  
+]]></code_example>defines an attribute class named SimpleAttribute that can be placed on <non_terminal where="17.1">class-declaration</non_terminal>s and  <non_terminal where="20.1">interface-declaration</non_terminal>s only. The example <code_example><![CDATA[
+[Simple] class Class1 {...}  
+[Simple] interface Interface1 {...}  
+]]></code_example>shows several uses of the Simple attribute. Although this attribute is defined with the name SimpleAttribute, when this attribute is used, the Attribute suffix may be omitted, resulting in the <keyword>short</keyword> name Simple. Thus, the example above is semantically equivalent to the following <code_example><![CDATA[
+[SimpleAttribute] class Class1 {...}  
+[SimpleAttribute] interface Interface1 {...}  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>AttributeUsage has a named parameter (<hyperlink>24.1.2</hyperlink>), called AllowMultiple, which indicates whether the attribute can be specified more than once for a given entity. If AllowMultiple for an attribute class is true, then that class is a multi-use attribute class, and can be specified more than once on an entity. If AllowMultiple for an attribute class is false or it is unspecified, then that class is a single-use attribute class, and can be specified at most once on an entity. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]  
+public class AuthorAttribute: Attribute {  
+   public AuthorAttribute(string name) {  
+      this.name = name;  
+   }  
+   public string Name { get { return name;} }  
+   private string name;  
+}  
+]]></code_example>defines a multi-use attribute class named AuthorAttribute. The example <code_example><![CDATA[
+[Author("Brian Kernighan"), Author("Dennis Ritchie")]   
+class Class1 {...}  
+]]></code_example>shows a class declaration with two uses of the Author attribute. end example]</example>
+  </paragraph>
+  <paragraph>AttributeUsage has another named parameter (<hyperlink>24.1.2</hyperlink>), called Inherited, which indicates whether the attribute, when specified on a base class, is also inherited by classes that derive from that base class. If Inherited for an attribute class is true, then that attribute is inherited. If Inherited for an attribute class is false or it is unspecified, then that attribute is not inherited. </paragraph>
+  <paragraph>An attribute class X not having an AttributeUsage attribute attached to it, as in <code_example><![CDATA[
+using System;  
+class X: Attribute { ... }  
+]]></code_example>is equivalent to the following: <code_example><![CDATA[
+using System;  
+[AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited =  
+true)]  
+class X: Attribute { ... }  
+]]></code_example></paragraph>
+</clause>

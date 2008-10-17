@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="17.2.3" title="Access modifiers">
+  <paragraph>A <non_terminal where="17.2">class-member-declaration</non_terminal> can have any one of the five possible kinds of declared accessibility (<hyperlink>10.5.1</hyperlink>): public, protected internal, protected, internal, or private. Except for the protected internal combination, it is a compile-time error to specify more than one access modifier. When a  <non_terminal where="17.2">class-member-declaration</non_terminal> does not include any access modifiers, private is assumed. </paragraph>
+</clause>

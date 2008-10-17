@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<clause number="20.4" title="Interface implementations">
+  <paragraph>Interfaces may be implemented by classes and structs. To indicate that a class or struct implements an interface, the interface identifier is included in the base class list of the class or struct. <example>[Example: For example: <code_example><![CDATA[
+interface ICloneable  
+{  
+   object Clone();  
+}  
+interface IComparable  
+{  
+   int CompareTo(object other);  
+}  
+class ListEntry: ICloneable, IComparable  
+{  
+   public object Clone() {...}  
+   public int CompareTo(object other) {...}  
+}  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>A class or struct that implements an interface also implicitly implements all of the interface's base interfaces. This is true even if the class or struct doesn't explicitly list all base interfaces in the base class list. <example>[Example: For example: <code_example><![CDATA[
+interface IControl  
+{  
+   void Paint();  
+}  
+interface ITextBox: IControl  
+{  
+   void SetText(string text);  
+}  
+class TextBox: ITextBox  
+{  
+   public void Paint() {...}  
+   public void SetText(string text) {...}  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Here, class TextBox implements both IControl and ITextBox. end example]</example>
+  </paragraph>
+</clause>

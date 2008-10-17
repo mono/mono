@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="20.1.1" title="Interface modifiers">
+  <paragraph>An <non_terminal where="20.1">interface-declaration</non_terminal> may optionally include a sequence of interface modifiers: <grammar_production><name><non_terminal where="20.1.1">interface-modifier</non_terminal>s</name> : <rhs><non_terminal where="20.1.1">interface-modifier</non_terminal></rhs><rhs><non_terminal where="20.1.1">interface-modifiers</non_terminal><non_terminal where="20.1.1">interface-modifier</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="20.1.1">interface-modifier</non_terminal></name> : <rhs><keyword>new</keyword></rhs><rhs><keyword>public</keyword></rhs><rhs><keyword>protected</keyword></rhs><rhs><keyword>internal</keyword></rhs><rhs><keyword>private</keyword></rhs></grammar_production></paragraph>
+  <paragraph>It is a compile-time error for the same modifier to appear multiple times in an interface declaration. </paragraph>
+  <paragraph>The new modifier is only permitted on nested interfaces. It specifies that the interface hides an inherited member by the same name, as described in <hyperlink>17.2.2</hyperlink>. </paragraph>
+  <paragraph>The public, protected, internal, and private modifiers control the accessibility of the interface. Depending on the context in which the interface declaration occurs, only some of these modifiers may be permitted (<hyperlink>10.5.1</hyperlink>). </paragraph>
+</clause>

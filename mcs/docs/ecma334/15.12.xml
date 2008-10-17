@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<clause number="15.12" title="The lock statement">
+  <paragraph>The lock statement obtains the mutual-exclusion lock for a given object, executes a statement, and then releases the lock. <grammar_production><name><non_terminal where="15.12">lock-statement</non_terminal></name> : <rhs><keyword>lock</keyword><terminal>(</terminal><non_terminal where="14.14">expression</non_terminal><terminal>)</terminal><non_terminal where="15">embedded-statement</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>The expression of a lock statement must denote a value of a <non_terminal where="11.2">reference-type</non_terminal>. No implicit boxing conversion (<hyperlink>13.1.5</hyperlink>) is ever performed for the expression of a lock statement, and thus it is a compile-time error for the expression to denote a value of a <non_terminal where="11.1">value-type</non_terminal>. </paragraph>
+  <paragraph>A lock statement of the form <code_example><![CDATA[
+lock (x) ...  
+]]></code_example>where x is an expression of a <non_terminal where="11.2">reference-type</non_terminal>, is precisely equivalent to <code_example><![CDATA[
+System.Threading.Monitor.Enter(x);  
+try {  
+   ...  
+}  
+finally {  
+   System.Threading.Monitor.Exit(x);  
+}  
+]]></code_example>except that x is only evaluated once. </paragraph>
+  <paragraph>
+    <example>[Example: The System.Type object of a class can conveniently be used as the mutual-exclusion lock for static methods of the class. For example: <code_example><![CDATA[
+class Cache  
+{  
+   public static void Add(object x) {  
+      lock (typeof(Cache)) {  
+         ...  
+      }  
+   }  
+   public static void Remove(object x) {  
+      lock (typeof(Cache)) {  
+         ...  
+      }  
+   }  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

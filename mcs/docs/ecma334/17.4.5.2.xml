@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<clause number="17.4.5.2" title="Instance field initialization">
+  <paragraph>The instance field variable initializers of a class correspond to a sequence of assignments that are executed immediately upon entry to any one of the instance constructors (<hyperlink>17.10.2</hyperlink>) of that class. The variable initializers are executed in the textual order in which they appear in the class declaration. The class instance creation and initialization process is described further in <hyperlink>17.10</hyperlink>. </paragraph>
+  <paragraph>A variable initializer for an instance field cannot reference the instance being created. Thus, it is a  compile-time error to reference this in a variable initializer, as it is a compile-time error for a variable initializer to reference any instance member through a <non_terminal where="14.5.2">simple-name</non_terminal>. <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   int x = 1;  
+   int y = x + 1;   // Error, reference to instance member of this  
+}  
+]]></code_example>the variable initializer for y results in a compile-time error because it references a member of the instance being created. end example]</example> </paragraph>
+</clause>

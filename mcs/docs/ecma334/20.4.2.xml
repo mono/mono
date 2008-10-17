@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<clause number="20.4.2" title="Interface mapping">
+  <paragraph>A class or struct must provide implementations of all members of the interfaces that are listed in the base class list of the class or struct. The process of locating implementations of interface members in an implementing class or struct is known as interface mapping. </paragraph>
+  <paragraph>Interface mapping for a class or struct C locates an implementation for each member of each interface specified in the base class list of C. The implementation of a particular interface member I.M, where I is the interface in which the member M is declared, is determined by examining each class or struct S, starting with C and repeating for each successive base class of C, until a match is located: <list><list_item> If S contains a declaration of an explicit interface member implementation that matches I and M, then this member is the implementation of I.M. </list_item><list_item> Otherwise, if S contains a declaration of a non-static public member that matches M, then this member is the implementation of I.M. </list_item></list></paragraph>
+  <paragraph>A compile-time error occurs if implementations cannot be located for all members of all interfaces specified in the base class list of C. Note that the members of an interface include those members that are inherited from base interfaces. </paragraph>
+  <paragraph>For purposes of interface mapping, a class member A matches an interface member B when: <list><list_item> A and B are methods, and the name, type, and formal parameter lists of A and B are identical. </list_item><list_item> A and B are properties, the name and type of A and B are identical, and A has the same accessors as B (A is permitted to have additional accessors if it is not an explicit interface member implementation). </list_item><list_item> A and B are events, and the name and type of A and B are identical. </list_item><list_item> A and B are indexers, the type and formal parameter lists of A and B are identical, and A has the same accessors as B (A is permitted to have additional accessors if it is not an explicit interface member implementation). </list_item></list></paragraph>
+  <paragraph>Notable implications of the interface-mapping algorithm are: <list><list_item> Explicit interface member implementations take precedence over other members in the same class or struct when determining the class or struct member that implements an interface member. </list_item><list_item> Neither non-public nor static members participate in interface mapping. </list_item></list></paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+interface ICloneable  
+{  
+   object Clone();  
+}  
+class C: ICloneable  
+{  
+   object ICloneable.Clone() {...}  
+   public object Clone() {...}  
+}  
+]]></code_example>the ICloneable.Clone member of C becomes the implementation of Clone in ICloneable because explicit interface member implementations take precedence over other members. end example]</example>
+  </paragraph>
+  <paragraph>If a class or struct implements two or more interfaces containing a member with the same name, type, and parameter types, it is possible to map each of those interface members onto a single class or struct member. </paragraph>
+  <paragraph>
+    <example>[Example: For example <code_example><![CDATA[
+interface IControl  
+{  
+   void Paint();  
+}  
+interface IForm  
+{  
+   void Paint();  
+}  
+class Page: IControl, IForm  
+{  
+   public void Paint() {...}  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Here, the Paint methods of both IControl and IForm are mapped onto the Paint method in Page. It is of course also possible to have separate explicit interface member implementations for the two methods. end example]</example>
+  </paragraph>
+  <paragraph>If a class or struct implements an interface that contains hidden members, then some members must necessarily be implemented through explicit interface member implementations. <example>[Example: For example <code_example><![CDATA[
+interface IBase  
+{  
+   int P { get; }  
+}  
+interface IDerived: IBase  
+{  
+   new int P();  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>An implementation of this interface would require at least one explicit interface member implementation, and would take one of the following forms <code_example><![CDATA[
+class C: IDerived  
+{  
+   int IBase.P { get {...} }  
+   int IDerived.P() {...}  
+}  
+class C: IDerived  
+{  
+   public int P { get {...} }  
+   int IDerived.P() {...}  
+}  
+class C: IDerived  
+{  
+   int IBase.P { get {...} }  
+   public int P() {...}  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+  <paragraph>When a class implements multiple interfaces that have the same base interface, there can be only one implementation of the base interface. <example>[Example: In the example <code_example><![CDATA[
+interface IControl  
+{  
+   void Paint();  
+}  
+interface ITextBox: IControl  
+{  
+   void SetText(string text);  
+}  
+interface IListBox: IControl  
+{  
+   void SetItems(string[] items);  
+}  
+class ComboBox: IControl, ITextBox, IListBox  
+{  
+   void IControl.Paint() {...}  
+   void ITextBox.SetText(string text) {...}  
+   void IListBox.SetItems(string[] items) {...}  
+}  
+]]></code_example>it is not possible to have separate implementations for the IControl named in the base class list, the IControl inherited by ITextBox, and the IControl inherited by IListBox. Indeed, there is no notion of a separate identity for these interfaces. Rather, the implementations of ITextBox and IListBox share the same implementation of IControl, and ComboBox is simply considered to implement three interfaces, IControl, ITextBox, and IListBox. end example]</example> </paragraph>
+  <paragraph>The members of a base class participate in interface mapping. <example>[Example: In the example <code_example><![CDATA[
+interface Interface1  
+{  
+   void F();  
+}  
+class Class1  
+{  
+   public void F() {}  
+   public void G() {}  
+}  
+class Class2: Class1, Interface1  
+{  
+   new public void G() {}  
+}  
+]]></code_example>the method F in Class1 is used in Class2's implementation of Interface1. end example]</example> </paragraph>
+</clause>

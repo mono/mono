@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<clause number="8.7.7" title="Indexers" informative="true">
+  <paragraph>An indexer is a member that enables an object to be indexed in the same way as an array. Whereas properties enable field-like access, indexers enable array-like access. </paragraph>
+  <paragraph>As an example, consider the Stack class presented earlier. The designer of this class might want to expose array-like access so that it is possible to inspect or alter the items on the stack without performing unnecessary Push and Pop operations. That is, class Stack is implemented as a linked list, but it also provides the convenience of array access. </paragraph>
+  <paragraph>Indexer declarations are similar to property declarations, with the main differences being that indexers are nameless (the &quot;name&quot; used in the declaration is this, since this is being indexed) and that indexers include indexing parameters. The indexing parameters are provided between square brackets. The example <code_example><![CDATA[
+using System;  
+public class Stack  
+{  
+   private Node GetNode(int index) {  
+      Node temp = first;   
+      while (index > 0) {  
+         temp = temp.Next;  
+         index--;  
+      }  
+      return temp;  
+   }  
+   public object this[int index] {  
+      get {  
+         if (!ValidIndex(index))  
+         throw new Exception("Index out of range.");  
+         else  
+         return GetNode(index).Value;  
+      }  
+      set {  
+         if (!ValidIndex(index))  
+         throw new Exception("Index out of range.");  
+         else  
+         GetNode(index).Value = value;  
+      }  
+   }  
+   ...  
+}  
+class Test  
+{  
+   static void Main() {  
+      Stack s = new Stack();  
+      s.Push(1);  
+      s.Push(2);  
+      s.Push(3);  
+      s[0] = 33;  // Changes the top item from 3 to 33  
+      s[1] = 22;  // Changes the middle item from 2 to 22  
+      s[2] = 11;  // Changes the bottom item from 1 to 11  
+   }  
+}  
+]]></code_example>shows an indexer for the Stack class. </paragraph>
+</clause>

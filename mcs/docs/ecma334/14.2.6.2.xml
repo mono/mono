@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<clause number="14.2.6.2" title="Binary numeric promotions" informative="true">
+  <paragraph>This clause is informative. </paragraph>
+  <paragraph>Binary numeric promotion occurs for the operands of the predefined +, -, *, /, %, &amp;, |, ^, ==, !=, &gt;, &lt;, &gt;=, and &lt;= binary operators. Binary numeric promotion implicitly converts both operands to a common type which, in case of the non-relational operators, also becomes the result type of the operation. Binary numeric promotion consists of applying the following rules, in the order they appear here: <list><list_item> If either operand is of type <keyword>decimal</keyword>, the other operand is converted to type <keyword>decimal</keyword>, or a  compile-time error occurs if the other operand is of type <keyword>float</keyword> or <keyword>double</keyword>. </list_item><list_item> Otherwise, if either operand is of type <keyword>double</keyword>, the other operand is converted to type <keyword>double</keyword>. </list_item><list_item> Otherwise, if either operand is of type <keyword>float</keyword>, the other operand is converted to type <keyword>float</keyword>. </list_item><list_item> Otherwise, if either operand is of type <keyword>ulong</keyword>, the other operand is converted to type <keyword>ulong</keyword>, or a compile-time error occurs if the other operand is of type <keyword>sbyte</keyword>, <keyword>short</keyword>, <keyword>int</keyword>, or <keyword>long</keyword>. </list_item><list_item> Otherwise, if either operand is of type <keyword>long</keyword>, the other operand is converted to type <keyword>long</keyword>. </list_item><list_item> Otherwise, if either operand is of type <keyword>uint</keyword> and the other operand is of type <keyword>sbyte</keyword>, <keyword>short</keyword>, or <keyword>int</keyword>, both operands are converted to type <keyword>long</keyword>. </list_item><list_item> Otherwise, if either operand is of type <keyword>uint</keyword>, the other operand is converted to type <keyword>uint</keyword>. </list_item><list_item> Otherwise, both operands are converted to type <keyword>int</keyword>. </list_item></list></paragraph>
+  <paragraph>
+    <note>[Note: Note that the first rule disallows any operations that mix the <keyword>decimal</keyword> type with the <keyword>double</keyword> and <keyword>float</keyword> types. The rule follows from the fact that there are no implicit conversions between the <keyword>decimal</keyword> type and the <keyword>double</keyword> and <keyword>float</keyword> types. end note]</note>
+  </paragraph>
+  <paragraph>
+    <note>[Note: Also note that it is not possible for an operand to be of type <keyword>ulong</keyword> when the other operand is of a signed integral type. The reason is that no integral type exists that can represent the full range of <keyword>ulong</keyword> as well as the signed integral types. end note]</note>
+  </paragraph>
+  <paragraph>In both of the above cases, a cast expression can be used to explicitly convert one operand to a type that is compatible with the other operand. </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+decimal AddPercent(decimal x, double percent) {  
+   return x * (1.0 + percent / 100.0);  
+}  
+]]></code_example>a compile-time error occurs because a <keyword>decimal</keyword> cannot be multiplied by a <keyword>double</keyword>. The error is resolved by explicitly converting the second operand to <keyword>decimal</keyword>, as follows: <code_example><![CDATA[
+decimal AddPercent(decimal x, double percent) {  
+   return x * (decimal)(1.0 + percent / 100.0);  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+  <paragraph>End of informative text. </paragraph>
+</clause>

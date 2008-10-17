@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="10.7.1" title="Name hiding">
+  <paragraph>The scope of an entity typically encompasses more program text than the declaration space of the entity. In particular, the scope of an entity may include declarations that introduce new declaration spaces containing entities of the same name. Such declarations cause the original entity to become hidden. Conversely, an entity is said to be visible when it is not hidden. </paragraph>
+  <paragraph>Name hiding occurs when scopes overlap through nesting and when scopes overlap through inheritance. The characteristics of the two types of hiding are described in the following sections. </paragraph>
+</clause>

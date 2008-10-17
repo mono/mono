@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="17.2.4" title="Constituent types">
+  <paragraph>Types that are used in the declaration of a member are called the constituent types of that member. Possible constituent types are the type of a constant, field, property, event, or indexer, the return type of a method or operator, and the parameter types of a method, indexer, operator, or instance constructor. The constituent types of a member must be at least as accessible as that member itself (<hyperlink>10.5.4</hyperlink>). </paragraph>
+</clause>

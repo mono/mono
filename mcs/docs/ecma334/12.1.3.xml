@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="12.1.3" title="Array elements">
+  <paragraph>The elements of an array come into existence when an array instance is created, and cease to exist when there are no references to that array instance. </paragraph>
+  <paragraph>The initial value of each of the elements of an array is the default value (<hyperlink>12.2</hyperlink>) of the type of the array elements. </paragraph>
+  <paragraph>For the purpose of definite assignment checking, an array element is considered initially assigned. </paragraph>
+</clause>

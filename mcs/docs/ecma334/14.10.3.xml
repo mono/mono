@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<clause number="14.10.3" title="Boolean logical operators">
+  <paragraph>The predefined boolean logical operators are: <code_example><![CDATA[
+bool operator &(bool x, bool y);  
+bool operator |(bool x, bool y);  
+bool operator ^(bool x, bool y);  
+]]></code_example></paragraph>
+  <paragraph>The result of x &amp; y is true if both x and y are true. Otherwise, the result is false. </paragraph>
+  <paragraph>The result of x | y is true if either x or y is true. Otherwise, the result is false. </paragraph>
+  <paragraph>The result of x ^ y is true if x is true and y is false, or x is false and y is true. Otherwise, the result is false. When the operands are of type <keyword>bool</keyword>, the ^ operator computes the same result as the != operator. </paragraph>
+</clause>

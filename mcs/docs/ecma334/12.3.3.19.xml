@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.19" title="General rules for simple expressions">
+  <paragraph>The following rule applies to these kinds of expressions: literals (<hyperlink>14.5.1</hyperlink>), simple names (<hyperlink>14.5.2</hyperlink>), member access expressions (<hyperlink>14.5.4</hyperlink>), non-indexed base access expressions (<hyperlink>14.5.8</hyperlink>), and typeof expressions (<hyperlink>14.5.11</hyperlink>). <list><list_item> The definite assignment state of v at the end of such an expression is the same as the definite assignment state of v at the beginning of the expression. </list_item></list></paragraph>
+</clause>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<clause number="14.5.4.1" title="Identical simple names and type names">
+  <paragraph>In a member access of the form E.I, if E is a single identifier, and if the meaning of E as a <non_terminal where="14.5.2">simple-name</non_terminal> (<hyperlink>14.5.2</hyperlink>) is a constant, field, property, local variable, or parameter with the same type as the meaning of E as a <non_terminal where="10.8">type-name</non_terminal> (<hyperlink>10.8</hyperlink>), then both possible meanings of E are permitted. The two possible meanings of E.I are never ambiguous, since I must necessarily be a member of the type E in both cases. In other words, the rule simply permits access to the static members of E where a compile-time error would otherwise have occurred. </paragraph>
+  <paragraph>
+    <example>[Example: For example: <code_example><![CDATA[
+struct Color  
+{  
+   public static readonly Color White = new Color(...);  
+   public static readonly Color Black = new Color(...);  
+   public Color Complement() {...}  
+}  
+class A  
+{  
+   public Color Color;          // Field Color of type Color  
+   void F() {  
+      Color = Color.Black;       // References Color.Black static member  
+      
+      Color = Color.Complement();  // Invokes Complement() on Color field  
+      
+   }  
+   static void G() {  
+      Color c = Color.White;    // References Color.White static member  
+      
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Within the A class, those occurrences of the Color identifier that reference the Color type are underlined, and those that reference the Color field are not underlined. end example]</example>
+  </paragraph>
+</clause>

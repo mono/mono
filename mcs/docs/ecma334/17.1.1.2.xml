@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="17.1.1.2" title="Sealed classes">
+  <paragraph>The sealed modifier is used to prevent derivation from a class. A compile-time error occurs if a sealed class is specified as the base class of another class. </paragraph>
+  <paragraph>A sealed class cannot also be an abstract class. </paragraph>
+  <paragraph>
+    <note>[Note: The sealed modifier is primarily used to prevent unintended derivation, but it also enables certain run-time optimizations. In particular, because a sealed class is known to never have any derived classes, it is possible to transform virtual function member invocations on sealed class instances into non-virtual invocations. end note]</note>
+  </paragraph>
+</clause>

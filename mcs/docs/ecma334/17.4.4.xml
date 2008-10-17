@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<clause number="17.4.4" title="Field initialization">
+  <paragraph>The initial value of a field, whether it be a static field or an instance field, is the default value (<hyperlink>12.2</hyperlink>) of the field's type. It is not possible to observe the value of a field before this default initialization has occurred, and a field is thus never &quot;uninitialized&quot;. <example>[Example: The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static bool b;  
+   int i;  
+   static void Main() {  
+      Test t = new Test();  
+      Console.WriteLine("b = {0}, i = {1}", b, t.i);  
+   }  
+}  
+]]></code_example>produces the output <code_example><![CDATA[
+b = False, i = 0  
+]]></code_example>because b and i are both automatically initialized to default values. end example]</example> </paragraph>
+</clause>

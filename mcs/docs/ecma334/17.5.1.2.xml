@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<clause number="17.5.1.2" title="Reference parameters">
+  <paragraph>A parameter declared with a ref modifier is a reference parameter. Unlike a value parameter, a reference parameter does not create a new storage location. Instead, a reference parameter represents the same storage location as the variable given as the argument in the method invocation. </paragraph>
+  <paragraph>When a formal parameter is a reference parameter, the corresponding argument in a method invocation must consist of the keyword ref followed by a <non_terminal where="12.4">variable-reference</non_terminal> (<hyperlink>12.3.3</hyperlink>) of the same type as the formal parameter. A variable must be definitely assigned before it can be passed as a reference parameter. </paragraph>
+  <paragraph>Within a method, a reference parameter is always considered definitely assigned. </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Swap(ref int x, ref int y) {  
+      int temp = x;  
+      x = y;  
+      y = temp;  
+   }  
+   static void Main() {  
+      int i = 1, j = 2;  
+      Swap(ref i, ref j);  
+      Console.WriteLine("i = {0}, j = {1}", i, j);  
+   }  
+}  
+]]></code_example>produces the output <code_example><![CDATA[
+i = 2, j = 1  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>For the invocation of Swap in Main, x represents i and y represents j. Thus, the invocation has the effect of swapping the values of i and j. end example]</example>
+  </paragraph>
+  <paragraph>In a method that takes reference parameters, it is possible for multiple names to represent the same storage location. <example>[Example: In the example <code_example><![CDATA[
+class A  
+{  
+   string s;  
+   void F(ref string a, ref string b) {  
+      s = "One";  
+      a = "Two";  
+      b = "Three";  
+   }  
+   void G() {  
+      F(ref s, ref s);  
+   }  
+}  
+]]></code_example>the invocation of F in G passes a reference to s for both a and b. Thus, for that invocation, the names s, a, and b all refer to the same storage location, and the three assignments all modify the instance field s. end example]</example> </paragraph>
+</clause>

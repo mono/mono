@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="24.1" title="Attribute classes">
+  <paragraph>A class that derives from the abstract class System.Attribute, whether directly or indirectly, is an attribute class. The declaration of an attribute class defines a new kind of attribute that can be placed on a declaration. By convention, attribute classes are named with a suffix of Attribute. Uses of an attribute may either include or omit this suffix. </paragraph>
+</clause>

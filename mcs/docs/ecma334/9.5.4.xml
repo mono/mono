@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<clause number="9.5.4" title="Conditional compilation directives">
+  <paragraph>The conditional compilation directives are used to conditionally include or exclude portions of a source file. <grammar_production><name><non_terminal where="9.5.4">pp-conditional</non_terminal></name> :: <rhs><non_terminal where="9.5.4">pp-if-section</non_terminal><non_terminal where="9.5.4">pp-elif-sections</non_terminal><opt/><non_terminal where="9.5.4">pp-else-section</non_terminal><opt/><non_terminal where="9.5.4">pp-endif</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.4">pp-if-section</non_terminal></name> :: <rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>#</terminal><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>if</terminal><non_terminal where="9.3.3">whitespace</non_terminal><non_terminal where="9.5.2">pp-expression</non_terminal><non_terminal where="9.5.3">pp-new-line</non_terminal><non_terminal where="9.5.4">conditional-section</non_terminal><opt/></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.4">pp-elif-section</non_terminal>s</name> :: <rhs><non_terminal where="9.5.4">pp-elif-section</non_terminal></rhs><rhs><non_terminal where="9.5.4">pp-elif-sections</non_terminal><non_terminal where="9.5.4">pp-elif-section</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.4">pp-elif-section</non_terminal></name> :: <rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>#</terminal><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>elif</terminal><non_terminal where="9.3.3">whitespace</non_terminal><non_terminal where="9.5.2">pp-expression</non_terminal><non_terminal where="9.5.3">pp-new-line</non_terminal><non_terminal where="9.5.4">conditional-section</non_terminal><opt/></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.4">pp-else-section</non_terminal></name> :: <rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>#</terminal><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>else</terminal><non_terminal where="9.5.3">pp-new-line</non_terminal><non_terminal where="9.5.4">conditional-section</non_terminal><opt/></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.4">pp-endif</non_terminal></name> :: <rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>#</terminal><non_terminal where="9.3.3">whitespace</non_terminal><opt/><terminal>endif</terminal><non_terminal where="9.5.3">pp-new-line</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.4">conditional-section</non_terminal></name> :: <rhs><non_terminal where="9.3">input-section</non_terminal></rhs><rhs><non_terminal where="9.5.4">skipped-section</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.4">skipped-section</non_terminal></name> :: <rhs><non_terminal where="9.5.4">skipped-section-part</non_terminal></rhs><rhs><non_terminal where="9.5.4">skipped-section</non_terminal><non_terminal where="9.5.4">skipped-section-part</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.4">skipped-section-part</non_terminal></name> :: <rhs><non_terminal where="9.5.4">skipped-characters</non_terminal><opt/><non_terminal where="9.3.1">new-line</non_terminal></rhs><rhs><non_terminal where="9.5">pp-directive</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.4">skipped-characters</non_terminal></name> :: <rhs><non_terminal where="9.3.3">whitespace</non_terminal><opt/><non_terminal where="9.5.4">not-number-sign</non_terminal><non_terminal where="9.3.2">input-characters</non_terminal><opt/></rhs></grammar_production><grammar_production><name><non_terminal where="9.5.4">not-number-sign</non_terminal></name> :: <rhs>Any <non_terminal where="9.3.2">input-character</non_terminal> except # </rhs></grammar_production></paragraph>
+  <paragraph>
+    <note>[Note: As indicated by the syntax, conditional compilation directives must be written as sets consisting of, in order, an <symbol>#if</symbol> directive, zero or more <symbol>#elif</symbol> directives, zero or one <symbol>#else</symbol> directive, and an <symbol>#endif</symbol> directive. Between the directives are conditional sections of source code. Each section is controlled by the immediately preceding directive. A conditional section may itself contain nested conditional compilation directives provided these directives form complete sets. end note]</note>
+  </paragraph>
+  <paragraph>A <non_terminal where="9.5.4">pp-conditional</non_terminal> selects at most one of the contained <non_terminal where="9.5.4">conditional-section</non_terminal>s for normal lexical processing: <list><list_item> The <non_terminal where="9.5.2">pp-expression</non_terminal>s of the <symbol>#if</symbol> and <symbol>#elif</symbol> directives are evaluated in order until one yields true. If an expression yields true, the <non_terminal where="9.5.4">conditional-section</non_terminal> of the corresponding directive is selected. </list_item><list_item> If all <non_terminal where="9.5.2">pp-expression</non_terminal>s yield false, and if an <symbol>#else</symbol> directive is present, the <non_terminal where="9.5.4">conditional-section</non_terminal> of the <symbol>#else</symbol> directive is selected. </list_item><list_item> Otherwise, no <non_terminal where="9.5.4">conditional-section</non_terminal> is selected. </list_item></list></paragraph>
+  <paragraph>The selected <non_terminal where="9.5.4">conditional-section</non_terminal>, if any, is processed as a normal input-section: the source code contained in the section must adhere to the lexical grammar; tokens are generated from the source code in the section; and pre-processing directives in the section have the prescribed effects. </paragraph>
+  <paragraph>The remaining <non_terminal where="9.5.4">conditional-section</non_terminal>s, if any, are processed as skipped-sections: except for pre-processing directives, the source code in the section need not adhere to the lexical grammar; no tokens are generated from the source code in the section; and pre-processing directives in the section must be lexically correct but are not otherwise processed. Within a <non_terminal where="9.5.4">conditional-section</non_terminal> that is being processed as a <non_terminal where="9.5.4">skipped-section</non_terminal>, any nested <non_terminal where="9.5.4">conditional-section</non_terminal>s (contained in nested <symbol>#if</symbol>...<symbol>#endif</symbol> and <symbol>#region</symbol>...<symbol>#endregion</symbol> constructs) are also processed as <non_terminal where="9.5.4">skipped-section</non_terminal>s. </paragraph>
+  <paragraph>
+    <example>[Example: The following example illustrates how conditional compilation directives can nest: <code_example><![CDATA[
+#define Debug    // Debugging on  
+#undef Trace    // Tracing off  
+class PurchaseTransaction  
+{  
+   void Commit() {  
+      #if Debug  
+      CheckConsistency();  
+      #if Trace  
+      WriteToLog(this.ToString());  
+      #endif  
+      #endif  
+      CommitHelper();  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Except for pre-processing directives, skipped source code is not subject to lexical analysis. For example, the following is valid despite the unterminated comment in the <symbol>#else</symbol> section: <code_example><![CDATA[
+#define Debug    // Debugging on  
+class PurchaseTransaction  
+{  
+   void Commit() {  
+      #if Debug  
+      CheckConsistency();  
+      #else  
+      /* Do something else  
+      #endif  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Note, however, that pre-processing directives are required to be lexically correct even in skipped sections of source code. </example>
+  </paragraph>
+  <paragraph>
+    <example>Pre-processing directives are not processed when they appear inside multi-line input elements. For example, the program: <code_example><![CDATA[
+class Hello  
+{  
+   static void Main() {  
+      System.Console.WriteLine(@"hello,   
+      #if Debug  
+      world  
+      #else  
+      Nebraska  
+      #endif  
+      ");  
+   }  
+}  
+]]></code_example>results in the output: <code_example><![CDATA[
+hello,  
+#if Debug  
+world  
+#else  
+Nebraska  
+#endif  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>In peculiar cases, the set of pre-processing directives that is processed might depend on the evaluation of the <non_terminal where="9.5.2">pp-expression</non_terminal>. The example: <code_example><![CDATA[
+#if X  
+/*   
+#else  
+/* */ class Q { }  
+#endif   
+]]></code_example>always produces the same token stream (class Q <symbol>{</symbol> <symbol>}</symbol>), regardless of whether or not X is defined. If X is defined, the only processed directives are <symbol>#if</symbol> and <symbol>#endif</symbol>, due to the multi-line comment. If X is undefined, then three directives (<symbol>#if</symbol>, <symbol>#else</symbol>, <symbol>#endif</symbol>) are part of the directive set. end example]</example>
+  </paragraph>
+</clause>

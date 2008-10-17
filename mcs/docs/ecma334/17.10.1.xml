@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<clause number="17.10.1" title="Constructor initializers">
+  <paragraph>All instance constructors (except those for class object) implicitly include an invocation of another instance constructor immediately before the <non_terminal where="17.10">constructor-body</non_terminal>. The constructor to implicitly invoke is determined by the constructor-initializer: <list><list_item> An instance constructor initializer of the form base(argument-listopt) causes an instance constructor from the direct base class to be invoked. That constructor is selected using <non_terminal where="14.4.1">argument-list</non_terminal> and the overload resolution rules of <hyperlink>14.4.2</hyperlink>. The set of candidate instance constructors consists of all accessible instance constructors declared in the direct base class. If this set is empty, or if a single best instance constructor cannot be identified, a compile-time error occurs. </list_item><list_item> An instance constructor initializer of the form this(argument-listopt) causes an instance constructor from the class itself to be invoked. The constructor is selected using <non_terminal where="14.4.1">argument-list</non_terminal> and the overload resolution rules of <hyperlink>14.4.2</hyperlink>. The set of candidate instance constructors consists of all accessible instance constructors declared in the class itself. If that set is empty, or if a single best instance constructor cannot be identified, a compile-time error occurs. If an instance constructor declaration includes a constructor initializer that invokes the constructor itself, a compile-time error occurs. </list_item></list></paragraph>
+  <paragraph>If an instance constructor has no constructor initializer, a constructor initializer of the form base() is implicitly provided. <note>[Note: Thus, an instance constructor declaration of the form <code_example><![CDATA[
+C(...) {...}  
+]]></code_example>is exactly equivalent to <code_example><![CDATA[
+C(...): base() {...}  
+]]></code_example>end note]</note> </paragraph>
+  <paragraph>The scope of the parameters given by the <non_terminal where="17.5.1">formal-parameter-list</non_terminal> of an instance constructor declaration includes the constructor initializer of that declaration. Thus, a constructor initializer is permitted to access the parameters of the constructor. <example>[Example: For example: <code_example><![CDATA[
+class A  
+{  
+   public A(int x, int y) {}  
+}  
+class B: A  
+{  
+   public B(int x, int y): base(x + y, x - y) {}  
+}  
+]]></code_example>end example]</example> </paragraph>
+  <paragraph>An instance constructor initializer cannot access the instance being created. Therefore it is a compile-time error to reference this in an argument expression of the constructor initializer, as it is a compile-time error for an argument expression to reference any instance member through a <non_terminal where="14.5.2">simple-name</non_terminal>. </paragraph>
+</clause>

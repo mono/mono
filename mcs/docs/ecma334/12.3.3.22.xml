@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.22" title="Simple assignment expressions">
+  <paragraph>For an expression expr of the form w = expr-rhs: <list><list_item> The definite assignment state of v before expr-rhs is the same as the definite assignment state of v before expr. </list_item><list_item> If w is the same variable as v, then the definite assignment state of v after expr is definitely assigned. </list_item></list></paragraph>
+  <paragraph>Otherwise, the definite assignment state of v after expr is the same as the definite assignment state of v after expr-rhs. </paragraph>
+</clause>

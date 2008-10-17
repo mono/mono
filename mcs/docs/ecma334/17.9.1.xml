@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<clause number="17.9.1" title="Unary operators">
+  <paragraph>The following rules apply to unary operator declarations, where T denotes the class or struct type that contains the operator declaration: <list><list_item> A unary +, -, !, or ~ operator must take a single parameter of type T and can return any type. </list_item><list_item> A unary ++ or  --operator must take a single parameter of type T and must return type T. </list_item><list_item> A unary true or false operator must take a single parameter of type T and must return type <keyword>bool</keyword>. </list_item></list></paragraph>
+  <paragraph>The signature of a unary operator consists of the operator token (+, -, !, ~, ++, --, true, or false) and the type of the single formal parameter. The return type is not part of a unary operator's signature, nor is the name of the formal parameter. </paragraph>
+  <paragraph>The true and false unary operators require pair-wise declaration. A compile-time error occurs if a class declares one of these operators without also declaring the other. The true and false operators are described further in <hyperlink>14.16</hyperlink>. </paragraph>
+  <paragraph>
+    <example>[Example: The following example shows an implementation and subsequent usage of operator++ for an integer vector class: <code_example><![CDATA[
+public class IntVector  
+{  
+   public int Length { ... }    // read-only property  
+   public int this[int index] { ... } // read-write indexer  
+   public IntVector(int vectorLength) { ... }  
+   public static IntVector operator++(IntVector iv) {  
+      IntVector temp = new IntVector(iv.Length);  
+      for (int i = 0; i < iv.Length; ++i)  
+      temp[i] = iv[i] + 1;  
+      return temp;  
+   }  
+}  
+class Test  
+{  
+   static void Main() {  
+      IntVector iv1 = new IntVector(4);  // vector of 4x0  
+      IntVector iv2;  
+      
+      iv2 = iv1++;  // iv2 contains 4x0, iv1 contains 4x1  
+      iv2 = ++iv1;  // iv2 contains 4x2, iv1 contains 4x2  
+   }  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Note how the operator method returns the value produced by adding 1 to the operand, just like the postfix increment and decrement operators(<hyperlink>14.5.9</hyperlink>), and the prefix increment and decrement operators (<hyperlink>14.6.5</hyperlink>). </example>
+  </paragraph>
+  <paragraph>
+    <example>Unlike in C++, this method need not, and, in fact, must not, modify the value of its operand directly. end example]</example>
+  </paragraph>
+</clause>

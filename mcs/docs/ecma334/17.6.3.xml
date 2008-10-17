@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<clause number="17.6.3" title="Virtual, sealed, override, and abstract accessors">
+  <paragraph>A virtual property declaration specifies that the accessors of the property are virtual. The virtual modifier applies to both accessors of a read-write property-it is not possible for only one accessor of a read-write property to be virtual. </paragraph>
+  <paragraph>An abstract property declaration specifies that the accessors of the property are virtual, but does not provide an actual implementation of the accessors. Instead, non-abstract derived classes are required to provide their own implementation for the accessors by overriding the property. Because an accessor for an abstract property declaration provides no actual implementation, its <non_terminal where="17.6.2">accessor-body</non_terminal> simply consists of a semicolon. </paragraph>
+  <paragraph>A property declaration that includes both the abstract and override modifiers specifies that the property is abstract and overrides a base property. The accessors of such a property are also abstract. </paragraph>
+  <paragraph>Abstract property declarations are only permitted in abstract classes (<hyperlink>17.1.1.1</hyperlink>). The accessors of an inherited virtual property can be overridden in a derived class by including a property declaration that specifies an override directive. This is known as an overriding property declaration. An overriding property declaration does not declare a new property. Instead, it simply specializes the implementations of the accessors of an existing virtual property. </paragraph>
+  <paragraph>An overriding property declaration must specify the exact same accessibility modifiers, type, and name as the inherited property. If the inherited property has only a single accessor (i.e., if the inherited property is read-only or write-only), the overriding property must include only that accessor. If the inherited property includes both accessors (i.e., if the inherited property is read-write), the overriding property can include either a single accessor or both accessors. </paragraph>
+  <paragraph>An overriding property declaration may include the sealed modifier. Use of this modifier prevents a derived class from further overriding the property. The accessors of a sealed property are also sealed. </paragraph>
+  <paragraph>Except for differences in declaration and invocation syntax, virtual, sealed, override, and abstract accessors behave exactly like virtual, sealed, override and abstract methods. Specifically, the rules described in <hyperlink>17.5.3</hyperlink>, <hyperlink>17.5.4</hyperlink>, <hyperlink>17.5.5</hyperlink>, and <hyperlink>17.5.6</hyperlink> apply as if accessors were methods of a corresponding form: <list><list_item> A get accessor corresponds to a parameterless method with a return value of the property type and the same modifiers as the containing property. </list_item><list_item> A set accessor corresponds to a method with a single value parameter of the property type, a <keyword>void</keyword> return type, and the same modifiers as the containing property. </list_item></list></paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+abstract class A  
+{  
+   int y;  
+   public virtual int X {  
+      get { return 0; }  
+   }  
+   public virtual int Y {  
+      get { return y; }  
+      set { y = value; }  
+   }  
+   public abstract int Z { get; set; }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>X is a virtual read-only property, Y is a virtual read-write property, and Z is an abstract read-write property. </example>
+  </paragraph>
+  <paragraph>
+    <example>Because Z is abstract, the containing class A must also be declared abstract. </example>
+  </paragraph>
+  <paragraph>
+    <example>A class that derives from A is show below: <code_example><![CDATA[
+class B: A  
+{  
+   int z;  
+   public override int X {  
+      get { return base.X + 1; }  
+   }  
+   public override int Y {  
+      set { base.Y = value < 0? 0: value; }  
+   }  
+   public override int Z {  
+      get { return z; }  
+      set { z = value; }  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Here, the declarations of X, Y, and Z are overriding property declarations. Each property declaration exactly matches the accessibility modifiers, type, and name of the corresponding inherited property. The get accessor of X and the set accessor of Y use the base keyword to access the inherited accessors. The declaration of Z overrides both abstract accessors-thus, there are no outstanding abstract function members in B, and B is permitted to be a non-abstract class. end example]</example>
+  </paragraph>
+</clause>

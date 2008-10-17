@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<clause number="25" title="Unsafe code">
+  <paragraph>An implementation that does not support unsafe code is required to diagnose any usage of the keyword unsafe. </paragraph>
+  <paragraph>This remainder of this clause is conditionally normative. </paragraph>
+  <paragraph>
+    <note>[Note: The core C# language, as defined in the preceding chapters, differs notably from C and C++ in its omission of pointers as a data type. Instead, C# provides references and the ability to create objects that are managed by a garbage collector. This design, coupled with other features, makes C# a much safer language than C or C++. In the core C# language it is simply not possible to have an uninitialized variable, a &quot;dangling&quot; pointer, or an expression that indexes an array beyond its bounds. Whole categories of bugs that routinely plague C and C++ programs are thus eliminated. </note>
+  </paragraph>
+  <paragraph>
+    <note>While practically every pointer type construct in C or C++ has a reference type counterpart in C#, nonetheless, there are situations where access to pointer types becomes a necessity. For example, interfacing with the underlying operating system, accessing a memory-mapped device, or implementing a time-critical algorithm may not be possible or practical without access to pointers. To address this need, C# provides the ability to write unsafe code. </note>
+  </paragraph>
+  <paragraph>
+    <note>In unsafe code it is possible to declare and operate on pointers, to perform conversions between pointers and integral types, to take the address of variables, and so forth. In a sense, writing unsafe code is much like writing C code within a C# program. </note>
+  </paragraph>
+  <paragraph>
+    <note>Unsafe code is in fact a &quot;safe&quot; feature from the perspective of both developers and users. Unsafe code must be clearly marked with the modifier unsafe, so developers can't possibly use unsafe features accidentally, and the execution engine works to ensure that unsafe code cannot be executed in an untrusted environment. end note]</note>
+  </paragraph>
+</clause>

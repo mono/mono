@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<clause number="17.2.5" title="Static and instance members">
+  <paragraph>Members of a class are either static members or instance members. <note>[Note: Generally speaking, it is useful to think of static members as belonging to classes and instance members as belonging to objects (instances of classes). end note]</note> </paragraph>
+  <paragraph>When a field, method, property, event, operator, or constructor declaration includes a static modifier, it declares a static member. In addition, a constant or type declaration implicitly declares a static member. Static members have the following characteristics: <list><list_item> When a static member is referenced in a <non_terminal where="14.5.4">member-access</non_terminal> (<hyperlink>14.5.4</hyperlink>) of the form E.M, E must denote a type that has a member M. It is a compile-time error for E to denote an instance. </list_item><list_item> A static field identifies exactly one storage location. No matter how many instances of a class are created, there is only ever one copy of a static field. </list_item><list_item> A static function member (method, property, event, operator, or constructor) does not operate on a specific instance, and it is a compile-time error to refer to this in such a function member. </list_item></list></paragraph>
+  <paragraph>When a field, method, property, event, indexer, constructor, or destructor declaration does not include a static modifier, it declares an instance member. (An instance member is sometimes called a non-static member.) Instance members have the following characteristics: <list><list_item> When an instance member is referenced in a <non_terminal where="14.5.4">member-access</non_terminal> (<hyperlink>14.5.4</hyperlink>) of the form E.M, E must denote an instance of a type that has a member M. It is a compile-time error for E to denote a type. </list_item><list_item> Every instance of a class contains a separate set of all instance fields of the class. </list_item><list_item> An instance function member (method, property, indexer, instance constructor, or destructor) operates on a given instance of the class, and this instance can be accessed as this (<hyperlink>14.5.7</hyperlink>). </list_item></list></paragraph>
+  <paragraph>
+    <example>[Example: The following example illustrates the rules for accessing static and instance members: <code_example><![CDATA[
+class Test  
+{  
+   int x;  
+   static int y;  
+   void F() {  
+      x = 1;      // Ok, same as this.x = 1  
+      y = 1;      // Ok, same as Test.y = 1  
+   }  
+   static void G() {  
+      x = 1;      // Error, cannot access this.x  
+      y = 1;      // Ok, same as Test.y = 1  
+   }  
+   static void Main() {  
+      Test t = new Test();  
+      t.x = 1;     // Ok  
+      t.y = 1;     // Error, cannot access static member through  
+      instance  
+      Test.x = 1;   // Error, cannot access instance member through type  
+      Test.y = 1;   // Ok  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>The F method shows that in an instance function member, a <non_terminal where="14.5.2">simple-name</non_terminal> (<hyperlink>14.5.2</hyperlink>) can be used to access both instance members and static members. The G method shows that in a static function member, it is a compile-time error to access an instance member through a <non_terminal where="14.5.2">simple-name</non_terminal>. The Main method shows that in a <non_terminal where="14.5.4">member-access</non_terminal> (<hyperlink>14.5.4</hyperlink>), instance members must be accessed through instances, and static members must be accessed through types. end example]</example>
+  </paragraph>
+</clause>

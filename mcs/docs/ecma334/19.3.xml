@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="19.3" title="Array element access">
+  <paragraph>Array elements are accessed using <non_terminal where="14.5.6">element-access</non_terminal> expressions (<hyperlink>14.5.6.1</hyperlink>) of the form A[I1, I2, ..., IN], where A is an expression of an array type and each IX is an expression of type <keyword>int</keyword>, <keyword>uint</keyword>, <keyword>long</keyword>, <keyword>ulong</keyword>, or of a type that can be implicitly converted to one or more of these types. The result of an array element access is a variable, namely the array element selected by the indices. </paragraph>
+  <paragraph>The elements of an array can be enumerated using a foreach statement (<hyperlink>15.8.4</hyperlink>). </paragraph>
+</clause>

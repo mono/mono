@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<clause number="14.5.11" title="The typeof operator">
+  <paragraph>The typeof operator is used to obtain the System.Type object for a type. <grammar_production><name><non_terminal where="14.5.11">typeof-expression</non_terminal></name> : <rhs><keyword>typeof</keyword><terminal>(</terminal><non_terminal where="11">type</non_terminal><terminal>)</terminal></rhs><rhs><keyword>typeof</keyword><terminal>(</terminal><keyword>void</keyword><terminal>)</terminal></rhs></grammar_production></paragraph>
+  <paragraph>The first form of <non_terminal where="14.5.11">typeof-expression</non_terminal> consists of a typeof keyword followed by a parenthesized type. The result of an expression of this form is the System.Type object for the indicated type. There is only one System.Type object for any given type. <note>[Note: This means that for type T, typeof(T) == typeof(T) is always true. end note]</note> </paragraph>
+  <paragraph>The second form of <non_terminal where="14.5.11">typeof-expression</non_terminal> consists of a typeof keyword followed by a parenthesized <keyword>void</keyword> keyword. The result of an expression of this form is the System.Type object that represents the absence of a type. The type object returned by typeof(<keyword>void</keyword>) is distinct from the type object returned for any type. </paragraph>
+  <paragraph>
+    <note>[Note: This special type object is useful in class libraries that allow reflection onto methods in the language, where those methods wish to have a way to represent the return type of any method, including <keyword>void</keyword> methods, with an instance of System.Type. end note]</note>
+  </paragraph>
+  <paragraph>
+    <example>[Example: The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      Type[] t = {  
+         typeof(int),  
+         typeof(System.Int32),  
+         typeof(string),  
+         typeof(double[]),  
+      typeof(void)   };  
+      for (int i = 0; i < t.Length; i++) {  
+         Console.WriteLine(t[i].FullName);  
+      }  
+   }  
+}  
+]]></code_example>produces the following output: <code_example><![CDATA[
+System.Int32  
+System.Int32  
+System.String  
+System.Double[]  
+System.Void  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Note that <keyword>int</keyword> and System.Int32 are the same type. end example]</example>
+  </paragraph>
+</clause>

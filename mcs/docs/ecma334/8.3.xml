@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<clause number="8.3" title="Variables and parameters" informative="true">
+  <paragraph>Variables represent storage locations. Every variable has a type that determines what values can be stored in the variable. Local variables are variables that are declared in methods, properties, or indexers. A local variable is defined by specifying a type name and a declarator that specifies the variable name and an optional initial value, as in: <code_example><![CDATA[
+int a;  
+int b = 1;  
+]]></code_example>but it is also possible for a local variable declaration to include multiple declarators. The declarations of a and b can be rewritten as: <code_example><![CDATA[
+int a, b = 1;  
+]]></code_example></paragraph>
+  <paragraph>A variable must be assigned before its value can be obtained. The example <code_example><![CDATA[
+class Test  
+{  
+   static void Main() {  
+      int a;  
+      int b = 1;  
+      int c = a + b; // error, a not yet assigned  
+      ...  
+   }  
+}  
+]]></code_example>results in a compile-time error because it attempts to use the variable a before it is assigned a value. The rules governing definite assignment are defined in <hyperlink>12.3</hyperlink>. </paragraph>
+  <paragraph>A field (<hyperlink>17.4</hyperlink>) is a variable that is associated with a class or struct, or an instance of a class or struct. A field declared with the static modifier defines a static variable, and a field declared without this modifier defines an instance variable. A static field is associated with a type, whereas an instance variable is associated with an instance. The example <code_example><![CDATA[
+using Personnel.Data;  
+class Employee  
+{  
+   private static DataSet ds;  
+   public string Name;  
+   public decimal Salary;  
+   ...  
+}  
+]]></code_example>shows an Employee class that has a private static variable and two public instance variables. </paragraph>
+  <paragraph>Formal parameter declarations also define variables. There are four kinds of parameters: value parameters, reference parameters, output parameters, and parameter arrays. </paragraph>
+  <paragraph>A value parameter is used for &quot;in&quot; parameter passing, in which the value of an argument is passed into a method, and modifications of the parameter do not impact the original argument. A value parameter refers to its own variable, one that is distinct from the corresponding argument. This variable is initialized by copying the value of the corresponding argument. The example <code_example><![CDATA[
+using System;  
+class Test {  
+   static void F(int p) {  
+      Console.WriteLine("p = {0}", p);  
+      p++;  
+   }  
+   static void Main() {  
+      int a = 1;  
+      Console.WriteLine("pre:  a = {0}", a);  
+      F(a);  
+      Console.WriteLine("post: a = {0}", a);  
+   }  
+}  
+]]></code_example>shows a method F that has a value parameter named p. The example produces the output: <code_example><![CDATA[
+pre:  a = 1  
+p = 1  
+post: a = 1  
+]]></code_example>even though the value parameter p is modified. </paragraph>
+  <paragraph>A reference parameter is used for &quot;by reference&quot; parameter passing, in which the parameter acts as an alias for a caller-provided argument. A reference parameter does not itself define a variable, but rather refers to the variable of the corresponding argument. Modifications of a reference parameter impact the corresponding argument. A reference parameter is declared with a ref modifier. The example <code_example><![CDATA[
+using System;  
+class Test {  
+   static void Swap(ref int a, ref int b) {  
+      int t = a;  
+      a = b;  
+      b = t;  
+   }  
+   static void Main() {  
+      int x = 1;  
+      int y = 2;  
+      
+      Console.WriteLine("pre:  x = {0}, y = {1}", x, y);  
+      Swap(ref x, ref y);  
+      Console.WriteLine("post: x = {0}, y = {1}", x, y);  
+   }  
+}  
+]]></code_example>shows a Swap method that has two reference parameters. The output produced is: <code_example><![CDATA[
+pre:  x = 1, y = 2  
+post: x = 2, y = 1  
+]]></code_example></paragraph>
+  <paragraph>The ref keyword must be used in both the declaration of the formal parameter and in uses of it. The use of ref at the call site calls special attention to the parameter, so that a developer reading the code will understand that the value of the argument could change as a result of the call. </paragraph>
+  <paragraph>An output parameter is similar to a reference parameter, except that the initial value of the caller-provided argument is unimportant. An output parameter is declared with an out modifier. The example <code_example><![CDATA[
+using System;  
+class Test {  
+   static void Divide(int a, int b, out int result, out int remainder) {  
+      result = a / b;  
+      remainder = a % b;  
+   }  
+   static void Main() {  
+      for (int i = 1; i < 10; i++)  
+      for (int j = 1; j < 10; j++) {  
+         int ans, r;  
+         Divide(i, j, out ans, out r);  
+         Console.WriteLine("{0} / {1} = {2}r{3}", i, j, ans, r);  
+      }  
+   }  
+}  
+]]></code_example>shows a Divide method that includes two output parameters-one for the result of the division and another for the remainder. </paragraph>
+  <paragraph>For value, reference, and output parameters, there is a one-to-one correspondence between caller-provided arguments and the parameters used to represent them. A parameter array enables a many-to-one relationship: many arguments can be represented by a single parameter array. In other words, parameter arrays enable variable length argument lists. </paragraph>
+  <paragraph>A parameter array is declared with a params modifier. There can be only one parameter array for a given method, and it must always be the last parameter specified. The type of a parameter array is always a single dimensional array type. A caller can either pass a single argument of this array type, or any number of arguments of the element type of this array type. For instance, the example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void F(params int[] args) {  
+      Console.WriteLine("# of arguments: {0}", args.Length);  
+      for (int i = 0; i < args.Length; i++)  
+      Console.WriteLine("\targs[{0}] = {1}", i, args[i]);  
+   }  
+   static void Main() {  
+      F();  
+      F(1);  
+      F(1, 2);  
+      F(1, 2, 3);  
+      F(new int[] {1, 2, 3, 4});  
+   }  
+}  
+]]></code_example>shows a method F that takes a variable number of <keyword>int</keyword> arguments, and several invocations of this method. The output is: <code_example><![CDATA[
+# of arguments: 0  
+# of arguments: 1  
+args[0] = 1  
+# of arguments: 2  
+args[0] = 1  
+args[1] = 2  
+# of arguments: 3  
+args[0] = 1  
+args[1] = 2  
+args[2] = 3  
+# of arguments: 4  
+args[0] = 1  
+args[1] = 2  
+args[2] = 3  
+args[3] = 4  
+]]></code_example></paragraph>
+  <paragraph>Most of the examples presented in this introduction use the WriteLine method of the Console class. The argument substitution behavior of this method, as exhibited in the example <code_example><![CDATA[
+int a = 1, b = 2;  
+Console.WriteLine("a = {0}, b = {1}", a, b);  
+]]></code_example>is accomplished using a parameter array. The WriteLine method provides several overloaded methods for the common cases in which a small number of arguments are passed, and one method that uses a parameter array. <code_example><![CDATA[
+namespace System  
+{  
+   public class Console  
+   {  
+      public static void WriteLine(string s) {...}  
+      public static void WriteLine(string s, object a) {...}  
+      public static void WriteLine(string s, object a, object b) {...}  
+      ...  
+      public static void WriteLine(string s, params object[] args) {...}  
+   }  
+}  
+]]></code_example></paragraph>
+</clause>

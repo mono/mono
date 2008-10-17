@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<clause number="8.7" title="Classes" informative="true">
+  <paragraph>Class declarations define new reference types. A class can inherit from another class, and can implement interfaces. </paragraph>
+  <paragraph>Class members can include constants, fields, methods, properties, events, indexers, operators, instance constructors, destructors, static constructors, and nested type declarations. Each member has an associated accessibility (<hyperlink>10.5</hyperlink>), which controls the regions of program text that are able to access the member. There are five possible forms of accessibility. These are summarized in the table below. <table_line>Form Intuitive meaning </table_line>
+<table_line>public Access not limited </table_line>
+<table_line>protected Access limited to the containing class or types derived from the containing class </table_line>
+<table_line>internal Access limited to this program </table_line>
+<table_line>protected </table_line>
+<table_line>internal </table_line>
+<table_line>Access limited to this program or types derived from the containing class </table_line>
+<table_line>private Access limited to the containing type </table_line>
+</paragraph>
+  <paragraph>The example <code_example><![CDATA[
+using System;  
+class MyClass  
+{  
+   public MyClass() {  
+      Console.WriteLine("Instance constructor");  
+   }  
+   public MyClass(int value) {  
+      MyField = value;  
+      Console.WriteLine("Instance constructor");  
+   }  
+   ~MyClass() {  
+      Console.WriteLine("Destructor");  
+   }  
+   public const int MyConst = 12;  
+   public int MyField = 34;  
+   public void MyMethod(){  
+      Console.WriteLine("MyClass.MyMethod");  
+   }  
+   public int MyProperty {  
+      get {  
+         return MyField;  
+      }  
+      set {  
+         MyField = value;  
+      }  
+   }  
+   public int this[int index] {  
+      get {  
+         return 0;  
+      }  
+      set {  
+         Console.WriteLine("this[{0}] = {1}", index, value);  
+      }  
+   }  
+   public event EventHandler MyEvent;  
+   public static MyClass operator+(MyClass a, MyClass b) {  
+      return new MyClass(a.MyField + b.MyField);  
+   }  
+   internal class MyNestedClass  
+   {}  
+}  
+]]></code_example>shows a class that contains each kind of member. The example <code_example><![CDATA[
+class Test  
+{  
+   static void Main() {  
+      // Instance constructor usage  
+      MyClass a = new MyClass();  
+      MyClass b = new MyClass(123);  
+      // Constant usage  
+      Console.WriteLine("MyConst = {0}", MyClass.MyConst);  
+      // Field usage  
+      a.MyField++;  
+      Console.WriteLine("a.MyField = {0}", a.MyField);  
+      // Method usage  
+      a.MyMethod();  
+      // Property usage  
+      a.MyProperty++;  
+      Console.WriteLine("a.MyProperty = {0}", a.MyProperty);  
+      // Indexer usage  
+      a[3] = a[1] = a[2];  
+      Console.WriteLine("a[3] = {0}", a[3]);  
+      // Event usage  
+      a.MyEvent += new EventHandler(MyHandler);  
+      // Overloaded operator usage  
+      MyClass c = a + b;  
+   }  
+   static void MyHandler(object sender, EventArgs e) {  
+      Console.WriteLine("Test.MyHandler");  
+   }  
+   internal class MyNestedClass  
+   {}  
+}  
+]]></code_example>shows uses of these members. </paragraph>
+</clause>

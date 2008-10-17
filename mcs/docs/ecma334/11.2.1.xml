@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="11.2.1" title="Class types">
+  <paragraph>A class type defines a data structure that contains data members (constants and fields), function members (methods, properties, events, indexers, operators, instance constructors, destructors, and static constructors), and nested types. Class types support inheritance, a mechanism whereby derived classes can extend and specialize base classes. Instances of class types are created using <non_terminal where="14.5.10.1">object-creation-expression</non_terminal>s (<hyperlink>14.5.10.1</hyperlink>). </paragraph>
+  <paragraph>Class types are described in <hyperlink>17</hyperlink>. </paragraph>
+</clause>

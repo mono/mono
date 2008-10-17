@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<clause number="17.2.7.4" title="Member Names Reserved for Destructors">
+  <paragraph>For a class containing a destructor (<hyperlink>17.12</hyperlink>), the following signature is reserved: <code_example><![CDATA[
+void Finalize();  
+]]></code_example></paragraph>
+</clause>

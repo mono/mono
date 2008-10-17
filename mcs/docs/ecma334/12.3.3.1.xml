@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.1" title="General rules for statements">
+  <paragraph>
+    <list>
+      <list_item> v is not definitely assigned at the beginning of a function member body. </list_item>
+      <list_item> v is definitely assigned at the beginning of any unreachable statement. </list_item>
+      <list_item> The definite assignment state of v at the beginning of any other statement is determined by checking the definite assignment state of v on all control flow transfers that target the beginning of that statement. If (and only if) v is definitely assigned on all such control flow transfers, then v is definitely assigned at the beginning of the statement. The set of possible control flow transfers is determined in the same way as for checking statement reachability (<hyperlink>15.1</hyperlink>). </list_item>
+      <list_item> The definite assignment state of v at the end point of a block, checked, unchecked, if, while, do, for, foreach, lock, using, or switch statement is determined by checking the definite assignment state of v on all control flow transfers that target the end point of that statement. If v is definitely assigned on all such control flow transfers, then v is definitely assigned at the end point of the statement. Otherwise, v is not definitely assigned at the end point of the statement. The set of possible control flow transfers is determined in the same way as for checking statement reachability (<hyperlink>15.1</hyperlink>). </list_item>
+    </list>
+  </paragraph>
+</clause>

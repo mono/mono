@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="14.13.3" title="Event assignment">
+  <paragraph>If the left operand of a += or -= operator is classified as an event access, then the expression is evaluated as follows: <list><list_item> The instance expression, if any, of the event access is evaluated. </list_item><list_item> The right operand of the += or -= operator is evaluated, and, if required, converted to the type of the left operand through an implicit conversion (<hyperlink>13.1</hyperlink>). </list_item><list_item> An event accessor of the event is invoked, with argument list consisting of the right operand, after evaluation and, if necessary, conversion. If the operator was +=, the add accessor is invoked; if the operator was -=, the remove accessor is invoked. </list_item></list></paragraph>
+  <paragraph>An event assignment expression does not yield a value. Thus, an event assignment expression is valid only in the context of a <non_terminal where="15.6">statement-expression</non_terminal> (<hyperlink>15.6</hyperlink>). </paragraph>
+</clause>

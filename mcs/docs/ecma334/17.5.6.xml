@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<clause number="17.5.6" title="Abstract methods">
+  <paragraph>When an instance method declaration includes an abstract modifier, that method is said to be an abstract method. Although an abstract method is implicitly also a virtual method, it cannot have the modifier virtual. </paragraph>
+  <paragraph>An abstract method declaration introduces a new virtual method but does not provide an implementation of that method. Instead, non-abstract derived classes are required to provide their own implementation by overriding that method. Because an abstract method provides no actual implementation, the <non_terminal where="17.5">method-body</non_terminal> of an abstract method simply consists of a semicolon. </paragraph>
+  <paragraph>Abstract method declarations are only permitted in abstract classes (<hyperlink>17.1.1.1</hyperlink>). </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+public abstract class Shape  
+{  
+   public abstract void Paint(Graphics g, Rectangle r);  
+}  
+public class Ellipse: Shape  
+{  
+   public override void Paint(Graphics g, Rectangle r) {  
+      g.DrawEllipse(r);  
+   }  
+}  
+public class Box: Shape  
+{  
+   public override void Paint(Graphics g, Rectangle r) {  
+      g.DrawRect(r);  
+   }  
+}  
+]]></code_example>the Shape class defines the abstract notion of a geometrical shape object that can paint itself. The Paint method is abstract because there is no meaningful default implementation. The Ellipse and Box classes are concrete Shape implementations. Because these classes are non-abstract, they are required to override the Paint method and provide an actual implementation. end example]</example>
+  </paragraph>
+  <paragraph>It is a compile-time error for a <non_terminal where="14.5.8">base-access</non_terminal> (<hyperlink>14.5.8</hyperlink>) to reference an abstract method. <example>[Example: In the example <code_example><![CDATA[
+abstract class A  
+{  
+   public abstract void F();  
+}  
+class B: A  
+{  
+   public override void F() {  
+      base.F();            // Error, base.F is abstract  
+   }  
+}  
+]]></code_example>a compile-time error is reported for the base.F() invocation because it references an abstract method. end example]</example> </paragraph>
+  <paragraph>An abstract method declaration is permitted to override a virtual method. This allows an abstract class to force re-implementation of the method in derived classes, and makes the original implementation of the method unavailable. <example>[Example: In the example <code_example><![CDATA[
+using System;  
+class A  
+{  
+   public virtual void F() {  
+      Console.WriteLine("A.F");  
+   }  
+}  
+abstract class B: A  
+{  
+   public abstract override void F();  
+}  
+class C: B  
+{  
+   public override void F() {  
+      Console.WriteLine("C.F");  
+   }  
+}  
+]]></code_example>class A declares a virtual method, class B overrides this method with an abstract method, and class C overrides that abstract method to provide its own implementation. end example]</example> </paragraph>
+</clause>

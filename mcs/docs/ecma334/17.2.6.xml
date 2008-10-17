@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<clause number="17.2.6" title="Nested types">
+  <paragraph>A type declared within a class or struct is called a nested type. A type that is declared within a compilation unit or namespace is called a non-nested type. <example>[Example: In the following example: <code_example><![CDATA[
+using System;  
+class A  
+{  
+   class B  
+   {  
+      static void F() {  
+         Console.WriteLine("A.B.F");  
+      }  
+   }  
+}  
+]]></code_example>class B is a nested type because it is declared within class A, and class A is a non-nested type because it is declared within a compilation unit. end example]</example> </paragraph>
+</clause>

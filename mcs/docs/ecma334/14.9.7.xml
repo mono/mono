@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<clause number="14.9.7" title="String equality operators">
+  <paragraph>The predefined string equality operators are: : <code_example><![CDATA[
+bool operator ==(string x, string y);  
+bool operator !=(string x, string y);  
+]]></code_example></paragraph>
+  <paragraph>Two string values are considered equal when one of the following is true: <list><list_item> Both values are null. </list_item><list_item> Both values are non-null references to string instances that have identical lengths and identical characters in each character position. </list_item></list></paragraph>
+  <paragraph>The string equality operators compare string values rather than string references. When two separate string instances contain the exact same sequence of characters, the values of the strings are equal, but the references are different. <note>[Note: As described in <hyperlink>14.9.6</hyperlink>, the reference type equality operators can be used to compare string references instead of string values. end note]</note> </paragraph>
+</clause>

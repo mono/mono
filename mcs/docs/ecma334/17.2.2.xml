@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="17.2.2" title="The new modifier">
+  <paragraph>A <non_terminal where="17.2">class-member-declaration</non_terminal> is permitted to declare a member with the same name or signature as an inherited member. When this occurs, the derived class member is said to hide the base class member. Hiding an inherited member is not considered an error, but it does cause the compiler to issue a warning. To suppress the warning, the declaration of the derived class member can include a new modifier to indicate that the derived member is intended to hide the base member. This topic is discussed further in <hyperlink>10.7.1.2</hyperlink>. </paragraph>
+  <paragraph>If a new modifier is included in a declaration that doesn't hide an inherited member, a warning to that effect is issued. This warning is suppressed by removing the new modifier. </paragraph>
+</clause>

@@ -1,0 +1,559 @@
+<?xml version="1.0"?>
+<toc>
+  <node number="1" name="Scope"/>
+  <node number="2" name="Conformance"/>
+  <node number="3" name="References"/>
+  <node number="4" name="Definitions"/>
+  <node number="5" name="Notational conventions"/>
+  <node number="6" name="Acronyms and abbreviations"/>
+  <node number="7" name="General description"/>
+  <node number="8" name="Language Overview">
+    <node number="8.1" name="Getting started"/>
+    <node number="8.2" name="Types">
+      <node number="8.2.1" name="Predefined types"/>
+      <node number="8.2.2" name="Conversions"/>
+      <node number="8.2.3" name="Array types"/>
+      <node number="8.2.4" name="Type system unification"/>
+    </node>
+    <node number="8.3" name="Variables and parameters"/>
+    <node number="8.4" name="Automatic memory management"/>
+    <node number="8.5" name="Expressions"/>
+    <node number="8.6" name="Statements"/>
+    <node number="8.7" name="Classes">
+      <node number="8.7.1" name="Constants"/>
+      <node number="8.7.2" name="Fields"/>
+      <node number="8.7.3" name="Methods"/>
+      <node number="8.7.4" name="Properties"/>
+      <node number="8.7.5" name="Events"/>
+      <node number="8.7.6" name="Operators"/>
+      <node number="8.7.7" name="Indexers"/>
+      <node number="8.7.8" name="Instance constructors"/>
+      <node number="8.7.9" name="Destructors"/>
+      <node number="8.7.10" name="Static constructors"/>
+      <node number="8.7.11" name="Inheritance"/>
+    </node>
+    <node number="8.8" name="Structs"/>
+    <node number="8.9" name="Interfaces"/>
+    <node number="8.10" name="Delegates"/>
+    <node number="8.11" name="Enums"/>
+    <node number="8.12" name="Namespaces and assemblies"/>
+    <node number="8.13" name="Versioning"/>
+    <node number="8.14" name="Attributes"/>
+  </node>
+  <node number="9" name="Lexical structure">
+    <node number="9.1" name="Programs"/>
+    <node number="9.2" name="Grammars">
+      <node number="9.2.1" name="Lexical grammar"/>
+      <node number="9.2.2" name="Syntactic grammar"/>
+    </node>
+    <node number="9.3" name="Lexical analysis">
+      <node number="9.3.1" name="Line terminators"/>
+      <node number="9.3.2" name="Comments"/>
+      <node number="9.3.3" name="White space"/>
+    </node>
+    <node number="9.4" name="Tokens">
+      <node number="9.4.1" name="Unicode escape sequences"/>
+      <node number="9.4.2" name="Identifiers"/>
+      <node number="9.4.3" name="Keywords"/>
+      <node number="9.4.4" name="Literals">
+        <node number="9.4.4.1" name="Boolean literals"/>
+        <node number="9.4.4.2" name="Integer literals"/>
+        <node number="9.4.4.3" name="Real literals"/>
+        <node number="9.4.4.4" name="Character literals"/>
+        <node number="9.4.4.5" name="String literals"/>
+        <node number="9.4.4.6" name="The null literal"/>
+      </node>
+      <node number="9.4.5" name="Operators and punctuators"/>
+    </node>
+    <node number="9.5" name="Pre-processing directives">
+      <node number="9.5.1" name="Conditional compilation symbols"/>
+      <node number="9.5.2" name="Pre-processing expressions"/>
+      <node number="9.5.3" name="Declaration directives"/>
+      <node number="9.5.4" name="Conditional compilation directives"/>
+      <node number="9.5.5" name="Diagnostic directives"/>
+      <node number="9.5.6" name="Region control"/>
+      <node number="9.5.7" name="Line directives"/>
+    </node>
+  </node>
+  <node number="10" name="Basic concepts">
+    <node number="10.1" name="Application startup"/>
+    <node number="10.2" name="Application termination"/>
+    <node number="10.3" name="Declarations"/>
+    <node number="10.4" name="Members">
+      <node number="10.4.1" name="Namespace members"/>
+      <node number="10.4.2" name="Struct members"/>
+      <node number="10.4.3" name="Enumeration members"/>
+      <node number="10.4.4" name="Class members"/>
+      <node number="10.4.5" name="Interface members"/>
+      <node number="10.4.6" name="Array members"/>
+      <node number="10.4.7" name="Delegate members"/>
+    </node>
+    <node number="10.5" name="Member access">
+      <node number="10.5.1" name="Declared accessibility"/>
+      <node number="10.5.2" name="Accessibility domains"/>
+      <node number="10.5.3" name="Protected access for instance members"/>
+      <node number="10.5.4" name="Accessibility constraints"/>
+    </node>
+    <node number="10.6" name="Signatures and overloading"/>
+    <node number="10.7" name="Scopes">
+      <node number="10.7.1" name="Name hiding">
+        <node number="10.7.1.1" name="Hiding through nesting"/>
+        <node number="10.7.1.2" name="Hiding through inheritance"/>
+      </node>
+    </node>
+    <node number="10.8" name="Namespace and type names">
+      <node number="10.8.1" name="Fully qualified names"/>
+    </node>
+    <node number="10.9" name="Automatic memory management"/>
+    <node number="10.10" name="Execution order"/>
+  </node>
+  <node number="11" name="Types">
+    <node number="11.1" name="Value types">
+      <node number="11.1.1" name="Default constructors"/>
+      <node number="11.1.2" name="Struct types"/>
+      <node number="11.1.3" name="Simple types"/>
+      <node number="11.1.4" name="Integral types"/>
+      <node number="11.1.5" name="Floating point types"/>
+      <node number="11.1.6" name="The decimal type"/>
+      <node number="11.1.7" name="The bool type"/>
+      <node number="11.1.8" name="Enumeration types"/>
+    </node>
+    <node number="11.2" name="Reference types">
+      <node number="11.2.1" name="Class types"/>
+      <node number="11.2.2" name="The object type"/>
+      <node number="11.2.3" name="The string type"/>
+      <node number="11.2.4" name="Interface types"/>
+      <node number="11.2.5" name="Array types"/>
+      <node number="11.2.6" name="Delegate types"/>
+    </node>
+    <node number="11.3" name="Boxing and unboxing">
+      <node number="11.3.1" name="Boxing conversions"/>
+      <node number="11.3.2" name="Unboxing conversions"/>
+    </node>
+  </node>
+  <node number="12" name="Variables">
+    <node number="12.1" name="Variable categories">
+      <node number="12.1.1" name="Static variables"/>
+      <node number="12.1.2" name="Instance variables">
+        <node number="12.1.2.1" name="Instance variables in classes"/>
+        <node number="12.1.2.2" name="Instance variables in structs"/>
+      </node>
+      <node number="12.1.3" name="Array elements"/>
+      <node number="12.1.4" name="Value parameters"/>
+      <node number="12.1.5" name="Reference parameters"/>
+      <node number="12.1.6" name="Output parameters"/>
+      <node number="12.1.7" name="Local variables"/>
+    </node>
+    <node number="12.2" name="Default values"/>
+    <node number="12.3" name="Definite assignment">
+      <node number="12.3.1" name="Initially assigned variables"/>
+      <node number="12.3.2" name="Initially unassigned variables"/>
+      <node number="12.3.3" name="Precise rules for determining definite assignment">
+        <node number="12.3.3.1" name="General rules for statements"/>
+        <node number="12.3.3.2" name="Block statements, checked, and unchecked statements"/>
+        <node number="12.3.3.3" name="Expression statements"/>
+        <node number="12.3.3.4" name="Declaration statements"/>
+        <node number="12.3.3.5" name="If statements"/>
+        <node number="12.3.3.6" name="Switch statements"/>
+        <node number="12.3.3.7" name="While statements"/>
+        <node number="12.3.3.8" name="Do statements"/>
+        <node number="12.3.3.9" name="For statements"/>
+        <node number="12.3.3.10" name="Break, continue, and goto statements"/>
+        <node number="12.3.3.11" name="Throw statements"/>
+        <node number="12.3.3.12" name="Return statements"/>
+        <node number="12.3.3.13" name="Try-catch statements"/>
+        <node number="12.3.3.14" name="Try-finally statements"/>
+        <node number="12.3.3.15" name="Try-catch-finally statements"/>
+        <node number="12.3.3.16" name="Foreach statements"/>
+        <node number="12.3.3.17" name="Using statements"/>
+        <node number="12.3.3.18" name="Lock statements"/>
+        <node number="12.3.3.19" name="General rules for simple expressions"/>
+        <node number="12.3.3.20" name="General rules for expressions with embedded expressions"/>
+        <node number="12.3.3.21" name="Invocation expressions and object creation expressions"/>
+        <node number="12.3.3.22" name="Simple assignment expressions"/>
+        <node number="12.3.3.23" name="&amp;&amp; expressions"/>
+        <node number="12.3.3.24" name="|| expressions"/>
+        <node number="12.3.3.25" name="! expressions"/>
+        <node number="12.3.3.26" name="?: expressions"/>
+      </node>
+    </node>
+    <node number="12.4" name="Variable references"/>
+    <node number="12.5" name="Atomicity of variable references"/>
+  </node>
+  <node number="13" name="Conversions">
+    <node number="13.1" name="Implicit conversions">
+      <node number="13.1.1" name="Identity conversion"/>
+      <node number="13.1.2" name="Implicit numeric conversions"/>
+      <node number="13.1.3" name="Implicit enumeration conversions"/>
+      <node number="13.1.4" name="Implicit reference conversions"/>
+      <node number="13.1.5" name="Boxing conversions"/>
+      <node number="13.1.6" name="Implicit constant expression conversions"/>
+      <node number="13.1.7" name="User-defined implicit conversions"/>
+    </node>
+    <node number="13.2" name="Explicit conversions">
+      <node number="13.2.1" name="Explicit numeric conversions"/>
+      <node number="13.2.2" name="Explicit enumeration conversions"/>
+      <node number="13.2.3" name="Explicit reference conversions"/>
+      <node number="13.2.4" name="Unboxing conversions"/>
+      <node number="13.2.5" name="User-defined explicit conversions"/>
+    </node>
+    <node number="13.3" name="Standard conversions">
+      <node number="13.3.1" name="Standard implicit conversions"/>
+      <node number="13.3.2" name="Standard explicit conversions"/>
+    </node>
+    <node number="13.4" name="User-defined conversions">
+      <node number="13.4.1" name="Permitted user-defined conversions"/>
+      <node number="13.4.2" name="Evaluation of user-defined conversions"/>
+      <node number="13.4.3" name="User-defined implicit conversions"/>
+      <node number="13.4.4" name="User-defined explicit conversions"/>
+    </node>
+  </node>
+  <node number="14" name="Expressions">
+    <node number="14.1" name="Expression classifications">
+      <node number="14.1.1" name="Values of expressions"/>
+    </node>
+    <node number="14.2" name="Operators">
+      <node number="14.2.1" name="Operator precedence and associativity"/>
+      <node number="14.2.2" name="Operator overloading"/>
+      <node number="14.2.3" name="Unary operator overload resolution"/>
+      <node number="14.2.4" name="Binary operator overload resolution"/>
+      <node number="14.2.5" name="Candidate user-defined operators"/>
+      <node number="14.2.6" name="Numeric promotions">
+        <node number="14.2.6.1" name="Unary numeric promotions"/>
+        <node number="14.2.6.2" name="Binary numeric promotions"/>
+      </node>
+    </node>
+    <node number="14.3" name="Member lookup">
+      <node number="14.3.1" name="Base types"/>
+    </node>
+    <node number="14.4" name="Function members">
+      <node number="14.4.1" name="Argument lists"/>
+      <node number="14.4.2" name="Overload resolution">
+        <node number="14.4.2.1" name="Applicable function member"/>
+        <node number="14.4.2.2" name="Better function member"/>
+        <node number="14.4.2.3" name="Better conversion"/>
+      </node>
+      <node number="14.4.3" name="Function member invocation">
+        <node number="14.4.3.1" name="Invocations on boxed instances"/>
+      </node>
+    </node>
+    <node number="14.5" name="Primary expressions">
+      <node number="14.5.1" name="Literals"/>
+      <node number="14.5.2" name="Simple names">
+        <node number="14.5.2.1" name="Invariant meaning in blocks"/>
+      </node>
+      <node number="14.5.3" name="Parenthesized expressions"/>
+      <node number="14.5.4" name="Member access">
+        <node number="14.5.4.1" name="Identical simple names and type names"/>
+      </node>
+      <node number="14.5.5" name="Invocation expressions">
+        <node number="14.5.5.1" name="Method invocations"/>
+        <node number="14.5.5.2" name="Delegate invocations"/>
+      </node>
+      <node number="14.5.6" name="Element access">
+        <node number="14.5.6.1" name="Array access"/>
+        <node number="14.5.6.2" name="Indexer access"/>
+      </node>
+      <node number="14.5.7" name="This access"/>
+      <node number="14.5.8" name="Base access"/>
+      <node number="14.5.9" name="Postfix increment and decrement operators"/>
+      <node number="14.5.10" name="The new operator">
+        <node number="14.5.10.1" name="Object creation expressions"/>
+        <node number="14.5.10.2" name="Array creation expressions"/>
+        <node number="14.5.10.3" name="Delegate creation expressions"/>
+      </node>
+      <node number="14.5.11" name="The typeof operator"/>
+      <node number="14.5.12" name="The checked and unchecked operators"/>
+    </node>
+    <node number="14.6" name="Unary expressions">
+      <node number="14.6.1" name="Unary plus operator"/>
+      <node number="14.6.2" name="Unary minus operator"/>
+      <node number="14.6.3" name="Logical negation operator"/>
+      <node number="14.6.4" name="Bitwise complement operator"/>
+      <node number="14.6.5" name="Prefix increment and decrement operators"/>
+      <node number="14.6.6" name="Cast expressions"/>
+    </node>
+    <node number="14.7" name="Arithmetic operators">
+      <node number="14.7.1" name="Multiplication operator"/>
+      <node number="14.7.2" name="Division operator"/>
+      <node number="14.7.3" name="Remainder operator"/>
+      <node number="14.7.4" name="Addition operator"/>
+      <node number="14.7.5" name="Subtraction operator"/>
+    </node>
+    <node number="14.8" name="Shift operators"/>
+    <node number="14.9" name="Relational and type-testing operators">
+      <node number="14.9.1" name="Integer comparison operators"/>
+      <node number="14.9.2" name="Floating-point comparison operators"/>
+      <node number="14.9.3" name="Decimal comparison operators"/>
+      <node number="14.9.4" name="Boolean equality operators"/>
+      <node number="14.9.5" name="Enumeration comparison operators"/>
+      <node number="14.9.6" name="Reference type equality operators"/>
+      <node number="14.9.7" name="String equality operators"/>
+      <node number="14.9.8" name="Delegate equality operators"/>
+      <node number="14.9.9" name="The is operator"/>
+      <node number="14.9.10" name="The as operator"/>
+    </node>
+    <node number="14.10" name="Logical operators">
+      <node number="14.10.1" name="Integer logical operators"/>
+      <node number="14.10.2" name="Enumeration logical operators"/>
+      <node number="14.10.3" name="Boolean logical operators"/>
+    </node>
+    <node number="14.11" name="Conditional logical operators">
+      <node number="14.11.1" name="Boolean conditional logical operators"/>
+      <node number="14.11.2" name="User-defined conditional logical operators"/>
+    </node>
+    <node number="14.12" name="Conditional operator"/>
+    <node number="14.13" name="Assignment operators">
+      <node number="14.13.1" name="Simple assignment"/>
+      <node number="14.13.2" name="Compound assignment"/>
+      <node number="14.13.3" name="Event assignment"/>
+    </node>
+    <node number="14.14" name="Expression"/>
+    <node number="14.15" name="Constant expressions"/>
+    <node number="14.16" name="Boolean expressions"/>
+  </node>
+  <node number="15" name="Statements">
+    <node number="15.1" name="End points and reachability"/>
+    <node number="15.2" name="Blocks">
+      <node number="15.2.1" name="Statement lists"/>
+    </node>
+    <node number="15.3" name="The empty statement"/>
+    <node number="15.4" name="Labeled statements"/>
+    <node number="15.5" name="Declaration statements">
+      <node number="15.5.1" name="Local variable declarations"/>
+      <node number="15.5.2" name="Local constant declarations"/>
+    </node>
+    <node number="15.6" name="Expression statements"/>
+    <node number="15.7" name="Selection statements">
+      <node number="15.7.1" name="The if statement"/>
+      <node number="15.7.2" name="The switch statement"/>
+    </node>
+    <node number="15.8" name="Iteration statements">
+      <node number="15.8.1" name="The while statement"/>
+      <node number="15.8.2" name="The do statement"/>
+      <node number="15.8.3" name="The for statement"/>
+      <node number="15.8.4" name="The foreach statement"/>
+    </node>
+    <node number="15.9" name="Jump statements">
+      <node number="15.9.1" name="The break statement"/>
+      <node number="15.9.2" name="The continue statement"/>
+      <node number="15.9.3" name="The goto statement"/>
+      <node number="15.9.4" name="The return statement"/>
+      <node number="15.9.5" name="The throw statement"/>
+    </node>
+    <node number="15.10" name="The try statement"/>
+    <node number="15.11" name="The checked and unchecked statements"/>
+    <node number="15.12" name="The lock statement"/>
+    <node number="15.13" name="The using statement"/>
+  </node>
+  <node number="16" name="Namespaces">
+    <node number="16.1" name="Compilation units"/>
+    <node number="16.2" name="Namespace declarations"/>
+    <node number="16.3" name="Using directives">
+      <node number="16.3.1" name="Using alias directives"/>
+      <node number="16.3.2" name="Using namespace directives"/>
+    </node>
+    <node number="16.4" name="Namespace members"/>
+    <node number="16.5" name="Type declarations"/>
+  </node>
+  <node number="17" name="Classes">
+    <node number="17.1" name="Class declarations">
+      <node number="17.1.1" name="Class modifiers">
+        <node number="17.1.1.1" name="Abstract classes"/>
+        <node number="17.1.1.2" name="Sealed classes"/>
+      </node>
+      <node number="17.1.2" name="Class base specification">
+        <node number="17.1.2.1" name="Base classes"/>
+        <node number="17.1.2.2" name="Interface implementations"/>
+      </node>
+      <node number="17.1.3" name="Class body"/>
+    </node>
+    <node number="17.2" name="Class members">
+      <node number="17.2.1" name="Inheritance"/>
+      <node number="17.2.2" name="The new modifier"/>
+      <node number="17.2.3" name="Access modifiers"/>
+      <node number="17.2.4" name="Constituent types"/>
+      <node number="17.2.5" name="Static and instance members"/>
+      <node number="17.2.6" name="Nested types">
+        <node number="17.2.6.1" name="Fully qualified name"/>
+        <node number="17.2.6.2" name="Declared accessibility"/>
+        <node number="17.2.6.3" name="Hiding"/>
+        <node number="17.2.6.4" name="this access"/>
+        <node number="17.2.6.5" name="Access to private and protected members of the containing type"/>
+      </node>
+      <node number="17.2.7" name="Reserved member names">
+        <node number="17.2.7.1" name="Member Names Reserved for Properties"/>
+        <node number="17.2.7.2" name="Member Names Reserved for Events"/>
+        <node number="17.2.7.3" name="Member Names Reserved for Indexers"/>
+        <node number="17.2.7.4" name="Member Names Reserved for Destructors"/>
+      </node>
+    </node>
+    <node number="17.3" name="Constants"/>
+    <node number="17.4" name="Fields">
+      <node number="17.4.1" name="Static and instance fields"/>
+      <node number="17.4.2" name="Readonly fields">
+        <node number="17.4.2.1" name="Using static readonly fields for constants"/>
+        <node number="17.4.2.2" name="Versioning of constants and static readonly fields"/>
+      </node>
+      <node number="17.4.3" name="Volatile fields"/>
+      <node number="17.4.4" name="Field initialization"/>
+      <node number="17.4.5" name="Variable initializers">
+        <node number="17.4.5.1" name="Static field initialization"/>
+        <node number="17.4.5.2" name="Instance field initialization"/>
+      </node>
+    </node>
+    <node number="17.5" name="Methods">
+      <node number="17.5.1" name="Method parameters">
+        <node number="17.5.1.1" name="Value parameters"/>
+        <node number="17.5.1.2" name="Reference parameters"/>
+        <node number="17.5.1.3" name="Output parameters"/>
+        <node number="17.5.1.4" name="Parameter arrays"/>
+      </node>
+      <node number="17.5.2" name="Static and instance methods"/>
+      <node number="17.5.3" name="Virtual methods"/>
+      <node number="17.5.4" name="Override methods"/>
+      <node number="17.5.5" name="Sealed methods"/>
+      <node number="17.5.6" name="Abstract methods"/>
+      <node number="17.5.7" name="External methods"/>
+      <node number="17.5.8" name="Method body"/>
+      <node number="17.5.9" name="Method overloading"/>
+    </node>
+    <node number="17.6" name="Properties">
+      <node number="17.6.1" name="Static and instance properties"/>
+      <node number="17.6.2" name="Accessors"/>
+      <node number="17.6.3" name="Virtual, sealed, override, and abstract accessors"/>
+    </node>
+    <node number="17.7" name="Events">
+      <node number="17.7.1" name="Field-like events"/>
+      <node number="17.7.2" name="Event accessors"/>
+      <node number="17.7.3" name="Static and instance events"/>
+      <node number="17.7.4" name="Virtual, sealed, override, and abstract accessors"/>
+    </node>
+    <node number="17.8" name="Indexers">
+      <node number="17.8.1" name="Indexer overloading"/>
+    </node>
+    <node number="17.9" name="Operators">
+      <node number="17.9.1" name="Unary operators"/>
+      <node number="17.9.2" name="Binary operators"/>
+      <node number="17.9.3" name="Conversion operators"/>
+    </node>
+    <node number="17.10" name="Instance constructors">
+      <node number="17.10.1" name="Constructor initializers"/>
+      <node number="17.10.2" name="Instance variable initializers"/>
+      <node number="17.10.3" name="Constructor execution"/>
+      <node number="17.10.4" name="Default constructors"/>
+      <node number="17.10.5" name="Private constructors"/>
+      <node number="17.10.6" name="Optional instance constructor parameters"/>
+    </node>
+    <node number="17.11" name="Static constructors"/>
+    <node number="17.12" name="Destructors"/>
+  </node>
+  <node number="18" name="Structs">
+    <node number="18.1" name="Struct declarations">
+      <node number="18.1.1" name="Struct modifiers"/>
+      <node number="18.1.2" name="Struct interfaces"/>
+      <node number="18.1.3" name="Struct body"/>
+    </node>
+    <node number="18.2" name="Struct members"/>
+    <node number="18.3" name="Class and struct differences">
+      <node number="18.3.1" name="Value semantics"/>
+      <node number="18.3.2" name="Inheritance"/>
+      <node number="18.3.3" name="Assignment"/>
+      <node number="18.3.4" name="Default values"/>
+      <node number="18.3.5" name="Boxing and unboxing"/>
+      <node number="18.3.6" name="Meaning of this"/>
+      <node number="18.3.7" name="Field initializers"/>
+      <node number="18.3.8" name="Constructors"/>
+      <node number="18.3.9" name="Destructors"/>
+    </node>
+    <node number="18.4" name="Struct examples">
+      <node number="18.4.1" name="Database integer type"/>
+      <node number="18.4.2" name="Database boolean type"/>
+    </node>
+  </node>
+  <node number="19" name="Arrays">
+    <node number="19.1" name="Array types">
+      <node number="19.1.1" name="The System.Array type"/>
+    </node>
+    <node number="19.2" name="Array creation"/>
+    <node number="19.3" name="Array element access"/>
+    <node number="19.4" name="Array members"/>
+    <node number="19.5" name="Array covariance"/>
+    <node number="19.6" name="Array initializers"/>
+  </node>
+  <node number="20" name="Interfaces">
+    <node number="20.1" name="Interface declarations">
+      <node number="20.1.1" name="Interface modifiers"/>
+      <node number="20.1.2" name="Base interfaces"/>
+      <node number="20.1.3" name="Interface body"/>
+    </node>
+    <node number="20.2" name="Interface members">
+      <node number="20.2.1" name="Interface methods"/>
+      <node number="20.2.2" name="Interface properties"/>
+      <node number="20.2.3" name="Interface events"/>
+      <node number="20.2.4" name="Interface indexers"/>
+      <node number="20.2.5" name="Interface member access"/>
+    </node>
+    <node number="20.3" name="Fully qualified interface member names"/>
+    <node number="20.4" name="Interface implementations">
+      <node number="20.4.1" name="Explicit interface member implementations"/>
+      <node number="20.4.2" name="Interface mapping"/>
+      <node number="20.4.3" name="Interface implementation inheritance"/>
+      <node number="20.4.4" name="Interface re-implementation"/>
+      <node number="20.4.5" name="Abstract classes and interfaces"/>
+    </node>
+  </node>
+  <node number="21" name="Enums">
+    <node number="21.1" name="Enum declarations"/>
+    <node number="21.2" name="Enum modifiers"/>
+    <node number="21.3" name="Enum members"/>
+    <node number="21.4" name="Enum values and operations"/>
+  </node>
+  <node number="22" name="Delegates">
+    <node number="22.1" name="Delegate declarations"/>
+    <node number="22.2" name="Delegate instantiation"/>
+    <node number="22.3" name="Delegate invocation"/>
+  </node>
+  <node number="23" name="Exceptions">
+    <node number="23.1" name="Causes of exceptions"/>
+    <node number="23.2" name="The System.Exception class"/>
+    <node number="23.3" name="How exceptions are handled"/>
+    <node number="23.4" name="Common Exception Classes"/>
+  </node>
+  <node number="24" name="Attributes">
+    <node number="24.1" name="Attribute classes">
+      <node number="24.1.1" name="Attribute usage"/>
+      <node number="24.1.2" name="Positional and named parameters"/>
+      <node number="24.1.3" name="Attribute parameter types"/>
+    </node>
+    <node number="24.2" name="Attribute specification"/>
+    <node number="24.3" name="Attribute instances">
+      <node number="24.3.1" name="Compilation of an attribute"/>
+      <node number="24.3.2" name="Run-time retrieval of an attribute instance"/>
+    </node>
+    <node number="24.4" name="Reserved attributes">
+      <node number="24.4.1" name="The AttributeUsage attribute"/>
+      <node number="24.4.2" name="The Conditional attribute"/>
+      <node number="24.4.3" name="The Obsolete attribute"/>
+    </node>
+  </node>
+  <node number="25" name="Unsafe code">
+    <node number="25.1" name="Unsafe contexts"/>
+    <node number="25.2" name="Pointer types"/>
+    <node number="25.3" name="Fixed and moveable variables"/>
+    <node number="25.4" name="Pointer conversions"/>
+    <node number="25.5" name="Pointers in expressions">
+      <node number="25.5.1" name="Pointer indirection"/>
+      <node number="25.5.2" name="Pointer member access"/>
+      <node number="25.5.3" name="Pointer element access"/>
+      <node number="25.5.4" name="The address-of operator"/>
+      <node number="25.5.5" name="Pointer increment and decrement"/>
+      <node number="25.5.6" name="Pointer arithmetic"/>
+      <node number="25.5.7" name="Pointer comparison"/>
+      <node number="25.5.8" name="The sizeof operator"/>
+    </node>
+    <node number="25.6" name="The fixed statement"/>
+    <node number="25.7" name="Stack allocation"/>
+    <node number="25.8" name="Dynamic memory allocation"/>
+  </node>
+</toc>

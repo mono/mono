@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="18" title="Structs">
+  <paragraph>Structs are similar to classes in that they represent data structures that can contain data members and function members. However, unlike classes, structs are value types and do not require heap allocation. A variable of a struct type directly contains the data of the struct, whereas a variable of a class type contains a reference to the data, the latter known as an object. </paragraph>
+  <paragraph>
+    <note>[Note: Structs are particularly useful for small data structures that have value semantics. Complex numbers, points in a coordinate system, or key-value pairs in a dictionary are all good examples of structs. Key to these data structures is that they have few data members, that they do not require use of inheritance or referential identity, and that they can be conveniently implemented using value semantics where assignment copies the value instead of the reference. end note]</note>
+  </paragraph>
+  <paragraph>As described in <hyperlink>11.1.3</hyperlink>, the simple types provided by C#, such as <keyword>int</keyword>, <keyword>double</keyword>, and <keyword>bool</keyword>, are, in fact, all struct types. Just as these predefined types are structs, it is also possible to use structs and operator overloading to implement new &quot;primitive&quot; types in the C# language. Two examples of such types are given at the end of this chapter (<hyperlink>18.4</hyperlink>). </paragraph>
+</clause>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<clause number="6" title="Acronyms and abbreviations" informative="true">
+  <paragraph>This clause is informative. </paragraph>
+  <paragraph>The following acronyms and abbreviations are used throughout this ECMA Standard. </paragraph>
+  <paragraph>BCL  -Base Class Library, which provides types to represent the built-in data types of the CLI, simple file access, custom attributes, security attributes, string manipulation, formatting, streams, and collections. </paragraph>
+  <paragraph>CLI  -Common Language Infrastructure </paragraph>
+  <paragraph>CLS  -Common Language Specification </paragraph>
+  <paragraph>IEC  -the International Electrotechnical Commission </paragraph>
+  <paragraph>IEEE  -the Institute of Electrical and Electronics Engineers </paragraph>
+  <paragraph>ISO  -the International Organization for Standardization </paragraph>
+  <paragraph>The name C# is pronounced &quot;C Sharp&quot;. </paragraph>
+  <paragraph>The name C# is written as the LATIN CAPITAL LETTER C (U+0043) followed by the NUMBER SIGN # (U+000D). </paragraph>
+  <paragraph>End of informative text. </paragraph>
+</clause>

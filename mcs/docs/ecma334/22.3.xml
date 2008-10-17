@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<clause number="22.3" title="Delegate invocation">
+  <paragraph>C# provides special syntax for invoking a delegate. When a non-null delegate instance whose invocation list contains one entry, is invoked, it invokes the one method with the same arguments it was given, and returns the same value as the referred to method. (See <hyperlink>14.5.5.2</hyperlink> for detailed information on delegate invocation.) If an exception occurs during the invocation of such a delegate, and that exception is not caught within the method that was invoked, the search for an exception catch clause continues in the method that called the delegate, as if that method had directly called the method to which that delegate referred. </paragraph>
+  <paragraph>Invocation of a delegate instance whose invocation list contains multiple entries, proceeds by invoking each of the methods in the invocation list, synchronously, in order. Each method so called is passed the same set of arguments as was given to the delegate instance. If such a delegate invocation includes reference parameters (<hyperlink>17.5.1.2</hyperlink>), each method invocation will occur with a reference to the same variable; changes to that variable by one method in the invocation list will be visible to methods further down the invocation list. If the delegate invocation includes output parameters or a return value, their final value will come from the invocation of the last delegate in the list. If an exception occurs during processing of the invocation of such a delegate, and that exception is not caught within the method that was invoked, the search for an exception catch clause continues in the method that called the delegate, and any methods further down the invocation list are not invoked. </paragraph>
+  <paragraph>Attempting to invoke a delegate instance whose value is null results in an exception of type System.NullReferenceException. </paragraph>
+  <paragraph>
+    <example>[Example: The following example shows how to instantiate, combine, remove, and invoke delegates: <code_example><![CDATA[
+using System;  
+delegate void D(int x);  
+class Test  
+{  
+   public static void M1(int i) {  
+      Console.WriteLine("Test.M1: " + i);  
+   }  
+   public static void M2(int i) {  
+      Console.WriteLine("Test.M2: " + i);  
+   }  
+   public void M3(int i) {  
+      Console.WriteLine("Test.M3: " + i);  
+   }  
+}  
+class Demo  
+{  
+   static void Main() {   
+      D cd1 = new D(Test.M1);  
+      cd1(-1);  // call M1  
+      D cd2 = new D(Test.M2);  
+      cd2(-2);  // call M2  
+      D cd3 = cd1 + cd2;  
+      cd3(10);  // call M1 then M2  
+      
+      cd3 += cd1;  
+      cd3(20);  // call M1, M2, then M1  
+      Test t = new Test();  
+      D cd4 = new D(t.M3);  
+      cd3 += cd4;  
+      cd3(30);  // call M1, M2, M1, then M3  
+      cd3 -= cd1; // remove last M1  
+      cd3(40);  // call M1, M2, then M3  
+      cd3 -= cd4;  
+      cd3(50);  // call M1 then M2  
+      cd3 -= cd2;  
+      cd3(60);  // call M1  
+      cd3 -= cd2; // impossible removal is benign  
+      cd3(60);  // call M1  
+      cd3 -= cd1; // invocation list is empty  
+      //  cd3(70);  // System.NullReferenceException thrown  
+      cd3 -= cd1; // impossible removal is benign  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>As shown in the statement cd3 += cd1;, a delegate can be present in an invocation list multiple times. In this case, it is simply invoked once per occurrence. In an invocation list such as this, when that delegate is removed, the last occurrence in the invocation list is the one actually removed. </example>
+  </paragraph>
+  <paragraph>
+    <example>Immediately prior to the execution of the final statement, cd3 -= cd1;, the delegate cd3 refers to an empty invocation list. Attempting to remove a delegate from an empty list (or to remove a non-existent delegate from a non-empty list) is not an error. </example>
+  </paragraph>
+  <paragraph>
+    <example>The output produced is: <code_example><![CDATA[
+Test.M1: -1  
+Test.M2: -2  
+Test.M1: 10  
+Test.M2: 10  
+Test.M1: 20  
+Test.M2: 20  
+Test.M1: 20  
+Test.M1: 30  
+Test.M2: 30  
+Test.M1: 30  
+Test.M3: 30  
+Test.M1: 40  
+Test.M2: 40  
+Test.M3: 40  
+Test.M1: 50  
+Test.M2: 50  
+Test.M1: 60  
+Test.M1: 60  
+]]></code_example>end example]</example>
+    <table_line/>
+  </paragraph>
+</clause>

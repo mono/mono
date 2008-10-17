@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="14.6.3" title="Logical negation operator">
+  <paragraph>For an operation of the form !x, unary operator overload resolution (<hyperlink>14.2.3</hyperlink>) is applied to select a specific operator implementation. The operand is converted to the parameter type of the selected operator, and the type of the result is the return type of the operator. Only one predefined logical negation operator exists: <code_example><![CDATA[
+bool operator !(bool x);  
+]]></code_example></paragraph>
+  <paragraph>This operator computes the logical negation of the operand: If the operand is true, the result is false. If the operand is false, the result is true. </paragraph>
+</clause>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<clause number="11.2.6" title="Delegate types">
+  <paragraph>A delegate is a data structure that refers to one or more methods, and for instance methods, it also refers to their corresponding object instances. </paragraph>
+  <paragraph>
+    <note>[Note: The closest equivalent of a delegate in C or C++ is a function pointer, but whereas a function pointer can only reference static functions, a delegate can reference both static and instance methods. In the latter case, the delegate stores not only a reference to the method's entry point, but also a reference to the object instance on which to invoke the method. end note]</note>
+  </paragraph>
+  <paragraph>Delegate types are described in <hyperlink>22</hyperlink>. </paragraph>
+</clause>

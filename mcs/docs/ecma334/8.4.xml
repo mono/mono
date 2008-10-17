@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<clause number="8.4" title="Automatic memory management" informative="true">
+  <paragraph>Manual memory management requires developers to manage the allocation and de-allocation of blocks of memory. Manual memory management can be both time-consuming and difficult. In C#, automatic memory management is provided so that developers are freed from this burdensome task. In the vast majority of cases, automatic memory management increases code quality and enhances developer productivity without negatively impacting either expressiveness or performance. </paragraph>
+  <paragraph>The example <code_example><![CDATA[
+using System;  
+public class Stack  
+{  
+   private Node first = null;  
+   public bool Empty {  
+      get {  
+         return (first == null);  
+      }  
+   }  
+   public object Pop() {  
+      if (first == null)   
+      throw new Exception("Can't Pop from an empty Stack.");  
+      else {  
+         object temp = first.Value;  
+         first = first.Next;  
+         return temp;  
+      }  
+   }  
+   public void Push(object o) {  
+      first = new Node(o, first);  
+   }  
+   class Node  
+   {  
+      public Node Next;  
+      public object Value;  
+      public Node(object value): this(value, null) {}  
+      public Node(object value, Node next) {  
+         Next = next;  
+         Value = value;  
+      }  
+   }  
+}  
+]]></code_example>shows a Stack class implemented as a linked list of Node instances. Node instances are created in the Push method and are garbage collected when no longer needed. A Node instance becomes eligible for garbage collection when it is no longer possible for any code to access it. For instance, when an item is removed from the Stack, the associated Node instance becomes eligible for garbage collection. </paragraph>
+  <paragraph>The example <code_example><![CDATA[
+class Test  
+{  
+   static void Main() {  
+      Stack s = new Stack();  
+      for (int i = 0; i < 10; i++)  
+      s.Push(i);  
+      s = null;  
+   }  
+}  
+]]></code_example>shows code that uses the Stack class. A Stack is created and initialized with 10 elements, and then assigned the value null. Once the variable s is assigned null, the Stack and the associated 10 Node instances become eligible for garbage collection. The garbage collector is permitted to clean up immediately, but is not required to do so. </paragraph>
+  <paragraph>The garbage collector underlying C# may work by moving objects around in memory, but this motion is invisible to most C# developers. For developers who are generally content with automatic memory management but sometimes need fine-grained control or that extra bit of performance, C# provides the ability to write &quot;unsafe&quot; code. Such code can deal directly with pointer types and object addresses, however, C# requires the programmer to fix objects to temporarily prevent the garbage collector from moving them. </paragraph>
+  <paragraph>This &quot;unsafe&quot; code feature is in fact a &quot;safe&quot; feature from the perspective of both developers and users. Unsafe code must be clearly marked in the code with the modifier unsafe, so developers can't possibly use unsafe language features accidentally, and the compiler and the execution engine work together to ensure that unsafe code cannot masquerade as safe code. These restrictions limit the use of unsafe code to situations in which the code is trusted. </paragraph>
+  <paragraph>The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void WriteLocations(byte[] arr) {  
+      unsafe {  
+         fixed (byte* pArray = arr) {  
+            byte* pElem = pArray;  
+            for (int i = 0; i < arr.Length; i++) {  
+               byte value = *pElem;  
+               Console.WriteLine("arr[{0}] at 0x{1:X} is {2}",  
+               i, (uint)pElem, value);  
+               pElem++;  
+            }  
+         }  
+      }  
+   }  
+   static void Main() {  
+      byte[] arr = new byte[] {1, 2, 3, 4, 5};  
+      WriteLocations(arr);  
+   }  
+}  
+]]></code_example>shows an unsafe block in a method named WriteLocations that fixes an array instance and uses pointer manipulation to iterate over the elements. The index, value, and location of each array element are written to the console. One possible example of output is: <code_example><![CDATA[
+arr[0] at 0x8E0360 is 1  
+arr[1] at 0x8E0361 is 2  
+arr[2] at 0x8E0362 is 3  
+arr[3] at 0x8E0363 is 4  
+arr[4] at 0x8E0364 is 5  
+]]></code_example>but, of course, the exact memory locations may be different in different executions of the application. </paragraph>
+</clause>

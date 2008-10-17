@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<clause number="14.9.2" title="Floating-point comparison operators">
+  <paragraph>The predefined floating-point comparison operators are: <code_example><![CDATA[
+bool operator ==(float x, float y);  
+bool operator ==(double x, double y);  
+bool operator !=(float x, float y);  
+bool operator !=(double x, double y);  
+bool operator <(float x, float y);  
+bool operator <(double x, double y);  
+bool operator >(float x, float y);  
+bool operator >(double x, double y);  
+bool operator <=(float x, float y);  
+bool operator <=(double x, double y);  
+bool operator >=(float x, float y);  
+bool operator >=(double x, double y);  
+]]></code_example></paragraph>
+  <paragraph>The operators compare the operands according to the rules of the IEEE 754 standard: <list><list_item> If either operand is NaN, the result is false for all operators except !=, for which the result is true. For any two operands, x != y always produces the same result as !(x == y). However, when one or both operands are NaN, the &lt;, &gt;, &lt;=, and &gt;= operators do not produce the same results as the logical negation of the opposite operator. <example>[Example: For example, if either of x and y is NaN, then x &lt; y is false, but !(x &gt;= y) is true. end example]</example> </list_item><list_item> When neither operand is NaN, the operators compare the values of the two floating-point operands with respect to the ordering <code_example><![CDATA[
+{UNICODE_150}{UNICODE_8734} < {UNICODE_150}max < {UNICODE_133} < {UNICODE_150}min < {UNICODE_150}0.0 == +0.0 < +min < {UNICODE_133} < +max < +{UNICODE_8734}  
+]]></code_example>where min and max are the smallest and largest positive finite values that can be represented in the given floating-point format. Notable effects of this ordering are: </list_item><list><list_item> Negative and positive zeros are considered equal. </list_item><list_item> A negative infinity is considered less than all other values, but equal to another negative infinity. </list_item><list_item> A positive infinity is considered greater than all other values, but equal to another positive infinity. </list_item></list></list></paragraph>
+</clause>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.11" title="Throw statements">
+  <paragraph>For a statement stmt of the form <code_example><![CDATA[
+throw expr ;  
+]]></code_example></paragraph>
+  <paragraph>The definite assignment state of v at the beginning of expr is the same as the definite assignment state of v at the beginning of stmt. </paragraph>
+</clause>

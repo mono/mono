@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="18.3.6" title="Meaning of this">
+  <paragraph>Within an instance constructor or instance function member of a class, this is classified as a value. Thus, while this can be used to refer to the instance for which the function member was invoked, it is not possible to assign to this in a function member of a class. </paragraph>
+  <paragraph>Within an instance constructor of a struct, this corresponds to an out parameter of the struct type, and within an instance function member of a struct, this corresponds to a ref parameter of the struct type. In both cases, this is classified as a variable, and it is possible to modify the entire struct for which the function member was invoked by assigning to this or by passing this as a ref or out parameter. </paragraph>
+</clause>

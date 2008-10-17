@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<clause number="25.5.8" title="The sizeof operator">
+  <paragraph>The sizeof operator returns the number of bytes occupied by a variable of a given type. The type specified as an operand to sizeof must be an <non_terminal where="25.2">unmanaged-type</non_terminal> (<hyperlink>25.2</hyperlink>). <grammar_production><name><non_terminal where="25.5.8">sizeof-expression</non_terminal></name> : <rhs><keyword>sizeof</keyword><terminal>(</terminal><non_terminal where="25.2">unmanaged-type</non_terminal><terminal>)</terminal></rhs></grammar_production></paragraph>
+  <paragraph>The result of the sizeof operator is a value of type <keyword>int</keyword>. For certain predefined types, the sizeof operator yields a constant value as shown in the table below. <table_line>Expression Result </table_line>
+<table_line>sizeof(<keyword>sbyte</keyword>) 1 </table_line>
+<table_line>sizeof(<keyword>byte</keyword>) 1 </table_line>
+<table_line>sizeof(<keyword>short</keyword>) 2 </table_line>
+<table_line>sizeof(<keyword>ushort</keyword>) 2 </table_line>
+<table_line>sizeof(<keyword>int</keyword>) 4 </table_line>
+<table_line>sizeof(<keyword>uint</keyword>) 4 </table_line>
+<table_line>sizeof(<keyword>long</keyword>) 8 </table_line>
+<table_line>sizeof(<keyword>ulong</keyword>) 8 </table_line>
+<table_line>sizeof(<keyword>char</keyword>) 2 </table_line>
+<table_line>sizeof(<keyword>float</keyword>) 4 </table_line>
+<table_line>sizeof(<keyword>double</keyword>) 8 </table_line>
+<table_line>sizeof(<keyword>bool</keyword>) 1 </table_line>
+</paragraph>
+  <paragraph>For all other types, the result of the sizeof operator is implementation-defined and is classified as a value, not a constant. </paragraph>
+  <paragraph>The order in which members are packed into a struct is unspecified. </paragraph>
+  <paragraph>For alignment purposes, there may be unnamed padding at the beginning of a struct, within a struct, and at the end of the struct. The contents of the bits used as padding are indeterminate. </paragraph>
+  <paragraph>When applied to an operand that has struct type, the result is the total number of bytes in a variable of that type, including any padding. </paragraph>
+</clause>

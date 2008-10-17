@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="20.1.3" title="Interface body">
+  <paragraph>The <non_terminal where="20.1.3">interface-body</non_terminal> of an interface defines the members of the interface. <grammar_production><name><non_terminal where="20.1.3">interface-body</non_terminal></name> : <rhs><terminal>{</terminal><non_terminal where="20.2">interface-member-declarations</non_terminal><opt/><terminal>}</terminal></rhs></grammar_production></paragraph>
+</clause>

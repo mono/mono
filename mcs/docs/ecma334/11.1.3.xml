@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<clause number="11.1.3" title="Simple types">
+  <paragraph>C# provides a set of predefined struct types called the simple types. The simple types are identified through reserved words, but these reserved words are simply aliases for predefined struct types in the System namespace, as described in the table below. <table_line>Reserved word Aliased type </table_line>
+<table_line><keyword>sbyte</keyword> System.SByte </table_line>
+<table_line><keyword>byte</keyword> System.Byte </table_line>
+<table_line><keyword>short</keyword> System.Int16 </table_line>
+<table_line><keyword>ushort</keyword> System.UInt16 </table_line>
+<table_line><keyword>int</keyword> System.Int32 </table_line>
+<table_line><keyword>uint</keyword> System.UInt32 </table_line>
+<table_line><keyword>long</keyword> System.Int64 </table_line>
+<table_line><keyword>ulong</keyword> System.UInt64 </table_line>
+<table_line><keyword>char</keyword> System.Char </table_line>
+<table_line><keyword>float</keyword> System.Single </table_line>
+<table_line><keyword>double</keyword> System.Double </table_line>
+<table_line><keyword>bool</keyword> System.Boolean </table_line>
+<table_line><keyword>decimal</keyword> System.Decimal </table_line>
+</paragraph>
+  <paragraph>Because a simple type aliases a struct type, every simple type has members. <example>[Example: For example, <keyword>int</keyword> has the members declared in System.Int32 and the members inherited from System.Object, and the following statements are permitted: <code_example><![CDATA[
+int i = int.MaxValue;      // System.Int32.MaxValue constant  
+string s = i.ToString();    // System.Int32.ToString() instance method  
+string t = 123.ToString();   // System.Int32.ToString() instance method  
+]]></code_example>end example]</example> The simple types differ from other struct types in that they permit certain additional operations: <list><list_item> Most simple types permit values to be created by writing literals (<hyperlink>9.4.4</hyperlink>). <example>[Example: For example, 123 is a literal of type <keyword>int</keyword> and 'a' is a literal of type <keyword>char</keyword>. end example]</example> C# makes no provision for literals of struct types in general, and non-default values of other struct types are ultimately always created through instance constructors of those struct types. </list_item><list_item> When the operands of an expression are all simple type constants, the compiler evaluates the expression at compile-time. Such an expression is known as a <non_terminal where="14.15">constant-expression</non_terminal> (<hyperlink>14.15</hyperlink>). Expressions involving operators defined by other struct types are not considered to be constant expressions. </list_item><list_item> Through const declarations, it is possible to declare constants of the simple types (<hyperlink>17.3</hyperlink>). It is not possible to have constants of other struct types, but a similar effect is provided by static readonly fields. </list_item><list_item> Conversions involving simple types can participate in evaluation of conversion operators defined by other struct types, but a user-defined conversion operator can never participate in evaluation of another  user-defined operator (<hyperlink>13.4.2</hyperlink>). </list_item></list></paragraph>
+</clause>

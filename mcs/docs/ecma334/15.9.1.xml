@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<clause number="15.9.1" title="The break statement">
+  <paragraph>The break statement exits the nearest enclosing switch, while, do, for, or foreach statement. <grammar_production><name><non_terminal where="15.9.1">break-statement</non_terminal></name> : <rhs><keyword>break</keyword><terminal>;</terminal></rhs></grammar_production></paragraph>
+  <paragraph>The target of a break statement is the end point of the nearest enclosing switch, while, do, for, or foreach statement. If a break statement is not enclosed by a switch, while, do, for, or foreach statement, a compile-time error occurs. </paragraph>
+  <paragraph>When multiple switch, while, do, for, or foreach statements are nested within each other, a break statement applies only to the innermost statement. To transfer control across multiple nesting levels, a goto statement (<hyperlink>15.9.3</hyperlink>) must be used. </paragraph>
+  <paragraph>A break statement cannot exit a finally block (<hyperlink>15.10</hyperlink>). When a break statement occurs within a finally block, the target of the break statement must be within the same finally block; otherwise a compile-time error occurs. </paragraph>
+  <paragraph>A break statement is executed as follows: <list><list_item> If the break statement exits one or more try blocks with associated finally blocks, control is initially transferred to the finally block of the innermost try statement. When and if control reaches the end point of a finally block, control is transferred to the finally block of the next enclosing try statement. This process is repeated until the finally blocks of all intervening try statements have been executed. </list_item><list_item> Control is transferred to the target of the break statement. </list_item></list></paragraph>
+  <paragraph>Because a break statement unconditionally transfers control elsewhere, the end point of a break statement is never reachable. </paragraph>
+</clause>

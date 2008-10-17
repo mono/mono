@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<clause number="25.1" title="Unsafe contexts">
+  <paragraph>The unsafe features of C# are available only in unsafe contexts. An unsafe context is introduced by including an unsafe modifier in the declaration of a type or member, or by employing an unsafe-statement: <list><list_item> A declaration of a class, struct, interface, or delegate may include an unsafe modifier, in which case the entire textual extent of that type declaration (including the body of the class, struct, or interface) is considered an unsafe context. </list_item><list_item> A declaration of a field, method, property, event, indexer, operator, instance constructor, destructor, or static constructor may include an unsafe modifier, in which case, the entire textual extent of that member declaration is considered an unsafe context. </list_item><list_item> An <non_terminal where="25.1">unsafe-statement</non_terminal> enables the use of an unsafe context within a block. The entire textual extent of the associated block is considered an unsafe context. </list_item></list></paragraph>
+  <paragraph>The associated grammar extensions are shown below. For brevity, ellipses (...) are used to represent productions that appear in preceding chapters. <grammar_production><name><non_terminal where="17.1.1">class-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="18.1.1">struct-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="20.1.1">interface-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="22.1">delegate-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.4">field-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.5">method-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.6">property-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.7">event-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.8">indexer-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.9">operator-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.10">constructor-modifier</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><keyword>unsafe</keyword></rhs></grammar_production><grammar_production><name><non_terminal where="17.12">destructor-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><keyword>extern</keyword><opt/><keyword>unsafe</keyword><opt/><terminal>~</terminal><non_terminal where="9.4.2">identifier</non_terminal><terminal>(</terminal><terminal>)</terminal><non_terminal where="17.12">destructor-body</non_terminal></rhs><rhs><non_terminal where="24.2">attributes</non_terminal><opt/><keyword>unsafe</keyword><opt/><keyword>extern</keyword><opt/><terminal>~</terminal><non_terminal where="9.4.2">identifier</non_terminal><terminal>(</terminal><terminal>)</terminal><non_terminal where="17.12">destructor-body</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="17.11">static-constructor-declaration</non_terminal></name> : <rhs><non_terminal where="24.2">attributes</non_terminal><opt/><keyword>extern</keyword><opt/><keyword>unsafe</keyword><opt/><keyword>static</keyword><non_terminal where="9.4.2">identifier</non_terminal><terminal>(</terminal><terminal>)</terminal><non_terminal where="17.11">static-constructor-body</non_terminal></rhs><rhs><non_terminal where="24.2">attributes</non_terminal><opt/><keyword>unsafe</keyword><opt/><keyword>extern</keyword><opt/><keyword>static</keyword><non_terminal where="9.4.2">identifier</non_terminal><terminal>(</terminal><terminal>)</terminal><non_terminal where="17.11">static-constructor-body</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="15">embedded-statement</non_terminal></name> : <rhs><terminal>...</terminal></rhs><rhs><non_terminal where="25.1">unsafe-statement</non_terminal></rhs></grammar_production><grammar_production><name><non_terminal where="25.1">unsafe-statement</non_terminal></name> : <rhs><keyword>unsafe</keyword><non_terminal where="15.2">block</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+public unsafe struct Node  
+{  
+   public int Value;  
+   public Node* Left;  
+   public Node* Right;  
+}  
+]]></code_example>the unsafe modifier specified in the struct declaration causes the entire textual extent of the struct declaration to become an unsafe context. Thus, it is possible to declare the Left and Right fields to be of a pointer type. The example above could also be written <code_example><![CDATA[
+public struct Node  
+{  
+   public int Value;  
+   public unsafe Node* Left;  
+   public unsafe Node* Right;  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Here, the unsafe modifiers in the field declarations cause those declarations to be considered unsafe contexts. end example]</example>
+  </paragraph>
+  <paragraph>Other than establishing an unsafe context, thus permitting the use of pointer types, the unsafe modifier has no effect on a type or a member. <example>[Example: In the example <code_example><![CDATA[
+public class A  
+{  
+   public unsafe virtual void F() {  
+      char* p;  
+      ...  
+   }  
+}  
+public class B: A  
+{  
+   public override void F() {  
+      base.F();  
+      ...  
+   }  
+}  
+]]></code_example>the unsafe modifier on the F method in A simply causes the textual extent of F to become an unsafe context in which the unsafe features of the language can be used. In the override of F in B, there is no need to re-specify the unsafe modifier-unless, of course, the F method in B itself needs access to unsafe features. </example></paragraph>
+  <paragraph>
+    <example>The situation is slightly different when a pointer type is part of the method's signature <code_example><![CDATA[
+public unsafe class A  
+{  
+   public virtual void F(char* p) {...}  
+}  
+public class B: A  
+{  
+   public unsafe override void F(char* p) {...}  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>Here, because F's signature includes a pointer type, it can only be written in an unsafe context. However, the unsafe context can be introduced by either making the entire class unsafe, as is the case in A, or by including an unsafe modifier in the method declaration, as is the case in B. end example]</example>
+  </paragraph>
+</clause>

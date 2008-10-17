@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<clause number="8.14" title="Attributes" informative="true">
+  <paragraph>C# is an imperative language, but like all imperative languages it does have some declarative elements. For example, the accessibility of a method in a class is specified by declaring it public, protected, internal, protected internal, or private. C# generalizes this capability, so that programmers can invent new kinds of declarative information, attach this declarative information to various program entities, and retrieve this declarative information at run-time. Programs specify this additional declarative information by defining and using attributes (<hyperlink>24</hyperlink>). </paragraph>
+  <paragraph>For instance, a framework might define a HelpAttribute attribute that can be placed on program elements such as classes and methods, enabling developers to provide a mapping from program elements to documentation for them. The example <code_example><![CDATA[
+using System;  
+[AttributeUsage(AttributeTargets.All)]  
+public class HelpAttribute: Attribute  
+{  
+   public HelpAttribute(string url) {  
+      this.url = url;  
+   }  
+   public string Topic = null;  
+   private string url;  
+   public string Url {   
+      get { return url; }  
+   }  
+}  
+]]></code_example>defines an attribute class named HelpAttribute, or Help for short, that has one positional parameter (string url) and one named parameter (string Topic). Positional parameters are defined by the formal parameters for public instance constructors of the attribute class, and named parameters are defined by public non-static read-write fields and properties of the attribute class. </paragraph>
+  <paragraph>The example <code_example><![CDATA[
+[Help("http://www.mycompany.com/.../Class1.htm")]  
+public class Class1   
+{  
+   [Help("http://www.mycompany.com/.../Class1.htm", Topic = "F")]  
+   public void F() {}  
+}  
+]]></code_example>shows several uses of the attribute Help. </paragraph>
+  <paragraph>Attribute information for a given program element can be retrieved at run-time by using reflection support. The example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      Type type = typeof(Class1);  
+      object[] arr = type.GetCustomAttributes(typeof(HelpAttribute),  
+      true);  
+      if (arr.Length == 0)  
+      Console.WriteLine("Class1 has no Help attribute.");  
+      else {  
+         HelpAttribute ha = (HelpAttribute) arr[0];  
+         Console.WriteLine("Url = {0}, Topic = {1}", ha.Url, ha.Topic);  
+      }  
+   }  
+}  
+]]></code_example>checks to see if Class1 has a Help attribute, and writes out the associated Topic and Url values if the attribute is present. </paragraph>
+  <paragraph>End of informative text. </paragraph>
+</clause>

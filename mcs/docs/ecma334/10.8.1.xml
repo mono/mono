@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<clause number="10.8.1" title="Fully qualified names">
+  <paragraph>Every namespace and type has a fully qualified name, which uniquely identifies the namespace or type amongst all others. The fully qualified name of a namespace or type N is determined as follows: <list><list_item> If N is a member of the global namespace, its fully qualified name is N. </list_item><list_item> Otherwise, its fully qualified name is S.N, where S is the fully qualified name of the namespace or type in which N is declared. </list_item></list></paragraph>
+  <paragraph>In other words, the fully qualified name of N is the complete hierarchical path of identifiers that lead to N, starting from the global namespace. Because every member of a namespace or type must have a unique name, it follows that the fully qualified name of a namespace or type is always unique. </paragraph>
+  <paragraph>
+    <example>[Example: The example below shows several namespace and type declarations along with their associated fully qualified names. <code_example><![CDATA[
+class A {}        // A  
+namespace X       // X  
+{  
+   class B        // X.B  
+   {  
+      class C {}   // X.B.C  
+   }  
+   namespace Y   // X.Y  
+   {  
+      class D {}   // X.Y.D  
+   }  
+}  
+namespace X.Y    // X.Y  
+{  
+   class E {}    // X.Y.E  
+}  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

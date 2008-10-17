@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<clause number="20" title="Interfaces">
+  <paragraph>An interface defines a contract. A class or struct that implements an interface must adhere to its contract. An interface may inherit from multiple base interfaces, and a class or struct may implement multiple interfaces. </paragraph>
+  <paragraph>Interfaces can contain methods, properties, events, and indexers. The interface itself does not provide implementations for the members that it defines. The interface merely specifies the members that must be supplied by classes or interfaces that implement the interface. </paragraph>
+</clause>

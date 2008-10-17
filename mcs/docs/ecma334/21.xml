@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<clause number="21" title="Enums">
+  <paragraph>An enum type is a distinct type that declares a set of named constants. <example>[Example: The example <code_example><![CDATA[
+enum Color  
+{  
+   Red,  
+   Green,  
+   Blue  
+}  
+]]></code_example>declares an enum type named Color with members Red, Green, and Blue. end example]</example> </paragraph>
+</clause>

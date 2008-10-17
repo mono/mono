@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<clause number="15.8.4" title="The foreach statement">
+  <paragraph>The foreach statement enumerates the elements of a collection, executing an embedded statement for each element of the collection. <grammar_production><name><non_terminal where="15.8.4">foreach-statement</non_terminal></name> : <rhs><keyword>foreach</keyword><terminal>(</terminal><non_terminal where="11">type</non_terminal><non_terminal where="9.4.2">identifier</non_terminal><keyword>in</keyword><non_terminal where="14.14">expression</non_terminal><terminal>)</terminal><non_terminal where="15">embedded-statement</non_terminal></rhs></grammar_production></paragraph>
+  <paragraph>The type and identifier of a foreach statement declare the iteration variable of the statement. The iteration variable corresponds to a read-only local variable with a scope that extends over the embedded statement. During execution of a foreach statement, the iteration variable represents the collection element for which an iteration is currently being performed. A compile-time error occurs if the embedded statement attempts to modify the iteration variable (via assignment or the ++ and  --operators) or pass the iteration variable as a ref or out parameter. </paragraph>
+  <paragraph>The type of the expression of a foreach statement must be a collection type (as defined below), and an explicit conversion (<hyperlink>13.2</hyperlink>) must exist from the element type of the collection to the type of the iteration variable. If expression has the value null, a System.NullReferenceException is thrown. </paragraph>
+  <paragraph>A type C is said to be a collection type if it implements the System.IEnumerable interface or implements the collection pattern by meeting all of the following criteria: <list><list_item> C contains a public instance method with the signature GetEnumerator(), that returns a <non_terminal where="11.1">struct-type</non_terminal>, <non_terminal where="11.2">class-type</non_terminal>, or <non_terminal where="11.2">interface-type</non_terminal>, which is called E in the following text. </list_item><list_item> E contains a public instance method with the signature MoveNext() and the return type <keyword>bool</keyword>. </list_item><list_item> E contains a public instance property named Current that permits reading the current value. The type of this property is said to be the element type of the collection type. </list_item></list></paragraph>
+  <paragraph>A type that implements IEnumerable is also a collection type, even if it doesn't satisfy the conditions above. (This is possible if it implements IEnumerable via private interface implementation.) </paragraph>
+  <paragraph>The System.Array type (<hyperlink>19.1.1</hyperlink>) is a collection type, and since all array types derive from System.Array, any array type expression is permitted in a foreach statement. The order in which foreach traverses the elements of an array is as follows: For single-dimensional arrays elements are traversed in increasing index order, starting with index 0 and ending with index Length  -1. For  multi-dimensional arrays, elements are traversed such that the indices of the rightmost dimension are increased first, then the next left dimension, and so on to the left. </paragraph>
+  <paragraph>A foreach statement of the form: <code_example><![CDATA[
+foreach (ElementType element in collection) statement  
+]]></code_example>corresponds to one of two possible expansions: <list><list_item> If the collection expression is of a type that implements the collection pattern (as defined above), the expansion of the foreach statement is: <code_example><![CDATA[
+Enumerator enumerator = (collection).GetEnumerator();  
+try {  
+   while (enumerator.MoveNext()) {  
+      ElementType element = (ElementType)enumerator.Current;  
+      statement;  
+   }  
+}  
+finally {  
+   IDisposable disposable = enumerator as System.IDisposable;  
+   if (disposable != null) disposable.Dispose();  
+}  
+]]></code_example></list_item></list></paragraph>
+  <paragraph>
+    <note>[Note: Significant optimizations of the above are often easily available. If the type E implements System.IDisposable, then the expression (enumerator as System.IDisposable) will always be non-null and the implementation can safely substitute a simple conversion for a possibly more expensive type test. Conversely, if the type E is sealed and does not implement System.IDisposable, then the expression (enumerator as System.IDisposable) will always evaluate to null. In this case, the implementation can safely optimize away the entire finally clause. end note]</note>
+    <list>
+      <list_item> Otherwise; the collection expression is of a type that implements System.IEnumerable, and the expansion of the foreach statement is: <code_example><![CDATA[
+IEnumerator enumerator =  
+((System.IEnumerable)(collection)).GetEnumerator();  
+try {  
+   while (enumerator.MoveNext()) {  
+      ElementType element = (ElementType)enumerator.Current;  
+      statement;  
+   }  
+}  
+finally {  
+   IDisposable disposable = enumerator as System.IDisposable;  
+   if (disposable != null) disposable.Dispose();  
+}  
+]]></code_example></list_item>
+    </list>
+  </paragraph>
+  <paragraph>In either expansion, the enumerator variable is a temporary variable that is inaccessible in, and invisible to, the embedded statement, and the element variable is read-only in the embedded statement. </paragraph>
+  <paragraph>
+    <example>[Example: The following example prints out each value in a two-dimensional array, in element order: <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main() {  
+      double[,] values = {  
+         {1.2, 2.3, 3.4, 4.5},  
+         {5.6, 6.7, 7.8, 8.9}  
+      };  
+      
+      foreach (double elementValue in values)  
+      Console.Write("{0} ", elementValue);  
+      Console.WriteLine();  
+   }  
+}  
+]]></code_example></example>
+  </paragraph>
+  <paragraph>
+    <example>The output produced is as follows: <code_example><![CDATA[
+1.2 2.3 3.4 4.5 5.6 6.7 7.8 8.9  
+]]></code_example>end example]</example>
+  </paragraph>
+</clause>

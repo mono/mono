@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<clause number="14.2.6" title="Numeric promotions" informative="true">
+  <paragraph>This clause is informative. </paragraph>
+  <paragraph>Numeric promotion consists of automatically performing certain implicit conversions of the operands of the predefined unary and binary numeric operators. Numeric promotion is not a distinct mechanism, but rather an effect of applying overload resolution to the predefined operators. Numeric promotion specifically does not affect evaluation of user-defined operators, although user-defined operators can be implemented to exhibit similar effects. </paragraph>
+  <paragraph>As an example of numeric promotion, consider the predefined implementations of the binary * operator: <code_example><![CDATA[
+int operator *(int x, int y);  
+uint operator *(uint x, uint y);  
+long operator *(long x, long y);  
+ulong operator *(ulong x, ulong y);  
+float operator *(float x, float y);  
+double operator *(double x, double y);  
+decimal operator *(decimal x, decimal y);  
+]]></code_example></paragraph>
+  <paragraph>When overload resolution rules (<hyperlink>14.4.2</hyperlink>) are applied to this set of operators, the effect is to select the first of the operators for which implicit conversions exist from the operand types. <example>[Example: For example, for the operation b * s, where b is a <keyword>byte</keyword> and s is a <keyword>short</keyword>, overload resolution selects operator *(<keyword>int</keyword>, <keyword>int</keyword>) as the best operator. Thus, the effect is that b and s are converted to <keyword>int</keyword>, and the type of the result is <keyword>int</keyword>. Likewise, for the operation i * d, where i is an <keyword>int</keyword> and d is a <keyword>double</keyword>, overload resolution selects operator *(<keyword>double</keyword>, <keyword>double</keyword>) as the best operator. end example]</example> </paragraph>
+  <paragraph>End of informative text. </paragraph>
+</clause>

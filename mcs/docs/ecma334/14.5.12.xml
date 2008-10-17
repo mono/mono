@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<clause number="14.5.12" title="The checked and unchecked operators">
+  <paragraph>The checked and unchecked operators are used to control the overflow checking context for <non_terminal where="11.1">integral-type</non_terminal> arithmetic operations and conversions. <grammar_production><name><non_terminal where="14.5.12">checked-expression</non_terminal></name> : <rhs><keyword>checked</keyword><terminal>(</terminal><non_terminal where="14.14">expression</non_terminal><terminal>)</terminal></rhs></grammar_production><grammar_production><name><non_terminal where="14.5.12">unchecked-expression</non_terminal></name> : <rhs><keyword>unchecked</keyword><terminal>(</terminal><non_terminal where="14.14">expression</non_terminal><terminal>)</terminal></rhs></grammar_production></paragraph>
+  <paragraph>The checked operator evaluates the contained expression in a checked context, and the unchecked operator evaluates the contained expression in an unchecked context. A <non_terminal where="14.5.12">checked-expression</non_terminal> or  <non_terminal where="14.5.12">unchecked-expression</non_terminal> corresponds exactly to a <non_terminal where="14.5.3">parenthesized-expression</non_terminal> (<hyperlink>14.5.3</hyperlink>), except that the contained expression is evaluated in the given overflow checking context. </paragraph>
+  <paragraph>The overflow checking context can also be controlled through the checked and unchecked statements (<hyperlink>15.11</hyperlink>). </paragraph>
+  <paragraph>The following operations are affected by the overflow checking context established by the checked and unchecked operators and statements: <list><list_item> The predefined ++ and  --unary operators (<hyperlink>14.5.9</hyperlink> and <hyperlink>14.6.5</hyperlink>), when the operand is of an integral type. </list_item><list_item> The predefined  -unary operator (<hyperlink>14.6.2</hyperlink>), when the operand is of an integral type. </list_item><list_item> The predefined +, -, *, and / binary operators (<hyperlink>14.7</hyperlink>), when both operands are of integral types. </list_item><list_item> Explicit numeric conversions (<hyperlink>13.2.1</hyperlink>) from one integral type to another integral type. </list_item></list></paragraph>
+  <paragraph>When one of the above operations produce a result that is too large to represent in the destination type, the context in which the operation is performed controls the resulting behavior: <list><list_item> In a checked context, if the operation is a constant expression (<hyperlink>14.15</hyperlink>), a compile-time error occurs. Otherwise, when the operation is performed at run-time, a System.OverflowException is thrown. </list_item><list_item> In an unchecked context, the result is truncated by discarding any high-order bits that do not fit in the destination type. </list_item></list></paragraph>
+  <paragraph>For non-constant expressions (expressions that are evaluated at run-time) that are not enclosed by any checked or unchecked operators or statements, the default overflow checking context is unchecked, unless external factors (such as compiler switches and execution environment configuration) call for checked evaluation. </paragraph>
+  <paragraph>For constant expressions (expressions that can be fully evaluated at compile-time), the default overflow checking context is always checked. Unless a constant expression is explicitly placed in an unchecked context, overflows that occur during the compile-time evaluation of the expression always cause  compile-time errors. </paragraph>
+  <paragraph>
+    <note>[Note: Developers may benefit if they exercise their code using checked mode (as well as unchecked mode). </note>
+  </paragraph>
+  <paragraph>
+    <note>It also seems reasonable that, unless otherwise requested, the default overflow checking context is set to checked when debugging is enabled. end note]</note>
+  </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class Test  
+{  
+   static readonly int x = 1000000;  
+   static readonly int y = 1000000;  
+   static int F() {  
+      return checked(x * y);    // Throws OverflowException  
+   }  
+   static int G() {  
+      return unchecked(x * y);  // Returns -727379968  
+   }  
+   static int H() {  
+      return x * y;      // Depends on default  
+   }  
+}  
+]]></code_example>no compile-time errors are reported since neither of the expressions can be evaluated at compile-time. At run-time, the F method throws a System.OverflowException, and the G method returns -727379968 (the lower 32 bits of the out-of-range result). The behavior of the H method depends on the default overflow checking context for the compilation, but it is either the same as F or the same as G. end example]</example>
+  </paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class Test  
+{  
+   const int x = 1000000;  
+   const int y = 1000000;  
+   static int F() {  
+      return checked(x * y);    // Compile error, overflow  
+   }  
+   static int G() {  
+      return unchecked(x * y);  // Returns -727379968  
+   }  
+   static int H() {  
+      return x * y;      // Compile error, overflow  
+   }  
+}  
+]]></code_example>the overflows that occur when evaluating the constant expressions in F and H cause compile-time errors to be reported because the expressions are evaluated in a checked context. An overflow also occurs when evaluating the constant expression in G, but since the evaluation takes place in an unchecked context, the overflow is not reported. end example]</example>
+  </paragraph>
+  <paragraph>The checked and unchecked operators only affect the overflow checking context for those operations that are textually contained within the &quot;(&quot; and &quot;)&quot; tokens. The operators have no effect on function members that are invoked as a result of evaluating the contained expression. <example>[Example: In the example <code_example><![CDATA[
+class Test  
+{  
+   static int Multiply(int x, int y) {  
+      return x * y;  
+   }  
+   static int F() {  
+      return checked(Multiply(1000000, 1000000));  
+   }  
+}  
+]]></code_example>the use of checked in F does not affect the evaluation of x * y in Multiply, so x * y is evaluated in the default overflow checking context. end example]</example> </paragraph>
+  <paragraph>The unchecked operator is convenient when writing constants of the signed integral types in hexadecimal notation. <example>[Example: For example: <code_example><![CDATA[
+class Test  
+{  
+   public const int AllBits = unchecked((int)0xFFFFFFFF);  
+   public const int HighBit = unchecked((int)0x80000000);  
+}  
+]]></code_example></example></paragraph>
+  <paragraph>
+    <example>Both of the hexadecimal constants above are of type <keyword>uint</keyword>. Because the constants are outside the <keyword>int</keyword> range, without the unchecked operator, the casts to <keyword>int</keyword> would produce compile-time errors. end example]</example>
+  </paragraph>
+  <paragraph>
+    <note>[Note: The checked and unchecked operators and statements allow programmers to control certain aspects of some numeric calculations. However, the behavior of some numeric operators depends on their operands' data types. For example, multiplying two decimals always results in an exception on overflow even within an explicitly unchecked construct. Similarly, multiplying two floats never results in an exception on overflow even within an explicitly checked construct. In addition, other operators are never affected by the mode of checking, whether default or explicit. As a service to programmers, it is recommended that the compiler issue a warning when there is an arithmetic expression within an explicitly checked or unchecked context (by operator or statement) that cannot possibly be affected by the specified mode of checking. Since such a warning is not required, the compiler has flexibility in determining the circumstances that merit the issuance of such warnings. end note]</note>
+  </paragraph>
+</clause>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<clause number="10.5.4" title="Accessibility constraints">
+  <paragraph>Several constructs in the C# language require a type to be at least as accessible as a member or another type. A type T is said to be at least as accessible as a member or type M if the accessibility domain of T is a superset of the accessibility domain of M. In other words, T is at least as accessible as M if T is accessible in all contexts in which M is accessible. </paragraph>
+  <paragraph>The following accessibility constraints exist: <list><list_item> The direct base class of a class type must be at least as accessible as the class type itself. </list_item><list_item> The explicit base interfaces of an interface type must be at least as accessible as the interface type itself. </list_item><list_item> The return type and parameter types of a delegate type must be at least as accessible as the delegate type itself. </list_item><list_item> The type of a constant must be at least as accessible as the constant itself. </list_item><list_item> The type of a field must be at least as accessible as the field itself. </list_item><list_item> The return type and parameter types of a method must be at least as accessible as the method itself. </list_item><list_item> The type of a property must be at least as accessible as the property itself. </list_item><list_item> The type of an event must be at least as accessible as the event itself. </list_item><list_item> The type and parameter types of an indexer must be at least as accessible as the indexer itself. </list_item><list_item> The return type and parameter types of an operator must be at least as accessible as the operator itself. </list_item><list_item> The parameter types of an instance constructor must be at least as accessible as the instance constructor itself. </list_item></list></paragraph>
+  <paragraph>
+    <example>[Example: In the example <code_example><![CDATA[
+class A {...}  
+public class B: A {...}  
+]]></code_example>the B class results in a compile-time error because A is not at least as accessible as B. end example]</example>
+  </paragraph>
+  <paragraph>
+    <example>[Example: Likewise, in the example <code_example><![CDATA[
+class A {...}  
+public class B  
+{  
+   A F() {...}  
+   internal A G() {...}  
+   public A H() {...}  
+}  
+]]></code_example>the H method in B results in a compile-time error because the return type A is not at least as accessible as the method. end example]</example>
+  </paragraph>
+</clause>

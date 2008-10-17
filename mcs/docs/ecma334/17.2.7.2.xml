@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clause number="17.2.7.2" title="Member Names Reserved for Events">
+  <paragraph>For an event E (<hyperlink>17.7</hyperlink>) of delegate type T, the following signatures are reserved: <code_example><![CDATA[
+void add_E(T handler);  
+void remove_E(T handler);  
+]]></code_example></paragraph>
+</clause>

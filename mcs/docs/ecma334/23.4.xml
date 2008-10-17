@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<clause number="23.4" title="Common Exception Classes">
+  <paragraph>The following exceptions are thrown by certain C# operations. <table_line>System.ArithmeticException A base class for exceptions that occur during </table_line>
+<table_line>arithmetic operations, such as </table_line>
+<table_line>System.DivideByZeroException and </table_line>
+<table_line>System.OverflowException. </table_line>
+<table_line>System.ArrayTypeMismatchException Thrown when a store into an array fails because the </table_line>
+<table_line>actual type of the stored element is incompatible </table_line>
+<table_line>with the actual type of the array. </table_line>
+<table_line>System.DivideByZeroException Thrown when an attempt to divide an integral </table_line>
+<table_line>value by zero occurs. </table_line>
+<table_line>System.IndexOutOfRangeException Thrown when an attempt to index an array via an </table_line>
+<table_line>index that is less than zero or outside the bounds of </table_line>
+<table_line>the array. </table_line>
+<table_line>System.InvalidCastException Thrown when an explicit conversion from a base </table_line>
+<table_line>type or interface to a derived type fails at run time. </table_line>
+<table_line>System.NullReferenceException Thrown when a null reference is used in a way </table_line>
+<table_line>that causes the referenced object to be required. </table_line>
+<table_line>System.OutOfMemoryException Thrown when an attempt to allocate memory (via </table_line>
+<table_line>new) fails. </table_line>
+<table_line>System.OverflowException Thrown when an arithmetic operation in a </table_line>
+<table_line>checked context overflows. </table_line>
+<table_line>System.StackOverflowException Thrown when the execution stack is exhausted by </table_line>
+<table_line>having too many pending method calls; typically </table_line>
+<table_line>indicative of very deep or unbounded recursion. </table_line>
+<table_line>System.TypeInitializationException Thrown when a static constructor throws an </table_line>
+<table_line>exception, and no catch clauses exists to catch it. </table_line>
+</paragraph>
+</clause>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<clause number="15.9.3" title="The goto statement">
+  <paragraph>The goto statement transfers control to a statement that is marked by a label. <grammar_production><name><non_terminal where="15.9.3">goto-statement</non_terminal></name> : <rhs><keyword>goto</keyword><non_terminal where="9.4.2">identifier</non_terminal><terminal>;</terminal></rhs><rhs><keyword>goto</keyword><keyword>case</keyword><non_terminal where="14.15">constant-expression</non_terminal><terminal>;</terminal></rhs><rhs><keyword>goto</keyword><keyword>default</keyword><terminal>;</terminal></rhs></grammar_production></paragraph>
+  <paragraph>The target of a goto identifier statement is the labeled statement with the given label. If a label with the given name does not exist in the current function member, or if the goto statement is not within the scope of the label, a compile-time error occurs. <note>[Note: This rule permits the use of a goto statement to transfer control out of a nested scope, but not into a nested scope. In the example <code_example><![CDATA[
+using System;  
+class Test  
+{  
+   static void Main(string[] args) {  
+      string[,] table = {  
+         {"red", "blue", "green"},  
+         {"Monday", "Wednesday", "Friday"}  
+      };  
+      foreach (string str in args) {  
+         int row, colm;  
+         for (row = 0; row <= 1; ++row)  
+         for (colm = 0; colm <= 2; ++colm)  
+         if (str == table[row,colm])  
+         goto done;  
+         Console.WriteLine("{0} not found", str);  
+         continue;  
+         done:  
+         Console.WriteLine("Found {0} at [{1}][{2}]", str, row, colm);  
+      }  
+   }  
+}  
+]]></code_example>a goto statement is used to transfer control out of a nested scope. end note]</note> </paragraph>
+  <paragraph>The target of a goto case statement is the statement list in the immediately enclosing switch statement (<hyperlink>15.7.2</hyperlink>) which contains a case label with the given constant value. If the goto case statement is not enclosed by a switch statement, if the <non_terminal where="14.15">constant-expression</non_terminal> is not implicitly convertible (<hyperlink>13.1</hyperlink>) to the governing type of the nearest enclosing switch statement, or if the nearest enclosing switch statement does not contain a case label with the given constant value, a compile-time error occurs. </paragraph>
+  <paragraph>The target of a goto default statement is the statement list in the immediately enclosing switch statement (<hyperlink>15.7.2</hyperlink>), which contains a default label. If the goto default statement is not enclosed by a switch statement, or if the nearest enclosing switch statement does not contain a default label, a compile-time error occurs. </paragraph>
+  <paragraph>A goto statement cannot exit a finally block (<hyperlink>15.10</hyperlink>). When a goto statement occurs within a finally block, the target of the goto statement must be within the same finally block, or otherwise a compile-time error occurs. </paragraph>
+  <paragraph>A goto statement is executed as follows: <list><list_item> If the goto statement exits one or more try blocks with associated finally blocks, control is initially transferred to the finally block of the innermost try statement. When and if control reaches the end point of a finally block, control is transferred to the finally block of the next enclosing try statement. This process is repeated until the finally blocks of all intervening try statements have been executed. </list_item><list_item> Control is transferred to the target of the goto statement. </list_item></list></paragraph>
+  <paragraph>Because a goto statement unconditionally transfers control elsewhere, the end point of a goto statement is never reachable. </paragraph>
+</clause>

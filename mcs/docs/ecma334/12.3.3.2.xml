@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<clause number="12.3.3.2" title="Block statements, checked, and unchecked statements">
+  <paragraph>The definite assignment state of v on the control transfer to the first statement of the statement list in the block (or to the end point of the block, if the statement list is empty) is the same as the definite assignment statement of v before the block, checked, or unchecked statement. </paragraph>
+</clause>
