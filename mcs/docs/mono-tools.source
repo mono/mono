@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<monodoc>
+  <source provider="man" basefile="mono-tools" path="dev-tools"/>
+</monodoc>
