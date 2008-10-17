@@ -32,14 +32,26 @@ net_1_1_dirs := \
 	installutil
 
 net_2_0_dirs := \
+	al			\
+	corcompare	\
+	csharp		\
+	mono-xsd	\
+	wsdl		\
+	compiler-tester	\
+	monop		\
 	xbuild		\
+	resgen		\
+	mono-service	\
+	mono-shlib-cop	\
+	mkbundle	\
 	sgen		\
+	security	\
 	mconfig		\
+	installutil	\
 	nunitreport	\
 	sqlsharp	\
-	csharp		\
-	csharplib	\
-	mono-shlib-cop
+	gacutil		\
+	csharplib
 
 net_2_1_dirs := \
 	compiler-tester
