@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Xml;
 
 namespace Mono.Documentation {
-	class ManifestResourceResolver : XmlUrlResolver {
+	public class ManifestResourceResolver : XmlUrlResolver {
 		private string dir;
 
 		public ManifestResourceResolver (string dir)

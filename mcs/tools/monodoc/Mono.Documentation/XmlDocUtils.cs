@@ -7,9 +7,9 @@ using System.Xml;
 
 namespace Mono.Documentation {
 
-	delegate XmlDocument DocLoader (string escapedTypeName);
+	public delegate XmlDocument DocLoader (string escapedTypeName);
 
-	static class XmlDocUtils
+	public static class XmlDocUtils
 	{
 		public static XmlNodeList GetMemberGenericParameters (XmlNode member)
 		{

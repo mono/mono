@@ -1,5 +1,11 @@
 2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* Mono.Documentation/ManifestResourceResolver.cs, 
+	  Mono.Documentation/XmlDocUtils.cs: Make types public so that they
+	  can be used from ../mdoc/mdoc.exe.
+
+2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* Makefile: Update $(thisdir).
 
 2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
