@@ -1,0 +1,1175 @@
+<Type Name="NetworkStream" FullName="System.Net.Sockets.NetworkStream" FullNameSP="System_Net_Sockets_NetworkStream" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public NetworkStream extends System.IO.Stream" />
+  <TypeSignature Language="C#" Value="public class NetworkStream : System.IO.Stream" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.IO.Stream</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Implements the standard stream mechanism to read
+      and write network data through an instance of the <see cref="T:System.Net.Sockets.Socket" /> class.
+      </para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.Net.Sockets.NetworkStream" /> class allows network data to be read and written
+   in the same manner as the <see cref="T:System.IO.Stream" qualify="true" />
+   class.</para>
+      <para> This class supports simultaneous synchronous and asynchronous access
+   to the network data. Random access is not supported and thus
+   the <see cref="P:System.Net.Sockets.NetworkStream.CanSeek" />
+   property always returns
+<see langword="false." /></para>
+      <para> The following properties and methods inherited from the <see cref="T:System.IO.Stream" qualify="true" /> class are
+not supported and throw a <see cref="T:System.NotSupportedException" />
+exception when
+accessed:</para>
+      <list type="bullet">
+        <item>
+          <term>
+            <see cref="P:System.Net.Sockets.NetworkStream.Length" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="P:System.Net.Sockets.NetworkStream.Position" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:System.Net.Sockets.NetworkStream.Seek(System.Int64,System.IO.SeekOrigin)" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:System.Net.Sockets.NetworkStream.SetLength(System.Int64)" />
+          </term>
+        </item>
+      </list>
+      <para>The <see cref="M:System.Net.Sockets.NetworkStream.Flush" /> method is reserved for future use but does not throw an exception.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Net.Sockets.Socket socket)" />
+      <MemberSignature Language="C#" Value="public NetworkStream (System.Net.Sockets.Socket socket);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
+      </Parameters>
+      <Docs>
+        <param name="socket">An instance of the <see cref="T:System.Net.Sockets.Socket" /> class.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.Sockets.NetworkStream" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor is equivalent to
+   <see cref="!:System.Net.Sockets.NetworkStream.NetworkStream" />(<paramref name="socket" />, <see cref="F:System.IO.FileAccess.ReadWrite" qualify="true" />, <see langword="false" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="socket" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">
+          <para>The <see cref="P:System.Net.Sockets.Socket.Blocking" /> property of <paramref name="socket" /> is <see langword="false" />.</para>
+          <para> -or-</para>
+          <para>The <see cref="P:System.Net.Sockets.Socket.Connected" /> property of <paramref name="socket" /> is <see langword="false" />.</para>
+          <para> -or-</para>
+          <para>The <see cref="P:System.Net.Sockets.Socket.SocketType" /> property of <paramref name="socket" /> is not <see cref="F:System.Net.Sockets.SocketType.Stream" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Net.Sockets.Socket socket, bool ownsSocket)" />
+      <MemberSignature Language="C#" Value="public NetworkStream (System.Net.Sockets.Socket socket, bool owns_socket);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="owns_socket" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="socket">An instance of the <see cref="T:System.Net.Sockets.Socket" /> class.</param>
+        <param name="owns_socket">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.Sockets.NetworkStream" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor is
+      equivalent to <see cref="!:System.Net.Sockets.NetworkStream.NetworkStream" />(<paramref name="socket" />, <see cref="F:System.IO.FileAccess.ReadWrite" qualify="true" />,
+   <paramref name="ownsSocket" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="socket" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">
+          <para>The <see cref="P:System.Net.Sockets.Socket.Blocking" /> property of <paramref name="socket" /> is <see langword="false" />.</para>
+          <para> -or-</para>
+          <para>The <see cref="P:System.Net.Sockets.Socket.Connected" /> property of <paramref name="socket" /> is <see langword="false" />.</para>
+          <para> -or-</para>
+          <para>The <see cref="P:System.Net.Sockets.Socket.SocketType" /> property of <paramref name="socket" /> is not <see cref="F:System.Net.Sockets.SocketType.Stream" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Net.Sockets.Socket socket, valuetype System.IO.FileAccess access)" />
+      <MemberSignature Language="C#" Value="public NetworkStream (System.Net.Sockets.Socket socket, System.IO.FileAccess access);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+      </Parameters>
+      <Docs>
+        <param name="socket">An instance of the <see cref="T:System.Net.Sockets.Socket" /> class.</param>
+        <param name="access">One of the values of the <see cref="T:System.IO.FileAccess" qualify="true" /> enumeration.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.Sockets.NetworkStream" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor is equivalent to
+   <see cref="!:System.Net.Sockets.NetworkStream.NetworkStream" />(<paramref name="socket" />, <paramref name="access" />, <see langword="false" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="socket" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">
+          <para>The <see cref="P:System.Net.Sockets.Socket.Blocking" /> property of <paramref name="socket" /> is <see langword="false" />.</para>
+          <para> -or-</para>
+          <para>The <see cref="P:System.Net.Sockets.Socket.Connected" /> property of <paramref name="socket" /> is <see langword="false" />.</para>
+          <para> -or-</para>
+          <para>The <see cref="P:System.Net.Sockets.Socket.SocketType" /> property of <paramref name="socket" /> is not <see cref="F:System.Net.Sockets.SocketType.Stream" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Net.Sockets.Socket socket, valuetype System.IO.FileAccess access, bool ownsSocket)" />
+      <MemberSignature Language="C#" Value="public NetworkStream (System.Net.Sockets.Socket socket, System.IO.FileAccess access, bool owns_socket);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="owns_socket" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="socket">An instance of the <see cref="T:System.Net.Sockets.Socket" /> class.</param>
+        <param name="access">One of the values of the <see cref="T:System.IO.FileAccess" qualify="true" /> enumeration.</param>
+        <param name="owns_socket">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.Sockets.NetworkStream" /> class.</para>
+        </summary>
+        <remarks>
+          <para>
+            <paramref name="socket" /> is required to be an
+   instance of the <see cref="T:System.Net.Sockets.Socket" /> class with its <see cref="P:System.Net.Sockets.Socket.Connected" />
+   property equal to <see langword="true" />
+   , <see cref="P:System.Net.Sockets.Socket.Blocking" /> property equal to <see langword="true" /> ,
+   and <see cref="T:System.Net.Sockets.SocketType" /> equal to <see cref="F:System.Net.Sockets.SocketType.Stream" />.</para>
+          <para> When <paramref name="ownsSocket" /> is <see langword="true" />, the current instance owns <paramref name="socket" />, meaning the <see cref="M:System.Net.Sockets.NetworkStream.Close" />
+and <see cref="M:System.Net.Sockets.NetworkStream.Dispose(System.Boolean)" /> methods call the <see cref="M:System.Net.Sockets.Socket.Close" />
+method of <paramref name="socket" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="socket" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">
+          <para>The <see cref="P:System.Net.Sockets.Socket.Blocking" /> property of <paramref name="socket" /> is <see langword="false" />.</para>
+          <para> -or-</para>
+          <para>The <see cref="P:System.Net.Sockets.Socket.Connected" /> property of <paramref name="socket" /> is <see langword="false" />.</para>
+          <para> -or-</para>
+          <para>The <see cref="P:System.Net.Sockets.Socket.SocketType" /> property of <paramref name="socket" /> is not <see cref="F:System.Net.Sockets.SocketType.Stream" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BeginRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginRead(class System.Byte[] buffer, int32 offset, int32 size, class System.AsyncCallback callback, object state)" />
+      <MemberSignature Language="C#" Value="public override IAsyncResult BeginRead (byte[] buffer, int offset, int size, AsyncCallback callback, object state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="size" Type="System.Int32" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Byte" qualify="true" /> array to store data read from the stream. </param>
+        <param name="offset">A <see cref="T:System.Int32" qualify="true" /> containing the zero-based position in <paramref name="buffer" /> at which to begin storing the data. </param>
+        <param name="size">A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes to read. </param>
+        <param name="callback">A <see cref="T:System.AsyncCallback" /> delegate, or <see langword="null" />.</param>
+        <param name="state">An application-defined object, or <see langword="null" />.</param>
+        <summary>
+          <para> Begins an asynchronous operation to read data from the current instance.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.
+   </para>
+        </returns>
+        <remarks>
+          <para>To retrieve the results of the operation and release
+      resources allocated by the <see cref="M:System.Net.Sockets.NetworkStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method, call
+      the <see cref="M:System.Net.Sockets.NetworkStream.EndRead(System.IAsyncResult)" /> method, and specify the
+   <see cref="T:System.IAsyncResult" /> object returned by this
+      
+      method.</para>
+          <para>
+            <block subset="none" type="note">The <see cref="M:System.Net.Sockets.NetworkStream.EndRead(System.IAsyncResult)" /> method should be
+   called exactly once for each call to the <see cref="M:System.Net.Sockets.NetworkStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method.</block>
+          </para>
+          <para>If the <paramref name="callback" /> parameter is not
+<see langword="null" />, the method referenced by 
+<paramref name="callback" /> is invoked 
+when the asynchronous operation completes. The <see cref="T:System.IAsyncResult" /> object returned by this method is
+passed as the argument to the method referenced by <paramref name="callback" />. The method
+referenced by <paramref name="callback" /> can retrieve the results of the operation by calling
+the <see cref="M:System.Net.Sockets.NetworkStream.EndRead(System.IAsyncResult)" />
+method.</para>
+          <para> The <paramref name="state" /> parameter
+can be any object that the caller wishes to have available for the duration of
+the asynchronous operation. This object is available via the
+<see cref="P:System.IAsyncResult.AsyncState" /> 
+property of the object returned by this
+method.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.IO.Stream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="offset" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="offset" /> &gt; <paramref name="buffer" />.Length. </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="size" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="size" /> &gt; <paramref name="buffer" />.Length - <paramref name="offset" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <para>An error occurred while accessing the underlying socket.</para>
+          <para>
+            <block subset="none" type="note">Any exception thrown by the <see cref="M:System.Net.Sockets.Socket.BeginReceive(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" qualify="true" /> method is caught and rethrown as an <see langword="IOException" /> with the original exception stored in the <see cref="P:System.Exception.InnerException" /> property.</block>
+          </para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+        <example>
+          <para>For an outline of an asynchronous operation, see the <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" qualify="true" /> method. For the complete example, see
+   the <see cref="T:System.Net.Sockets.Socket" qualify="true" /> class overview.</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BeginWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginWrite(class System.Byte[] buffer, int32 offset, int32 size, class System.AsyncCallback callback, object state)" />
+      <MemberSignature Language="C#" Value="public override IAsyncResult BeginWrite (byte[] buffer, int offset, int size, AsyncCallback callback, object state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="size" Type="System.Int32" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Byte" qualify="true" /> array containing data to write to the stream. </param>
+        <param name="offset">A <see cref="T:System.Int32" qualify="true" /> containing the zero-based position in <paramref name="buffer" /> containing the starting location of the data to write. </param>
+        <param name="size">A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes to write to the stream. </param>
+        <param name="callback">A <see cref="T:System.AsyncCallback" /> delegate, or <see langword="null" />.</param>
+        <param name="state">An application-defined object, or <see langword="null" />.</param>
+        <summary>
+          <para> Begins an asynchronous operation to write data to the current instance.
+      </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation. </para>
+        </returns>
+        <remarks>
+          <para> To release
+      resources allocated by the <see cref="M:System.Net.Sockets.NetworkStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method, call
+      the <see cref="M:System.Net.Sockets.NetworkStream.EndWrite(System.IAsyncResult)" /> method, and specify the
+   <see cref="T:System.IAsyncResult" /> object returned by this
+      
+      method.</para>
+          <para>
+            <block subset="none" type="note">The <see cref="M:System.Net.Sockets.NetworkStream.EndWrite(System.IAsyncResult)" /> method should be
+   called exactly once for each call to the <see cref="M:System.Net.Sockets.NetworkStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method.</block>
+          </para>
+          <para>If the <paramref name="callback" /> parameter is not
+<see langword="null" />, the method referenced by <paramref name="callback" /> is invoked 
+when the asynchronous operation completes. The <see cref="T:System.IAsyncResult" /> object returned by this method is
+passed as the argument to the method referenced by <paramref name="callback" />. The method
+referenced by <paramref name="callback" /> can retrieve the results of the operation by calling
+the <see cref="M:System.Net.Sockets.NetworkStream.EndWrite(System.IAsyncResult)" />
+method.</para>
+          <para> The <paramref name="state" /> parameter
+can be any object that the caller wishes to have available for the duration of
+the asynchronous operation. This object is available via the
+<see cref="P:System.IAsyncResult.AsyncState" /> 
+property of the object returned by this
+method.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.IO.Stream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="offset" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="offset" /> &gt; <paramref name="buffer" />.Length. </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="size" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="size" /> &gt; <paramref name="buffer" />.Length - <paramref name="offset" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <para>An error occurred while accessing the underlying socket. </para>
+          <para>
+            <block subset="none" type="note">Any exception thrown by the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" qualify="true" /> method is caught and rethrown as an <see langword="IOException" /> with the original exception stored in the <see cref="P:System.Exception.InnerException" /> property.</block>
+          </para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+        <example>
+          <para>For an outline of an asynchronous operation, see the <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" qualify="true" />
+method. For the complete example, see the <see cref="T:System.Net.Sockets.Socket" qualify="true" /> class overview.</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanRead">
+      <MemberSignature Language="ILASM" Value=".property bool CanRead { public hidebysig virtual specialname bool get_CanRead() }" />
+      <MemberSignature Language="C#" Value="public override bool CanRead { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Boolean" qualify="true" /> value indicating whether the current stream supports reading.
+   </para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> indicates that the current stream supports reading; 
+<see langword="false" />. indicates that the current stream does not 
+   support reading.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The value of this property is initially set by the 
+   <see cref="T:System.Net.Sockets.NetworkStream" /> constructors.</para>
+          <block subset="none" type="note">
+            <para>This property overrides <see cref="P:System.IO.Stream.CanRead" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanSeek">
+      <MemberSignature Language="ILASM" Value=".property bool CanSeek { public hidebysig virtual specialname bool get_CanSeek() }" />
+      <MemberSignature Language="C#" Value="public override bool CanSeek { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns the <see cref="T:System.Boolean" /> value <see langword="false" /> to indicate that the
+<see cref="T:System.Net.Sockets.NetworkStream" /> class 
+   cannot access a specific location in the data
+   stream.
+   </para>
+        </summary>
+        <value>
+          <para>
+            <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para> This property is read-only. </para>
+          <block subset="none" type="note">
+            <para>This property overrides <see cref="P:System.IO.Stream.CanSeek" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanTimeout">
+      <MemberSignature Language="C#" Value="public override bool CanTimeout { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CanWrite">
+      <MemberSignature Language="ILASM" Value=".property bool CanWrite { public hidebysig virtual specialname bool get_CanWrite() }" />
+      <MemberSignature Language="C#" Value="public override bool CanWrite { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Boolean" qualify="true" /> value indicating whether the current stream supports writing.
+   </para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> indicates that the current stream supports writing; 
+<see langword="false" /> 
+indicates that the current stream does not support writing.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The value of this property is set by the 
+   <see cref="T:System.Net.Sockets.NetworkStream" /> 
+   constructors.</para>
+          <block subset="none" type="note">
+            <para>This property overrides <see cref="P:System.IO.Stream.CanWrite" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
+      <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Closes the stream and, if owned by the current instance, the underlying socket.
+      </para>
+        </summary>
+        <remarks>
+          <para> This method calls <see cref="M:System.Net.Sockets.NetworkStream.Dispose(System.Boolean)" />(<see langword="true" /> ), which frees both managed and unmanaged
+   resources used by the current instance. When the underlying socket is owned by
+   the current instance, the <see cref="M:System.Net.Sockets.Socket.Close" />
+   method of the socket is called, which frees both managed and unmanaged resources
+   used by the socket.</para>
+          <block subset="none" type="note">
+            <para> Ownership of a socket is
+      specified using the <see cref="T:System.Net.Sockets.NetworkStream" /> constructor.</para>
+            <para>This method overrides <see cref="M:System.IO.Stream.Close" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public void Close (int timeout);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DataAvailable">
+      <MemberSignature Language="ILASM" Value=".property bool DataAvailable { public hidebysig virtual specialname bool get_DataAvailable() }" />
+      <MemberSignature Language="C#" Value="public virtual bool DataAvailable { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Boolean" qualify="true" /> value indicating whether data is available to be read from the underlying socket buffer.
+   </para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> indicates that data is available to be
+   read; <see langword="false" />
+   indicates that there is no data available to be read.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors"> As
+      described
+      above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default">Accessing this
+      property causes a call to the <see cref="P:System.Net.Sockets.Socket.Available" /> method of the underlying <see cref="T:System.Net.Sockets.Socket" /> instance. If the <see langword="Available" />
+      method returns a
+      non-zero value, indicating data is available to be read, this property returns
+   <see langword="true" />; otherwise, this property returns
+   <see langword="false" />.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this property
+      to determine if data is available to be read in the underlying socket
+      buffer.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool disposing)" />
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">A <see cref="T:System.Boolean" qualify="true" />. Specify <see langword="true" /> to release both managed and unmanaged resources; specify <see langword="false" /> to release only unmanaged resources.</param>
+        <summary>
+          <para>Releases the unmanaged resources used by the current instance and optionally
+      releases the managed resources.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para> Ownership of a socket is specified using the <see cref="T:System.Net.Sockets.NetworkStream" />
+   constructor.</para>
+            <para> The
+<see cref="M:System.Net.Sockets.NetworkStream.Close" /> method calls this method with
+   the <paramref name="disposing" /> parameter set to <see langword="true" />. The finalizer
+   calls this method with the <paramref name="disposing" /> parameter set to <see langword="false" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">
+   
+   This method
+   closes the current <see cref="T:System.Net.Sockets.NetworkStream" />
+   instance releasing all unmanaged resources allocated by the current instance.
+   When the underlying socket is owned by the current
+   instance, the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" /> method of
+   the socket is called, which frees
+   the managed and unmanaged resources used by the
+   socket. When the <paramref name="disposing" /> parameter is <see langword="true" /> , this method also releases all resources held by any other
+   managed objects allocated by the current
+   instance.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="default">
+   
+   This method
+   closes the current <see cref="T:System.Net.Sockets.NetworkStream" />
+   instance releasing all unmanaged resources allocated by the current instance.
+   When the underlying socket is owned by the current
+   instance, the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" /> method of
+   the socket is called, which frees the managed and unmanaged resources used by the
+   socket.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">
+   
+   The <see cref="M:System.Net.Sockets.Socket.Dispose(System.Boolean)" /> method can be called
+   multiple times by other objects. When overriding this method, do not reference
+   objects that have been previously disposed in an earlier call.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">
+   
+   Use this method to release
+   resources allocated by
+   the current
+   instance.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 EndRead(class System.IAsyncResult asyncResult)" />
+      <MemberSignature Language="C#" Value="public override int EndRead (IAsyncResult ar);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ar" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="ar">A <see cref="T:System.IAsyncResult" /> object that holds the state information for the asynchronous operation. </param>
+        <summary>
+          <para> Ends an asynchronous call to
+      read data from the current instance.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes read from the stream.
+   </para>
+        </returns>
+        <remarks>
+          <para> This method blocks if the asynchronous operation has not completed.</para>
+          <para>The <see cref="M:System.Net.Sockets.NetworkStream.EndRead(System.IAsyncResult)" />
+method completes an asynchronous request that was started with a call to the
+<see cref="M:System.Net.Sockets.NetworkStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method. The object specified for the 
+<paramref name="asyncResult" /> parameter is required to be the same object as was returned 
+by the <see cref="M:System.Net.Sockets.NetworkStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />
+method call that began the
+request.</para>
+          <para>If the <see cref="M:System.Net.Sockets.NetworkStream.EndRead(System.IAsyncResult)" />
+method is invoked via the <see cref="T:System.AsyncCallback" /> delegate specified to the <see cref="M:System.Net.Sockets.NetworkStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method, the
+<paramref name="asyncResult" /> parameter is the <see cref="T:System.IAsyncResult" /> 
+argument passed to the
+delegate's method.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.IO.Stream.EndRead(System.IAsyncResult)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="asyncResult" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">An error occurred while accessing the underlying socket. <para><block subset="none" type="note">This method catches all exceptions thrown by the <see cref="M:System.Net.Sockets.Socket.EndReceive(System.IAsyncResult)" qualify="true" /> method.</block></para></exception>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+        <example>
+          <para>For an outline of an asynchronous operation, see the <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" qualify="true" /> method.
+   For the complete example, see the <see cref="T:System.Net.Sockets.Socket" qualify="true" /> class overview.</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void EndWrite(class System.IAsyncResult asyncResult)" />
+      <MemberSignature Language="C#" Value="public override void EndWrite (IAsyncResult ar);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ar" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="ar">A <see cref="T:System.IAsyncResult" /> object that holds the state information for the asynchronous operation. </param>
+        <summary>
+          <para>Ends an asynchronous call to write data to the current instance.</para>
+        </summary>
+        <remarks>
+          <para> This method blocks if the asynchronous operation has not completed.</para>
+          <para>The <see cref="M:System.Net.Sockets.NetworkStream.EndWrite(System.IAsyncResult)" />
+method completes an asynchronous request that was started with a call to the
+<see cref="M:System.Net.Sockets.NetworkStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method. The object specified for the 
+<paramref name="asyncResult" /> parameter is required to be the same object as was returned 
+by the <see cref="M:System.Net.Sockets.NetworkStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />
+method call that began the
+request.</para>
+          <para>If the <see cref="M:System.Net.Sockets.NetworkStream.EndWrite(System.IAsyncResult)" />
+method is invoked via the <see cref="T:System.AsyncCallback" /> delegate specified to the <see cref="M:System.Net.Sockets.NetworkStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method, the
+<paramref name="asyncResult" /> parameter is the <see cref="T:System.IAsyncResult" /> 
+argument passed to the
+delegate's method.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.IO.Stream.EndWrite(System.IAsyncResult)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="asyncResult" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.IO.IOException">An error occurred while accessing the underlying socket. <para><block subset="none" type="note">This method catches all exceptions thrown by the <see cref="M:System.Net.Sockets.Socket.EndSend(System.IAsyncResult)" qualify="true" /> method.</block></para></exception>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+        <example>
+          <para>For an outline of an asynchronous operation, see the <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" qualify="true" /> method.
+   For the complete example, see the <see cref="T:System.Net.Sockets.Socket" qualify="true" /> class
+   overview.</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Finalize()" />
+      <MemberSignature Language="C#" Value="~NetworkStream ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Frees unmanaged resources used by the current instance.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>Application code does not call this method; it is automatically invoked
+         during garbage collection unless finalization by the garbage collector has been
+         disabled. For more information, see <see cref="M:System.GC.SuppressFinalize(System.Object)" qualify="true" />, and <see cref="M:System.Object.Finalize" qualify="true" />.</para>
+            <para> This method calls <see cref="M:System.Net.Sockets.NetworkStream.Dispose(System.Boolean)" />(<see langword="false" />), which frees unmanaged resources used by
+      the current instance. When the underlying socket is owned by the current
+      instance, it is closed and the managed and unmanaged resources used by the
+      socket are freed.</para>
+            <para>Ownership of a socket is specified using the <see cref="T:System.Net.Sockets.NetworkStream" /> constructor.</para>
+            <para>This method overrides <see cref="M:System.Object.Finalize" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Flush()" />
+      <MemberSignature Language="C#" Value="public override void Flush ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> This method is reserved for future use.
+      </para>
+        </summary>
+        <remarks>
+          <para>Calling this method does not throw an exception.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.IO.Stream.Flush" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="ILASM" Value=".property int64 Length { public hidebysig virtual specialname int64 get_Length() }" />
+      <MemberSignature Language="C#" Value="public override long Length { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Throws a <see cref="T:System.NotSupportedException" />.
+   </para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>
+          <block subset="none" type="note">
+            <para> The <see cref="T:System.IO.Stream" /> base class implements this property to return the length of the data
+      available on the stream. This functionality is not supported in
+      the <see cref="T:System.Net.Sockets.NetworkStream" /> class.</para>
+            <para>This property overrides <see cref="P:System.IO.Stream.Length" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">Any attempt to access this property. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Position">
+      <MemberSignature Language="ILASM" Value=".property int64 Position { public hidebysig virtual specialname int64 get_Position() public hidebysig virtual specialname void set_Position(int64 value) }" />
+      <MemberSignature Language="C#" Value="public override long Position { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Throws a <see cref="T:System.NotSupportedException" />.
+   </para>
+        </summary>
+        <value>To be added.</value>
+        <remarks>
+          <block subset="none" type="note">
+            <para> The <see cref="T:System.IO.Stream" /> base class implements this property to return or set the
+      current position in the stream. This functionality is not supported in the <see cref="T:System.Net.Sockets.NetworkStream" />
+      class.</para>
+            <para>This property overrides <see cref="P:System.IO.Stream.Position" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">Any attempt to access this property.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Read(class System.Byte[] buffer, int32 offset, int32 size)" />
+      <MemberSignature Language="C#" Value="public override int Read (byte[] buffer, int offset, int size);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="size" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Byte" qualify="true" /> array to store data read from the stream. </param>
+        <param name="offset">A <see cref="T:System.Int32" qualify="true" /> containing the zero-based position in <paramref name="buffer" /> at which to begin storing the data. </param>
+        <param name="size">A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes to read. </param>
+        <summary>
+          <para> Reads data from the current instance and stores it in a data buffer.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes read from the
+   stream.
+   </para>
+        </returns>
+        <remarks>
+          <para> When no incoming data is available, this method blocks and
+      waits for data to arrive.</para>
+          <para> If the remote socket was shut down gracefully (<see cref="M:System.Net.Sockets.Socket.Shutdown(System.Net.Sockets.SocketShutdown)" qualify="true" /> was called on the socket or
+   the <see cref="F:System.Net.Sockets.SocketOptionName.Linger" qualify="true" /> option was enabled
+   and <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" /> was called on the socket) and all data was received, this
+   method immediately returns zero.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="offset" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="offset" /> &gt; <paramref name="buffer" />.Length. </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="size" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="size" /> &gt; <paramref name="buffer" />.Length - <paramref name="offset" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An error occurred while accessing the underlying socket. <para><block subset="none" type="note">This method catches all exceptions thrown by the <see cref="M:System.Net.Sockets.Socket.Receive(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" qualify="true" /> method.</block></para></exception>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Readable">
+      <MemberSignature Language="C#" Value="protected bool Readable { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadTimeout">
+      <MemberSignature Language="C#" Value="public override int ReadTimeout { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Seek">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int64 Seek(int64 offset, valuetype System.IO.SeekOrigin origin)" />
+      <MemberSignature Language="C#" Value="public override long Seek (long offset, System.IO.SeekOrigin origin);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="origin" Type="System.IO.SeekOrigin" />
+      </Parameters>
+      <Docs>
+        <param name="offset">This parameter is not used.</param>
+        <param name="origin">This parameter is not used.</param>
+        <summary>
+          <para> Throws a <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
+        <returns>To be added.</returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para> The <see cref="T:System.IO.Stream" /> base class uses this method to set the current
+      position in the stream. This functionality is not supported in the <see cref="T:System.Net.Sockets.NetworkStream" />
+      class.</para>
+            <para>This method overrides <see cref="M:System.IO.Stream.Seek(System.Int64,System.IO.SeekOrigin)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">Any call to this method.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetLength">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void SetLength(int64 value)" />
+      <MemberSignature Language="C#" Value="public override void SetLength (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">This parameter is not used.</param>
+        <summary>
+          <para>Throws a <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.IO.Stream" />
+   base class uses this method to set the length of the data available on the
+   stream. This functionality is not supported in the <see cref="T:System.Net.Sockets.NetworkStream" /> class.</para>
+            <para>This method overrides <see cref="M:System.IO.Stream.SetLength(System.Int64)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">Any call to this method.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Socket">
+      <MemberSignature Language="C#" Value="protected System.Net.Sockets.Socket Socket { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.Socket</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Byte[] buffer, int32 offset, int32 size)" />
+      <MemberSignature Language="C#" Value="public override void Write (byte[] buffer, int offset, int size);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="size" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Byte" qualify="true" /> array containing data to write to the stream.</param>
+        <param name="offset">A <see cref="T:System.Int32" qualify="true" /> containing the zero-based position in <paramref name="buffer" /> containing the starting location of the data to write.</param>
+        <param name="size">A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes to write to the stream.</param>
+        <summary>
+          <para>Writes data from a specific area of a data buffer to the current instance.</para>
+        </summary>
+        <remarks>
+          <para>When no buffer space is available within the underlying protocol, this method
+      blocks unless the socket is in non-blocking mode. </para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="offset" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="offset" /> &gt; <paramref name="buffer" />.Length. </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="size" /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="size" /> &gt; <paramref name="buffer" />.Length - <paramref name="offset" />.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">An error occurred while accessing the underlying socket. <para><block subset="none" type="note">This method catches all exceptions thrown by the <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" qualify="true" /> method.</block></para></exception>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Writeable">
+      <MemberSignature Language="C#" Value="protected bool Writeable { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteTimeout">
+      <MemberSignature Language="C#" Value="public override int WriteTimeout { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

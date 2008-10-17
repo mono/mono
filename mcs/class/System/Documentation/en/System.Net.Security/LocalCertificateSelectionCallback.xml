@@ -1,0 +1,31 @@
+<Type Name="LocalCertificateSelectionCallback" FullName="System.Net.Security.LocalCertificateSelectionCallback">
+  <TypeSignature Language="C#" Value="public delegate System.Security.Cryptography.X509Certificates.X509Certificate LocalCertificateSelectionCallback(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, string[] acceptableIssuers);" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="targetHost" Type="System.String" />
+    <Parameter Name="localCertificates" Type="System.Security.Cryptography.X509Certificates.X509CertificateCollection" />
+    <Parameter Name="remoteCertificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
+    <Parameter Name="acceptableIssuers" Type="System.String[]" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="sender">To be added.</param>
+    <param name="targetHost">To be added.</param>
+    <param name="localCertificates">To be added.</param>
+    <param name="remoteCertificate">To be added.</param>
+    <param name="acceptableIssuers">To be added.</param>
+    <summary>To be added.</summary>
+    <value>To be added.</value>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

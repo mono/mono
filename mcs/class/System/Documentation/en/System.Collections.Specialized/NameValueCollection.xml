@@ -1,0 +1,934 @@
+<Type Name="NameValueCollection" FullName="System.Collections.Specialized.NameValueCollection" FullNameSP="System_Collections_Specialized_NameValueCollection" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable NameValueCollection extends System.Object" />
+  <TypeSignature Language="C#" Value="public class NameValueCollection : System.Collections.Specialized.NameObjectCollectionBase" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Collections.Specialized.NameObjectCollectionBase</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Represents a collection of associated <see cref="T:System.String" /> keys and <see cref="T:System.String" />
+values.</para>
+    </summary>
+    <remarks>
+      <para>This class can be used for headers, query strings and
+      form data. Each key in the collection is associated with one or more
+      values. Multiple values for a particular key are contained in a single
+   <see cref="T:System.String" /> . </para>
+      <para>The capacity is the number of key-and-value pairs that the <see cref="T:System.Collections.Specialized.NameValueCollection" /> can contain. The default initial
+   capacity is zero. The capacity is automatically increased as required.</para>
+      <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Specialized.NameValueCollection" />.</para>
+      <para>The comparer determines whether two keys are equal.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public NameValueCollection ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Collections.Specialized.NameValueCollection" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>The new instance is initialized with the default initial capacity, <see cref="T:System.Collections.IHashCodeProvider" />, and <see cref="T:System.Collections.IComparer" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NameValueCollection (System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
+      </Parameters>
+      <Docs>
+        <param name="equalityComparer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Collections.Specialized.NameValueCollection col)" />
+      <MemberSignature Language="C#" Value="public NameValueCollection (System.Collections.Specialized.NameValueCollection col);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="col" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="col">The <see cref="T:System.Collections.Specialized.NameValueCollection" /> used to initialize the new instance.</param>
+        <summary>
+          <para> Constructs and
+      initializes a new instance of the <see cref="T:System.Collections.Specialized.NameValueCollection" /> class using the values of the specified <see cref="T:System.Collections.Specialized.NameValueCollection" />
+      .</para>
+        </summary>
+        <remarks>
+          <para>The capacity, values, and order of values of the new 
+      instance are equal to the capacity and values of <paramref name="col" />
+      . The <see cref="T:System.Collections.IHashCodeProvider" /> and <see cref="T:System.Collections.IComparer" /> of the new instance are the
+      default instances.</para>
+          <para>The elements of the new <see cref="T:System.Collections.Specialized.NameValueCollection" /> are sorted in the same
+   order as the source <see cref="T:System.Collections.Specialized.NameValueCollection" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="col" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity)" />
+      <MemberSignature Language="C#" Value="public NameValueCollection (int capacity);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">A <see cref="T:System.Int32" /> containing the initial number of entries that the new instance can contain. </param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Collections.Specialized.NameValueCollection" />
+class with the specified initial capacity.</para>
+        </summary>
+        <remarks>
+          <para>The new instance is initialized with the default <see cref="T:System.Collections.IHashCodeProvider" /> and <see cref="T:System.Collections.IComparer" />
+.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="capacity" /> &lt; 0. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Collections.IHashCodeProvider hashProvider, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public NameValueCollection (System.Collections.IHashCodeProvider hashProvider, System.Collections.IComparer comparer);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="hashProvider" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="hashProvider">
+          <para>The <see cref="T:System.Collections.IHashCodeProvider" /> that supplies the hash codes for all keys in the new instance; or, <see langword="null" /> to use the default hash code provider.</para>
+        </param>
+        <param name="comparer">
+          <para>The <see cref="T:System.Collections.IComparer" /> to use to determine whether two keys are equal. Specify <see langword="null" /> to use the default comparer.</para>
+        </param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Collections.Specialized.NameValueCollection" /> class
+   with the specified <see cref="T:System.Collections.IHashCodeProvider" /> and the specified <see cref="T:System.Collections.IComparer" />
+   
+   .</para>
+        </summary>
+        <remarks>
+          <para>The new instance is initialized with the default capacity of zero.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use NameValueCollection (IEqualityComparer)")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NameValueCollection (int capacity, System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">To be added.</param>
+        <param name="equalityComparer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity, class System.Collections.Specialized.NameValueCollection col)" />
+      <MemberSignature Language="C#" Value="public NameValueCollection (int capacity, System.Collections.Specialized.NameValueCollection col);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="col" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">A <see cref="T:System.Int32" /> containing the initial number of entries that the new instance can contain. </param>
+        <param name="col">The <see cref="T:System.Collections.Specialized.NameValueCollection" /> used to initialize the new instance. </param>
+        <summary>
+          <para>Constructs and initializes new instance of the <see cref="T:System.Collections.Specialized.NameValueCollection" /> class
+   that contains the same values as the specified <see cref="T:System.Collections.Specialized.NameValueCollection" /> and either the specified capacity or the
+   capacity of the specified collection, whichever is
+   greater.</para>
+        </summary>
+        <remarks>
+          <para>The new instance is initialized with the default <see cref="T:System.Collections.IHashCodeProvider" /> and <see cref="T:System.Collections.IComparer" /> .</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="col" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="capacity" /> is &lt; 0.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected NameValueCollection (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity, class System.Collections.IHashCodeProvider hashProvider, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public NameValueCollection (int capacity, System.Collections.IHashCodeProvider hashProvider, System.Collections.IComparer comparer);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="hashProvider" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">A <see cref="T:System.Int32" /> containing the initial number of entries that the <see cref="T:System.Collections.Specialized.NameValueCollection" /> can contain. </param>
+        <param name="hashProvider">The <see cref="T:System.Collections.IHashCodeProvider" /> that will supply the hash codes for all keys in the new instance.</param>
+        <param name="comparer">
+          <para> The <see cref="T:System.Collections.IComparer" /> to use to determine whether two keys in the new instance are equal.</para>
+        </param>
+        <summary>
+          <para>Constructs and initializes new instance of the <see cref="T:System.Collections.Specialized.NameValueCollection" />
+class with the specified initial capacity, hash code provider,
+and comparer.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="capacity" /> &lt; 0. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use NameValueCollection (IEqualityComparer)")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Add(class System.Collections.Specialized.NameValueCollection c)" />
+      <MemberSignature Language="C#" Value="public void Add (System.Collections.Specialized.NameValueCollection c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="c">The <see cref="T:System.Collections.Specialized.NameValueCollection" /> to copy to the current instance. </param>
+        <summary>
+          <para>Copies the entries from the specified <see cref="T:System.Collections.Specialized.NameValueCollection" /> to 
+   the current instance.</para>
+        </summary>
+        <remarks>
+          <para>If a key in <paramref name="c" /> already exists in the target <see cref="T:System.Collections.Specialized.NameValueCollection" /> instance, the associated value in
+<paramref name="c" /> is added to the existing comma-separated list of values
+   associated with the same key in the target <see cref="T:System.Collections.Specialized.NameValueCollection" /> instance.</para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="c" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Add(string name, string value)" />
+      <MemberSignature Language="C#" Value="public virtual void Add (string name, string val);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="val" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">
+          <para>A <see cref="T:System.String" /> that represents the key of the entry to add. Can be <see langword="null" /> .</para>
+        </param>
+        <param name="val">To be added.</param>
+        <summary>
+          <para>Adds an entry with the specified key and value to the current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para>If the specified key already exists in the current instance, the specified
+         value is added to the existing comma-separated list of values associated with
+         the same key.</para>
+            <para>Attempting to assign the same value to an existing key adds a new value to that key, thus providing two (or more) copies of the same value associated with the key.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides">Override this method to customize the default
+      behavior in a type derived from the current
+      type.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+      add an entry to the current
+      instance.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AllKeys">
+      <MemberSignature Language="ILASM" Value=".property class System.String[] AllKeys { public hidebysig virtual specialname class System.String[] get_AllKeys() }" />
+      <MemberSignature Language="C#" Value="public virtual string[] AllKeys { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets all the keys in the current instance. </para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> array containing all the keys of the current instance.
+   If the current instance is empty, the value of this property is an empty array.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This property
+      is read-only.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">The array returned by <see cref="P:System.Collections.Specialized.NameValueCollection.AllKeys" /> is cached for better
+   performance and is automatically refreshed when the collection changes. A
+   derived class can invalidate the cached version by calling <see cref="M:System.Collections.Specialized.NameValueCollection.InvalidateCachedArrays" />, thereby forcing the array to be refreshed.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Clear()" />
+      <MemberSignature Language="C#" Value="public virtual void Clear ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Invalidates the cached arrays and removes all entries from 
+      the current instance.</para>
+        </summary>
+        <remarks>
+          <para>The value of each key and value in the current instance is set to 
+   <see langword="null" /> 
+   .</para>
+          <para>If the current instance is empty, it remains unchanged and no exception is 
+   thrown.</para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void CopyTo(class System.Array dest, int32 index)" />
+      <MemberSignature Language="C#" Value="public void CopyTo (Array dest, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dest" Type="System.Array" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="dest">A one-dimensional, zero-based <see cref="T:System.Array" /> that is the destination of the elements copied from the current instance.</param>
+        <param name="index">A <see cref="T:System.Int32" /> containing the zero-based index in <paramref name="dest" /> at which copying begins. </param>
+        <summary>
+          <para>Copies the elements from the current instance to the specified <see cref="T:System.Array" />, starting at the specified
+   index in that array.</para>
+        </summary>
+        <remarks>
+          <para>This method uses <see cref="M:System.Array.Copy(System.Array,System.Array,System.Int32)" qualify="true" /> to copy the elements.</para>
+          <para>
+            <block subset="none" type="note">This method is
+   implemented to support the <see cref="T:System.Collections.ICollection" /> interface.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="dest" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> &lt; 0.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="dest" /> has more than one dimension.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="index" /> &gt;= <paramref name="dest" />.Length.</para>
+          <para>-or-</para>
+          <para>The number of elements in the current instance is greater than the available space from <paramref name="index" /> to the end of the destination <paramref name="dest" />.</para>
+        </exception>
+        <exception cref="T:System.InvalidCastException">At least one element in the current instance is not assignment-compatible with the type of <paramref name="dest" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public virtual int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 Count { public hidebysig virtual specialname int32 get_Count() }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para> Gets the number of elements contained in the current
+      instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> that indicates the number of elements contained in the current
+   instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>This property is implemented to support the <see cref="T:System.Collections.ICollection" /> interface.</para>
+          </block>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Get">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string Get(int32 index)" />
+      <MemberSignature Language="C#" Value="public virtual string Get (int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">
+          <para>A <see cref="T:System.Int32" /> that specifies the zero-based index of the entry that contains the values to get from the current instance.</para>
+        </param>
+        <summary>
+          <para> Returns the values at the
+      specified index of the
+      current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> that contains a
+   comma-separated list of the values at the specified index of the current
+   instance, if found;
+   otherwise, <see langword="null" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is outside the valid range of indices for the current instance.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Get">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string Get(string name)" />
+      <MemberSignature Language="C#" Value="public virtual string Get (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">
+          <para>A <see cref="T:System.String" /> that specified the key of the entry that contains the values to get.</para>
+        </param>
+        <summary>
+          <para> Gets the values associated with the specified key from
+      the current instance combined into one comma-separated list.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> that contains a
+   comma-separated list of the values associated with the specified key from the
+   current instance, if found;
+   otherwise, <see langword="null" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">If <paramref name="name" /> is
+<see langword="null" />, the values associated with the null key, if any, are returned; otherwise, <see langword="null" /> is returned.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetKey">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string GetKey(int32 index)" />
+      <MemberSignature Language="C#" Value="public virtual string GetKey (int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">
+          <para>A <see cref="T:System.Int32" /> that specifies the zero-based index of the key to get from the current instance.</para>
+        </param>
+        <summary>
+          <para>Returns the key at the specified index of the current
+      instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> that contains the
+   key at the specified index of the current instance, if found;
+   otherwise, <see langword="null" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is outside the valid range of indices for the current instance.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetValues">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.String[] GetValues(int32 index)" />
+      <MemberSignature Language="C#" Value="public virtual string[] GetValues (int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">
+          <para> A <see cref="T:System.Int32" /> that specifies the zero-based index of the entry that contains the values to get from the current instance.</para>
+        </param>
+        <summary>
+          <para> Returns an array that contains the values at the
+      specified index of the current instance.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> array containing the values at the specified index of the
+   current instance, if found;
+   otherwise, <see langword="null" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is outside the valid range of indices for the current instance.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetValues">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.String[] GetValues(string name)" />
+      <MemberSignature Language="C#" Value="public virtual string[] GetValues (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">
+          <para>A <see cref="T:System.String" /> that specifies the key of the entry that contains the values to get. </para>
+        </param>
+        <summary>
+          <para>Gets the values associated with the specified key from
+      the current instance.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" />
+array containing the values associated with <paramref name="name" />
+from the current instance, if found;
+otherwise, <see langword="null" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">If <paramref name="name" /> is
+<see langword="null" />, no exception is thrown and <see langword="null" /> is returned.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasKeys">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool HasKeys()" />
+      <MemberSignature Language="C#" Value="public bool HasKeys ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current instance
+   contains keys that are not <see langword="null" />.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the
+   current instance contains
+   keys that are not <see langword="null" />; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidateCachedArrays">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig instance void InvalidateCachedArrays()" />
+      <MemberSignature Language="C#" Value="protected void InvalidateCachedArrays ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Resets the cached arrays of the current instance to <see langword="null" />.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">The array returned by <see cref="P:System.Collections.Specialized.NameValueCollection.AllKeys" /> is cached for better performance and is automatically refreshed
+   when the collection changes. A derived class can invalidate the
+   cached version by calling <see cref="M:System.Collections.Specialized.NameValueCollection.InvalidateCachedArrays" />, thereby
+   forcing the arrays to be recreated.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="protected bool IsReadOnly { set; get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool IsReadOnly { family hidebysig specialname bool get_IsReadOnly() family hidebysig specialname void set_IsReadOnly(bool value) }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets a value indicating whether the current instance is read-only.</summary>
+        <value>
+          <see langword="true" /> if the current instance is read-only; otherwise, <see langword="false" />.</value>
+        <remarks>
+          <para>This property is read-write.</para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="ILASM" Value=".property string Item[int32 index] { public hidebysig specialname instance string get_Item(int32 index) }" />
+      <MemberSignature Language="C#" Value="public string this[int index] { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">
+          <para> A <see cref="T:System.Int32" /> that specifies the zero-based index of the entry to locate in the current instance.</para>
+        </param>
+        <summary>
+          <para> Gets the value in the current instance that is associated with the
+      specified index.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that contains the comma-separated list of values at the specified
+   index of the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>This property provides the ability to access a specific element in the
+         collection by using the following syntax: <c>myCollection[index]</c>.</para>
+            <para>This property cannot be set. To set the value at a specified index,
+         use <c>Item[GetKey(index)]</c>.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is outside the valid range of indices for the current instance.</exception>
+        <exception cref="T:System.NotSupportedException">The property is being set and the current instance is read-only.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="ILASM" Value=".property string Item[string name] { public hidebysig specialname instance string get_Item(string name) public hidebysig specialname instance void set_Item(string name, string value) }" />
+      <MemberSignature Language="C#" Value="public string this[string name] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">
+          <para>A <see cref="T:System.String" /> containing the key of the entry to locate. </para>
+        </param>
+        <summary>
+          <para>Gets or sets the value in the current instance that is associated with the
+      specified key.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that contains the
+   comma-separated list of values associated with the specified key. If
+<paramref name="name" /> is not contained in the current instance, attempting to get it 
+   returns <see langword="null" />, and attempting to set it creates a new entry
+   using <paramref name="name" />
+   .</para>
+        </value>
+        <remarks>
+          <para>If the specified key already exists in the collection,
+      setting this property overwrites the existing values with the specified
+      value. (If the existing value contains a string of multiple comma-delimited values, the complete string is replaced with a single instance of the specified value.) If the specified key does not exist in the collection, setting this
+      property creates a new entry using the specified key and the specified
+      value.</para>
+          <block subset="none" type="note">
+            <para>This property provides the ability to access a specific element in the
+         current instance using the following notation: myCollection[key] .</para>
+            <para> To add the new value to
+         the existing list of values, use the <see cref="M:System.Collections.Specialized.NameValueCollection.Add(System.Collections.Specialized.NameValueCollection)" /> method.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is outside the valid range of indexes for the collection.</exception>
+        <exception cref="T:System.NotSupportedException">The property is being set and the current instance is read-only. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Remove(string name)" />
+      <MemberSignature Language="C#" Value="public virtual void Remove (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> containing the key of the entry to remove from the current instance.</param>
+        <summary>
+          <para>Removes the entry with the specified key from the current instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">If <paramref name="name" />
+is found, the key <paramref name="name" /> and its associated value are set
+to <see langword="null" />.
+Removing an element does not alter the capacity of a
+<see cref="T:System.Collections.Specialized.NameValueCollection" /> 
+. </block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method uses the <see cref="M:System.Object.Equals(System.Object)" /> implementation of <paramref name="name" /> to locate <paramref name="name" /> in the 
+current instance. If <paramref name="name" /> is not found in the current
+instance or is <see langword="null" />, no exception
+is thrown and the current
+instance is unchanged. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Set">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Set(string name, string value)" />
+      <MemberSignature Language="C#" Value="public virtual void Set (string name, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">
+          <para>A <see cref="T:System.String" /> containing the key of the entry to add the new value to. </para>
+        </param>
+        <param name="value">
+          <para>A <see cref="T:System.String" /> containing the new value to add to the specified entry. </para>
+        </param>
+        <summary>
+          <para>Sets the value of the specified entry in the current
+      instance to the specified value.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">If the 
+      specified key already exists in the current instance, this method overwrites the
+      existing values with the specified value. (If the existing value contains a string of multiple comma-delimited values, the complete string is replaced with a single instance of value.) If the specified key does not exist in the current instance, this method creates
+      a new entry using the specified key and the specified value.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use the <see cref="M:System.Collections.Specialized.NameValueCollection.Add(System.Collections.Specialized.NameValueCollection)" /> 
+method to add the new value to the existing list of values.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

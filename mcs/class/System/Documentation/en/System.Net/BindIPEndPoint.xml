@@ -1,0 +1,27 @@
+<Type Name="BindIPEndPoint" FullName="System.Net.BindIPEndPoint">
+  <TypeSignature Language="C#" Value="public delegate System.Net.IPEndPoint BindIPEndPoint(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount);" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="servicePoint" Type="System.Net.ServicePoint" />
+    <Parameter Name="remoteEndPoint" Type="System.Net.IPEndPoint" />
+    <Parameter Name="retryCount" Type="System.Int32" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Net.IPEndPoint</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="servicePoint">To be added.</param>
+    <param name="remoteEndPoint">To be added.</param>
+    <param name="retryCount">To be added.</param>
+    <summary>To be added.</summary>
+    <value>To be added.</value>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

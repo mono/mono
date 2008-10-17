@@ -1,0 +1,237 @@
+<Type Name="SocketPermissionAttribute" FullName="System.Net.SocketPermissionAttribute" FullNameSP="System_Net_SocketPermissionAttribute" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable SocketPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
+  <TypeSignature Language="C#" Value="public sealed class SocketPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Security.Permissions.CodeAccessSecurityAttribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Constructor | System.AttributeTargets.Method, AllowMultiple=true, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>Used to declaratively specify security actions to control socket connections.</para>
+    </summary>
+    <remarks>
+      <para>The properties of a <see cref="T:System.Net.SocketPermissionAttribute" /> are required to have non-null
+   values. Once set, the values of the properties cannot be changed.</para>
+      <block subset="none" type="note">
+        <para>The details of a socket connection are specified using the properties of the
+      current instance. For example, to secure a socket connection to port 80, set the
+   <see cref="P:System.Net.SocketPermissionAttribute.Port" /> property equal to
+      "80".</para>
+        <para>The security information declared by a security attribute is stored in the
+      metadata of the attribute target, and is accessed by the system at run-time.
+      Security attributes are used for declarative security only. For imperative
+      security, use the corresponding permission class, <see cref="T:System.Net.SocketPermission" />
+      .</para>
+        <para>The allowable <see cref="T:System.Net.SocketPermissionAttribute" /> targets are
+   determined by the <see cref="T:System.Security.Permissions.SecurityAction" /> passed to the constructor.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action)" />
+      <MemberSignature Language="C#" Value="public SocketPermissionAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
+      </Parameters>
+      <Docs>
+        <param name="action">A <see cref="T:System.Security.Permissions.SecurityAction" /> value.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.SocketPermissionAttribute" /> class with the specified <see cref="T:System.Security.Permissions.SecurityAction" /> value.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <permission cref="T:System.ArgumentException">
+          <paramref name="action " /> is not a valid <see cref="T:System.Security.Permissions.SecurityAction" /> value.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Access">
+      <MemberSignature Language="ILASM" Value=".property string Access { public hidebysig specialname instance string get_Access() public hidebysig specialname instance void set_Access(string value) }" />
+      <MemberSignature Language="C#" Value="public string Access { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the network access method specified by the
+      current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing a
+   network access method allowed by the current instance. Valid values are
+   "Accept" and "Connect".</para>
+        </value>
+        <remarks>
+          <para>This property is write-once. Once this property has been 
+      set to a non-null value, attempts to set this
+      property to new value cause a <see cref="T:System.ArgumentException" /> .</para>
+   Valid values for this property correspond to <see cref="T:System.Net.NetworkAccess" /> enumeration values.
+</remarks>
+        <exception cref="T:System.ArgumentException">
+          <see cref="P:System.Net.SocketPermissionAttribute.Access" /> is being set and is not <see langword="null" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreatePermission">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.IPermission CreatePermission()" />
+      <MemberSignature Language="C#" Value="public override System.Security.IPermission CreatePermission ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.IPermission</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a
+ <see cref="T:System.Net.SocketPermission" /> that
+ contains the security information of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.SocketPermission" />
+object with the security information of the current
+instance.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.Security.Permissions.SecurityAttribute.CreatePermission" />.</para>
+            <para>Applications typically do not call this method; it is intended for use by the
+ system.</para>
+            <para>The security information described by a security attribute is stored in the
+ metadata of the attribute target, and is accessed by the system at run-time. The
+ system uses the object returned by this method to convert the security
+ information of the current instance into the form stored in metadata.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">One or more of the current instance's <see cref="P:System.Net.SocketPermissionAttribute.Access" />, <see cref="P:System.Net.SocketPermissionAttribute.Host" />, <see cref="P:System.Net.SocketPermissionAttribute.Transport" /> or <see cref="P:System.Net.SocketPermissionAttribute.Port" /> properties is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Host">
+      <MemberSignature Language="ILASM" Value=".property string Host { public hidebysig specialname instance string get_Host() public hidebysig specialname instance void set_Host(string value) }" />
+      <MemberSignature Language="C#" Value="public string Host { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the DNS host name or IP address specified
+      by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing a DNS host name or
+   IP address.</para>
+        </value>
+        <remarks>
+          <para> This property is write-once. Once this property has been
+      set to a non-null value, attempts to set this property to new value cause a
+   <see cref="T:System.ArgumentException" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <see cref="P:System.Net.SocketPermissionAttribute.Host" /> is being set and is not <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Port">
+      <MemberSignature Language="ILASM" Value=".property string Port { public hidebysig specialname instance string get_Port() public hidebysig specialname instance void set_Port(string value) }" />
+      <MemberSignature Language="C#" Value="public string Port { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the port specified by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing a port number, or "All" or
+   -1 to indicate all
+   ports.</para>
+        </value>
+        <remarks>
+          <para>This property is write-once. Once this property has been 
+      set to a non-null value, attempts to set this property to new value cause a
+   <see cref="T:System.ArgumentException" /> .</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <see cref="P:System.Net.SocketPermissionAttribute.Port" /> is being set and is not <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transport">
+      <MemberSignature Language="ILASM" Value=".property string Transport { public hidebysig specialname instance string get_Transport() public hidebysig specialname instance void set_Transport(string value) }" />
+      <MemberSignature Language="C#" Value="public string Transport { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the transport type specified by the current
+      instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the
+   transport type associated with the current
+   instance. Valid values are "All", "Connectionless", "ConnectionOriented", "Tcp", and
+   "Udp".</para>
+        </value>
+        <remarks>
+          <para>This property is write-once. Once this property has been 
+      set to a non-null value, attempts to set this property to new value cause a
+   <see cref="T:System.ArgumentException" /> .</para>
+          <block subset="none" type="note">Valid values for this property correspond to <see cref="T:System.Net.TransportType" /> enumeration values.</block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <see cref="P:System.Net.SocketPermissionAttribute.Transport" /> is being set and is not <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

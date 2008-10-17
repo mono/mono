@@ -1,0 +1,324 @@
+<Type Name="AuthenticationManager" FullName="System.Net.AuthenticationManager" FullNameSP="System_Net_AuthenticationManager" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public AuthenticationManager extends System.Object" />
+  <TypeSignature Language="C#" Value="public class AuthenticationManager" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Manages the authentication modules called during the client authentication
+      process.</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.Net.AuthenticationManager" /> class manages
+   authentication modules that are responsible for client authentication.
+<block subset="none" type="note">The <see cref="T:System.Net.AuthenticationManager" /> is called by <see cref="T:System.Net.WebRequest" /> instances to provide information 
+   that is sent to servers to authenticate the client. The authentication process
+   might consist of requests to an authentication server separate from the resource
+   server, as well as any other activities required to properly authenticate a
+   client.</block></para>
+      <para>The <see cref="T:System.Net.AuthenticationManager" />
+queries registered authentication modules by calling the <see cref="M:System.Net.IAuthenticationModule.Authenticate(System.String,System.Net.WebRequest,System.Net.ICredentials)" qualify="true" /> method for each module. The
+first authentication module that returns a <see cref="T:System.Net.Authorization" /> instance is used to authenticate the request. An authentication module, which can be any object that
+implements the <see cref="T:System.Net.IAuthenticationModule" /> interface, is registered using the <see cref="M:System.Net.AuthenticationManager.Register(System.Net.IAuthenticationModule)" />
+method. Authentication modules are called in the order in which they are registered.</para>
+      <para>Applications typically do not access this type directly;
+   it provides authentication services for the <see cref="T:System.Net.WebRequest" /> type.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Authenticate">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.Authorization Authenticate(string challenge, class System.Net.WebRequest request, class System.Net.ICredentials credentials)" />
+      <MemberSignature Language="C#" Value="public static System.Net.Authorization Authenticate (string challenge, System.Net.WebRequest request, System.Net.ICredentials credentials);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Authorization</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="challenge" Type="System.String" />
+        <Parameter Name="request" Type="System.Net.WebRequest" />
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+      </Parameters>
+      <Docs>
+        <param name="challenge">A <see cref="T:System.String" /> containing the challenge returned by an Internet host. The content of this string is determined by the authentication protocol(s) used by the server that issued the challenge.</param>
+        <param name="request">The <see cref="T:System.Net.WebRequest" /> that received <paramref name="challenge" /> .</param>
+        <param name="credentials">The <see cref="T:System.Net.ICredentials" /> associated with <paramref name="request" />. <block subset="none" type="note">The <see cref="P:System.Net.WebRequest.Credentials" /> property of <paramref name="request" /> is used to supply this argument.</block></param>
+        <summary>
+          <para> Calls registered authentication modules to find a module that
+      responds to the specified authentication challenge.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Net.Authorization" /> instance containing the response from the
+   authentication module, or <see langword="null" /> if no authentication module
+   responded to the challenge.</para>
+          <para> Applications do not call this method; it is called by
+<see cref="T:System.Net.WebRequest" /> 
+instances.</para>
+        </returns>
+        <remarks>
+          <para>The <see cref="M:System.Net.AuthenticationManager.Authenticate(System.String,System.Net.WebRequest,System.Net.ICredentials)" /> method invokes the <see cref="M:System.Net.IAuthenticationModule.Authenticate(System.String,System.Net.WebRequest,System.Net.ICredentials)" qualify="true" /> method of each
+   registered authentication module until one of the modules returns a <see cref="T:System.Net.Authorization" />
+   instance. Authentication modules are called in the order in which they were registered via
+   the <see cref="M:System.Net.AuthenticationManager.Register(System.Net.IAuthenticationModule)" />
+   method.</para>
+          <para>
+            <block subset="none" type="note">The <see cref="P:System.Net.Authorization.Message" /> property of the object returned by
+this method contains the
+client's response to the server challenge contained in <paramref name="challenge" />
+. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="challenge " />, <paramref name="request " />, or <paramref name="credentials " /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CredentialPolicy">
+      <MemberSignature Language="C#" Value="public static System.Net.ICredentialPolicy CredentialPolicy { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.ICredentialPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CustomTargetNameDictionary">
+      <MemberSignature Language="C#" Value="public static System.Collections.Specialized.StringDictionary CustomTargetNameDictionary { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PreAuthenticate">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.Authorization PreAuthenticate(class System.Net.WebRequest request, class System.Net.ICredentials credentials)" />
+      <MemberSignature Language="C#" Value="public static System.Net.Authorization PreAuthenticate (System.Net.WebRequest request, System.Net.ICredentials credentials);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Authorization</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="request" Type="System.Net.WebRequest" />
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+      </Parameters>
+      <Docs>
+        <param name="request">A <see cref="T:System.Net.WebRequest" /> containing a request for access to a resource.</param>
+        <param name="credentials">The <see cref="T:System.Net.ICredentials" /> associated with <paramref name="request" /> .</param>
+        <summary>
+          <para>Attempts to obtain a <see cref="T:System.Net.Authorization" />
+instance used to initiate client authentication.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Net.Authorization" /> instance if an authentication module can provide
+   authentication information to be sent with <paramref name="request" /> ;
+   otherwise, <see langword="null" />. If <paramref name="credentials" />
+   is <see langword="null" />, this method returns <see langword="null" />.</para>
+        </returns>
+        <remarks>
+          <para>The <see cref="M:System.Net.AuthenticationManager.PreAuthenticate(System.Net.WebRequest,System.Net.ICredentials)" /> method invokes the <see cref="M:System.Net.IAuthenticationModule.PreAuthenticate(System.Net.WebRequest,System.Net.ICredentials)" qualify="true" /> method of each registered
+   authentication module until one of the modules returns a <see cref="T:System.Net.Authorization" />
+   instance. Authentication modules are called in the order in which they were
+   registered via the <see cref="M:System.Net.AuthenticationManager.Register(System.Net.IAuthenticationModule)" /> method.</para>
+          <para>
+            <block subset="none" type="note">The <see cref="T:System.Net.Authorization" /> instance contains the
+information that will be
+sent by a client to initiate authentication instead of waiting for the server to
+request it. Authentication modules that support preauthentication allow clients
+to improve server efficiency by avoiding extra round trips caused by
+authentication challenges.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">If an authorization module supports preauthentication
+   of requests, its <see cref="P:System.Net.IAuthenticationModule.CanPreAuthenticate" qualify="true" />
+   property returns <see langword="true" />. Note that
+   preauthentication requires that an authentication of the client has already
+   occurred. The information obtained from the initial authentication is used to
+   provide the <see cref="P:System.Net.Authorization.Message" /> that is
+   sent to the server as an authentication header in
+<paramref name="request" /> .</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="request " />is <see langword="null." /></para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Register">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Register(class System.Net.IAuthenticationModule authenticationModule)" />
+      <MemberSignature Language="C#" Value="public static void Register (System.Net.IAuthenticationModule authenticationModule);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="authenticationModule" Type="System.Net.IAuthenticationModule" />
+      </Parameters>
+      <Docs>
+        <param name="authenticationModule">The <see cref="T:System.Net.IAuthenticationModule" /> to register.</param>
+        <summary>
+          <para> Adds an authentication module to the list of registered
+      authentication modules managed by the authentication manager.</para>
+        </summary>
+        <remarks>
+          <para>The <see cref="M:System.Net.AuthenticationManager.Register(System.Net.IAuthenticationModule)" /> method adds an authentication
+   module to the end of the list of modules managed by the authentication manager.
+   Each registered module is required to have a
+   unique <see cref="P:System.Net.IAuthenticationModule.AuthenticationType" />. If a module with the same
+<see cref="P:System.Net.IAuthenticationModule.AuthenticationType" /> is already registered, this method removes the 
+   registered module, and adds <paramref name="authenticationModule" /> to the end of the
+   list. <block subset="none" type="note">Authentication
+   modules are called in
+   the order in which they were added to the list.</block></para>
+          <para>
+            <block subset="none" type="note">To remove a module,
+   call one of the <see cref="M:System.Net.AuthenticationManager.Unregister(System.Net.IAuthenticationModule)" />
+   
+   methods.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="authenticationModule " /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisteredModules">
+      <MemberSignature Language="ILASM" Value=".property class System.Collections.IEnumerator RegisteredModules { public hidebysig static specialname class System.Collections.IEnumerator get_RegisteredModules() }" />
+      <MemberSignature Language="C#" Value="public static System.Collections.IEnumerator RegisteredModules { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a list of registered authentication modules.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Collections.IEnumerator" /> that
+   provides access to the list of registered
+   authentication modules.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">The <see cref="M:System.Net.AuthenticationManager.Register(System.Net.IAuthenticationModule)" /> method adds modules to the
+   list of registered authentication modules, and the <see cref="M:System.Net.AuthenticationManager.Unregister(System.Net.IAuthenticationModule)" /> method removes modules from
+   it.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unregister">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Unregister(class System.Net.IAuthenticationModule authenticationModule)" />
+      <MemberSignature Language="C#" Value="public static void Unregister (System.Net.IAuthenticationModule authenticationModule);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="authenticationModule" Type="System.Net.IAuthenticationModule" />
+      </Parameters>
+      <Docs>
+        <param name="authenticationModule">The <see cref="T:System.Net.IAuthenticationModule" /> module to remove.</param>
+        <summary>
+          <para> Removes the specified authentication module from the list of registered modules.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">To add an authentication module to
+      the list of registered modules, call the <see cref="M:System.Net.AuthenticationManager.Register(System.Net.IAuthenticationModule)" />
+      method.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="authenticationModule " /> is <see langword="null" />.</exception>
+        <exception cref="T:System.InvalidOperationException">
+          <paramref name="authenticationModule " />is not a registered authentication module.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unregister">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Unregister(string authenticationScheme)" />
+      <MemberSignature Language="C#" Value="public static void Unregister (string authenticationScheme);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="authenticationScheme" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="authenticationScheme">A <see cref="T:System.String" /> containing the authentication type of the module to remove.</param>
+        <summary>
+          <para>Removes the authentication module with the specified
+      authentication type from the list of registered modules.</para>
+        </summary>
+        <remarks>
+          <para>The <paramref name="authenticationScheme" /> is required to match
+   the value returned by the <see cref="P:System.Net.IAuthenticationModule.AuthenticationType" /> property of a registered authentication module.</para>
+          <para>
+            <block subset="none" type="note">To add an authentication module to
+   the list of registered modules, call the <see cref="M:System.Net.AuthenticationManager.Register(System.Net.IAuthenticationModule)" />
+   method.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="authenticationScheme " /> is <see langword="null" />.</exception>
+        <exception cref="T:System.InvalidOperationException">There is no registered module with the <paramref name="authenticationScheme " /> authentication type.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

@@ -1,0 +1,1310 @@
+<Type Name="HttpStatusCode" FullName="System.Net.HttpStatusCode" FullNameSP="System_Net_HttpStatusCode" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable HttpStatusCode extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum HttpStatusCode" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para>Contains the values of status codes defined for the Hypertext Transfer Protocol (HTTP).</para>
+    </summary>
+    <remarks>
+      <para>This enumeration is used by <see cref="T:System.Net.HttpWebResponse" />.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Net.HttpStatusCode" /> enumeration contains the values of the status codes
+   defined in IETF RFC 2616 - HTTP/1.1. </para>
+        <para>The status of an HTTP request is contained in the <see cref="P:System.Net.HttpWebResponse.StatusCode" qualify="true" /> property. </para>
+      </block>
+    </remarks>
+    <example>
+      <para> The following example compares the status returned by a
+   <see cref="T:System.Net.HttpWebResponse" /> with a <see cref="T:System.Net.HttpStatusCode" />
+   value to determine the status of the response.</para>
+      <code lang="C#">using System;
+using System.Net;
+
+public class HttpStatusCodeExample {
+
+   public static void Main() {
+      string serverName = "http://www.contoso.com";
+      HttpWebRequest httpReq = (HttpWebRequest) WebRequest.Create(serverName);
+      httpReq.AllowAutoRedirect = false;
+      HttpWebResponse httpRes = (HttpWebResponse) httpReq.GetResponse();
+      if (httpRes.StatusCode==HttpStatusCode.Found) {    
+          Console.WriteLine("Request for {0} was redirected.", serverName);
+      }
+   }
+}
+</code>
+      <para>The output is</para>
+      <c>
+        <para>Request for http://www.contoso.com was
+      redirected.</para>
+      </c>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName="Accepted">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Accepted = 202" />
+      <MemberSignature Language="C#" Value="Accepted" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Accepted</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent
+      to HTTP status 202. Indicates that the request has been
+      accepted but not
+      yet processed.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 202, see
+      Section 10.2.3 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ambiguous">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Ambiguous = 300" />
+      <MemberSignature Language="C#" Value="Ambiguous" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Ambiguous</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 300. Indicates that multiple
+      representations, each with a specific location, correspond to the requested
+      resource. Agent-driven negotiation information is provided so that the
+      request can be redirected by the user (or user agent) to the location of the
+      preferred representation.</para>
+          <block subset="none" type="note">
+            <para>The default action is to treat this status as a redirect and
+         follow the contents of the Location header associated with the current
+         response.</para>
+            <para>
+              <see cref="F:System.Net.HttpStatusCode.Ambiguous" /> is a synonym for <see cref="F:System.Net.HttpStatusCode.MultipleChoices" />.</para>
+            <para>For a detailed description of the HTTP status code 300, see Section 10.3.1 of IETF RFC 2616 -
+      HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BadGateway">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode BadGateway = 502" />
+      <MemberSignature Language="C#" Value="BadGateway" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>BadGateway</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 502. Indicates that the
+      server, acting as a gateway or proxy, received an invalid response from the upstream
+      server that was accessed while attempting to fulfill the request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 502, see
+      Section 10.5.3 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BadRequest">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode BadRequest = 400" />
+      <MemberSignature Language="C#" Value="BadRequest" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>BadRequest</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 400.
+      Indicates that improper syntax prevented the server from understanding the request .</para>
+          <block subset="none" type="note">
+            <para>For a detailed description of the HTTP status code 400, see Section 10.4.1 of IETF RFC 2616 -
+         HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Conflict">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Conflict = 409" />
+      <MemberSignature Language="C#" Value="Conflict" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Conflict</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 409. Indicates that a conflict with the current resource
+      state prevented the completion of the request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 409, see
+      Section 10.4.10 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Continue">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Continue = 100" />
+      <MemberSignature Language="C#" Value="Continue" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Continue</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 100. Indicates that the client is allowed to continue with the request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of HTTP status code 100, see
+      Section 10.1.1 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Created">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Created = 201" />
+      <MemberSignature Language="C#" Value="Created" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Created</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 201.
+      Indicates that the request has been fulfilled, resulting in the creation of a new resource. The most specific URI for this resource is contained
+      by the Location header field of the response.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 201, see
+      Section 10.2.2 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExpectationFailed">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode ExpectationFailed = 417" />
+      <MemberSignature Language="C#" Value="ExpectationFailed" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ExpectationFailed</MemberValue>
+      <Docs>
+        <summary>
+          <para> 
+      Equivalent to HTTP status 417. Indicates that the Expect request-header field condition could
+      not be met by the server, or the server is a proxy and has unambiguous evidence
+      that the next-hop server cannot meet the condition.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 417, see
+      Section 10.4.18 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Forbidden">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Forbidden = 403" />
+      <MemberSignature Language="C#" Value="Forbidden" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Forbidden</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 403. Indicates that the server understood but refuses to fulfill the request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 403, see
+      Section 10.4.4 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Found">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Found = 302" />
+      <MemberSignature Language="C#" Value="Found" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Found</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 302. Indicates
+      that the requested resource is temporarily located on a different URI.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="F:System.Net.HttpStatusCode.Found" /> is a synonym for <see cref="F:System.Net.HttpStatusCode.Redirect" />.</para>
+            <para> The default action when this status is received
+      is to follow the Location header of the response. When the original
+      request method was POST, the redirected request will use the GET method.</para>
+            <para>For a detailed description of the HTTP status code 302, see Section 10.3.3 of IETF RFC 2616 -
+      HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GatewayTimeout">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode GatewayTimeout = 504" />
+      <MemberSignature Language="C#" Value="GatewayTimeout" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>GatewayTimeout</MemberValue>
+      <Docs>
+        <summary>
+          <para> 
+      Equivalent to HTTP status 504. Indicates that the server, acting as a gateway or proxy, timed out while waiting for a response from an
+      upstream server accessed in an attempt to fulfill the request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 504, see
+      Section 10.5.5 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Gone">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Gone = 410" />
+      <MemberSignature Language="C#" Value="Gone" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Gone</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 410. Indicates both that the
+      requested resource is no longer available
+      on the server and no forwarding address is known.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 410, see
+      Section 10.4.11 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HttpVersionNotSupported">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode HttpVersionNotSupported = 505" />
+      <MemberSignature Language="C#" Value="HttpVersionNotSupported" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>HttpVersionNotSupported</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP
+      status 505. Indicates that the HTTP protocol version used by the request is not
+      supported by the server.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 505, see
+      Section 10.5.6 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InternalServerError">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode InternalServerError = 500" />
+      <MemberSignature Language="C#" Value="InternalServerError" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>InternalServerError</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 500. Indicates that the request could not be fulfilled by the server due to an unexpected condition.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 500, see
+      Section 10.5.1 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LengthRequired">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode LengthRequired = 411" />
+      <MemberSignature Language="C#" Value="LengthRequired" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>LengthRequired</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 411. Indicates that the server refuses to accept the request because its Content-length header is undefined.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 411, see
+      Section 10.4.12 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MethodNotAllowed">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode MethodNotAllowed = 405" />
+      <MemberSignature Language="C#" Value="MethodNotAllowed" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>MethodNotAllowed</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 405. Indicates that the method specified in the Request-Line
+      is not allowed for the requested resource.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 405, see
+      Section 10.4.6 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Moved">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Moved = 301" />
+      <MemberSignature Language="C#" Value="Moved" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>MovedPermanently</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 301. Indicates that a new, permanent URI has been
+      assigned to the requested resource. All future references should use one of the
+      returned URIs.</para>
+          <block subset="none" type="note">
+            <para> The default action when this status is received is to
+         follow the Location header of the response. When the original request method was POST,
+         the redirected request will use the GET method.</para>
+            <para>
+              <see cref="F:System.Net.HttpStatusCode.Moved" /> is a synonym for <see cref="F:System.Net.HttpStatusCode.MovedPermanently" />.</para>
+            <para>For a detailed description of the HTTP status code 301, see Section 10.3.2 of IETF RFC 2616 -
+      HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MovedPermanently">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode MovedPermanently = 301" />
+      <MemberSignature Language="C#" Value="MovedPermanently" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>MovedPermanently</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 301. Indicates that a new, permanent URI has been assigned to the requested resource. All future references should use one of the returned URIs.</para>
+          <block subset="none" type="note">
+            <para> The default action when this status is received is to
+         follow the Location header of the response.</para>
+            <para>
+              <see cref="F:System.Net.HttpStatusCode.MovedPermanently" /> is a synonym for <see cref="F:System.Net.HttpStatusCode.Moved" />.</para>
+            <para>For a detailed description of the HTTP status code 301, see Section 10.3.2 of IETF RFC 2616 -
+      HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MultipleChoices">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode MultipleChoices = 300" />
+      <MemberSignature Language="C#" Value="MultipleChoices" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Ambiguous</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent
+      to HTTP status 300. Indicates that multiple representations, each with a specific location,
+      correspond to the requested resource. Agent-driven negotiation information is provided
+      so that the request can be redirected by the user (or user agent) to the location of the preferred representation.</para>
+          <block subset="none" type="note">
+            <para> The default action is to treat this status as a redirect
+         and follow the contents of the Location header of the response.</para>
+            <para>
+              <see cref="F:System.Net.HttpStatusCode.MultipleChoices" /> is a synonym for <see cref="F:System.Net.HttpStatusCode.Ambiguous" />.</para>
+            <para>For a detailed description of the HTTP status code 300, see Section 10.3.1 of IETF RFC 2616 -
+      HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoContent">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode NoContent = 204" />
+      <MemberSignature Language="C#" Value="NoContent" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NoContent</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 204. Indicates that the request has been fulfilled by the
+      server and no entity-body was returned by the server.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 204, see
+      Section 10.2.5 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NonAuthoritativeInformation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode NonAuthoritativeInformation = 203" />
+      <MemberSignature Language="C#" Value="NonAuthoritativeInformation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NonAuthoritativeInformation</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 203.
+      Indicates that a local or a third-party
+      copy rather than the origin server provided the metainformation returned in the entity-header.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 203, see
+      Section 10.2.4 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NotAcceptable">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode NotAcceptable = 406" />
+      <MemberSignature Language="C#" Value="NotAcceptable" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NotAcceptable</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 406. Indicates that the only response entities that can be generated by the requested resource have content
+      characteristics that are not acceptable according to the accept headers sent in the request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 406, see
+      Section 10.4.7 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NotFound">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode NotFound = 404" />
+      <MemberSignature Language="C#" Value="NotFound" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NotFound</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 404. Indicates that the server did not find a resource that matches
+      the requested URI.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 404, see
+      Section 10.4.5 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NotImplemented">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode NotImplemented = 501" />
+      <MemberSignature Language="C#" Value="NotImplemented" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NotImplemented</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 501. Indicates that
+      the functionality required to fulfill the request is not supported by the server.
+      This is appropriate, for example, if the server does not recognize the request method and cannot support it for any resource.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 501, see
+      Section 10.5.2 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NotModified">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode NotModified = 304" />
+      <MemberSignature Language="C#" Value="NotModified" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NotModified</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 304. Indicates that the
+      client has performed a conditional GET request and access is allowed, but the document has not been modified.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 304, see Section 10.3.5
+      of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OK">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode OK = 200" />
+      <MemberSignature Language="C#" Value="OK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OK</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 200. Indicates that the request succeeded.
+      The method used by the request determines the information returned with the response
+      as described in the following table.</para>
+          <list type="table">
+            <listheader>
+              <term>Method</term>
+              <description>Information returned</description>
+            </listheader>
+            <item>
+              <term> GET</term>
+              <description> The entity that corresponds to the requested
+            resource.</description>
+            </item>
+            <item>
+              <term> HEAD</term>
+              <description> 
+            The entity-header fields that correspond to the requested resource. Does
+            not return the message-body.</description>
+            </item>
+            <item>
+              <term> POST </term>
+              <description> An entity
+            that contains or describes the result of the action.</description>
+            </item>
+            <item>
+              <term> TRACE</term>
+              <description> An entity
+            that contains the request message received by the server. </description>
+            </item>
+          </list>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 200, see
+      Section 10.2.1 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PartialContent">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode PartialContent = 206" />
+      <MemberSignature Language="C#" Value="PartialContent" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>PartialContent</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 206. Indicates that the server has
+      fulfilled a partial GET request for the resource. The request is required to have
+      included a Range header field that indicates the desired range.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 206, see
+      Section 10.2.7 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PaymentRequired">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode PaymentRequired = 402" />
+      <MemberSignature Language="C#" Value="PaymentRequired" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>PaymentRequired</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 402.
+      <see cref="F:System.Net.HttpStatusCode.PaymentRequired" /> is reserved for future use.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreconditionFailed">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode PreconditionFailed = 412" />
+      <MemberSignature Language="C#" Value="PreconditionFailed" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>PreconditionFailed</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 412. Indicates
+      that a precondition given in one or more of the request-header fields
+      was tested on the server but evaluated to
+      false.</para>
+          <block subset="none" type="note">
+            <para>Conditions are set with conditional request headers such as If-Match,
+         If-None-Match, or If-Unmodified-Since.</para>
+            <para>For a detailed description of the HTTP status code 412, see Section 10.4.13 of IETF RFC 2616 -
+         HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProxyAuthenticationRequired">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode ProxyAuthenticationRequired = 407" />
+      <MemberSignature Language="C#" Value="ProxyAuthenticationRequired" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ProxyAuthenticationRequired</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 407. Indicates that
+      the client is required to authenticate itself to the
+      proxy before proceeding.</para>
+          <block subset="none" type="note">
+            <para>The Proxy-authenticate header contains the details of how to perform the
+         authentication.</para>
+            <para>For a detailed description of the HTTP status code 407, see Section 10.4.8 of IETF RFC 2616 -
+         HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Redirect">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Redirect = 302" />
+      <MemberSignature Language="C#" Value="Redirect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Found</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 302. Indicates that the requested resource is
+      temporarily located on a different URI.</para>
+          <block subset="none" type="note">
+            <para> The default action when this status is received is to follow the
+         Location header of the response. When the original request method was POST,
+         the redirected request will use the GET method.</para>
+            <para>
+              <see cref="F:System.Net.HttpStatusCode.Redirect" /> is a synonym for <see cref="F:System.Net.HttpStatusCode.Found" />.</para>
+            <para>For a detailed description of the HTTP status code 302, see Section 10.3.3 of IETF RFC 2616 -
+      HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RedirectKeepVerb">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode RedirectKeepVerb = 307" />
+      <MemberSignature Language="C#" Value="RedirectKeepVerb" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>TemporaryRedirect</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 307. Indicates that the requested resource is
+      temporarily located under a different URI.</para>
+          <block subset="none" type="note">
+            <para>The default action when this status is received is to follow the Location
+         header associated with the response. When the original request method was POST,
+         the redirected request will also use the POST method.</para>
+            <para>
+              <see cref="F:System.Net.HttpStatusCode.RedirectKeepVerb" /> is a synonym for <see cref="F:System.Net.HttpStatusCode.TemporaryRedirect" />.</para>
+            <para>For a detailed description of the HTTP status code 307, see Section 10.3.8 of IETF RFC 2616 -
+      HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RedirectMethod">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode RedirectMethod = 303" />
+      <MemberSignature Language="C#" Value="RedirectMethod" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>RedirectMethod</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 303.
+      Automatically
+      redirects the client to the URI specified in the Location header as the result
+      of a POST.</para>
+          <block subset="none" type="note">
+            <para>The request to the resource specified by the Location header will be made
+         with a GET.</para>
+            <para>
+              <see cref="F:System.Net.HttpStatusCode.RedirectMethod" /> is a synonym for <see cref="F:System.Net.HttpStatusCode.SeeOther" />.</para>
+            <para>For a detailed description of the HTTP status code 303, see Section 10.3.4 of IETF RFC 2616 -
+      HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RequestedRangeNotSatisfiable">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode RequestedRangeNotSatisfiable = 416" />
+      <MemberSignature Language="C#" Value="RequestedRangeNotSatisfiable" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>RequestedRangeNotSatisfiable</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status
+      416. Indicates that none of the values specified by the Range request-header field
+      overlap the current extent of the
+      selected resource, and no If-Range request-header field was contained by the request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 416, see
+      Section 10.4.17 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RequestEntityTooLarge">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode RequestEntityTooLarge = 413" />
+      <MemberSignature Language="C#" Value="RequestEntityTooLarge" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>RequestEntityTooLarge</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 413. Indicates that the
+      request entity is larger that the server is willing or able to process, so the server is not
+      processing the request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP
+      status code 413, see Section 10.4.14 of IETF RFC 2616 -
+      HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RequestTimeout">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode RequestTimeout = 408" />
+      <MemberSignature Language="C#" Value="RequestTimeout" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>RequestTimeout</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 408. Indicates that the
+      server timed out before the client produced a request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 408, see
+      Section 10.4.9 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RequestUriTooLong">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode RequestUriTooLong = 414" />
+      <MemberSignature Language="C#" Value="RequestUriTooLong" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>RequestUriTooLong</MemberValue>
+      <Docs>
+        <summary>
+          <para> 
+      Equivalent to HTTP status 414. Indicates
+      that the Request-URI is longer than the server will interpret, so the server is not servicing the
+      request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 414, see
+      Section 10.4.15 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResetContent">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode ResetContent = 205" />
+      <MemberSignature Language="C#" Value="ResetContent" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ResetContent</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 205. Indicates that the server
+      has fulfilled the request and the document view that yielded the request is to be reset by
+      the user agent.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 205, see
+      Section 10.2.6 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SeeOther">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode SeeOther = 303" />
+      <MemberSignature Language="C#" Value="SeeOther" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>RedirectMethod</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 303. Automatically redirects the client to the URI
+      specified in the Location header as the result of a POST.</para>
+          <block subset="none" type="note">
+            <para>The request to the resource specified by the Location header will be made
+         with a GET.</para>
+            <para>
+              <see cref="F:System.Net.HttpStatusCode.SeeOther" /> is a synonym for <see cref="F:System.Net.HttpStatusCode.RedirectMethod" />.</para>
+            <para>For a detailed description of the HTTP status code 303, see Section 10.3.4 of IETF RFC 2616 -
+      HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ServiceUnavailable">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode ServiceUnavailable = 503" />
+      <MemberSignature Language="C#" Value="ServiceUnavailable" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ServiceUnavailable</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 503. Indicates that a temporary overloading or maintenance of
+      the server is preventing it from handling the request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 503, see
+      Section 10.5.4 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SwitchingProtocols">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode SwitchingProtocols = 101" />
+      <MemberSignature Language="C#" Value="SwitchingProtocols" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SwitchingProtocols</MemberValue>
+      <Docs>
+        <summary>
+          <para>
+      Equivalent to HTTP status 101. Indicates that the server understands
+      and will comply with the client's request to switch the protocol
+      being used by the current connection to the protocols defined by the response's Upgrade header.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 101, see
+      Section 10.1.2 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TemporaryRedirect">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode TemporaryRedirect = 307" />
+      <MemberSignature Language="C#" Value="TemporaryRedirect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>TemporaryRedirect</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 307. Indicates that the requested resource is temporarily
+      located under a different URI.</para>
+          <block subset="none" type="note">
+            <para>The default action when this status is received is to follow the Location
+         header associated with the response. When the original request method was POST,
+         the redirected request will also use the POST method.</para>
+            <para>
+              <see cref="F:System.Net.HttpStatusCode.TemporaryRedirect" /> is a synonym for <see cref="F:System.Net.HttpStatusCode.RedirectKeepVerb" />.</para>
+            <para>For a detailed description of the HTTP status code 307, see Section 10.3.8 of IETF RFC 2616 -
+      HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unauthorized">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Unauthorized = 401" />
+      <MemberSignature Language="C#" Value="Unauthorized" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Unauthorized</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 401. Indicates that user authentication is required
+      for the request.</para>
+          <block subset="none" type="note">
+            <para>The WWW-Authenticate header contains the details of how to perform the
+         authentication.</para>
+            <para>For a detailed description of the HTTP status code 401, see Section 10.4.2 of IETF RFC 2616 -
+         HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnsupportedMediaType">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode UnsupportedMediaType = 415" />
+      <MemberSignature Language="C#" Value="UnsupportedMediaType" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>UnsupportedMediaType</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status
+      415. Indicates that the format of the entity of the request is not supported by the requested resource, so the server did not service the request.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status code 415, see
+      Section 10.4.16 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unused">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode Unused = 306" />
+      <MemberSignature Language="C#" Value="Unused" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Unused</MemberValue>
+      <Docs>
+        <summary>
+          <para> Equivalent to HTTP status 306.</para>
+          <block subset="none" type="note">
+            <para>This status code is not used in HTTP/1.1.</para>
+            <para>For a detailed description of the HTTP status code 306, see Section 10.3.7 of IETF RFC 2616 -
+         HTTP/1.1.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UseProxy">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.HttpStatusCode UseProxy = 305" />
+      <MemberSignature Language="C#" Value="UseProxy" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>UseProxy</MemberValue>
+      <Docs>
+        <summary>
+          <para>Equivalent to HTTP status 305. Indicates that the requested
+      resource is required to be accessed through the proxy identified in the Location header field.</para>
+          <para>
+            <block subset="none" type="note">For a detailed description of the HTTP status
+      code 305, see Section 10.3.6 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

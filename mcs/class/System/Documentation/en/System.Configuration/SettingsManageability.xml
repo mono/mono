@@ -1,0 +1,31 @@
+<Type Name="SettingsManageability" FullName="System.Configuration.SettingsManageability">
+  <TypeSignature Language="C#" Value="public enum SettingsManageability" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Roaming">
+      <MemberSignature Language="C#" Value="Roaming" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Configuration.SettingsManageability</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

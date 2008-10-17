@@ -1,0 +1,2066 @@
+<Type Name="HttpWebRequest" FullName="System.Net.HttpWebRequest" FullNameSP="System_Net_HttpWebRequest" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable HttpWebRequest extends System.Net.WebRequest" />
+  <TypeSignature Language="C#" Value="public class HttpWebRequest : System.Net.WebRequest" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Net.WebRequest</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Provides an HTTP-specific implementation of the <see cref="T:System.Net.WebRequest" /> 
+class.</para>
+    </summary>
+    <remarks>
+      <para> This class implements
+      properties and methods defined in <see cref="T:System.Net.WebRequest" /> and provides additional
+      properties and methods that enable the user to interact directly with servers
+      using the Hypertext Transfer Protocol (HTTP). </para>
+      <block subset="none" type="note">
+        <para>Instances of this class are
+         automatically created by the <see cref="T:System.Net.WebRequest" /> class. For example,
+         an instance of <see cref="T:System.Net.HttpWebRequest" /> is created when the <see cref="M:System.Net.WebRequest.Create(System.Uri,System.Boolean)" />
+         method is called and a Uniform Resource Identifier (URI) beginning with <c>http://</c> is specified.
+      It is expected that an instance of this class will be constructed for every
+      request made to the server. For example, after a call to <see cref="M:System.Net.HttpWebRequest.Abort" />
+      cancels an asynchronous operation, a call to <see cref="M:System.Net.HttpWebRequest.GetRequestStream" /> causes a <see cref="T:System.Net.WebException" /> to
+      be thrown.</para>
+        <para>Requests can be sent synchronously or
+      asynchronously. The <see cref="M:System.Net.HttpWebRequest.GetResponse" /> method
+      sends a request to
+      a server synchronously and returns a <see cref="T:System.Net.HttpWebResponse" />
+      instance containing the response. An asynchronous request for a resource
+      is sent using the <see cref="M:System.Net.HttpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.HttpWebRequest.EndGetResponse(System.IAsyncResult)" /> methods. </para>
+        <para> Request data is sent using a request stream. The <see cref="M:System.Net.HttpWebRequest.GetRequestStream" />
+, <see cref="M:System.Net.HttpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />, and <see cref="M:System.Net.HttpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> methods
+return a <see cref="T:System.IO.Stream" /> instance used to send
+data.</para>
+        <para>When errors occur while accessing an Internet resource,
+   the <see cref="T:System.Net.HttpWebRequest" /> class throws a <see cref="T:System.Net.WebException" />
+   , and the <see cref="P:System.Net.WebException.Status" qualify="true" />
+   property that indicates the source of the error. When <see cref="P:System.Net.WebException.Status" qualify="true" /> is <see cref="F:System.Net.WebExceptionStatus.ProtocolError" qualify="true" />, the <see cref="P:System.Net.WebException.Response" /> property contains the <see cref="T:System.Net.HttpWebResponse" />
+   received from the Internet resource. </para>
+        <para> Certain HTTP headers are protected; the user cannot set
+   them directly in the header collection obtained from the <see cref="P:System.Net.HttpWebRequest.Headers" />
+   property. Instead, these headers are set using the
+   associated properties of a <see cref="T:System.Net.HttpWebRequest" /> instance, or are set by the system. The following table describes how
+   each protected header is set.</para>
+        <list type="table">
+          <listheader>
+            <term>Header</term>
+            <description>Set by</description>
+          </listheader>
+          <item>
+            <term> Accept</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.Accept" />
+            </description>
+          </item>
+          <item>
+            <term> Connection</term>
+            <description>
+              <para>
+                <see cref="P:System.Net.HttpWebRequest.Connection" />
+              </para>
+              <para>
+                <see cref="P:System.Net.HttpWebRequest.KeepAlive" />
+              </para>
+            </description>
+          </item>
+          <item>
+            <term> Content-Length</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.ContentLength" />
+            </description>
+          </item>
+          <item>
+            <term> Content-Type</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.ContentType" />
+            </description>
+          </item>
+          <item>
+            <term> Expect</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.Expect" />
+            </description>
+          </item>
+          <item>
+            <term> Date</term>
+            <description>Set to current date by the system.</description>
+          </item>
+          <item>
+            <term> Host</term>
+            <description> Set to current host by the
+      system.</description>
+          </item>
+          <item>
+            <term> if-Modified-since</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.IfModifiedSince" />
+            </description>
+          </item>
+          <item>
+            <term> Range</term>
+            <description>
+              <see cref="M:System.Net.HttpWebRequest.AddRange(System.Int32,System.Int32)" />
+            </description>
+          </item>
+          <item>
+            <term> Referer</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.Referer" />
+            </description>
+          </item>
+          <item>
+            <term> Transfer-Encoding</term>
+            <description>
+              <para>
+                <see cref="P:System.Net.HttpWebRequest.TransferEncoding" />
+              </para>
+              <para>
+                <see cref="P:System.Net.HttpWebRequest.SendChunked" />
+              </para>
+            </description>
+          </item>
+          <item>
+            <term> User-Agent</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.UserAgent" />
+            </description>
+          </item>
+        </list>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected HttpWebRequest (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="serializationInfo">To be added.</param>
+        <param name="streamingContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Serialization is obsoleted for this type", false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Abort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Abort()" />
+      <MemberSignature Language="C#" Value="public override void Abort ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Cancels
+      an asynchronous operation.</para>
+        </summary>
+        <remarks>
+          <para>
+            <see cref="M:System.Net.HttpWebRequest.Abort" /> 
+cancels any pending asynchronous operation. After this method is called, calling <see cref="M:System.Net.HttpWebRequest.GetResponse" />, <see cref="M:System.Net.HttpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.HttpWebRequest.EndGetResponse(System.IAsyncResult)" />, <see cref="M:System.Net.HttpWebRequest.GetRequestStream" />, <see cref="M:System.Net.HttpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />, or <see cref="M:System.Net.HttpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> will throw a <see cref="T:System.Net.WebException" /> with <see cref="P:System.Net.WebException.Status" /> set to <see cref="F:System.Net.WebExceptionStatus.RequestCanceled" />
+.</para>
+          <block subset="none" type="note">
+            <para>If no pending request exists, calling this method does not cause an exception
+      to be thrown.</para>
+            <para>This method
+      overrides <see cref="M:System.Net.WebRequest.Abort" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Accept">
+      <MemberSignature Language="ILASM" Value=".property string Accept { public hidebysig specialname instance string get_Accept() public hidebysig specialname instance void set_Accept(string value) }" />
+      <MemberSignature Language="C#" Value="public string Accept { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a <see cref="T:System.String" /> containing the value of the HTTP Accept header.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the value of the HTTP Accept header. The default value of this property is
+<see langword="null" />.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">For additional information see section
+      14.1 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void AddRange(int32 range)" />
+      <MemberSignature Language="C#" Value="public void AddRange (int range);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="range" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="range">A <see cref="T:System.Int32" /> that specifies the starting or ending point of the range. If this value is positive, the range is from the beginning of the data to <paramref name="range" />. If this value is negative, the range is from <paramref name="range" /> to the end of the data.</param>
+        <summary>
+          <para>Adds a HTTP Range header to the current instance for
+      a specific range from the beginning or end of the requested data.</para>
+        </summary>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Net.HttpWebRequest.AddRange(System.Int32,System.Int32)" />("bytes", <paramref name="range" />).</para>
+          <block subset="none" type="note">
+            <para>The HTTP Range header specifies either a single range of bytes or a set of
+      byte ranges in an entity-body to be returned. If the server accessed by the
+      current instance supports the use of this header, this allows for the partial
+      retrieval of the entity due to, for example, the entity being particularly
+      large or there having been a failed transfer of data.</para>
+            <para>For more information on the HTTP Range header, see Section 14.35 of RFC
+      2616.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The range header could not be added.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void AddRange(int32 from, int32 to)" />
+      <MemberSignature Language="C#" Value="public void AddRange (int from, int to);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="from" Type="System.Int32" />
+        <Parameter Name="to" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="from">A <see cref="T:System.Int32" /> indicating the starting byte position of the entity-body data to be returned.</param>
+        <param name="to">A <see cref="T:System.Int32" /> indicating the last byte.</param>
+        <summary>
+          <para>Adds a HTTP Range header to the current instance for a specified range.</para>
+        </summary>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Net.HttpWebRequest.AddRange(System.Int32,System.Int32)" />("bytes", <paramref name="from" />, <paramref name="to" />).</para>
+          <block subset="none" type="note">
+            <para>The HTTP Range header specifies either a single range of bytes or a set
+      of byte ranges in an entity-body to be returned. If the server accessed by
+      the current instance supports the use of this header, this allows for the
+      partial retrieval of the entity due to, for example, the entity being
+      particularly large or there having been a failed transfer of data.</para>
+            <para>For more information on the HTTP Range header, see Section 14.35 of RFC
+      2616.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="from " /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="to " /> &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="from " /> &gt; <paramref name="to " />.</para>
+        </exception>
+        <exception cref="T:System.InvalidOperationException">The range header could not be added.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void AddRange(string rangeSpecifier, int32 range)" />
+      <MemberSignature Language="C#" Value="public void AddRange (string rangeSpecifier, int range);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rangeSpecifier" Type="System.String" />
+        <Parameter Name="range" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="rangeSpecifier">A <see cref="T:System.String" /> that contains the description of the range.</param>
+        <param name="range">A <see cref="T:System.Int32" /> that designates the starting or ending point of the range. If this value is positive, the range is from the beginning of the data to <paramref name="range" />. If this value is negative, the range is from <paramref name="range" /> to the end of the data. </param>
+        <summary>
+          <para> Adds a HTTP Range header to the current request for a specific range from the
+      beginning or end of the requested data.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The HTTP Range header specifies either a single range of bytes or a set of
+      byte ranges in an entity-body to be returned. If the server accessed by the
+      current instance supports the use of this header, this allows for the partial
+      retrieval of the entity due to, for example, the entity being particularly
+      large or there having been a failed transfer of data.</para>
+            <para>For more information on the HTTP Range header, see Section 14.35 of RFC
+      2616.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="rangeSpecifier " />is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="rangeSpecifier" /> is invalid.</exception>
+        <exception cref="T:System.InvalidOperationException">The range header could not be added.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void AddRange(string rangeSpecifier, int32 from, int32 to)" />
+      <MemberSignature Language="C#" Value="public void AddRange (string rangeSpecifier, int from, int to);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rangeSpecifier" Type="System.String" />
+        <Parameter Name="from" Type="System.Int32" />
+        <Parameter Name="to" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="rangeSpecifier">A <see cref="T:System.String" /> that contains the description of the range.</param>
+        <param name="from">A <see cref="T:System.Int32" /> designating the position at which to start sending data.</param>
+        <param name="to">A <see cref="T:System.Int32" /> designating the position at which to stop sending data. </param>
+        <summary>
+          <para>Adds a HTTP Range header to the current instance for
+      a specified range.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The HTTP Range header specifies either a single range of bytes or a set of
+         byte ranges in an entity-body to be returned. If the server accessed by the
+         current instance supports the use of this header, this allows for the partial
+         retrieval of the entity due to, for example, the entity being particularly
+         large or there having been a failed transfer of data.</para>
+            <para>For more information on the HTTP Range header, see Section 14.35 of IETF RFC
+         2616.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="rangeSpecifier " />is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="from " />&lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="to " />&lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="from " />&gt; <paramref name="to " />.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="rangeSpecifier" /> is invalid.</exception>
+        <exception cref="T:System.InvalidOperationException">The range header could not be added.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Address">
+      <MemberSignature Language="ILASM" Value=".property class System.Uri Address { public hidebysig specialname instance class System.Uri get_Address() }" />
+      <MemberSignature Language="C#" Value="public Uri Address { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the URI that responds to the current request.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Uri" />
+identifying the Internet resource that responds to the current request.
+The default is the URI used by the <see cref="M:System.Net.WebRequest.Create(System.Uri,System.Boolean)" qualify="true" />
+method to initialize
+the current
+instance. </para>
+        </value>
+        <remarks>
+          <para> This property is
+      read-only.</para>
+          <para> The
+      value of this property is set to the URI that is the source of
+      the response after all redirections are complete.</para>
+          <para>
+            <block subset="none" type="note">The URI of the original request is kept in the <see cref="P:System.Net.HttpWebRequest.RequestUri" /> property.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AllowAutoRedirect">
+      <MemberSignature Language="ILASM" Value=".property bool AllowAutoRedirect { public hidebysig specialname instance bool get_AllowAutoRedirect() public hidebysig specialname instance void set_AllowAutoRedirect(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool AllowAutoRedirect { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that indicates whether the current request will follow redirection responses.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />if the current request will automatically follow redirection
+   responses from the Internet resource; otherwise <see langword="false " />
+   . The default value is
+<see langword="true" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para>Set <see cref="P:System.Net.HttpWebRequest.AllowAutoRedirect" /> to <see langword="true" /> to allow the current request to
+      automatically follow HTTP redirection headers to the new location of a
+      resource.</para>
+            <para> The maximum number
+      of redirections to follow is set by the <see cref="P:System.Net.HttpWebRequest.MaximumAutomaticRedirections" />
+      property.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AllowWriteStreamBuffering">
+      <MemberSignature Language="ILASM" Value=".property bool AllowWriteStreamBuffering { public hidebysig specialname instance bool get_AllowWriteStreamBuffering() public hidebysig specialname instance void set_AllowWriteStreamBuffering(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool AllowWriteStreamBuffering { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that indicates whether to buffer the data sent to the Internet resource requested by the
+   current instance.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />to enable
+   buffering of the data sent
+   to the Internet resource requested by the current instance; <see langword="false " />to disable buffering. The default is
+<see langword="true" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para>When <see cref="P:System.Net.HttpWebRequest.AllowWriteStreamBuffering" /> is <see langword="true" />
+   , the data is buffered in memory so it is ready to be resent in the
+   event of redirections or authentication requests.</para>
+            <para> Depending on available memory, setting <see cref="P:System.Net.HttpWebRequest.AllowWriteStreamBuffering" />
+as <see langword="true" />
+might
+impact system performance when uploading large amounts of data.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AutomaticDecompression">
+      <MemberSignature Language="C#" Value="public System.Net.DecompressionMethods AutomaticDecompression { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.DecompressionMethods</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginGetRequestStream">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginGetRequestStream(class System.AsyncCallback callback, object state)" />
+      <MemberSignature Language="C#" Value="public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callback">A <see cref="T:System.AsyncCallback" /> delegate to be called when the stream is available. Can be <see langword="null" /> .</param>
+        <param name="state">A <see cref="T:System.Object" /> containing state information for the asynchronous request. Can be <see langword="null" /> .</param>
+        <summary>
+          <para> Begins an asynchronous request for a stream in which to write data to
+      be sent in the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IAsyncResult" /> that contains information about the asynchronous operation.</para>
+        </returns>
+        <remarks>
+          <para>This method starts an asynchronous operation. To get the
+      request stream, call the <see cref="M:System.Net.HttpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> method and specify the <see cref="T:System.IAsyncResult" /> object returned by
+      this method. <block subset="none" type="note"> The
+   <see cref="M:System.Net.HttpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> method
+      should be called exactly once for each call to <see cref="M:System.Net.HttpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />.</block></para>
+          <para>If the <paramref name="callback" /> parameter is not
+<see langword="null" />, the method(s) referenced by <paramref name="callback" /> are invoked 
+   when the asynchronous operation completes. The <see cref="T:System.IAsyncResult" /> object
+   returned by this method is passed as the argument to the method(s) referenced by
+<paramref name="callback" /> 
+.</para>
+          <para>The <paramref name="state" /> parameter can be any object that the
+caller wishes to have available for the duration of the asynchronous operation.
+This object is available via the <see cref="P:System.IAsyncResult.AsyncState" />
+property of the
+object returned by this method.</para>
+          <para>The value of the <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property of the current instance is
+required to be set prior to calling this method. </para>
+          <block subset="none" type="note">
+            <para> The method(s) invoked by
+      the callback delegate can call the <see cref="M:System.Net.HttpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> method to retrieve the stream.</para>
+            <para>This method is the asynchronous version of
+      the <see cref="M:System.Net.HttpWebRequest.GetRequestStream" /> method.</para>
+            <para>This method overrides <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" qualify="true" /> .</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The stream is being used by a previous call to <see cref="M:System.Net.HttpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> .</para>
+          <para>-or-</para>
+          <para>No writeable stream is available.</para>
+        </exception>
+        <exception cref="T:System.Net.ProtocolViolationException">
+          <para>The <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property of the current instance is not set.</para>
+          <para>-or-</para>
+          <para>The <see cref="P:System.Net.HttpWebRequest.Method" /> property of the current instance is "GET" or "HEAD".</para>
+        </exception>
+        <exception cref="T:System.Net.WebException">
+          <para>
+            <see cref="M:System.Net.HttpWebRequest.Abort" /> was previously called.</para>
+          <para>-or-</para>
+          <para>An error occurred while processing the request.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BeginGetResponse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginGetResponse(class System.AsyncCallback callback, object state)" />
+      <MemberSignature Language="C#" Value="public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callback">A <see cref="T:System.AsyncCallback" /> delegate to be called when the stream is available. Can be <see langword="null" /> .</param>
+        <param name="state">A <see cref="T:System.Object" /> containing state information for the asynchronous request. Can be <see langword="null" /> .</param>
+        <summary>
+          <para> Begins sending the current HTTP request
+      asynchronously.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IAsyncResult" /> that contains information about the asynchronous
+   operation.</para>
+        </returns>
+        <remarks>
+          <para> This method starts an asynchronous operation. To get
+      the response, call the <see cref="M:System.Net.HttpWebRequest.EndGetResponse(System.IAsyncResult)" /> method and
+      specify the <see cref="T:System.IAsyncResult" /> object returned by
+      this method. <block subset="none" type="note"> The <see cref="M:System.Net.HttpWebRequest.EndGetResponse(System.IAsyncResult)" /> method
+      should be called exactly once for each call to <see cref="M:System.Net.HttpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" />.</block></para>
+          <para>If the <paramref name="callback" /> parameter is not
+<see langword="null" />, the method referenced by <paramref name="callback" /> is invoked 
+   when the asynchronous operation completes. The <see cref="T:System.IAsyncResult" /> object
+   returned by this method is passed as the argument to the method referenced by
+<paramref name="callback" />.</para>
+          <para>The <paramref name="state" /> parameter can be any object that the
+caller wishes to have available for the duration of the asynchronous operation.
+This object is available via the <see cref="P:System.IAsyncResult.AsyncState" />
+property of the object returned by this method.</para>
+          <block subset="none" type="note">
+            <para>The method(s) invoked by the callback delegate can call the <see cref="M:System.Net.HttpWebRequest.EndGetResponse(System.IAsyncResult)" /> method to retrieve the response.</para>
+            <para>This method is the asynchronous version of the <see cref="M:System.Net.HttpWebRequest.GetResponse" /> method.</para>
+            <para>This method overrides <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <see cref="M:System.Net.HttpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> or <see cref="M:System.Net.HttpWebRequest.GetResponse" /> was previously called on this instance.</exception>
+        <exception cref="T:System.Net.ProtocolViolationException">The <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property of the current instance has not been set.</exception>
+        <exception cref="T:System.Net.WebException">
+          <see cref="M:System.Net.HttpWebRequest.Abort" /> was previously called.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ClientCertificates">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Connection">
+      <MemberSignature Language="ILASM" Value=".property string Connection { public hidebysig specialname instance string get_Connection() public hidebysig specialname instance void set_Connection(string value) }" />
+      <MemberSignature Language="C#" Value="public string Connection { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the value of the Connection HTTP header.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the
+   value of the Connection HTTP header. The
+   default value is <see langword="null" />. </para>
+        </value>
+        <remarks>
+          <para>The current request sends the <see cref="P:System.Net.HttpWebRequest.Connection" /> property to the Internet resource as
+   the Connection
+   HTTP header. </para>
+          <block subset="none" type="note">
+            <para>If <see cref="P:System.Net.HttpWebRequest.KeepAlive" /> is
+<see langword="true" /> , the value "Keep-alive" is appended to the 
+   end of the Connection
+   header.</para>
+            <para>For additional
+   information see section 14.10 of IETF RFC 2616 - HTTP/1.1.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The value of <see cref="P:System.Net.HttpWebRequest.Connection" /> is set to "Keep-alive" or "Close". This value is case insensitive.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConnectionGroupName">
+      <MemberSignature Language="ILASM" Value=".property string ConnectionGroupName { public hidebysig virtual specialname string get_ConnectionGroupName() public hidebysig virtual specialname void set_ConnectionGroupName(string value) }" />
+      <MemberSignature Language="C#" Value="public override string ConnectionGroupName { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the name of the connection group for the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that contains the name of the connection group for the current instance. The default value is
+<see langword="null" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Net.HttpWebRequest.ConnectionGroupName" /> property
+ enables a request to be associated with a connection group. This is useful when
+ an application makes requests to one server for different users, such as a Web
+ site that retrieves customer information from a database server.</para>
+            <para> Each
+ connection group creates additional connections for a server. This might
+ result in exceeding <see cref="P:System.Net.ServicePoint.ConnectionLimit" qualify="true" /> for that server.</para>
+            <para>This property overrides <see cref="P:System.Net.WebRequest.ConnectionGroupName" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContentLength">
+      <MemberSignature Language="ILASM" Value=".property int64 ContentLength { public hidebysig virtual specialname int64 get_ContentLength() public hidebysig virtual specialname void set_ContentLength(int64 value) }" />
+      <MemberSignature Language="C#" Value="public override long ContentLength { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the Content-length HTTP header.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int64" /> value that specifies the number of bytes of data to send to the Internet resource. The default is -1,
+   which indicates that this value has not been set.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property contains the value to send
+   as the Content-length
+   HTTP header of the request.</para>
+          <para>Any value other than -1 in the <see cref="P:System.Net.HttpWebRequest.ContentLength" />
+property indicates that the request will upload data;
+only methods that upload data are allowed in the <see cref="P:System.Net.HttpWebRequest.Method" />
+property.</para>
+          <para>This property is required to be set prior to writing data to the request data
+   stream. Once the <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property is set to a value, that
+   number of bytes is required to be written to the request data stream.
+<block subset="none" type="note">Get the request data stream by calling <see cref="M:System.Net.HttpWebRequest.GetRequestStream" /> , or <see cref="M:System.Net.HttpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.HttpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> 
+.</block></para>
+          <block subset="none" type="note">
+            <para>For additional information see section 14.13 of IETF RFC
+      2616 - HTTP/1.1.</para>
+            <para>This property overrides <see cref="P:System.Net.WebRequest.ContentLength" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">Data has already been written to the request stream.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">A value less than zero is specified for a set operation.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContentType">
+      <MemberSignature Language="ILASM" Value=".property string ContentType { public hidebysig virtual specialname string get_ContentType() public hidebysig virtual specialname void set_ContentType(string value) }" />
+      <MemberSignature Language="C#" Value="public override string ContentType { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the value of the Content-type HTTP header of the current instance.</para>
+        </summary>
+        <value>
+          <para>The value of the Content-type HTTP header of the current instance. The default
+      value is <see langword="null" />
+      . </para>
+        </value>
+        <remarks>
+          <para>The <see cref="P:System.Net.HttpWebRequest.ContentType" /> property contains the media type
+   of the current instance. Values assigned to the <see cref="P:System.Net.HttpWebRequest.ContentType" /> property replace any existing
+   contents when the request sends the Content-type HTTP header. </para>
+          <block subset="none" type="note">
+            <para>To clear the Content-type HTTP header, set the <see cref="P:System.Net.HttpWebRequest.ContentType" /> property
+   to <see langword="null " />
+   .</para>
+            <para>For additional information see section 14.17 of IETF RFC
+   2616 - HTTP/1.1.</para>
+            <para>This property overrides <see cref="P:System.Net.WebRequest.ContentType" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContinueDelegate">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.HttpContinueDelegate ContinueDelegate { public hidebysig specialname instance class System.Net.HttpContinueDelegate get_ContinueDelegate() public hidebysig specialname instance void set_ContinueDelegate(class System.Net.HttpContinueDelegate value) }" />
+      <MemberSignature Language="C#" Value="public System.Net.HttpContinueDelegate ContinueDelegate { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpContinueDelegate</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the delegate method whose methods are invoked when an HTTP 100-continue response is received
+ by the current instance.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Net.HttpContinueDelegate" /> 
+that references the methods that are invoked when an HTTP Continue response is
+received. The default value is <see langword="null" />
+.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para> 
+ This delegate is useful to display the status of responses received by the current
+ instance.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CookieContainer">
+      <MemberSignature Language="C#" Value="public System.Net.CookieContainer CookieContainer { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.CookieContainer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Credentials">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.ICredentials Credentials { public hidebysig virtual specialname class System.Net.ICredentials get_Credentials() public hidebysig virtual specialname void set_Credentials(class System.Net.ICredentials value) }" />
+      <MemberSignature Language="C#" Value="public override System.Net.ICredentials Credentials { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.ICredentials</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the credentials used for authenticating
+      the current request.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Net.ICredentials" /> object containing
+   the authentication credentials associated with
+   the current instance. The default is
+<see langword="null" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Net.HttpWebRequest.Credentials" /> property contains
+      authentication information to identify the client making the request. The <see cref="P:System.Net.HttpWebRequest.Credentials" /> property can be either an instance
+      of <see cref="T:System.Net.NetworkCredential" />, in which case the user, password, and domain
+      information contained in the <see cref="T:System.Net.NetworkCredential" /> instance is used to authenticate
+      the request, or it can be an instance of <see cref="T:System.Net.CredentialCache" />, in which case the uniform resource
+      identifier (URI) of the request is used to determine the user, password, and
+      domain information to use to authenticate the request.</para>
+            <para>This property overrides <see cref="P:System.Net.WebRequest.Credentials" qualify="true" />
+.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefaultCachePolicy">
+      <MemberSignature Language="C#" Value="public static System.Net.Cache.RequestCachePolicy DefaultCachePolicy { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Cache.RequestCachePolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultMaximumErrorResponseLength">
+      <MemberSignature Language="C#" Value="public static int DefaultMaximumErrorResponseLength { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultMaximumResponseHeadersLength">
+      <MemberSignature Language="C#" Value="public static int DefaultMaximumResponseHeadersLength { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndGetRequestStream">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IO.Stream EndGetRequestStream(class System.IAsyncResult asyncResult)" />
+      <MemberSignature Language="C#" Value="public override System.IO.Stream EndGetRequestStream (IAsyncResult asyncResult);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">The <see cref="T:System.IAsyncResult" /> object that holds the state information for the asynchronous operation.</param>
+        <summary>
+          <para>Completes an asynchronous request for a stream that was
+      started by the <see cref="M:System.Net.HttpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />
+      method.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.Stream" /> to write request data to.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para> The caller is responsible for calling the <see cref="M:System.IO.Stream.Close" qualify="true" />
+   method to close the
+   stream.
+   </para>
+            <para>This method overrides <see cref="M:System.Net.WebRequest.EndGetRequestStream(System.IAsyncResult)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="asyncResult " />is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="asyncResult" /> was not returned by the current instance from a call to <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />.</exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para> This method was called previously using <paramref name="asyncResult." /></para>
+          <para>-or-</para>
+          <para>No stream is available.</para>
+        </exception>
+        <exception cref="T:System.Net.WebException">
+          <para>
+            <see cref="M:System.Net.HttpWebRequest.Abort" /> was previously called.</para>
+          <para>-or-</para>
+          <para>An error occurred while processing the request.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndGetResponse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Net.WebResponse EndGetResponse(class System.IAsyncResult asyncResult)" />
+      <MemberSignature Language="C#" Value="public override System.Net.WebResponse EndGetResponse (IAsyncResult asyncResult);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.WebResponse</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">The <see cref="T:System.IAsyncResult" /> object that hold the state information for the asynchronous operation. </param>
+        <summary>
+          <para>Returns a <see cref="T:System.Net.WebResponse" /> that contains a response to the specified pending
+   Internet request.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.WebResponse" /> that contains a response to the Internet request
+   referenced by <paramref name="asyncResult" /> .</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method completes an asynchronous request for
+         an Internet resource that was started by calling <see cref="M:System.Net.HttpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" />.</para>
+            <para>This method overrides <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResult)" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="asyncResult " />is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="asyncResult" /> was not returned by the current instance from a call to <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" />.</exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para> This method was called previously using <paramref name="asyncResult." /></para>
+          <para>-or-</para>
+          <para>The <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property of the current instance is greater than 0 but the data has not been written to the request stream.</para>
+        </exception>
+        <exception cref="T:System.Net.WebException">
+          <para>
+            <see cref="M:System.Net.HttpWebRequest.Abort" /> was previously called.</para>
+          <para>-or-</para>
+          <para>An error occurred while processing the request.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Expect">
+      <MemberSignature Language="ILASM" Value=".property string Expect { public hidebysig specialname instance string get_Expect() public hidebysig specialname instance void set_Expect(string value) }" />
+      <MemberSignature Language="C#" Value="public string Expect { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the value of the HTTP Expect header.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> that contains the
+   contents of the HTTP Expect header. The default value is
+<see langword="null" /> . </para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para>By default, <see cref="P:System.Net.HttpWebRequest.Expect" /> is <see langword="null" /> . Other values can be added to the
+      list that <see cref="P:System.Net.HttpWebRequest.Expect" /> maintains, or all values except "100-continue" can be
+      deleted from the list by setting <see cref="P:System.Net.HttpWebRequest.Expect" /> to <see langword="null" /> .</para>
+            <para>For additional information see section 14.20 of IETF RFC
+      2616 - HTTP/1.1.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The value specified for a set operation is "100-continue". This value is case insensitive.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
+        </returns>
+        <remarks>
+          <para>The algorithm used to 
+ generate the hash code is unspecified.</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Object.GetHashCode" qualify="true" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="protected override void GetObjectData (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="serializationInfo">To be added.</param>
+        <param name="streamingContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetRequestStream">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IO.Stream GetRequestStream()" />
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetRequestStream ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.IO.Stream" /> for writing data to the Internet resource requested by the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.Stream" /> for writing
+   data to an Internet resource requested by the current instance.</para>
+        </returns>
+        <remarks>
+          <para> The value of the
+   <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property is required to be set before writing data to the
+      stream.
+      </para>
+          <block subset="none" type="note">
+            <para>This method returns a stream to use to
+         send data for the <see cref="T:System.Net.HttpWebRequest" />. Once the <see cref="T:System.IO.Stream" /> instance has been returned,
+         data can be sent with the <see cref="T:System.Net.HttpWebRequest" /> by using the <see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)" qualify="true" /> method. </para>
+            <para> Call the <see cref="M:System.IO.Stream.Close" qualify="true" /> method to close the stream and release
+      the connection
+      for reuse. Failure to close the stream might cause the application to run out of
+      connections.
+      </para>
+            <para>This method overrides <see cref="M:System.Net.WebRequest.GetRequestStream" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.Net.ProtocolViolationException">
+          <para>The <see cref="P:System.Net.HttpWebRequest.Method" /> property of the current instance is "GET" or "HEAD". </para>
+          <para> -or- </para>
+          <para>The <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property of the current instance is not set. </para>
+        </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="M:System.Net.HttpWebRequest.GetRequestStream" /> method was called more than once.</para>
+          <para>-or-</para>
+          <para>No writeable stream is available.</para>
+        </exception>
+        <exception cref="T:System.Net.WebException">
+          <para>
+            <see cref="M:System.Net.HttpWebRequest.Abort" /> was previously called.</para>
+          <para>-or-</para>
+          <para>The timeout period for the request expired.</para>
+          <para>-or-</para>
+          <para>An error occurred while processing the request.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetResponse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Net.WebResponse GetResponse()" />
+      <MemberSignature Language="C#" Value="public override System.Net.WebResponse GetResponse ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.WebResponse</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a response to an Internet request.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.WebResponse" /> containing the response from the Internet resource requested by the current
+   instance.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method returns a <see cref="T:System.Net.WebResponse" /> instance containing the response from the Internet resource requested
+      by the current instance. The actual instance returned is an instance of
+   <see cref="T:System.Net.HttpWebResponse" /> , and can be typecast to that class to access
+      HTTP-specific properties.</para>
+            <para>This method overrides <see cref="M:System.Net.WebRequest.GetResponse" qualify="true" />
+.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.Net.ProtocolViolationException">The <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property of the current instance is not set. </exception>
+        <exception cref="T:System.Net.WebException">
+          <para>
+            <see cref="M:System.Net.HttpWebRequest.Abort" /> was previously called.</para>
+          <para>-or-</para>
+          <para>The timeout period for the request expired.</para>
+          <para>-or-</para>
+          <para>An error occurred while processing the request.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HaveResponse">
+      <MemberSignature Language="ILASM" Value=".property bool HaveResponse { public hidebysig specialname instance bool get_HaveResponse() }" />
+      <MemberSignature Language="C#" Value="public bool HaveResponse { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Boolean" /> value indicating whether a response has been received for the current
+   instance.
+   </para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if a response has been received; otherwise
+<see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Headers">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.WebHeaderCollection Headers { public hidebysig virtual specialname class System.Net.WebHeaderCollection get_Headers() public hidebysig virtual specialname void set_Headers(class System.Net.WebHeaderCollection value) }" />
+      <MemberSignature Language="C#" Value="public override System.Net.WebHeaderCollection Headers { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.WebHeaderCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the collection of HTTP header name/value pairs associated with the
+      current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Net.WebHeaderCollection" /> containing the name/value pairs of the headers for
+   the current instance.</para>
+        </value>
+        <remarks>
+          <para> 
+      The following table
+      lists the HTTP headers that cannot be set using the collection
+      returned by this property.</para>
+          <list type="table">
+            <listheader>
+              <term>Header</term>
+              <description>Set by</description>
+            </listheader>
+            <item>
+              <term> Accept</term>
+              <description>
+                <see cref="P:System.Net.HttpWebRequest.Accept" />
+      .</description>
+            </item>
+            <item>
+              <term> Connection</term>
+              <description>
+                <para>
+                  <see cref="P:System.Net.HttpWebRequest.Connection" />
+   .</para>
+                <para>
+                  <see cref="P:System.Net.HttpWebRequest.KeepAlive" />.</para>
+              </description>
+            </item>
+            <item>
+              <term> Content-Length</term>
+              <description>
+                <see cref="P:System.Net.HttpWebRequest.ContentLength" />.</description>
+            </item>
+            <item>
+              <term> Content-Type</term>
+              <description>
+                <see cref="P:System.Net.HttpWebRequest.ContentType" />.</description>
+            </item>
+            <item>
+              <term> Expect</term>
+              <description>
+                <see cref="P:System.Net.HttpWebRequest.Expect" />.</description>
+            </item>
+            <item>
+              <term> Date</term>
+              <description>Set
+      by the system to the current date.</description>
+            </item>
+            <item>
+              <term> Host</term>
+              <description>Set
+      by the system to the current host information.</description>
+            </item>
+            <item>
+              <term> Range</term>
+              <description>
+                <see cref="M:System.Net.HttpWebRequest.AddRange(System.Int32,System.Int32)" />
+.</description>
+            </item>
+            <item>
+              <term> Referer</term>
+              <description>
+                <see cref="P:System.Net.HttpWebRequest.Referer" />.</description>
+            </item>
+            <item>
+              <term> Transfer-Encoding</term>
+              <description>
+                <para>
+                  <see cref="P:System.Net.HttpWebRequest.TransferEncoding" />. <see langword="" /></para>
+                <para>
+                  <see cref="P:System.Net.HttpWebRequest.SendChunked" />.</para>
+              </description>
+            </item>
+            <item>
+              <term> User-Agent</term>
+              <description>
+                <see cref="P:System.Net.HttpWebRequest.UserAgent" />.</description>
+            </item>
+          </list>
+          <para>
+            <block subset="none" type="note">This property overrides <see cref="P:System.Net.WebRequest.Headers" qualify="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">A set operation was requested but data has already been written to the request data stream.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IfModifiedSince">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.DateTime IfModifiedSince { public hidebysig specialname instance valuetype System.DateTime get_IfModifiedSince() public hidebysig specialname instance void set_IfModifiedSince(valuetype System.DateTime value) }" />
+      <MemberSignature Language="C#" Value="public DateTime IfModifiedSince { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the value of the HTTP If-Modified-Since 
+      header.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.DateTime" /> that contains the 
+   contents of the HTTP If-Modified-Since
+   header. The default value is the current
+   date and time of the system.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">For additional
+      information see section 14.25 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="KeepAlive">
+      <MemberSignature Language="ILASM" Value=".property bool KeepAlive { public hidebysig specialname instance bool get_KeepAlive() public hidebysig specialname instance void set_KeepAlive(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool KeepAlive { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value indicating whether to make a persistent connection to the server hosting the Internet resource requested by the current instance.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />indicates
+   that the current request will contain an HTTP Connection header with the value
+   "Keep-alive"
+   ; otherwise, <see langword="false" />. The default
+   value is <see langword="true" />.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">An application uses <see cref="P:System.Net.HttpWebRequest.KeepAlive" />
+to indicate a preference for persistent connections. When this property is <see langword="true" /> , the application makes persistent connections to
+the servers that support them.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaximumAutomaticRedirections">
+      <MemberSignature Language="ILASM" Value=".property int32 MaximumAutomaticRedirections { public hidebysig specialname instance int32 get_MaximumAutomaticRedirections() public hidebysig specialname instance void set_MaximumAutomaticRedirections(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int MaximumAutomaticRedirections { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the maximum number of redirects that the current instance will follow.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> value that
+   indicates the maximum number of redirection responses that the current instance will follow. The
+   default value is implementation-specific.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This
+      property sets the maximum number of
+      redirections for the request to follow if the <see cref="P:System.Net.HttpWebRequest.AllowAutoRedirect" /> property
+      is <see langword="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The value specified for a set operation is less than or equal to zero.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaximumResponseHeadersLength">
+      <MemberSignature Language="C#" Value="public int MaximumResponseHeadersLength { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MediaType">
+      <MemberSignature Language="ILASM" Value=".property string MediaType { public hidebysig specialname instance string get_MediaType() public hidebysig specialname instance void set_MediaType(string value) }" />
+      <MemberSignature Language="C#" Value="public string MediaType { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the media type of the current request.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that identifies the media type of the current request. The default value is
+<see langword="null" />.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">The value of this
+      property affects the <see cref="P:System.Net.HttpWebResponse.CharacterSet" /> property. When this property is set in
+      the current instance,
+      the corresponding media type is chosen from the list of character sets returned
+      in the response HTTP Content-type
+      header. </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Method">
+      <MemberSignature Language="ILASM" Value=".property string Method { public hidebysig virtual specialname string get_Method() public hidebysig virtual specialname void set_Method(string value) }" />
+      <MemberSignature Language="C#" Value="public override string Method { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the HTTP protocol request method used by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing an HTTP method. The default value
+   is "GET".</para>
+        </value>
+        <remarks>
+          <para>If the <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property is set to any value other
+   than -1, the <see cref="P:System.Net.HttpWebRequest.Method" /> property
+   is
+   required to be set to a protocol method that sends request data.</para>
+          <para>The <see cref="P:System.Net.HttpWebRequest.Method" />
+property
+can be set to any of the following HTTP 1.1
+protocol methods:</para>
+          <list type="table">
+            <listheader>
+              <term>HTTP Method</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> GET</term>
+              <description>Retrieves in entity-body form the
+         information identified by the <see cref="P:System.Net.HttpWebRequest.RequestUri" /> property of the current
+         instance.</description>
+            </item>
+            <item>
+              <term> HEAD</term>
+              <description>Identical to GET except that the message-body is not
+         returned in the response.</description>
+            </item>
+            <item>
+              <term> POST</term>
+              <description> Requests that the origin server accept the entity
+         enclosed in the request as a new subordinate of the resource identified the
+         Request-URI in the Request-Line.</description>
+            </item>
+            <item>
+              <term> PUT</term>
+              <description>Requests that the enclosed entity be stored
+         under the supplied Request-URI.</description>
+            </item>
+            <item>
+              <term> DELETE</term>
+              <description>Requests that the origin server delete the resource
+         identified by the Request-URI.</description>
+            </item>
+            <item>
+              <term> TRACE</term>
+              <description>Invokes a remote, application-layer loopback of the
+         request message.</description>
+            </item>
+            <item>
+              <term> OPTIONS</term>
+              <description>Requests information about the communication
+         options available on the request/response chain identified by the
+         Request-URI. <block subset="none" type="note">This allows the
+         client to determine the options and/or requirements associated with a
+         resource, or the capabilities of a server, without implying a resource
+         action or initiating a resource
+         retrieval.</block></description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>For detailed information regarding these methods, see
+      sections 9.2 to 9.8 of RFC 2616.</para>
+            <para>This property overrides <see cref="P:System.Net.WebRequest.Method" qualify="true" />
+.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <see langword="null" />, <see cref="F:System.String.Empty" />, or an invalid value was specified for a set operation.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pipelined">
+      <MemberSignature Language="ILASM" Value=".property bool Pipelined { public hidebysig specialname instance bool get_Pipelined() public hidebysig specialname instance void set_Pipelined(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool Pipelined { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value indicating whether to pipeline the current request to the Internet resource.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />if the current request can be pipelined; otherwise,
+<see langword="false" />. The default is <see langword="true" />.</para>
+        </value>
+        <remarks>
+          <para>An application uses this property to indicate a preference for pipelined connections. If <see cref="P:System.Net.HttpWebRequest.Pipelined" /> is <see langword="true" /> , an application makes pipelined connections to servers that support them.</para>
+          <para>
+            <block subset="none" type="note">Pipelined connections are made only when the <see cref="P:System.Net.HttpWebRequest.KeepAlive" />
+property is <see langword="true" /> .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreAuthenticate">
+      <MemberSignature Language="ILASM" Value=".property bool PreAuthenticate { public hidebysig virtual specialname bool get_PreAuthenticate() public hidebysig virtual specialname void set_PreAuthenticate(bool value) }" />
+      <MemberSignature Language="C#" Value="public override bool PreAuthenticate { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a Boolean value that indicates whether to send HTTP
+      preauthentication header information with current instance without waiting for
+      an authentication challenge from the requested resource.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />to send a HTTP
+WWW-authenticate header with the current 
+   instance without waiting for an authentication challenge from the requested
+   resource; otherwise, <see langword="false" />. The default is
+<see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>When <see cref="P:System.Net.HttpWebRequest.PreAuthenticate" /> is <see langword="true" /> and credentials are supplied, the HTTP WWW-authenticate header is sent with the current
+   instance without waiting for an authentication
+   challenge from the requested resource; otherwise the request uses standard authentication procedures.</para>
+          <block subset="none" type="note">
+            <para>Set this property to <see langword="true " />to allow
+   clients to improve server efficiency by avoiding extra round trips caused by
+   authentication challenges.</para>
+            <para>This property overrides <see cref="P:System.Net.WebRequest.PreAuthenticate" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProtocolVersion">
+      <MemberSignature Language="ILASM" Value=".property class System.Version ProtocolVersion { public hidebysig specialname instance class System.Version get_ProtocolVersion() public hidebysig specialname instance void set_ProtocolVersion(class System.Version value) }" />
+      <MemberSignature Language="C#" Value="public Version ProtocolVersion { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the version of the
+      HTTP protocol to use for the current request.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Version" /> that represents
+   the HTTP version to use for the request. The default is <see cref="F:System.Net.HttpVersion.Version11" qualify="true" />.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="T:System.Net.HttpWebRequest" /> class supports only versions 1.0 and 1.1 of
+   HTTP. Setting <see cref="P:System.Net.HttpWebRequest.ProtocolVersion" /> to a
+   different version causes a <see cref="T:System.ArgumentException" /> exception to be thrown.</para>
+          <para>
+            <block subset="none" type="note">To set
+   the <see cref="P:System.Net.HttpWebRequest.ProtocolVersion" /> property of the current instance, specify one of the members of
+   the use the
+<see cref="T:System.Net.HttpVersion" /> class. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The HTTP version is set to a value other than 1.0 or 1.1.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Proxy">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.IWebProxy Proxy { public hidebysig virtual specialname class System.Net.IWebProxy get_Proxy() public hidebysig virtual specialname void set_Proxy(class System.Net.IWebProxy value) }" />
+      <MemberSignature Language="C#" Value="public override System.Net.IWebProxy Proxy { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IWebProxy</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets network proxy information for the current instance.</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.Net.WebProxy" /> instance to
+   use as a
+   proxy for the current instance. The default value is set by calling <see cref="P:System.Net.GlobalProxySelection.Select" qualify="true" /> . </para>
+        </value>
+        <remarks>
+          <para>The <see cref="P:System.Net.HttpWebRequest.Proxy" />
+property identifies the <see cref="T:System.Net.WebProxy" /> instance to use
+to communicate with the destination server.</para>
+          <block subset="none" type="note">
+            <para> To specify that no proxy should be used, set the <see cref="P:System.Net.HttpWebRequest.Proxy" />
+property to the proxy instance returned by the <see cref="M:System.Net.GlobalProxySelection.GetEmptyWebProxy" qualify="true" /> method.</para>
+            <para>This property overrides <see cref="P:System.Net.WebRequest.Proxy" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">A set operation was requested and the specified value was <see langword="null" />.</exception>
+        <exception cref="T:System.InvalidOperationException">A set operation was requested but data has already been sent to the request stream.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have permission for the requested operation.</exception>
+        <permission cref="!:System.Security.Permissions.WebPermission">Requires unrestricted <see cref="T:System.Net.WebPermission" />. See <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadWriteTimeout">
+      <MemberSignature Language="C#" Value="public int ReadWriteTimeout { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Referer">
+      <MemberSignature Language="ILASM" Value=".property string Referer { public hidebysig specialname instance string get_Referer() public hidebysig specialname instance void set_Referer(string value) }" />
+      <MemberSignature Language="C#" Value="public string Referer { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the value of the HTTP Referer header.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the 
+   value of the HTTP Referer header. The default value is
+<see langword="null" />.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">For additional
+      information see section 14.36 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RequestUri">
+      <MemberSignature Language="ILASM" Value=".property class System.Uri RequestUri { public hidebysig virtual specialname class System.Uri get_RequestUri() }" />
+      <MemberSignature Language="C#" Value="public override Uri RequestUri { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the <see cref="T:System.Uri" /> of the resource that receives requests sent by the current instance.</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.Uri" /> of the resource that receives requests sent by the
+   current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>This property is the <see cref="T:System.Uri" /> instance passed to the current instance via the <see cref="M:System.Net.WebRequest.Create(System.Uri,System.Boolean)" qualify="true" /> method. </para>
+          <block subset="none" type="note">
+            <para>Following a redirection header does not change the <see cref="P:System.Net.HttpWebRequest.RequestUri" /> property.
+   The URI of the resource
+   that actually responded to the current instance is contained by <see cref="P:System.Net.HttpWebRequest.Address" /> property of the current
+   instance.</para>
+            <para>This property overrides <see cref="P:System.Net.WebRequest.RequestUri" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SendChunked">
+      <MemberSignature Language="ILASM" Value=".property bool SendChunked { public hidebysig specialname instance bool get_SendChunked() public hidebysig specialname instance void set_SendChunked(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool SendChunked { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets a value indicating whether to send data in segments.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />
+to send data in segments; otherwise,
+<see langword="false" />. The default value is <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>When <see cref="P:System.Net.HttpWebRequest.SendChunked" /> is <see langword="true" /> , the request sends data to the destination in segments. The
+   destination server is required to support receiving chunked data.</para>
+          <para>
+            <block subset="none" type="note">Set this property
+   to <see langword="true" /> only if the server specified by the <see cref="P:System.Net.HttpWebRequest.Address" /> property of the current instance accepts chunked
+   data (i.e. is HTTP/1.1 or greater in compliance). If the server does not
+   accept chunked data, buffer all data to be written and send a HTTP Content-Length header with the
+   buffered data.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">A set operation was requested but data has already been written to the request data stream.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ServicePoint">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.ServicePoint ServicePoint { public hidebysig specialname instance class System.Net.ServicePoint get_ServicePoint() }" />
+      <MemberSignature Language="C#" Value="public System.Net.ServicePoint ServicePoint { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.ServicePoint</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the service point to use for the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Net.ServicePoint" /> that represents the network connection to the destination. The value of this property can be, but is not required to be,  <see langword="null" /> until the <see cref="M:System.Net.HttpWebRequest.GetResponse" /> method is called.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
+      <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="serializationInfo">To be added.</param>
+        <param name="streamingContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Timeout">
+      <MemberSignature Language="ILASM" Value=".property int32 Timeout { public hidebysig virtual specialname int32 get_Timeout() public hidebysig virtual specialname void set_Timeout(int32 value) }" />
+      <MemberSignature Language="C#" Value="public override int Timeout { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the length of time before the request times out.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> indicating the number of milliseconds to wait for a response until the request times out,
+   or <see cref="F:System.Threading.Timeout.Infinite" qualify="true" /> to indicate that the request does not
+   time out.</para>
+        </value>
+        <remarks>
+          <para>
+            <see cref="P:System.Net.HttpWebRequest.Timeout" /> is the number of milliseconds that a
+   synchronous request made with the <see cref="M:System.Net.HttpWebRequest.GetResponse" /> method waits for a response. If a resource does
+   not respond within the time-out period, the request throws a <see cref="T:System.Net.WebException" /> with
+   the <see cref="P:System.Net.WebException.Status" /> property set to <see cref="F:System.Net.WebExceptionStatus.Timeout" qualify="true" />.</para>
+          <para>
+            <block subset="none" type="note">This property overrides <see cref="P:System.Net.WebRequest.Timeout" qualify="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>A value less than zero and not equal to <see cref="F:System.Threading.Timeout.Infinite" qualify="true" /> is specified for a set operation.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TransferEncoding">
+      <MemberSignature Language="ILASM" Value=".property string TransferEncoding { public hidebysig specialname instance string get_TransferEncoding() public hidebysig specialname instance void set_TransferEncoding(string value) }" />
+      <MemberSignature Language="C#" Value="public string TransferEncoding { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the value of the HTTP
+   Transfer-encoding header.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that contains the value of the
+   HTTP Transfer-encoding header.
+   The default value is <see langword="null" />.</para>
+        </value>
+        <remarks>
+          <para>This property can be set in the current instance only if
+      the <see cref="P:System.Net.HttpWebRequest.SendChunked" /> property in the current instance is
+   <see langword="true" />.</para>
+          <block subset="none" type="note">
+            <para> Clearing <see cref="P:System.Net.HttpWebRequest.TransferEncoding" /> by setting it to <see langword="null " />has no effect on
+      the value of <see cref="P:System.Net.HttpWebRequest.SendChunked" />.</para>
+            <para>Values assigned to the <see cref="P:System.Net.HttpWebRequest.TransferEncoding" /> property replace any
+   existing contents.</para>
+            <para>For additional information see section 14.41 of IETF RFC
+   2616 - HTTP/1.1.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <see cref="P:System.Net.HttpWebRequest.TransferEncoding" /> is set when <see cref="P:System.Net.HttpWebRequest.SendChunked" /> is <see langword="false" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <see cref="P:System.Net.HttpWebRequest.TransferEncoding" /> is set to the value "Chunked". This value is case insensitive.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnsafeAuthenticatedConnectionSharing">
+      <MemberSignature Language="C#" Value="public bool UnsafeAuthenticatedConnectionSharing { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UseDefaultCredentials">
+      <MemberSignature Language="C#" Value="public override bool UseDefaultCredentials { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UserAgent">
+      <MemberSignature Language="ILASM" Value=".property string UserAgent { public hidebysig specialname instance string get_UserAgent() public hidebysig specialname instance void set_UserAgent(string value) }" />
+      <MemberSignature Language="C#" Value="public string UserAgent { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the value of the HTTP
+   User-agent header.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the value of the HTTP User-agent header. The default value is
+<see langword="null" />.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">For additional 
+      information see section 14.43 of IETF RFC 2616 - HTTP/1.1.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

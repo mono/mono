@@ -1,0 +1,418 @@
+<Type Name="Timer" FullName="System.Timers.Timer">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public class Timer : System.ComponentModel.Component, System.ComponentModel.ISupportInitialize" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ComponentModel.Component</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ComponentModel.ISupportInitialize</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ComponentModel.DefaultProperty("Interval")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.ComponentModel.DefaultEvent("Elapsed")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>Provides a mechanism to trigger events at a preset interval.</summary>
+    <remarks>
+      <para>The Timer component raises the <see cref="E:System.Timers.Timer.Elapsed" /> event at recurring intervals, set by the <see cref="P:System.Timers.Timer.Interval" /> property.</para>
+      <para>By default this timer executes the Elapsed event handlers on a thread from the <see cref="T:System.Threading.ThreadPool" />, however this behaviour can be changed by providing an instance of  <see cref="T:System.ComponentModel.ISynchronizeInvoke" /> to the <see cref="P:System.Timers.Timer.SynchronizingObject" /> property.</para>
+      <para>By default, the <see cref="P:System.Timers.Timer.AutoReset" /> property is true and the timer will raise the <see cref="E:System.Timers.Timer.Elapsed" /> event multiple times. To cause the Timer to raise this event once only, set <see cref="P:System.Timers.Timer.AutoReset" /> to false.</para>
+      <block subset="none" type="note">
+        <para>
+As mentioned previously, event handlers are raised on a thread from the <see cref="T:System.Threading.ThreadPool" />. It is possible that the timer Interval will pass before processing of the previous event handler is complete and cause two threads to execute the event handler simultaneously. As such, you should ensure that your <see cref="E:System.Timers.Timer.Elapsed" /> event handlers are reentrant.
+  </para>
+      </block>
+      <block subset="none" type="note">
+        <para>
+As the Elapsed event handlers are raised on a ThreadPool thread, a race condition exists where the event handler may be executed after <see cref="M:System.Timers.Timer.Stop" /> has been called on a separate thread. If it is cruical that the Stop thread not continue until the event handler completes, use a stronger synchronization mechanism such as the <see cref="T:System.Threading.Monitor" /> class.
+  </para>
+      </block>
+      <example>
+        <code lang="C#">
+using System;
+using System.Timers;
+
+public class TimerExample
+{
+	private static System.Timers.Timer ourTimer;
+
+	public static void Main()
+	{
+		ourTimer = new System.Timers.Timer();
+
+		// attach to the Elapsed event.
+		ourTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsed);
+
+		// make our timer interval 1 second
+		ourTimer.Interval = 1000;
+		
+		// don't forget to enable the timer!
+		// we could also call ourTimer.Start() here; they both have the same effect 
+		// (starting the timer).
+		ourTimer.Enabled = true;
+
+		Console.WriteLine("Waiting 10 seconds before exit...");
+		System.Threading.Thread.Sleep(10000);
+	}
+
+	private static void OnTimerElapsed(object sender, ElapsedEventArgs e)
+	{
+		Console.WriteLine("Timer elapsed at: " + e.SignalTime.ToLongTimeString());
+	}
+}
+  </code>
+      </example>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Timer ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Constructs and initializes a new instance of the <see cref="T:System.Timers.Timer" /> class with properties set to default values.</summary>
+        <remarks>
+          <para>Below are the default values applied when using this constructor:</para>
+          <list type="table">
+            <listheader>
+              <term>Property</term>
+              <description>Initial Value</description>
+            </listheader>
+            <item>
+              <term>AutoReset</term>
+              <description>true</description>
+            </item>
+            <item>
+              <term>Interval</term>
+              <description>100</description>
+            </item>
+            <item>
+              <term>Enabled</term>
+              <description>false</description>
+            </item>
+          </list>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Timer (double interval);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="interval" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="interval">The Interval duration, in milliseconds.</param>
+        <summary>Constructs and initializes a new instance of the <see cref="T:System.Timers.Timer" /> class with the specified <see cref="P:System.Timers.Timer.Interval" />.</summary>
+        <remarks>
+          <para>Constructs a new <see cref="T:System.Timers.Timer" /> instance with the specified interval. All other properties retain their default values.</para>
+          <para>For a list of default values, see <see cref="M:System.Timers.Timer.Timer()" /></para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AutoReset">
+      <MemberSignature Language="C#" Value="public bool AutoReset { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Get or set a value which determines whether the <see cref="E:System.Timers.Timer.Elapsed" /> event is raised multiple times (once for each time <see cref="P:System.Timers.Timer.Interval" /> passes), or just once.</summary>
+        <value>true if the timer will raise the Elapsed event multiple times when Interval passes, false if it will raise it just once.</value>
+        <remarks>A value which determines whether the <see cref="E:System.Timers.Timer.Elapsed" /> event is raised multiple times (once for each time <see cref="P:System.Timers.Timer.Interval" /> passes), or just once.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Timers.TimersDescription("Indicates whether the timer will be restarted when it is enabled.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Category("Behavior")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="BeginInit">
+      <MemberSignature Language="C#" Value="public void BeginInit ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This method currently does nothing.</summary>
+        <remarks>This method exists to satisfy interface requirements but has no purpose.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Disables the timer.</summary>
+        <remarks>This has the same effect as calling <see cref="M:System.Timers.Timer.Stop()" />, or setting <see cref="P:System.Timers.Timer.Enabled" /> to false.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">true if the object is being disposed, false otherwise.</param>
+        <summary>Disables and disposes of the timer component.</summary>
+        <remarks>Disables and disposes of the timer component.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Elapsed">
+      <MemberSignature Language="C#" Value="public event System.Timers.ElapsedEventHandler Elapsed;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Timers.ElapsedEventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This event is raised when the specified <see cref="P:System.Timers.Timer.Interval" /> elapses.</summary>
+        <remarks>
+          <para>If <see cref="P:System.Timers.Timer.AutoReset" /> is true, this event will be raised only once. Otherwise, this event will be raised once for each time <see cref="P:System.Timers.Timer.Interval" /> elapses.</para>
+          <para>To see an example of how to use this event, see the <see cref="T:System.Timers.Timer" /> class documentation.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Timers.TimersDescription("Occurs when the Interval has elapsed.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Category("Behavior")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Enabled">
+      <MemberSignature Language="C#" Value="public bool Enabled { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Get or set a value indicating whether this timer is enabled or disabled.</summary>
+        <value>Boolean true if this timer is enabled, or boolean false if this timer is disabled.</value>
+        <remarks>
+          <para>Using this property is equivalent to calling <see cref="M:System.Timers.Timer.Start" /> or <see cref="M:System.Timers.Timer.Stop" />.</para>
+          <block subset="none" type="note">
+            <para>
+Disabling a timer that has been enabled, but whose <see cref="P:System.Timers.Timer.Interval" /> has not elapsed will cause that timer not to raise its <see cref="E:System.Timers.Timer.Elapsed" /> event.
+  </para>
+          </block>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Timers.TimersDescription("Indicates whether the timer is enabled to fire events at a defined interval.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Category("Behavior")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="EndInit">
+      <MemberSignature Language="C#" Value="public void EndInit ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This method currently does nothing.</summary>
+        <remarks>This method exists to satisfy interface requirements but has no purpose.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Interval">
+      <MemberSignature Language="C#" Value="public double Interval { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>To be added</summary>
+        <value>Double value representing the number of milliseconds for the interval.</value>
+        <remarks>
+          <para>Changing this property after starting the timer will have no effect. For example, if I set Interval to 5 seconds, enable the timer and once 3 seconds pass I set Interval to 10 seconds, the <see cref="E:System.Timers.Timer.Elapsed" /> event will still be raised after the original 5 seconds, not 13 seconds as could be assumed.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Timers.TimersDescription("The number of milliseconds between timer events.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.RecommendedAsConfigurable(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(100)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Category("Behavior")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Site">
+      <MemberSignature Language="C#" Value="public override System.ComponentModel.ISite Site { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.ISite</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'ComponentModel.ISite'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Start">
+      <MemberSignature Language="C#" Value="public void Start ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Causes the timer to begin raising <see cref="E:System.Timers.Timer.Elapsed" /> events.</summary>
+        <remarks>
+          <para>Calling this method has the same effect as setting <see cref="P:System.Timers.Timer.Enabled" /> to true.</para>
+          <para>For an example covering the use of the Timer class, see the <see cref="T:System.Timers.Timer" /> class documentation.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Stop">
+      <MemberSignature Language="C#" Value="public void Stop ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Causes the timer to stop raising <see cref="E:System.Timers.Timer.Elapsed" /> events.</summary>
+        <remarks>
+          <para>Calling this property has the same effect as setting <see cref="P:System.Timers.Timer.Enabled" /> to false.</para>
+          <block subset="none" type="note">
+            <para>
+A race condition exists where an <see cref="E:System.Timers.Timer.Elapsed" /> event handler may be executed after a call to Stop has been made. See the main <see cref="T:System.Timers.Timer" /> class documentation for more information.
+  </para>
+          </block>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SynchronizingObject">
+      <MemberSignature Language="C#" Value="public System.ComponentModel.ISynchronizeInvoke SynchronizingObject { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.ISynchronizeInvoke</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'ComponentModel.ISynchronizeInvoke'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Timers.TimersDescription("The object used to marshal the event handler calls issued when an interval has elapsed.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(null)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+</Type>

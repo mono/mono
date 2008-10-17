@@ -1,0 +1,829 @@
+<Type Name="IPAddress" FullName="System.Net.IPAddress" FullNameSP="System_Net_IPAddress" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable IPAddress extends System.Object" />
+  <TypeSignature Language="C#" Value="public class IPAddress" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Represents an Internet Protocol (IP) address.</para>
+    </summary>
+    <remarks>
+      <para>An instance of the <see cref="T:System.Net.IPAddress" /> class contains the
+   value of an address on an IP
+   network. This address is stored internally as a <see cref="T:System.Int64" qualify="true" />
+   
+   in network-byte-order.</para>
+      <para>
+        <block subset="none" type="note">
+   
+   Different conventions are in use
+   for ordering bytes within multi-byte data types. All IP address values must be sent over the network in
+   network-byte-order. Network-byte-order puts the most significant byte first (also known
+   as big-endian order). On the host, the ordering of bytes
+   is platform-specific and this ordering is referred to as host-byte-order.</block>
+      </para>
+      <para>The IP address can be represented as four numbers in the range
+   0-255 separated by periods (for example, "192.168.1.2"), known as dotted-quad notation. </para>
+      <block subset="none" type="note">
+        <para> The address space is fragmented into
+      different types determined by bits 31-28 as shown in the following table.</para>
+        <list type="table">
+          <listheader>
+            <term> Bits 31-28</term>
+            <description>Address type</description>
+            <description>Address range</description>
+          </listheader>
+          <item>
+            <term> 0xxx</term>
+            <description>class A </description>
+            <description>0.0.0.0-127.255.255.255</description>
+          </item>
+          <item>
+            <term> 10xx</term>
+            <description>class B</description>
+            <description>128.0.0.0-191.255.255.255</description>
+          </item>
+          <item>
+            <term> 110x</term>
+            <description>class C</description>
+            <description>192.0.0.0-223.255.255.255</description>
+          </item>
+          <item>
+            <term> 1110</term>
+            <description>multicast</description>
+            <description>224.0.0.0-239.255.255.255</description>
+          </item>
+          <item>
+            <term> 1111</term>
+            <description>reserved</description>
+            <description>240.0.0.0-255.255.255.255</description>
+          </item>
+        </list>
+      </block>
+      <para>Instances of the <see cref="T:System.Net.IPAddress" /> class are provided for common IP address values as shown in the
+following table.</para>
+      <para>
+        <list type="table">
+          <listheader>
+            <term>Field</term>
+            <description>IP
+         Address</description>
+          </listheader>
+          <item>
+            <term> Any</term>
+            <description>0.0.0.0</description>
+          </item>
+          <item>
+            <term> Broadcast</term>
+            <description>255.255.255.255</description>
+          </item>
+          <item>
+            <term> Loopback</term>
+            <description>127.0.0.1</description>
+          </item>
+          <item>
+            <term> None</term>
+            <description>255.255.255.255</description>
+          </item>
+        </list>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public IPAddress (byte[] address);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="address" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int64 newAddress)" />
+      <MemberSignature Language="C#" Value="public IPAddress (long addr);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="addr" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="addr">A <see cref="T:System.Int64" /> containing the IP address in host-byte-order. </param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.IPAddress" />
+class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="newAddress" /> is less than 0 or greater than 0x00000000FFFFFFFF.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public IPAddress (byte[] address, long scopeId);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="address" Type="System.Byte[]" />
+        <Parameter Name="scopeId" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="scopeId">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Address">
+      <MemberSignature Language="ILASM" Value=".property int64 Address { public hidebysig specialname instance int64 get_Address() public hidebysig specialname instance void set_Address(int64 value) }" />
+      <MemberSignature Language="C#" Value="public long Address { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets an Internet Protocol (IP) address.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int64" /> containing
+   the IP address in host-byte-order.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para>To convert <see cref="P:System.Net.IPAddress.Address" />
+   to dotted-quad notation, use the <see cref="M:System.Net.IPAddress.ToString" />
+   method.</para>
+            <para>Values greater than 0x00000000FFFFFFFF  are permitted for IPv6 extensibility.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value specified in a set operation is less than 0.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("This property is obsolete. Use GetAddressBytes.")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="AddressFamily">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Net.Sockets.AddressFamily AddressFamily { public hidebysig specialname instance valuetype System.Net.Sockets.AddressFamily get_AddressFamily() }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.AddressFamily AddressFamily { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the address family.</para>
+        </summary>
+        <value>
+          <para>
+            <see cref="F:System.Net.Sockets.AddressFamily.InterNetwork" /> 
+.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Any">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress Any" />
+      <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress Any;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Indicates that the protocol will
+      select which address to use. </para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para> This is equivalent to <see cref="!:System.Net.IPAddress.IPAddress" /> (0x0000000000000000) and represents the address
+   0.0.0.0.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Broadcast">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress Broadcast" />
+      <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress Broadcast;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Provides the IP broadcast address.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para> This is equivalent to <see cref="!:System.Net.IPAddress.IPAddress" /> (0x00000000FFFFFFFF) and represents the address 255.255.255.255.</para>
+          <para>This value is used to simultaneously address every host on the network.</para>
+          <block subset="none" type="note">
+            <para>Multiple fields are defined for this IP address based on prior
+      art. This field is identical to <see cref="F:System.Net.IPAddress.None" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object comparand)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object other);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="other">A <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance and the
+      specified <see cref="T:System.Object" />
+      represent the same IP address.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="comparand" /> is an instance of the <see cref="T:System.Net.IPAddress" /> class
+   and has the same <see cref="P:System.Net.IPAddress.Address" /> property value
+   as the current instance; otherwise
+<see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method
+         overrides <see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAddressBytes">
+      <MemberSignature Language="C#" Value="public byte[] GetAddressBytes ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" />
+containing the hash code for the current instance.</para>
+        </returns>
+        <remarks>
+          <para>The algorithm used to generate the hash code is
+         unspecified.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.Object.GetHashCode" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HostToNetworkOrder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 HostToNetworkOrder(int16 host)" />
+      <MemberSignature Language="C#" Value="public static short HostToNetworkOrder (short host);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="host" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="host">A <see cref="T:System.Int16" /> in host-byte-order.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.Int16" /> from host-byte-order to network-byte-order.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int16" />
+in network-byte-order.</para>
+        </returns>
+        <remarks>
+          <para>This method performs conversions on systems where the host-byte-order differs 
+      from network-byte-order. On systems where this is not the case, this method does
+      nothing.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HostToNetworkOrder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 HostToNetworkOrder(int32 host)" />
+      <MemberSignature Language="C#" Value="public static int HostToNetworkOrder (int host);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="host" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="host">A <see cref="T:System.Int32" /> in host-byte-order.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.Int32" /> from host-byte-order to network-byte-order.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" />
+in network-byte-order.</para>
+        </returns>
+        <remarks>
+          <para>This method performs conversions on systems where the host-byte-order differs 
+      from network-byte-order. On systems where this is not the case, this method does
+      nothing.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HostToNetworkOrder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 HostToNetworkOrder(int64 host)" />
+      <MemberSignature Language="C#" Value="public static long HostToNetworkOrder (long host);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="host" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="host">A <see cref="T:System.Int64" /> in host-byte-order.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.Int64" /> from host-byte-order to network-byte-order.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int64" /> in network-byte-order.</para>
+        </returns>
+        <remarks>
+          <para>This method performs conversions on systems where the host-byte-order differs 
+      from network-byte-order. On systems where this is not the case, this method does
+      nothing.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IPv6Any">
+      <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress IPv6Any;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IPv6Loopback">
+      <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress IPv6Loopback;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IPv6None">
+      <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress IPv6None;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsIPv6LinkLocal">
+      <MemberSignature Language="C#" Value="public bool IsIPv6LinkLocal { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsIPv6Multicast">
+      <MemberSignature Language="C#" Value="public bool IsIPv6Multicast { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsIPv6SiteLocal">
+      <MemberSignature Language="C#" Value="public bool IsIPv6SiteLocal { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsLoopback">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLoopback(class System.Net.IPAddress address)" />
+      <MemberSignature Language="C#" Value="public static bool IsLoopback (System.Net.IPAddress addr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="addr" Type="System.Net.IPAddress" />
+      </Parameters>
+      <Docs>
+        <param name="addr"> A <see cref="T:System.Net.IPAddress" /> containing the IP address to check.</param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> that indicates whether the specified IP address is a loopback address.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " />if
+<paramref name="address " /> is a loopback address; otherwise
+<see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para> All IP addresses of the form 127.X.Y.Z, where X, Y, and Z are
+      in the range 0-255, are forwarded to the IP loopback address 127.0.0.1.
+      The <see cref="F:System.Net.IPAddress.Loopback" /> address is
+      used to specify the address of the local computer. </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Loopback">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress Loopback" />
+      <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress Loopback;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Provides the IP loopback
+      address.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para> This is equivalent to <see cref="!:System.Net.IPAddress.IPAddress" /> (0x000000000100007F) and represents the address
+   127.0.0.1.</para>
+          <para> The loopback address is used to specify the address of the local computer.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NetworkToHostOrder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 NetworkToHostOrder(int16 network)" />
+      <MemberSignature Language="C#" Value="public static short NetworkToHostOrder (short network);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="network" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="network">A <see cref="T:System.Int16" /> in network-byte-order.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.Int16" qualify="true" /> from network-byte-order to host-byte-order.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int16" />
+in host-byte-order.</para>
+        </returns>
+        <remarks>
+          <para>This method performs conversions on systems where the host-byte-order differs 
+      from network-byte-order. On systems where this is not the case, this method does
+      nothing.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NetworkToHostOrder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 NetworkToHostOrder(int32 network)" />
+      <MemberSignature Language="C#" Value="public static int NetworkToHostOrder (int network);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="network" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="network">A <see cref="T:System.Int32" /> in network-byte-order.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.Int32" qualify="true" /> from network-byte-order to host-byte-order.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> in host-byte-order.</para>
+        </returns>
+        <remarks>
+          <para>This method performs conversions on systems where the host-byte-order differs 
+      from network-byte-order. On systems where this is not the case, this method does
+      nothing.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NetworkToHostOrder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 NetworkToHostOrder(int64 network)" />
+      <MemberSignature Language="C#" Value="public static long NetworkToHostOrder (long network);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="network" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="network">A <see cref="T:System.Int64" /> in network-byte-order.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.Int64" qualify="true" /> from network-byte-order to host-byte-order.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int64" /> in host-byte-order.</para>
+        </returns>
+        <remarks>
+          <para>This method performs conversions on systems where the host-byte-order differs 
+      from network-byte-order. On systems where this is not the case, this method does
+      nothing.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress None" />
+      <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress None;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Provides the IP address that indicates
+      that no network interface should be used.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para> This is equivalent to <see cref="!:System.Net.IPAddress.IPAddress" /> (0x00000000FFFFFFFF) and represents the address 255.255.255.255.</para>
+          <block subset="none" type="note">
+            <para>Multiple fields are defined for this IP address based on prior
+      art. This field is identical to <see cref="F:System.Net.IPAddress.Broadcast" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.IPAddress Parse(string ipString)" />
+      <MemberSignature Language="C#" Value="public static System.Net.IPAddress Parse (string ipString);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ipString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="ipString">A <see cref="T:System.String" /> in dotted-quad notation containing the IP address to convert.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.String" /> representation of an IP address in dotted-quad notation, to a <see cref="T:System.Net.IPAddress" /> instance.</para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.Net.IPAddress" /> instance that represents the address specified in <paramref name="ipString" />.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>An example of a string in dotted-quad notation is "127.0.0.1".</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="ipString " />is <see langword="null" />.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="ipString " />is not a valid IP address.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ScopeId">
+      <MemberSignature Language="C#" Value="public long ScopeId { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns a <see cref="T:System.String" /> representation of the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> representation of 
+   the current instance. The returned string is an IP address expressed in dotted-quad notation (for example, "192.168.1.2").</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Net.IPAddress.ToString" /> method converts the IP address stored in the <see cref="P:System.Net.IPAddress.Address" /> property of the current instance to
+      a <see cref="T:System.String" qualify="true" />
+      containing
+      
+      the address in dotted-quad notation (for example, "192.168.1.2"). </para>
+            <para>This method overrides <see cref="M:System.Object.ToString" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string ipString, out System.Net.IPAddress address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ipString" Type="System.String" />
+        <Parameter Name="address" Type="System.Net.IPAddress&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="ipString">To be added.</param>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

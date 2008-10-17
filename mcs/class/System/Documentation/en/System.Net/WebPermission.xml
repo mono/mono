@@ -1,0 +1,572 @@
+<Type Name="WebPermission" FullName="System.Net.WebPermission" FullNameSP="System_Net_WebPermission" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable WebPermission extends System.Security.CodeAccessPermission" />
+  <TypeSignature Language="C#" Value="public sealed class WebPermission : System.Security.CodeAccessPermission, System.Security.Permissions.IUnrestrictedPermission" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Security.CodeAccessPermission</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Security.Permissions.IUnrestrictedPermission</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Controls access to Internet resources.</para>
+    </summary>
+    <remarks>
+      <para>The XML encoding of a <see cref="T:System.Net.WebPermission" /> instance
+      is defined below in EBNF format. The following conventions are used:</para>
+      <list type="bullet">
+        <item>
+          <term>
+            <para> All non-literals in the grammar below are shown in normal type.</para>
+          </term>
+        </item>
+        <item>
+          <term>
+            <para> All literals are in bold font. </para>
+          </term>
+        </item>
+      </list>
+      <para> The following meta-language symbols are used: </para>
+      <list type="bullet">
+        <item>
+          <term>
+            
+            '*' represents a meta-language symbol suffixing an
+            expression that can appear zero or more times.</term>
+        </item>
+        <item>
+          <term>
+            
+            '?' represents a meta-language symbol suffixing an
+            expression that can appear zero or one time.</term>
+        </item>
+        <item>
+          <term>
+            
+            '+' represents a meta-language symbol suffixing an
+            expression that can appear one or more times.</term>
+        </item>
+        <item>
+          <term>
+            
+            '(',')' is used to group literals, non-literals or a
+            mixture of literals and non-literals.</term>
+        </item>
+        <item>
+          <term>
+            
+            '|' denotes an exclusive disjunction between two
+            expressions.</term>
+        </item>
+        <item>
+          <term>
+            
+            '::= ' denotes a production rule where a left hand
+            non-literal is replaced by a right hand expression containing literals,
+            non-literals or both.</term>
+        </item>
+      </list>
+      <para> BuildVersion refers to the build version of the shipping CLI. This is
+      a dotted build number such as '2412.0'.</para>
+      <para>ECMAPubKeyToken ::= <see langword="b77a5c561934e089" /></para>
+      <para>HostName refers to a host name such as <c>www.contoso.com</c> . </para>
+      <para>Portnumber denotes a <see cref="T:System.Int32" /> value indicating a port. </para>
+      <para>TransportProtocol ::= <see langword="1" /> |
+<see langword="2" /> | <see langword="3 " /> /*1= UDP , 2 = TCP, 3 = both */ </para>
+      <c>
+        <para>WebPermissionXML ::= </para>
+        <para>
+          <see langword="&lt;IPermission " />
+        </para>
+        <para>
+          <see langword="class=&quot; " />
+        </para>
+        <para>
+          <see langword="System.Net.WebPermission," />
+        </para>
+        <para>
+          <see langword="System," />
+        </para>
+        <para>
+          <see langword="Version=1.0." />BuildVersion<see langword="," /></para>
+        <para>
+          <see langword="Culture=neutral," />
+        </para>
+        <para>
+          <see langword="PublicKeyToken=" />ECMAPubKeyToken<see langword="&quot; " /></para>
+        <para>
+          <see langword="version=&quot;1&quot; " />
+        </para>
+        <para>(</para>
+        <para>
+          <see langword="Unrestricted=&quot;true&quot;/&gt; " />
+        </para>
+        <para>)</para>
+        <para>|</para>
+        <para>&gt;</para>
+        <para>(<see langword="&lt;ConnectAccess&gt; " /></para>
+        <para>(</para>
+        <para>
+          <see langword="&lt;URI&gt;" />HostName<see langword="#" />PortNumber<see langword="#" />TransportProtocol<see langword="&lt;/URI&gt; " /></para>
+        <para>)+</para>
+        <para>
+          <see langword="&lt;/ConnectAccess&gt; " />
+        </para>
+        <para>
+          <see langword="&lt;/IPermission&gt; " />
+        </para>
+        <para>)</para>
+        <para>|</para>
+        <para>&gt;</para>
+        <para>(<see langword="&lt;AcceptAccess&gt; " /></para>
+        <para>(</para>
+        <para>
+          <see langword="&lt;URI&gt;" />HostName<see langword="#" />PortNumber<see langword="#" />TransportProtocol<see langword="&lt;/URI&gt; " /></para>
+        <para>)+<see langword=" " /></para>
+        <para>
+          <see langword="&lt;/AcceptAccess&gt; " />
+        </para>
+        <para>
+          <see langword="&lt;/IPermission&gt; " />
+        </para>
+        <para>)</para>
+        <para>|</para>
+        <para>
+          <see langword="/&gt; " />
+        </para>
+      </c>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public WebPermission ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Security.Permissions.PermissionState state)" />
+      <MemberSignature Language="C#" Value="public WebPermission (System.Security.Permissions.PermissionState state);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="state" Type="System.Security.Permissions.PermissionState" />
+      </Parameters>
+      <Docs>
+        <param name="state">
+          <para>A <see cref="T:System.Security.Permissions.PermissionState" /> value. </para>
+        </param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.WebPermission" /> class with the specified <see cref="T:System.Security.Permissions.PermissionState" />
+value.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This constructor creates either fully restricted (<see cref="F:System.Security.Permissions.PermissionState.None" />) 
+      or <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> access to Internet
+      resources.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Net.NetworkAccess access, string uriString)" />
+      <MemberSignature Language="C#" Value="public WebPermission (System.Net.NetworkAccess access, string uriString);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="access" Type="System.Net.NetworkAccess" />
+        <Parameter Name="uriString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="access">A <see cref="T:System.Net.NetworkAccess" /> value indicating the type of access to secure. </param>
+        <param name="uriString">A <see cref="T:System.String" /> that represents the URI to grant access rights to. <block subset="none" type="note">For more information on the format of this string, see <see cref="T:System.Uri" />.</block></param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Net.WebPermission" /> class that secures
+   access to the specified
+   URI.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uriString" /> is <see langword="null" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public WebPermission (System.Net.NetworkAccess access, System.Text.RegularExpressions.Regex uriRegex);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="access" Type="System.Net.NetworkAccess" />
+        <Parameter Name="uriRegex" Type="System.Text.RegularExpressions.Regex" />
+      </Parameters>
+      <Docs>
+        <param name="access">To be added.</param>
+        <param name="uriRegex">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AcceptList">
+      <MemberSignature Language="C#" Value="public System.Collections.IEnumerator AcceptList { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddPermission">
+      <MemberSignature Language="C#" Value="public void AddPermission (System.Net.NetworkAccess access, string uriString);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="access" Type="System.Net.NetworkAccess" />
+        <Parameter Name="uriString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="access">To be added.</param>
+        <param name="uriString">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddPermission">
+      <MemberSignature Language="C#" Value="public void AddPermission (System.Net.NetworkAccess access, System.Text.RegularExpressions.Regex uriRegex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="access" Type="System.Net.NetworkAccess" />
+        <Parameter Name="uriRegex" Type="System.Text.RegularExpressions.Regex" />
+      </Parameters>
+      <Docs>
+        <param name="access">To be added.</param>
+        <param name="uriRegex">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConnectList">
+      <MemberSignature Language="C#" Value="public System.Collections.IEnumerator ConnectList { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.IPermission Copy()" />
+      <MemberSignature Language="C#" Value="public override System.Security.IPermission Copy ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.IPermission</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a new <see cref="T:System.Net.WebPermission" /> object containing the same values as the current
+   instance.</para>
+        </summary>
+        <returns>
+          <para> A new <see cref="T:System.Net.WebPermission" /> instance
+   containing the same values as the current instance.
+   </para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The object returned by this method represents the same access to resources as
+         the current instance.</para>
+            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.Copy" qualify="true" /> and is implemented to
+      support the <see cref="T:System.Security.IPermission" /> interface.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromXml">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void FromXml(class System.Security.SecurityElement securityElement)" />
+      <MemberSignature Language="C#" Value="public override void FromXml (System.Security.SecurityElement securityElement);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="securityElement" Type="System.Security.SecurityElement" />
+      </Parameters>
+      <Docs>
+        <param name="securityElement">
+          <para>A <see cref="T:System.Security.SecurityElement" /> instance containing the XML encoding to use to reconstruct the state of a <see cref="T:System.Net.WebPermission" /> object.</para>
+        </param>
+        <summary>
+          <para>Reconstructs the state of a <see cref="T:System.Net.WebPermission" /> object using the specified XML
+   encoding.</para>
+        </summary>
+        <remarks>
+          <para>The state of the current instance is changed to the state encoded in
+   <paramref name="securityElement" />.</para>
+          <block subset="none" type="note">
+            <para>For the XML encoding for this class, see the <see cref="T:System.Net.WebPermission" /> class
+      page.</para>
+            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.FromXml(System.Security.SecurityElement)" qualify="true" /> .</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="securityElement " />is <see langword="null" />.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="securityElement " />does not contain the encoding for a <see cref="T:System.Net.WebPermission" /> instance.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Intersect">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.IPermission Intersect(class System.Security.IPermission target)" />
+      <MemberSignature Language="C#" Value="public override System.Security.IPermission Intersect (System.Security.IPermission target);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.IPermission</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="System.Security.IPermission" />
+      </Parameters>
+      <Docs>
+        <param name="target">A <see cref="T:System.Net.WebPermission" /> instance to intersect with the current instance.</param>
+        <summary>
+          <para>Returns a new <see cref="T:System.Net.WebPermission" /> object that is the intersection of the current
+   instance and the specified object. </para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.Net.WebPermission" /> instance that represents the intersection of the
+   current instance and <paramref name="target" />. If the intersection is
+   empty, returns <see langword="null" />. If the
+   current instance is unrestricted, returns a copy of <paramref name="target" />. If
+<paramref name="target" /> is unrestricted, returns a copy of the current instance.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The intersection of two permissions is a permission that secures the
+         resources and operations secured by both permissions. Specifically, it
+         represents the minimum permission such that any demand that passes both
+         permissions will also pass their intersection.</para>
+            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.Intersect(System.Security.IPermission)" qualify="true" /> and is implemented to
+      support the <see cref="T:System.Security.IPermission" /> interface.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="target " />is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="target" /> is not <see langword="null" /> and is not of type <see cref="T:System.Net.WebPermission" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSubsetOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool IsSubsetOf(class System.Security.IPermission target)" />
+      <MemberSignature Language="C#" Value="public override bool IsSubsetOf (System.Security.IPermission target);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="System.Security.IPermission" />
+      </Parameters>
+      <Docs>
+        <param name="target">A <see cref="T:System.Net.WebPermission" /> instance that is to be tested for the subset relationship.</param>
+        <summary>
+          <para>Determines whether the current instance is a subset of the specified
+      object.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the current instance is a subset of <paramref name="target" /> ;
+   otherwise,<see langword=" false" />. If target is null, return
+<see langword="false" />. If the current instance is unrestricted, and
+<paramref name="target" /> is not, returns <see langword="false" />. If <paramref name="target" /> is 
+   unrestricted, returns <see langword="true" />.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The current instance is a subset of <paramref name="target" /> if the current instance
+      specifies a set of accesses to resources that is wholly contained by
+   <paramref name="target" />. For example, a permission that represents read access to a file
+      is a subset of a permission that represents read and write access to the file. </para>
+            <para>If this method returns <see langword="true" /> , the 
+   current instance describes access to internet resources that is also
+   described by <paramref name="target" />
+   . </para>
+            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.IsSubsetOf(System.Security.IPermission)" qualify="true" /> and is implemented to
+support the <see cref="T:System.Security.IPermission" /> interface.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="target " />is not of type <see cref="T:System.Net.WebPermission" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsUnrestricted">
+      <MemberSignature Language="C#" Value="public bool IsUnrestricted ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToXml">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.SecurityElement ToXml()" />
+      <MemberSignature Language="C#" Value="public override System.Security.SecurityElement ToXml ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.SecurityElement</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns the XML encoding of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Security.SecurityElement" /> containing the XML encoding of the state of the
+   current instance.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>For the XML encoding for this class, see the <see cref="T:System.Net.WebPermission" /> class page.</para>
+            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.ToXml" qualify="true" /> .</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Union">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.IPermission Union(class System.Security.IPermission target)" />
+      <MemberSignature Language="C#" Value="public override System.Security.IPermission Union (System.Security.IPermission target);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.IPermission</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="System.Security.IPermission" />
+      </Parameters>
+      <Docs>
+        <param name="target">The <see cref="T:System.Net.WebPermission" /> instance to combine with the current instance.</param>
+        <summary>
+          <para>Returns a new <see cref="T:System.Net.WebPermission" /> object that is the union of the current instance and
+   the specified object.</para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.Net.WebPermission" /> instance that represents the union of the current
+   instance and <paramref name="target" />. If the current instance
+   or <paramref name="target" /> is unrestricted, returns a <see cref="T:System.Net.WebPermission" /> instance that is unrestricted.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The result of a call to <see cref="M:System.Net.WebPermission.Union(System.Security.IPermission)" /> is a permission that represents all of
+      the access to permissions represented by the current instance as well as the
+      permissions represented by <paramref name="target" />. Any demand that passes either the
+      current instance or <paramref name="target " />passes their union.</para>
+            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.Union(System.Security.IPermission)" qualify="true" /> and is implemented to
+   support the <see cref="T:System.Security.IPermission" /> interface.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="target " />is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="target" /> is not <see langword="null" /> and is not of type <see cref="T:System.Net.WebPermission" /> .</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

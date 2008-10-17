@@ -1,0 +1,67 @@
+<Type Name="ElapsedEventHandler" FullName="System.Timers.ElapsedEventHandler">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void ElapsedEventHandler(object sender, ElapsedEventArgs e);" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Docs>
+    <param name="sender">To be added.</param>
+    <param name="e">To be added.</param>
+    <summary>
+      <para>Identifies the method that will be executed when the <see cref="E:System.Timers.Timer.Elapsed" /> event fires.</para>
+    </summary>
+    <remarks>
+      <para>Use this delegate to attach handlers to the <see cref="E:System.Timers.Timer.Elapsed" /> event.</para>
+      <example>
+        <code lang="C#">
+using System;
+using System.Timers;
+
+public class TimerExample
+{
+	private static System.Timers.Timer ourTimer;
+
+	public static void Main()
+	{
+		ourTimer = new System.Timers.Timer();
+
+		// attach to the Elapsed event.
+		ourTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsed);
+
+		// make our timer interval 1 second
+		ourTimer.Interval = 1000;
+		
+		// don't forget to enable the timer!
+		// we could also call ourTimer.Start() here; they both have the same effect 
+		// (starting the timer).
+		ourTimer.Enabled = true;
+
+		Console.WriteLine("Waiting 10 seconds before exit...");
+		System.Threading.Thread.Sleep(10000);
+	}
+
+	private static void OnTimerElapsed(object sender, ElapsedEventArgs e)
+	{
+		Console.WriteLine("Timer elapsed at: " + e.SignalTime.ToLongTimeString());
+	}
+}
+  </code>
+      </example>
+    </remarks>
+  </Docs>
+  <Members />
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="e" Type="System.Timers.ElapsedEventArgs" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+</Type>

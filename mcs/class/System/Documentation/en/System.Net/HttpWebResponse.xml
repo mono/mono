@@ -1,0 +1,882 @@
+<Type Name="HttpWebResponse" FullName="System.Net.HttpWebResponse" FullNameSP="System_Net_HttpWebResponse" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable HttpWebResponse extends System.Net.WebResponse" />
+  <TypeSignature Language="C#" Value="public class HttpWebResponse : System.Net.WebResponse" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Net.WebResponse</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para>Provides an HTTP-specific implementation of the
+   <see cref="T:System.Net.WebResponse" />
+   class.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Net.HttpWebResponse" /> class contains support for the
+      properties and methods included in <see cref="T:System.Net.WebResponse" /> with
+      additional
+      elements that
+      enable the user to interact directly with the Hypertext Transfer Protocol (HTTP).</para>
+        <para>Expected usage is that instances of this class are not created directly but
+      are obtained by calling
+   <see cref="M:System.Net.HttpWebRequest.GetResponse" qualify="true" /> . To obtain the response from the Internet resource as a
+   <see cref="T:System.IO.Stream" />
+   , call the <see cref="M:System.Net.HttpWebResponse.GetResponseStream" /> method.
+   </para>
+        <para>Certain HTTP headers are protected such that the user
+   cannot set them directly in the header collection. Instead, these headers can be
+   set via the properties of the <see cref="T:System.Net.HttpWebRequest" /> class or are set by the system. The following table
+   details these protected headers.</para>
+        <list type="table">
+          <listheader>
+            <term>Header</term>
+            <description>Set by</description>
+          </listheader>
+          <item>
+            <term> Accept</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.Accept" />
+            </description>
+          </item>
+          <item>
+            <term> Connection</term>
+            <description>
+              <para>
+                <see cref="P:System.Net.HttpWebRequest.Connection" />
+              </para>
+              <para>
+                <see cref="P:System.Net.HttpWebRequest.KeepAlive" />
+              </para>
+            </description>
+          </item>
+          <item>
+            <term> Content-Length</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.ContentLength" />
+            </description>
+          </item>
+          <item>
+            <term> Content-Type</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.ContentType" />
+            </description>
+          </item>
+          <item>
+            <term> Expect</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.Expect" />
+            </description>
+          </item>
+          <item>
+            <term> Date</term>
+            <description>Set to current date by the system.</description>
+          </item>
+          <item>
+            <term> Host</term>
+            <description>Set to current host by the system.</description>
+          </item>
+          <item>
+            <term> if-Modified-since</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.IfModifiedSince" />
+            </description>
+          </item>
+          <item>
+            <term> Range</term>
+            <description>
+              <see cref="M:System.Net.HttpWebRequest.AddRange(System.Int32,System.Int32)" />
+            </description>
+          </item>
+          <item>
+            <term> Referer</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.Referer" />
+            </description>
+          </item>
+          <item>
+            <term> Transfer-Encoding</term>
+            <description>
+              <para>
+                <see cref="P:System.Net.HttpWebRequest.TransferEncoding" />
+              </para>
+              <para>
+                <see cref="P:System.Net.HttpWebRequest.SendChunked" />
+              </para>
+            </description>
+          </item>
+          <item>
+            <term> User-Agent</term>
+            <description>
+              <see cref="P:System.Net.HttpWebRequest.UserAgent" />
+            </description>
+          </item>
+        </list>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected HttpWebResponse (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="serializationInfo">To be added.</param>
+        <param name="streamingContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Serialization is obsoleted for this type", false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="CharacterSet">
+      <MemberSignature Language="ILASM" Value=".property string CharacterSet { public hidebysig specialname instance string get_CharacterSet() }" />
+      <MemberSignature Language="C#" Value="public string CharacterSet { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the character set used for the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that
+   represents the character set used for the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">For detailed
+      information about character sets, see Section 3.4 of RFC 2616.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
+      <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Closes the response stream.</para>
+        </summary>
+        <remarks>
+          <para>The <see cref="M:System.Net.HttpWebResponse.Close" /> method closes the response stream and releases the connection to the Internet resource for reuse by other requests.</para>
+          <block subset="none" type="note">
+            <para>Call either the <see cref="M:System.IO.Stream.Close" qualify="true" /> or <see cref="M:System.Net.HttpWebResponse.Close" qualify="true" /> method to close the stream and release the connection for reuse. It is not necessary to call both <see cref="M:System.IO.Stream.Close" qualify="true" /> and <see cref="M:System.Net.HttpWebResponse.Close" qualify="true" /> , but 
+ doing so does not cause an error. Failure to close the stream might cause an
+ application to run out of connections. </para>
+            <para>This method overrides <see cref="M:System.Net.WebResponse.Close" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContentEncoding">
+      <MemberSignature Language="ILASM" Value=".property string ContentEncoding { public hidebysig specialname instance string get_ContentEncoding() }" />
+      <MemberSignature Language="C#" Value="public string ContentEncoding { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the
+      method used to encode the body of the response.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that describes the method used to encode the body of the response.</para>
+        </value>
+        <remarks>
+          <para> This property is read-only.</para>
+          <para>The <see cref="P:System.Net.HttpWebResponse.ContentEncoding" /> property contains the value of the
+<see langword="Content-Encoding" /> 
+header returned with the response.</para>
+          <para>
+            <block subset="none" type="note">For detailed information about content encoding,
+   see Section 3.5 of RFC 2616.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContentLength">
+      <MemberSignature Language="ILASM" Value=".property int64 ContentLength { public hidebysig virtual specialname int64 get_ContentLength() }" />
+      <MemberSignature Language="C#" Value="public override long ContentLength { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the content length of the response data being received.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int64" />
+containing the number of bytes returned from the Internet resource. This
+value does not include header information.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.Net.HttpWebResponse.ContentLength" /> property contains the value of the
+<see langword="Content-length" /> header returned with the response. If the 
+<see langword="Content-length" /> 
+header
+is not set in the response, <see cref="P:System.Net.HttpWebResponse.ContentLength" />
+is set to the value -1.</para>
+          <para>
+            <block subset="none" type="note">This property
+   overrides <see cref="P:System.Net.WebResponse.ContentLength" />
+   .</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContentType">
+      <MemberSignature Language="ILASM" Value=".property string ContentType { public hidebysig virtual specialname string get_ContentType() }" />
+      <MemberSignature Language="C#" Value="public override string ContentType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the content type of the
+      response.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that
+   represents the content type of the response data.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para> The <see cref="P:System.Net.HttpWebResponse.ContentType" /> property contains the value of the
+<see langword="Content-Type" /> 
+header returned with the response.</para>
+          <para>
+            <block subset="none" type="note">This property
+   overrides <see cref="P:System.Net.WebResponse.ContentType" />
+   .</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Cookies">
+      <MemberSignature Language="C#" Value="public System.Net.CookieCollection Cookies { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.CookieCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool disposing)" />
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">
+          <see langword="true" /> to release both managed and unmanaged resources; <see langword="false" /> to release only unmanaged resources.</param>
+        <summary>
+          <para>Releases the unmanaged resources used by the current
+      instance and optionally releases the managed resources.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">When <paramref name="disposing" /> is <see langword="true" />, 
+   this method releases all resources held by any managed objects that the current
+   instance references.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">When
+   overriding <see cref="M:System.Net.HttpWebResponse.Dispose(System.Boolean)" />(<see cref="T:System.Boolean" />), be careful not to reference objects that have been
+   previously disposed in an earlier call to <see cref="M:System.Net.HttpWebResponse.Dispose(System.Boolean)" /> as
+<see cref="M:System.Net.HttpWebResponse.Dispose(System.Boolean)" /> may be called multiple times by 
+   other objects. . </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" />
+containing the hash code for the current instance.</para>
+        </returns>
+        <remarks>
+          <para>The algorithm used to generate the hash code is
+      unspecified.</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Object.GetHashCode" qualify="true" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="protected override void GetObjectData (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="serializationInfo">To be added.</param>
+        <param name="streamingContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetResponseHeader">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetResponseHeader(string headerName)" />
+      <MemberSignature Language="C#" Value="public string GetResponseHeader (string headerName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="headerName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="headerName">A <see cref="T:System.String" /> that specifies the header value to return. </param>
+        <summary>
+          <para> Returns a specified header from the current response.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing the value of the specified header.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetResponseStream">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IO.Stream GetResponseStream()" />
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetResponseStream ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.IO.Stream" /> for reading the body of the response from the
+   server.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IO.Stream" /> containing the body of the response.</para>
+        </returns>
+        <remarks>
+          <para>The <see cref="M:System.Net.HttpWebResponse.GetResponseStream" />
+method returns the data stream from the requested Internet
+resource.</para>
+          <block subset="none" type="note">
+            <para>
+      Call either the <see cref="M:System.IO.Stream.Close" qualify="true" /> or <see cref="M:System.Net.HttpWebResponse.Close" qualify="true" /> method to close the stream and release the
+      connection for reuse. It is not necessary to call both <see cref="M:System.IO.Stream.Close" qualify="true" /> and <see cref="M:System.Net.HttpWebResponse.Close" qualify="true" /> , but doing so does
+      not cause an error. Failure to close the stream might cause an application
+      to run out of connections.
+      </para>
+            <para>This method overrides <see cref="M:System.Net.WebResponse.GetResponseStream" /> .</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Headers">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.WebHeaderCollection Headers { public hidebysig virtual specialname class System.Net.WebHeaderCollection get_Headers() }" />
+      <MemberSignature Language="C#" Value="public override System.Net.WebHeaderCollection Headers { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.WebHeaderCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the
+      headers associated with the current response from the server.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Net.WebHeaderCollection" /> containing the header information returned with the
+   response.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Net.HttpWebResponse.Headers" /> property is a collection
+      of name/value pairs containing the HTTP header values returned
+      with the response. The following table lists common headers and
+      the properties that store their values.</para>
+            <list type="table">
+              <listheader>
+                <term>Header</term>
+                <description>Property</description>
+              </listheader>
+              <item>
+                <term> Content-Encoding</term>
+                <description>
+                  <see cref="P:System.Net.HttpWebResponse.ContentEncoding" />
+                </description>
+              </item>
+              <item>
+                <term> Content-Length</term>
+                <description>
+                  <see cref="P:System.Net.HttpWebResponse.ContentLength" />
+                </description>
+              </item>
+              <item>
+                <term> Content-Type</term>
+                <description>
+                  <see cref="P:System.Net.HttpWebResponse.ContentType" />
+                </description>
+              </item>
+              <item>
+                <term> Last-Modified</term>
+                <description>
+                  <see cref="P:System.Net.HttpWebResponse.LastModified" />
+                </description>
+              </item>
+              <item>
+                <term> Server</term>
+                <description>
+                  <see cref="P:System.Net.HttpWebResponse.Server" />
+                </description>
+              </item>
+            </list>
+            <para>This property overrides <see cref="P:System.Net.WebResponse.Headers" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsMutuallyAuthenticated">
+      <MemberSignature Language="C#" Value="public override bool IsMutuallyAuthenticated { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LastModified">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.DateTime LastModified { public hidebysig specialname instance valuetype System.DateTime get_LastModified() }" />
+      <MemberSignature Language="C#" Value="public DateTime LastModified { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the last
+      date and time that the contents of the response were modified.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.DateTime" />
+value containing the date and time the contents of the response were
+modified.</para>
+        </value>
+        <remarks>
+          <para> This property is read-only.</para>
+          <para>The <see cref="P:System.Net.HttpWebResponse.LastModified" /> property contains the value of the
+<see langword="Last-Modified" /> header
+   received with the response.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Method">
+      <MemberSignature Language="ILASM" Value=".property string Method { public hidebysig specialname instance string get_Method() }" />
+      <MemberSignature Language="C#" Value="public string Method { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the method used to return the response.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that represents the HTTP method used to return the response.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Net.HttpWebRequest.Method" /> property can be set to any of the
+      HTTP 1.1 protocol methods: GET, HEAD, POST, PUT, DELETE, TRACE, or OPTIONS. The
+      following table describes these methods.</para>
+            <list type="table">
+              <listheader>
+                <term>Item</term>
+                <description>Description</description>
+              </listheader>
+              <item>
+                <term> GET</term>
+                <description>Retrieves in entity-body form the
+            information identified by the <see cref="P:System.Net.HttpWebRequest.RequestUri" /> property of the request
+            associated with the current instance.</description>
+              </item>
+              <item>
+                <term> HEAD</term>
+                <description>Identical to GET except that the
+            message-body is not returned in the response.</description>
+              </item>
+              <item>
+                <term> POST</term>
+                <description>Requests that the origin server accept the
+            entity enclosed in the request as a new subordinate of the resource
+            identified the Request-URI in the Request-Line.</description>
+              </item>
+              <item>
+                <term> PUT</term>
+                <description>Requests that the enclosed entity be stored
+            under the supplied Request-URI.</description>
+              </item>
+              <item>
+                <term> DELETE</term>
+                <description>Requests that the origin server delete the
+            resource identified by the Request-URI.</description>
+              </item>
+              <item>
+                <term> TRACE</term>
+                <description>Invokes a remote, application-layer loopback
+            of the request message.</description>
+              </item>
+              <item>
+                <term> OPTIONS</term>
+                <description>Requests information about the communication
+            options available on the request/response chain identified by the
+            Request-URI. <block subset="none" type="note">This allows the client
+            to determine the options and/or requirements associated with a resource,
+            or the capabilities of a server, without implying a resource action or
+            initiating a resource
+            retrieval.</block></description>
+              </item>
+            </list>
+            <para>For detailed information regarding these methods, see sections 9.2 to 9.8 of
+      RFC 2616.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProtocolVersion">
+      <MemberSignature Language="ILASM" Value=".property class System.Version ProtocolVersion { public hidebysig specialname instance class System.Version get_ProtocolVersion() }" />
+      <MemberSignature Language="C#" Value="public Version ProtocolVersion { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets
+      the version of the HTTP protocol used in the response.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Version" />
+that contains the HTTP protocol version of the response.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.Net.HttpWebResponse.ProtocolVersion" /> property contains the <see cref="T:System.Net.HttpVersion" /> number
+   of the response sent by the Internet resource.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResponseUri">
+      <MemberSignature Language="ILASM" Value=".property class System.Uri ResponseUri { public hidebysig virtual specialname class System.Uri get_ResponseUri() }" />
+      <MemberSignature Language="C#" Value="public override Uri ResponseUri { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the <see cref="T:System.Uri" />
+of the Internet resource that actually responded to the request.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Uri" />
+representing the resource that actually responded to the request.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Net.HttpWebResponse.ResponseUri" /> property contains the URI of the Internet resource that
+      actually responded to the request. This URI might not be the same as the
+      originally requested URI if the request was redirected by the original
+      server.</para>
+            <para>This method overrides <see cref="P:System.Net.WebResponse.ResponseUri" qualify="true" />
+.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Server">
+      <MemberSignature Language="ILASM" Value=".property string Server { public hidebysig specialname instance string get_Server() }" />
+      <MemberSignature Language="C#" Value="public string Server { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the name of the server that sent the response.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the name of the server that sent the response.</para>
+        </value>
+        <remarks>
+          <para> This property is read-only.</para>
+          <para> The <see cref="P:System.Net.HttpWebResponse.Server" />
+property contains the value of the <see langword="Server" /> header
+returned with the response.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StatusCode">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Net.HttpStatusCode StatusCode { public hidebysig specialname instance valuetype System.Net.HttpStatusCode get_StatusCode() }" />
+      <MemberSignature Language="C#" Value="public System.Net.HttpStatusCode StatusCode { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpStatusCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the status of the response.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Net.HttpStatusCode" /> value.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.Net.HttpWebResponse.StatusCode" /> value
+   indicates the status of the HTTP response. The expected values are defined in the <see cref="T:System.Net.HttpStatusCode" /> enumeration.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StatusDescription">
+      <MemberSignature Language="ILASM" Value=".property string StatusDescription { public hidebysig specialname instance string get_StatusDescription() }" />
+      <MemberSignature Language="C#" Value="public string StatusDescription { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the status description returned with the response.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that describes the status of the response.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
+      <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="serializationInfo">To be added.</param>
+        <param name="streamingContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

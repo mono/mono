@@ -1,0 +1,85 @@
+<Type Name="NetworkAccess" FullName="System.Net.NetworkAccess" FullNameSP="System_Net_NetworkAccess" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable NetworkAccess extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum NetworkAccess" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Specifies network access permission types.</para>
+    </summary>
+    <remarks>
+      <para>This enumeration is used to indicate whether a 
+      permission object secures connect (client-side) or accept (server-side)
+      operations.</para>
+      <para>
+        <block subset="none" type="note">The <see cref="T:System.Net.NetworkAccess" /> enumeration is used with the <see cref="T:System.Net.WebPermission" /> and <see cref="T:System.Net.SocketPermission" /> classes.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Accept">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.NetworkAccess Accept = 128" />
+      <MemberSignature Language="C#" Value="Accept" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.NetworkAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Accept</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies accept operations.
+      </para>
+          <para>
+            <block subset="none" type="note">This access type is typically used by
+      servers. </block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.NetworkAccess Connect = 64" />
+      <MemberSignature Language="C#" Value="Connect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.NetworkAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Connect</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies connect operations.
+      </para>
+          <para>
+            <block subset="none" type="note">This access type is typically used by clients. </block>
+          </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,102 @@
+<Type Name="UriPartial" FullName="System.UriPartial" FullNameSP="System_UriPartial" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable UriPartial extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum UriPartial" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+ Specifies URI components.
+</summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">The <see cref="T:System.UriPartial" /> enumeration defines the values that are passed to the
+<see cref="M:System.Uri.GetLeftPart(System.UriPartial)" qualify="true" /> method.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Authority">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.UriPartial Authority = 1" />
+      <MemberSignature Language="C#" Value="Authority" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriPartial</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Authority</MemberValue>
+      <Docs>
+        <summary>
+ Specifies the authority component of a URI.
+</summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Path">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.UriPartial Path = 2" />
+      <MemberSignature Language="C#" Value="Path" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriPartial</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Path</MemberValue>
+      <Docs>
+        <summary>
+ Specifies the path component of a URI.
+</summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Query">
+      <MemberSignature Language="C#" Value="Query" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UriPartial</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Scheme">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.UriPartial Scheme = 0" />
+      <MemberSignature Language="C#" Value="Scheme" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriPartial</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Scheme</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies the scheme component of a URI.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

@@ -1,0 +1,289 @@
+<Type Name="IAuthenticationModule" FullName="System.Net.IAuthenticationModule" FullNameSP="System_Net_IAuthenticationModule" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class interface public abstract IAuthenticationModule" />
+  <TypeSignature Language="C#" Value="public interface IAuthenticationModule" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Implemented by types that perform client authentication.</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.Net.IAuthenticationModule" /> interface 
+   defines the properties and methods that types are required to implement to handle
+   client authentication. Types that implement this interface are called
+   authentication modules. In addition to implementing this interface, an
+   authentication module implements an authentication protocol, such as the
+   Kerberos protocol. The <see cref="P:System.Net.IAuthenticationModule.AuthenticationType" />
+   property
+   value is a case-insensitive string that typically indicates the protocol implemented by
+   the module. Each authentication module registered with the authentication
+   manager is required to have a unique <see cref="P:System.Net.IAuthenticationModule.AuthenticationType" /> .
+   The following string values are reserved for use by modules
+   implementing the indicated protocols:
+   </para>
+      <list type="table">
+        <listheader>
+          <term>AuthenticationType</term>
+          <description>Protocol</description>
+        </listheader>
+        <item>
+          <term>
+            <para>"basic"</para>
+          </term>
+          <description>Basic as defined by IETF RFC 2617</description>
+        </item>
+        <item>
+          <term> "digest"</term>
+          <description>Digest access as defined by IETF RFC 
+            2617</description>
+        </item>
+        <item>
+          <term> "kerberos"</term>
+          <description>Kerberos as defined by IETF RFC 
+            1510</description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para> Authentication modules are registered with the
+         authentication manager (<see cref="T:System.Net.AuthenticationManager" /> ) by calling the <see cref="M:System.Net.AuthenticationManager.Register(System.Net.IAuthenticationModule)" qualify="true" />
+         method. When the authentication manager receives an
+         authentication request, registered authentication modules are given the
+         opportunity to handle the authentication in their <see cref="M:System.Net.IAuthenticationModule.Authenticate(System.String,System.Net.WebRequest,System.Net.ICredentials)" /> method. Similarly, when a
+         client wishes to avoid waiting for the server to request authentication, it can
+         request preauthentication information to send with a request. If
+         the <see cref="P:System.Net.IAuthenticationModule.CanPreAuthenticate" /> property of a registered
+         module returns <see langword="true" />, it is
+         among the modules that are given the opportunity to provide the
+         preauthentication information via the <see cref="M:System.Net.IAuthenticationModule.PreAuthenticate(System.Net.WebRequest,System.Net.ICredentials)" />
+         
+         method. </para>
+        <para> Not all modules receive all authentication and
+         preauthentication requests. The authentication manager searches for an
+         authentication module by invoking the <see cref="M:System.Net.IAuthenticationModule.Authenticate(System.String,System.Net.WebRequest,System.Net.ICredentials)" /> or <see cref="M:System.Net.IAuthenticationModule.PreAuthenticate(System.Net.WebRequest,System.Net.ICredentials)" /> method of each registered
+         module in the order in which it was registered. Once a module returns
+         a <see cref="T:System.Net.Authorization" />
+         
+         instance, indicating that it handles the
+         authentication, the authentication manager terminates the search. </para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Authenticate">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Net.Authorization Authenticate(string challenge, class System.Net.WebRequest request, class System.Net.ICredentials credentials)" />
+      <MemberSignature Language="C#" Value="public System.Net.Authorization Authenticate (string challenge, System.Net.WebRequest request, System.Net.ICredentials credentials);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Authorization</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="challenge" Type="System.String" />
+        <Parameter Name="request" Type="System.Net.WebRequest" />
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+      </Parameters>
+      <Docs>
+        <param name="challenge">A <see cref="T:System.String" /> containing the authentication challenge sent by the server. The content of this string is determined by the authentication protocol(s) used by the server that issued the challenge.</param>
+        <param name="request">The <see cref="T:System.Net.WebRequest" /> instance that received <paramref name="challenge" /> .</param>
+        <param name="credentials">The credentials of the <see cref="T:System.Net.WebRequest" /> instance that received <paramref name="challenge" /> .</param>
+        <summary>
+          <para>Returns an instance of the <see cref="T:System.Net.Authorization" /> class that provides a
+   response to an authentication challenge.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.Authorization" /> instance containing the
+   challenge response, or <see langword="null " />if the challenge cannot be handled.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">If the
+      authentication module can handle <paramref name="challenge" /> , this method
+      proceeds with the authentication in accordance with the authentication protocol implemented by the current
+      instance and returns a <see cref="T:System.Net.Authorization" /> instance containing the challenge response. If the authentication module cannot handle
+      the challenge, this method returns <see langword="null" />. If the authentication module encounters an
+      error while conducting the authentication process, this method can, but
+      is not required to throw an exception.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Implement this
+      method to receive and optionally handle requests for client authentication from
+      the authentication manager.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">The <see cref="T:System.Net.AuthenticationManager" /> class invokes the <see cref="M:System.Net.IAuthenticationModule.Authenticate(System.String,System.Net.WebRequest,System.Net.ICredentials)" />
+method on registered authentication modules to allow modules to handle a
+server challenge.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AuthenticationType">
+      <MemberSignature Language="ILASM" Value=".property string AuthenticationType { public hidebysig virtual abstract specialname string get_AuthenticationType() }" />
+      <MemberSignature Language="C#" Value="public string AuthenticationType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the authentication type of the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> indicating the
+   authentication type of the current authentication module.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="behaviors">
+            <para>The following string values are reserved for use by modules implementing the 
+         indicated protocols: </para>
+            <para>
+              <list type="table">
+                <listheader>
+                  <term>AuthenticationType</term>
+                  <description>Protocol </description>
+                </listheader>
+                <item>
+                  <term> "basic"</term>
+                  <description> Basic as defined by IETF RFC 2617 </description>
+                </item>
+                <item>
+                  <term>"digest"</term>
+                  <description>Digest access as defined by IETF RFC 2617 </description>
+                </item>
+                <item>
+                  <term>"kerberos"</term>
+                  <description>Kerberos as defined by IETF RFC 1510 </description>
+                </item>
+              </list>
+            </para>
+          </block>
+          <block subset="none" type="overrides">Implement this
+property to return a string that identifies all instances of the current type.
+The string returned by this property typically indicates the protocol
+implemented by the current type. For example, an authentication module that
+implements the Digest protocol would typically return "digest" as its <see langword="AuthenticationType" />. </block>
+          <para>
+            <block subset="none" type="usage">The <see cref="P:System.Net.IAuthenticationModule.AuthenticationType" /> 
+property must be unique for all registered authentication modules. The value of
+this property is used by the <see cref="M:System.Net.AuthenticationManager.Register(System.Net.IAuthenticationModule)" qualify="true" /> method to determine if there
+is already an authentication module registered for the type.
+Modules can also be unregistered by passing the value of this property to the
+<see cref="M:System.Net.AuthenticationManager.Unregister(System.Net.IAuthenticationModule)" qualify="true" /> 
+method.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanPreAuthenticate">
+      <MemberSignature Language="ILASM" Value=".property bool CanPreAuthenticate { public hidebysig virtual abstract specialname bool get_CanPreAuthenticate() }" />
+      <MemberSignature Language="C#" Value="public bool CanPreAuthenticate { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Boolean" /> value indicating whether the authentication module supports
+   preauthentication.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />if the authentication module supports
+   preauthentication; otherwise <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors">The <see cref="P:System.Net.IAuthenticationModule.CanPreAuthenticate" /> property is set to <see langword="true " /> to indicate that the authentication module can respond with a
+<see cref="T:System.Net.Authorization" /> instance when the <see cref="M:System.Net.IAuthenticationModule.PreAuthenticate(System.Net.WebRequest,System.Net.ICredentials)" /> method is called. This 
+   property returns <see langword="false" /> if the protocol implemented by
+   the current authentication module does not support preauthentication.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">This method is used by the authentication
+   manager to determine which modules receive requests by clients for authentication
+   information that will be supplied in anticipation of a server's request for
+   authentication. This method controls whether the <see cref="M:System.Net.IAuthenticationModule.PreAuthenticate(System.Net.WebRequest,System.Net.ICredentials)" /> method can be
+   called.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreAuthenticate">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Net.Authorization PreAuthenticate(class System.Net.WebRequest request, class System.Net.ICredentials credentials)" />
+      <MemberSignature Language="C#" Value="public System.Net.Authorization PreAuthenticate (System.Net.WebRequest request, System.Net.ICredentials credentials);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Authorization</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="request" Type="System.Net.WebRequest" />
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+      </Parameters>
+      <Docs>
+        <param name="request">The <see cref="T:System.Net.WebRequest" /> instance associated with the authentication request.</param>
+        <param name="credentials">The credentials associated with the authentication request.</param>
+        <summary>
+          <para>Returns an instance of the <see cref="T:System.Net.Authorization" /> class containing client authentication information.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.Authorization" /> instance containing client authentication
+   information to be sent with <paramref name="request" />, or <see langword="null " />if the current instance does not support preauthentication.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method returns an instance of the <see cref="T:System.Net.Authorization" /> class containing authentication information to be
+   sent with the request. This method is required to return <see langword="null" />
+   if it cannot handle preauthentication requests
+   from the authentication manager.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Implement this method if the
+   protocol implemented by the current instance supports
+   preauthentication.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">This method is used by
+   the authentication manager to handle requests by clients
+   for authentication information that will be used to preempt a server's
+   request for authentication. This method is not called unless the <see cref="P:System.Net.IAuthenticationModule.CanPreAuthenticate" /> property returns
+<see langword="true" />.</block>
+          </para>
+          <para>
+            <see langword="" />
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

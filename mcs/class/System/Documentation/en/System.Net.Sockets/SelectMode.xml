@@ -1,0 +1,92 @@
+<Type Name="SelectMode" FullName="System.Net.Sockets.SelectMode" FullNameSP="System_Net_Sockets_SelectMode" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable SelectMode extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum SelectMode" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Specifies the mode used by the <see cref="M:System.Net.Sockets.Socket.Poll(System.Int32,System.Net.Sockets.SelectMode)" /> method of
+   the <see cref="T:System.Net.Sockets.Socket" /> class.
+   </para>
+    </summary>
+    <remarks>
+      <para>A <see cref="T:System.Net.Sockets.SelectMode" /> member specifies the
+   status information (read, write, or error) to retrieve from the
+   current <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="SelectError">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SelectMode SelectError = 2" />
+      <MemberSignature Language="C#" Value="SelectError" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SelectMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SelectError</MemberValue>
+      <Docs>
+        <summary>
+          <para>Determine the error status of the current <see cref="T:System.Net.Sockets.Socket" /> 
+instance.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SelectRead">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SelectMode SelectRead = 0" />
+      <MemberSignature Language="C#" Value="SelectRead" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SelectMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SelectRead</MemberValue>
+      <Docs>
+        <summary>
+          <para>Determine the read status of the current <see cref="T:System.Net.Sockets.Socket" /> 
+instance.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SelectWrite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SelectMode SelectWrite = 1" />
+      <MemberSignature Language="C#" Value="SelectWrite" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SelectMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SelectWrite</MemberValue>
+      <Docs>
+        <summary>
+          <para>Determine the write status of the current <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

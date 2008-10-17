@@ -1,0 +1,44 @@
+<Type Name="DesigntimeLicenseContextSerializer" FullName="System.ComponentModel.Design.DesigntimeLicenseContextSerializer">
+  <TypeSignature Language="C#" Value="public class DesigntimeLicenseContextSerializer" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Serialize">
+      <MemberSignature Language="C#" Value="public static void Serialize (System.IO.Stream o, string cryptoKey, System.ComponentModel.Design.DesigntimeLicenseContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="o" Type="System.IO.Stream" />
+        <Parameter Name="cryptoKey" Type="System.String" />
+        <Parameter Name="context" Type="System.ComponentModel.Design.DesigntimeLicenseContext" />
+      </Parameters>
+      <Docs>
+        <param name="o">To be added: an object of type 'IO.Stream'</param>
+        <param name="cryptoKey">To be added: an object of type 'string'</param>
+        <param name="context">To be added: an object of type 'DesigntimeLicenseContext'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

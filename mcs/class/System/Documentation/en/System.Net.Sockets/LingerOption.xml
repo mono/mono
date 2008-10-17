@@ -1,0 +1,131 @@
+<Type Name="LingerOption" FullName="System.Net.Sockets.LingerOption" FullNameSP="System_Net_Sockets_LingerOption" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public LingerOption extends System.Object" />
+  <TypeSignature Language="C#" Value="public class LingerOption" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Maintains information that specifies how a <see cref="T:System.Net.Sockets.Socket" /> instance
+   with pending data behaves when the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" /> method of
+   the socket is called. </para>
+    </summary>
+    <remarks>
+      <para> An instance of this class is
+      passed into the <see cref="M:System.Net.Sockets.Socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)" qualify="true" /> method
+      and is returned by the <see cref="M:System.Net.Sockets.Socket.GetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName)" qualify="true" /> method when the <paramref name="optionName" />
+      parameter is set to <see cref="F:System.Net.Sockets.SocketOptionName.Linger" qualify="true" />.</para>
+      <para>When the <see cref="P:System.Net.Sockets.LingerOption.Enabled" /> property is <see langword="true" />, any queued data continues to be sent until
+   time equal to the setting of the <see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property has passed or until
+   the input queue is empty. At this time, the connection is closed. </para>
+      <para> When the <see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property is zero or the <see cref="P:System.Net.Sockets.LingerOption.Enabled" /> property is
+<see langword="false" />, calling <see cref="M:System.Net.Sockets.Socket.Close" /> immediately closes the socket and any
+pending data is lost. </para>
+When setting the <see cref="F:System.Net.Sockets.SocketOptionName.Linger" /> option of an instance of
+the <see cref="T:System.Net.Sockets.Socket" qualify="true" /> class, a <see cref="T:System.ArgumentException" qualify="true" /> exception is thrown if the
+<see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property is
+less than zero or greater than <see cref="F:System.UInt16.MaxValue" />.
+</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(bool enable, int32 seconds)" />
+      <MemberSignature Language="C#" Value="public LingerOption (bool enable, int secs);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="enable" Type="System.Boolean" />
+        <Parameter Name="secs" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="enable">A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> enables the linger option and <see langword="false" /> disables the option.</param>
+        <param name="secs">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of
+      the <see cref="T:System.Net.Sockets.LingerOption" /> class.</para>
+        </summary>
+        <remarks>
+          <para>The <see cref="T:System.Net.Sockets.LingerOption" /> instance is created with the <see cref="P:System.Net.Sockets.LingerOption.Enabled" /> property set to <paramref name="enable " />and the
+<see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property set to <paramref name="seconds" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Enabled">
+      <MemberSignature Language="ILASM" Value=".property bool Enabled { public hidebysig specialname instance bool get_Enabled() public hidebysig specialname instance void set_Enabled(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool Enabled { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value indicating whether the connection remains
+   open (lingers) for a period of time after the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" /> method is
+   called.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />to enable lingering
+   after the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" />
+   method is called; otherwise
+<see langword="false" />.</para>
+        </value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LingerTime">
+      <MemberSignature Language="ILASM" Value=".property int32 LingerTime { public hidebysig specialname instance int32 get_LingerTime() public hidebysig specialname instance void set_LingerTime(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int LingerTime { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the amount of time to remain connected after
+      the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" /> method is called.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" qualify="true" /> that contains the amount of time, in seconds, to remain connected after
+   calling the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" />
+   method.</para>
+        </value>
+        <remarks>
+          <para>When setting the <see cref="F:System.Net.Sockets.SocketOptionName.Linger" /> option of an instance of
+   the <see cref="T:System.Net.Sockets.Socket" qualify="true" /> class, a <see cref="T:System.ArgumentException" qualify="true" /> exception is thrown if the
+<see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> 
+property is less than zero or greater than
+<see cref="F:System.UInt16.MaxValue" /> . </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

@@ -1,0 +1,246 @@
+<Type Name="UriComponents" FullName="System.UriComponents">
+  <TypeSignature Language="C#" Value="public enum UriComponents" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="AbsoluteUri">
+      <MemberSignature Language="C#" Value="AbsoluteUri" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Fragment">
+      <MemberSignature Language="C#" Value="Fragment" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Host">
+      <MemberSignature Language="C#" Value="Host" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HostAndPort">
+      <MemberSignature Language="C#" Value="HostAndPort" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HttpRequestUrl">
+      <MemberSignature Language="C#" Value="HttpRequestUrl" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="KeepDelimiter">
+      <MemberSignature Language="C#" Value="KeepDelimiter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Path">
+      <MemberSignature Language="C#" Value="Path" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PathAndQuery">
+      <MemberSignature Language="C#" Value="PathAndQuery" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Port">
+      <MemberSignature Language="C#" Value="Port" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Query">
+      <MemberSignature Language="C#" Value="Query" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Scheme">
+      <MemberSignature Language="C#" Value="Scheme" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SchemeAndServer">
+      <MemberSignature Language="C#" Value="SchemeAndServer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SerializationInfoString">
+      <MemberSignature Language="C#" Value="SerializationInfoString" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StrongAuthority">
+      <MemberSignature Language="C#" Value="StrongAuthority" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StrongPort">
+      <MemberSignature Language="C#" Value="StrongPort" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UserInfo">
+      <MemberSignature Language="C#" Value="UserInfo" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriComponents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

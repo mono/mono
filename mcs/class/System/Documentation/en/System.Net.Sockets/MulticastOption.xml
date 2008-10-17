@@ -1,0 +1,189 @@
+<Type Name="MulticastOption" FullName="System.Net.Sockets.MulticastOption" FullNameSP="System_Net_Sockets_MulticastOption" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public MulticastOption extends System.Object" />
+  <TypeSignature Language="C#" Value="public class MulticastOption" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Contains Internet Protocol (IP) addresses used
+      when joining or leaving
+      an IP multicast group.</para>
+    </summary>
+    <remarks>
+      <para>Collectively, the hosts listening to a specific IP multicast address (the group address) are
+      called a multicast group. Each member of the group receives any IP messages sent
+      to the group address. </para>
+      <para> An instance of this class is passed into the <see cref="M:System.Net.Sockets.Socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)" qualify="true" /> method
+   and returned by the <see cref="M:System.Net.Sockets.Socket.GetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName)" qualify="true" /> method when the <paramref name="optionName" />
+   parameter is set to <see cref="F:System.Net.Sockets.SocketOptionName.AddMembership" qualify="true" /> or <see cref="F:System.Net.Sockets.SocketOptionName.DropMembership" qualify="true" />. </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Net.IPAddress group)" />
+      <MemberSignature Language="C#" Value="public MulticastOption (System.Net.IPAddress grp);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="grp" Type="System.Net.IPAddress" />
+      </Parameters>
+      <Docs>
+        <param name="grp">An instance of <see cref="T:System.Net.IPAddress" qualify="true" /> containing the IP address of a multicast group.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.Sockets.MulticastOption" /> class with the specified IP multicast group
+   address.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Net.Sockets.MulticastOption.Group" /> property of the new instance using
+<paramref name="group" />. The <see cref="P:System.Net.Sockets.MulticastOption.LocalAddress" /> property is initialized to <see cref="F:System.Net.IPAddress.Any" qualify="true" />. <see langword="Any" /> 
+allows the protocol to decide which local IP address to
+use.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="group " />is <see langword="null" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MulticastOption (System.Net.IPAddress group, int interfaceIndex);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="group" Type="System.Net.IPAddress" />
+        <Parameter Name="interfaceIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="group">To be added.</param>
+        <param name="interfaceIndex">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Net.IPAddress group, class System.Net.IPAddress mcint)" />
+      <MemberSignature Language="C#" Value="public MulticastOption (System.Net.IPAddress grp, System.Net.IPAddress addr);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="grp" Type="System.Net.IPAddress" />
+        <Parameter Name="addr" Type="System.Net.IPAddress" />
+      </Parameters>
+      <Docs>
+        <param name="grp">To be added.</param>
+        <param name="addr">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.Sockets.MulticastOption" /> class with the specified IP
+   multicast group and local addresses.</para>
+        </summary>
+        <remarks>
+          <para>The <see cref="P:System.Net.Sockets.MulticastOption.Group" /> property is set to <paramref name="group" /> and the
+<see cref="P:System.Net.Sockets.MulticastOption.LocalAddress" /> property is set to <paramref name="mcint" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="group " /> or <paramref name="mcint" /> is <see langword="null" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Group">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.IPAddress Group { public hidebysig specialname instance class System.Net.IPAddress get_Group() public hidebysig specialname instance void set_Group(class System.Net.IPAddress value) }" />
+      <MemberSignature Language="C#" Value="public System.Net.IPAddress Group { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the IP address of a multicast group.</para>
+        </summary>
+        <value>
+          <para> An instance of <see cref="T:System.Net.IPAddress" qualify="true" />
+containing the IP address of a multicast
+group.</para>
+        </value>
+        <remarks>
+          <para> Collectively, the hosts listening to a specific IP
+      multicast address are called a multicast group. Each member of the group receives any IP messages sent to this
+      address. </para>
+          <block subset="none" type="note">
+            <para>Valid IP addresses for multicast groups are in the range 224.0.0.0 to
+         239.255.255.255 with some addresses reserved for special purposes. </para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InterfaceIndex">
+      <MemberSignature Language="C#" Value="public int InterfaceIndex { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LocalAddress">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.IPAddress LocalAddress { public hidebysig specialname instance class System.Net.IPAddress get_LocalAddress() public hidebysig specialname instance void set_LocalAddress(class System.Net.IPAddress value) }" />
+      <MemberSignature Language="C#" Value="public System.Net.IPAddress LocalAddress { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the local IP address to receive data.</para>
+        </summary>
+        <value>
+          <para> An instance of <see cref="T:System.Net.IPAddress" qualify="true" /> containing the local IP
+   address.</para>
+        </value>
+        <remarks>
+          <para>This property specifies the local IP address used to receive data
+      sent to the multicast group. </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

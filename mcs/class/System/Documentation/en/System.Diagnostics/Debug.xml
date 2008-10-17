@@ -1,0 +1,1128 @@
+<Type Name="Debug" FullName="System.Diagnostics.Debug">
+  <TypeSignature Language="C#" Value="public sealed class Debug" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>
+    All public static members members of this type are safe for multithreaded
+    operations.  No instance members are guaranteed to be thread safe.
+  </ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      Provides a diagnostic message facility.
+    </summary>
+    <remarks>
+      <para>
+        The <see cref="T:System.Diagnostics.Debug" /> class provides a
+        mechanism for applications to generate diagnostic messages based on 
+        the DEBUG conditional define.
+      </para>
+      <para>
+        In practice, this means that you can call methods on the 
+        <see cref="T:System.Diagnostics.Debug" /> class, but in order for them
+        to actually be executed at runtime, you must define the DEBUG symbol
+        during compilation.  This can be done either through the C# 
+        <see langword="#define" /> keyword or through the C# compiler
+        <c>-define</c> compiler option.
+      </para>
+      <para>
+        All diagnostic messages generated are indented by 
+        <see cref="P:System.Diagnostics.Trace.IndentSize" />*<see cref="P:System.Diagnostics.Trace.IndentLevel" /> 
+        space characters.  Initially, 
+        <see cref="P:System.Diagnostics.Trace.IndentLevel" /> is 0 (zero),
+        so no indent is generated.
+      </para>
+      <para>
+        NOTE: The <see cref="T:System.Diagnostics.Debug" /> and
+        <see cref="T:System.Diagnostics.Trace" /> classes share their 
+        public static properties.
+      </para>
+    </remarks>
+    <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+  </Docs>
+  <Members>
+    <Member MemberName="Assert">
+      <MemberSignature Language="C#" Value="public static void Assert (bool condition);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="condition">A boolean condition to check</param>
+        <summary>
+          Displays a message if <paramref name="condition" /> is 
+          <see langword="false" />.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="false" />, then
+          <see cref="M:System.Diagnostics.TraceListener.Fail(System.String)" /> 
+          is invoked on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Assert">
+      <MemberSignature Language="C#" Value="public static void Assert (bool condition, string message);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="condition">A boolean condition to check</param>
+        <param name="message">A message to display</param>
+        <summary>
+          Displays <paramref name="message" /> if <paramref name="condition" /> 
+          is <see langword="false" />.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="false" />, then
+          <see cref="M:System.Diagnostics.TraceListener.Fail(System.String)" /> 
+          is invoked on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Assert">
+      <MemberSignature Language="C#" Value="public static void Assert (bool condition, string message, string detailMessage);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="detailMessage" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="condition">A boolean condition to check</param>
+        <param name="message">A message to display</param>
+        <param name="detailMessage">A more detailed message to display</param>
+        <summary>
+          Displays <paramref name="message" /> and 
+          <paramref name="detailMessage" /> if <paramref name="condition" /> 
+          is <see langword="false" />.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="false" />, then
+          <see cref="M:System.Diagnostics.TraceListener.Fail(System.String,System.String)" /> 
+          is invoked on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="AutoFlush">
+      <MemberSignature Language="C#" Value="public static bool AutoFlush { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>
+          Should 
+          <see cref="M:System.Diagnostics.TraceListener.Flush" /> be called on 
+          the <see cref="P:System.Diagnostics.Debug.Listeners" /> after 
+          writing each message?
+        </summary>
+        <value>
+          Whether or not the <see cref="T:System.Diagnostics.TraceListener" />
+          objects should be 
+          <see cref="M:System.Diagnostics.TraceListener.Flush" />ed after each
+          write.
+        </value>
+        <remarks>
+          <para>
+            If <see langword="true" />, 
+            <see cref="M:System.Diagnostics.TraceListener.Flush" /> will be 
+            invoked on each <see cref="T:System.Diagnostics.TraceListener" />
+            in the <see cref="P:System.Diagnostics.Debug.Listeners" /> collection
+            after any modifying operation (such as 
+            <see cref="M:System.Diagnostics.Debug.Fail" />,
+            <see cref="M:System.Diagnostics.Debug.Write" />,
+            <see cref="M:System.Diagnostics.Debug.WriteLine" />, etc.).
+          </para>
+          <para>
+            This value is shared with the 
+            <see cref="T:System.Diagnostics.Trace" /> class.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public static void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Closes all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.Close" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Fail">
+      <MemberSignature Language="C#" Value="public static void Fail (string message);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A message to display</param>
+        <summary>
+          Send a failure message to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.Fail(System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Fail">
+      <MemberSignature Language="C#" Value="public static void Fail (string message, string detailMessage);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="detailMessage" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A message to display</param>
+        <param name="detailMessage">A more detailed message to display</param>
+        <summary>
+          Send a failure message to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.Fail(System.String,System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public static void Flush ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Flushes the contents of all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.Flush" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Indent">
+      <MemberSignature Language="C#" Value="public static void Indent ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Indents subsequent messages until the next
+          <see cref="M:System.Diagnostics.Debug.Unindent" /> call.
+        </summary>
+        <remarks>
+          <para>
+            This is equivalent to incrementing 
+            <see cref="P:System.Diagnostics.Trace.IndentLevel" /> by one.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IndentLevel">
+      <MemberSignature Language="C#" Value="public static int IndentLevel { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>The message indent level.</summary>
+        <value>The indent level.</value>
+        <remarks>
+          <para>
+            This effects how many levels of indentation are written 
+            before each message sent to the 
+            <see cref="T:System.Diagnostics.TraceListener" />s.
+          </para>
+          <para>
+            Sets the 
+            <see cref="P:System.Diagnostics.TraceListener.IndentLevel" />
+            property on all 
+            <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+            <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+          </para>
+          <para>
+            This value is shared with the 
+            <see cref="T:System.Diagnostics.Trace" /> class.
+          </para>
+        </remarks>
+        <altmember name="T:System.Diagnostics.Debug" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IndentSize">
+      <MemberSignature Language="C#" Value="public static int IndentSize { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>The message indent size.</summary>
+        <value>The indent size.</value>
+        <remarks>
+          <para>
+            The indent size is the number of characters per 
+            <see cref="P:System.Diagnostics.Trace.IndentLevel" />.
+          </para>
+          <para>
+            This effects how many characters of indentation are written 
+            before each message sent to the 
+            <see cref="T:System.Diagnostics.TraceListener" />s.
+          </para>
+          <para>
+            Sets the 
+            <see cref="P:System.Diagnostics.TraceListener.IndentSize" />
+            property on all 
+            <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+            <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+          </para>
+          <para>
+            This value is shared with the 
+            <see cref="T:System.Diagnostics.Trace" /> class.
+          </para>
+        </remarks>
+        <altmember name="T:System.Diagnostics.Debug" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Listeners">
+      <MemberSignature Language="C#" Value="public static System.Diagnostics.TraceListenerCollection Listeners { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.TraceListenerCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Gets the list of <see cref="T:System.Diagnostics.TraceListener" /> objects
+          that messages are forwarded to.
+        </summary>
+        <value>
+          The list of <see cref="T:System.Diagnostics.TraceListener" /> objects
+          to forward messages to.
+        </value>
+        <remarks>
+          <para>
+            This collection is shared with the 
+            <see cref="T:System.Diagnostics.Trace" /> class.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Print">
+      <MemberSignature Language="C#" Value="public static void Print (string message);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Print">
+      <MemberSignature Language="C#" Value="public static void Print (string format, object[] args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="format">To be added.</param>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Unindent">
+      <MemberSignature Language="C#" Value="public static void Unindent ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Unindents subsequent messages.
+        </summary>
+        <remarks>
+          <para>
+            This is equivalent to decrementing 
+            <see cref="P:System.Diagnostics.Trace.IndentLevel" /> by one.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public static void Write (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">An object to display</param>
+        <summary>
+          Send <paramref name="value" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.Write(System.Object)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public static void Write (string message);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A message to display</param>
+        <summary>
+          Send <paramref name="message" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public static void Write (object value, string category);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="category" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">An object to display</param>
+        <param name="category">The message category</param>
+        <summary>
+          Send <paramref name="value" /> and its category 
+          <paramref name="category" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.Write(System.Object,System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public static void Write (string message, string category);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="category" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A message to display</param>
+        <param name="category">The message category</param>
+        <summary>
+          Send <paramref name="message" /> and its category 
+          <paramref name="message" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.Write(System.String,System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteIf">
+      <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="condition">Whether to display <paramref name="value" /></param>
+        <param name="value">An object to display</param>
+        <summary>
+          If <paramref name="condition" /> is <see langword="true" />, send a
+          <paramref name="value" /> to all
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="true" />, 
+          invoke the <see cref="M:System.Diagnostics.TraceListener.Write(System.Object)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteIf">
+      <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, string message);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="condition">Whether to display <paramref name="message" /></param>
+        <param name="message">A message to display</param>
+        <summary>
+          If <paramref name="condition" /> is <see langword="true" />, send 
+          <paramref name="message" /> to all
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="true" />, 
+          invoke the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteIf">
+      <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, object value, string category);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="category" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="condition">Whether to display <paramref name="value" /></param>
+        <param name="value">An object to display</param>
+        <param name="category">The message category</param>
+        <summary>
+          If <paramref name="condition" /> is <see langword="true" />, send
+          <paramref name="message" /> and its category 
+          <paramref name="category" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="true" />, 
+          invoke the <see cref="M:System.Diagnostics.TraceListener.Write(System.Object,System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteIf">
+      <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, string message, string category);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="category" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="condition">Whether to display <paramref name="message" /></param>
+        <param name="message">A message to display</param>
+        <param name="category">The message category</param>
+        <summary>
+          If <paramref name="condition" /> is <see langword="true" />, send
+          <paramref name="message" /> and its category 
+          <paramref name="category" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="true" />, 
+          invoke the <see cref="M:System.Diagnostics.TraceListener.Write(System.String,System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public static void WriteLine (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">An object to display</param>
+        <summary>
+          Send <paramref name="value" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.Object)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public static void WriteLine (string message);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A message to display</param>
+        <summary>
+          Send <paramref name="message" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public static void WriteLine (object value, string category);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="category" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">An object to display</param>
+        <param name="category">The message category</param>
+        <summary>
+          Send <paramref name="value" /> and its category 
+          <paramref name="category" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.Object,System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public static void WriteLine (string message, string category);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="category" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A message to display</param>
+        <param name="category">The message category</param>
+        <summary>
+          Send <paramref name="message" /> and its category 
+          <paramref name="message" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          Invokes the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String,System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteLineIf">
+      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="condition">Whether to display <paramref name="value" /></param>
+        <param name="value">An object to display</param>
+        <summary>
+          If <paramref name="condition" /> is <see langword="true" />, send a
+          <paramref name="value" /> to all
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="true" />, 
+          invoke the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.Object)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteLineIf">
+      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, string message);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="condition">Whether to display <paramref name="message" /></param>
+        <param name="message">A message to display</param>
+        <summary>
+          If <paramref name="condition" /> is <see langword="true" />, send 
+          <paramref name="message" /> to all
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="true" />, 
+          invoke the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteLineIf">
+      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, object value, string category);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="category" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="condition">Whether to display <paramref name="value" /></param>
+        <param name="value">An object to display</param>
+        <param name="category">The message category</param>
+        <summary>
+          If <paramref name="condition" /> is <see langword="true" />, send
+          <paramref name="message" /> and its category 
+          <paramref name="category" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="true" />, 
+          invoke the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.Object,System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteLineIf">
+      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, string message, string category);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="category" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="condition">Whether to display <paramref name="message" /></param>
+        <param name="message">A message to display</param>
+        <param name="category">The message category</param>
+        <summary>
+          If <paramref name="condition" /> is <see langword="true" />, send
+          <paramref name="message" /> and its category 
+          <paramref name="category" /> to all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </summary>
+        <remarks>
+          If <paramref name="condition" /> is <see langword="true" />, 
+          invoke the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String,System.String)" />
+          method on all 
+          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
+          <see cref="P:System.Diagnostics.Debug.Listeners" /> collection.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+</Type>

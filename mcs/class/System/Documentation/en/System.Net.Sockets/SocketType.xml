@@ -1,0 +1,159 @@
+<Type Name="SocketType" FullName="System.Net.Sockets.SocketType" FullNameSP="System_Net_Sockets_SocketType" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable SocketType extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum SocketType" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Specifies the type of socket an instance of the <see cref="T:System.Net.Sockets.Socket" /> class represents.
+   </para>
+    </summary>
+    <remarks>
+      <para>A <see cref="T:System.Net.Sockets.SocketType" /> member 
+   is required
+   when constructing instances of the <see cref="T:System.Net.Sockets.Socket" />
+   class and specifies the functionality the instance supports. </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Dgram">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketType Dgram = 2" />
+      <MemberSignature Language="C#" Value="Dgram" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Dgram</MemberValue>
+      <Docs>
+        <summary>
+          <para> Supports datagrams, which are connectionless, unreliable
+      messages of a fixed (typically small) maximum length. Uses the User Datagram
+      Protocol (<see cref="F:System.Net.Sockets.ProtocolType.Udp" /> ) protocol
+      and the <see cref="F:System.Net.Sockets.AddressFamily.InterNetwork" /> address family.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Raw">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketType Raw = 3" />
+      <MemberSignature Language="C#" Value="Raw" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Raw</MemberValue>
+      <Docs>
+        <summary>
+          <para> Supports access to the underlying
+      transport protocol. Can communicate through protocols other than <see cref="F:System.Net.Sockets.ProtocolType.Tcp" /> and <see cref="F:System.Net.Sockets.ProtocolType.Udp" />,
+      such as Internet Control Message Protocol (<see cref="F:System.Net.Sockets.ProtocolType.Icmp" />) and Internet Group Management
+      Protocol (<see cref="F:System.Net.Sockets.ProtocolType.Igmp" />).</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Rdm">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketType Rdm = 4" />
+      <MemberSignature Language="C#" Value="Rdm" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Rdm</MemberValue>
+      <Docs>
+        <summary>
+          <para>Supports message-oriented, reliably delivered messages, and preserves message 
+      boundaries in data. </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Seqpacket">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketType Seqpacket = 5" />
+      <MemberSignature Language="C#" Value="Seqpacket" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Seqpacket</MemberValue>
+      <Docs>
+        <summary>
+          <para> Supports message-oriented, sequenced packets.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Stream">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketType Stream = 1" />
+      <MemberSignature Language="C#" Value="Stream" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Stream</MemberValue>
+      <Docs>
+        <summary>
+          <para> Supports reliable, two-way, connection-based byte
+      streams with an out-of-band (OOB) data transmission mechanism. Uses the Transmission
+      Control Protocol (<see cref="F:System.Net.Sockets.ProtocolType.Tcp" qualify="true" />) protocol and the <see cref="F:System.Net.Sockets.AddressFamily.InterNetwork" qualify="true" /> address family.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unknown">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketType Unknown = -1" />
+      <MemberSignature Language="C#" Value="Unknown" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Unknown</MemberValue>
+      <Docs>
+        <summary>
+          <para> Unknown socket type.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

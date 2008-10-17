@@ -1,0 +1,29 @@
+<Type Name="RemoteCertificateValidationCallback" FullName="System.Net.Security.RemoteCertificateValidationCallback">
+  <TypeSignature Language="C#" Value="public delegate bool RemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors);" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="certificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
+    <Parameter Name="chain" Type="System.Security.Cryptography.X509Certificates.X509Chain" />
+    <Parameter Name="sslPolicyErrors" Type="System.Net.Security.SslPolicyErrors" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Boolean</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="sender">To be added.</param>
+    <param name="certificate">To be added.</param>
+    <param name="chain">To be added.</param>
+    <param name="sslPolicyErrors">To be added.</param>
+    <summary>To be added.</summary>
+    <value>To be added.</value>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

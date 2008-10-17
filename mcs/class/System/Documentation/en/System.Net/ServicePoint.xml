@@ -1,0 +1,480 @@
+<Type Name="ServicePoint" FullName="System.Net.ServicePoint" FullNameSP="System_Net_ServicePoint" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public ServicePoint extends System.Object" />
+  <TypeSignature Language="C#" Value="public class ServicePoint" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Represents connections to Internet hosts.</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.Net.ServicePoint" /> class handles connections to a resource based on the host information
+   passed in the Uniform Resource Identifier (URI) of the resource. The initial
+   connection to the host determines the information the <see cref="T:System.Net.ServicePoint" /> maintains, which is then
+   shared by all subsequent requests for resources residing on the host. </para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Net.ServicePoint" /> instances are
+   created and managed by the <see cref="T:System.Net.ServicePointManager" />
+   class. The maximum number of <see cref="T:System.Net.ServicePoint" /> instances is
+   set by the <see cref="P:System.Net.ServicePointManager.MaxServicePoints" qualify="true" />
+   property.</para>
+        <para>A <see cref="T:System.Net.ServicePoint" /> instance that is not connected to any host is idle. 
+An idle <see cref="T:System.Net.ServicePoint" />
+is managed by the <see cref="T:System.Net.ServicePointManager" />
+only until it has been
+idle longer than the time specified in its <see cref="P:System.Net.ServicePoint.MaxIdleTime" /> property.
+After a <see cref="T:System.Net.ServicePoint" />
+instance exceeds the <see cref="P:System.Net.ServicePoint.MaxIdleTime" /> , it is
+released by the service point
+manager and subsequently freed. The default value of <see cref="P:System.Net.ServicePoint.MaxIdleTime" /> is set by the <see cref="P:System.Net.ServicePointManager.MaxServicePointIdleTime" qualify="true" />
+property. </para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Address">
+      <MemberSignature Language="ILASM" Value=".property class System.Uri Address { public hidebysig specialname instance class System.Uri get_Address() }" />
+      <MemberSignature Language="C#" Value="public Uri Address { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the Uniform Resource Identifier (URI) of the <see cref="T:System.Net.ServicePoint" />.
+   </para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Uri" /> instance
+   representing the URI specified at the time the current instance was constructed <see langword="." /></para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">The <see cref="P:System.Uri.Host" /> property
+   of the <see cref="T:System.Uri" /> returned by this property names the host to which the current instance connects.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BindIPEndPointDelegate">
+      <MemberSignature Language="C#" Value="public System.Net.BindIPEndPoint BindIPEndPointDelegate { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.BindIPEndPoint</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Certificate">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509Certificate Certificate { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ClientCertificate">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509Certificate ClientCertificate { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CloseConnectionGroup">
+      <MemberSignature Language="C#" Value="public bool CloseConnectionGroup (string connectionGroupName);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="connectionGroupName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="connectionGroupName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConnectionLeaseTimeout">
+      <MemberSignature Language="C#" Value="public int ConnectionLeaseTimeout { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConnectionLimit">
+      <MemberSignature Language="ILASM" Value=".property int32 ConnectionLimit { public hidebysig specialname instance int32 get_ConnectionLimit() public hidebysig specialname instance void set_ConnectionLimit(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int ConnectionLimit { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the maximum number of
+      simultaneous connections that the <see cref="T:System.Net.ServicePoint" /> can make to an Internet
+      host.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> containing the 
+   maximum number of simultaneous connections allowed on the current <see cref="T:System.Net.ServicePoint" />.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">When the <see cref="T:System.Net.ServicePoint" /> is created, the value of
+   this property is determined by the value of the
+<see cref="P:System.Net.ServicePointManager.DefaultConnectionLimit" qualify="true" /> 
+property.
+Note that subsequent changes to <see cref="P:System.Net.ServicePointManager.DefaultConnectionLimit" /> have no effect on existing <see cref="T:System.Net.ServicePoint" /> instances.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than or equal to zero. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConnectionName">
+      <MemberSignature Language="ILASM" Value=".property string ConnectionName { public hidebysig specialname instance string get_ConnectionName() }" />
+      <MemberSignature Language="C#" Value="public string ConnectionName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the connection group name specified by the <see cref="T:System.Net.WebRequest" /> that created the connection.
+   </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the 
+   value of the <see cref="P:System.Net.WebRequest.ConnectionGroupName" /> property of the <see cref="T:System.Net.WebRequest" /> that
+   initiated the connection provided
+   by the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">If this
+      property is set, only <see cref="T:System.Net.WebRequest" />
+      instances with the same <see cref="P:System.Net.WebRequest.ConnectionGroupName" /> can communicate with
+      the host using the current instance.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CurrentConnections">
+      <MemberSignature Language="ILASM" Value=".property int32 CurrentConnections { public hidebysig specialname instance int32 get_CurrentConnections() }" />
+      <MemberSignature Language="C#" Value="public int CurrentConnections { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+ Gets the number of connections held by the current
+ instance.
+</summary>
+        <value>
+ A <see cref="T:System.Int32" /> containing the number of connections held by
+ the current instance.
+</value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">The value of <see cref="P:System.Net.ServicePoint.CurrentConnections" /> cannot
+ exceed that of <see cref="P:System.Net.ServicePoint.ConnectionLimit" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Expect100Continue">
+      <MemberSignature Language="C#" Value="public bool Expect100Continue { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the hash code for this instance.</para>
+        </returns>
+        <remarks>
+          <para>The algorithm used to
+ generate the hash code is unspecified.</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Object.GetHashCode" qualify="true" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IdleSince">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.DateTime IdleSince { public hidebysig specialname instance valuetype System.DateTime get_IdleSince() }" />
+      <MemberSignature Language="C#" Value="public DateTime IdleSince { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the date and time that the <see cref="T:System.Net.ServicePoint" /> was last connected to a host.
+   </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.DateTime" /> instance
+   containing the date and time at which the <see cref="T:System.Net.ServicePoint" /> was last
+   connected.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">When the difference between the current time
+      and <see cref="P:System.Net.ServicePoint.IdleSince" /> exceeds the
+      value of <see cref="P:System.Net.ServicePoint.MaxIdleTime" />, the current instance is released by
+      the <see cref="T:System.Net.ServicePointManager" /> and subsequently freed.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxIdleTime">
+      <MemberSignature Language="ILASM" Value=".property int32 MaxIdleTime { public hidebysig specialname instance int32 get_MaxIdleTime() public hidebysig specialname instance void set_MaxIdleTime(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int MaxIdleTime { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+   Gets or sets the maximum amount of time the current
+   instance can remain idle (unconnected to a host).
+</summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> containing the number of milliseconds that a <see cref="T:System.Net.ServicePoint" /> can remain idle before it is released by the <see cref="T:System.Net.ServicePointManager" /> 
+and subsequently freed.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">When the difference between the current 
+      time and <see cref="P:System.Net.ServicePoint.IdleSince" /> exceeds the value of <see cref="P:System.Net.ServicePoint.MaxIdleTime" />, the current instance is released by
+      the <see cref="T:System.Net.ServicePointManager" /> and subsequently freed.</block>
+          </para>
+          <para>The default value of this property is the value of the <see cref="P:System.Net.ServicePointManager.MaxServicePointIdleTime" qualify="true" />
+property at the time the <see cref="T:System.Net.ServicePoint" /> was created.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than <see cref="F:System.Threading.Timeout.Infinite" /> or greater than <see cref="F:System.Int32.MaxValue" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProtocolVersion">
+      <MemberSignature Language="ILASM" Value=".property class System.Version ProtocolVersion { public hidebysig virtual specialname class System.Version get_ProtocolVersion() }" />
+      <MemberSignature Language="C#" Value="public virtual Version ProtocolVersion { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the version of the protocol that the <see cref="T:System.Net.ServicePoint" /> uses.
+   </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Version" /> instance
+   containing the version of the protocol used by the <see cref="T:System.Net.ServicePoint" /> .</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors">As described
+      above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default">The value returned depends on the protocol. If the protocol is not set, <see langword="null" /> is returned.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this property to return
+   the version information for types derived from <see cref="T:System.Net.ServicePoint" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this property to determine the protocol
+   version information used by the current instance.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReceiveBufferSize">
+      <MemberSignature Language="C#" Value="public int ReceiveBufferSize { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsPipelining">
+      <MemberSignature Language="ILASM" Value=".property bool SupportsPipelining { public hidebysig specialname instance bool get_SupportsPipelining() }" />
+      <MemberSignature Language="C#" Value="public bool SupportsPipelining { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.Boolean" /> value that indicates whether the <see cref="T:System.Net.ServicePoint" /> supports pipelined connections.
+   </para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true" /> if the <see cref="T:System.Net.ServicePoint" /> supports pipelined connections;
+   otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">For information on pipelining, see IETF 
+      RFC 2068.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UseNagleAlgorithm">
+      <MemberSignature Language="C#" Value="public bool UseNagleAlgorithm { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

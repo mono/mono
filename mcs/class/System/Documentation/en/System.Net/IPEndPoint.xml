@@ -1,0 +1,363 @@
+<Type Name="IPEndPoint" FullName="System.Net.IPEndPoint" FullNameSP="System_Net_IPEndPoint" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable IPEndPoint extends System.Net.EndPoint" />
+  <TypeSignature Language="C#" Value="public class IPEndPoint : System.Net.EndPoint" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Net.EndPoint</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Represents a network endpoint as an Internet Protocol (IP) address and a port number.</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.Net.IPEndPoint" /> class contains 
+ the IP address of a host system and the number of a port to
+ access on the host. The <see cref="T:System.Net.IPEndPoint" /> class represents a connection point used by the
+<see cref="T:System.Net.Sockets.Socket" />
+class.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int64 address, int32 port)" />
+      <MemberSignature Language="C#" Value="public IPEndPoint (long iaddr, int port);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="iaddr" Type="System.Int64" />
+        <Parameter Name="port" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="iaddr">To be added.</param>
+        <param name="port">A <see cref="T:System.Int32" /> containing the port number to use when accessing <paramref name="address" /> . Specify zero to indicate any available port.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.IPEndPoint" /> class with the specified address and port number.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="port " />is less than <see cref="F:System.Net.IPEndPoint.MinPort" /> or greater than <see cref="F:System.Net.IPEndPoint.MaxPort" />. </para>
+          <para>A negative number was specified for <paramref name="address" />. </para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Net.IPAddress address, int32 port)" />
+      <MemberSignature Language="C#" Value="public IPEndPoint (System.Net.IPAddress address, int port);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="address" Type="System.Net.IPAddress" />
+        <Parameter Name="port" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.Net.IPAddress" /> instance containing the IP address of the endpoint.</param>
+        <param name="port">The port number to use when accessing <paramref name="address" /> . Specify zero to indicate any available port.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.IPEndPoint" /> class with the specified address and port number.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="address" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="port " />is less than <see cref="F:System.Net.IPEndPoint.MinPort" /> or greater than <see cref="F:System.Net.IPEndPoint.MaxPort" />. </para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Address">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.IPAddress Address { public hidebysig specialname instance class System.Net.IPAddress get_Address() public hidebysig specialname instance void set_Address(class System.Net.IPAddress value) }" />
+      <MemberSignature Language="C#" Value="public System.Net.IPAddress Address { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the IP address of the endpoint.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Net.IPAddress" /> instance containing the IP address of the end
+ point.</para>
+        </value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddressFamily">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Net.Sockets.AddressFamily AddressFamily { public hidebysig virtual specialname valuetype System.Net.Sockets.AddressFamily get_AddressFamily() }" />
+      <MemberSignature Language="C#" Value="public override System.Net.Sockets.AddressFamily AddressFamily { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the Internet Protocol (IP) address family.</para>
+        </summary>
+        <value>
+          <para>Returns <see cref="F:System.Net.Sockets.AddressFamily.InterNetwork" qualify="true" /> .</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Net.EndPoint Create(class System.Net.SocketAddress socketAddress)" />
+      <MemberSignature Language="C#" Value="public override System.Net.EndPoint Create (System.Net.SocketAddress sockaddr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.EndPoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sockaddr" Type="System.Net.SocketAddress" />
+      </Parameters>
+      <Docs>
+        <param name="sockaddr">A <see cref="T:System.Net.SocketAddress" /> instance that provides the address information for the new <see cref="T:System.Net.IPEndPoint" /> instance.</param>
+        <summary>
+          <para> Returns a new <see cref="T:System.Net.IPEndPoint" /> instance containing the address
+   information from the specified <see cref="T:System.Net.SocketAddress" />
+   instance.
+   </para>
+        </summary>
+        <returns>
+          <para>A new <see cref="T:System.Net.IPEndPoint" /> instance containing the address
+   information from the specified <see cref="T:System.Net.SocketAddress" /> instance.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method
+      overrides <see cref="M:System.Net.EndPoint.Create(System.Net.SocketAddress)" /> .</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The <see langword="AddressFamily" /> of the specified <see cref="T:System.Net.SocketAddress" /> is not equal to the <see langword="AddressFamily" /> of the current instance. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object comparand)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see langword="Object" /> to compare to the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance and the specified 
+ <see cref="T:System.Object" /> represent 
+ the same type and value.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="comparand" /> represents 
+ the same endpoint as the current instance. If <paramref name="comparand" /> is a
+<see langword="null" /> reference or is not an instance of <see cref="T:System.Net.IPEndPoint" />, returns 
+<see langword="false" /> .</para>
+        </returns>
+        <remarks>
+          <para>Two <see cref="T:System.Net.IPEndPoint" /> instances are equal if their <see cref="P:System.Net.IPEndPoint.Address" /> 
+and <see cref="P:System.Net.IPEndPoint.Port" /> properties contain the same values.</para>
+          <para>
+            <block subset="none" type="note">This method 
+ overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
+        </returns>
+        <remarks>
+          <para>The algorithm used to generate the hash code is
+ unspecified.</para>
+          <para>
+            <block subset="none" type="note">This method
+ overrides <see cref="M:System.Object.GetHashCode" />
+ .</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxPort">
+      <MemberSignature Language="ILASM" Value=".field public static literal int32 MaxPort = 65535" />
+      <MemberSignature Language="C#" Value="public const int MaxPort = 65535;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>65535</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies the maximum value that can be assigned to the <see cref="P:System.Net.IPEndPoint.Port" />
+property.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is 65535.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MinPort">
+      <MemberSignature Language="ILASM" Value=".field public static literal int32 MinPort = 0" />
+      <MemberSignature Language="C#" Value="public const int MinPort = 0;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>0</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies the minimum value that can be assigned to the <see cref="P:System.Net.IPEndPoint.Port" />
+property.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is zero.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Port">
+      <MemberSignature Language="ILASM" Value=".property int32 Port { public hidebysig specialname instance int32 get_Port() public hidebysig specialname instance void set_Port(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int Port { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the port number of the endpoint.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> value that is between <see cref="F:System.Net.IPEndPoint.MinPort" /> and <see cref="F:System.Net.IPEndPoint.MaxPort" />
+inclusive.</para>
+        </value>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation was less than <see cref="F:System.Net.IPEndPoint.MinPort" /> or greater than <see cref="F:System.Net.IPEndPoint.MaxPort" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Serialize">
+      <MemberSignature Language="C#" Value="public override System.Net.SocketAddress Serialize ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.SocketAddress</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" />
+containing the IP address, in dotted-quad notation, followed by a colon and the port number for the
+specified endpoint, for example, 127.0.0.1:80.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Object.ToString" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

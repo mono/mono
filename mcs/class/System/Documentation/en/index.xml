@@ -1,0 +1,1061 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.DefaultDependency(System.Runtime.CompilerServices.LoadHint.Always)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComCompatibleVersion(1, 0, 3300, 0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.StringFreezing</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Microsoft.CSharp">
+      <Type Name="CSharpCodeProvider" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Microsoft.VisualBasic">
+      <Type Name="VBCodeProvider" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Microsoft.Win32">
+      <Type Name="IntranetZoneCredentialPolicy" Kind="Class" />
+      <Type Name="PowerModeChangedEventArgs" Kind="Class" />
+      <Type Name="PowerModeChangedEventHandler" Kind="Delegate" />
+      <Type Name="PowerModes" Kind="Enumeration" />
+      <Type Name="SessionEndedEventArgs" Kind="Class" />
+      <Type Name="SessionEndedEventHandler" Kind="Delegate" />
+      <Type Name="SessionEndingEventArgs" Kind="Class" />
+      <Type Name="SessionEndingEventHandler" Kind="Delegate" />
+      <Type Name="SessionEndReasons" Kind="Enumeration" />
+      <Type Name="SessionSwitchEventArgs" Kind="Class" />
+      <Type Name="SessionSwitchEventHandler" Kind="Delegate" />
+      <Type Name="SessionSwitchReason" Kind="Enumeration" />
+      <Type Name="SystemEvents" Kind="Class" />
+      <Type Name="TimerElapsedEventArgs" Kind="Class" />
+      <Type Name="TimerElapsedEventHandler" Kind="Delegate" />
+      <Type Name="UserPreferenceCategory" Kind="Enumeration" />
+      <Type Name="UserPreferenceChangedEventArgs" Kind="Class" />
+      <Type Name="UserPreferenceChangedEventHandler" Kind="Delegate" />
+      <Type Name="UserPreferenceChangingEventArgs" Kind="Class" />
+      <Type Name="UserPreferenceChangingEventHandler" Kind="Delegate" />
+    </Namespace>
+    <Namespace Name="System">
+      <Type Name="FileStyleUriParser" Kind="Class" />
+      <Type Name="FtpStyleUriParser" Kind="Class" />
+      <Type Name="GenericUriParser" Kind="Class" />
+      <Type Name="GenericUriParserOptions" Kind="Enumeration" />
+      <Type Name="GopherStyleUriParser" Kind="Class" />
+      <Type Name="HttpStyleUriParser" Kind="Class" />
+      <Type Name="LdapStyleUriParser" Kind="Class" />
+      <Type Name="NetPipeStyleUriParser" Kind="Class" />
+      <Type Name="NetTcpStyleUriParser" Kind="Class" />
+      <Type Name="NewsStyleUriParser" Kind="Class" />
+      <Type Name="Uri" Kind="Class" />
+      <Type Name="UriBuilder" Kind="Class" />
+      <Type Name="UriComponents" Kind="Enumeration" />
+      <Type Name="UriFormat" Kind="Enumeration" />
+      <Type Name="UriFormatException" Kind="Class" />
+      <Type Name="UriHostNameType" Kind="Enumeration" />
+      <Type Name="UriIdnScope" Kind="Enumeration" />
+      <Type Name="UriKind" Kind="Enumeration" />
+      <Type Name="UriParser" Kind="Class" />
+      <Type Name="UriPartial" Kind="Enumeration" />
+      <Type Name="UriTypeConverter" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.CodeDom">
+      <Type Name="CodeArgumentReferenceExpression" Kind="Class" />
+      <Type Name="CodeArrayCreateExpression" Kind="Class" />
+      <Type Name="CodeArrayIndexerExpression" Kind="Class" />
+      <Type Name="CodeAssignStatement" Kind="Class" />
+      <Type Name="CodeAttachEventStatement" Kind="Class" />
+      <Type Name="CodeAttributeArgument" Kind="Class" />
+      <Type Name="CodeAttributeArgumentCollection" Kind="Class" />
+      <Type Name="CodeAttributeDeclaration" Kind="Class" />
+      <Type Name="CodeAttributeDeclarationCollection" Kind="Class" />
+      <Type Name="CodeBaseReferenceExpression" Kind="Class" />
+      <Type Name="CodeBinaryOperatorExpression" Kind="Class" />
+      <Type Name="CodeBinaryOperatorType" Kind="Enumeration" />
+      <Type Name="CodeCastExpression" Kind="Class" />
+      <Type Name="CodeCatchClause" Kind="Class" />
+      <Type Name="CodeCatchClauseCollection" Kind="Class" />
+      <Type Name="CodeChecksumPragma" Kind="Class" />
+      <Type Name="CodeComment" Kind="Class" />
+      <Type Name="CodeCommentStatement" Kind="Class" />
+      <Type Name="CodeCommentStatementCollection" Kind="Class" />
+      <Type Name="CodeCompileUnit" Kind="Class" />
+      <Type Name="CodeConditionStatement" Kind="Class" />
+      <Type Name="CodeConstructor" Kind="Class" />
+      <Type Name="CodeDefaultValueExpression" Kind="Class" />
+      <Type Name="CodeDelegateCreateExpression" Kind="Class" />
+      <Type Name="CodeDelegateInvokeExpression" Kind="Class" />
+      <Type Name="CodeDirectionExpression" Kind="Class" />
+      <Type Name="CodeDirective" Kind="Class" />
+      <Type Name="CodeDirectiveCollection" Kind="Class" />
+      <Type Name="CodeEntryPointMethod" Kind="Class" />
+      <Type Name="CodeEventReferenceExpression" Kind="Class" />
+      <Type Name="CodeExpression" Kind="Class" />
+      <Type Name="CodeExpressionCollection" Kind="Class" />
+      <Type Name="CodeExpressionStatement" Kind="Class" />
+      <Type Name="CodeFieldReferenceExpression" Kind="Class" />
+      <Type Name="CodeGotoStatement" Kind="Class" />
+      <Type Name="CodeIndexerExpression" Kind="Class" />
+      <Type Name="CodeIterationStatement" Kind="Class" />
+      <Type Name="CodeLabeledStatement" Kind="Class" />
+      <Type Name="CodeLinePragma" Kind="Class" />
+      <Type Name="CodeMemberEvent" Kind="Class" />
+      <Type Name="CodeMemberField" Kind="Class" />
+      <Type Name="CodeMemberMethod" Kind="Class" />
+      <Type Name="CodeMemberProperty" Kind="Class" />
+      <Type Name="CodeMethodInvokeExpression" Kind="Class" />
+      <Type Name="CodeMethodReferenceExpression" Kind="Class" />
+      <Type Name="CodeMethodReturnStatement" Kind="Class" />
+      <Type Name="CodeNamespace" Kind="Class" />
+      <Type Name="CodeNamespaceCollection" Kind="Class" />
+      <Type Name="CodeNamespaceImport" Kind="Class" />
+      <Type Name="CodeNamespaceImportCollection" Kind="Class" />
+      <Type Name="CodeObject" Kind="Class" />
+      <Type Name="CodeObjectCreateExpression" Kind="Class" />
+      <Type Name="CodeParameterDeclarationExpression" Kind="Class" />
+      <Type Name="CodeParameterDeclarationExpressionCollection" Kind="Class" />
+      <Type Name="CodePrimitiveExpression" Kind="Class" />
+      <Type Name="CodePropertyReferenceExpression" Kind="Class" />
+      <Type Name="CodePropertySetValueReferenceExpression" Kind="Class" />
+      <Type Name="CodeRegionDirective" Kind="Class" />
+      <Type Name="CodeRegionMode" Kind="Enumeration" />
+      <Type Name="CodeRemoveEventStatement" Kind="Class" />
+      <Type Name="CodeSnippetCompileUnit" Kind="Class" />
+      <Type Name="CodeSnippetExpression" Kind="Class" />
+      <Type Name="CodeSnippetStatement" Kind="Class" />
+      <Type Name="CodeSnippetTypeMember" Kind="Class" />
+      <Type Name="CodeStatement" Kind="Class" />
+      <Type Name="CodeStatementCollection" Kind="Class" />
+      <Type Name="CodeThisReferenceExpression" Kind="Class" />
+      <Type Name="CodeThrowExceptionStatement" Kind="Class" />
+      <Type Name="CodeTryCatchFinallyStatement" Kind="Class" />
+      <Type Name="CodeTypeConstructor" Kind="Class" />
+      <Type Name="CodeTypeDeclaration" Kind="Class" />
+      <Type Name="CodeTypeDeclarationCollection" Kind="Class" />
+      <Type Name="CodeTypeDelegate" Kind="Class" />
+      <Type Name="CodeTypeMember" Kind="Class" />
+      <Type Name="CodeTypeMemberCollection" Kind="Class" />
+      <Type Name="CodeTypeOfExpression" Kind="Class" />
+      <Type Name="CodeTypeParameter" Kind="Class" />
+      <Type Name="CodeTypeParameterCollection" Kind="Class" />
+      <Type Name="CodeTypeReference" Kind="Class" />
+      <Type Name="CodeTypeReferenceCollection" Kind="Class" />
+      <Type Name="CodeTypeReferenceExpression" Kind="Class" />
+      <Type Name="CodeTypeReferenceOptions" Kind="Enumeration" />
+      <Type Name="CodeVariableDeclarationStatement" Kind="Class" />
+      <Type Name="CodeVariableReferenceExpression" Kind="Class" />
+      <Type Name="FieldDirection" Kind="Enumeration" />
+      <Type Name="MemberAttributes" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.CodeDom.Compiler">
+      <Type Name="CodeCompiler" Kind="Class" />
+      <Type Name="CodeDomProvider" Kind="Class" />
+      <Type Name="CodeGenerator" Kind="Class" />
+      <Type Name="CodeGeneratorOptions" Kind="Class" />
+      <Type Name="CodeParser" Kind="Class" />
+      <Type Name="CompilerError" Kind="Class" />
+      <Type Name="CompilerErrorCollection" Kind="Class" />
+      <Type Name="CompilerInfo" Kind="Class" />
+      <Type Name="CompilerParameters" Kind="Class" />
+      <Type Name="CompilerResults" Kind="Class" />
+      <Type Name="Executor" Kind="Class" />
+      <Type Name="GeneratedCodeAttribute" Kind="Class" />
+      <Type Name="GeneratorSupport" Kind="Enumeration" />
+      <Type Name="ICodeCompiler" Kind="Interface" />
+      <Type Name="ICodeGenerator" Kind="Interface" />
+      <Type Name="ICodeParser" Kind="Interface" />
+      <Type Name="IndentedTextWriter" Kind="Class" />
+      <Type Name="LanguageOptions" Kind="Enumeration" />
+      <Type Name="TempFileCollection" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Collections.Generic">
+      <Type Name="LinkedList`1" DisplayName="LinkedList&lt;T&gt;" Kind="Class" />
+      <Type Name="LinkedList`1+Enumerator" DisplayName="LinkedList&lt;T&gt;+Enumerator" Kind="Structure" />
+      <Type Name="LinkedListNode`1" DisplayName="LinkedListNode&lt;T&gt;" Kind="Class" />
+      <Type Name="Queue`1" DisplayName="Queue&lt;T&gt;" Kind="Class" />
+      <Type Name="Queue`1+Enumerator" DisplayName="Queue&lt;T&gt;+Enumerator" Kind="Structure" />
+      <Type Name="SortedDictionary`2" DisplayName="SortedDictionary&lt;TKey,TValue&gt;" Kind="Class" />
+      <Type Name="SortedDictionary`2+Enumerator" DisplayName="SortedDictionary&lt;TKey,TValue&gt;+Enumerator" Kind="Structure" />
+      <Type Name="SortedDictionary`2+KeyCollection" DisplayName="SortedDictionary&lt;TKey,TValue&gt;+KeyCollection" Kind="Class" />
+      <Type Name="SortedDictionary`2+KeyCollection+Enumerator" DisplayName="KeyCollection&lt;TKey,TValue&gt;+Enumerator" Kind="Structure" />
+      <Type Name="SortedDictionary`2+ValueCollection" DisplayName="SortedDictionary&lt;TKey,TValue&gt;+ValueCollection" Kind="Class" />
+      <Type Name="SortedDictionary`2+ValueCollection+Enumerator" DisplayName="ValueCollection&lt;TKey,TValue&gt;+Enumerator" Kind="Structure" />
+      <Type Name="SortedList`2" DisplayName="SortedList&lt;TKey,TValue&gt;" Kind="Class" />
+      <Type Name="Stack`1" DisplayName="Stack&lt;T&gt;" Kind="Class" />
+      <Type Name="Stack`1+Enumerator" DisplayName="Stack&lt;T&gt;+Enumerator" Kind="Structure" />
+    </Namespace>
+    <Namespace Name="System.Collections.Specialized">
+      <Type Name="BitVector32" Kind="Structure" />
+      <Type Name="BitVector32+Section" Kind="Structure" />
+      <Type Name="CollectionsUtil" Kind="Class" />
+      <Type Name="HybridDictionary" Kind="Class" />
+      <Type Name="IOrderedDictionary" Kind="Interface" />
+      <Type Name="ListDictionary" Kind="Class" />
+      <Type Name="NameObjectCollectionBase" Kind="Class" />
+      <Type Name="NameObjectCollectionBase+KeysCollection" Kind="Class" />
+      <Type Name="NameValueCollection" Kind="Class" />
+      <Type Name="OrderedDictionary" Kind="Class" />
+      <Type Name="StringCollection" Kind="Class" />
+      <Type Name="StringDictionary" Kind="Class" />
+      <Type Name="StringEnumerator" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ComponentModel">
+      <Type Name="AddingNewEventArgs" Kind="Class" />
+      <Type Name="AddingNewEventHandler" Kind="Delegate" />
+      <Type Name="AmbientValueAttribute" Kind="Class" />
+      <Type Name="ArrayConverter" Kind="Class" />
+      <Type Name="AsyncCompletedEventArgs" Kind="Class" />
+      <Type Name="AsyncCompletedEventHandler" Kind="Delegate" />
+      <Type Name="AsyncOperation" Kind="Class" />
+      <Type Name="AsyncOperationManager" Kind="Class" />
+      <Type Name="AttributeCollection" Kind="Class" />
+      <Type Name="AttributeProviderAttribute" Kind="Class" />
+      <Type Name="BackgroundWorker" Kind="Class" />
+      <Type Name="BaseNumberConverter" Kind="Class" />
+      <Type Name="BindableAttribute" Kind="Class" />
+      <Type Name="BindableSupport" Kind="Enumeration" />
+      <Type Name="BindingDirection" Kind="Enumeration" />
+      <Type Name="BindingList`1" DisplayName="BindingList&lt;T&gt;" Kind="Class" />
+      <Type Name="BooleanConverter" Kind="Class" />
+      <Type Name="BrowsableAttribute" Kind="Class" />
+      <Type Name="ByteConverter" Kind="Class" />
+      <Type Name="CancelEventArgs" Kind="Class" />
+      <Type Name="CancelEventHandler" Kind="Delegate" />
+      <Type Name="CategoryAttribute" Kind="Class" />
+      <Type Name="CharConverter" Kind="Class" />
+      <Type Name="CollectionChangeAction" Kind="Enumeration" />
+      <Type Name="CollectionChangeEventArgs" Kind="Class" />
+      <Type Name="CollectionChangeEventHandler" Kind="Delegate" />
+      <Type Name="CollectionConverter" Kind="Class" />
+      <Type Name="ComplexBindingPropertiesAttribute" Kind="Class" />
+      <Type Name="Component" Kind="Class" />
+      <Type Name="ComponentCollection" Kind="Class" />
+      <Type Name="ComponentConverter" Kind="Class" />
+      <Type Name="ComponentEditor" Kind="Class" />
+      <Type Name="ComponentResourceManager" Kind="Class" />
+      <Type Name="Container" Kind="Class" />
+      <Type Name="ContainerFilterService" Kind="Class" />
+      <Type Name="CultureInfoConverter" Kind="Class" />
+      <Type Name="CustomTypeDescriptor" Kind="Class" />
+      <Type Name="DataObjectAttribute" Kind="Class" />
+      <Type Name="DataObjectFieldAttribute" Kind="Class" />
+      <Type Name="DataObjectMethodAttribute" Kind="Class" />
+      <Type Name="DataObjectMethodType" Kind="Enumeration" />
+      <Type Name="DateTimeConverter" Kind="Class" />
+      <Type Name="DecimalConverter" Kind="Class" />
+      <Type Name="DefaultBindingPropertyAttribute" Kind="Class" />
+      <Type Name="DefaultEventAttribute" Kind="Class" />
+      <Type Name="DefaultPropertyAttribute" Kind="Class" />
+      <Type Name="DefaultValueAttribute" Kind="Class" />
+      <Type Name="DescriptionAttribute" Kind="Class" />
+      <Type Name="DesignerAttribute" Kind="Class" />
+      <Type Name="DesignerCategoryAttribute" Kind="Class" />
+      <Type Name="DesignerSerializationVisibility" Kind="Enumeration" />
+      <Type Name="DesignerSerializationVisibilityAttribute" Kind="Class" />
+      <Type Name="DesignOnlyAttribute" Kind="Class" />
+      <Type Name="DesignTimeVisibleAttribute" Kind="Class" />
+      <Type Name="DisplayNameAttribute" Kind="Class" />
+      <Type Name="DoubleConverter" Kind="Class" />
+      <Type Name="DoWorkEventArgs" Kind="Class" />
+      <Type Name="DoWorkEventHandler" Kind="Delegate" />
+      <Type Name="EditorAttribute" Kind="Class" />
+      <Type Name="EditorBrowsableAttribute" Kind="Class" />
+      <Type Name="EditorBrowsableState" Kind="Enumeration" />
+      <Type Name="EnumConverter" Kind="Class" />
+      <Type Name="EventDescriptor" Kind="Class" />
+      <Type Name="EventDescriptorCollection" Kind="Class" />
+      <Type Name="EventHandlerList" Kind="Class" />
+      <Type Name="ExpandableObjectConverter" Kind="Class" />
+      <Type Name="ExtenderProvidedPropertyAttribute" Kind="Class" />
+      <Type Name="GuidConverter" Kind="Class" />
+      <Type Name="HandledEventArgs" Kind="Class" />
+      <Type Name="HandledEventHandler" Kind="Delegate" />
+      <Type Name="IBindingList" Kind="Interface" />
+      <Type Name="IBindingListView" Kind="Interface" />
+      <Type Name="ICancelAddNew" Kind="Interface" />
+      <Type Name="IChangeTracking" Kind="Interface" />
+      <Type Name="IComNativeDescriptorHandler" Kind="Interface" />
+      <Type Name="IComponent" Kind="Interface" />
+      <Type Name="IContainer" Kind="Interface" />
+      <Type Name="ICustomTypeDescriptor" Kind="Interface" />
+      <Type Name="IDataErrorInfo" Kind="Interface" />
+      <Type Name="IEditableObject" Kind="Interface" />
+      <Type Name="IExtenderProvider" Kind="Interface" />
+      <Type Name="IIntellisenseBuilder" Kind="Interface" />
+      <Type Name="IListSource" Kind="Interface" />
+      <Type Name="ImmutableObjectAttribute" Kind="Class" />
+      <Type Name="INestedContainer" Kind="Interface" />
+      <Type Name="INestedSite" Kind="Interface" />
+      <Type Name="InheritanceAttribute" Kind="Class" />
+      <Type Name="InheritanceLevel" Kind="Enumeration" />
+      <Type Name="InitializationEventAttribute" Kind="Class" />
+      <Type Name="INotifyPropertyChanged" Kind="Interface" />
+      <Type Name="INotifyPropertyChanging" Kind="Interface" />
+      <Type Name="InstallerTypeAttribute" Kind="Class" />
+      <Type Name="InstanceCreationEditor" Kind="Class" />
+      <Type Name="Int16Converter" Kind="Class" />
+      <Type Name="Int32Converter" Kind="Class" />
+      <Type Name="Int64Converter" Kind="Class" />
+      <Type Name="InvalidAsynchronousStateException" Kind="Class" />
+      <Type Name="InvalidEnumArgumentException" Kind="Class" />
+      <Type Name="IRaiseItemChangedEvents" Kind="Interface" />
+      <Type Name="IRevertibleChangeTracking" Kind="Interface" />
+      <Type Name="ISite" Kind="Interface" />
+      <Type Name="ISupportInitialize" Kind="Interface" />
+      <Type Name="ISupportInitializeNotification" Kind="Interface" />
+      <Type Name="ISynchronizeInvoke" Kind="Interface" />
+      <Type Name="ITypeDescriptorContext" Kind="Interface" />
+      <Type Name="ITypedList" Kind="Interface" />
+      <Type Name="License" Kind="Class" />
+      <Type Name="LicenseContext" Kind="Class" />
+      <Type Name="LicenseException" Kind="Class" />
+      <Type Name="LicenseManager" Kind="Class" />
+      <Type Name="LicenseProvider" Kind="Class" />
+      <Type Name="LicenseProviderAttribute" Kind="Class" />
+      <Type Name="LicenseUsageMode" Kind="Enumeration" />
+      <Type Name="LicFileLicenseProvider" Kind="Class" />
+      <Type Name="ListBindableAttribute" Kind="Class" />
+      <Type Name="ListChangedEventArgs" Kind="Class" />
+      <Type Name="ListChangedEventHandler" Kind="Delegate" />
+      <Type Name="ListChangedType" Kind="Enumeration" />
+      <Type Name="ListSortDescription" Kind="Class" />
+      <Type Name="ListSortDescriptionCollection" Kind="Class" />
+      <Type Name="ListSortDirection" Kind="Enumeration" />
+      <Type Name="LocalizableAttribute" Kind="Class" />
+      <Type Name="LookupBindingPropertiesAttribute" Kind="Class" />
+      <Type Name="MarshalByValueComponent" Kind="Class" />
+      <Type Name="MaskedTextProvider" Kind="Class" />
+      <Type Name="MaskedTextResultHint" Kind="Enumeration" />
+      <Type Name="MemberDescriptor" Kind="Class" />
+      <Type Name="MergablePropertyAttribute" Kind="Class" />
+      <Type Name="MultilineStringConverter" Kind="Class" />
+      <Type Name="NestedContainer" Kind="Class" />
+      <Type Name="NotifyParentPropertyAttribute" Kind="Class" />
+      <Type Name="NullableConverter" Kind="Class" />
+      <Type Name="ParenthesizePropertyNameAttribute" Kind="Class" />
+      <Type Name="PasswordPropertyTextAttribute" Kind="Class" />
+      <Type Name="ProgressChangedEventArgs" Kind="Class" />
+      <Type Name="ProgressChangedEventHandler" Kind="Delegate" />
+      <Type Name="PropertyChangedEventArgs" Kind="Class" />
+      <Type Name="PropertyChangedEventHandler" Kind="Delegate" />
+      <Type Name="PropertyChangingEventArgs" Kind="Class" />
+      <Type Name="PropertyChangingEventHandler" Kind="Delegate" />
+      <Type Name="PropertyDescriptor" Kind="Class" />
+      <Type Name="PropertyDescriptorCollection" Kind="Class" />
+      <Type Name="PropertyTabAttribute" Kind="Class" />
+      <Type Name="PropertyTabScope" Kind="Enumeration" />
+      <Type Name="ProvidePropertyAttribute" Kind="Class" />
+      <Type Name="ReadOnlyAttribute" Kind="Class" />
+      <Type Name="RecommendedAsConfigurableAttribute" Kind="Class" />
+      <Type Name="ReferenceConverter" Kind="Class" />
+      <Type Name="RefreshEventArgs" Kind="Class" />
+      <Type Name="RefreshEventHandler" Kind="Delegate" />
+      <Type Name="RefreshProperties" Kind="Enumeration" />
+      <Type Name="RefreshPropertiesAttribute" Kind="Class" />
+      <Type Name="RunInstallerAttribute" Kind="Class" />
+      <Type Name="RunWorkerCompletedEventArgs" Kind="Class" />
+      <Type Name="RunWorkerCompletedEventHandler" Kind="Delegate" />
+      <Type Name="SByteConverter" Kind="Class" />
+      <Type Name="SettingsBindableAttribute" Kind="Class" />
+      <Type Name="SingleConverter" Kind="Class" />
+      <Type Name="StringConverter" Kind="Class" />
+      <Type Name="SyntaxCheck" Kind="Class" />
+      <Type Name="TimeSpanConverter" Kind="Class" />
+      <Type Name="ToolboxItemAttribute" Kind="Class" />
+      <Type Name="ToolboxItemFilterAttribute" Kind="Class" />
+      <Type Name="ToolboxItemFilterType" Kind="Enumeration" />
+      <Type Name="TypeConverter" Kind="Class" />
+      <Type Name="TypeConverter+StandardValuesCollection" Kind="Class" />
+      <Type Name="TypeConverterAttribute" Kind="Class" />
+      <Type Name="TypeDescriptionProvider" Kind="Class" />
+      <Type Name="TypeDescriptionProviderAttribute" Kind="Class" />
+      <Type Name="TypeDescriptor" Kind="Class" />
+      <Type Name="TypeListConverter" Kind="Class" />
+      <Type Name="UInt16Converter" Kind="Class" />
+      <Type Name="UInt32Converter" Kind="Class" />
+      <Type Name="UInt64Converter" Kind="Class" />
+      <Type Name="WarningException" Kind="Class" />
+      <Type Name="Win32Exception" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ComponentModel.Design">
+      <Type Name="ActiveDesignerEventArgs" Kind="Class" />
+      <Type Name="ActiveDesignerEventHandler" Kind="Delegate" />
+      <Type Name="CheckoutException" Kind="Class" />
+      <Type Name="CommandID" Kind="Class" />
+      <Type Name="ComponentChangedEventArgs" Kind="Class" />
+      <Type Name="ComponentChangedEventHandler" Kind="Delegate" />
+      <Type Name="ComponentChangingEventArgs" Kind="Class" />
+      <Type Name="ComponentChangingEventHandler" Kind="Delegate" />
+      <Type Name="ComponentEventArgs" Kind="Class" />
+      <Type Name="ComponentEventHandler" Kind="Delegate" />
+      <Type Name="ComponentRenameEventArgs" Kind="Class" />
+      <Type Name="ComponentRenameEventHandler" Kind="Delegate" />
+      <Type Name="DesignerCollection" Kind="Class" />
+      <Type Name="DesignerEventArgs" Kind="Class" />
+      <Type Name="DesignerEventHandler" Kind="Delegate" />
+      <Type Name="DesignerOptionCollection+WrappedPropertyDescriptor" Kind="Class" />
+      <Type Name="DesignerOptionService" Kind="Class" />
+      <Type Name="DesignerOptionService+DesignerOptionCollection" Kind="Class" />
+      <Type Name="DesignerTransaction" Kind="Class" />
+      <Type Name="DesignerTransactionCloseEventArgs" Kind="Class" />
+      <Type Name="DesignerTransactionCloseEventHandler" Kind="Delegate" />
+      <Type Name="DesignerVerb" Kind="Class" />
+      <Type Name="DesignerVerbCollection" Kind="Class" />
+      <Type Name="DesigntimeLicenseContext" Kind="Class" />
+      <Type Name="DesigntimeLicenseContextSerializer" Kind="Class" />
+      <Type Name="HelpContextType" Kind="Enumeration" />
+      <Type Name="HelpKeywordAttribute" Kind="Class" />
+      <Type Name="HelpKeywordType" Kind="Enumeration" />
+      <Type Name="IComponentChangeService" Kind="Interface" />
+      <Type Name="IComponentDiscoveryService" Kind="Interface" />
+      <Type Name="IComponentInitializer" Kind="Interface" />
+      <Type Name="IDesigner" Kind="Interface" />
+      <Type Name="IDesignerEventService" Kind="Interface" />
+      <Type Name="IDesignerFilter" Kind="Interface" />
+      <Type Name="IDesignerHost" Kind="Interface" />
+      <Type Name="IDesignerOptionService" Kind="Interface" />
+      <Type Name="IDictionaryService" Kind="Interface" />
+      <Type Name="IEventBindingService" Kind="Interface" />
+      <Type Name="IExtenderListService" Kind="Interface" />
+      <Type Name="IExtenderProviderService" Kind="Interface" />
+      <Type Name="IHelpService" Kind="Interface" />
+      <Type Name="IInheritanceService" Kind="Interface" />
+      <Type Name="IMenuCommandService" Kind="Interface" />
+      <Type Name="IReferenceService" Kind="Interface" />
+      <Type Name="IResourceService" Kind="Interface" />
+      <Type Name="IRootDesigner" Kind="Interface" />
+      <Type Name="ISelectionService" Kind="Interface" />
+      <Type Name="IServiceContainer" Kind="Interface" />
+      <Type Name="ITreeDesigner" Kind="Interface" />
+      <Type Name="ITypeDescriptorFilterService" Kind="Interface" />
+      <Type Name="ITypeDiscoveryService" Kind="Interface" />
+      <Type Name="ITypeResolutionService" Kind="Interface" />
+      <Type Name="MenuCommand" Kind="Class" />
+      <Type Name="SelectionTypes" Kind="Enumeration" />
+      <Type Name="ServiceContainer" Kind="Class" />
+      <Type Name="ServiceCreatorCallback" Kind="Delegate" />
+      <Type Name="StandardCommands" Kind="Class" />
+      <Type Name="StandardToolWindows" Kind="Class" />
+      <Type Name="ViewTechnology" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.ComponentModel.Design.Serialization">
+      <Type Name="ComponentSerializationService" Kind="Class" />
+      <Type Name="ContextStack" Kind="Class" />
+      <Type Name="DefaultSerializationProviderAttribute" Kind="Class" />
+      <Type Name="DesignerLoader" Kind="Class" />
+      <Type Name="DesignerSerializerAttribute" Kind="Class" />
+      <Type Name="IDesignerLoaderHost" Kind="Interface" />
+      <Type Name="IDesignerLoaderService" Kind="Interface" />
+      <Type Name="IDesignerSerializationManager" Kind="Interface" />
+      <Type Name="IDesignerSerializationProvider" Kind="Interface" />
+      <Type Name="IDesignerSerializationService" Kind="Interface" />
+      <Type Name="INameCreationService" Kind="Interface" />
+      <Type Name="InstanceDescriptor" Kind="Class" />
+      <Type Name="MemberRelationship" Kind="Structure" />
+      <Type Name="MemberRelationshipService" Kind="Class" />
+      <Type Name="ResolveNameEventArgs" Kind="Class" />
+      <Type Name="ResolveNameEventHandler" Kind="Delegate" />
+      <Type Name="RootDesignerSerializerAttribute" Kind="Class" />
+      <Type Name="SerializationStore" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Configuration">
+      <Type Name="ApplicationScopedSettingAttribute" Kind="Class" />
+      <Type Name="ApplicationSettingsBase" Kind="Class" />
+      <Type Name="ApplicationSettingsGroup" Kind="Class" />
+      <Type Name="AppSettingsReader" Kind="Class" />
+      <Type Name="ClientSettingsSection" Kind="Class" />
+      <Type Name="ConfigurationException" Kind="Class" />
+      <Type Name="ConfigurationSettings" Kind="Class" />
+      <Type Name="ConfigXmlDocument" Kind="Class" />
+      <Type Name="DefaultSettingValueAttribute" Kind="Class" />
+      <Type Name="DictionarySectionHandler" Kind="Class" />
+      <Type Name="IApplicationSettingsProvider" Kind="Interface" />
+      <Type Name="IConfigurationSectionHandler" Kind="Interface" />
+      <Type Name="IConfigurationSystem" Kind="Interface" />
+      <Type Name="IgnoreSectionHandler" Kind="Class" />
+      <Type Name="IPersistComponentSettings" Kind="Interface" />
+      <Type Name="ISettingsProviderService" Kind="Interface" />
+      <Type Name="LocalFileSettingsProvider" Kind="Class" />
+      <Type Name="NameValueFileSectionHandler" Kind="Class" />
+      <Type Name="NameValueSectionHandler" Kind="Class" />
+      <Type Name="NoSettingsVersionUpgradeAttribute" Kind="Class" />
+      <Type Name="SettingAttribute" Kind="Class" />
+      <Type Name="SettingChangingEventArgs" Kind="Class" />
+      <Type Name="SettingChangingEventHandler" Kind="Delegate" />
+      <Type Name="SettingElement" Kind="Class" />
+      <Type Name="SettingElementCollection" Kind="Class" />
+      <Type Name="SettingsAttributeDictionary" Kind="Class" />
+      <Type Name="SettingsBase" Kind="Class" />
+      <Type Name="SettingsContext" Kind="Class" />
+      <Type Name="SettingsDescriptionAttribute" Kind="Class" />
+      <Type Name="SettingsGroupDescriptionAttribute" Kind="Class" />
+      <Type Name="SettingsGroupNameAttribute" Kind="Class" />
+      <Type Name="SettingsLoadedEventArgs" Kind="Class" />
+      <Type Name="SettingsLoadedEventHandler" Kind="Delegate" />
+      <Type Name="SettingsManageability" Kind="Enumeration" />
+      <Type Name="SettingsManageabilityAttribute" Kind="Class" />
+      <Type Name="SettingsProperty" Kind="Class" />
+      <Type Name="SettingsPropertyCollection" Kind="Class" />
+      <Type Name="SettingsPropertyIsReadOnlyException" Kind="Class" />
+      <Type Name="SettingsPropertyNotFoundException" Kind="Class" />
+      <Type Name="SettingsPropertyValue" Kind="Class" />
+      <Type Name="SettingsPropertyValueCollection" Kind="Class" />
+      <Type Name="SettingsPropertyWrongTypeException" Kind="Class" />
+      <Type Name="SettingsProvider" Kind="Class" />
+      <Type Name="SettingsProviderAttribute" Kind="Class" />
+      <Type Name="SettingsProviderCollection" Kind="Class" />
+      <Type Name="SettingsSavingEventHandler" Kind="Delegate" />
+      <Type Name="SettingsSerializeAs" Kind="Enumeration" />
+      <Type Name="SettingsSerializeAsAttribute" Kind="Class" />
+      <Type Name="SettingValueElement" Kind="Class" />
+      <Type Name="SingleTagSectionHandler" Kind="Class" />
+      <Type Name="SpecialSetting" Kind="Enumeration" />
+      <Type Name="SpecialSettingAttribute" Kind="Class" />
+      <Type Name="UserScopedSettingAttribute" Kind="Class" />
+      <Type Name="UserSettingsGroup" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Diagnostics">
+      <Type Name="BooleanSwitch" Kind="Class" />
+      <Type Name="ConsoleTraceListener" Kind="Class" />
+      <Type Name="CorrelationManager" Kind="Class" />
+      <Type Name="CounterCreationData" Kind="Class" />
+      <Type Name="CounterCreationDataCollection" Kind="Class" />
+      <Type Name="CounterSample" Kind="Structure" />
+      <Type Name="CounterSampleCalculator" Kind="Class" />
+      <Type Name="DataReceivedEventArgs" Kind="Class" />
+      <Type Name="DataReceivedEventHandler" Kind="Delegate" />
+      <Type Name="Debug" Kind="Class" />
+      <Type Name="DefaultTraceListener" Kind="Class" />
+      <Type Name="DelimitedListTraceListener" Kind="Class" />
+      <Type Name="DiagnosticsConfigurationHandler" Kind="Class" />
+      <Type Name="EntryWrittenEventArgs" Kind="Class" />
+      <Type Name="EntryWrittenEventHandler" Kind="Delegate" />
+      <Type Name="EventInstance" Kind="Class" />
+      <Type Name="EventLog" Kind="Class" />
+      <Type Name="EventLogEntry" Kind="Class" />
+      <Type Name="EventLogEntryCollection" Kind="Class" />
+      <Type Name="EventLogEntryType" Kind="Enumeration" />
+      <Type Name="EventLogPermission" Kind="Class" />
+      <Type Name="EventLogPermissionAccess" Kind="Enumeration" />
+      <Type Name="EventLogPermissionAttribute" Kind="Class" />
+      <Type Name="EventLogPermissionEntry" Kind="Class" />
+      <Type Name="EventLogPermissionEntryCollection" Kind="Class" />
+      <Type Name="EventLogTraceListener" Kind="Class" />
+      <Type Name="EventSourceCreationData" Kind="Class" />
+      <Type Name="EventTypeFilter" Kind="Class" />
+      <Type Name="FileVersionInfo" Kind="Class" />
+      <Type Name="ICollectData" Kind="Interface" />
+      <Type Name="InstanceData" Kind="Class" />
+      <Type Name="InstanceDataCollection" Kind="Class" />
+      <Type Name="InstanceDataCollectionCollection" Kind="Class" />
+      <Type Name="MonitoringDescriptionAttribute" Kind="Class" />
+      <Type Name="OverflowAction" Kind="Enumeration" />
+      <Type Name="PerformanceCounter" Kind="Class" />
+      <Type Name="PerformanceCounterCategory" Kind="Class" />
+      <Type Name="PerformanceCounterCategoryType" Kind="Enumeration" />
+      <Type Name="PerformanceCounterInstanceLifetime" Kind="Enumeration" />
+      <Type Name="PerformanceCounterManager" Kind="Class" />
+      <Type Name="PerformanceCounterPermission" Kind="Class" />
+      <Type Name="PerformanceCounterPermissionAccess" Kind="Enumeration" />
+      <Type Name="PerformanceCounterPermissionAttribute" Kind="Class" />
+      <Type Name="PerformanceCounterPermissionEntry" Kind="Class" />
+      <Type Name="PerformanceCounterPermissionEntryCollection" Kind="Class" />
+      <Type Name="PerformanceCounterType" Kind="Enumeration" />
+      <Type Name="Process" Kind="Class" />
+      <Type Name="ProcessModule" Kind="Class" />
+      <Type Name="ProcessModuleCollection" Kind="Class" />
+      <Type Name="ProcessPriorityClass" Kind="Enumeration" />
+      <Type Name="ProcessStartInfo" Kind="Class" />
+      <Type Name="ProcessThread" Kind="Class" />
+      <Type Name="ProcessThreadCollection" Kind="Class" />
+      <Type Name="ProcessWindowStyle" Kind="Enumeration" />
+      <Type Name="SourceFilter" Kind="Class" />
+      <Type Name="SourceLevels" Kind="Enumeration" />
+      <Type Name="SourceSwitch" Kind="Class" />
+      <Type Name="Stopwatch" Kind="Class" />
+      <Type Name="Switch" Kind="Class" />
+      <Type Name="SwitchAttribute" Kind="Class" />
+      <Type Name="SwitchLevelAttribute" Kind="Class" />
+      <Type Name="TextWriterTraceListener" Kind="Class" />
+      <Type Name="ThreadPriorityLevel" Kind="Enumeration" />
+      <Type Name="ThreadState" Kind="Enumeration" />
+      <Type Name="ThreadWaitReason" Kind="Enumeration" />
+      <Type Name="Trace" Kind="Class" />
+      <Type Name="TraceEventCache" Kind="Class" />
+      <Type Name="TraceEventType" Kind="Enumeration" />
+      <Type Name="TraceFilter" Kind="Class" />
+      <Type Name="TraceLevel" Kind="Enumeration" />
+      <Type Name="TraceListener" Kind="Class" />
+      <Type Name="TraceListenerCollection" Kind="Class" />
+      <Type Name="TraceOptions" Kind="Enumeration" />
+      <Type Name="TraceSource" Kind="Class" />
+      <Type Name="TraceSwitch" Kind="Class" />
+      <Type Name="XmlWriterTraceListener" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.IO">
+      <Type Name="ErrorEventArgs" Kind="Class" />
+      <Type Name="ErrorEventHandler" Kind="Delegate" />
+      <Type Name="FileSystemEventArgs" Kind="Class" />
+      <Type Name="FileSystemEventHandler" Kind="Delegate" />
+      <Type Name="FileSystemWatcher" Kind="Class" />
+      <Type Name="InternalBufferOverflowException" Kind="Class" />
+      <Type Name="InvalidDataException" Kind="Class" />
+      <Type Name="IODescriptionAttribute" Kind="Class" />
+      <Type Name="NotifyFilters" Kind="Enumeration" />
+      <Type Name="RenamedEventArgs" Kind="Class" />
+      <Type Name="RenamedEventHandler" Kind="Delegate" />
+      <Type Name="WaitForChangedResult" Kind="Structure" />
+      <Type Name="WatcherChangeTypes" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.IO.Compression">
+      <Type Name="CompressionMode" Kind="Enumeration" />
+      <Type Name="DeflateStream" Kind="Class" />
+      <Type Name="GZipStream" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.IO.Ports">
+      <Type Name="Handshake" Kind="Enumeration" />
+      <Type Name="Parity" Kind="Enumeration" />
+      <Type Name="SerialData" Kind="Enumeration" />
+      <Type Name="SerialDataReceivedEventArgs" Kind="Class" />
+      <Type Name="SerialDataReceivedEventHandler" Kind="Delegate" />
+      <Type Name="SerialError" Kind="Enumeration" />
+      <Type Name="SerialErrorReceivedEventArgs" Kind="Class" />
+      <Type Name="SerialErrorReceivedEventHandler" Kind="Delegate" />
+      <Type Name="SerialPinChange" Kind="Enumeration" />
+      <Type Name="SerialPinChangedEventArgs" Kind="Class" />
+      <Type Name="SerialPinChangedEventHandler" Kind="Delegate" />
+      <Type Name="SerialPort" Kind="Class" />
+      <Type Name="StopBits" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Media">
+      <Type Name="SoundPlayer" Kind="Class" />
+      <Type Name="SystemSound" Kind="Class" />
+      <Type Name="SystemSounds" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Net">
+      <Type Name="AuthenticationManager" Kind="Class" />
+      <Type Name="AuthenticationSchemes" Kind="Enumeration" />
+      <Type Name="AuthenticationSchemeSelector" Kind="Delegate" />
+      <Type Name="Authorization" Kind="Class" />
+      <Type Name="BindIPEndPoint" Kind="Delegate" />
+      <Type Name="Cookie" Kind="Class" />
+      <Type Name="CookieCollection" Kind="Class" />
+      <Type Name="CookieContainer" Kind="Class" />
+      <Type Name="CookieException" Kind="Class" />
+      <Type Name="CredentialCache" Kind="Class" />
+      <Type Name="DecompressionMethods" Kind="Enumeration" />
+      <Type Name="Dns" Kind="Class" />
+      <Type Name="DnsPermission" Kind="Class" />
+      <Type Name="DnsPermissionAttribute" Kind="Class" />
+      <Type Name="DownloadDataCompletedEventArgs" Kind="Class" />
+      <Type Name="DownloadDataCompletedEventHandler" Kind="Delegate" />
+      <Type Name="DownloadProgressChangedEventArgs" Kind="Class" />
+      <Type Name="DownloadProgressChangedEventHandler" Kind="Delegate" />
+      <Type Name="DownloadStringCompletedEventArgs" Kind="Class" />
+      <Type Name="DownloadStringCompletedEventHandler" Kind="Delegate" />
+      <Type Name="EndPoint" Kind="Class" />
+      <Type Name="EndpointPermission" Kind="Class" />
+      <Type Name="FileWebRequest" Kind="Class" />
+      <Type Name="FileWebResponse" Kind="Class" />
+      <Type Name="FtpStatusCode" Kind="Enumeration" />
+      <Type Name="FtpWebRequest" Kind="Class" />
+      <Type Name="FtpWebResponse" Kind="Class" />
+      <Type Name="GlobalProxySelection" Kind="Class" />
+      <Type Name="HttpContinueDelegate" Kind="Delegate" />
+      <Type Name="HttpListener" Kind="Class" />
+      <Type Name="HttpListenerBasicIdentity" Kind="Class" />
+      <Type Name="HttpListenerContext" Kind="Class" />
+      <Type Name="HttpListenerException" Kind="Class" />
+      <Type Name="HttpListenerPrefixCollection" Kind="Class" />
+      <Type Name="HttpListenerRequest" Kind="Class" />
+      <Type Name="HttpListenerResponse" Kind="Class" />
+      <Type Name="HttpRequestHeader" Kind="Enumeration" />
+      <Type Name="HttpResponseHeader" Kind="Enumeration" />
+      <Type Name="HttpStatusCode" Kind="Enumeration" />
+      <Type Name="HttpVersion" Kind="Class" />
+      <Type Name="HttpWebRequest" Kind="Class" />
+      <Type Name="HttpWebResponse" Kind="Class" />
+      <Type Name="IAuthenticationModule" Kind="Interface" />
+      <Type Name="ICertificatePolicy" Kind="Interface" />
+      <Type Name="ICredentialPolicy" Kind="Interface" />
+      <Type Name="ICredentials" Kind="Interface" />
+      <Type Name="ICredentialsByHost" Kind="Interface" />
+      <Type Name="IPAddress" Kind="Class" />
+      <Type Name="IPEndPoint" Kind="Class" />
+      <Type Name="IPHostEntry" Kind="Class" />
+      <Type Name="IWebProxy" Kind="Interface" />
+      <Type Name="IWebProxyScript" Kind="Interface" />
+      <Type Name="IWebRequestCreate" Kind="Interface" />
+      <Type Name="NetworkAccess" Kind="Enumeration" />
+      <Type Name="NetworkCredential" Kind="Class" />
+      <Type Name="OpenReadCompletedEventArgs" Kind="Class" />
+      <Type Name="OpenReadCompletedEventHandler" Kind="Delegate" />
+      <Type Name="OpenWriteCompletedEventArgs" Kind="Class" />
+      <Type Name="OpenWriteCompletedEventHandler" Kind="Delegate" />
+      <Type Name="ProtocolViolationException" Kind="Class" />
+      <Type Name="SecurityProtocolType" Kind="Enumeration" />
+      <Type Name="ServicePoint" Kind="Class" />
+      <Type Name="ServicePointManager" Kind="Class" />
+      <Type Name="SocketAddress" Kind="Class" />
+      <Type Name="SocketPermission" Kind="Class" />
+      <Type Name="SocketPermissionAttribute" Kind="Class" />
+      <Type Name="TransportType" Kind="Enumeration" />
+      <Type Name="UploadDataCompletedEventArgs" Kind="Class" />
+      <Type Name="UploadDataCompletedEventHandler" Kind="Delegate" />
+      <Type Name="UploadFileCompletedEventArgs" Kind="Class" />
+      <Type Name="UploadFileCompletedEventHandler" Kind="Delegate" />
+      <Type Name="UploadProgressChangedEventArgs" Kind="Class" />
+      <Type Name="UploadProgressChangedEventHandler" Kind="Delegate" />
+      <Type Name="UploadStringCompletedEventArgs" Kind="Class" />
+      <Type Name="UploadStringCompletedEventHandler" Kind="Delegate" />
+      <Type Name="UploadValuesCompletedEventArgs" Kind="Class" />
+      <Type Name="UploadValuesCompletedEventHandler" Kind="Delegate" />
+      <Type Name="WebClient" Kind="Class" />
+      <Type Name="WebException" Kind="Class" />
+      <Type Name="WebExceptionStatus" Kind="Enumeration" />
+      <Type Name="WebHeaderCollection" Kind="Class" />
+      <Type Name="WebPermission" Kind="Class" />
+      <Type Name="WebPermissionAttribute" Kind="Class" />
+      <Type Name="WebProxy" Kind="Class" />
+      <Type Name="WebRequest" Kind="Class" />
+      <Type Name="WebRequestMethods" Kind="Class" />
+      <Type Name="WebRequestMethods+File" Kind="Class" />
+      <Type Name="WebRequestMethods+Ftp" Kind="Class" />
+      <Type Name="WebRequestMethods+Http" Kind="Class" />
+      <Type Name="WebResponse" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Net.Cache">
+      <Type Name="HttpCacheAgeControl" Kind="Enumeration" />
+      <Type Name="HttpRequestCacheLevel" Kind="Enumeration" />
+      <Type Name="HttpRequestCachePolicy" Kind="Class" />
+      <Type Name="RequestCacheLevel" Kind="Enumeration" />
+      <Type Name="RequestCachePolicy" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Net.Configuration">
+      <Type Name="AuthenticationModuleElement" Kind="Class" />
+      <Type Name="AuthenticationModuleElementCollection" Kind="Class" />
+      <Type Name="AuthenticationModulesSection" Kind="Class" />
+      <Type Name="BypassElement" Kind="Class" />
+      <Type Name="BypassElementCollection" Kind="Class" />
+      <Type Name="ConnectionManagementElement" Kind="Class" />
+      <Type Name="ConnectionManagementElementCollection" Kind="Class" />
+      <Type Name="ConnectionManagementSection" Kind="Class" />
+      <Type Name="DefaultProxySection" Kind="Class" />
+      <Type Name="FtpCachePolicyElement" Kind="Class" />
+      <Type Name="HttpCachePolicyElement" Kind="Class" />
+      <Type Name="HttpWebRequestElement" Kind="Class" />
+      <Type Name="Ipv6Element" Kind="Class" />
+      <Type Name="MailSettingsSectionGroup" Kind="Class" />
+      <Type Name="ModuleElement" Kind="Class" />
+      <Type Name="NetSectionGroup" Kind="Class" />
+      <Type Name="PerformanceCountersElement" Kind="Class" />
+      <Type Name="ProxyElement" Kind="Class" />
+      <Type Name="ProxyElement+AutoDetectValues" Kind="Enumeration" />
+      <Type Name="ProxyElement+BypassOnLocalValues" Kind="Enumeration" />
+      <Type Name="ProxyElement+UseSystemDefaultValues" Kind="Enumeration" />
+      <Type Name="RequestCachingSection" Kind="Class" />
+      <Type Name="ServicePointManagerElement" Kind="Class" />
+      <Type Name="SettingsSection" Kind="Class" />
+      <Type Name="SmtpNetworkElement" Kind="Class" />
+      <Type Name="SmtpSection" Kind="Class" />
+      <Type Name="SmtpSpecifiedPickupDirectoryElement" Kind="Class" />
+      <Type Name="SocketElement" Kind="Class" />
+      <Type Name="WebProxyScriptElement" Kind="Class" />
+      <Type Name="WebRequestModuleElement" Kind="Class" />
+      <Type Name="WebRequestModuleElementCollection" Kind="Class" />
+      <Type Name="WebRequestModulesSection" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Net.Mail">
+      <Type Name="AlternateView" Kind="Class" />
+      <Type Name="AlternateViewCollection" Kind="Class" />
+      <Type Name="Attachment" Kind="Class" />
+      <Type Name="AttachmentBase" Kind="Class" />
+      <Type Name="AttachmentCollection" Kind="Class" />
+      <Type Name="DeliveryNotificationOptions" Kind="Enumeration" />
+      <Type Name="LinkedResource" Kind="Class" />
+      <Type Name="LinkedResourceCollection" Kind="Class" />
+      <Type Name="MailAddress" Kind="Class" />
+      <Type Name="MailAddressCollection" Kind="Class" />
+      <Type Name="MailMessage" Kind="Class" />
+      <Type Name="MailPriority" Kind="Enumeration" />
+      <Type Name="SendCompletedEventHandler" Kind="Delegate" />
+      <Type Name="SmtpAccess" Kind="Enumeration" />
+      <Type Name="SmtpClient" Kind="Class" />
+      <Type Name="SmtpDeliveryMethod" Kind="Enumeration" />
+      <Type Name="SmtpException" Kind="Class" />
+      <Type Name="SmtpFailedRecipientException" Kind="Class" />
+      <Type Name="SmtpFailedRecipientsException" Kind="Class" />
+      <Type Name="SmtpPermission" Kind="Class" />
+      <Type Name="SmtpPermissionAttribute" Kind="Class" />
+      <Type Name="SmtpStatusCode" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Net.Mime">
+      <Type Name="ContentDisposition" Kind="Class" />
+      <Type Name="ContentType" Kind="Class" />
+      <Type Name="DispositionTypeNames" Kind="Class" />
+      <Type Name="MediaTypeNames" Kind="Class" />
+      <Type Name="MediaTypeNames+Application" Kind="Class" />
+      <Type Name="MediaTypeNames+Image" Kind="Class" />
+      <Type Name="MediaTypeNames+Text" Kind="Class" />
+      <Type Name="TransferEncoding" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Net.NetworkInformation">
+      <Type Name="DuplicateAddressDetectionState" Kind="Enumeration" />
+      <Type Name="GatewayIPAddressInformation" Kind="Class" />
+      <Type Name="GatewayIPAddressInformationCollection" Kind="Class" />
+      <Type Name="IcmpV4Statistics" Kind="Class" />
+      <Type Name="IcmpV6Statistics" Kind="Class" />
+      <Type Name="IPAddressCollection" Kind="Class" />
+      <Type Name="IPAddressInformation" Kind="Class" />
+      <Type Name="IPAddressInformationCollection" Kind="Class" />
+      <Type Name="IPGlobalProperties" Kind="Class" />
+      <Type Name="IPGlobalStatistics" Kind="Class" />
+      <Type Name="IPInterfaceProperties" Kind="Class" />
+      <Type Name="IPStatus" Kind="Enumeration" />
+      <Type Name="IPv4InterfaceProperties" Kind="Class" />
+      <Type Name="IPv4InterfaceStatistics" Kind="Class" />
+      <Type Name="IPv6InterfaceProperties" Kind="Class" />
+      <Type Name="MulticastIPAddressInformation" Kind="Class" />
+      <Type Name="MulticastIPAddressInformationCollection" Kind="Class" />
+      <Type Name="NetBiosNodeType" Kind="Enumeration" />
+      <Type Name="NetworkAddressChangedEventHandler" Kind="Delegate" />
+      <Type Name="NetworkAvailabilityChangedEventHandler" Kind="Delegate" />
+      <Type Name="NetworkAvailabilityEventArgs" Kind="Class" />
+      <Type Name="NetworkChange" Kind="Class" />
+      <Type Name="NetworkInformationAccess" Kind="Enumeration" />
+      <Type Name="NetworkInformationException" Kind="Class" />
+      <Type Name="NetworkInformationPermission" Kind="Class" />
+      <Type Name="NetworkInformationPermissionAttribute" Kind="Class" />
+      <Type Name="NetworkInterface" Kind="Class" />
+      <Type Name="NetworkInterfaceComponent" Kind="Enumeration" />
+      <Type Name="NetworkInterfaceType" Kind="Enumeration" />
+      <Type Name="OperationalStatus" Kind="Enumeration" />
+      <Type Name="PhysicalAddress" Kind="Class" />
+      <Type Name="Ping" Kind="Class" />
+      <Type Name="PingCompletedEventArgs" Kind="Class" />
+      <Type Name="PingCompletedEventHandler" Kind="Delegate" />
+      <Type Name="PingException" Kind="Class" />
+      <Type Name="PingOptions" Kind="Class" />
+      <Type Name="PingReply" Kind="Class" />
+      <Type Name="PrefixOrigin" Kind="Enumeration" />
+      <Type Name="SuffixOrigin" Kind="Enumeration" />
+      <Type Name="TcpConnectionInformation" Kind="Class" />
+      <Type Name="TcpState" Kind="Enumeration" />
+      <Type Name="TcpStatistics" Kind="Class" />
+      <Type Name="UdpStatistics" Kind="Class" />
+      <Type Name="UnicastIPAddressInformation" Kind="Class" />
+      <Type Name="UnicastIPAddressInformationCollection" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Net.Security">
+      <Type Name="AuthenticatedStream" Kind="Class" />
+      <Type Name="AuthenticationLevel" Kind="Enumeration" />
+      <Type Name="LocalCertificateSelectionCallback" Kind="Delegate" />
+      <Type Name="NegotiateStream" Kind="Class" />
+      <Type Name="ProtectionLevel" Kind="Enumeration" />
+      <Type Name="RemoteCertificateValidationCallback" Kind="Delegate" />
+      <Type Name="SslPolicyErrors" Kind="Enumeration" />
+      <Type Name="SslStream" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Net.Sockets">
+      <Type Name="AddressFamily" Kind="Enumeration" />
+      <Type Name="IOControlCode" Kind="Enumeration" />
+      <Type Name="IPPacketInformation" Kind="Structure" />
+      <Type Name="IPv6MulticastOption" Kind="Class" />
+      <Type Name="LingerOption" Kind="Class" />
+      <Type Name="MulticastOption" Kind="Class" />
+      <Type Name="NetworkStream" Kind="Class" />
+      <Type Name="ProtocolFamily" Kind="Enumeration" />
+      <Type Name="ProtocolType" Kind="Enumeration" />
+      <Type Name="SelectMode" Kind="Enumeration" />
+      <Type Name="SendPacketsElement" Kind="Class" />
+      <Type Name="Socket" Kind="Class" />
+      <Type Name="SocketAsyncEventArgs" Kind="Class" />
+      <Type Name="SocketAsyncOperation" Kind="Enumeration" />
+      <Type Name="SocketError" Kind="Enumeration" />
+      <Type Name="SocketException" Kind="Class" />
+      <Type Name="SocketFlags" Kind="Enumeration" />
+      <Type Name="SocketInformation" Kind="Structure" />
+      <Type Name="SocketInformationOptions" Kind="Enumeration" />
+      <Type Name="SocketOptionLevel" Kind="Enumeration" />
+      <Type Name="SocketOptionName" Kind="Enumeration" />
+      <Type Name="SocketShutdown" Kind="Enumeration" />
+      <Type Name="SocketType" Kind="Enumeration" />
+      <Type Name="TcpClient" Kind="Class" />
+      <Type Name="TcpListener" Kind="Class" />
+      <Type Name="TransmitFileOptions" Kind="Enumeration" />
+      <Type Name="UdpClient" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.InteropServices">
+      <Type Name="DefaultParameterValueAttribute" Kind="Class" />
+      <Type Name="HandleCollector" Kind="Class" />
+      <Type Name="StandardOleMarshalObject" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.InteropServices.ComTypes">
+      <Type Name="ADVF" Kind="Enumeration" />
+      <Type Name="DATADIR" Kind="Enumeration" />
+      <Type Name="DVASPECT" Kind="Enumeration" />
+      <Type Name="FORMATETC" Kind="Structure" />
+      <Type Name="IAdviseSink" Kind="Interface" />
+      <Type Name="IDataObject" Kind="Interface" />
+      <Type Name="IEnumFORMATETC" Kind="Interface" />
+      <Type Name="IEnumSTATDATA" Kind="Interface" />
+      <Type Name="STATDATA" Kind="Structure" />
+      <Type Name="STGMEDIUM" Kind="Structure" />
+      <Type Name="TYMED" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Security.AccessControl">
+      <Type Name="SemaphoreAccessRule" Kind="Class" />
+      <Type Name="SemaphoreAuditRule" Kind="Class" />
+      <Type Name="SemaphoreRights" Kind="Enumeration" />
+      <Type Name="SemaphoreSecurity" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Security.Authentication">
+      <Type Name="AuthenticationException" Kind="Class" />
+      <Type Name="CipherAlgorithmType" Kind="Enumeration" />
+      <Type Name="ExchangeAlgorithmType" Kind="Enumeration" />
+      <Type Name="HashAlgorithmType" Kind="Enumeration" />
+      <Type Name="InvalidCredentialException" Kind="Class" />
+      <Type Name="SslProtocols" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Security.Cryptography">
+      <Type Name="AsnEncodedData" Kind="Class" />
+      <Type Name="AsnEncodedDataCollection" Kind="Class" />
+      <Type Name="AsnEncodedDataEnumerator" Kind="Class" />
+      <Type Name="Oid" Kind="Class" />
+      <Type Name="OidCollection" Kind="Class" />
+      <Type Name="OidEnumerator" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Security.Cryptography.X509Certificates">
+      <Type Name="OpenFlags" Kind="Enumeration" />
+      <Type Name="PublicKey" Kind="Class" />
+      <Type Name="StoreLocation" Kind="Enumeration" />
+      <Type Name="StoreName" Kind="Enumeration" />
+      <Type Name="X500DistinguishedName" Kind="Class" />
+      <Type Name="X500DistinguishedNameFlags" Kind="Enumeration" />
+      <Type Name="X509BasicConstraintsExtension" Kind="Class" />
+      <Type Name="X509Certificate2" Kind="Class" />
+      <Type Name="X509Certificate2Collection" Kind="Class" />
+      <Type Name="X509Certificate2Enumerator" Kind="Class" />
+      <Type Name="X509CertificateCollection" Kind="Class" />
+      <Type Name="X509CertificateCollection+X509CertificateEnumerator" Kind="Class" />
+      <Type Name="X509Chain" Kind="Class" />
+      <Type Name="X509ChainElement" Kind="Class" />
+      <Type Name="X509ChainElementCollection" Kind="Class" />
+      <Type Name="X509ChainElementEnumerator" Kind="Class" />
+      <Type Name="X509ChainPolicy" Kind="Class" />
+      <Type Name="X509ChainStatus" Kind="Structure" />
+      <Type Name="X509ChainStatusFlags" Kind="Enumeration" />
+      <Type Name="X509EnhancedKeyUsageExtension" Kind="Class" />
+      <Type Name="X509Extension" Kind="Class" />
+      <Type Name="X509ExtensionCollection" Kind="Class" />
+      <Type Name="X509ExtensionEnumerator" Kind="Class" />
+      <Type Name="X509FindType" Kind="Enumeration" />
+      <Type Name="X509IncludeOption" Kind="Enumeration" />
+      <Type Name="X509KeyUsageExtension" Kind="Class" />
+      <Type Name="X509KeyUsageFlags" Kind="Enumeration" />
+      <Type Name="X509NameType" Kind="Enumeration" />
+      <Type Name="X509RevocationFlag" Kind="Enumeration" />
+      <Type Name="X509RevocationMode" Kind="Enumeration" />
+      <Type Name="X509Store" Kind="Class" />
+      <Type Name="X509SubjectKeyIdentifierExtension" Kind="Class" />
+      <Type Name="X509SubjectKeyIdentifierHashAlgorithm" Kind="Enumeration" />
+      <Type Name="X509VerificationFlags" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Security.Permissions">
+      <Type Name="ResourcePermissionBase" Kind="Class" />
+      <Type Name="ResourcePermissionBaseEntry" Kind="Class" />
+      <Type Name="StorePermission" Kind="Class" />
+      <Type Name="StorePermissionAttribute" Kind="Class" />
+      <Type Name="StorePermissionFlags" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Text.RegularExpressions">
+      <Type Name="Capture" Kind="Class" />
+      <Type Name="CaptureCollection" Kind="Class" />
+      <Type Name="Group" Kind="Class" />
+      <Type Name="GroupCollection" Kind="Class" />
+      <Type Name="Match" Kind="Class" />
+      <Type Name="MatchCollection" Kind="Class" />
+      <Type Name="MatchEvaluator" Kind="Delegate" />
+      <Type Name="Regex" Kind="Class" />
+      <Type Name="RegexCompilationInfo" Kind="Class" />
+      <Type Name="RegexOptions" Kind="Enumeration" />
+      <Type Name="RegexRunner" Kind="Class" />
+      <Type Name="RegexRunnerFactory" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Threading">
+      <Type Name="Semaphore" Kind="Class" />
+      <Type Name="SemaphoreFullException" Kind="Class" />
+      <Type Name="ThreadExceptionEventArgs" Kind="Class" />
+      <Type Name="ThreadExceptionEventHandler" Kind="Delegate" />
+    </Namespace>
+    <Namespace Name="System.Timers">
+      <Type Name="ElapsedEventArgs" Kind="Class" />
+      <Type Name="ElapsedEventHandler" Kind="Delegate" />
+      <Type Name="Timer" Kind="Class" />
+      <Type Name="TimersDescriptionAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Web">
+      <Type Name="AspNetHostingPermission" Kind="Class" />
+      <Type Name="AspNetHostingPermissionAttribute" Kind="Class" />
+      <Type Name="AspNetHostingPermissionLevel" Kind="Enumeration" />
+    </Namespace>
+  </Types>
+  <Title>System</Title>
+</Overview>

@@ -1,0 +1,256 @@
+<Type Name="SocketFlags" FullName="System.Net.Sockets.SocketFlags" FullNameSP="System_Net_Sockets_SocketFlags" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable SocketFlags extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum SocketFlags" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Controls the transfer behavior when sending and
+      receiving data on a <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
+    </summary>
+    <remarks>
+      <para>The following methods use this enumeration:</para>
+      <list type="bullet">
+        <item>
+          <term>
+            <see cref="M:System.Net.Sockets.Socket.BeginReceive(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:System.Net.Sockets.Socket.BeginReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@,System.AsyncCallback,System.Object)" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:System.Net.Sockets.Socket.BeginSendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint,System.AsyncCallback,System.Object)" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:System.Net.Sockets.Socket.Receive(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" />
+          </term>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Broadcast">
+      <MemberSignature Language="C#" Value="Broadcast" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ControlDataTruncated">
+      <MemberSignature Language="C#" Value="ControlDataTruncated" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DontRoute">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketFlags DontRoute = 0x4" />
+      <MemberSignature Language="C#" Value="DontRoute" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DontRoute</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies not to use routing tables to transmit the data. If there is a router 
+ between the local and destination addresses, the data will be lost.
+ </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxIOVectorLength">
+      <MemberSignature Language="C#" Value="MaxIOVectorLength" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <MemberValue>MaxIOVectorLength</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Multicast">
+      <MemberSignature Language="C#" Value="Multicast" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketFlags None = 0x0" />
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>None</MemberValue>
+      <Docs>
+        <summary>
+          <para> No flags are specified. 
+ </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OutOfBand">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketFlags OutOfBand = 0x1" />
+      <MemberSignature Language="C#" Value="OutOfBand" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OutOfBand</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies to send or receive out-of-band (OOB) data. OOB
+      data is specially marked data that can be received independently of unmarked data.
+      </para>
+          <block subset="none" type="note">
+            <para>Used only with a connection-oriented protocol. </para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Partial">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketFlags Partial = 0x8000" />
+      <MemberSignature Language="C#" Value="Partial" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Partial</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies that a partial message has been received.
+      </para>
+          <block subset="none" type="note">
+            <para>Used only with a message-oriented protocol. </para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Peek">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketFlags Peek = 0x2" />
+      <MemberSignature Language="C#" Value="Peek" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Peek</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies to peek at the incoming data. This copies data 
+ to the input buffer but does not remove it from the input queue.
+ </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Truncated">
+      <MemberSignature Language="C#" Value="Truncated" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

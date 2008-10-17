@@ -1,0 +1,958 @@
+<Type Name="WebHeaderCollection" FullName="System.Net.WebHeaderCollection" FullNameSP="System_Net_WebHeaderCollection" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable WebHeaderCollection extends System.Collections.Specialized.NameValueCollection" />
+  <TypeSignature Language="C#" Value="public class WebHeaderCollection : System.Collections.Specialized.NameValueCollection" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Collections.Specialized.NameValueCollection</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para>Contains protocol headers associated with a <see cref="T:System.Net.WebRequest" /> or
+<see cref="T:System.Net.WebResponse" /> instance.</para>
+    </summary>
+    <remarks>
+      <para>This class is generally accessed through <see cref="P:System.Net.WebRequest.Headers" qualify="true" /> or <see cref="P:System.Net.WebResponse.Headers" qualify="true" />
+.</para>
+      <para> 
+   Certain protocol headers are protected and cannot be set directly in a <see cref="T:System.Net.WebHeaderCollection" /> instance. These headers
+   can only be set through provided property accessors or by the system. The
+   protected headers are:</para>
+      <list type="bullet">
+        <item>
+          <term>
+      
+      Accept</term>
+        </item>
+        <item>
+          <term>
+      
+      Connection</term>
+        </item>
+        <item>
+          <term>
+      
+      Content-Length</term>
+        </item>
+        <item>
+          <term>
+      
+      Content-Type</term>
+        </item>
+        <item>
+          <term>
+      
+      Date</term>
+        </item>
+        <item>
+          <term>
+      
+      Expect</term>
+        </item>
+        <item>
+          <term>
+      
+      Host</term>
+        </item>
+        <item>
+          <term>
+      
+      If-Modified-Since</term>
+        </item>
+        <item>
+          <term>
+      
+      Range</term>
+        </item>
+        <item>
+          <term>
+      
+      Referer</term>
+        </item>
+        <item>
+          <term>
+      
+      Transfer-Encoding</term>
+        </item>
+        <item>
+          <term>
+      
+      UserAgent</term>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public WebHeaderCollection ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Constructs a new instance of the <see cref="T:System.Net.WebHeaderCollection" />
+class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected WebHeaderCollection (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="serializationInfo">To be added.</param>
+        <param name="streamingContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Add(string header)" />
+      <MemberSignature Language="C#" Value="public void Add (string header);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="header">A <see cref="T:System.String" /> containing the header to add, with the name and value separated by a colon.</param>
+        <summary>
+          <para>Inserts the specified header into the collection.</para>
+        </summary>
+        <remarks>
+          <para>This method inserts a new header into the list of header 
+      name/value pairs. <paramref name="header" />
+      is required to be specified in the format <c>name:value</c>.</para>
+          <para>If the header specified in <c>name</c> is already present in the
+   collection, <c>value</c> is concatenated with the existing
+value.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="header " /> is <see langword="null" /> or <see cref="F:System.String.Empty" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="header" /> does not contain a colon (:) character.</para>
+          <para>-or-</para>
+          <para>
+            <c>name</c> is <see cref="F:System.String.Empty" />, or contains invalid characters.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="header" /> is a protected header that can only be set with a property accessor or by the system. </para>
+          <para>-or-</para>
+          <para>
+            <c>value</c> contains invalid characters.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (System.Net.HttpRequestHeader header, string value);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.Net.HttpRequestHeader" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (System.Net.HttpResponseHeader header, string value);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.Net.HttpResponseHeader" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Add(string name, string value)" />
+      <MemberSignature Language="C#" Value="public override void Add (string name, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> that contains the name of the header to add to the collection.</param>
+        <param name="value">A <see cref="T:System.String" /> that contains the content of the header.</param>
+        <summary>
+          <para>Inserts a new header with the specified name and value into the collection.</para>
+        </summary>
+        <remarks>
+          <para>This method inserts
+      a new header into
+      the list of header name/value pairs.</para>
+          <para> If the header specified in <paramref name="name" /> is already present, <paramref name="value" /> is concatenated with the existing
+   value.</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Collections.Specialized.NameValueCollection.Add(System.Collections.Specialized.NameValueCollection)" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="name " /> is <see langword="null" /> or <see cref="F:System.String.Empty" />, or contains invalid characters.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="name" /> is a protected header that can only be set with a property accessor or by the system.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="value" /> contains invalid characters.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddWithoutValidate">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig instance void AddWithoutValidate(string headerName, string headerValue)" />
+      <MemberSignature Language="C#" Value="protected void AddWithoutValidate (string headerName, string headerValue);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="headerName" Type="System.String" />
+        <Parameter Name="headerValue" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="headerName">A <see cref="T:System.String" /> that contains the name of the header to add to the collection.</param>
+        <param name="headerValue">A <see cref="T:System.String" /> that contains the content of the header.</param>
+        <summary>
+          <para>Inserts a header into the current instance without checking whether the header
+      is on the restricted header list.</para>
+        </summary>
+        <remarks>
+          <para>This method adds a header to the
+      collection without checking whether the header is on the restricted header list. </para>
+          <para>
+            <block subset="none" type="note">When subclassing <see cref="T:System.Net.WebHeaderCollection" />,
+   use the <see cref="M:System.Net.WebHeaderCollection.AddWithoutValidate(System.String,System.String)" />
+   method
+   to
+   
+   add headers that are normally exposed through
+   property accessors. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="headerName " /> is <see langword="null" /> or <see cref="F:System.String.Empty" />, or contains invalid characters.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="headerValue" /> contains invalid characters.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AllKeys">
+      <MemberSignature Language="C#" Value="public override string[] AllKeys { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public override void Clear ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public override int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Get">
+      <MemberSignature Language="C#" Value="public override string Get (int index);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Get">
+      <MemberSignature Language="C#" Value="public override string Get (string name);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public override System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetKey">
+      <MemberSignature Language="C#" Value="public override string GetKey (int index);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="serializationInfo">To be added.</param>
+        <param name="streamingContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetValues">
+      <MemberSignature Language="C#" Value="public override string[] GetValues (int index);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetValues">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.String[] GetValues(string header)" />
+      <MemberSignature Language="C#" Value="public override string[] GetValues (string header);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="header">A <see cref="T:System.String" /> containing the protocol header name whose values are returned. </param>
+        <summary>
+          <para> Returns the values stored in the specified protocol
+      header.
+      </para>
+        </summary>
+        <returns>
+          <para> An array of <see cref="T:System.String" /> objects that contain the values of the protocol
+   header named <paramref name="header" />
+   in the current instance. If <paramref name="header " />is not found in the current
+   instance, returns <see langword="null" /> .
+   </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Collections.Specialized.NameValueCollection.GetValues(System.String)" />.</block>
+          </para>
+        </remarks>
+        <example>
+          <para>This example demonstrates the <see cref="M:System.Net.WebHeaderCollection.GetValues(System.String)" /> method.</para>
+          <code lang="C#">
+using System;
+using System.Net;
+
+class GetValuesExample
+{
+   public static void Main()
+   {
+      Uri contosoUri = new Uri("http://www.contoso.com");
+      HttpWebRequest httpContoso = 
+         (HttpWebRequest)WebRequest.Create(contosoUri);
+
+      httpContoso.SendChunked=true;
+      httpContoso.TransferEncoding="compress";
+      httpContoso.TransferEncoding="gzip";
+    
+      WebHeaderCollection webColl = httpContoso.Headers;
+      String[] sAry = webColl.GetValues("Transfer-Encoding");
+
+      Console.WriteLine("Transfer-Encoding:");
+      foreach(string s in sAry)
+         Console.WriteLine("{0}", s);
+   }
+}
+</code>
+          <para>The output is</para>
+          <para>
+Transfer-Encoding:</para>
+          <para> compress</para>
+          <para> gzip
+</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsRestricted">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsRestricted(string headerName)" />
+      <MemberSignature Language="C#" Value="public static bool IsRestricted (string headerName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="headerName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="headerName">A <see cref="T:System.String" /> containing the header to test.</param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value that indicates whether the specified HTTP header can be set.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if
+   the header is protected; otherwise <see langword="false" /> .</para>
+        </returns>
+        <remarks>
+          <para>This method returns <see langword="true" /> to indicate that a header is
+   protected. Protected headers can only be set through provided property accessors or by the
+   system. They cannot be set directly in the current instance.</para>
+          <para>The protected headers are:</para>
+          <list type="bullet">
+            <item>
+              <term>
+      
+      Accept</term>
+            </item>
+            <item>
+              <term>
+      
+      Connection</term>
+            </item>
+            <item>
+              <term>
+      
+      Content-Length</term>
+            </item>
+            <item>
+              <term>
+      
+      Content-Type</term>
+            </item>
+            <item>
+              <term>
+      
+      Date</term>
+            </item>
+            <item>
+              <term>
+      
+      Expect</term>
+            </item>
+            <item>
+              <term>
+      
+      Host</term>
+            </item>
+            <item>
+              <term>
+      
+      If-Modified-Since</term>
+            </item>
+            <item>
+              <term>
+      
+      Range</term>
+            </item>
+            <item>
+              <term>
+      
+      Referer</term>
+            </item>
+            <item>
+              <term>
+      
+      Transfer-Encoding</term>
+            </item>
+            <item>
+              <term>
+      
+      UserAgent</term>
+            </item>
+          </list>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="headerName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="headerName " /> contains invalid characters.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsRestricted">
+      <MemberSignature Language="C#" Value="public static bool IsRestricted (string headerName, bool response);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="headerName" Type="System.String" />
+        <Parameter Name="response" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="headerName">To be added.</param>
+        <param name="response">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public string this[System.Net.HttpRequestHeader hrh] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hrh" Type="System.Net.HttpRequestHeader" />
+      </Parameters>
+      <Docs>
+        <param name="hrh">To be added.</param>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public string this[System.Net.HttpResponseHeader hrh] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hrh" Type="System.Net.HttpResponseHeader" />
+      </Parameters>
+      <Docs>
+        <param name="hrh">To be added.</param>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Keys">
+      <MemberSignature Language="C#" Value="public override System.Collections.Specialized.NameObjectCollectionBase.KeysCollection Keys { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Specialized.NameObjectCollectionBase+KeysCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnDeserialization">
+      <MemberSignature Language="C#" Value="public override void OnDeserialization (object sender);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="sender">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public void Remove (System.Net.HttpRequestHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.Net.HttpRequestHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public void Remove (System.Net.HttpResponseHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.Net.HttpResponseHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Remove(string name)" />
+      <MemberSignature Language="C#" Value="public override void Remove (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> that contains the name of the header to remove from the current instance.</param>
+        <summary>
+          <para>Removes the specified header from the current instance.</para>
+        </summary>
+        <remarks>
+          <para>This method deletes the specified header from the current instance. If
+      multiple values were added to the same header using <see cref="M:System.Net.WebHeaderCollection.Add(System.String,System.String)" />, a single call to <see cref="M:System.Net.WebHeaderCollection.Remove(System.String)" /> deletes all of the values.</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Collections.Specialized.NameValueCollection.Remove(System.String)" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="name " /> contains invalid characters.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="name " /> is a protected header that can only be set with a property accessor or by the system.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Set">
+      <MemberSignature Language="C#" Value="public void Set (System.Net.HttpRequestHeader header, string value);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.Net.HttpRequestHeader" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Set">
+      <MemberSignature Language="C#" Value="public void Set (System.Net.HttpResponseHeader header, string value);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.Net.HttpResponseHeader" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Set">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Set(string name, string value)" />
+      <MemberSignature Language="C#" Value="public override void Set (string name, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> that contains the name of the header to set. </param>
+        <param name="value">A <see cref="T:System.String" /> that contains the content of the header to set. </param>
+        <summary>
+          <para> Sets the specified header to the specified value.
+      </para>
+        </summary>
+        <remarks>
+          <para>The <see cref="M:System.Net.WebHeaderCollection.Set(System.String,System.String)" /> method inserts a new header into 
+   the list of header name/value pairs.</para>
+          <para>If the header specified in <paramref name="name" /> is already
+present, <paramref name="value" /> replaces the existing
+value.</para>
+          <para>
+            <block subset="none" type="note">This method overrides <see cref="M:System.Collections.Specialized.NameValueCollection.Set(System.String,System.String)" />.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />.</exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="name " /> contains invalid characters.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="name " /> is a protected header that can only be set with a property accessor or by the system.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="value " /> contains invalid characters.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
+      <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="serializationInfo">To be added.</param>
+        <param name="streamingContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToByteArray">
+      <MemberSignature Language="C#" Value="public byte[] ToByteArray ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

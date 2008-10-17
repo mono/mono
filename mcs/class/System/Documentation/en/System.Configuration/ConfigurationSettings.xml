@@ -1,0 +1,149 @@
+<Type Name="ConfigurationSettings" FullName="System.Configuration.ConfigurationSettings">
+  <TypeSignature Language="C#" Value="public sealed class ConfigurationSettings" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Provides access to the configuration settings for the application.</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AppSettings">
+      <MemberSignature Language="C#" Value="public static System.Collections.Specialized.NameValueCollection AppSettings { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Specialized.NameValueCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Provides access to the &lt;appSettings&gt; element of the application configuration.</summary>
+        <value>a <see cref="T:System.Collections.Specialized.NameValueCollection" /> containing values of the keys contained in the &lt;appSettings&gt; element of the config file.</value>
+        <remarks>
+          <example>
+The following example demonstrates the use of the AppSettings property.
+  <code lang="C#">
+/**
+ * Simple demo of the dotnet Configuration management system
+ * Building:
+ * 	mcs -o ConfigurationSettingDemo.exe ConfigurationSettingDemo.cs
+ */
+using System.Configuration;
+using System;
+using System.Collections.Specialized;
+
+namespace ConfigSettingsDemos {
+	class ConfigurationSettingDemo {
+		public static void Main(){
+			// Fetch the generic settings object
+			NameValueCollection settings=ConfigurationSettings.AppSettings;
+			// Reference by the key name
+			System.Console.WriteLine("The value of pi={0}",settings["pi"]);
+			// Reference in a loop
+			foreach(String key in settings.Keys){
+				System.Console.WriteLine("{0}={1}",key,settings[key]);
+			}
+		}
+	}
+}
+  </code></example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("This property is obsolete.  Please use System.Configuration.ConfigurationManager.AppSettings")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetConfig">
+      <MemberSignature Language="C#" Value="public static object GetConfig (string sectionName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sectionName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="sectionName">The configuration file section to be accessed.</param>
+        <summary>Provides access to the configuration settings for a user defined section of the configuration file.</summary>
+        <returns>The configuration settings for the specified section.</returns>
+        <remarks>
+          <example>
+            <code lang="C#">
+/**
+ * Demo of the dotnet Configuration management system
+ * Shows how to create your own configuration options tree and the corresponding handlers
+ *
+ * Building:
+ * 	mcs -o ConfigurationSettingDemo2.exe ConfigurationSettingDemo2.cs
+ * Files:
+ * 	ConfigurationSettingDemo2.cs
+ * 	ConfigurationSettingDemo2.exe.config
+ */
+using System.Configuration;
+using System;
+using System.Xml;
+
+namespace ConfigSettingsDemos {
+	
+	// Handler for settings sections containing &lt;username&gt; and &lt;password&gt; nodes
+	class Testhandler: IConfigurationSectionHandler {
+		public object Create(object parent, object context, XmlNode section){
+			string username=section["username"].InnerText;
+			string password=section["password"].InnerText;
+			return new DbSettings(username, password);
+		}
+	}
+	
+	// Provides ConfigurationSettings objects for application use
+	public class DbSettings {
+		public string username;
+		public string password;
+		
+		internal DbSettings(string username, string password){
+			this.username=username;
+			this.password=password;
+		}
+		
+		public override string ToString() {
+			return String.Format("server: localhost;user:{0};password:{1}",username,password);
+		}
+	}
+	
+	public class ConfigurationSettingDemo2 {
+		public static void Main(){
+			// Use dbconnectivity as a starting point for configuration parsing
+			string sectionroot="dbconnectivity";
+			DbSettings settings=(DbSettings)ConfigurationSettings.GetConfig(sectionroot);
+			Console.WriteLine("DB Connectivity String is: {0}", settings);
+		}
+	}
+}
+  </code>
+          </example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("This method is obsolete, it has been replaced by System.Configuration!System.Configuration.ConfigurationManager.GetSection")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,171 @@
+<Type Name="StandardToolWindows" FullName="System.ComponentModel.Design.StandardToolWindows">
+  <TypeSignature Language="C#" Value="public class StandardToolWindows" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StandardToolWindows ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ObjectBrowser">
+      <MemberSignature Language="C#" Value="public static readonly Guid ObjectBrowser = 970d9861-ee83-11d0-a778-00a0c91110c3;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>970d9861-ee83-11d0-a778-00a0c91110c3</MemberValue>
+    </Member>
+    <Member MemberName="OutputWindow">
+      <MemberSignature Language="C#" Value="public static readonly Guid OutputWindow = 34e76e81-ee4a-11d0-ae2e-00a0c90fffc3;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>34e76e81-ee4a-11d0-ae2e-00a0c90fffc3</MemberValue>
+    </Member>
+    <Member MemberName="ProjectExplorer">
+      <MemberSignature Language="C#" Value="public static readonly Guid ProjectExplorer = 3ae79031-e1bc-11d0-8f78-00a0c9110057;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>3ae79031-e1bc-11d0-8f78-00a0c9110057</MemberValue>
+    </Member>
+    <Member MemberName="PropertyBrowser">
+      <MemberSignature Language="C#" Value="public static readonly Guid PropertyBrowser = eefa5220-e298-11d0-8f78-00a0c9110057;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>eefa5220-e298-11d0-8f78-00a0c9110057</MemberValue>
+    </Member>
+    <Member MemberName="RelatedLinks">
+      <MemberSignature Language="C#" Value="public static readonly Guid RelatedLinks = 66dba47c-61df-11d2-aa79-00c04f990343;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>66dba47c-61df-11d2-aa79-00c04f990343</MemberValue>
+    </Member>
+    <Member MemberName="ServerExplorer">
+      <MemberSignature Language="C#" Value="public static readonly Guid ServerExplorer = 74946827-37a0-11d2-a273-00c04f8ef4ff;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>74946827-37a0-11d2-a273-00c04f8ef4ff</MemberValue>
+    </Member>
+    <Member MemberName="TaskList">
+      <MemberSignature Language="C#" Value="public static readonly Guid TaskList = 4a9b7e51-aa16-11d0-a8c5-00a0c921a4d2;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>4a9b7e51-aa16-11d0-a8c5-00a0c921a4d2</MemberValue>
+    </Member>
+    <Member MemberName="Toolbox">
+      <MemberSignature Language="C#" Value="public static readonly Guid Toolbox = b1e99781-ab81-11d0-b683-00aa00a3ee26;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>b1e99781-ab81-11d0-b683-00aa00a3ee26</MemberValue>
+    </Member>
+  </Members>
+</Type>

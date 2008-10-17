@@ -1,0 +1,277 @@
+<Type Name="CodeNamespace" FullName="System.CodeDom.CodeNamespace">
+  <TypeSignature Language="C#" Value="public class CodeNamespace : System.CodeDom.CodeObject" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.CodeDom.CodeObject</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.AutoDispatch)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>Represents a namespace definition in the CodeDOM</summary>
+    <remarks>
+      <example>
+        <code lang="C#">
+using System;
+using System.Text;
+using System.IO;
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
+
+/*	Outputs an empty namespace called Mono.CodeDomDemo in c#
+ *	// Demo Namespace
+ *	namespace Mono.CodeDomDemo {
+ * 	using System.Data;
+ *
+ *	}
+ */
+class CodeDomDemo {
+	public static int Main(string[] args) {
+		// Create namespace
+		CodeNamespace demoNs= new CodeNamespace("Mono.CodeDomDemo");
+		// Add stuff to the namespace
+		demoNs.Imports.Add(new CodeNamespaceImport("System.Data"));
+		demoNs.Comments.Add(new CodeCommentStatement("Demo Namespace"));
+		// Generate c# code
+		CSharpCodeProvider provider = new CSharpCodeProvider();
+		ICodeGenerator codeGen = provider.CreateGenerator ();
+		StringWriter sw  = new StringWriter(new StringBuilder());
+		codeGen.GenerateCodeFromNamespace(demoNs, sw,new CodeGeneratorOptions());
+		Console.WriteLine(sw.ToString());
+		return(0);
+	}
+}
+</code>
+      </example>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeNamespace ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Creates an empty <see cref="T:System.CodeDom.CodeNamespace" /> object.</summary>
+        <remarks>After the object has be constructed, the <see cref="M:System.CodeDom.CodeNamespace.Name" /> property
+has to be set before the Code Generator is called on it.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeNamespace (string name);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">Name of the Namespace to be created</param>
+        <summary>Creates a <see cref="T:System.CodeDom.CodeNamespace" /> object with the specified Namespace name.</summary>
+        <remarks>
+          <code lang="C#">
+using System;
+using System.Text;
+using System.IO;
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
+
+/*	Outputs an empty namespace called Mono.CodeDomDemo in c#
+ *	namespace Mono.CodeDomDemo {
+ * 
+ *	}
+ */
+class CodeDomDemo {
+	public static int Main(string[] args) {
+		// Create namespace
+		CodeNamespace demoNs= new CodeNamespace("Mono.CodeDomDemo");
+		// Generate c# code
+		CSharpCodeProvider provider = new CSharpCodeProvider();
+		ICodeGenerator codeGen = provider.CreateGenerator ();
+		StringWriter sw  = new StringWriter(new StringBuilder());
+		codeGen.GenerateCodeFromNamespace(demoNs, sw,new CodeGeneratorOptions());
+		Console.WriteLine(sw.ToString());
+		return(0);
+	}
+}
+</code>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Comments">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeCommentStatementCollection Comments { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeCommentStatementCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Collection of comments applicable to the Namespace.</summary>
+        <value>
+          <see cref="T:System.CodeDom.CodeCommentStatementCollection" /> object, which is a collection of comments
+on the namespace.</value>
+        <remarks>
+          <code lang="C#">
+/*	Creates namespace like thus when c# code is generated.
+/*	// Demo Namespace
+/*	namespace Mono.CodeDomDemo {
+/*
+/*	}
+...
+CodeNamespace demoNs= new CodeNamespace("Mono.CodeDomDemo");
+demoNs.Comments.Add(new CodeCommentStatement("Demo Namespace"));
+...
+</code>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Imports">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeNamespaceImportCollection Imports { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeNamespaceImportCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Collection of imports applicable to the namespace</summary>
+        <value>
+          <see cref="T:System.CodeDom.CodeNamespaceImportCollection" /> object, which is a collection of
+imports applicable to the namespace.</value>
+        <remarks>
+          <code lang="C#">
+/*	Creates namespace like thus when c# code is generated.
+/*	namespace Mono.CodeDomDemo {
+/*		using System.Data;
+/*	}
+...
+CodeNamespace demoNs= new CodeNamespace("Mono.CodeDomDemo");
+demoNs.Imports.Add(new CodeNamespaceImport("System.Data"));
+...
+</code>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Name of the Namespace to be generated.</summary>
+        <value>Name of the generated Namespace.</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PopulateComments">
+      <MemberSignature Language="C#" Value="public event EventHandler PopulateComments;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PopulateImports">
+      <MemberSignature Language="C#" Value="public event EventHandler PopulateImports;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PopulateTypes">
+      <MemberSignature Language="C#" Value="public event EventHandler PopulateTypes;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Types">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeTypeDeclarationCollection Types { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeTypeDeclarationCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Collection of CodeDom types that resides inside the namespace.</summary>
+        <value>To be added: an object of type 'CodeTypeDeclarationCollection'</value>
+        <remarks>This is a  collection of <see cref="T:System.CodeDom.CodeTypeDeclaration" />s that reside inside the Namespace.
+
+
+<example><code lang="C#">
+// This example creates a Mono.CodeDomDemo namespace and adds a new class 'Hello' to it.
+...
+// Create Hello class
+CodeTypeDeclaration helloClass=new CodeTypeDeclaration("Hello");
+helloClass.IsClass=true;
+...
+CodeNamespace testNs= new CodeNamespace("Mono.CodeDomDemo");
+testNs.Types.Add(helloClass);
+  </code></example></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

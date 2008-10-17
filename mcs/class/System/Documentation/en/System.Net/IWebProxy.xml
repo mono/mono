@@ -1,0 +1,145 @@
+<Type Name="IWebProxy" FullName="System.Net.IWebProxy" FullNameSP="System_Net_IWebProxy" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class interface public abstract IWebProxy" />
+  <TypeSignature Language="C#" Value="public interface IWebProxy" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Defines the methods and properties required by types that 
+      support accessing hosts via proxy
+      servers. </para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">This interface is implemented by 
+      the <see cref="T:System.Net.WebRequest" /> type.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Credentials">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.ICredentials Credentials { public hidebysig virtual abstract specialname class System.Net.ICredentials get_Credentials() public hidebysig virtual abstract specialname void set_Credentials(class System.Net.ICredentials value) }" />
+      <MemberSignature Language="C#" Value="public System.Net.ICredentials Credentials { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.ICredentials</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the credentials to submit to the proxy server for authentication.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Net.ICredentials" /> instance that contains the credentials needed to authenticate a request to the proxy server.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">The <see cref="T:System.Net.ICredentials" /> instance set and returned
+ by the <see cref="P:System.Net.IWebProxy.Credentials" /> property
+ contains the credentials that are sent to the proxy server in response to an
+ HTTP 407 (<see cref="F:System.Net.HttpStatusCode.ProxyAuthenticationRequired" /> ) status code.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this property to set the
+ credentials supplied in response to HTTP 407 status code
+ messages.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetProxy">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Uri GetProxy(class System.Uri destination)" />
+      <MemberSignature Language="C#" Value="public Uri GetProxy (Uri destination);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="destination" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="destination">A <see cref="T:System.Uri" /> specifying the requested Internet resource.</param>
+        <summary>
+          <para> Returns the Uniform Resource Identifier (URI) of a proxy server.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Uri" /> instance
+   containing the URI of the proxy used to contact
+<paramref name="destination" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">The <see cref="M:System.Net.IWebProxy.GetProxy(System.Uri)" /> method returns the URI of the
+   proxy server that handles requests to the Internet resource specified in the
+<paramref name="destination " />parameter.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+   get the URI of the proxy server used to access the specified resource.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsBypassed">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool IsBypassed(class System.Uri host)" />
+      <MemberSignature Language="C#" Value="public bool IsBypassed (Uri host);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="host" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="host">The <see cref="T:System.Uri" /> of the server to check for proxy use.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Boolean" /> value that indicates whether the proxy server is not used to access a specified server.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " /> if
+   the proxy server is not used to access the server specified in <paramref name="host" />;
+   otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">The value
+      returned by the <see cref="M:System.Net.IWebProxy.IsBypassed(System.Uri)" /> method indicates whether
+      requests that access the server specified in the <paramref name="host " />
+      parameter bypass the proxy server. </block>
+          </para>
+          <para>
+            <block subset="none" type="usage">If <see cref="M:System.Net.IWebProxy.IsBypassed(System.Uri)" />
+is <see langword="true" /> , requests and responses between the
+client and <paramref name="host" /> are not required to go through the proxy
+server.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

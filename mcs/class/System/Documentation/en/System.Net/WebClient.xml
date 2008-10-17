@@ -1,0 +1,2227 @@
+<Type Name="WebClient" FullName="System.Net.WebClient" FullNameSP="System_Net_WebClient" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed WebClient extends System.MarshalByRefObject" />
+  <TypeSignature Language="C#" Value="public class WebClient : System.ComponentModel.Component" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ComponentModel.Component</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <para> Provides common methods for sending data to
+      and receiving data from a resource identified by a URI.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Net.WebClient" />
+   class provides common methods for
+   sending data to or receiving data from any local, Intranet, or Internet resource identified by
+   a URI. </para>
+        <para>The <see cref="T:System.Net.WebClient" /> class uses the <see cref="T:System.Net.WebRequest" /> class to provide access to Internet
+resources. <see cref="T:System.Net.WebClient" /> instances can
+access data with any class derived from <see cref="T:System.Net.WebRequest" /> that is
+registered with the <see cref="M:System.Net.WebRequest.RegisterPrefix(System.String,System.Net.IWebRequestCreate)" qualify="true" />
+method. </para>
+        <para> By default, the CLI supports URIs
+   with the "http:", "https:", and "file:"
+   schemes.</para>
+        <para>The <see cref="T:System.Net.WebClient" /> class provides the following methods for uploading data to
+a resource. </para>
+        <list type="bullet">
+          <item>
+            <term>
+              <see cref="M:System.Net.WebClient.OpenWrite(System.String)" /> sends a <see cref="T:System.IO.Stream" /> to the server hosting a 
+      resource.</term>
+          </item>
+          <item>
+            <term>
+              <see cref="M:System.Net.WebClient.UploadData(System.String,System.Byte[])" /> sends a byte array to the server hosting 
+      a resource and returns a byte array containing the response from the server,
+      if any.</term>
+          </item>
+          <item>
+            <term>
+              <see cref="M:System.Net.WebClient.UploadFile(System.String,System.String)" /> sends a local file to the server 
+      hosting a resource and returns a byte array containing the response from the
+      server, if any.</term>
+          </item>
+          <item>
+            <term>
+              <see cref="M:System.Net.WebClient.UploadValues(System.String,System.Collections.Specialized.NameValueCollection)" /> sends a <see cref="T:System.Collections.Specialized.NameValueCollection" /> 
+   collection to the server hosting a resource and returns a byte array containing the response from the server,
+   if any.</term>
+          </item>
+        </list>
+        <para>The <see cref="T:System.Net.WebClient" /> class also provides the following methods for
+downloading data from a resource.</para>
+        <list type="bullet">
+          <item>
+            <term>
+              <see cref="M:System.Net.WebClient.DownloadData(System.String)" /> downloads data from a resource and 
+      returns a byte array.</term>
+          </item>
+          <item>
+            <term>
+              <see cref="M:System.Net.WebClient.DownloadFile(System.String,System.String)" /> downloads data from a resource to a 
+      local file.</term>
+          </item>
+          <item>
+            <term>
+              <see cref="M:System.Net.WebClient.OpenRead(System.String)" /> returns the data from the resource as a
+   <see cref="T:System.IO.Stream" />.</term>
+          </item>
+        </list>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public WebClient ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs a new instance of the <see cref="T:System.Net.WebClient" /> class.</para>
+        </summary>
+        <remarks>
+          <para> This constructor creates a new instance of the
+ <see cref="T:System.Net.WebClient" />
+ class with properties set to <see langword="null" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BaseAddress">
+      <MemberSignature Language="ILASM" Value=".property string BaseAddress { public hidebysig specialname instance string get_BaseAddress() public hidebysig specialname instance void set_BaseAddress(string value) }" />
+      <MemberSignature Language="C#" Value="public string BaseAddress { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the base URI for requests made by a <see cref="T:System.Net.WebClient" /> .</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the base URI for requests made by a
+<see cref="T:System.Net.WebClient" /> or, <see cref="F:System.String.Empty" />, if no value 
+   was set or <see langword="null" /> was specified for a set operation. </para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">The <see cref="P:System.Net.WebClient.BaseAddress" /> property
+   contains a base URI that is combined with the relative address specified when
+   calling an upload or download method.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The value specified for a set operation is not <see langword="null" /> or <see cref="F:System.String.Empty" />, and is not a URI in a format recognized by the <see cref="T:System.Uri" /> class.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CachePolicy">
+      <MemberSignature Language="C#" Value="public System.Net.Cache.RequestCachePolicy CachePolicy { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Cache.RequestCachePolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CancelAsync">
+      <MemberSignature Language="C#" Value="public void CancelAsync ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Credentials">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.ICredentials Credentials { public hidebysig specialname instance class System.Net.ICredentials get_Credentials() public hidebysig specialname instance void set_Credentials(class System.Net.ICredentials value) }" />
+      <MemberSignature Language="C#" Value="public System.Net.ICredentials Credentials { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.ICredentials</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the network credentials used
+      to authenticate the client making the current request.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Net.ICredentials" /> containing the authentication credentials for the
+   request. The default is
+<see langword="null" />.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="P:System.Net.WebClient.Credentials" /> property contains the
+   authentication credentials required to access the Internet resource.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DownloadData">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Byte[] DownloadData(string address)" />
+      <MemberSignature Language="C#" Value="public byte[] DownloadData (string address);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI from which data will be downloaded.</param>
+        <summary>
+          <para>Downloads data from the resource identified by the
+      specified URI.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Byte" /> array containing the data downloaded from the resource
+   specified by <paramref name="address" />.</para>
+        </returns>
+        <remarks>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not 
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+   with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+   data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+   the <see cref="P:System.Net.WebClient.QueryString" />
+   property of the current instance is not <see cref="F:System.String.Empty" />, it is
+   appended to <paramref name="address" />.</para>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para> -or-</para>
+          <para>An error occurred while downloading data.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DownloadData">
+      <MemberSignature Language="C#" Value="public byte[] DownloadData (Uri address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadDataAsync">
+      <MemberSignature Language="C#" Value="public void DownloadDataAsync (Uri address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadDataAsync">
+      <MemberSignature Language="C#" Value="public void DownloadDataAsync (Uri address, object userToken);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="userToken" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="userToken">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadDataCompleted">
+      <MemberSignature Language="C#" Value="public event System.Net.DownloadDataCompletedEventHandler DownloadDataCompleted;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.DownloadDataCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadFile">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void DownloadFile(string address, string fileName)" />
+      <MemberSignature Language="C#" Value="public void DownloadFile (string address, string fileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI from which data will be downloaded.</param>
+        <param name="fileName">A <see cref="T:System.String" /> that specifies the name of the local file to which data will be written.</param>
+        <summary>
+          <para> Downloads data from the resource identified by
+      the specified URI, and writes the data to the specified file .</para>
+        </summary>
+        <remarks>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not 
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+   with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+   data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+   the <see cref="P:System.Net.WebClient.QueryString" />
+   property of the current instance is not <see cref="F:System.String.Empty" />, it is
+   appended to <paramref name="address" />.</para>
+          <para>This method downloads data from the absolute URI 
+   to local file, <paramref name="fileName" /> . If <paramref name="fileName " />already exists,
+   the existing file is overwritten.</para>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="filename" /> is <see langword="null" /> or <see cref="F:System.String.Empty" /> or contains invalid characters, or the specified path to the file does not exist.</para>
+          <para>-or-</para>
+          <para>An error occurred while downloading data.</para>
+        </exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have permission to write to local files.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write to files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DownloadFile">
+      <MemberSignature Language="C#" Value="public void DownloadFile (Uri address, string fileName);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="fileName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadFileAsync">
+      <MemberSignature Language="C#" Value="public void DownloadFileAsync (Uri address, string fileName);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="fileName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadFileAsync">
+      <MemberSignature Language="C#" Value="public void DownloadFileAsync (Uri address, string fileName, object userToken);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="userToken" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="fileName">To be added.</param>
+        <param name="userToken">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadFileCompleted">
+      <MemberSignature Language="C#" Value="public event System.ComponentModel.AsyncCompletedEventHandler DownloadFileCompleted;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.AsyncCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadProgressChanged">
+      <MemberSignature Language="C#" Value="public event System.Net.DownloadProgressChangedEventHandler DownloadProgressChanged;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.DownloadProgressChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadString">
+      <MemberSignature Language="C#" Value="public string DownloadString (string address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadString">
+      <MemberSignature Language="C#" Value="public string DownloadString (Uri address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadStringAsync">
+      <MemberSignature Language="C#" Value="public void DownloadStringAsync (Uri address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadStringAsync">
+      <MemberSignature Language="C#" Value="public void DownloadStringAsync (Uri address, object userToken);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="userToken" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="userToken">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadStringCompleted">
+      <MemberSignature Language="C#" Value="public event System.Net.DownloadStringCompletedEventHandler DownloadStringCompleted;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.DownloadStringCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Encoding">
+      <MemberSignature Language="C#" Value="public System.Text.Encoding Encoding { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetWebRequest">
+      <MemberSignature Language="C#" Value="protected virtual System.Net.WebRequest GetWebRequest (Uri address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetWebResponse">
+      <MemberSignature Language="C#" Value="protected virtual System.Net.WebResponse GetWebResponse (System.Net.WebRequest request);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebResponse</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="request" Type="System.Net.WebRequest" />
+      </Parameters>
+      <Docs>
+        <param name="request">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetWebResponse">
+      <MemberSignature Language="C#" Value="protected virtual System.Net.WebResponse GetWebResponse (System.Net.WebRequest request, IAsyncResult result);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebResponse</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="request" Type="System.Net.WebRequest" />
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="request">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Headers">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.WebHeaderCollection Headers { public hidebysig specialname instance class System.Net.WebHeaderCollection get_Headers() public hidebysig specialname instance void set_Headers(class System.Net.WebHeaderCollection value) }" />
+      <MemberSignature Language="C#" Value="public System.Net.WebHeaderCollection Headers { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.WebHeaderCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a collection of header name/value pairs
+      associated with the request.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Net.WebHeaderCollection" /> containing header 
+   name/value pairs associated with the request or, if this property has not been
+   set or was set to <see langword="null" />, a new instance of the <see cref="T:System.Net.WebHeaderCollection" />
+   class.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">This property
+      stores the header information that the current instance sends with a
+      request. This is an unrestricted collection of headers; setting headers that are
+      protected in <see cref="T:System.Net.WebRequest" /> descendants like <see cref="T:System.Net.HttpWebRequest" /> is allowed.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsBusy">
+      <MemberSignature Language="C#" Value="public bool IsBusy { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnDownloadDataCompleted">
+      <MemberSignature Language="C#" Value="protected virtual void OnDownloadDataCompleted (System.Net.DownloadDataCompletedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Net.DownloadDataCompletedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnDownloadFileCompleted">
+      <MemberSignature Language="C#" Value="protected virtual void OnDownloadFileCompleted (System.ComponentModel.AsyncCompletedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.ComponentModel.AsyncCompletedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnDownloadProgressChanged">
+      <MemberSignature Language="C#" Value="protected virtual void OnDownloadProgressChanged (System.Net.DownloadProgressChangedEventArgs e);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.Net.DownloadProgressChangedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="e">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnDownloadStringCompleted">
+      <MemberSignature Language="C#" Value="protected virtual void OnDownloadStringCompleted (System.Net.DownloadStringCompletedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Net.DownloadStringCompletedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnOpenReadCompleted">
+      <MemberSignature Language="C#" Value="protected virtual void OnOpenReadCompleted (System.Net.OpenReadCompletedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Net.OpenReadCompletedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnOpenWriteCompleted">
+      <MemberSignature Language="C#" Value="protected virtual void OnOpenWriteCompleted (System.Net.OpenWriteCompletedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Net.OpenWriteCompletedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnUploadDataCompleted">
+      <MemberSignature Language="C#" Value="protected virtual void OnUploadDataCompleted (System.Net.UploadDataCompletedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Net.UploadDataCompletedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnUploadFileCompleted">
+      <MemberSignature Language="C#" Value="protected virtual void OnUploadFileCompleted (System.Net.UploadFileCompletedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Net.UploadFileCompletedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnUploadProgressChanged">
+      <MemberSignature Language="C#" Value="protected virtual void OnUploadProgressChanged (System.Net.UploadProgressChangedEventArgs e);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.Net.UploadProgressChangedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="e">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnUploadStringCompleted">
+      <MemberSignature Language="C#" Value="protected virtual void OnUploadStringCompleted (System.Net.UploadStringCompletedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Net.UploadStringCompletedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnUploadValuesCompleted">
+      <MemberSignature Language="C#" Value="protected virtual void OnUploadValuesCompleted (System.Net.UploadValuesCompletedEventArgs args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Net.UploadValuesCompletedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.IO.Stream OpenRead(string address)" />
+      <MemberSignature Language="C#" Value="public System.IO.Stream OpenRead (string address);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI from which data will be downloaded.</param>
+        <summary>
+          <para>Opens a readable <see cref="T:System.IO.Stream" /> containing the data downloaded from the resource identified
+   by the specified URI.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.IO.Stream" /> used to read data from
+   a resource.</para>
+        </returns>
+        <remarks>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not 
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+   with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+   data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+   the <see cref="P:System.Net.WebClient.QueryString" />
+   property of the current instance is not <see cref="F:System.String.Empty" />, it is
+   appended to <paramref name="address" />.</para>
+          <para>
+            <block subset="none" type="note">This method creates a <see cref="T:System.IO.Stream" /> instance used to access the data specified by the absolute URI
+<paramref name="." /> The caller of this method is responsible for calling <see cref="M:System.IO.Stream.Close" /> to 
+release the resources allocated for the stream.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para> -or-</para>
+          <para>An error occurred while downloading data.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OpenRead">
+      <MemberSignature Language="C#" Value="public System.IO.Stream OpenRead (Uri address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenReadAsync">
+      <MemberSignature Language="C#" Value="public void OpenReadAsync (Uri address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenReadAsync">
+      <MemberSignature Language="C#" Value="public void OpenReadAsync (Uri address, object userToken);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="userToken" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="userToken">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenReadCompleted">
+      <MemberSignature Language="C#" Value="public event System.Net.OpenReadCompletedEventHandler OpenReadCompleted;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.OpenReadCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.IO.Stream OpenWrite(string address)" />
+      <MemberSignature Language="C#" Value="public System.IO.Stream OpenWrite (string address);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI to receive the data.</param>
+        <summary>
+          <para> Opens a <see cref="T:System.IO.Stream" /> for writing data to the resource identified by the specified URI.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Net.WebClient.OpenWrite(System.String)" />(<paramref name="address" />, "POST").</para>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not 
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+the <see cref="P:System.Net.WebClient.QueryString" />
+property of the current instance is not <see cref="F:System.String.Empty" />, it is
+appended to <paramref name="address" />.</para>
+          <para>
+            <block subset="none" type="note">The underlying request is
+   made with the POST method.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para> -or-</para>
+          <para>An error occurred while opening the stream.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OpenWrite">
+      <MemberSignature Language="C#" Value="public System.IO.Stream OpenWrite (Uri address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.IO.Stream OpenWrite(string address, string method)" />
+      <MemberSignature Language="C#" Value="public System.IO.Stream OpenWrite (string address, string method);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="method" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI of the resource to receive the data.</param>
+        <param name="method">A <see cref="T:System.String" /> that specifies the protocol method used to send the data to the resource identified by <paramref name="address" /> .</param>
+        <summary>
+          <para> Opens a <see cref="T:System.IO.Stream" /> for writing data to the resource identified by the specified URI using the
+   specified protocol method.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
+        </returns>
+        <remarks>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not 
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+   with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+   data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+   the <see cref="P:System.Net.WebClient.QueryString" />
+   property of the current instance is not <see cref="F:System.String.Empty" />, it is
+   appended to <paramref name="address" />.</para>
+          <block subset="none" type="note">
+            <para> This method returns a writable stream
+      that is used to send data to a resource. The underlying request is made
+      with the protocol method specified by <paramref name="method" /> . For more information
+      about protocol methods, see <see cref="P:System.Net.WebRequest.Method" qualify="true" /> .</para>
+            <para>If the <paramref name="method" /> parameter specifies a method that is not recognized by
+   the server, the underlying protocol classes determine what occurs. Typically, a
+<see cref="T:System.Net.WebException" /> 
+is thrown with the <see cref="P:System.Net.WebException.Status" /> property set to indicate the error.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para> -or-</para>
+          <para>An error occurred while opening the stream.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OpenWrite">
+      <MemberSignature Language="C#" Value="public System.IO.Stream OpenWrite (Uri address, string method);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenWriteAsync">
+      <MemberSignature Language="C#" Value="public void OpenWriteAsync (Uri address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenWriteAsync">
+      <MemberSignature Language="C#" Value="public void OpenWriteAsync (Uri address, string method);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenWriteAsync">
+      <MemberSignature Language="C#" Value="public void OpenWriteAsync (Uri address, string method, object userToken);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="userToken" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="userToken">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenWriteCompleted">
+      <MemberSignature Language="C#" Value="public event System.Net.OpenWriteCompletedEventHandler OpenWriteCompleted;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.OpenWriteCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Proxy">
+      <MemberSignature Language="C#" Value="public System.Net.IWebProxy Proxy { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.IWebProxy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="QueryString">
+      <MemberSignature Language="ILASM" Value=".property class System.Collections.Specialized.NameValueCollection QueryString { public hidebysig specialname instance class System.Collections.Specialized.NameValueCollection get_QueryString() public hidebysig specialname instance void set_QueryString(class System.Collections.Specialized.NameValueCollection value) }" />
+      <MemberSignature Language="C#" Value="public System.Collections.Specialized.NameValueCollection QueryString { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Specialized.NameValueCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets a collection of query name/value pairs
+      associated with the request.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Collections.Specialized.NameValueCollection" /> that contains query name/value
+   pairs associated with the request or, if this property has not been
+   set or was set to <see langword="null" />, a new instance of the <see cref="T:System.Collections.Specialized.NameValueCollection" />
+   class.</para>
+        </value>
+        <remarks>
+          <para>The <see cref="P:System.Net.WebClient.QueryString" /> property contains a <see cref="T:System.Collections.Specialized.NameValueCollection" />
+instance containing name/value pairs that are appended to
+the URI as a query string. The contents of the <see cref="P:System.Net.WebClient.QueryString" /> property are preceded by a question mark
+(?), and each name/value pair is separated by an ampersand (&amp;).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResponseHeaders">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.WebHeaderCollection ResponseHeaders { public hidebysig specialname instance class System.Net.WebHeaderCollection get_ResponseHeaders() }" />
+      <MemberSignature Language="C#" Value="public System.Net.WebHeaderCollection ResponseHeaders { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.WebHeaderCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a collection of header name/value pairs
+      associated with the response.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Net.WebHeaderCollection" /> containing header name/value
+   pairs associated with the response.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.Net.WebClient.ResponseHeaders" /> property contains a <see cref="T:System.Net.WebHeaderCollection" />
+instance containing header information the <see cref="T:System.Net.WebClient" /> receives from the Internet
+resource. </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UploadData">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Byte[] UploadData(string address, class System.Byte[] data)" />
+      <MemberSignature Language="C#" Value="public byte[] UploadData (string address, byte[] data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI of the resource to receive the data.</param>
+        <param name="data">A <see cref="T:System.Byte" /> array containing data to send to the resource.</param>
+        <summary>
+          <para> Uploads the specified data to the resource
+      identified by the specified
+      URI.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Byte" /> array containing
+   the body of the response, if any, from the server hosting the
+   resource.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Net.WebClient.UploadData(System.String,System.Byte[])" />
+(<paramref name="address" />, "POST", <paramref name="data" />).</para>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not 
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+the <see cref="P:System.Net.WebClient.QueryString" />
+property of the current instance is not <see cref="F:System.String.Empty" />, it is
+appended to <paramref name="address" />.</para>
+          <block subset="none" type="note">
+            <para>This method sends a data buffer to a
+      resource. The underlying request is
+      made using the POST method. </para>
+            <para> This method does not encode the contents of <paramref name="data" /> before uploading
+   it to the resource.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="data" /> is <see langword="null" />.</para>
+          <para>-or-</para>
+          <para>An error occurred while opening the stream or uploading the data.</para>
+          <para>-or-</para>
+          <para>There was no response from the server hosting the resource.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UploadData">
+      <MemberSignature Language="C#" Value="public byte[] UploadData (Uri address, byte[] data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadData">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Byte[] UploadData(string address, string method, class System.Byte[] data)" />
+      <MemberSignature Language="C#" Value="public byte[] UploadData (string address, string method, byte[] data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI of the resource to receive the data.</param>
+        <param name="method">
+          <para>A <see cref="T:System.String" /> that specifies the protocol method used to send the data to the resource identified by <paramref name="address" /> .</para>
+        </param>
+        <param name="data">A <see cref="T:System.Byte" /> array containing data to send to the resource.</param>
+        <summary>
+          <para> Uploads the specified data to the resource identified by the specified
+      URI using the specified protocol method.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Byte" /> array containing the body of
+   the response, if any, from the server hosting the
+   resource.</para>
+        </returns>
+        <remarks>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not 
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+   with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+   data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+   the <see cref="P:System.Net.WebClient.QueryString" />
+   property of the current instance is not <see cref="F:System.String.Empty" />, it is
+   appended to <paramref name="address" />.</para>
+          <block subset="none" type="note">
+            <para> For more information about protocol
+      methods, see <see cref="P:System.Net.WebRequest.Method" qualify="true" />
+      . </para>
+            <para> This method does not encode the contents of <paramref name="data" /> before uploading
+   it to the resource.</para>
+            <para> If <paramref name="method" /> specifies a method that is not recognized by
+the server, the underlying protocol classes determine what occurs. Typically, a
+<see cref="T:System.Net.WebException" /> 
+is thrown with the <see cref="P:System.Net.WebException.Status" /> property set to indicate the error.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="data" /> is <see langword="null" />.</para>
+          <para>-or-</para>
+          <para>An error occurred while opening the stream or uploading the data.</para>
+          <para>-or-</para>
+          <para>There was no response from the server hosting the resource.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UploadData">
+      <MemberSignature Language="C#" Value="public byte[] UploadData (Uri address, string method, byte[] data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadDataAsync">
+      <MemberSignature Language="C#" Value="public void UploadDataAsync (Uri address, byte[] data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadDataAsync">
+      <MemberSignature Language="C#" Value="public void UploadDataAsync (Uri address, string method, byte[] data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadDataAsync">
+      <MemberSignature Language="C#" Value="public void UploadDataAsync (Uri address, string method, byte[] data, object userToken);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="data" Type="System.Byte[]" />
+        <Parameter Name="userToken" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="data">To be added.</param>
+        <param name="userToken">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadDataCompleted">
+      <MemberSignature Language="C#" Value="public event System.Net.UploadDataCompletedEventHandler UploadDataCompleted;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.UploadDataCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadFile">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Byte[] UploadFile(string address, string fileName)" />
+      <MemberSignature Language="C#" Value="public byte[] UploadFile (string address, string fileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI of the resource to receive the file.</param>
+        <param name="fileName">A <see cref="T:System.String" /> that specifies the file to send to the resource.</param>
+        <summary>
+          <para> Uploads the specified local file to the resource
+      identified by the specified
+      URI.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Byte" /> array containing the body of the response, if any, from the server hosting the
+   resource.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Net.WebClient.UploadFile(System.String,System.String)" /> (<paramref name="address" />, "POST",
+<paramref name="filename" />).</para>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+the <see cref="P:System.Net.WebClient.QueryString" />
+property of the current instance is not <see cref="F:System.String.Empty" />, it is
+appended to <paramref name="address" />.</para>
+          <para>
+            <block subset="none" type="note">This method sends a local file to a
+   resource. The underlying request is
+   made using the POST method.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="filename" /> is <see langword="null" /> or <see cref="F:System.String.Empty" /> or contains invalid characters, or the specified path to the file does not exist.</para>
+          <para>-or-</para>
+          <para>An error occurred while opening the stream or uploading the file.</para>
+          <para>-or-</para>
+          <para>There was no response from the server hosting the resource.</para>
+          <para>-or-</para>
+          <para>The Content-Type header begins with "multipart".</para>
+        </exception>
+        <exception cref="T:System.Security.SecurityException">Local file access has not been granted.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to access path information and read files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UploadFile">
+      <MemberSignature Language="C#" Value="public byte[] UploadFile (Uri address, string fileName);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="fileName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadFile">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Byte[] UploadFile(string address, string method, string fileName)" />
+      <MemberSignature Language="C#" Value="public byte[] UploadFile (string address, string method, string fileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI of the resource to receive the file.</param>
+        <param name="method">
+          <para>A <see cref="T:System.String" /> that specifies the protocol method used to send the data to the resource identified by <paramref name="address" /> .</para>
+        </param>
+        <param name="fileName">A <see cref="T:System.String" /> that specifies the file to send to the resource.</param>
+        <summary>
+          <para>Uploads the specified local file using the specified protocol
+      method to the resource identified by the specified URI .</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Byte" /> array containing the body of
+   the response, if any, from the server hosting the resource.</para>
+        </returns>
+        <remarks>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+   with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+   data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+   the <see cref="P:System.Net.WebClient.QueryString" />
+   property of the current instance is not <see cref="F:System.String.Empty" />, it is
+   appended to <paramref name="address" />.</para>
+          <block subset="none" type="note">
+            <para> For more information about protocol
+      methods, see <see cref="P:System.Net.WebRequest.Method" qualify="true" />
+      . </para>
+            <para> If <paramref name="method" /> specifies a protocol method that is not recognized by
+   the server, the underlying protocol classes determine what occurs. Typically, a
+<see cref="T:System.Net.WebException" /> 
+is thrown with the <see cref="P:System.Net.WebException.Status" /> property set to indicate the error.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="filename" /> is <see langword="null" /> or <see cref="F:System.String.Empty" /> or contains invalid characters, or the specified path to the file does not exist.</para>
+          <para>-or-</para>
+          <para>An error occurred while opening the stream or uploading the file.</para>
+          <para>-or-</para>
+          <para>There was no response from the server hosting the resource.</para>
+          <para>-or-</para>
+          <para>The Content-Type header begins with "multipart".</para>
+        </exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have the required permissions.</exception>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to access path information and read files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UploadFile">
+      <MemberSignature Language="C#" Value="public byte[] UploadFile (Uri address, string method, string fileName);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="fileName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadFileAsync">
+      <MemberSignature Language="C#" Value="public void UploadFileAsync (Uri address, string fileName);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="fileName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadFileAsync">
+      <MemberSignature Language="C#" Value="public void UploadFileAsync (Uri address, string method, string fileName);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="fileName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadFileAsync">
+      <MemberSignature Language="C#" Value="public void UploadFileAsync (Uri address, string method, string fileName, object userToken);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="userToken" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="fileName">To be added.</param>
+        <param name="userToken">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadFileCompleted">
+      <MemberSignature Language="C#" Value="public event System.Net.UploadFileCompletedEventHandler UploadFileCompleted;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.UploadFileCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadProgressChanged">
+      <MemberSignature Language="C#" Value="public event System.Net.UploadProgressChangedEventHandler UploadProgressChanged;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.UploadProgressChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadString">
+      <MemberSignature Language="C#" Value="public string UploadString (string address, string data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="data" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadString">
+      <MemberSignature Language="C#" Value="public string UploadString (Uri address, string data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="data" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadString">
+      <MemberSignature Language="C#" Value="public string UploadString (string address, string method, string data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="data" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadString">
+      <MemberSignature Language="C#" Value="public string UploadString (Uri address, string method, string data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="data" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadStringAsync">
+      <MemberSignature Language="C#" Value="public void UploadStringAsync (Uri address, string data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="data" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadStringAsync">
+      <MemberSignature Language="C#" Value="public void UploadStringAsync (Uri address, string method, string data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="data" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadStringAsync">
+      <MemberSignature Language="C#" Value="public void UploadStringAsync (Uri address, string method, string data, object userToken);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="data" Type="System.String" />
+        <Parameter Name="userToken" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="data">To be added.</param>
+        <param name="userToken">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadStringCompleted">
+      <MemberSignature Language="C#" Value="public event System.Net.UploadStringCompletedEventHandler UploadStringCompleted;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.UploadStringCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadValues">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Byte[] UploadValues(string address, class System.Collections.Specialized.NameValueCollection data)" />
+      <MemberSignature Language="C#" Value="public byte[] UploadValues (string address, System.Collections.Specialized.NameValueCollection data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI of the resource to receive the collection <paramref name="data" /> .</param>
+        <param name="data">The <see cref="T:System.Collections.Specialized.NameValueCollection" /> to send to the resource identified by <paramref name="address" /> .</param>
+        <summary>
+          <para> Uploads the specified name/value collection
+      to the specified resource.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Byte" /> array containing the body of the response, if any, from the server hosting the
+   resource.</para>
+        </returns>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Net.WebClient.UploadValues(System.String,System.Collections.Specialized.NameValueCollection)" /> (<paramref name="address" />, "POST",
+<paramref name="data" />).</para>
+          <para>If the Content-Type header is <see langword="null" />, this method sets it to
+"application/x-www-form-urlencoded".</para>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not 
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+the <see cref="P:System.Net.WebClient.QueryString" />
+property of the current instance is not <see cref="F:System.String.Empty" />, it is
+appended to <paramref name="address" />.</para>
+          <para>
+            <block subset="none" type="note">The underlying
+   request is made using the POST method. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="data" /> is <see langword="null" />.</para>
+          <para>-or-</para>
+          <para>An error occurred while opening the stream or uploading the data.</para>
+          <para>-or-</para>
+          <para>There was no response from the server hosting the resource.</para>
+          <para>-or-</para>
+          <para>The Content-Type header is not <see langword="null" />, and is not "application/x-www-form-urlencoded".</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UploadValues">
+      <MemberSignature Language="C#" Value="public byte[] UploadValues (Uri address, System.Collections.Specialized.NameValueCollection data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadValues">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Byte[] UploadValues(string address, string method, class System.Collections.Specialized.NameValueCollection data)" />
+      <MemberSignature Language="C#" Value="public byte[] UploadValues (string address, string method, System.Collections.Specialized.NameValueCollection data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> that specifies the URI of the resource to receive the collection <paramref name="data" /> . </param>
+        <param name="method">A <see cref="T:System.String" /> that specifies the protocol method used to send <paramref name="data" /> to the resource.</param>
+        <param name="data">The <see cref="T:System.Collections.Specialized.NameValueCollection" /> to send to the resource identified by <paramref name="address" /> . </param>
+        <summary>
+          <para> Uploads the specified name/value collection
+      to the specified resource using the specified method.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Byte" /> array containing the body of the response, if any, from the server hosting the
+   resource.</para>
+        </returns>
+        <remarks>
+          <para>If the Content-Type header is <see langword="null" />, this method sets it to "application/x-www-form-urlencoded". </para>
+          <para>If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is not 
+<see cref="F:System.String.Empty" />, <paramref name="address" /> is combined
+with <see cref="P:System.Net.WebClient.BaseAddress" /> to form the absolute URI of the requested
+data. If the <see cref="P:System.Net.WebClient.BaseAddress" /> property of the current instance is
+<see cref="F:System.String.Empty" />, 
+<paramref name="address" /> is required to be the absolute URI of the requested data. If
+the <see cref="P:System.Net.WebClient.QueryString" />
+property of the current instance is not <see cref="F:System.String.Empty" />, it is
+appended to <paramref name="address" />.</para>
+          <para>
+            <block subset="none" type="note">If <paramref name="method" /> specifies a protocol
+method that is not recognized by the server, the underlying protocol classes
+determine what occurs. Typically, a <see cref="T:System.Net.WebException" /> is thrown with the <see cref="P:System.Net.WebException.Status" />
+property set to indicate the error.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Net.WebException">
+          <para>The absolute URI is not valid.</para>
+          <para> -or-</para>
+          <para>
+            <paramref name="data" /> is <see langword="null" />.</para>
+          <para>-or-</para>
+          <para>An error occurred while opening the stream or uploading the data.</para>
+          <para>-or-</para>
+          <para>There was no response from the server hosting the resource.</para>
+          <para>-or-</para>
+          <para>The Content-Type header is not <see langword="null" />, and is not "application/x-www-form-urlencoded".</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UploadValues">
+      <MemberSignature Language="C#" Value="public byte[] UploadValues (Uri address, string method, System.Collections.Specialized.NameValueCollection data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadValuesAsync">
+      <MemberSignature Language="C#" Value="public void UploadValuesAsync (Uri address, System.Collections.Specialized.NameValueCollection values);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="values" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="values">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadValuesAsync">
+      <MemberSignature Language="C#" Value="public void UploadValuesAsync (Uri address, string method, System.Collections.Specialized.NameValueCollection values);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="values" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="values">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadValuesAsync">
+      <MemberSignature Language="C#" Value="public void UploadValuesAsync (Uri address, string method, System.Collections.Specialized.NameValueCollection values, object userToken);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="method" Type="System.String" />
+        <Parameter Name="values" Type="System.Collections.Specialized.NameValueCollection" />
+        <Parameter Name="userToken" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="values">To be added.</param>
+        <param name="userToken">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UploadValuesCompleted">
+      <MemberSignature Language="C#" Value="public event System.Net.UploadValuesCompletedEventHandler UploadValuesCompleted;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.UploadValuesCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UseDefaultCredentials">
+      <MemberSignature Language="C#" Value="public bool UseDefaultCredentials { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

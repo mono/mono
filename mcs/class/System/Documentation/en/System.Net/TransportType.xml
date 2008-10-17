@@ -1,0 +1,133 @@
+<Type Name="TransportType" FullName="System.Net.TransportType" FullNameSP="System_Net_TransportType" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable TransportType extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum TransportType" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Specifies transport types.
+      </para>
+    </summary>
+    <remarks>
+      <para>
+        <block subset="none" type="note">The <see cref="T:System.Net.TransportType" /> enumeration defines transport types
+   for the <see cref="T:System.Net.SocketPermission" /> and <see cref="T:System.Net.Sockets.Socket" /> classes.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="All">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.TransportType All = 3" />
+      <MemberSignature Language="C#" Value="All" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.TransportType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>All</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies any transport type.
+ </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Connectionless">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.TransportType Connectionless = 1" />
+      <MemberSignature Language="C#" Value="Connectionless" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.TransportType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Udp</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies any connectionless transport, such as User Datagram Protocol (UDP).</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConnectionOriented">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.TransportType ConnectionOriented = 2" />
+      <MemberSignature Language="C#" Value="ConnectionOriented" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.TransportType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Tcp</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies any connection-oriented transport, such as Transmission Control Protocol (TCP).</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Tcp">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.TransportType Tcp = 2" />
+      <MemberSignature Language="C#" Value="Tcp" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.TransportType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Tcp</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies the Transmission Control Protocol (TCP) transport as defined by IETF RFC 793.
+      </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Udp">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.TransportType Udp = 1" />
+      <MemberSignature Language="C#" Value="Udp" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.TransportType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Udp</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies the User Datagram Protocol (UDP) transport as defined by IETF RFC 768.
+      </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

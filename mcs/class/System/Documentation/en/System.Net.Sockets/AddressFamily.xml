@@ -1,0 +1,657 @@
+<Type Name="AddressFamily" FullName="System.Net.Sockets.AddressFamily" FullNameSP="System_Net_Sockets_AddressFamily" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable AddressFamily extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum AddressFamily" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para>Specifies the addressing schemes used by the <see cref="T:System.Net.Sockets.Socket" /> class.</para>
+    </summary>
+    <remarks>
+      <para>A <see cref="T:System.Net.Sockets.AddressFamily" /> member is specified to the
+<see cref="T:System.Net.Sockets.Socket" /> class constructors to identify 
+   the addressing scheme that the socket instance will use to resolve an address. For example,
+<see cref="F:System.Net.Sockets.AddressFamily.InterNetwork" /> indicates that an IP version 4 address is 
+   expected when a <see cref="T:System.Net.Sockets.Socket" />
+   instance connects to an endpoint.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AppleTalk">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily AppleTalk = 16" />
+      <MemberSignature Language="C#" Value="AppleTalk" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>AppleTalk</MemberValue>
+      <Docs>
+        <summary>
+          <para> AppleTalk address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Atm">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Atm = 22" />
+      <MemberSignature Language="C#" Value="Atm" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Atm</MemberValue>
+      <Docs>
+        <summary>
+          <para>Native Asynchronous Transfer Mode (ATM) services address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Banyan">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Banyan = 21" />
+      <MemberSignature Language="C#" Value="Banyan" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Banyan</MemberValue>
+      <Docs>
+        <summary>
+          <para> Banyan address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ccitt">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Ccitt = 10" />
+      <MemberSignature Language="C#" Value="Ccitt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Ccitt</MemberValue>
+      <Docs>
+        <summary>
+          <para>Addresses for CCITT protocols, such as X.25.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Chaos">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Chaos = 5" />
+      <MemberSignature Language="C#" Value="Chaos" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Chaos</MemberValue>
+      <Docs>
+        <summary>
+          <para>Address for MIT CHAOS protocols.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Cluster">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Cluster = 24" />
+      <MemberSignature Language="C#" Value="Cluster" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Cluster</MemberValue>
+      <Docs>
+        <summary>
+          <para>Address for Microsoft cluster products.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DataKit">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily DataKit = 9" />
+      <MemberSignature Language="C#" Value="DataKit" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DataKit</MemberValue>
+      <Docs>
+        <summary>
+          <para>Address for Datakit protocols.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DataLink">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily DataLink = 13" />
+      <MemberSignature Language="C#" Value="DataLink" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DataLink</MemberValue>
+      <Docs>
+        <summary>
+          <para> Direct data-link interface address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DecNet">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily DecNet = 12" />
+      <MemberSignature Language="C#" Value="DecNet" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DecNet</MemberValue>
+      <Docs>
+        <summary>
+          <para> DECnet address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ecma">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Ecma = 8" />
+      <MemberSignature Language="C#" Value="Ecma" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Ecma</MemberValue>
+      <Docs>
+        <summary>
+          <para>European Computer Manufacturers Association (ECMA) address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FireFox">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily FireFox = 19" />
+      <MemberSignature Language="C#" Value="FireFox" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>FireFox</MemberValue>
+      <Docs>
+        <summary>
+          <para> FireFox address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HyperChannel">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily HyperChannel = 15" />
+      <MemberSignature Language="C#" Value="HyperChannel" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>HyperChannel</MemberValue>
+      <Docs>
+        <summary>
+          <para> NSC Hyperchannel address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ieee12844">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Ieee12844 = 25" />
+      <MemberSignature Language="C#" Value="Ieee12844" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Ieee12844</MemberValue>
+      <Docs>
+        <summary>
+          <para> IEEE 1284.4 workgroup address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ImpLink">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily ImpLink = 3" />
+      <MemberSignature Language="C#" Value="ImpLink" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ImpLink</MemberValue>
+      <Docs>
+        <summary>
+          <para>ARPANET IMP address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InterNetwork">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily InterNetwork = 2" />
+      <MemberSignature Language="C#" Value="InterNetwork" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>InterNetwork</MemberValue>
+      <Docs>
+        <summary>
+          <para> Address for IP version 4.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InterNetworkV6">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily InterNetworkV6 = 23" />
+      <MemberSignature Language="C#" Value="InterNetworkV6" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>InterNetworkV6</MemberValue>
+      <Docs>
+        <summary>
+          <para>Address for IP version 6.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ipx">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Ipx = 6" />
+      <MemberSignature Language="C#" Value="Ipx" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NS</MemberValue>
+      <Docs>
+        <summary>
+          <para>Internetwork Packet Exchange (IPX) or Sequenced Packet 
+ Exchange (SPX) address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Irda">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Irda = 26" />
+      <MemberSignature Language="C#" Value="Irda" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Irda</MemberValue>
+      <Docs>
+        <summary>
+          <para> Infrared Data Association (IrDA) address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Iso">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Iso = 7" />
+      <MemberSignature Language="C#" Value="Iso" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Osi</MemberValue>
+      <Docs>
+        <summary>
+          <para>Address for ISO protocols.</para>
+          <block subset="none" type="note">
+            <para>Multiple names are defined for this value based on prior art. 
+         This value is identical to <see cref="F:System.Net.Sockets.AddressFamily.Osi" />.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Lat">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Lat = 14" />
+      <MemberSignature Language="C#" Value="Lat" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Lat</MemberValue>
+      <Docs>
+        <summary>
+          <para> LAT address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="C#" Value="Max" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <MemberValue>Max</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NetBios">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily NetBios = 17" />
+      <MemberSignature Language="C#" Value="NetBios" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NetBios</MemberValue>
+      <Docs>
+        <summary>
+          <para> NetBios address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NetworkDesigners">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily NetworkDesigners = 28" />
+      <MemberSignature Language="C#" Value="NetworkDesigners" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NetworkDesigners</MemberValue>
+      <Docs>
+        <summary>
+          <para> Address for Network Designers OSI gateway-enabled protocols.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NS">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily NS = 6" />
+      <MemberSignature Language="C#" Value="NS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>NS</MemberValue>
+      <Docs>
+        <summary>
+          <para>Address for Xerox NS protocols.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Osi">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Osi = 7" />
+      <MemberSignature Language="C#" Value="Osi" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Osi</MemberValue>
+      <Docs>
+        <summary>
+          <para>Address for ISO protocols.</para>
+          <block subset="none" type="note">
+            <para>Multiple names are defined for this value based on prior art. 
+         This value is identical to <see cref="F:System.Net.Sockets.AddressFamily.Iso" />.</para>
+          </block>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pup">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Pup = 4" />
+      <MemberSignature Language="C#" Value="Pup" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Pup</MemberValue>
+      <Docs>
+        <summary>
+          <para>Address for PUP protocols.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sna">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Sna = 11" />
+      <MemberSignature Language="C#" Value="Sna" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Sna</MemberValue>
+      <Docs>
+        <summary>
+          <para>IBM SNA address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unix">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Unix = 1" />
+      <MemberSignature Language="C#" Value="Unix" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Unix</MemberValue>
+      <Docs>
+        <summary>
+          <para>Address is local to the host.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unknown">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Unknown = -1" />
+      <MemberSignature Language="C#" Value="Unknown" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Unknown</MemberValue>
+      <Docs>
+        <summary>
+          <para>Used to indicate an uninitialized state. This member is not to be used when
+      constructing instances of the <see cref="T:System.Net.Sockets.Socket" /> class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Unspecified">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily Unspecified = 0" />
+      <MemberSignature Language="C#" Value="Unspecified" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Unspecified</MemberValue>
+      <Docs>
+        <summary>
+          <para>Unspecified address family.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VoiceView">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.AddressFamily VoiceView = 18" />
+      <MemberSignature Language="C#" Value="VoiceView" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>VoiceView</MemberValue>
+      <Docs>
+        <summary>
+          <para>VoiceView address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

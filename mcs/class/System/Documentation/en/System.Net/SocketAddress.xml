@@ -1,0 +1,292 @@
+<Type Name="SocketAddress" FullName="System.Net.SocketAddress" FullNameSP="System_Net_SocketAddress" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public SocketAddress extends System.Object" />
+  <TypeSignature Language="C#" Value="public class SocketAddress" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Provides a socket address stored in a <see cref="T:System.Byte" qualify="true" /> array.
+   </para>
+    </summary>
+    <remarks>
+      <para>At a minimum, a socket address consists of a member of the <see cref="T:System.Net.Sockets.AddressFamily" qualify="true" /> enumeration
+   stored in the first two bytes of the array.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Net.Sockets.AddressFamily family)" />
+      <MemberSignature Language="C#" Value="public SocketAddress (System.Net.Sockets.AddressFamily family);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="family" Type="System.Net.Sockets.AddressFamily" />
+      </Parameters>
+      <Docs>
+        <param name="family">One of the values of the <see cref="T:System.Net.Sockets.AddressFamily" /> enumeration.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.SocketAddress" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>This method is equivalent to <see cref="!:System.Net.SocketAddress.SocketAddress" />(<paramref name="family" />, 32).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Net.Sockets.AddressFamily family, int32 size)" />
+      <MemberSignature Language="C#" Value="public SocketAddress (System.Net.Sockets.AddressFamily family, int size);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="family" Type="System.Net.Sockets.AddressFamily" />
+        <Parameter Name="size" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="family">One of the values of the <see cref="T:System.Net.Sockets.AddressFamily" /> enumeration.</param>
+        <param name="size">A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes to allocate for the <see cref="T:System.Byte" qualify="true" /> array storing the socket address.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.SocketAddress" />
+class.</para>
+        </summary>
+        <remarks>
+          <para>The minimum value for <paramref name="size" /> is 2 bytes.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="size" /> is less than 2.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object comparand)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" qualify="true" /> to compare to the current instance.</param>
+        <summary>
+          <para>Determines whether the current instance and the
+      specified <see cref="T:System.Object" qualify="true" /> represent the same
+      socket address.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" />
+indicates <paramref name="comparand" /> is an
+instance of the <see cref="T:System.Net.SocketAddress" /> class and contains the same data as the current
+instance; otherwise <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Family">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Net.Sockets.AddressFamily Family { public hidebysig specialname instance valuetype System.Net.Sockets.AddressFamily get_Family() }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.AddressFamily Family { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the address family which specifies the addressing scheme used to resolve an address.</para>
+        </summary>
+        <value>
+          <para>One of the values defined in the <see cref="T:System.Net.Sockets.AddressFamily" qualify="true" /> enumeration.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>This property is set by the <see cref="T:System.Net.SocketAddress" /> constructors and is stored in
+   the first two bytes of the socket address array.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" qualify="true" /> containing the hash code for the current instance.</para>
+        </returns>
+        <remarks>
+          <para>The algorithm used to generate the hash code is
+         unspecified.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.Object.GetHashCode" qualify="true" />.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="ILASM" Value=".property unsigned int8 Item[int32 offset] { public hidebysig specialname instance unsigned int8 get_Item(int32 offset) public hidebysig specialname instance void set_Item(int32 offset, unsigned int8 value) }" />
+      <MemberSignature Language="C#" Value="public byte this[int offset] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="offset">A <see cref="T:System.Int32" qualify="true" /> containing the zero-based index of the element to get or set.</param>
+        <summary>
+          <para>Gets or sets the element at the specified index of
+      the <see cref="T:System.Byte" qualify="true" /> array storing the socket address.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Byte" qualify="true" /> containing the element at the specified index.</para>
+        </value>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IndexOutOfRangeException">
+          <para>
+            <paramref name="offset" /> is &lt; 0.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="offset" /> &gt;= <see cref="P:System.Net.SocketAddress.Size" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Size">
+      <MemberSignature Language="ILASM" Value=".property int32 Size { public hidebysig specialname instance int32 get_Size() }" />
+      <MemberSignature Language="C#" Value="public int Size { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the length of the socket address.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" qualify="true" /> containing the length of the
+<see cref="T:System.Byte" qualify="true" /> array storing the socket 
+   address.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>This property is set by the <see cref="T:System.Net.SocketAddress" /> constructors.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Returns a <see cref="T:System.String" qualify="true" /> representation of the value of the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" /> representation of the current
+   instance.</para>
+        </returns>
+        <remarks>
+          <para> The returned string contains the string representation of the address family, the length of the array holding the socket
+      address, and the contents of the array from the third to the maximum element, output in the
+      following format:</para>
+          <para>
+            <see cref="P:System.Net.SocketAddress.Family" />:<see cref="P:System.Net.SocketAddress.Size" />:{array[2], array[3], ...,
+   element[<see langword="Size" />-
+   1]}</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.Object.ToString" qualify="true" />.</para>
+          </block>
+        </remarks>
+        <example>
+          <para>The following example writes a socket address to the
+      console.</para>
+          <code lang="C#">using System;
+using System.Net;
+using System.Net.Sockets;
+
+public class SocketAddressToString{
+  public static void Main() {
+    Console.WriteLine("This is a minimal SocketAddress.");
+    SocketAddress socketAddress = new 
+           SocketAddress(AddressFamily.InterNetwork);
+    Console.WriteLine("{0}", socketAddress.ToString());
+  }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>This is a minimal SocketAddress.</para>
+            <para>InterNetwork:32:{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

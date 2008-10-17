@@ -1,0 +1,90 @@
+<Type Name="SocketShutdown" FullName="System.Net.Sockets.SocketShutdown" FullNameSP="System_Net_Sockets_SocketShutdown" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable SocketShutdown extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum SocketShutdown" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para>Specifies whether the ability to send or receive data is terminated when the <see cref="M:System.Net.Sockets.Socket.Shutdown(System.Net.Sockets.SocketShutdown)" />
+method is called on a connected <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Both">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketShutdown Both = 2" />
+      <MemberSignature Language="C#" Value="Both" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketShutdown</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Both</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies to terminate the ability to send and receive data 
+ on a <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Receive">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketShutdown Receive = 0" />
+      <MemberSignature Language="C#" Value="Receive" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketShutdown</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Receive</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies to terminate the ability to receive data on a 
+ <see cref="T:System.Net.Sockets.Socket" /> 
+ instance.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketShutdown Send = 1" />
+      <MemberSignature Language="C#" Value="Send" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketShutdown</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Send</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies to terminate the ability to send data from a 
+ <see cref="T:System.Net.Sockets.Socket" /> 
+ instance.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

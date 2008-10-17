@@ -1,0 +1,154 @@
+<Type Name="CodeCommentStatement" FullName="System.CodeDom.CodeCommentStatement">
+  <TypeSignature Language="C#" Value="public class CodeCommentStatement : System.CodeDom.CodeStatement" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.CodeDom.CodeStatement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.AutoDispatch)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+      <see cref="T:System.CodeDom.CodeStatement" /> representing a comment in the code graph.</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeCommentStatement ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Creates a <see cref="T:System.CodeDom.CodeCommentStatement" /> with an empty comment text. The <see cref="P:System.CodeDom.CodeCommentStatement.Comment" /> property should be used before emitting the code for the object.</summary>
+        <remarks>
+          <example>
+Creating the code for the following statement throws an Exception because the value of the CodeCommentStatement Comment property hasn't been set.
+  <code lang="C#">
+...
+demoNs.Comments.Add(new CodeCommentStatement());
+...
+  </code></example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeCommentStatement (System.CodeDom.CodeComment comment);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="comment" Type="System.CodeDom.CodeComment" />
+      </Parameters>
+      <Docs>
+        <param name="comment">CodeComment this CodeCommentStatement is to be initialized with.</param>
+        <summary>Creates a <see cref="T:System.CodeDom.CodeCommentStatement" /> initalized with the comment in the specified <see cref="T:System.CodeDom.CodeComment" /> object.</summary>
+        <remarks>To be added
+<example><code lang="C#">
+...
+		CodeComment com=new CodeComment("foo!");
+		com.DocComment=true;
+		demoNs.Comments.Add(new CodeCommentStatement(com));
+...
+  </code>
+emits
+  <code lang="C#">
+/// foo!
+  </code></example></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeCommentStatement (string text);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">String the Comment property of this object is to be initialized to.</param>
+        <summary>Creates a <see cref="T:System.CodeDom.CodeCommentStatement" /> with the <see cref="P:System.CodeDom.CodeCommentStatement.Comment" /> property initialized to the specified string.</summary>
+        <remarks>
+          <example>
+            <code lang="C#">
+		demoNs.Comments.Add(new CodeCommentStatement("This is a test"));
+  </code>
+generates the code
+  <code lang="C#">
+// This is a test
+  </code></example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeCommentStatement (string text, bool docComment);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="docComment" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="text">String the Comment property of this object is to be initialized to.</param>
+        <param name="docComment">If true, specifies a documentation comment; otherwise a regular comment is produced.</param>
+        <summary>Creates a <see cref="T:System.CodeDom.CodeCommentStatement" /> with the <see cref="P:System.CodeDom.CodeCommentStatement.Comment" /> property initialized to the specified string. The docComment argument signifies whether the comment is a regular comment or a document line.</summary>
+        <remarks>
+          <example>
+            <code lang="C#">
+demoNs.Comments.Add(new CodeCommentStatement("This is a docstring test",true));
+demoNs.Comments.Add(new CodeCommentStatement("This is a test",false));
+  </code>
+generates the following code for C#
+  <code lang="C#">
+/// This is a docstring test
+// This is a test
+  </code></example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Comment">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeComment Comment { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeComment</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>This is the text of the comment to be generated.</summary>
+        <value>To be added: an object of type 'CodeComment'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

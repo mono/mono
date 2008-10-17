@@ -1,0 +1,2909 @@
+<Type Name="Uri" FullName="System.Uri" FullNameSP="System_Uri" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable Uri extends System.MarshalByRefObject" />
+  <TypeSignature Language="C#" Value="public class Uri : System.Runtime.Serialization.ISerializable" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Provides an object representation of a uniform resource identifier
+      (URI) as defined by IETF RFC 2396.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para> A Uniform Resource Identifier (URI) is a compact
+         string of
+         characters used to identify a resource located on a computer. A resource can be anything that
+         has identity. Examples of resources that might be accessed using a
+         URI include an electronic document, an image, a web service, and a collection
+         of other resources. A URI is represented as a sequence of characters.
+         While the exact format of a URI is determined by the protocol
+         used to access the resource, many URI consist of four major
+         components:</para>
+        <para> &lt;<paramref name="scheme" />&gt;://&lt;<paramref name="authority" />&gt;&lt;<paramref name="path" />&gt;?&lt;<paramref name="query" />&gt;</para>
+        <para>
+          <paramref name="Scheme" /> - Indicates a protocol used to access the
+   resource.</para>
+        <para>
+          <paramref name="Authority" /> - Indicates the
+naming authority (server or registry) that governs the namespace defined by the
+remainder of the URI. The authority component is composed of <paramref name="userinfo" />,
+<paramref name="host" /> and <paramref name="port" /> subcomponents in the form 
+&lt;<paramref name="userinfo" />&gt;@&lt;<paramref name="host" />&gt;:&lt;<paramref name="port" />&gt;. Only
+the <paramref name="host" /> subcomponent is required to be present in the
+<paramref name="Authority" /> component. Authority information is stored in the <see cref="P:System.Uri.Authority" />
+property.</para>
+        <para>
+          <paramref name="Path" /> - Identifies the
+resource within the scope of the scheme and, if present, the authority. This
+information is stored in the <see cref="P:System.Uri.AbsolutePath" /> , <see cref="P:System.Uri.PathAndQuery" />, and <see cref="P:System.Uri.LocalPath" />
+properties.</para>
+        <para>
+          <paramref name="Query" /> - Parameter
+information that is passed to the executable script identified
+by the URI. The query, if present, is the last element in a URI and begins
+with a "?". This information is stored in the <see cref="P:System.Uri.Query" />
+property.</para>
+        <para>
+          <paramref name="Userinfo -" /> [Subcomponent of <paramref name="Authority" />] Consists of a user name and, optionally,
+scheme-specific authorization information used to access <paramref name="Host" />
+. The <paramref name="userinfo" />,
+if present, is separated from the <paramref name="Host" /> component by the "@" character.
+Note that for some URI schemes, the format of the <paramref name="userinfo" /> subcomponent
+is "username:password". Passing authorization information in this manner is
+strongly discouraged due to security issues. The
+<paramref name="userinfo" /> information is stored in the <see cref="P:System.Uri.UserInfo" /> 
+property.</para>
+        <para>
+          <paramref name="Host" /> - [Subcomponent of
+<paramref name="Authority" />] The Domain Name system (DNS) name or IP4 address of a machine that provides
+access to the resource. This information is stored in the <see cref="P:System.Uri.Host" /> property.</para>
+        <para>
+          <paramref name="Port" /> - [Subcomponent of
+<paramref name="Authority" /> ] The network port number used to connect
+to the host. If no port number is specified in the URI, most schemes designate
+protocols that have a default port number. This information is stored
+in the <see cref="P:System.Uri.Port" />
+property.</para>
+        <para>
+          <paramref name="Fragment" /> - The fragment is
+not part of the URI, but is used in conjunction with the URI and is included here for completeness. This component contains resource-specific information that
+is used after a resource is retrieved. The <paramref name="fragment" />
+, if present, is separated from the
+URI by the "#" character. This information is stored in the <see cref="P:System.Uri.Fragment" />
+property.</para>
+        <para> URIs include components consisting of or delimited by
+   certain special (reserved) characters that have a special meaning in a URI
+   component. If the reserved meaning is not intended, then the character is
+   required to be escaped in the URI. An escaped character is encoded as a
+   character triplet consisting of the percent character "%" followed by the
+   US-ASCII character code specified as two hexadecimal digits. For example, "%20"
+   is the escaped encoding for the US-ASCII space character. The URI represented by
+   a <see cref="T:System.Uri" />
+   
+   instance is always
+   in "escaped" form. The following characters are reserved:</para>
+        <list type="bullet">
+          <item>
+            <term>
+              <para>Semi-colon (";" )</para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>Forward slash ( "/")</para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>Question mark ( "?" )</para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>Colon ( ":" )</para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>At-sign ("@") </para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>Ampersand ( "&amp;" )</para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>Equal sign ("=" )</para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>Plus sign ("+" )</para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>US Dollar sign ("$" )</para>
+            </term>
+          </item>
+          <item>
+            <term>
+              <para>Comma (",")</para>
+            </term>
+          </item>
+        </list>
+        <para>To transform the URI contained in a <see cref="T:System.Uri" /> instance from an
+                           escape encoded URI to a human-readable URI, use the <see cref="M:System.Uri.ToString" /> method.</para>
+      </block>
+      <para />
+      <para>URIs are stored as canonical URIs in escaped encoding,
+                        with all characters with ASCII values greater than 127 replaced with their
+                        hexadecimal equivalents. The <see cref="T:System.Uri" /> constructors do not escape URI strings
+                        if the string is a well-formed URI, including a scheme identifier, that
+                        contains escape sequences. To put the URI in canonical form, the <see cref="T:System.Uri" />
+                        
+                        constructors perform
+                        the following steps.</para>
+      <list type="bullet">
+        <item>
+          <term>
+                           
+                           Converts the URI scheme to lowercase.</term>
+        </item>
+        <item>
+          <term>
+                           
+                           Converts the host name to lowercase.</term>
+        </item>
+        <item>
+          <term>
+                           
+                           Removes default and empty port numbers.</term>
+        </item>
+        <item>
+          <term>
+                           
+                           Simplifies the URI by removing superfluous segments such as "/" and
+                           "/test" segments.</term>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Uri" />
+               class stores only absolute URIs (for example, "http://www.contoso.com/index.htm"). Relative URIs (for example, "/new/index.htm") are
+               expanded to absolute form using a specified base URI. The <see cref="M:System.Uri.MakeRelative(System.Uri)" />
+               method converts absolute URIs to relative URIs.</para>
+      <para> The <see cref="T:System.Uri" /> class properties
+            are read-only; to modify a <see cref="T:System.Uri" /> instance use the <see cref="T:System.UriBuilder" /> class.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string uriString)" />
+      <MemberSignature Language="C#" Value="public Uri (string uriString);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="uriString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="uriString">A <see cref="T:System.String" /> containing a URI.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Uri" /> class
+   by parsing the specified
+   URI.</para>
+        </summary>
+        <remarks>
+          <para>This constructor is equivalent to calling the <see cref="T:System.Uri" /> (<see cref="T:System.String" />, <see cref="T:System.Boolean" />) constructor, and specifying
+<paramref name="uriString" /> and <see langword="false" /> as the arguments.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uriString " /> is <see langword="null" /> .</para>
+        </exception>
+        <exception cref="T:System.UriFormatException">
+          <para>
+            <paramref name="uriString" /> is a zero length string or contains only spaces.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="uriString " /> is in an invalid form and cannot be parsed.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Uri (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="serializationInfo">To be added.</param>
+        <param name="streamingContext">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string uriString, bool dontEscape)" />
+      <MemberSignature Language="C#" Value="public Uri (string uriString, bool dontEscape);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="uriString" Type="System.String" />
+        <Parameter Name="dontEscape" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="uriString">A <see cref="T:System.String" /> containing a URI.</param>
+        <param name="dontEscape">
+          <see langword="true" /> if the URI in <paramref name="uriString" /> is already escaped; otherwise, <see langword="false" />.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Uri" /> class by parsing the specified
+   URI.</para>
+        </summary>
+        <remarks>
+          <para> This constructor parses the URI, places
+      its components into the appropriate properties, and puts the URI in
+      canonical form. If the specified URI does not contain a scheme component, the URI
+      is parsed using "file" as the scheme.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uriString " /> is <see langword="null" /> .</para>
+        </exception>
+        <exception cref="T:System.UriFormatException">
+          <para>
+            <paramref name="uriString" /> is a zero length string or contains only spaces.</para>
+          <para>-or-</para>
+          <para>The parsing routine detected a scheme in an invalid form.</para>
+          <para>-or-</para>
+          <para>The parser detected more than two consecutive slashes in a URI that does not use the "file" scheme.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="uriString " />is in an invalid form and cannot be parsed.</para>
+        </exception>
+        <example>
+          <para>The following example creates a <see cref="T:System.Uri" /> instance for the URI
+   "http://www.contoso.com/Hello%20World.htm". Because the URI contains escaped
+   characters, the third parameter, <paramref name="dontEscape" /> , is set to
+<see langword="true" /> .</para>
+          <code lang="C#">using System;
+
+public class UriTest {
+ public static void Main() {
+ 
+ Uri myUri = new Uri("http://www.contoso.com/Hello%20World.htm", true);
+
+ Console.WriteLine(myUri.ToString());
+ }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>http://www.contoso.com/Hello World.htm</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Uri (string uriString, UriKind uriKind);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="uriString" Type="System.String" />
+        <Parameter Name="uriKind" Type="System.UriKind" />
+      </Parameters>
+      <Docs>
+        <param name="uriString">To be added.</param>
+        <param name="uriKind">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Uri baseUri, string relativeUri)" />
+      <MemberSignature Language="C#" Value="public Uri (Uri baseUri, string relativeUri);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="baseUri" Type="System.Uri" />
+        <Parameter Name="relativeUri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="baseUri">A <see cref="T:System.Uri" /> containing a base URI.</param>
+        <param name="relativeUri">A <see cref="T:System.String" /> containing a relative URI.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Uri" /> class by
+   combining the specified
+   base and relative URIs.</para>
+        </summary>
+        <remarks>
+          <para>This constructor is equivalent to calling the <see cref="T:System.Uri" /> (<see cref="T:System.Uri" />, <see cref="T:System.String" />, <see cref="T:System.Boolean" />) constructor, and specifying <paramref name="baseUri,    relativeUri, " />and <see langword="false" /> as the arguments.</para>
+        </remarks>
+        <exception cref="T:System.UriFormatException">
+          <para>
+            <paramref name="relativeUri " />is in an invalid form.</para>
+        </exception>
+        <exception cref="T:System.NullReferenceException">
+          <paramref name="baseUri" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Uri (Uri baseUri, Uri relativeUri);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="baseUri" Type="System.Uri" />
+        <Parameter Name="relativeUri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="baseUri">To be added.</param>
+        <param name="relativeUri">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Uri baseUri, string relativeUri, bool dontEscape)" />
+      <MemberSignature Language="C#" Value="public Uri (Uri baseUri, string relativeUri, bool dontEscape);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="baseUri" Type="System.Uri" />
+        <Parameter Name="relativeUri" Type="System.String" />
+        <Parameter Name="dontEscape" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="baseUri">A <see cref="T:System.Uri" /> containing the base URI. This parameter can, but is not required to contain a terminating slash ("/") character.</param>
+        <param name="relativeUri">A <see cref="T:System.String" /> containing the relative URI to add to the base URI. This parameter can, but is not required to contain a leading slash ("/") character.</param>
+        <param name="dontEscape">
+          <see langword="true" /> if <paramref name="baseUri" /> and <paramref name="relativeUri" /> are already escaped; otherwise, <see langword="false" />.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Uri" /> class by combining the specified
+   base and relative URIs.</para>
+        </summary>
+        <remarks>
+          <para>This constructor compensates for the presence or absence
+      of a terminating slash in <paramref name="baseUri" /> and/or a leading slash in
+   <paramref name="relativeUri" />
+   to produce a well-formed URI.</para>
+          <para> 
+   If the relative URI contains a <see cref="P:System.Uri.Scheme" /> that is the same as the
+   scheme of the base URI and the <see cref="F:System.Uri.SchemeDelimiter" /> is not present, or the
+   relative URI does not contain a scheme, the new instance is composed of the
+   relative URI (without its scheme component, if any) qualified by the scheme and
+   authority information from the base URI. </para>
+          <para>If the relative URI contains a <see cref="P:System.Uri.Scheme" /> followed by the <see cref="F:System.Uri.SchemeDelimiter" />, 
+it is treated as an absolute URI and the base URI is ignored. If the relative
+URI contains a scheme that differs from the scheme of the base URI, the
+base URI is ignored. If the <see cref="F:System.Uri.SchemeDelimiter" /> is not present in the relative URI,
+it is assumed, and the new instance is constructed as though the relative URI
+were an absolute URI.</para>
+          <para>
+            <block subset="none" type="note">When the base URI is ignored, only the 
+   components of the relative URI are used to construct the new
+   instance.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.UriFormatException">
+          <para>
+            <paramref name="relativeUri " />is in an invalid form.</para>
+        </exception>
+        <exception cref="T:System.NullReferenceException">
+          <paramref name="baseUri" /> is <see langword="null" />.</exception>
+        <example>
+          <para> The following example creates new instances of the
+   <see cref="T:System.Uri" /> class by
+      combining a <see cref="T:System.Uri" /> instance representing the
+      base URI and a string containing a relative URI.
+      </para>
+          <code lang="C#">using System;
+
+public class UriTest {
+ public static void Main() {
+
+ // Typical base and relative URI constructor usage.
+
+ Uri baseUri = new Uri("http://www.contoso.com", true);
+ Uri myUri = new Uri(baseUri, "index.htm",true);
+ Console.WriteLine("Typical usage: {0}",myUri.ToString());
+
+ // Base and relative URI contain slashes.
+ Uri baseUri2 = new Uri("http://www.contoso.com/", true);
+ Uri myUri2 = new Uri(baseUri2, "/index.htm",true);
+ Console.WriteLine("Slash example: {0}",myUri2.ToString());
+
+ // Relative URI contains a different scheme than the base URI.
+ Uri baseUri3 = new Uri("http://www.contoso.com/", true);
+ Uri myUri3 = new Uri(baseUri3, "ftp://www.contoso2.com/index.htm",true);
+ Console.WriteLine("Different schemes: {0}", myUri3.ToString());
+
+
+ // Relative URI contains the same scheme as the base URI.
+ // The scheme delimiter is not present in the relative URI.
+ Uri baseUri4 = new Uri("http://www.contoso.com/", true);
+ Uri myUri4 = new Uri(baseUri4, "http:www.contoso2.com/index.htm",true);
+ Console.WriteLine("Same schemes - relative treated as relative: {0}",myUri4.ToString());
+
+ // Relative URI contains the same scheme as the base URI.
+ // The scheme delimiter is present in the relative URI.
+ Uri baseUri5 = new Uri("http://www.contoso.com/", true);
+ Uri myUri5 = new Uri(baseUri5, "http://www.contoso2/index.htm",true);
+ Console.WriteLine("Same schemes - relative treated as absolute: {0}",myUri5.ToString());
+
+ }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>Typical usage: http://www.contoso.com/index.htm
+         </para>
+            <para>Slash example: http://www.contoso.com/index.htm</para>
+            <para>Different schemes: ftp://www.contoso2.com/index.htm </para>
+            <para>Same schemes - relative treated as relative: http://www.contoso.com/www.contoso2 .com/index.htm</para>
+            <para>Same schemes - relative treated as absolute: http://www.contoso2/index.htm </para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("dontEscape is always false")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="AbsolutePath">
+      <MemberSignature Language="ILASM" Value=".property string AbsolutePath { public hidebysig specialname instance string get_AbsolutePath() }" />
+      <MemberSignature Language="C#" Value="public string AbsolutePath { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the absolute path of the resource identified by the
+      current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the
+   absolute path to the resource.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.Uri.AbsolutePath" />
+property contains the path to
+the resource identified by the current instance. The <see cref="P:System.Uri.AbsolutePath" />
+property always returns at least a slash
+('/').</para>
+          <para>If, when the current instance was constructed, the URI was already escaped or
+   the constructor's <paramref name="dontEscape" /> parameter was set to <see langword="false" /> ,
+   the value returned by this property is escaped.</para>
+          <para>
+            <block subset="none" type="note">The path information
+   does not include the scheme, host name,
+   query, or fragment components of the URI. </block>
+          </para>
+        </remarks>
+        <example>
+          <para> The following example outputs the absolute
+      path of a URI.</para>
+          <code lang="C#">using System;
+
+public class UriTest {
+ public static void Main() {
+   Uri myUri = new Uri ("http://www.contoso.com/URI/Hello%20World.htm?date=today", true);
+   Console.WriteLine(myUri.AbsolutePath);
+ }
+}
+   </code>
+          <para>The output is</para>
+          <c>
+            <para>/URI/Hello%20World.htm</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AbsoluteUri">
+      <MemberSignature Language="ILASM" Value=".property string AbsoluteUri { public hidebysig specialname instance string get_AbsoluteUri() }" />
+      <MemberSignature Language="C#" Value="public string AbsoluteUri { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the absolute URI of the resource identified by the current instance in canonical form.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the URI
+   used to construct the current instance, in canonical format.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.Uri.AbsoluteUri" /> property includes the entire URI stored in the current <see cref="T:System.Uri" /> instance, including any
+   fragment or query information. If, when the current instance was constructed,
+   the URI was already escaped or the constructor's <paramref name="dontEscape" /> parameter was
+   set to <see langword="false" /> , the value returned
+   by this property is escaped.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Authority">
+      <MemberSignature Language="ILASM" Value=".property string Authority { public hidebysig specialname instance string get_Authority() }" />
+      <MemberSignature Language="C#" Value="public string Authority { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the authority component of the URI used to construct the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the
+ authority component of the current instance. The value returned by this property
+ is composed of the values returned by the <see cref="P:System.Uri.Host" /> and <see cref="P:System.Uri.Port" /> properties.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.Uri.Authority" /> property returns the <see cref="P:System.Uri.Host" /> and <see cref="P:System.Uri.Port" /> information
+ specified in the URI used to construct the current instance. The value of this
+ property includes the port information only if the URI specified a port that is
+ not the default for the current scheme. When port information is included
+ in the value returned by this property, the host and port are separated by a
+ colon (":").</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Canonicalize">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Canonicalize()" />
+      <MemberSignature Language="C#" Value="protected virtual void Canonicalize ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Converts the components of the URI represented by
+      the current instance to canonical form.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method converts the URI to a format suitable for machine interpretation
+      according to the scheme of the current instance. The conversions
+      are required to preserve all information that could, if removed or
+      altered, change the URI represented by the current instance. </block>
+          </para>
+          <block subset="none" type="default">
+            <para>This method performs the following conversions:</para>
+            <list type="bullet">
+              <item>
+                <term>
+            
+            Converts file references to the format of the current
+            platform, for example on a Windows system, file://c|/AFile.txt is converted to
+            "file:///c:/AFile.txt".</term>
+              </item>
+              <item>
+                <term>
+            
+            Converts any backslash characters ('\') to forward
+            slashes ('/').</term>
+              </item>
+              <item>
+                <term>
+            
+            Compresses multiple consecutive forward slashes ('/')
+            in the path component to a single forward slash.</term>
+              </item>
+              <item>
+                <term>
+            
+            Compresses any path meta sequences ("/." and "/..").</term>
+              </item>
+            </list>
+          </block>
+          <para>
+            <block subset="none" type="overrides">Override this
+      method to canonicalize the type derived from <see cref="T:System.Uri" />
+      .</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Applications
+      do not call this method; it is called by constructors after
+      parsing the URI and escaping the components. </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("This method does nothing, it has been obsoleted")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="CheckHostName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.UriHostNameType CheckHostName(string name)" />
+      <MemberSignature Language="C#" Value="public static UriHostNameType CheckHostName (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriHostNameType</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> containing the host name to validate. </param>
+        <summary>
+          <para>Returns a value that describes the format of a host name
+      string.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.UriHostNameType" /> that indicates the type of the host name. If the type of
+   the host name cannot be determined, or the host name is <see langword="null" /> or
+   a zero-length string, returns <see cref="F:System.UriHostNameType.Unknown" /> .
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para> The following example demonstrates using the <see cref="M:System.Uri.CheckHostName(System.String)" /> method.
+   </para>
+          <code lang="C#">using System;
+
+public class UriTest {
+ public static void Main() {
+ 
+ Console.WriteLine(Uri.CheckHostName("www.contoso.com"));
+ }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>Dns</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CheckSchemeName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool CheckSchemeName(string schemeName)" />
+      <MemberSignature Language="C#" Value="public static bool CheckSchemeName (string schemeName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="schemeName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="schemeName">A <see cref="T:System.String" /> containing the scheme name to validate. </param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value indicating whether the specified scheme name is valid.
+   </para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " />if the scheme name is valid; otherwise,
+<see langword="false" />. If 
+<paramref name="schemeName" /> is <see langword="null" /> or is a zero-length string, returns 
+<see langword="false" />.
+   </para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">The scheme name is
+      required to begin with a letter, and contain only letters, digits,
+      and the characters '.', '+' or '-'.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CheckSecurity">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void CheckSecurity()" />
+      <MemberSignature Language="C#" Value="protected virtual void CheckSecurity ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Checks the current instance for character sequences that can result in unauthorized access to resources,
+      and removes them.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method checks for invalid
+      or dangerous character sequences in the components of the current instance, and
+      removes them. The semantics that determine whether a character sequence presents
+      a security risk are determined by the scheme of the current
+      instance.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">The default implementation does
+      nothing.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this method to provide
+      security checks for types derived from <see cref="T:System.Uri" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Invoke this method on instances of
+      types derived from <see cref="T:System.Uri" /> to remove any URI content that allows unauthorized
+      access to resources.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="C#" Value="public static int Compare (Uri uri1, Uri uri2, UriComponents partsToCompare, UriFormat compareFormat, StringComparison comparisonType);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri1" Type="System.Uri" />
+        <Parameter Name="uri2" Type="System.Uri" />
+        <Parameter Name="partsToCompare" Type="System.UriComponents" />
+        <Parameter Name="compareFormat" Type="System.UriFormat" />
+        <Parameter Name="comparisonType" Type="System.StringComparison" />
+      </Parameters>
+      <Docs>
+        <param name="uri1">To be added.</param>
+        <param name="uri2">To be added.</param>
+        <param name="partsToCompare">To be added.</param>
+        <param name="compareFormat">To be added.</param>
+        <param name="comparisonType">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DnsSafeHost">
+      <MemberSignature Language="C#" Value="public string DnsSafeHost { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object comparand)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object comparant);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="comparant" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="comparant">The <see cref="T:System.Uri" /> instance to compare with the current instance. This argument can be a <see cref="T:System.String" /> or a <see cref="T:System.Uri" /> .</param>
+        <summary>
+          <para>Compares the current instance and the specified
+      object for equality.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " />if
+<paramref name="comparand " />represents the same URI (ignoring any fragment or query information) as
+   the current instance; otherwise, <see langword="false" /> . If <paramref name="comparand" /> is
+<see langword="null" />, a zero-length string, or is not an instance of <see cref="T:System.String" /> or <see cref="T:System.Uri" /> 
+, returns false.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="comparand" /> is a <see cref="T:System.String" />, it is converted
+   to a <see cref="T:System.Uri" /> by
+   calling <see cref="T:System.Uri" />(<paramref name="comparand" />).</para>
+          <para>The <see cref="P:System.Uri.Scheme" />, <see cref="P:System.Uri.Host" /> and unescaped version of the <see cref="P:System.Uri.AbsolutePath" /> of the
+current instance and <paramref name="comparand" /> are compared for equality.</para>
+          <para>If the scheme of
+   the current instance is the <see cref="F:System.Uri.UriSchemeFile" /> scheme, the absolute paths are compared
+   in accordance with the case sensitivity of the current
+   platform.</para>
+          <para>
+            <block subset="none" type="note">
+   This method overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Escape">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Escape()" />
+      <MemberSignature Language="C#" Value="protected virtual void Escape ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Converts any unsafe or reserved characters in the <see cref="P:System.Uri.AbsolutePath" /> component to equivalent escaped hexadecimal
+   sequences.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>Converts any unsafe or reserved characters in the <see cref="P:System.Uri.AbsolutePath" /> component to a character 
+      sequence
+      consisting of a "%" followed by the hexadecimal value of the character
+      as described by IETF 2396. </para>
+            <para>If the path component of the current instance is <see langword="null" />, the
+   escaped path is <see cref="F:System.String.Empty" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="default">As described
+   above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this
+   method to customize the escaping behavior provided by the <see cref="T:System.Uri" />
+   type.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Applications
+   typically do not call this method; it is intended for use by the
+   constructors.</block>
+          </para>
+          <para>
+            <block subset="none" type="note">For additional
+   information on escaping URI, see section 2 of RFC 2396.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="EscapeDataString">
+      <MemberSignature Language="C#" Value="public static string EscapeDataString (string stringToEscape);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stringToEscape" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stringToEscape">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EscapeString">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig static string EscapeString(string str)" />
+      <MemberSignature Language="C#" Value="protected static string EscapeString (string str);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="str" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="str">A <see cref="T:System.String" /> to convert to its escaped representation.</param>
+        <summary>
+          <para>Converts a string to its escaped representation.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the escaped representation of
+<paramref name="str" /> .</para>
+        </returns>
+        <remarks>
+          <para> 
+      The string is escaped in accordance with RFC 2396. </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="EscapeUriString">
+      <MemberSignature Language="C#" Value="public static string EscapeUriString (string stringToEscape);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stringToEscape" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stringToEscape">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Fragment">
+      <MemberSignature Language="ILASM" Value=".property string Fragment { public hidebysig specialname instance string get_Fragment() }" />
+      <MemberSignature Language="C#" Value="public string Fragment { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the fragment component of the URI used to construct the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing any
+   fragment information contained in the URI used to construct the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.Uri.Fragment" /> property gets
+   any text following a fragment marker ('#') in the URI, including the fragment
+   marker itself. If, when the current instance was constructed, the URI
+   was already escaped or the constructor's <paramref name="dontEscape" /> parameter was set to
+<see langword="false" /> 
+, the value
+returned by this property is escaped. </para>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Uri.Fragment" /> property is not considered in a <see cref="M:System.Uri.Equals(System.Object)" /> comparison.</para>
+          </block>
+        </remarks>
+        <example>
+          <para>The following example demonstrates the use of the
+   <see cref="P:System.Uri.Fragment" />
+   property.</para>
+          <code lang="C#">using System;
+
+public class UriTest {
+ public static void Main() {
+
+ Uri baseUri = new Uri("http://www.contoso.com/");
+ Uri myUri = new Uri(baseUri, "index.htm#main");
+ 
+ Console.WriteLine(myUri.Fragment);
+ }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>#main</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromHex">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 FromHex(valuetype System.Char digit)" />
+      <MemberSignature Language="C#" Value="public static int FromHex (char digit);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="digit" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="digit">The hexadecimal digit (0-9, a-f, A-F) to convert. </param>
+        <summary>
+          <para> Returns the decimal value of a hexadecimal digit.
+ </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Int32" /> containing an integer from 0 - 15 that corresponds to the specified hexadecimal
+ digit.
+ </para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="digit " />is not a valid hexadecimal digit (0-9, a-f, A-F).</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetComponents">
+      <MemberSignature Language="C#" Value="public string GetComponents (UriComponents components, UriFormat format);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="components" Type="System.UriComponents" />
+        <Parameter Name="format" Type="System.UriFormat" />
+      </Parameters>
+      <Docs>
+        <param name="components">To be added.</param>
+        <param name="format">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Generates a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Int32" /> containing the hash code for this instance.</para>
+        </returns>
+        <remarks>
+          <para> The hash code is generated without the fragment component.
+      For example, the URIs "http://www.contoso.com/index.htm#search"
+      and "http://www.contoso.com/index.htm"
+      produce the same hash code.</para>
+          <para>The algorithm used to generate the hash code is unspecified.</para>
+          <para>
+            <block subset="none" type="note">
+      This method overrides <see cref="M:System.Object.GetHashCode" />. </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetLeftPart">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetLeftPart(valuetype System.UriPartial part)" />
+      <MemberSignature Language="C#" Value="public string GetLeftPart (UriPartial part);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="part" Type="System.UriPartial" />
+      </Parameters>
+      <Docs>
+        <param name="part">A <see cref="T:System.UriPartial" /> value that specifies the component to return.</param>
+        <summary>
+          <para>Returns the specified portion of the URI represented by
+      the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing all
+   components up to the specified portion of the URI, or <see cref="F:System.String.Empty" /> if
+   the current instance does not contain the component identified by
+<paramref name="part" /> .</para>
+        </returns>
+        <remarks>
+          <para>The <see cref="M:System.Uri.GetLeftPart(System.UriPartial)" /> method returns a string containing the URI
+   components starting with the left-most component of
+   the URI and ending with the component specified by <paramref name="part" />
+   . The returned string does not include fragment or
+   query information.</para>
+          <para>
+            <see cref="M:System.Uri.GetLeftPart(System.UriPartial)" /> includes delimiters as follows:</para>
+          <list type="bullet">
+            <item>
+              <term>
+                <see cref="F:System.UriPartial.Scheme" /> has 
+      the scheme delimiter added.</term>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.UriPartial.Authority" /> does 
+      not have the path delimiter added.</term>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.UriPartial.Path" />
+   includes any delimiters in the original URI up to the query or
+   fragment delimiter.</term>
+            </item>
+          </list>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The <paramref name="part" /> parameter is not a valid <see cref="T:System.UriPartial" /> value.</exception>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.Uri.GetLeftPart(System.UriPartial)" /> method.</para>
+          <code lang="C#">using System;
+
+public class UriTest {
+  public static void Main() {
+    string[] myUri  = {
+            "http://www.contoso.com/index.htm",
+            "http:www.contoso.com/index.htm#mark",
+                    "mailto:user@contoso.com?subject=uri",
+                    "nntp://news.contoso.com/123456@contoso.com"
+    };
+    foreach (string s in myUri) {
+      Uri aUri = new Uri(s);
+      Console.WriteLine("URI: {0}", aUri.ToString());
+      Console.WriteLine("Scheme: {0}",aUri.GetLeftPart(UriPartial.Scheme));
+      Console.WriteLine("Authority: {0}",aUri.GetLeftPart(UriPartial.Authority));
+      Console.WriteLine("Path: {0}",aUri.GetLeftPart(UriPartial.Path));
+    }  
+  }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>URI: http://www.contoso.com/index.htm</para>
+            <para>Scheme: http://</para>
+            <para>Authority: http://www.contoso.com</para>
+            <para>Path: http://www.contoso.com/index.htm</para>
+            <para>URI: http://www.contoso.com/index.htm#mark</para>
+            <para>Scheme: http://</para>
+            <para>Authority: http://www.contoso.com</para>
+            <para>Path: http://www.contoso.com/index.htm</para>
+            <para>URI: mailto:user@contoso.com?subject=uri</para>
+            <para>Scheme: mailto:</para>
+            <para>Authority:</para>
+            <para>Path: mailto:user@contoso.com</para>
+            <para>URI: nntp://news.contoso.com/123456@contoso.com</para>
+            <para>Scheme: nntp://</para>
+            <para>Authority: nntp://news.contoso.com</para>
+            <para>Path: nntp://news.contoso.com/123456@contoso.com</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="protected void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="HexEscape">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string HexEscape(valuetype System.Char character)" />
+      <MemberSignature Language="C#" Value="public static string HexEscape (char character);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="character" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="character">A <see cref="T:System.Char" /> containing the character to convert to escaped hexadecimal representation. </param>
+        <summary>
+          <para> Converts a specified ASCII character into its escaped hexadecimal equivalent.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing the escaped hexadecimal representation of the specified character.
+   </para>
+        </returns>
+        <remarks>
+          <para> The returned string is in the
+      form "%XX", where X represents a hexadecimal digit (0-9, A-F).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">The numerical value of <paramref name="character" /> is greater than 255. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HexUnescape">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Char HexUnescape(string pattern, class System.Int32&amp; index)" />
+      <MemberSignature Language="C#" Value="public static char HexUnescape (string pattern, ref int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pattern" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="pattern">A <see cref="T:System.String" /> containing the hexadecimal representation of a character. </param>
+        <param name="index">A <see cref="T:System.Int32" /> containing the location in <paramref name="pattern" /> where the hexadecimal representation of a character begins. </param>
+        <summary>
+          <para> Converts a specified escaped hexadecimal representation of a character to the character.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Char" /> containing a character. If the character pointed to
+   by <paramref name="index" /> is a "%" and there are at least two characters following the
+   "%", and the two characters are valid hexadecimal digits, the hexadecimal
+   digits are converted to <see cref="T:System.Char" />. Otherwise, the character at <paramref name="index" /> is returned. Valid hexadecimal digits are:
+   0-9,
+   a-f, A-F.
+   </para>
+          <para>On return, the value of <paramref name="index " />
+contains the index of the character following the one returned.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index &lt; " />0, or <paramref name="index " />&gt;= the number of characters in pattern.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Host">
+      <MemberSignature Language="ILASM" Value=".property string Host { public hidebysig specialname instance string get_Host() }" />
+      <MemberSignature Language="C#" Value="public string Host { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the host component of the URI used to construct the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the DNS host
+   name or IP address of the host server. If the host information was not
+   specified to the constructor, the value of this property is <see cref="F:System.String.Empty" /> .</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para> If the host information is an IP6 address, the information is enclosed in square brackets ("[" and "]").</para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates using the <see cref="P:System.Uri.Host" /> 
+property.</para>
+          <code lang="C#">using System;
+
+public class UriTest {
+ public static void Main() {
+
+ Uri baseUri = new Uri("http://www.contoso.com:8080/");
+ Uri myUri = new Uri(baseUri, "shownew.htm?date=today");
+ 
+ Console.WriteLine(myUri.Host);
+ }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>www.contoso.com</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HostNameType">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.UriHostNameType HostNameType { public hidebysig specialname instance valuetype System.UriHostNameType get_HostNameType() }" />
+      <MemberSignature Language="C#" Value="public UriHostNameType HostNameType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UriHostNameType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the format of the host address in the URI used to construct the current instance.
+      </para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.UriHostNameType" /> that indicates the format of the host address 
+   information in the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>If <see cref="P:System.Uri.Host" /> is <see langword="null" />, the value of this property is
+<see cref="F:System.UriHostNameType.Unknown" /> .</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsAbsoluteUri">
+      <MemberSignature Language="C#" Value="public bool IsAbsoluteUri { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsBadFileSystemCharacter">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual bool IsBadFileSystemCharacter(valuetype System.Char character)" />
+      <MemberSignature Language="C#" Value="protected virtual bool IsBadFileSystemCharacter (char ch);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ch" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="ch">A <see cref="T:System.Char" /> containing the character to check.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Boolean" /> value that indicates whether the specified character would be an invalid character
+   if used in a file system name.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the specified character is not acceptable for use in a file
+   system name; otherwise, <see langword="false" />.</para>
+          <para>The value returned by this
+   method is implementation-specific.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method
+      returns <see langword="false" /> if the specified character cannot be used in a
+      URI that identifies a file, as defined by the current file system on the current
+      platform.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this
+      method to provide a check for invalid characters as defined by the current file system on the current
+      platform.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to determine if a character can be used in a file
+      name.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IsBaseOf">
+      <MemberSignature Language="C#" Value="public bool IsBaseOf (Uri uri);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="uri">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsDefaultPort">
+      <MemberSignature Language="ILASM" Value=".property bool IsDefaultPort { public hidebysig specialname instance bool get_IsDefaultPort() }" />
+      <MemberSignature Language="C#" Value="public bool IsDefaultPort { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the <see cref="P:System.Uri.Port" /> value of the current instance is the default port for the scheme of the current instance.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />if the value in the <see cref="P:System.Uri.Port" /> property is the default
+ port for the <see cref="P:System.Uri.Scheme" />
+ ; otherwise, <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">For a list of default
+ port values, see the <see cref="P:System.Uri.Port" /> property.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsExcludedCharacter">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig static bool IsExcludedCharacter(valuetype System.Char character)" />
+      <MemberSignature Language="C#" Value="protected static bool IsExcludedCharacter (char ch);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ch" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="ch">A <see cref="T:System.Char" /> containing the character to check.</param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value that indicates whether the specified 
+   character is excluded from use or is unwise in URIs, as defined by IETF
+   RFC 2396.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if the
+   specified character is required to
+   be escaped; otherwise, <see langword="false" /> .</para>
+        </returns>
+        <remarks>
+          <para>This method returns <see langword="true" /> for the following characters:
+   </para>
+          <list type="table">
+            <listheader>
+              <term>Character(s)</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term>
+                <paramref name="character " />&lt; 0x0020 </term>
+              <description>Any character with the ASCII value less than
+      hexadecimal 0x20 (32). </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="character " />&lt; 0x007f</term>
+              <description>Any character with the ASCII value greater than
+   hexadecimal 0x7f (127).</description>
+            </item>
+            <item>
+              <term> &lt;</term>
+              <description>Less than sign.</description>
+            </item>
+            <item>
+              <term> &gt;</term>
+              <description>Greater than sign.</description>
+            </item>
+            <item>
+              <term> #</term>
+              <description> Number sign (crosshatch, pound sign).</description>
+            </item>
+            <item>
+              <term> %</term>
+              <description>Percent.</description>
+            </item>
+            <item>
+              <term> "</term>
+              <description>
+                <para>Quotation mark.</para>
+              </description>
+            </item>
+            <item>
+              <term> {</term>
+              <description>Left curly brace.</description>
+            </item>
+            <item>
+              <term> }</term>
+              <description>Right curly brace.</description>
+            </item>
+            <item>
+              <term> |</term>
+              <description>Pipe sign (vertical bar).</description>
+            </item>
+            <item>
+              <term> \</term>
+              <description> Backward slash.</description>
+            </item>
+            <item>
+              <term> ^</term>
+              <description>Circumflex (caret).</description>
+            </item>
+            <item>
+              <term> [</term>
+              <description>Left square bracket.</description>
+            </item>
+            <item>
+              <term> ]</term>
+              <description>Right square bracket.</description>
+            </item>
+            <item>
+              <term> `</term>
+              <description>Grave accent.</description>
+            </item>
+          </list>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IsFile">
+      <MemberSignature Language="ILASM" Value=".property bool IsFile { public hidebysig specialname instance bool get_IsFile() }" />
+      <MemberSignature Language="C#" Value="public bool IsFile { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current instance identifies a file.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />if the 
+ resource identified by the current <see cref="T:System.Uri" /> is a file; otherwise,
+<see langword="false" /> .</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.Uri.IsFile" /> property is <see langword="true" /> when the <see cref="P:System.Uri.Scheme" /> property
+ equals <see cref="F:System.Uri.UriSchemeFile" />.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsHexDigit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsHexDigit(valuetype System.Char character)" />
+      <MemberSignature Language="C#" Value="public static bool IsHexDigit (char digit);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="digit" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="digit">A <see cref="T:System.Char" /> containing the character to validate. </param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value that indicates whether the specified character is a valid hexadecimal digit.
+   </para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " />if the
+   character is a valid hexadecimal digit (0-9, A-F, a-f);
+   otherwise <see langword="false" />.
+   </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsHexEncoding">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsHexEncoding(string pattern, int32 index)" />
+      <MemberSignature Language="C#" Value="public static bool IsHexEncoding (string pattern, int index);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pattern" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="pattern">The <see cref="T:System.String" /> to check. </param>
+        <param name="index">A <see cref="T:System.Int32" /> containing the location in <paramref name="pattern " />to check for hex encoding. </param>
+        <summary>
+          <para> Returns a <see cref="T:System.Boolean" /> value that indicates whether
+   a substring of the specified string is in escaped hexadecimal encoding format ("%" followed by two hexadecimal
+   characters).
+   </para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true " />if the 
+   specified location in <paramref name="pattern " />contains a
+   substring in escaped hexadecimal encoding
+   format; otherwise, <see langword="false" />.
+   </para>
+        </returns>
+        <remarks>
+          <para>The <see cref="M:System.Uri.IsHexEncoding(System.String,System.Int32)" />
+method checks for hexadecimal digits case-insensitively.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsLoopback">
+      <MemberSignature Language="ILASM" Value=".property bool IsLoopback { public hidebysig specialname instance bool get_IsLoopback() }" />
+      <MemberSignature Language="C#" Value="public bool IsLoopback { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating
+ whether the host information of the current instance is the current computer.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />if the host of
+ the current instance is the reserved hostname "localhost" or the
+ loop-back IP address (127.0.0.1); otherwise,
+<see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+        <example>
+          <para>The following example demonstrates the <see cref="P:System.Uri.IsLoopback" /> property.</para>
+          <code lang="C#">using System;
+
+public class UriTest {
+ public static void Main() {
+ Uri myUri = new Uri("http://127.0.0.1/index.htm", true);
+ Console.WriteLine("{0} is loopback? {1}", myUri.ToString(), myUri.IsLoopback);
+
+ myUri = new Uri("http://localhost/index.htm", true);
+ Console.WriteLine("{0} is loopback? {1}", myUri.ToString(), myUri.IsLoopback);
+
+ }
+}
+</code>
+          <para>The output is </para>
+          <para> 
+ http://127.0.0.1/index.htm is loopback?
+ True</para>
+          <para>http://localhost/index.htm is loopback? True</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReservedCharacter">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual bool IsReservedCharacter(valuetype System.Char character)" />
+      <MemberSignature Language="C#" Value="protected virtual bool IsReservedCharacter (char ch);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ch" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="ch">To be added.</param>
+        <summary>
+          <para>Returns a <see cref="T:System.Boolean" /> value that indicates whether a character is part of the URI reserved set.</para>
+        </summary>
+        <returns>
+          <para>
+            <see langword="true" /> if <paramref name="character" /> is a URI reserved character as defined by IETF RFC
+   2396; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>The following characters are reserved for the use in URI:</para>
+          <list type="table">
+            <listheader>
+              <term>Character</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term> ;</term>
+              <description>Semi-colon.</description>
+            </item>
+            <item>
+              <term> /</term>
+              <description> Forward slash.</description>
+            </item>
+            <item>
+              <term> :</term>
+              <description>Colon.</description>
+            </item>
+            <item>
+              <term> @</term>
+              <description>At sign (commercial at).</description>
+            </item>
+            <item>
+              <term> &amp;</term>
+              <description>Ampersand.</description>
+            </item>
+            <item>
+              <term> =</term>
+              <description>Equals sign.</description>
+            </item>
+            <item>
+              <term> +</term>
+              <description>Plus sign.</description>
+            </item>
+            <item>
+              <term> $</term>
+              <description>US
+            Dollar sign.</description>
+            </item>
+            <item>
+              <term> ,</term>
+              <description>Comma.</description>
+            </item>
+          </list>
+          <para>
+            <block subset="none" type="behaviors"> As described above. 
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this 
+   method to customize the escaping behavior provided by the <see cref="T:System.Uri" />
+   type.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to determine if a character is reserved.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="IsUnc">
+      <MemberSignature Language="C#" Value="public bool IsUnc { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsWellFormedOriginalString">
+      <MemberSignature Language="C#" Value="public bool IsWellFormedOriginalString ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsWellFormedUriString">
+      <MemberSignature Language="C#" Value="public static bool IsWellFormedUriString (string uriString, UriKind uriKind);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uriString" Type="System.String" />
+        <Parameter Name="uriKind" Type="System.UriKind" />
+      </Parameters>
+      <Docs>
+        <param name="uriString">To be added.</param>
+        <param name="uriKind">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LocalPath">
+      <MemberSignature Language="ILASM" Value=".property string LocalPath { public hidebysig specialname instance string get_LocalPath() }" />
+      <MemberSignature Language="C#" Value="public string LocalPath { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the local operating-system representation of the resource identified by the
+      current instance.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the
+   local representation of the resource identified by the current
+   instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>If the <see cref="P:System.Uri.Scheme" /> of the current instance is not equal to <see cref="F:System.Uri.UriSchemeFile" />, this
+   property returns the same value as <see cref="P:System.Uri.AbsolutePath" /> . </para>
+          <para>If the scheme is equal to
+<see cref="F:System.Uri.UriSchemeFile" />, this 
+   property returns an unescaped platform-dependent local representation of the file name.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MakeRelative">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string MakeRelative(class System.Uri toUri)" />
+      <MemberSignature Language="C#" Value="public string MakeRelative (Uri toUri);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="toUri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="toUri">The URI to compare to the current URI.</param>
+        <summary>
+          <para> Returns the specified <see cref="T:System.Uri" /> as a relative URI.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> with
+   the difference between the current instance and <paramref name="toUri" /> if the two
+   URIs are the same except for the path information. If the two
+   URIs differ in more than the <see cref="P:System.Uri.AbsolutePath" />, this method returns the <see cref="T:System.String" />
+ representation of <paramref name="toUri" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para>The following example demonstrates the <see cref="M:System.Uri.MakeRelative(System.Uri)" />
+method.</para>
+          <code lang="C#">using System;
+public class UriTest {
+  public static void Main() {
+    Uri myUri = new Uri("http://www.contoso.com/Hello%20World.htm", true);
+    Console.WriteLine(myUri.ToString());
+    Console.WriteLine(myUri.MakeRelative(new Uri ("http://www.contoso.com/index.htm")));
+  }
+}
+</code>
+          <para>The output is </para>
+          <c>
+            <para>http://www.contoso.com/Hello World.htm</para>
+            <para>index.htm</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use MakeRelativeUri(Uri uri) instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="MakeRelativeUri">
+      <MemberSignature Language="C#" Value="public Uri MakeRelativeUri (Uri uri);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="uri">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool op_Equality (Uri u1, Uri u2);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="u1" Type="System.Uri" />
+        <Parameter Name="u2" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="u1">To be added.</param>
+        <param name="u2">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (Uri u1, Uri u2);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="u1" Type="System.Uri" />
+        <Parameter Name="u2" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="u1">To be added.</param>
+        <param name="u2">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OriginalString">
+      <MemberSignature Language="C#" Value="public string OriginalString { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Parse()" />
+      <MemberSignature Language="C#" Value="protected virtual void Parse ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Parses the URI into its constituent components.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> This method parses the <see cref="P:System.Uri.AbsolutePath" />
+property, separates it into various URI components, and stores the
+components in the appropriate <see cref="T:System.Uri" />
+properties.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="default"> This method parses path components as defined in IETF RFC 2396. 
+</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">
+   Override this method to provide parsing for URIs in
+   formats that are not defined in IETF RFC 2396.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Applications typically do not call this 
+   method; it is intended for use by the constructors.</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.UriFormatException">
+          <para>The scheme of the URI is in an invalid format.</para>
+          <para>-or-</para>
+          <para>The URI is in an invalid form and cannot be parsed.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("The method has been deprecated. It is not used by the system.")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="PathAndQuery">
+      <MemberSignature Language="ILASM" Value=".property string PathAndQuery { public hidebysig specialname instance string get_PathAndQuery() }" />
+      <MemberSignature Language="C#" Value="public string PathAndQuery { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the <see cref="P:System.Uri.AbsolutePath" /> and <see cref="P:System.Uri.Query" /> components of the URI used to 
+   construct the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> that contains the
+   values of the <see cref="P:System.Uri.AbsolutePath" /> and <see cref="P:System.Uri.Query" /> properties.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+        <example>
+          <para> The following example uses the <see cref="P:System.Uri.PathAndQuery" /> property to extract the path and query information 
+   from a <see cref="T:System.Uri" />
+   instance.</para>
+          <code lang="C#">using System;
+
+public class UriTest {
+ public static void Main() {
+
+ Uri baseUri = new Uri("http://www.contoso.com/");
+ Uri myUri = new Uri(baseUri, "catalog/shownew.htm?date=today");
+ 
+ Console.WriteLine(myUri.PathAndQuery);
+ }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>/catalog/shownew.htm?date=today</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Port">
+      <MemberSignature Language="ILASM" Value=".property int32 Port { public hidebysig specialname instance int32 get_Port() }" />
+      <MemberSignature Language="C#" Value="public int Port { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the port number used to connect to the <see cref="P:System.Uri.Host" /> referenced by the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> containing the port number, or -1 if no port is used by
+   the URI <see cref="P:System.Uri.Scheme" /> . If no port was specified as part of the URI used
+   to construct the current instance, the <see cref="P:System.Uri.Port" /> property returns the default port for the URI scheme.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <block subset="none" type="note">
+            <para>The following table lists the default port number
+         for each supported scheme.</para>
+            <list type="table">
+              <listheader>
+                <term>Scheme</term>
+                <description>Port</description>
+              </listheader>
+              <item>
+                <term> file</term>
+                <description>-1</description>
+              </item>
+              <item>
+                <term> ftp</term>
+                <description>21</description>
+              </item>
+              <item>
+                <term> gopher</term>
+                <description>70</description>
+              </item>
+              <item>
+                <term> http</term>
+                <description>80</description>
+              </item>
+              <item>
+                <term> https</term>
+                <description>43</description>
+              </item>
+              <item>
+                <term> mailto</term>
+                <description>25</description>
+              </item>
+              <item>
+                <term> news</term>
+                <description>119</description>
+              </item>
+              <item>
+                <term> nntp</term>
+                <description>119</description>
+              </item>
+            </list>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Query">
+      <MemberSignature Language="ILASM" Value=".property string Query { public hidebysig specialname instance string get_Query() }" />
+      <MemberSignature Language="C#" Value="public string Query { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the query component of the URI used to construct the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the
+   query information included in the specified URI, or <see cref="F:System.String.Empty" /> .</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>If, when the current instance was constructed, the URI was already escaped or
+      the constructor's <paramref name="dontEscape" /> parameter was set to <see langword="false" /> ,
+      the value returned by this property is escaped.</para>
+          <para>
+            <block subset="none" type="note">Query information is separated from the
+      path information by a question mark ('?') and is located at the end of a
+      URI. The query information includes the
+      leading question mark.</block>
+          </para>
+        </remarks>
+        <example>
+          <para> The following example uses the <see cref="P:System.Uri.Query" />
+property to extract the
+query from a URI.</para>
+          <code lang="C#">using System;
+
+public class UriTest {
+ public static void Main() {
+
+ Uri baseUri = new Uri("http://www.contoso.com/");
+ Uri myUri = new Uri(baseUri, "catalog/shownew.htm?date=today");
+ 
+ Console.WriteLine(myUri.Query);
+ }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para>?date=today</para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Scheme">
+      <MemberSignature Language="ILASM" Value=".property string Scheme { public hidebysig specialname instance string get_Scheme() }" />
+      <MemberSignature Language="C#" Value="public string Scheme { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the scheme component of the URI used to construct the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the URI scheme.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SchemeDelimiter">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string SchemeDelimiter" />
+      <MemberSignature Language="C#" Value="public static readonly string SchemeDelimiter;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.String" /> containing the 
+   characters that separate the scheme
+   component from the remainder of a URI.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is "://".</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Segments">
+      <MemberSignature Language="C#" Value="public string[] Segments { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
+      <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Returns the unescaped, canonical form of the URI
+      information used to construct the current instance.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" /> containing the unescaped, canonical form of the URI
+   represented by the current instance.
+   </para>
+        </returns>
+        <remarks>
+          <para>The string returned by this method includes the <see cref="P:System.Uri.Query" /> and <see cref="P:System.Uri.Fragment" />
+components.</para>
+          <para>
+            <block subset="none" type="note">
+   This method overrides <see cref="M:System.Object.ToString" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryCreate">
+      <MemberSignature Language="C#" Value="public static bool TryCreate (string uriString, UriKind uriKind, out Uri result);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uriString" Type="System.String" />
+        <Parameter Name="uriKind" Type="System.UriKind" />
+        <Parameter Name="result" Type="System.Uri&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="uriString">To be added.</param>
+        <param name="uriKind">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryCreate">
+      <MemberSignature Language="C#" Value="public static bool TryCreate (Uri baseUri, string relativeUri, out Uri result);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseUri" Type="System.Uri" />
+        <Parameter Name="relativeUri" Type="System.String" />
+        <Parameter Name="result" Type="System.Uri&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="baseUri">To be added.</param>
+        <param name="relativeUri">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryCreate">
+      <MemberSignature Language="C#" Value="public static bool TryCreate (Uri baseUri, Uri relativeUri, out Uri result);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseUri" Type="System.Uri" />
+        <Parameter Name="relativeUri" Type="System.Uri" />
+        <Parameter Name="result" Type="System.Uri&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="baseUri">To be added.</param>
+        <param name="relativeUri">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Unescape">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual string Unescape(string path)" />
+      <MemberSignature Language="C#" Value="protected virtual string Unescape (string str);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="str" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="str">The <see cref="T:System.String" /> to unescape.</param>
+        <summary>
+          <para> Converts escape sequences in the specified <see cref="T:System.String" /> into their
+ unescaped equivalents.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing <paramref name="path" /> with its escaped characters
+ converted to their unescaped equivalents. If path is <see langword="null" /> or a
+ zero-length string, returns <see cref="F:System.String.Empty" />.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para> Escape sequences can be hex-encoded reserved characters (for example
+ "%40") or hex-encoded UTF-8 sequences (for example "%C4%D2").</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="UnescapeDataString">
+      <MemberSignature Language="C#" Value="public static string UnescapeDataString (string stringToUnescape);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stringToUnescape" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stringToUnescape">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UriSchemeFile">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string UriSchemeFile" />
+      <MemberSignature Language="C#" Value="public static readonly string UriSchemeFile;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>file</MemberValue>
+      <Docs>
+        <summary>
+          <para>A <see cref="T:System.String" /> containing the 
+   characters that indicate that
+   a URI identifies a file.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is "file".</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UriSchemeFtp">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string UriSchemeFtp" />
+      <MemberSignature Language="C#" Value="public static readonly string UriSchemeFtp;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ftp</MemberValue>
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.String" /> containing the 
+   characters that indicate that a URI is accessed through the File Transfer Protocol
+   (FTP).</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is "ftp".</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UriSchemeGopher">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string UriSchemeGopher" />
+      <MemberSignature Language="C#" Value="public static readonly string UriSchemeGopher;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>gopher</MemberValue>
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.String" /> containing the 
+   characters that indicate that a URI is accessed through
+   the Gopher protocol.</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is "gopher".</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UriSchemeHttp">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string UriSchemeHttp" />
+      <MemberSignature Language="C#" Value="public static readonly string UriSchemeHttp;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>http</MemberValue>
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.String" /> containing the 
+   characters that indicate that a URI is accessed through
+   the Hypertext Transfer Protocol (HTTP).</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is "http".</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UriSchemeHttps">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string UriSchemeHttps" />
+      <MemberSignature Language="C#" Value="public static readonly string UriSchemeHttps;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>https</MemberValue>
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.String" /> 
+containing the characters that indicate that a URI is accessed through the Secure Hypertext Transfer
+Protocol (HTTPS).</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is "https".</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UriSchemeMailto">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string UriSchemeMailto" />
+      <MemberSignature Language="C#" Value="public static readonly string UriSchemeMailto;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>mailto</MemberValue>
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.String" /> containing the 
+   characters that indicate that a URI is an email address and is accessed through the
+   Simple Network Mail Protocol (SNMP).</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is "mailto".</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UriSchemeNetPipe">
+      <MemberSignature Language="C#" Value="public static readonly string UriSchemeNetPipe;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UriSchemeNetTcp">
+      <MemberSignature Language="C#" Value="public static readonly string UriSchemeNetTcp;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UriSchemeNews">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string UriSchemeNews" />
+      <MemberSignature Language="C#" Value="public static readonly string UriSchemeNews;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>news</MemberValue>
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.String" /> containing the 
+   characters that indicate that a URI is an Internet news group and is accessed through
+   the Network News Transport Protocol (NNTP).</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is "news".</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UriSchemeNntp">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string UriSchemeNntp" />
+      <MemberSignature Language="C#" Value="public static readonly string UriSchemeNntp;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>nntp</MemberValue>
+      <Docs>
+        <summary>
+          <para> A <see cref="T:System.String" /> containing the characters that indicate that a URI is an Internet news group and
+   is accessed through the Network News Transport Protocol (NNTP).</para>
+        </summary>
+        <remarks>
+          <para>This field is read-only. The value of this field is "nntp".</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UserEscaped">
+      <MemberSignature Language="ILASM" Value=".property bool UserEscaped { public hidebysig specialname instance bool get_UserEscaped() }" />
+      <MemberSignature Language="C#" Value="public bool UserEscaped { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a <see cref="T:System.Boolean" /> value that indicates whether the URI information used to
+   construct the current instance was escaped before the current instance was created.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />if
+   the <paramref name="dontEscape " />parameter of the constructor for
+   the current instance was set to
+<see langword="true " /> ; otherwise, 
+<see langword="false" /> .</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UserInfo">
+      <MemberSignature Language="ILASM" Value=".property string UserInfo { public hidebysig specialname instance string get_UserInfo() }" />
+      <MemberSignature Language="C#" Value="public string UserInfo { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the userinfo component of the URI
+ used to construct the current instance.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing any 
+ user information included in the URI used to construct the current instance, or
+<see cref="F:System.String.Empty" /> if no user 
+ information was included.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">For details on the 
+ userinfo component of a URI, see IETF RFC 2396, 3.2.2.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ComponentModel.TypeConverter(typeof(System.UriTypeConverter))</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

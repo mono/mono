@@ -1,0 +1,639 @@
+<Type Name="Dns" FullName="System.Net.Dns" FullNameSP="System_Net_Dns" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed Dns extends System.Object" />
+  <TypeSignature Language="C#" Value="public static class Dns" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Obtains domain information from the Domain Name System as
+      defined by IETF RFC 1035 and RFC 1036.</para>
+    </summary>
+    <remarks>
+      <para>The <see cref="T:System.Net.Dns" /> class creates
+   and sends queries to obtain information about a host server from the Internet
+   Domain Name System (DNS). In order to access DNS, the machine executing the
+   query is required to be connected to a network. If the query is executed on a
+   machine that does not have access to a domain name server, a <see cref="T:System.Net.Sockets.SocketException" />
+   is thrown. </para>
+      <para> Information from the DNS query is returned in an
+   instance of the <see cref="T:System.Net.IPHostEntry" /> class. If the specified host
+   has more than one entry in the DNS database, the <see cref="T:System.Net.IPHostEntry" /> instance contains
+   multiple IP addresses and
+   aliases. </para>
+      <para>
+        <block subset="none" type="note">See the <see cref="T:System.Net.IPHostEntry" />
+class page for an example that uses the <see cref="T:System.Net.Dns" /> class.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="BeginGetHostAddresses">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginGetHostAddresses (string hostName, AsyncCallback requestCallback, object stateObject);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostName" Type="System.String" />
+        <Parameter Name="requestCallback" Type="System.AsyncCallback" />
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="hostName">To be added.</param>
+        <param name="requestCallback">To be added.</param>
+        <param name="stateObject">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginGetHostByName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IAsyncResult BeginGetHostByName(string hostName, class System.AsyncCallback requestCallback, object stateObject)" />
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginGetHostByName (string hostName, AsyncCallback requestCallback, object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostName" Type="System.String" />
+        <Parameter Name="requestCallback" Type="System.AsyncCallback" />
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="hostName">A <see cref="T:System.String" /> containing the DNS name of the host.</param>
+        <param name="requestCallback">A <see cref="T:System.AsyncCallback" /> delegate, or <see langword="null" /> .</param>
+        <param name="stateObject">An application-defined object, or <see langword="null" /> .</param>
+        <summary>
+          <para>Begins the asynchronous execution of a DNS query to obtain address information about the specified host.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.</para>
+        </returns>
+        <remarks>
+          <para>This method starts an 
+      asynchronous request for information about the specified host. To retrieve the
+      results of the query and release resources allocated by this method, call
+      the <see cref="M:System.Net.Dns.EndGetHostByName(System.IAsyncResult)" /> method and specify the <see cref="T:System.IAsyncResult" /> object
+      returned by this method. <block subset="none" type="note">The <see cref="M:System.Net.Dns.EndGetHostByName(System.IAsyncResult)" />
+      method should be called exactly once for each call to
+   <see cref="M:System.Net.Dns.BeginGetHostByName(System.String,System.AsyncCallback,System.Object)" /> .</block></para>
+          <para>If the <paramref name="requestCallback" /> parameter is not 
+<see langword="null" />, the method referenced by <paramref name="requestCallback" /> is invoked when the 
+   asynchronous operation completes. The <see cref="T:System.IAsyncResult" /> object returned by this method is
+   passed as the argument to the method referenced by <paramref name="requestCallback" />
+   . The method referenced by
+<paramref name="requestCallback" /> can retrieve the results of the query by calling 
+<see cref="M:System.Net.Dns.EndGetHostByName(System.IAsyncResult)" /> .</para>
+The <paramref name="stateObject" /> parameter can be any object
+that the caller wishes to have available for the duration of the asynchronous
+operation. This object is available via the <see cref="P:System.IAsyncResult.AsyncState" />
+property of the object returned by this method.
+</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="hostName" /> is <see langword="null" /> .</exception>
+        <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have permission to access DNS information.</exception>
+        <permission cref="T:System.Net.DnsPermission">Requires unrestricted permission for accessing DNS information. See <see cref="T:System.Net.DnsPermission" /> and <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use BeginGetHostEntry instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="BeginGetHostEntry">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginGetHostEntry (System.Net.IPAddress hostAddress, AsyncCallback requestCallback, object stateObject);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostAddress" Type="System.Net.IPAddress" />
+        <Parameter Name="requestCallback" Type="System.AsyncCallback" />
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="hostAddress">To be added.</param>
+        <param name="requestCallback">To be added.</param>
+        <param name="stateObject">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginGetHostEntry">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginGetHostEntry (string hostNameOrAddress, AsyncCallback requestCallback, object stateObject);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostNameOrAddress" Type="System.String" />
+        <Parameter Name="requestCallback" Type="System.AsyncCallback" />
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="hostNameOrAddress">To be added.</param>
+        <param name="requestCallback">To be added.</param>
+        <param name="stateObject">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginResolve">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IAsyncResult BeginResolve(string hostName, class System.AsyncCallback requestCallback, object stateObject)" />
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginResolve (string hostName, AsyncCallback requestCallback, object stateObject);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostName" Type="System.String" />
+        <Parameter Name="requestCallback" Type="System.AsyncCallback" />
+        <Parameter Name="stateObject" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="hostName">A <see cref="T:System.String" /> containing the DNS name or IP address of the host.</param>
+        <param name="requestCallback">A <see cref="T:System.AsyncCallback" /> delegate or <see langword="null" /> .</param>
+        <param name="stateObject">An application-defined object, or <see langword="null" /> .</param>
+        <summary>
+          <para>Begins the asynchronous execution of a DNS query to
+      resolve a host name or IP address.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.</para>
+        </returns>
+        <remarks>
+          <para>This method starts an asynchronous request for DNS
+      information about the specified host. To retrieve the results of the query and
+      release resources allocated by this method, call the <see cref="M:System.Net.Dns.EndResolve(System.IAsyncResult)" />
+      method, and specify the <see cref="T:System.IAsyncResult" /> object returned by this method. <block subset="none" type="note">The <see cref="M:System.Net.Dns.EndResolve(System.IAsyncResult)" />
+      method should be called exactly once for each call to <see cref="M:System.Net.Dns.BeginResolve(System.String,System.AsyncCallback,System.Object)" /></block>.</para>
+          <para> If the <paramref name="requestCallback" /> parameter is not
+<see langword="null" />, the method referenced by <paramref name="requestCallback" /> is 
+   invoked when the asynchronous operation completes. The <see cref="T:System.IAsyncResult" /> object
+   returned by this method is passed as the argument to the method referenced by
+<paramref name="requestCallback" />. The method referenced by <paramref name="requestCallback" /> can 
+   retrieve the results of the query by calling <see cref="M:System.Net.Dns.EndResolve(System.IAsyncResult)" />.</para>
+          <para> The <paramref name="stateObject" /> parameter can be any object that the caller wishes
+   to have available for the duration of the asynchronous operation. This object is
+   available via the <see cref="P:System.IAsyncResult.AsyncState" /> property of the object returned by this
+   method. </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="hostName" /> is <see langword="null" /> .</exception>
+        <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have permission to access DNS information.</exception>
+        <permission cref="T:System.Net.DnsPermission">Requires unrestricted permission for accessing DNS information. See <see cref="T:System.Net.DnsPermission" /> and <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use BeginGetHostEntry instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="EndGetHostAddresses">
+      <MemberSignature Language="C#" Value="public static System.Net.IPAddress[] EndGetHostAddresses (IAsyncResult asyncResult);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndGetHostByName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.IPHostEntry EndGetHostByName(class System.IAsyncResult asyncResult)" />
+      <MemberSignature Language="C#" Value="public static System.Net.IPHostEntry EndGetHostByName (IAsyncResult asyncResult);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPHostEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">The <see cref="T:System.IAsyncResult" /> object that holds the state information for the asynchronous operation.</param>
+        <summary>
+          <para>Ends an asynchronous query to obtain address information about the specified host.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.IPHostEntry" /> object containing DNS address information about a host. </para>
+        </returns>
+        <remarks>
+          <para>This method blocks if the asynchronous operation has not completed.</para>
+          <para>The <see cref="M:System.Net.Dns.EndGetHostByName(System.IAsyncResult)" /> method completes an asynchronous request for
+   DNS information that was started with a call to <see cref="M:System.Net.Dns.BeginGetHostByName(System.String,System.AsyncCallback,System.Object)" />. The object
+   specified for the <paramref name="asyncResult" /> parameter is required to be the same
+   object as was returned by the <see cref="M:System.Net.Dns.BeginGetHostByName(System.String,System.AsyncCallback,System.Object)" /> method call that began the request.
+   </para>
+          <para>If the <see cref="M:System.Net.Dns.EndGetHostByName(System.IAsyncResult)" /> method is invoked via the <see cref="T:System.AsyncCallback" /> delegate 
+specified to the <see cref="M:System.Net.Dns.BeginGetHostByName(System.String,System.AsyncCallback,System.Object)" /> method, the <paramref name="asyncResult" />
+parameter is the <see cref="T:System.IAsyncResult" /> argument passed to the delegate's method.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="asyncResult " />is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use EndGetHostEntry instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="EndGetHostEntry">
+      <MemberSignature Language="C#" Value="public static System.Net.IPHostEntry EndGetHostEntry (IAsyncResult asyncResult);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.IPHostEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndResolve">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.IPHostEntry EndResolve(class System.IAsyncResult asyncResult)" />
+      <MemberSignature Language="C#" Value="public static System.Net.IPHostEntry EndResolve (IAsyncResult asyncResult);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPHostEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">
+          <SPAN>The <see langword="System.IAsyncResult" /> object that holds the state information for the asynchronous operation. </SPAN>
+        </param>
+        <summary>
+          <para> Ends an asynchronous query to resolve a host name or IP address.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.IPHostEntry" /> object containing address information about a host. </para>
+        </returns>
+        <remarks>
+          <para>This method blocks if the asynchronous operation has not
+      completed.</para>
+          <para>The <see cref="M:System.Net.Dns.EndResolve(System.IAsyncResult)" /> method completes an asynchronous request for
+   DNS information that was started with a call to <see cref="M:System.Net.Dns.BeginResolve(System.String,System.AsyncCallback,System.Object)" /> . The object specified for the
+<paramref name="asyncResult" /> parameter is required to be the same object as was returned 
+   by the <see cref="M:System.Net.Dns.BeginResolve(System.String,System.AsyncCallback,System.Object)" /> method call that began the request.
+   </para>
+          <para>If the <see cref="M:System.Net.Dns.EndResolve(System.IAsyncResult)" /> method is invoked via the <see cref="T:System.AsyncCallback" /> delegate 
+specified to the <see cref="M:System.Net.Dns.BeginResolve(System.String,System.AsyncCallback,System.Object)" /> method, the <paramref name="asyncResult" /> parameter is the
+<see cref="T:System.IAsyncResult" /> 
+argument passed to the delegate's method.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="asyncResult " />is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use EndGetHostEntry instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetHostAddresses">
+      <MemberSignature Language="C#" Value="public static System.Net.IPAddress[] GetHostAddresses (string hostNameOrAddress);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.IPAddress[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostNameOrAddress" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="hostNameOrAddress">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHostByAddress">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.IPHostEntry GetHostByAddress(class System.Net.IPAddress address)" />
+      <MemberSignature Language="C#" Value="public static System.Net.IPHostEntry GetHostByAddress (System.Net.IPAddress address);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPHostEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Net.IPAddress" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.Net.IPAddress" /> instance.</param>
+        <summary>
+          <para>Queries DNS for the DNS host name of the specified IP
+      address.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.IPHostEntry" /> instance containing the host information.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="address " />is <see langword="null" /> .</exception>
+        <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have permission to access DNS information.</exception>
+        <permission cref="T:System.Net.DnsPermission">Requires unrestricted permission for accessing DNS information. See <see cref="T:System.Net.DnsPermission" /> and <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use GetHostEntry instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetHostByAddress">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.IPHostEntry GetHostByAddress(string address)" />
+      <MemberSignature Language="C#" Value="public static System.Net.IPHostEntry GetHostByAddress (string address);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPHostEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="address">A <see cref="T:System.String" /> containing an IP address.</param>
+        <summary>
+          <para>Queries DNS for the DNS host name of the specified IP address.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.IPHostEntry" /> instance containing the host information.</para>
+        </returns>
+        <remarks>
+          <para>The IP address specified by the <paramref name="address " />parameter
+   is required to be in dotted-quad notation (for example, "192.168.1.2").</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="address " />is <see langword="null" /> .</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="address " />is not a valid IP address.</exception>
+        <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have permission to access DNS information.</exception>
+        <permission cref="T:System.Net.DnsPermission">Requires unrestricted permission for accessing DNS information. See <see cref="T:System.Net.DnsPermission" /> and <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use GetHostEntry instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetHostByName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.IPHostEntry GetHostByName(string hostName)" />
+      <MemberSignature Language="C#" Value="public static System.Net.IPHostEntry GetHostByName (string hostName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPHostEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="hostName">A <see cref="T:System.String" /> containing the DNS name of the host.</param>
+        <summary>
+          <para> Queries DNS for address information about the specified
+      host.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.IPHostEntry" /> object containing host information for the address
+   specified in <paramref name="hostName" />
+   .</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para>To retrieve host information asynchronously, use the <see cref="M:System.Net.Dns.BeginGetHostByName(System.String,System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.Dns.EndGetHostByName(System.IAsyncResult)" />
+   methods. </para>
+            <para>See the <see cref="T:System.Net.IPHostEntry" />
+class page for an example that uses the <see cref="M:System.Net.Dns.GetHostByName(System.String)" /> method.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="hostName " />is <see langword="null" /> .</exception>
+        <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have permission to access DNS information.</exception>
+        <permission cref="T:System.Net.DnsPermission">Requires unrestricted permission for accessing DNS information. See <see cref="T:System.Net.DnsPermission" /> and <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use GetHostEntry instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetHostEntry">
+      <MemberSignature Language="C#" Value="public static System.Net.IPHostEntry GetHostEntry (System.Net.IPAddress address);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.IPHostEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Net.IPAddress" />
+      </Parameters>
+      <Docs>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHostEntry">
+      <MemberSignature Language="C#" Value="public static System.Net.IPHostEntry GetHostEntry (string hostNameOrAddress);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.IPHostEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostNameOrAddress" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="hostNameOrAddress">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHostName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetHostName()" />
+      <MemberSignature Language="C#" Value="public static string GetHostName ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the DNS host name of the local machine.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the DNS host name
+   of the local machine.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.Net.Sockets.SocketException">An error was encountered resolving the local host name.</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have permission to access DNS information.</exception>
+        <permission cref="T:System.Net.DnsPermission">Requires unrestricted permission for accessing DNS information. See <see cref="T:System.Net.DnsPermission" /> and <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" qualify="true" />.</permission>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.IPHostEntry Resolve(string hostName)" />
+      <MemberSignature Language="C#" Value="public static System.Net.IPHostEntry Resolve (string hostName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.IPHostEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="hostName">A <see cref="T:System.String" /> containing a DNS-style host name or IP address.</param>
+        <summary>
+          <para> Resolves a DNS host name or IP address to a <see cref="T:System.Net.IPHostEntry" />
+instance. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Net.IPHostEntry" /> instance
+   containing address information about the host specified in
+<paramref name="hostName" />
+.</para>
+        </returns>
+        <remarks>
+          <para>The <see cref="M:System.Net.Dns.Resolve(System.String)" /> method
+   queries a DNS server for the IP address associated
+   with a host name or an IP address in dotted-quad notation. </para>
+          <para>When <paramref name="hostName " />is a DNS-style host name associated with multiple IP
+addresses, only the first IP address that resolves to that host name is
+returned. </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="hostName " />is <see langword="null" /> .</exception>
+        <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
+        <exception cref="T:System.Security.SecurityException">The caller does not have permission to access DNS information.</exception>
+        <permission cref="T:System.Net.DnsPermission">Requires unrestricted permission for accessing DNS information. This method also asserts unrestricted <see langword="DnsPermission" /> . See <see cref="T:System.Net.DnsPermission" /> and <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" qualify="true" />.</permission>
+        <example>
+          <para>The following example demonstrates the use of the <see cref="M:System.Net.Dns.Resolve(System.String)" /> method.</para>
+          <code lang="C#">using System;
+using System.Net;
+
+public class DnsTest {
+ public static void Main() {
+   IPHostEntry hostInfo1 = Dns.Resolve("www.contoso.com");
+   DisplayHostInfo(hostInfo1);
+   Console.WriteLine();
+ }
+
+ public static void DisplayHostInfo(IPHostEntry hostInfo) {
+   string[] aliases = hostInfo.Aliases;
+   IPAddress[] addresses = hostInfo.AddressList;
+   Console.WriteLine("The host name is: {0}", hostInfo.HostName);
+
+   for(int x = 0; x &lt; aliases.Length; x++)
+     Console.WriteLine("Alias {0} == {1}", aliases[x], addresses[x]);
+ }
+}
+</code>
+          <para>The output is</para>
+          <c>
+            <para> The host name is: contoso.com</para>
+            <para> Alias www.contoso.com == 207.46.230.186 </para>
+          </c>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use GetHostEntry instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

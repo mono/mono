@@ -1,0 +1,991 @@
+<Type Name="SocketOptionName" FullName="System.Net.Sockets.SocketOptionName" FullNameSP="System_Net_Sockets_SocketOptionName" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable SocketOptionName extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum SocketOptionName" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Specifies option names for use in the <see cref="M:System.Net.Sockets.Socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)" qualify="true" /> and <see cref="M:System.Net.Sockets.Socket.GetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName)" qualify="true" /> 
+methods of the <see cref="T:System.Net.Sockets.Socket" /> class. </para>
+    </summary>
+    <remarks>
+      <para>Socket options determine the behavior of an instance of
+      the <see cref="T:System.Net.Sockets.Socket" /> class. Some socket options apply only to specific protocols while others apply to
+      all types. Members of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration specify
+      which protocol applies to a specific socket option. </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AcceptConnection">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName AcceptConnection = 2" />
+      <MemberSignature Language="C#" Value="AcceptConnection" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>HeaderIncluded</MemberValue>
+      <Docs>
+        <summary>
+          <para>
+            <see cref="M:System.Net.Sockets.Socket.Listen(System.Int32)" qualify="true" /> has been called on the socket.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> 
+data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddMembership">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName AddMembership = 12" />
+      <MemberSignature Language="C#" Value="AddMembership" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>AddMembership</MemberValue>
+      <Docs>
+        <summary>
+          <para> Add an IP group membership.
+ </para>
+          <para>The value associated with this option is an instance of the <see cref="T:System.Net.Sockets.MulticastOption" qualify="true" /> class. </para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddSourceMembership">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName AddSourceMembership = 15" />
+      <MemberSignature Language="C#" Value="AddSourceMembership" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>AddSourceMembership</MemberValue>
+      <Docs>
+        <summary>
+          <para>Join a source group.</para>
+          <para>The value associated with this option is an instance of the <see cref="T:System.Net.IPAddress" qualify="true" />
+class. </para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BlockSource">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName BlockSource = 17" />
+      <MemberSignature Language="C#" Value="BlockSource" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>BlockSource</MemberValue>
+      <Docs>
+        <summary>
+          <para>Block data from a source.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Broadcast">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName Broadcast = 32" />
+      <MemberSignature Language="C#" Value="Broadcast" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Broadcast</MemberValue>
+      <Docs>
+        <summary>
+          <para> Permit sending broadcast messages on the socket.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
+ type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BsdUrgent">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName BsdUrgent = 2" />
+      <MemberSignature Language="C#" Value="BsdUrgent" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>HeaderIncluded</MemberValue>
+      <Docs>
+        <summary>
+          <para>Use urgent data as defined by IETF RFC 1222. This option can
+      be set only once, and once set, cannot be turned off.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Tcp" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ChecksumCoverage">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName ChecksumCoverage = 20" />
+      <MemberSignature Language="C#" Value="ChecksumCoverage" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ChecksumCoverage</MemberValue>
+      <Docs>
+        <summary>
+          <para>Set or get UDP checksum coverage.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data
+   type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Udp" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Debug">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName Debug = 1" />
+      <MemberSignature Language="C#" Value="Debug" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Debug</MemberValue>
+      <Docs>
+        <summary>
+          <para>Record debugging information when available.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
+ type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DontFragment">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName DontFragment = 14" />
+      <MemberSignature Language="C#" Value="DontFragment" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DontFragment</MemberValue>
+      <Docs>
+        <summary>
+          <para>Do not fragment IP datagrams.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DontLinger">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName DontLinger = -129" />
+      <MemberSignature Language="C#" Value="DontLinger" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DontLinger</MemberValue>
+      <Docs>
+        <summary>
+          <para> Close socket gracefully without lingering.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
+ type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DontRoute">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName DontRoute = 16" />
+      <MemberSignature Language="C#" Value="DontRoute" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DropSourceMembership</MemberValue>
+      <Docs>
+        <summary>
+          <para> Do not route; send directly to interface addresses.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
+ type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DropMembership">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName DropMembership = 13" />
+      <MemberSignature Language="C#" Value="DropMembership" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DropMembership</MemberValue>
+      <Docs>
+        <summary>
+          <para> Drop an IP group membership.
+ </para>
+          <para>The value associated with this option is an instance of the <see cref="T:System.Net.Sockets.MulticastOption" qualify="true" /> class. </para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DropSourceMembership">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName DropSourceMembership = 16" />
+      <MemberSignature Language="C#" Value="DropSourceMembership" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DropSourceMembership</MemberValue>
+      <Docs>
+        <summary>
+          <para>Drop a source group.</para>
+          <para>The value associated with this option is an instance of the <see cref="T:System.Net.IPAddress" qualify="true" />
+class. </para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Error">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName Error = 4103" />
+      <MemberSignature Language="C#" Value="Error" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Error</MemberValue>
+      <Docs>
+        <summary>
+          <para> Get the error status code, then clear the code.
+      </para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExclusiveAddressUse">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName ExclusiveAddressUse = -5" />
+      <MemberSignature Language="C#" Value="ExclusiveAddressUse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ExclusiveAddressUse</MemberValue>
+      <Docs>
+        <summary>
+          <para> Enable a socket to be bound for exclusive access.
+      </para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data
+   type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Expedited">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName Expedited = 2" />
+      <MemberSignature Language="C#" Value="Expedited" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>HeaderIncluded</MemberValue>
+      <Docs>
+        <summary>
+          <para>Use expedited data as defined by IETF RFC 1222. This option
+      can be set only once, and once set, cannot be turned off.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Tcp" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HeaderIncluded">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName HeaderIncluded = 2" />
+      <MemberSignature Language="C#" Value="HeaderIncluded" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>HeaderIncluded</MemberValue>
+      <Docs>
+        <summary>
+          <para> Application is providing the IP header for
+ outgoing datagrams.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HopLimit">
+      <MemberSignature Language="C#" Value="HopLimit" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IPOptions">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName IPOptions = 1" />
+      <MemberSignature Language="C#" Value="IPOptions" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Debug</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies IP options to be inserted into outgoing datagrams.</para>
+          <para>The value associated with this option is a <see cref="T:System.Byte" qualify="true" /> 
+array.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IpTimeToLive">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName IpTimeToLive = 4" />
+      <MemberSignature Language="C#" Value="IpTimeToLive" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ReuseAddress</MemberValue>
+      <Docs>
+        <summary>
+          <para>Set the IP header time-to-live field.</para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="KeepAlive">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName KeepAlive = 8" />
+      <MemberSignature Language="C#" Value="KeepAlive" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>KeepAlive</MemberValue>
+      <Docs>
+        <summary>
+          <para> Send keep-alives.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
+ type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Linger">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName Linger = 128" />
+      <MemberSignature Language="C#" Value="Linger" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Linger</MemberValue>
+      <Docs>
+        <summary>
+          <para> Linger on close if unsent data is present.
+ </para>
+          <para>The value associated with this option is an instance of 
+ the <see cref="T:System.Net.Sockets.LingerOption" qualify="true" /> class. </para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaxConnections">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName MaxConnections = 2147483647" />
+      <MemberSignature Language="C#" Value="MaxConnections" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>MaxConnections</MemberValue>
+      <Docs>
+        <summary>
+          <para> Maximum queue length that can be specified by <see cref="M:System.Net.Sockets.Socket.Listen(System.Int32)" />.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MulticastInterface">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName MulticastInterface = 9" />
+      <MemberSignature Language="C#" Value="MulticastInterface" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>MulticastInterface</MemberValue>
+      <Docs>
+        <summary>
+          <para>Set the interface for outgoing multicast packets.</para>
+          <para>The value associated with this option is a <see cref="T:System.Byte" qualify="true" />
+array. </para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MulticastLoopback">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName MulticastLoopback = 11" />
+      <MemberSignature Language="C#" Value="MulticastLoopback" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>MulticastLoopback</MemberValue>
+      <Docs>
+        <summary>
+          <para>IP multicast loopback.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MulticastTimeToLive">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName MulticastTimeToLive = 10" />
+      <MemberSignature Language="C#" Value="MulticastTimeToLive" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>MulticastTimeToLive</MemberValue>
+      <Docs>
+        <summary>
+          <para> IP multicast time to live.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoChecksum">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName NoChecksum = 1" />
+      <MemberSignature Language="C#" Value="NoChecksum" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Debug</MemberValue>
+      <Docs>
+        <summary>
+          <para>Send UDP datagrams with checksum set to zero.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Udp" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoDelay">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName NoDelay = 1" />
+      <MemberSignature Language="C#" Value="NoDelay" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Debug</MemberValue>
+      <Docs>
+        <summary>
+          <para> Disable the Nagle algorithm for send coalescing.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
+ type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Tcp" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OutOfBandInline">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName OutOfBandInline = 256" />
+      <MemberSignature Language="C#" Value="OutOfBandInline" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>OutOfBandInline</MemberValue>
+      <Docs>
+        <summary>
+          <para> Receive out-of-band data in the normal data stream.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
+ type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PacketInformation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName PacketInformation = 19" />
+      <MemberSignature Language="C#" Value="PacketInformation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>PacketInformation</MemberValue>
+      <Docs>
+        <summary>
+          <para>Return information about received packets.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReceiveBuffer">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName ReceiveBuffer = 4098" />
+      <MemberSignature Language="C#" Value="ReceiveBuffer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ReceiveBuffer</MemberValue>
+      <Docs>
+        <summary>
+          <para>Specifies the total per-socket buffer space reserved for
+ receives. This is unrelated to the maximum message size or the size of a TCP window. </para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReceiveLowWater">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName ReceiveLowWater = 4100" />
+      <MemberSignature Language="C#" Value="ReceiveLowWater" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ReceiveLowWater</MemberValue>
+      <Docs>
+        <summary>
+          <para> Receive low water mark.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReceiveTimeout">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName ReceiveTimeout = 4102" />
+      <MemberSignature Language="C#" Value="ReceiveTimeout" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ReceiveTimeout</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies the 
+      maximum time, in milliseconds, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> and <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" /> methods will block when attempting to
+      receive data. If data is not received within this time, a <see cref="T:System.Net.Sockets.SocketException" /> exception is thrown.
+      </para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReuseAddress">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName ReuseAddress = 4" />
+      <MemberSignature Language="C#" Value="ReuseAddress" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ReuseAddress</MemberValue>
+      <Docs>
+        <summary>
+          <para> Allow the socket to be bound to an address that is already in use.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
+ type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SendBuffer">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName SendBuffer = 4097" />
+      <MemberSignature Language="C#" Value="SendBuffer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SendBuffer</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies the total per-socket buffer space reserved for sends. This is
+ unrelated to the maximum message size or the size of a TCP window.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SendLowWater">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName SendLowWater = 4099" />
+      <MemberSignature Language="C#" Value="SendLowWater" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SendLowWater</MemberValue>
+      <Docs>
+        <summary>
+          <para> Send low water mark.
+ </para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SendTimeout">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName SendTimeout = 4101" />
+      <MemberSignature Language="C#" Value="SendTimeout" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SendTimeout</MemberValue>
+      <Docs>
+        <summary>
+          <para> Specifies the 
+      maximum time, in milliseconds, the <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> and <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> methods will block when attempting to
+      send data. If data is not sent within this time, a <see cref="T:System.Net.Sockets.SocketException" /> exception is thrown.
+      </para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> member of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName Type = 4104" />
+      <MemberSignature Language="C#" Value="Type" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Type</MemberValue>
+      <Docs>
+        <summary>
+          <para> Get the socket type, one of the members of 
+      the <see cref="T:System.Net.Sockets.SocketType" qualify="true" /> enumeration.
+      </para>
+          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TypeOfService">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName TypeOfService = 3" />
+      <MemberSignature Language="C#" Value="TypeOfService" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>TypeOfService</MemberValue>
+      <Docs>
+        <summary>
+          <para>Change the IP header type of service field.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnblockSource">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName UnblockSource = 18" />
+      <MemberSignature Language="C#" Value="UnblockSource" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>UnblockSource</MemberValue>
+      <Docs>
+        <summary>
+          <para>Unblock a previously blocked source.</para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UpdateAcceptContext">
+      <MemberSignature Language="C#" Value="UpdateAcceptContext" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateConnectContext">
+      <MemberSignature Language="C#" Value="UpdateConnectContext" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UseLoopback">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.SocketOptionName UseLoopback = 64" />
+      <MemberSignature Language="C#" Value="UseLoopback" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>UseLoopback</MemberValue>
+      <Docs>
+        <summary>
+          <para> Bypass hardware when possible.
+      </para>
+          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
+          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

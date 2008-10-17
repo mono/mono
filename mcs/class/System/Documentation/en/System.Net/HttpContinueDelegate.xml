@@ -1,0 +1,40 @@
+<Type Name="HttpContinueDelegate" FullName="System.Net.HttpContinueDelegate" FullNameSP="System_Net_HttpContinueDelegate" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable HttpContinueDelegate extends System.Delegate" />
+  <TypeSignature Language="C#" Value="public delegate void HttpContinueDelegate(int StatusCode, WebHeaderCollection httpHeaders);" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Docs>
+    <param name="StatusCode">A <see cref="T:System.Int32" /> containing the numeric value of the HTTP status from the server. </param>
+    <param name="httpHeaders">A <see cref="T:System.Net.WebHeaderCollection" /> containing the headers returned with the response.</param>
+    <summary>
+      <para> Defines the shape of methods that are invoked when
+      a <see cref="F:System.Net.HttpStatusCode.Continue" qualify="true" /> response is received
+      by a web client.
+      </para>
+    </summary>
+    <remarks>
+      <para> Use a <see cref="T:System.Net.HttpContinueDelegate" />
+instance to specify the methods that are automatically invoked
+whenever HTTP 100 ( <see cref="F:System.Net.HttpStatusCode.Continue" qualify="true" />) responses are received from
+a web server.</para>
+    </remarks>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
+  <Parameters>
+    <Parameter Name="StatusCode" Type="System.Int32" />
+    <Parameter Name="httpHeaders" Type="System.Net.WebHeaderCollection" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+</Type>

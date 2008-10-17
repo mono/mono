@@ -1,0 +1,304 @@
+<Type Name="Authorization" FullName="System.Net.Authorization" FullNameSP="System_Net_Authorization" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public Authorization extends System.Object" />
+  <TypeSignature Language="C#" Value="public class Authorization" />
+  <MemberOfLibrary>Networking</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.x.x</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Supplies authentication messages used to authenticate a client to server.</para>
+    </summary>
+    <remarks>
+      <para> The <see cref="T:System.Net.Authorization" /> class contains authentication information returned by
+   a <see cref="T:System.Net.IAuthenticationModule" /> module. <see cref="T:System.Net.Authorization" /> instances are used
+   to pass server challenge responses and client preauthentication information. </para>
+      <para>
+        <block subset="none" type="note">Applications do not create or access instances of this type directly;
+   instances of this type are created by authentication modules and used by the
+<see cref="T:System.Net.AuthenticationManager" />.</block>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string token)" />
+      <MemberSignature Language="C#" Value="public Authorization (string token);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="token" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="token">A <see cref="T:System.String" /> containing the authorization message to be sent to the server.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.Authorization" /> class with the specified
+   authorization message.</para>
+        </summary>
+        <remarks>
+          <para>This constructor creates a <see cref="T:System.Net.Authorization" /> instance with the <see cref="P:System.Net.Authorization.Message" /> property set to <paramref name="token " />and the <see cref="P:System.Net.Authorization.Complete" /> property set to <see langword="true" />. If <paramref name="token" /> is <see langword="null" /> or a zero-length string, <see cref="P:System.Net.Authorization.Message" />
+is set to <see langword="null" />. <see cref="P:System.Net.Authorization.ConnectionGroupId" /> is set to
+<see langword="null" />.</para>
+          <para>
+            <block subset="none" type="note">The <see cref="P:System.Net.Authorization.Complete" /> property
+indicates whether the authentication, as defined by the authentication protocol implemented by
+the caller, is finished or requires additional information exchange between the client and
+server.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string token, bool finished)" />
+      <MemberSignature Language="C#" Value="public Authorization (string token, bool complete);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="token" Type="System.String" />
+        <Parameter Name="complete" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="token">A <see cref="T:System.String" /> containing the authentication message to be sent to the server.</param>
+        <param name="complete">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.Authorization" /> class with the specified
+   authorization message and completion status.</para>
+        </summary>
+        <remarks>
+          <para>This constructor creates a <see cref="T:System.Net.Authorization" /> instance with the <see cref="P:System.Net.Authorization.Message" /> property set to <paramref name="token " />and the
+<see cref="P:System.Net.Authorization.Complete" /> property set to <paramref name="finished" />. If <paramref name="token" /> is <see langword="null" /> or 
+   a zero-length string, <see cref="P:System.Net.Authorization.Message" /> is set to
+<see langword="null" />. <see cref="P:System.Net.Authorization.ConnectionGroupId" /> is set to 
+<see langword="null" />.</para>
+          <para>
+            <block subset="none" type="note">The <see cref="P:System.Net.Authorization.Complete" /> property indicates
+whether the authentication, as defined by the authentication protocol
+implemented by the caller, is finished or requires additional information
+exchange between the client and server.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string token, bool finished, string connectionGroupId)" />
+      <MemberSignature Language="C#" Value="public Authorization (string token, bool complete, string connectionGroupId);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="token" Type="System.String" />
+        <Parameter Name="complete" Type="System.Boolean" />
+        <Parameter Name="connectionGroupId" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="token">A <see cref="T:System.String" /> containing the authentication message to be sent to the server. </param>
+        <param name="complete">To be added.</param>
+        <param name="connectionGroupId">A <see cref="T:System.String" /> containing a unique identifier that will be used to identify the authenticated connection, or <see langword="null" /> . </param>
+        <summary>
+          <para> Constructs and initializes a new instance of the <see cref="T:System.Net.Authorization" /> class with the specified
+   authorization message, completion status, and connection group identifier.
+   </para>
+        </summary>
+        <remarks>
+          <para>This constructor creates a <see cref="T:System.Net.Authorization" /> instance with the <see cref="P:System.Net.Authorization.Message" /> property set to <paramref name="token" />, the
+<see cref="P:System.Net.Authorization.Complete" /> property set to <paramref name="finished" />, and 
+   the <see cref="P:System.Net.Authorization.ConnectionGroupId" /> property set to <paramref name="connectionGroupId" />. If <paramref name="token" /> is
+<see langword="null" /> or a zero-length string, <see cref="P:System.Net.Authorization.Message" /> is set to <see langword="null" />. If 
+<paramref name="connectionGroupId " /> is <see langword="null" /> or a zero-length string, 
+<see cref="P:System.Net.Authorization.ConnectionGroupId" /> is set to <see langword="null" />.</para>
+          <block subset="none" type="note">
+            <para>The connection group identifier is used to restrict access to the
+      server connection established with the current authorization instance. Only
+   <see cref="T:System.Net.WebRequest" />
+   instances that have <paramref name="connectionGroupId" /> as their <see cref="P:System.Net.WebRequest.ConnectionGroupName" />
+   property value can use the connection. The connection group information
+   set by this constructor is also available in the <see cref="P:System.Net.ServicePoint.ConnectionName" /> property of
+   the service point that represents the connection.</para>
+            <para>The <see cref="P:System.Net.Authorization.Complete" /> property indicates whether the
+authentication, as defined by the authentication protocol implemented by the
+caller, is finished or requires additional information exchange between the
+client and server.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Complete">
+      <MemberSignature Language="ILASM" Value=".property bool Complete { public hidebysig specialname instance bool get_Complete() }" />
+      <MemberSignature Language="C#" Value="public bool Complete { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating the completion status of the authentication.</para>
+        </summary>
+        <value>
+          <para>
+            <see langword="true " />if the authentication process is complete; otherwise,
+<see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The <see cref="P:System.Net.Authorization.Complete" /> property is set to <see langword="true " />when the
+   authentication process between the client and the server is finished.</para>
+          <para>
+            <block subset="none" type="note">Some authentication
+   modules, such as a Kerberos module, use multiple
+   round trips between the client and server to complete an authentication. The authentication module sets the
+<see cref="P:System.Net.Authorization.Complete" /> property to 
+<see langword="false" /> until the authentication is complete.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConnectionGroupId">
+      <MemberSignature Language="ILASM" Value=".property string ConnectionGroupId { public hidebysig specialname instance string get_ConnectionGroupId() }" />
+      <MemberSignature Language="C#" Value="public string ConnectionGroupId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the unique identifier for an authenticated connection.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing a unique
+   connection identifier, or <see langword="null" /> if no value was specified to the
+   constructor for the
+   current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The connection group identifier is used to restrict access to the server connection
+      established with the current authorization instance. </para>
+          <para>
+            <block subset="none" type="note">Only <see cref="T:System.Net.WebRequest" /> instances that have <see cref="P:System.Net.Authorization.ConnectionGroupId" /> as
+   their <see cref="P:System.Net.WebRequest.ConnectionGroupName" /> property value
+   can use the connection. If the value of this property is
+<see langword="null" /> , access to the connection is
+   not restricted in this manner. The connection group information is also available in
+   the <see cref="P:System.Net.ServicePoint.ConnectionName" /> property of the service point that
+   represents the connection.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="ILASM" Value=".property string Message { public hidebysig specialname instance string get_Message() }" />
+      <MemberSignature Language="C#" Value="public string Message { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the response to an authentication
+      challenge.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the message that will be returned to the server in response to an
+   authentication challenge.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="note">The content of the
+      string returned by this property is determined by the protocol implemented
+      by the <see cref="T:System.Net.IAuthenticationModule" />
+      
+      object that created
+      the current instance. </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MutuallyAuthenticated">
+      <MemberSignature Language="C#" Value="public bool MutuallyAuthenticated { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ProtectionRealm">
+      <MemberSignature Language="ILASM" Value=".property class System.String[] ProtectionRealm { public hidebysig specialname instance class System.String[] get_ProtectionRealm() public hidebysig specialname instance void set_ProtectionRealm(class System.String[] value) }" />
+      <MemberSignature Language="C#" Value="public string[] ProtectionRealm { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the URIs that can be authenticated using the value in the <see cref="P:System.Net.Authorization.Message" /> property.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" /> array containing URIs.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">A <see cref="T:System.Net.WebRequest" /> compares a URI
+   to this list to determine if the current instance can be used to
+   authenticate a request for a given URI.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>
