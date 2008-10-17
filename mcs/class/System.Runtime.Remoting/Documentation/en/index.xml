@@ -1,0 +1,66 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.Runtime.Remoting" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System.Runtime.Remoting.Channels">
+      <Type Name="BinaryClientFormatterSink" />
+      <Type Name="BinaryClientFormatterSinkProvider" />
+      <Type Name="BinaryServerFormatterSink" />
+      <Type Name="BinaryServerFormatterSink+Protocol" />
+      <Type Name="BinaryServerFormatterSinkProvider" />
+      <Type Name="CommonTransportKeys" />
+      <Type Name="IAuthorizeRemotingConnection" />
+      <Type Name="SoapClientFormatterSink" />
+      <Type Name="SoapClientFormatterSinkProvider" />
+      <Type Name="SoapServerFormatterSink" />
+      <Type Name="SoapServerFormatterSink+Protocol" />
+      <Type Name="SoapServerFormatterSinkProvider" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Channels.Http">
+      <Type Name="HttpChannel" />
+      <Type Name="HttpClientChannel" />
+      <Type Name="HttpRemotingHandler" />
+      <Type Name="HttpRemotingHandlerFactory" />
+      <Type Name="HttpServerChannel" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Channels.Ipc">
+      <Type Name="IpcChannel" />
+      <Type Name="IpcClientChannel" />
+      <Type Name="IpcServerChannel" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Channels.Tcp">
+      <Type Name="TcpChannel" />
+      <Type Name="TcpClientChannel" />
+      <Type Name="TcpServerChannel" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.MetadataServices">
+      <Type Name="MetaData" />
+      <Type Name="SdlChannelSink" />
+      <Type Name="SdlChannelSinkProvider" />
+      <Type Name="SdlType" />
+      <Type Name="ServiceType" />
+      <Type Name="SUDSGeneratorException" />
+      <Type Name="SUDSParserException" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Remoting.Services">
+      <Type Name="RemotingClientProxy" />
+      <Type Name="RemotingService" />
+    </Namespace>
+  </Types>
+  <Title>System.Runtime.Remoting</Title>
+</Overview>

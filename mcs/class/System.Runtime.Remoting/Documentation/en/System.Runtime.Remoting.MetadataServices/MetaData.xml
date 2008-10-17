@@ -1,0 +1,318 @@
+<Type Name="MetaData" FullName="System.Runtime.Remoting.MetadataServices.MetaData">
+  <TypeSignature Language="C#" Value="public class MetaData" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Remoting</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MetaData ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertCodeSourceFileToAssemblyFile">
+      <MemberSignature Language="C#" Value="public static void ConvertCodeSourceFileToAssemblyFile (string codePath, string assemblyPath, string strongNameFilename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="codePath" Type="System.String" />
+        <Parameter Name="assemblyPath" Type="System.String" />
+        <Parameter Name="strongNameFilename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="codePath">To be added: an object of type 'string'</param>
+        <param name="assemblyPath">To be added: an object of type 'string'</param>
+        <param name="strongNameFilename">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertCodeSourceStreamToAssemblyFile">
+      <MemberSignature Language="C#" Value="public static void ConvertCodeSourceStreamToAssemblyFile (System.Collections.ArrayList outCodeStreamList, string assemblyPath, string strongNameFilename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="outCodeStreamList" Type="System.Collections.ArrayList" />
+        <Parameter Name="assemblyPath" Type="System.String" />
+        <Parameter Name="strongNameFilename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="outCodeStreamList">To be added: an object of type 'Collections.ArrayList'</param>
+        <param name="assemblyPath">To be added: an object of type 'string'</param>
+        <param name="strongNameFilename">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertSchemaStreamToCodeSourceStream">
+      <MemberSignature Language="C#" Value="public static void ConvertSchemaStreamToCodeSourceStream (bool clientProxy, string outputDirectory, System.IO.Stream inputStream, System.Collections.ArrayList outCodeStreamList);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="clientProxy" Type="System.Boolean" />
+        <Parameter Name="outputDirectory" Type="System.String" />
+        <Parameter Name="inputStream" Type="System.IO.Stream" />
+        <Parameter Name="outCodeStreamList" Type="System.Collections.ArrayList" />
+      </Parameters>
+      <Docs>
+        <param name="clientProxy">To be added: an object of type 'bool'</param>
+        <param name="outputDirectory">To be added: an object of type 'string'</param>
+        <param name="inputStream">To be added: an object of type 'IO.Stream'</param>
+        <param name="outCodeStreamList">To be added: an object of type 'Collections.ArrayList'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertSchemaStreamToCodeSourceStream">
+      <MemberSignature Language="C#" Value="public static void ConvertSchemaStreamToCodeSourceStream (bool clientProxy, string outputDirectory, System.IO.Stream inputStream, System.Collections.ArrayList outCodeStreamList, string proxyUrl);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="clientProxy" Type="System.Boolean" />
+        <Parameter Name="outputDirectory" Type="System.String" />
+        <Parameter Name="inputStream" Type="System.IO.Stream" />
+        <Parameter Name="outCodeStreamList" Type="System.Collections.ArrayList" />
+        <Parameter Name="proxyUrl" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="clientProxy">To be added: an object of type 'bool'</param>
+        <param name="outputDirectory">To be added: an object of type 'string'</param>
+        <param name="inputStream">To be added: an object of type 'IO.Stream'</param>
+        <param name="outCodeStreamList">To be added: an object of type 'Collections.ArrayList'</param>
+        <param name="proxyUrl">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertSchemaStreamToCodeSourceStream">
+      <MemberSignature Language="C#" Value="public static void ConvertSchemaStreamToCodeSourceStream (bool clientProxy, string outputDirectory, System.IO.Stream inputStream, System.Collections.ArrayList outCodeStreamList, string proxyUrl, string proxyNamespace);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="clientProxy" Type="System.Boolean" />
+        <Parameter Name="outputDirectory" Type="System.String" />
+        <Parameter Name="inputStream" Type="System.IO.Stream" />
+        <Parameter Name="outCodeStreamList" Type="System.Collections.ArrayList" />
+        <Parameter Name="proxyUrl" Type="System.String" />
+        <Parameter Name="proxyNamespace" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="clientProxy">To be added: an object of type 'bool'</param>
+        <param name="outputDirectory">To be added: an object of type 'string'</param>
+        <param name="inputStream">To be added: an object of type 'IO.Stream'</param>
+        <param name="outCodeStreamList">To be added: an object of type 'Collections.ArrayList'</param>
+        <param name="proxyUrl">To be added: an object of type 'string'</param>
+        <param name="proxyNamespace">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertTypesToSchemaToFile">
+      <MemberSignature Language="C#" Value="public static void ConvertTypesToSchemaToFile (System.Runtime.Remoting.MetadataServices.ServiceType[] servicetypes, System.Runtime.Remoting.MetadataServices.SdlType sdltype, string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="servicetypes" Type="System.Runtime.Remoting.MetadataServices.ServiceType[]" />
+        <Parameter Name="sdltype" Type="System.Runtime.Remoting.MetadataServices.SdlType" />
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="servicetypes">To be added.</param>
+        <param name="sdltype">To be added.</param>
+        <param name="path">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertTypesToSchemaToFile">
+      <MemberSignature Language="C#" Value="public static void ConvertTypesToSchemaToFile (Type[] types, System.Runtime.Remoting.MetadataServices.SdlType sdltype, string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="types" Type="System.Type[]" />
+        <Parameter Name="sdltype" Type="System.Runtime.Remoting.MetadataServices.SdlType" />
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="types">To be added: an object of type 'Type []'</param>
+        <param name="sdltype">To be added.</param>
+        <param name="path">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertTypesToSchemaToStream">
+      <MemberSignature Language="C#" Value="public static void ConvertTypesToSchemaToStream (System.Runtime.Remoting.MetadataServices.ServiceType[] servicetypes, System.Runtime.Remoting.MetadataServices.SdlType sdltype, System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="servicetypes" Type="System.Runtime.Remoting.MetadataServices.ServiceType[]" />
+        <Parameter Name="sdltype" Type="System.Runtime.Remoting.MetadataServices.SdlType" />
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="servicetypes">To be added.</param>
+        <param name="sdltype">To be added.</param>
+        <param name="stream">To be added.</param>
+        <param name="outputStream">To be added: an object of type 'IO.Stream'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConvertTypesToSchemaToStream">
+      <MemberSignature Language="C#" Value="public static void ConvertTypesToSchemaToStream (Type[] types, System.Runtime.Remoting.MetadataServices.SdlType sdltype, System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="types" Type="System.Type[]" />
+        <Parameter Name="sdltype" Type="System.Runtime.Remoting.MetadataServices.SdlType" />
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="types">To be added: an object of type 'Type []'</param>
+        <param name="sdltype">To be added.</param>
+        <param name="stream">To be added.</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RetrieveSchemaFromUrlToFile">
+      <MemberSignature Language="C#" Value="public static void RetrieveSchemaFromUrlToFile (string url, string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="url" Type="System.String" />
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="url">To be added: an object of type 'string'</param>
+        <param name="path">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RetrieveSchemaFromUrlToStream">
+      <MemberSignature Language="C#" Value="public static void RetrieveSchemaFromUrlToStream (string url, System.IO.Stream outputStream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="url" Type="System.String" />
+        <Parameter Name="outputStream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="url">To be added: an object of type 'string'</param>
+        <param name="outputStream">To be added: an object of type 'IO.Stream'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SaveStreamToFile">
+      <MemberSignature Language="C#" Value="public static void SaveStreamToFile (System.IO.Stream inputStream, string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputStream" Type="System.IO.Stream" />
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="inputStream">To be added: an object of type 'IO.Stream'</param>
+        <param name="path">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>
