@@ -1,0 +1,74 @@
+<Type Name="Antialias" FullName="Cairo.Antialias">
+  <TypeSignature Language="C#" Value="public enum Antialias" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Specifies the type of antialiasing to do when rendering text or shapes.</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Antialias</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary> Use the default antialiasing for the subsystem and target device</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Gray">
+      <MemberSignature Language="C#" Value="Gray" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Antialias</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary> Perform single-color antialiasing (using shades of gray for black text on a white background, for example).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Antialias</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary> Use a bilevel alpha mask</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Subpixel">
+      <MemberSignature Language="C#" Value="Subpixel" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Antialias</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Perform antialiasing by taking advantage of the order of subpixel elements on devices such as LCD panels</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

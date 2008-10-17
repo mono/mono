@@ -1,0 +1,87 @@
+<Type Name="HintStyle" FullName="Cairo.HintStyle">
+  <TypeSignature Language="C#" Value="public enum HintStyle" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Specifies the type of hinting to do on font outlines.</summary>
+    <remarks>Hinting is the process of fitting outlines to the pixel grid in order to improve the appearance of the result. Since hinting outlines involves distorting them, it also reduces the faithfulness to the original outline shapes. Not all of the outline hinting styles are supported by all font backends.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.HintStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Use the default hint style for for font backend and target device</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Full">
+      <MemberSignature Language="C#" Value="Full" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.HintStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Hint outlines to maximize contrast</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Medium">
+      <MemberSignature Language="C#" Value="Medium" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.HintStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Hint outlines with medium strength giving a compromise between fidelity to the original shapes and contrast</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.HintStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Do not hint outlines</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Slight">
+      <MemberSignature Language="C#" Value="Slight" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.HintStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Hint outlines slightly to improve contrast while retaining good fidelity to the original shapes.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

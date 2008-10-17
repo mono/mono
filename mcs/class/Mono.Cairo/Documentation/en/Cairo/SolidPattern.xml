@@ -1,0 +1,116 @@
+<Type Name="SolidPattern" FullName="Cairo.SolidPattern">
+  <TypeSignature Language="C#" Value="public class SolidPattern : Cairo.Pattern" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cairo.Pattern</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Extends Pattern to create a solid pattern consisting of a solid color and an optional alpha value. </summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SolidPattern (Cairo.Color color);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="color" Type="Cairo.Color" />
+      </Parameters>
+      <Docs>
+        <param name="color">Color to use for the solid pattern.</param>
+        <summary>Creates a SolidPattern pattern from the given Color.</summary>
+        <remarks>The solid pattern will contain an alpha channel (specified in the color)</remarks>
+        <since version="Mono-1.2.5" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SolidPattern (Cairo.Color color, bool solid);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="color" Type="Cairo.Color" />
+        <Parameter Name="solid" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="color">Color to use for the solid pattern.</param>
+        <param name="solid">Whether this should ignore the alpha channel.</param>
+        <summary>Creates a SolidPattern pattern from the given Color, you can specify whether to ignore the alpha channel.</summary>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SolidPattern (double r, double g, double b);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="r" Type="System.Double" />
+        <Parameter Name="g" Type="System.Double" />
+        <Parameter Name="b" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="r">Red component, between 0 and 1.</param>
+        <param name="g">Green component, between 0 and 1.</param>
+        <param name="b">Blue component, between 0 and 1.</param>
+        <summary>Creates a SolidPattern pattern from the given RGB components.</summary>
+        <remarks>
+        </remarks>
+        <since version="Mono-1.2.5" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SolidPattern (double r, double g, double b, double a);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="r" Type="System.Double" />
+        <Parameter Name="g" Type="System.Double" />
+        <Parameter Name="b" Type="System.Double" />
+        <Parameter Name="a" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="r">Red component, between 0 and 1.</param>
+        <param name="g">Green component, between 0 and 1.</param>
+        <param name="b">Blue component, between 0 and 1.</param>
+        <param name="a">Alpha channel value, between 0 and 1.</param>
+        <summary>Creates a SolidPattern pattern from the RGB components and Alpha value.</summary>
+        <remarks>.</remarks>
+        <since version="Mono-1.2.5" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Color">
+      <MemberSignature Language="C#" Value="public Cairo.Color Color { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Cairo.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

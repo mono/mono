@@ -1,0 +1,59 @@
+<Type Name="HintMetrics" FullName="Cairo.HintMetrics">
+  <TypeSignature Language="C#" Value="public enum HintMetrics" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Specifies whether to hint font metrics.</summary>
+    <remarks>Hinting font metrics means quantizing them so that they are integer values in device space. Doing this improves the consistency of letter and line spacing, however it also means that text will be laid out differently at different zoom factors.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.HintMetrics</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Hint metrics in the default manner for the font backend and target device</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Off">
+      <MemberSignature Language="C#" Value="Off" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.HintMetrics</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Do not hint font metrics</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="On">
+      <MemberSignature Language="C#" Value="On" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.HintMetrics</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Hint font metrics</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

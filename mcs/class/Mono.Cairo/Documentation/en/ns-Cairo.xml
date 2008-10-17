@@ -1,0 +1,80 @@
+<Namespace Name="Cairo">
+  <Docs>
+    <summary>A binding to the 2D Cairo Graphics rendering API.</summary>
+    <remarks>
+      <para>
+         The Mono.Cairo namespace is a binding to the
+	 http://CairoGraphics.org API.
+      </para>
+      <para>
+         Before Mono 1.2.5, this API only exposed the Cairo 1.0 API,
+	 starting with Mono 1.2.5, this release exposes both the Cairo
+	 1.0 and 1.2 APIs regardless of the underlying Cairo
+	 implementation available on the underlying system.
+      </para>
+      <para>
+         If you are planning on using the 1.2 API, you should first
+	 check using the <see cref="M:Cairo.CairoAPI.Version"/> whether
+	 you are running on a system that supports the 1.2 API before
+	 making any 1.2 calls or make it a requirement that the system
+	 must have a 1.2 Cairo installed.    Cairo 1.2 APIs have been
+	 flagged in the documentation.
+      </para>
+      <para>
+	Cairo draws into surfaces, there are many to choose from
+	(in-memory image buffers, PDF surfaces, Postscript surfaces,
+	hardware accelerated surfaces, Xlib surfaces and a handful
+	more).  Drawing operations are performed on the Cairo surfaces, for example:
+      </para>
+      <example>
+	<code lang="C#">
+//
+// To compile use: mcs test.cs -r:Mono.Cairo
+//
+// This generates a file test.png that contains the text
+// "Hello, World" rendered with a serif font in blue, on a
+// transparent background.
+//
+using Cairo;
+
+class X {
+	static void Main ()
+	{
+		//
+		// Creates an Image-based surface with with data stored in
+		// ARGB32 format.  
+		//
+		ImageSurface surface = new ImageSurface (Format.ARGB32, 240, 80);
+
+		//
+		// Create a context, "using" is used here to ensure that the
+		// context is Disposed once we are done
+		//
+		using (Context ctx = new Cairo.Context (surface)){
+
+			// Select a font to draw with
+			ctx.SelectFontFace ("serif", FontSlant.Normal, FontWeight.Bold);
+			ctx.SetFontSize (32.0);
+			
+			// Select a color (blue)
+			ctx.SetSourceRGB (0, 0, 1);
+			
+			// Draw
+			ctx.MoveTo (10, 50);
+			ctx.ShowText ("Hello, World");
+			
+			surface.WriteToPng ("test.png");
+		}
+	}
+}
+	</code>
+      </example>
+      <para>
+	To compile code that uses Mono.Cairo all you have to do is
+	reference the Mono.Cairo assembly by passing the -r:Mono.Cairo command
+	line option to the compiler or referencing the assembly from
+	MonoDevelop.  The code is contained in the "Cairo" namespace.
+      </para>
+    </remarks>
+  </Docs>
+</Namespace>

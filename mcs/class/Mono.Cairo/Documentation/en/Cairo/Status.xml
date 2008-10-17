@@ -1,0 +1,342 @@
+<Type Name="Status" FullName="Cairo.Status">
+  <TypeSignature Language="C#" Value="public enum Status" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Reports the internal status of the Cairo system. When an error occurs, all further calls to acquire the status will report the error.</summary>
+    <remarks />
+  </Docs>
+  <Members>
+    <Member MemberName="ClipNotRepresentable">
+      <MemberSignature Language="C#" Value="ClipNotRepresentable" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version="Cairo" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FileNotFound">
+      <MemberSignature Language="C#" Value="FileNotFound" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>file not found</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidContent">
+      <MemberSignature Language="C#" Value="InvalidContent" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>invalid value for an input Cairo.Content</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidDash">
+      <MemberSignature Language="C#" Value="InvalidDash" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>invalid value for a dash setting</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidDscComment">
+      <MemberSignature Language="C#" Value="InvalidDscComment" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>invalid value for a DSC comment</summary>
+        <since version="cairo 1.2" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidFormat">
+      <MemberSignature Language="C#" Value="InvalidFormat" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>invalid value for an input Cairo.Format</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidIndex">
+      <MemberSignature Language="C#" Value="InvalidIndex" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version="Cairo" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidMatrix">
+      <MemberSignature Language="C#" Value="InvalidMatrix" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>An invalid matrix (not invertible) was used.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidPathData">
+      <MemberSignature Language="C#" Value="InvalidPathData" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Input path data not valid</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidPopGroup">
+      <MemberSignature Language="C#" Value="InvalidPopGroup" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>No saved group was found to pop.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidRestore">
+      <MemberSignature Language="C#" Value="InvalidRestore" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Restore was called on a Cairo graphics object without a matching or prior Save.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidStatus">
+      <MemberSignature Language="C#" Value="InvalidStatus" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>invalid value for an input Cairo.Status</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidString">
+      <MemberSignature Language="C#" Value="InvalidString" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>input string not valid UTF-8</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidVisual">
+      <MemberSignature Language="C#" Value="InvalidVisual" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>invalid value for an input Visual</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoCurrentPoint">
+      <MemberSignature Language="C#" Value="NoCurrentPoint" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>No current point is defined.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoMemory">
+      <MemberSignature Language="C#" Value="NoMemory" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Out of memory error.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NullPointer">
+      <MemberSignature Language="C#" Value="NullPointer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>null pointer</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PatternTypeMismatch">
+      <MemberSignature Language="C#" Value="PatternTypeMismatch" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>the pattern type is not appropriate for the operation</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadError">
+      <MemberSignature Language="C#" Value="ReadError" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>error while reading from input stream</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Success">
+      <MemberSignature Language="C#" Value="Success" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>No error has occured.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SurfaceFinished">
+      <MemberSignature Language="C#" Value="SurfaceFinished" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>target surface has been finished</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SurfaceTypeMismatch">
+      <MemberSignature Language="C#" Value="SurfaceTypeMismatch" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>the surface type is not appropriate for the operation</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteError">
+      <MemberSignature Language="C#" Value="WriteError" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>error while writing to output stream</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,109 @@
+<Type Name="Gradient" FullName="Cairo.Gradient">
+  <TypeSignature Language="C#" Value="public class Gradient : Cairo.Pattern" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cairo.Pattern</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Base class for gradients.</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Gradient ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>Default constructor</summary>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Gradient (IntPtr handle);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="handle" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="handle">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddColorStop">
+      <MemberSignature Language="C#" Value="public Cairo.Status AddColorStop (double offset, Cairo.Color c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Double" />
+        <Parameter Name="c" Type="Cairo.Color" />
+      </Parameters>
+      <Docs>
+        <param name="offset">an offset in the range [0.0 .. 1.0]</param>
+        <param name="c">the color</param>
+        <summary>Adds a translucent color stop to a gradient pattern.</summary>
+        <returns>the status</returns>
+        <remarks>The offset specifies the location along the gradient's control vector. For example, a linear gradient's control vector is from (x0,y0) to (x1,y1) while a radial gradient's control vector is from any point on the start circle to the corresponding point on the end circle.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddColorStopRgb">
+      <MemberSignature Language="C#" Value="public Cairo.Status AddColorStopRgb (double offset, Cairo.Color c);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Double" />
+        <Parameter Name="c" Type="Cairo.Color" />
+      </Parameters>
+      <Docs>
+        <param name="offset">an offset in the range [0.0 .. 1.0]</param>
+        <param name="c">the color</param>
+        <summary>Adds an opaque color stop to a gradient pattern.</summary>
+        <returns>the status</returns>
+        <remarks>The offset specifies the location along the gradient's control vector. For example, a linear gradient's control vector is from (x0,y0) to (x1,y1) while a radial gradient's control vector is from any point on the start circle to the corresponding point on the end circle.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ColorStopCount">
+      <MemberSignature Language="C#" Value="public int ColorStopCount { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

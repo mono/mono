@@ -1,0 +1,36 @@
+<Type Name="Win32Surface" FullName="Cairo.Win32Surface">
+  <TypeSignature Language="C#" Value="public class Win32Surface : Cairo.Surface" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cairo.Surface</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Microsoft Windows surface support</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Win32Surface (IntPtr hdc);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="hdc" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="hdc">To be added.</param>
+        <summary>Creates a new Win32Surface from a valid <paramref name="hdc" />.</summary>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

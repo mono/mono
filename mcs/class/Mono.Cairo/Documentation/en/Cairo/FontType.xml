@@ -1,0 +1,75 @@
+<Type Name="FontType" FullName="Cairo.FontType">
+  <TypeSignature Language="C#" Value="public enum FontType" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Describes the type of a given font face or scaled font.</summary>
+    <remarks>
+    </remarks>
+    <since version="cairo 1.2" />
+  </Docs>
+  <Members>
+    <Member MemberName="Atsui">
+      <MemberSignature Language="C#" Value="Atsui" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.FontType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The font is of type ATSUI</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FreeType">
+      <MemberSignature Language="C#" Value="FreeType" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.FontType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The font is of type FreeType</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Toy">
+      <MemberSignature Language="C#" Value="Toy" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.FontType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The font was created using cairo's toy font api</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Win32">
+      <MemberSignature Language="C#" Value="Win32" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.FontType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The font is of type Win32</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,214 @@
+<Type Name="ImageSurface" FullName="Cairo.ImageSurface">
+  <TypeSignature Language="C#" Value="public class ImageSurface : Cairo.Surface" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cairo.Surface</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>An in-memory image surface</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ImageSurface (string filename);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">name of PNG file to load</param>
+        <summary>Creates a new image surface and initializes the contents to the given PNG file.</summary>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ImageSurface (Cairo.Format format, int width, int height);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="format" Type="Cairo.Format" />
+        <Parameter Name="width" Type="System.Int32" />
+        <Parameter Name="height" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="format">format of pixels in the surface to create</param>
+        <param name="width">width of the surface, in pixels</param>
+        <param name="height">height of the surface, in pixels</param>
+        <summary>Creates an image surface of the specified format and dimensions.</summary>
+        <remarks>The initial contents of the surface is undefined; you must explicitely clear the buffer, using, for example, <see cref="M:Cairo.Graphics.Rectangle()" /> and <see cref="M:Cairo.Graphics.Fill()" /> if you want it cleared.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ImageSurface (ref byte[] data, Cairo.Format format, int width, int height, int stride);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="data" Type="System.Byte[]&amp;" RefType="ref" />
+        <Parameter Name="format" Type="Cairo.Format" />
+        <Parameter Name="width" Type="System.Int32" />
+        <Parameter Name="height" Type="System.Int32" />
+        <Parameter Name="stride" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="data">a buffer supplied by the application in which to write contents</param>
+        <param name="format">the format of pixels in the buffer</param>
+        <param name="width">the width of the image to be stored in the buffer</param>
+        <param name="height">the height of the image to be stored in the buffer</param>
+        <param name="stride">the number of bytes between the start of rows in the buffer. Having this be specified separate from width  allows for padding at the end of rows, or for writing to a subportion of a larger image</param>
+        <summary>Creates an image surface for the provided pixel data.</summary>
+        <remarks>
+	  The output buffer must be kept around until the <see cref="T:Cairo.Surface" /> is destroyed or <see cref="M:Cairo.Surface.Finish()" /> is called on the surface. The
+	  initial contents of buffer will be used as the inital image contents;
+	  you must explicitly clear the buffer using, for example, <see cref="M:Cairo.Graphics.Rectangle()" /> and <see cref="M:Cairo.Graphics.Fill()" /> if you want it cleared.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ImageSurface (IntPtr data, Cairo.Format format, int width, int height, int stride);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="data" Type="System.IntPtr" />
+        <Parameter Name="format" Type="Cairo.Format" />
+        <Parameter Name="width" Type="System.Int32" />
+        <Parameter Name="height" Type="System.Int32" />
+        <Parameter Name="stride" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="data">An IntPtr pointing to the data (the data buffer contains height lines of stride elements with the number of elements needed by format.</param>
+        <param name="format">The format that the data has.</param>
+        <param name="width">Width of the image.</param>
+        <param name="height">Height of the image.</param>
+        <param name="stride">Stride, the number of bytes in a row.   This is typically a number bigger or equal than the width, and it is used to permit individual lines to be aligned.</param>
+        <summary>Creates an image surface for the provided pixel data.</summary>
+        <remarks>
+	  The output buffer must be kept around until the <see cref="T:Cairo.Surface" /> is destroyed or <see cref="M:Cairo.Surface.Finish()" /> is called on the surface. The
+	  initial contents of buffer will be used as the inital image contents;
+	  you must explicitly clear the buffer using, for example, <see cref="M:Cairo.Graphics.Rectangle()" /> and <see cref="M:Cairo.Graphics.Fill()" /> if you want it cleared.
+	  </remarks>
+        <since version="Mono-1.2.5" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Data">
+      <MemberSignature Language="C#" Value="public byte[] Data { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="cairo 1.2" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DataPtr">
+      <MemberSignature Language="C#" Value="public IntPtr DataPtr { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>An IntPtr pointing to the image data in memory.</summary>
+        <value>To be added.</value>
+        <remarks>
+        </remarks>
+        <since version="Mono-1.2.5" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Format">
+      <MemberSignature Language="C#" Value="public Cairo.Format Format { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Format</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version="cairo 1.2" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Height">
+      <MemberSignature Language="C#" Value="public int Height { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Stride">
+      <MemberSignature Language="C#" Value="public int Stride { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The number of bytes per row in the image.</summary>
+        <value>To be added.</value>
+        <remarks>the number of bytes between the start of rows in the buffer. Having this be specified separate from width  allows for padding at the end of rows, or for writing to a subportion of a larger image.</remarks>
+        <since version="cairo 1.2" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Width">
+      <MemberSignature Language="C#" Value="public int Width { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

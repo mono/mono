@@ -1,0 +1,389 @@
+<Type Name="Graphics" FullName="Cairo.Graphics">
+  <TypeSignature Language="C#" Value="public class Graphics : Cairo.Context" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cairo.Context</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Docs>
+    <summary>Obsolete version of Cairo.Context, use it instead.</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Graphics (Cairo.Surface surface);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="surface" Type="Cairo.Surface" />
+      </Parameters>
+      <Docs>
+        <param name="surface">The <see cref="T:Cairo.Surface" /> on which this Graphics object will render everything.</param>
+        <summary>Creates a <see cref="T:Cairo.Graphics" /> object using the provided surface.</summary>
+        <remarks>
+
+Note that the <paramref name="surface" /> can be a <see cref="T:Cairo.Surface" /> or <see cref="T:Cairo.ImageSurface" />.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Graphics (IntPtr state);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="state" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="state">The raw C object.</param>
+        <summary>This constructor accepts a Cairo graphics object coming in from the C API and wraps it into our <see cref="T:Cairo.Graphics" /> class.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Antialias">
+      <MemberSignature Language="C#" Value="public Cairo.Antialias Antialias { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Antialias</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The antialiasing mode of the rasterizer used for drawing shapes.</summary>
+        <value>The antialiasing mode</value>
+        <remarks>This value is a hint, and a particular backend may or may not support a particular value. At the current time, no backend supports <see cref="F:Cairo.Antialias.Subpixel" /> when drawing shapes. Note that this option does not affect text rendering.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Color">
+      <MemberSignature Language="C#" Value="public Cairo.Color Color { set; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The current Color in the drawing context.</summary>
+        <value>the Color</value>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ColorRgb">
+      <MemberSignature Language="C#" Value="public Cairo.Color ColorRgb { set; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Color property")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CurrentPoint">
+      <MemberSignature Language="C#" Value="public Cairo.PointD CurrentPoint { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.PointD</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the current point of the current path, which is conceptually the final point reached by the path so far.</summary>
+        <value>the current point</value>
+        <remarks>The current point is returned in the user-space coordinate system. If there is no defined current point then x and y will both be set to 0.0.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FillRule">
+      <MemberSignature Language="C#" Value="public Cairo.FillRule FillRule { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.FillRule</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Get or set the fill rule.</summary>
+        <value>See <see cref="T:Cairo.FillRule" /></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FontExtents">
+      <MemberSignature Language="C#" Value="public Cairo.FontExtents FontExtents { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.FontExtents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FontMatrix">
+      <MemberSignature Language="C#" Value="public Cairo.Matrix FontMatrix { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Matrix</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The current font matrix</summary>
+        <value>a matrix describing a transform to be applied to the current font.</value>
+        <remarks>The font matrix gives a transformation from the design space of the font (in this space, the em-square is 1 unit by 1 unit) to user space. Normally, a simple scale is used (see <see cref="M:Cairo.Graphics.SetFontSize()" />), but a more complex font matrix can be used to shear the font or stretch it unequally along the two axes</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FontOptions">
+      <MemberSignature Language="C#" Value="public Cairo.FontOptions FontOptions { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.FontOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A set of custom font rendering options</summary>
+        <value>font options to use</value>
+        <remarks>Rendering options are derived by merging these options with the options derived from underlying surface; if the value in options has a default value (like Cairo.Antialias.Default), then the value from the surface is used.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Handle">
+      <MemberSignature Language="C#" Value="public IntPtr Handle { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Internal handle to the native cairo object</summary>
+        <value>pointer to native object</value>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LineCap">
+      <MemberSignature Language="C#" Value="public Cairo.LineCap LineCap { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.LineCap</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Get or set the line cap style.</summary>
+        <value>See <see cref="T:Cairo.LineCap" />.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LineJoin">
+      <MemberSignature Language="C#" Value="public Cairo.LineJoin LineJoin { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.LineJoin</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Get or set the line join style.</summary>
+        <value>See <see cref="T:Cairo.LineJoin" />.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LineWidth">
+      <MemberSignature Language="C#" Value="public double LineWidth { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Get or set the width of the stroke.</summary>
+        <value>The width of the stroke.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Matrix">
+      <MemberSignature Language="C#" Value="public Cairo.Matrix Matrix { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Matrix</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Get or set the current transformation matrix (CTM).</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MiterLimit">
+      <MemberSignature Language="C#" Value="public double MiterLimit { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Get or set the miter limit (the value beyond which joins are no longer mitered).</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Operator">
+      <MemberSignature Language="C#" Value="public Cairo.Operator Operator { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Operator</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The current Operator for the drawing context.</summary>
+        <value>the Operator</value>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pattern">
+      <MemberSignature Language="C#" Value="public Cairo.Pattern Pattern { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Pattern</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>See <see cref="P:Cairo.Graphics.Source" />.</summary>
+        <value>See <see cref="P:Cairo.Graphics.Source" />.</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Source">
+      <MemberSignature Language="C#" Value="public Cairo.Pattern Source { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Pattern</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Sets the source pattern within graphics object to <paramref name="source" />.</summary>
+        <value>A <see cref="T:Cairo.Pattern" /> to be used as the source for subsequent drawing operations.
+</value>
+        <remarks>This pattern will then be used for any subsequent drawing operation until a new source pattern is set.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Status">
+      <MemberSignature Language="C#" Value="public Cairo.Status Status { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Get the internal status of Cairo.</summary>
+        <value>the Status</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Target">
+      <MemberSignature Language="C#" Value="public Cairo.Surface Target { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Surface</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the target surface for the cairo context as passed to <see cref="C:Cairo.Graphics()" />.</summary>
+        <value>the target surface.</value>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Tolerance">
+      <MemberSignature Language="C#" Value="public double Tolerance { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Sets the tolerance used when converting paths into trapezoids.</summary>
+        <value>the tolerance, in device units (typically pixels)</value>
+        <remarks>Curved segments of the path will be subdivided until the maximum deviation between the original path and the polygonal approximation is less than the tolerance. The default value is 0.1. A larger value will give  better performance, a smaller value, better appearance. (Reducing the value from the default value of 0.1 is unlikely to improve appearance significantly.)</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("Renamed Cairo.Context per suggestion from cairo binding guidelines.")</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

@@ -1,0 +1,88 @@
+<Type Name="SubpixelOrder" FullName="Cairo.SubpixelOrder">
+  <TypeSignature Language="C#" Value="public enum SubpixelOrder" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>The subpixel order specifies the order of color elements within each pixel on the display device when rendering with an antialiasing mode of Cairo.Antialias.Subpixel.</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Bgr">
+      <MemberSignature Language="C#" Value="Bgr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SubpixelOrder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Subpixel elements are arranged horizontally with blue at the left</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SubpixelOrder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Use the default subpixel order for for the target device</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Rgb">
+      <MemberSignature Language="C#" Value="Rgb" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SubpixelOrder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Subpixel elements are arranged horizontally with red at the left</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Vbgr">
+      <MemberSignature Language="C#" Value="Vbgr" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SubpixelOrder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Subpixel elements are arranged vertically with blue at the top</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Vrgb">
+      <MemberSignature Language="C#" Value="Vrgb" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SubpixelOrder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Subpixel elements are arranged vertically with red at the top</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

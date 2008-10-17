@@ -1,0 +1,90 @@
+<Type Name="Extend" FullName="Cairo.Extend">
+  <TypeSignature Language="C#" Value="public enum Extend" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Defines Pattern Extend types.</summary>
+    <remarks>
+      <example>
+        <code lang="C#">
+image = new ImageSurface ("data/e.png");
+
+pattern = new SurfacePattern (image);
+pattern.Extend = Cairo.Extend.Repeat;
+               
+matrix = new Matrix ();
+matrix.InitScale (w * 5.0, h * 5.0);
+
+pattern.Matrix = matrix;
+
+gr.Pattern = pattern;
+  </code>
+      </example>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Extend</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>No extend.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pad">
+      <MemberSignature Language="C#" Value="Pad" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Extend</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>pixels outside of the pattern copy the closest pixel from the source</summary>
+        <since version="cairo 1.2" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reflect">
+      <MemberSignature Language="C#" Value="Reflect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Extend</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Reflect a certain Pattern.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Repeat">
+      <MemberSignature Language="C#" Value="Repeat" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Extend</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Repeat a certain Pattern.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

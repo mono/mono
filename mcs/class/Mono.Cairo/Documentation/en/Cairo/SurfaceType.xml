@@ -1,0 +1,174 @@
+<Type Name="SurfaceType" FullName="Cairo.SurfaceType">
+  <TypeSignature Language="C#" Value="public enum SurfaceType" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Describes the type of a given surface.</summary>
+    <remarks>
+    </remarks>
+    <since version="cairo 1.2" />
+  </Docs>
+  <Members>
+    <Member MemberName="BeOS">
+      <MemberSignature Language="C#" Value="BeOS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The surface is of type beos</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DirectFB">
+      <MemberSignature Language="C#" Value="DirectFB" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The surface is of type directfb</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Glitz">
+      <MemberSignature Language="C#" Value="Glitz" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The surface is of type glitz</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Image">
+      <MemberSignature Language="C#" Value="Image" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The surface is of type image</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pdf">
+      <MemberSignature Language="C#" Value="Pdf" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The surface is of type pdf</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PS">
+      <MemberSignature Language="C#" Value="PS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The surface is of type ps</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Quartz">
+      <MemberSignature Language="C#" Value="Quartz" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The surface is of type Quartz</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Svg">
+      <MemberSignature Language="C#" Value="Svg" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The surface is of type svg</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Win32">
+      <MemberSignature Language="C#" Value="Win32" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The surface is of type win32</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Xcb">
+      <MemberSignature Language="C#" Value="Xcb" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The surface is of type xcb</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Xlib">
+      <MemberSignature Language="C#" Value="Xlib" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.SurfaceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>An X Window window surface.</summary>
+        <since version="Mono-1.2.5" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,70 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Mono.Cairo" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Cairo">
+      <Type Name="Antialias" Kind="Enumeration" />
+      <Type Name="CairoAPI" Kind="Class" />
+      <Type Name="Color" Kind="Structure" />
+      <Type Name="Content" Kind="Enumeration" />
+      <Type Name="Context" Kind="Class" />
+      <Type Name="DirectFBSurface" Kind="Class" />
+      <Type Name="Distance" Kind="Structure" />
+      <Type Name="Extend" Kind="Enumeration" />
+      <Type Name="FillRule" Kind="Enumeration" />
+      <Type Name="Filter" Kind="Enumeration" />
+      <Type Name="FontExtents" Kind="Structure" />
+      <Type Name="FontFace" Kind="Class" />
+      <Type Name="FontOptions" Kind="Class" />
+      <Type Name="FontSlant" Kind="Enumeration" />
+      <Type Name="FontType" Kind="Enumeration" />
+      <Type Name="FontWeight" Kind="Enumeration" />
+      <Type Name="Format" Kind="Enumeration" />
+      <Type Name="GlitzSurface" Kind="Class" />
+      <Type Name="Glyph" Kind="Structure" />
+      <Type Name="Gradient" Kind="Class" />
+      <Type Name="Graphics" Kind="Class" />
+      <Type Name="HintMetrics" Kind="Enumeration" />
+      <Type Name="HintStyle" Kind="Enumeration" />
+      <Type Name="ImageSurface" Kind="Class" />
+      <Type Name="LinearGradient" Kind="Class" />
+      <Type Name="LineCap" Kind="Enumeration" />
+      <Type Name="LineJoin" Kind="Enumeration" />
+      <Type Name="Matrix" Kind="Class" />
+      <Type Name="NativeMethods" Kind="Class" />
+      <Type Name="Operator" Kind="Enumeration" />
+      <Type Name="Path" Kind="Class" />
+      <Type Name="Pattern" Kind="Class" />
+      <Type Name="PatternType" Kind="Enumeration" />
+      <Type Name="PdfSurface" Kind="Class" />
+      <Type Name="Point" Kind="Structure" />
+      <Type Name="PointD" Kind="Structure" />
+      <Type Name="PSSurface" Kind="Class" />
+      <Type Name="RadialGradient" Kind="Class" />
+      <Type Name="Rectangle" Kind="Structure" />
+      <Type Name="ScaledFont" Kind="Class" />
+      <Type Name="SolidPattern" Kind="Class" />
+      <Type Name="Status" Kind="Enumeration" />
+      <Type Name="SubpixelOrder" Kind="Enumeration" />
+      <Type Name="Surface" Kind="Class" />
+      <Type Name="SurfacePattern" Kind="Class" />
+      <Type Name="SurfaceType" Kind="Enumeration" />
+      <Type Name="SvgSurface" Kind="Class" />
+      <Type Name="SvgVersion" Kind="Enumeration" />
+      <Type Name="TextExtents" Kind="Structure" />
+      <Type Name="Win32Surface" Kind="Class" />
+      <Type Name="XcbSurface" Kind="Class" />
+      <Type Name="XlibSurface" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>Mono.Cairo</Title>
+</Overview>

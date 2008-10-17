@@ -1,0 +1,614 @@
+<Type Name="Matrix" FullName="Cairo.Matrix">
+  <TypeSignature Language="C#" Value="public class Matrix : ICloneable" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para>Defines the Matrix object for transformations and translations.</para>
+    </summary>
+    <remarks>
+      <para>
+2D affine transform matrices are 3x3 of the form:
+</para>
+      <example>
+        <code>
+[ xx yx tx ]
+[ xy yy ty ]
+[  0  0   1 ]
+  </code>
+      </example>
+      <para>
+As you can see, the bottom row is always [0 0 1]. The Cairo.Matrix implementation deals with the top 6 values only.
+</para>
+      <example>
+        <code lang="C#">
+Cairo.Graphics g;
+Matrix matrix;
+
+// Assume we initialize the Graphics obj here...
+
+// Get the CTM (Current Transformation Matrix)
+Matrix m = g.Matrix;
+
+// Make some changes
+m.Translate (translateX, translateY)
+m.Scale (scaleX, scaleY);
+
+// set the CTM to the modified matrix
+g.Matrix = m;
+
+// do some drawing operations here... 
+
+// Perhaps we now want to compute a few device-to-user point translations...
+// If we use Graphics.
+// first, get the CTM.
+m = g.Matrix;
+
+// invert it
+Cairo.Status cs = m.Invert();
+
+if (cs == Cairo.Status.Success) {
+	// TIP: Transform as many points as you like...
+	m.TransformPoint (ref point1X, ref point1Y);
+	m.TransformPoint (ref point2x, ref point2Y);
+	// ...
+} 
+ </code>
+      </example>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Matrix ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>Create a new Matrix, initialized to the identity.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Matrix (double xx, double yx, double xy, double yy, double x0, double y0);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="xx" Type="System.Double" />
+        <Parameter Name="yx" Type="System.Double" />
+        <Parameter Name="xy" Type="System.Double" />
+        <Parameter Name="yy" Type="System.Double" />
+        <Parameter Name="x0" Type="System.Double" />
+        <Parameter Name="y0" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="xx">xx component of the affine transformation.</param>
+        <param name="yx">yx component of the affine transformation.</param>
+        <param name="xy">xy component of the affine transformation.</param>
+        <param name="yy">yy component of the affine transformation.</param>
+        <param name="x0">x0 component of the affine transformation.</param>
+        <param name="y0">y0 component of the affine transformation.</param>
+        <summary>Create a new matrix, initialized with the specified values.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="o" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="o">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Init">
+      <MemberSignature Language="C#" Value="public void Init (double xx, double yx, double xy, double yy, double x0, double y0);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xx" Type="System.Double" />
+        <Parameter Name="yx" Type="System.Double" />
+        <Parameter Name="xy" Type="System.Double" />
+        <Parameter Name="yy" Type="System.Double" />
+        <Parameter Name="x0" Type="System.Double" />
+        <Parameter Name="y0" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="xx">xx component of the affine transformation</param>
+        <param name="yx">yx component of the affine transformation</param>
+        <param name="xy">xy component of the affine transformation</param>
+        <param name="yy">yy component of the affine transformation</param>
+        <param name="x0">X translation component of the affine transformation</param>
+        <param name="y0">Y translation component of the affine transformation</param>
+        <summary>Sets the matrix to be the affine transformation given by xx, yx, xy, yy, x0, y0. The transformation is given by:
+
+
+<list type="bullet"><item><term>x_new = xx * x + xy * y + x0;</term></item><item><term>y_new = yx * x + yy * y + y0;</term></item></list></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InitIdentity">
+      <MemberSignature Language="C#" Value="public void InitIdentity ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Initializes the matrix to the identity.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InitRotate">
+      <MemberSignature Language="C#" Value="public void InitRotate (double radians);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="radians" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="radians">Angle of rotation, in radians. The direction of rotation is defined such that positive angles rotate in the direction from the positive X axis toward the positive Y axis. With the default axis orientation of cairo, positive angles rotate in a clockwise direction.
+</param>
+        <summary>Initialize the matrix to a transformation that rotates by the specified radians value.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InitScale">
+      <MemberSignature Language="C#" Value="public void InitScale (double sx, double sy);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sx" Type="System.Double" />
+        <Parameter Name="sy" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="sx">scale factor in the X dimension.</param>
+        <param name="sy">scale factor in the Y dimension.</param>
+        <summary>Initializes the matrix to a transformation that scales by sx and sy in the X and Y dimensions, respectively.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InitTranslate">
+      <MemberSignature Language="C#" Value="public void InitTranslate (double tx, double ty);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="tx" Type="System.Double" />
+        <Parameter Name="ty" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="tx">amount to translate in the X direction.</param>
+        <param name="ty">amount to translate in the Y direction.</param>
+        <summary>Initializes matrix to a transformation that translates by tx and ty in the X and Y dimensions, respectively.
+</summary>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Invert">
+      <MemberSignature Language="C#" Value="public Cairo.Status Invert ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Status</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Changes matrix to be the inverse of its original value. Not all transformation matrices have inverses; if the matrix collapses points together (it is degenerate), then it has no inverse and this function will fail.
+</summary>
+        <returns>If the matrix has an inverse, modifies the matrix to be the inverse matrix and returns <see cref="T:Cairo.Status " />.Success. Otherwise, return <see cref="T:Cairo.Status" />.InvalidMatrix if the matrix is invalid.</returns>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsIdentity">
+      <MemberSignature Language="C#" Value="public bool IsIdentity ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Determine if a given matrix is the Identity.</summary>
+        <returns>Returns true if this matrix is equivalent to the identity.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Multiply">
+      <MemberSignature Language="C#" Value="public void Multiply (Cairo.Matrix b);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="b" Type="Cairo.Matrix" />
+      </Parameters>
+      <Docs>
+        <param name="b">The affine transformation matrix to multiply by.</param>
+        <summary>Multiplies this Matrix by b. The effect is to apply b's transformation to this matrix, or in other words, to transform this matrix by b.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Multiply">
+      <MemberSignature Language="C#" Value="public static Cairo.Matrix Multiply (Cairo.Matrix a, Cairo.Matrix b);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Cairo.Matrix</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="Cairo.Matrix" />
+        <Parameter Name="b" Type="Cairo.Matrix" />
+      </Parameters>
+      <Docs>
+        <param name="a">The matrix to be multiplied.</param>
+        <param name="b">The matrix to multiply by.</param>
+        <summary>Multiplies the affine transformations in a and b together and returns the result in result. The result is an affine transformation which is equivalent to separately applying the transformations a and b in order.</summary>
+        <returns>The result of multiplying a and b.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool op_Equality (Cairo.Matrix lhs, Cairo.Matrix rhs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="lhs" Type="Cairo.Matrix" />
+        <Parameter Name="rhs" Type="Cairo.Matrix" />
+      </Parameters>
+      <Docs>
+        <param name="lhs">The first matrix to compare.</param>
+        <param name="rhs">The second Matrix to compare.</param>
+        <summary>Determines whether two matrices have the same value.</summary>
+        <returns>Returns true if all members are equal.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (Cairo.Matrix lhs, Cairo.Matrix rhs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="lhs" Type="Cairo.Matrix" />
+        <Parameter Name="rhs" Type="Cairo.Matrix" />
+      </Parameters>
+      <Docs>
+        <param name="lhs">The first Matrix to compare.</param>
+        <param name="rhs">The second Matrix to compare.</param>
+        <summary>Determines whether two matrices do not share the same value.</summary>
+        <returns>Returns true if any members are not equal.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Rotate">
+      <MemberSignature Language="C#" Value="public void Rotate (double radians);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="radians" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="radians">angle of rotation, in radians. The direction of rotation is defined such that positive angles rotate in the direction from the positive X axis toward the positive Y axis. With the default axis orientation of cairo, positive angles rotate in a clockwise direction.
+</param>
+        <summary>Applies rotation by radians to the transformation in the matrix. The effect of the new transformation is to first rotate the coordinates by radians, then apply the original transformation to the coordinates.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Scale">
+      <MemberSignature Language="C#" Value="public void Scale (double sx, double sy);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sx" Type="System.Double" />
+        <Parameter Name="sy" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="sx">scale factor in the X direction</param>
+        <param name="sy">scale factor in the Y direction</param>
+        <summary>Applies scaling by tx, ty to the transformation in the matrix. The effect of the new transformation is to first scale the coordinates by sx and sy, then apply the original transformation to the coordinates.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TransformDistance">
+      <MemberSignature Language="C#" Value="public void TransformDistance (ref double dx, ref double dy);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dx" Type="System.Double&amp;" RefType="ref" />
+        <Parameter Name="dy" Type="System.Double&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="dx">X component of a distance vector. An in/out parameter.</param>
+        <param name="dy">Y component of a distance vector. An in/out parameter.</param>
+        <summary>Transforms the distance vector (dx,@y) by @matrix. This is similar to cairo_matrix_transform() except that the translation components of the transformation are ignored. The calculation of the returned vector is as follows:
+
+<list type="bullet"><item><term>dx2 = dx1 * a + dy1 * c;</term></item><item><term>dy2 = dx1 * b + dy1 * d;</term></item></list>
+
+ Affine transformations are position invariant, so the same vector always transforms to the same vector. If (x1,y1) transforms to (x2,y2) then (x1+@x1,y1+dy1) will transform to (x1+dx2,y1+dy2) for all values of x1 and x2.
+</summary>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TransformPoint">
+      <MemberSignature Language="C#" Value="public void TransformPoint (ref double x, ref double y);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x" Type="System.Double&amp;" RefType="ref" />
+        <Parameter Name="y" Type="System.Double&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="x">X position. An in/out parameter.</param>
+        <param name="y">Y position. An in/out parameter.</param>
+        <summary>Transforms the point (x, y) by the matrix.</summary>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Translate">
+      <MemberSignature Language="C#" Value="public void Translate (double tx, double ty);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="tx" Type="System.Double" />
+        <Parameter Name="ty" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="tx">amount to translate in the X direction.</param>
+        <param name="ty">amount to translate in the X direction.</param>
+        <summary> Applies a translation by tx, ty to the transformation in matrix. The effect of the new transformation is to first translate the coordinates by @tx and ty, then apply the original transformation to the coordinates.
+</summary>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="X0">
+      <MemberSignature Language="C#" Value="public double X0;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>X0 component of the affine transformation.</summary>
+        <remarks>Represents the x-component of translation.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Xx">
+      <MemberSignature Language="C#" Value="public double Xx;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Xx component of the affine transformation.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Xy">
+      <MemberSignature Language="C#" Value="public double Xy;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Xy component of the affine transformation.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Y0">
+      <MemberSignature Language="C#" Value="public double Y0;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Y0 component of the affine transformation.</summary>
+        <remarks>Represents the y-component of translation.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Yx">
+      <MemberSignature Language="C#" Value="public double Yx;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Yx component of the affine transformation.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Yy">
+      <MemberSignature Language="C#" Value="public double Yy;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Yy component of the affine transformation.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

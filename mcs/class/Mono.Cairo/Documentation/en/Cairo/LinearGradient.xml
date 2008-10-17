@@ -1,0 +1,76 @@
+<Type Name="LinearGradient" FullName="Cairo.LinearGradient">
+  <TypeSignature Language="C#" Value="public class LinearGradient : Cairo.Gradient" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cairo</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Cairo.Gradient</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Extends <see cref="T:Cairo.Gradient" /> by providing a linear gradient along the line defined by (x0, y0) and (x1, y1).  </summary>
+    <remarks>
+      <para>Before using the gradient pattern, a number of color stops should be defined using AddColorStop() or AddColorStopRgb().
+</para>
+      <para>
+        <example>
+          <code lang="C#">
+Pattern pat;
+
+pat = new LinearGradient (0.0, 0.0,  0.0, 1.0);
+pat.AddColorStop (1, new Color (0, 0, 0, 1) );
+pat.AddColorStop (0, new Color (1, 1, 1, 1) );
+
+gr.Rectangle ( new PointD (0, 0), 1, 1);
+gr.Pattern =  pat;
+gr.Fill ();
+
+pat.Destroy ();
+  </code>
+        </example>
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LinearGradient (double x0, double y0, double x1, double y1);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="x0" Type="System.Double" />
+        <Parameter Name="y0" Type="System.Double" />
+        <Parameter Name="x1" Type="System.Double" />
+        <Parameter Name="y1" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="x0"> x coordinate of the start point </param>
+        <param name="y0">y coordinate of the start point</param>
+        <param name="x1">x coordinate of the end point</param>
+        <param name="y1">y coordinate of the end point</param>
+        <summary>Create a new linear gradient <see cref="T:Cairo.Pattern" /> along the line defined by (x0, y0) and (x1, y1). </summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LinearPoints">
+      <MemberSignature Language="C#" Value="public Cairo.PointD[] LinearPoints { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Cairo.PointD[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
