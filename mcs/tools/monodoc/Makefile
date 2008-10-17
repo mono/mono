@@ -35,7 +35,8 @@ TEST_FILES = \
 	Test/man-test-4.html
 
 EXTRA_DISTFILES = \
-	$(RESOURCE_FILES)   \
+	monodoc.dll.config.in   \
+	$(RESOURCE_FILES)       \
 	$(TEST_FILES)
 
 LIB_MCS_FLAGS = \
