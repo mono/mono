@@ -120,3 +120,7 @@ ifneq ($(response),$(sourcefile))
 $(response): $(topdir)/build/executable.make $(depsdir)/.stamp
 endif
 $(makefrag): $(topdir)/build/executable.make $(depsdir)/.stamp
+
+doc-update-local:
+	@:
+

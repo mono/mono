@@ -366,3 +366,22 @@ ifneq ($(response),$(sourcefile))
 $(response): $(topdir)/build/library.make $(depsdir)/.stamp
 endif
 $(makefrag) $(test_response) $(test_makefrag) $(btest_response) $(btest_makefrag): $(topdir)/build/library.make $(depsdir)/.stamp
+
+## Documentation stuff
+
+Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE)] $(notdir $(@))";)
+MDOC_UP  =$(Q_MDOC_UP) \
+	if `echo $(PROFILE) | grep ^net_1_ > /dev/null 2>/dev/null` ; then    \
+		$(RUNTIME) $(topdir)/tools/mdoc/monodocer1.exe                      \
+			-path:Documentation/en -assembly:$(the_lib) ;                     \
+	else                                                                  \
+		$(RUNTIME) $(topdir)/tools/mdoc/mdoc.exe update --delete            \
+			-o Documentation/en $(the_lib) ;                                  \
+	fi
+
+doc-update-local: $(the_libdir)/.doc-stamp
+
+$(the_libdir)/.doc-stamp: $(the_lib)
+	$(MDOC_UP)
+	@echo "doc-stamp" > $@
+

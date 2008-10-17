@@ -1,3 +1,7 @@
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile: Add doc-update target support.
+
 2008-05-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* mono-api.xsl: Added support for event accessors.

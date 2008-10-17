@@ -34,6 +34,8 @@ DISTFILES= $(CORCOMPARE_SOURCES) $(APIINFO_SOURCES) $(APIDIFF_SOURCES) cormissin
 
 all-local: $(ALL_PROGRAMS)
 
+doc-update-local:
+
 install-local: $(ALL_PROGRAMS)
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	for i in $(ALL_PROGRAMS) ; do \

@@ -30,6 +30,8 @@ else
 all-local: $(SECURITY_TARGETS)
 endif
 
+doc-update-local:
+
 install-local: all-local
 uninstall-local:
 

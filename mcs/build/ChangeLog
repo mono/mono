@@ -1,3 +1,12 @@
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* build.rules: doc-update is now a standard target; provide a $(MDOC)
+	  variable to simplify running the `mdoc` updater program.
+	* executable.make: Add doc-update target support (does nothing).
+	* library.make: Add doc-update target support; runs `mdoc update` on
+	  the assembly, updating the documentation within Documentation/en.
+	* Makefile: Add doc-update target support.
+
 2008-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* library.make: Allow FIXTURE make variable to be passed to nunit.

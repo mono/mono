@@ -1,3 +1,7 @@
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* Test/Makefile: Add doc-update target support.
+
 2008-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: add reference to S.D.Linq.

@@ -112,7 +112,7 @@ gacutil = $(topdir)/class/lib/net_1_1_bootstrap/gacutil.exe
 GACUTIL = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(gacutil)
 endif
 
-STD_TARGETS = test run-test run-test-ondotnet clean install uninstall
+STD_TARGETS = test run-test run-test-ondotnet clean install uninstall doc-update
 
 $(STD_TARGETS): %: do-%
 
@@ -181,3 +181,9 @@ dist-default:
 
 withmcs:
 	$(MAKE) MCS='$(INTERNAL_MCS)' BOOTSTRAP_MCS='$(INTERNAL_MCS)' all
+
+## Documentation stuff
+
+Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE)] $(notdir $(@))";)
+MDOC   =$(Q_MDOC) $(RUNTIME) $(topdir)/tools/mdoc/mdoc.exe
+
