@@ -738,10 +738,10 @@ namespace Mono.Cecil {
 					TableComparers.NestedClass.Instance);
 			th.Sorted |= ((long) 1 << NestedClassTable.RId);
 
-			if (th.HasTable(InterfaceImplTable.RId))
-				m_tableWriter.GetInterfaceImplTable().Rows.Sort(
+			if (th.HasTable (InterfaceImplTable.RId))
+				m_tableWriter.GetInterfaceImplTable ().Rows.Sort (
 					TableComparers.InterfaceImpl.Instance);
-			th.Sorted |= ((long)1 << InterfaceImplTable.RId);
+			th.Sorted |= ((long) 1 << InterfaceImplTable.RId);
 
 			if (th.HasTable (ConstantTable.RId))
 				m_tableWriter.GetConstantTable ().Rows.Sort (
