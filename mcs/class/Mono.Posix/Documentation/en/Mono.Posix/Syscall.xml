@@ -1,0 +1,1927 @@
+<Type Name="Syscall" FullName="Mono.Posix.Syscall">
+  <TypeSignature Language="C#" Value="public class Syscall" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("Use Mono.Unix.Native.Syscall.")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>The Syscall wrapper class makes it possible to execute the defined system calls. For more information on any of these system calls, the linux manual system (man) has exhaustive information on each syscall in section two: 'man 2 chdir' (or often 'man chdir(2)') for example would give information related to chdir, including error codes, which are in general not listed here.</summary>
+    <remarks>
+      <para>This type is obsolete.  Please use 
+    <see cref="T:Mono.Unix.Native.Syscall" /> instead.</para>
+      <para>The syscall wrapper follows the posix standard. This means some functionality or flags which are linux specific may not be available. Below is a list of known posix syscall functions and features that are not yet implemented.</para>
+      <list type="table">
+        <listheader>
+          <term>Syscall featuer</term>
+          <description>Status</description>
+        </listheader>
+        <item>
+          <term>OpenFlags.O_NOFOLLOW  = 512</term>
+          <description>Non posix. Not yet implemented.</description>
+        </item>
+        <item>
+          <term>OpenFlags.O_DIRECTORY = 1024</term>
+          <description>Non posix. Not yet implemented.</description>
+        </item>
+        <item>
+          <term>OpenFlags.O_DIRECT    = 2048</term>
+          <description>Non posix. Not yet implemented.</description>
+        </item>
+        <item>
+          <term>OpenFlags.O_ASYNC     = 4096</term>
+          <description>Non posix. Not yet implemented.</description>
+        </item>
+        <item>
+          <term>OpenFlags.O_LARGEFILE = 8192</term>
+          <description>Non posix. Not yet implemented.</description>
+        </item>
+        <item>
+          <term>Signals.SIGPWR		</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>Signals.SIGRTMIN</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>execve</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>time</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>mknod</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>mount</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>umount</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>stime</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>ptrace</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>utime</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>ftime</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>pipe</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>times</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>fcntl</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>ulimit</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>sigaction</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>sigsuspend</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>sigpending</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>setrlimit</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>getrlimit</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>getrusage</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>gettimeofday</term>
+          <description>Not yet implemented.</description>
+        </item>
+        <item>
+          <term>settimeofday</term>
+          <description>Not yet implemented.</description>
+        </item>
+      </list>
+    </remarks>
+    <altmember cref="T:Mono.Unix.Native.Syscall" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Syscall ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>No need to call directly. Class only contains static functions.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="access">
+      <MemberSignature Language="C#" Value="public static int access (string pathname, Mono.Posix.AccessMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pathname" Type="System.String" />
+        <Parameter Name="mode" Type="Mono.Posix.AccessMode" />
+      </Parameters>
+      <Docs>
+        <param name="pathname">a <see cref="T:System.String" /></param>
+        <param name="mode">a <see cref="T:System.Int32" /></param>
+        <summary>Checks whether the calling task has the necessary access rights to perform operations specified by mode on the file pathname. AccessMode is a mask consisting of one or more of the values R_OK, W_OK, X_OK and F_OK which respectively test if the taks can read, write, execute or test if the file exists.</summary>
+        <returns>a <see cref="T:System.Int32" />. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.access" /> instead.</para>
+          <para> The test is performed using the real uid and gid of the calling task. Only the access bits of the file are tested. See 'man access(2)' for more information and error codes.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.access" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="alarm">
+      <MemberSignature Language="C#" Value="public static uint alarm (uint seconds);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="seconds" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="seconds">a <see cref="T:System.UInt32" /></param>
+        <summary>If the call completes successfully, the taks will receive a SIGALARM signal after a delay of seconds seconds. A delay of zero seconds simply cancel the alarm. If an previous alarm was activated when the call is made then the previous alarm is cancelled.</summary>
+        <returns>a <see cref="T:System.UInt32" />. If a previous alarm was activated, the call returns the time delay before the expiration of that previous alarm (now canceled). Otherwise, it returns zero.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.getuid" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.alarm" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="chdir">
+      <MemberSignature Language="C#" Value="public static int chdir (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">a <see cref="T:System.String" /></param>
+        <summary>Changes the current directory to 'path'.</summary>
+        <returns>a <see cref="T:System.Int32" />. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.chdir" /> instead.</para>
+          <para>See 'man chrdir(2)' for more information and error codes.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.chdir" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="chmod">
+      <MemberSignature Language="C#" Value="public static int chmod (string path, Mono.Posix.FileMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="Mono.Posix.FileMode" />
+      </Parameters>
+      <Docs>
+        <param name="path">a <see cref="T:System.String" /></param>
+        <param name="mode">a <see cref="T:System.Int32" /></param>
+        <summary>Change permissions for a file or folder.</summary>
+        <returns>a <see cref="T:System.Int32" />. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.chmod" /> instead.</para>
+          <para>See 'man chmod(2)' for error codes and more information.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.chmod" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="chown">
+      <MemberSignature Language="C#" Value="public static int chown (string path, int owner, int group);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="owner" Type="System.Int32" />
+        <Parameter Name="group" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="path">a <see cref="T:System.String" /></param>
+        <param name="owner">a <see cref="T:System.Int32" /> representing owner UID.</param>
+        <param name="group">a <see cref="T:System.Int32" /> representing Group GID</param>
+        <summary>Change owner for a file or folder.</summary>
+        <returns>a <see cref="T:System.Int32" />. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.chown" /> instead.</para>
+          <para>The  owner of the file specified by path is changed.  Only the super-user may change the owner of a file.  The owner  of  a  file  may change the group of the file to any group of which that owner is a member.  The super-user may change the group arbitrarily.
+ See 'man chown(2)' for more information and error codes.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.chown" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="chroot">
+      <MemberSignature Language="C#" Value="public static int chroot (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">a <see cref="T:System.String" /> representing new root directory.</param>
+        <summary>Change root directory</summary>
+        <returns>a <see cref="T:System.Int32" />. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.chroot" /> instead.</para>
+          <para>See 'man chroot(2)' for more information and error codes.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.chroot" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="close">
+      <MemberSignature Language="C#" Value="public static int close (int fileDescriptor);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileDescriptor" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="fileDescriptor">a <see cref="T:System.Int32" /></param>
+        <summary>Closes the file descriptor fileDescriptor. If fileDescriptor is the last file descriptor refering to a file, then the ressources associated with that file are deallocated. The lock held on the file by the current task are released.</summary>
+        <returns>a <see cref="T:System.Int32" />. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.close" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.close" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="closedir">
+      <MemberSignature Language="C#" Value="public static int closedir (IntPtr dir);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dir" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dir">a <see cref="T:System.IntPtr" /></param>
+        <summary>Closes the directory represented by IntPtr. IntPtr is a pointer retrieved by opendir()</summary>
+        <returns>a <see cref="T:System.Int32" />. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.closedir" /> instead.</para>
+        </remarks>
+        <altmember cref="T:Mono.Unix.UnixDirectory" />
+        <altmember cref="T:Mono.Unix.UnixDirectoryInfo" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.closedir" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="creat">
+      <MemberSignature Language="C#" Value="public static int creat (string pathname, Mono.Posix.FileMode flags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pathname" Type="System.String" />
+        <Parameter Name="flags" Type="Mono.Posix.FileMode" />
+      </Parameters>
+      <Docs>
+        <param name="pathname">a <see cref="T:System.String" /></param>
+        <param name="flags">a <see cref="T:System.Int32" /></param>
+        <summary>Creates a file 'pathname' using the given file mode flags.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.creat" /> instead.</para>
+          <para>On success, a file descriptor for the file is returned. This file descriptor is the lowest numbered unused descriptor. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.creat" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="dup">
+      <MemberSignature Language="C#" Value="public static int dup (int fileDescriptor);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileDescriptor" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="fileDescriptor">a <see cref="T:System.Int32" /></param>
+        <summary>dup duplicates a file descriptor to the lowest unused file descriptor available.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.dup" /> instead.</para>
+          <para>On success, the new file descriptor is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.dup" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="dup2">
+      <MemberSignature Language="C#" Value="public static int dup2 (int oldFileDescriptor, int newFileDescriptor);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oldFileDescriptor" Type="System.Int32" />
+        <Parameter Name="newFileDescriptor" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="oldFileDescriptor">a <see cref="T:System.Int32" /></param>
+        <param name="newFileDescriptor">a <see cref="T:System.Int32" /></param>
+        <summary> dup2 duplicates a file descriptor to another specified file descriptor. If the destination file descriptor is already used, it is closed. The two descriptors share all (ie. file locks, position, etc.) but the close-on-exec flag. </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.dup2" /> instead.</para>
+          <para>On success, the new file descriptor is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.dup2" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="exit">
+      <MemberSignature Language="C#" Value="public static int exit (int status);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="status" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="status">a <see cref="T:System.Int32" /></param>
+        <summary>Terminates the process that calls the function with the status 'status'. </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.exit" /> instead.</para>
+          <example>
+            <code lang="C#">
+using System;
+using Mono.Posix;
+using System.Runtime.InteropServices;
+
+class Test
+{
+	public void SignalCatcher(int v)
+	{
+		// sleep signal caught.
+		Console.WriteLine("Signal received: " + v);
+		// this line will not be printed because process exits...
+		Console.WriteLine("Exiting with: " + Syscall.exit(9));
+	}		
+	
+	public static void Main(string[] args)
+	{
+		Test t = new Test();
+		Console.Write("waiting for event...");
+		string x = Console.ReadLine();
+	}
+	
+	public Test()
+	{
+		// create a signal handler delegate for sleep signals
+		Console.WriteLine("signal result: " + Syscall.signal(14, 
+					   new Syscall.sighandler_t(SignalCatcher)));
+		// send a sleep signal
+		Syscall.alarm(3);
+	}
+}
+  </code>
+          </example>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.exit" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="fork">
+      <MemberSignature Language="C#" Value="public static int fork ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>fork() turns a single process into 2 identical processes, known as the parent and the child. </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.fork" /> instead.</para>
+          <para>On success, fork() returns 0 to the child process and returns the process ID of the child process to the parent process. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.fork" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="getegid">
+      <MemberSignature Language="C#" Value="public static int getegid ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Get the effective group ID for the current process.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.geteuid" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getegid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="geteuid">
+      <MemberSignature Language="C#" Value="public static int geteuid ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Get the effective user ID for the current process.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.geteuid" /> instead.</para>
+          <para>To be added</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.geteuid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="getgid">
+      <MemberSignature Language="C#" Value="public static int getgid ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Get the group ID for the current process.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.getgid" /> instead.</para>
+          <para>To be added</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getgid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="getgroupname">
+      <MemberSignature Language="C#" Value="public static string getgroupname (int gid);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gid" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="gid">a <see cref="T:System.Int32" /></param>
+        <summary>Retrieve the groupname for the given GID.</summary>
+        <returns>a <see cref="T:System.String" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.UnixGroup.GetGroupName" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixGroup.GetGroupName" />
+        <altmember cref="F:Mono.Unix.Native.Group.gr_name" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getgrent" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getgrnam" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getgrgid" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.fgetgrent" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="gethostname">
+      <MemberSignature Language="C#" Value="public static string gethostname ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Retrieves the hostname.</summary>
+        <returns>a <see cref="T:System.String" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="P:Mono.Unix.UnixEnvironment.MachineName" /> instead.</para>
+          <para>See also GetHostName()</para>
+        </remarks>
+        <altmember cref="P:Mono.Unix.UnixEnvironment.MachineName" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.gethostname" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetHostName">
+      <MemberSignature Language="C#" Value="public static string GetHostName ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Retrieves the hostname.</summary>
+        <returns>a <see cref="T:System.String" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="P:Mono.Unix.UnixEnvironment.MachineName" /> instead.</para>
+          <para>Either GetHostName() should be removed, since gethostname() also exists, or the entire library should be CamelCased per .NET standard.</para>
+        </remarks>
+        <altmember cref="P:Mono.Unix.UnixEnvironment.MachineName" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.gethostname" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="getpgrp">
+      <MemberSignature Language="C#" Value="public static int getpgrp ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Get the process group.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.getpgrp" /> instead.</para>
+          <para>getpgrp always returns the current process group. see 'man getpgrp(2)' for more information.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpgrp" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="getpid">
+      <MemberSignature Language="C#" Value="public static int getpid ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the unique identifier for the current process.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.getpid" /> instead.</para>
+          <para>often used to generate temp. file names etc.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="getppid">
+      <MemberSignature Language="C#" Value="public static int getppid ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the unique identifier for the parent process.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.getppid" /> instead.</para>
+          <para>To be added</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getppid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="getuid">
+      <MemberSignature Language="C#" Value="public static int getuid ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Get the user ID for the current process.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.getuid" /> instead.</para>
+          <para>To be added</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getuid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="getusername">
+      <MemberSignature Language="C#" Value="public static string getusername (int uid);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uid" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="uid">a <see cref="T:System.Int32" /></param>
+        <summary>Retrieves the username for the UID in question.</summary>
+        <returns>a <see cref="T:System.String" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.UnixUser.GetUserName" /> instead.</para>
+          <example>
+            <code lang="C#">
+	public static void Main(string[] args)
+	{
+		const int ROOT = 0;
+		Test t = new Test();
+		Console.Write("Hello, " + Syscall.getusername(ROOT));
+		string x = Console.ReadLine();
+	}
+  </code>
+          </example>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixUser.GetUserName" />
+        <altmember cref="F:Mono.Unix.Native.Passwd.pw_name" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpwent" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpwnam" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpwuid" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.fgetpwent" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="isatty">
+      <MemberSignature Language="C#" Value="public static bool isatty (int desc);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="desc" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="desc">a <see cref="T:System.Int32" /></param>
+        <summary>Boolean value indicating if the file at fileDescriptor is a tty.</summary>
+        <returns>a <see cref="T:System.Boolean" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="P:Mono.Unix.Native.Syscall.isatty" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.isatty" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="kill">
+      <MemberSignature Language="C#" Value="public static void kill (int pid, int sig);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pid" Type="System.Int32" />
+        <Parameter Name="sig" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="pid">a <see cref="T:System.Int32" /></param>
+        <param name="sig">a <see cref="T:System.Int32" /></param>
+        <summary>Kill the process 'pid' with the given signal.</summary>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.kill" /> instead.</para>
+          <example>
+            <code lang="C#">
+		int myPID = Syscall.getpid();
+		Syscall.kill(myPID,9);
+  </code>
+          </example>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.kill" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="lchown">
+      <MemberSignature Language="C#" Value="public static int lchown (string path, int owner, int group);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="owner" Type="System.Int32" />
+        <Parameter Name="group" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="path">a <see cref="T:System.String" /></param>
+        <param name="owner">a <see cref="T:System.Int32" /> Owner UID</param>
+        <param name="group">a <see cref="T:System.Int32" /> Owner GID</param>
+        <summary>Change the ownership for 'path'</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.lchown" /> instead.</para>
+          <para>The  owner of the file specified by path is changed.  Only the super-user may change the owner of a file.  The owner  of  a  file  may change the group of the file to any group of which that owner is a member.  The super-user may change the group arbitrarily.
+ See 'man chown(2)' for more information and error codes.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.lchown" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="link">
+      <MemberSignature Language="C#" Value="public static int link (string oldPath, string newPath);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oldPath" Type="System.String" />
+        <Parameter Name="newPath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="oldPath">a <see cref="T:System.String" /></param>
+        <param name="newPath">a <see cref="T:System.String" /></param>
+        <summary>Create a hard link from oldPath to newPath.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.link" /> instead.</para>
+          <para>There is no way to distinguish the links. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.link" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="lseek">
+      <MemberSignature Language="C#" Value="public static int lseek (int fileDescriptor, int offset, int whence);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileDescriptor" Type="System.Int32" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="whence" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="fileDescriptor">a <see cref="T:System.Int32" /></param>
+        <param name="offset">a <see cref="T:System.Int32" /></param>
+        <param name="whence">a <see cref="T:System.Int32" /></param>
+        <summary>Changes the read/write file offset of a file descriptor. </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.lseek" /> instead.</para>
+          <para>The offset parameter is interpreted according to the possible following values of whence: </para>
+          <list type="table">
+            <listheader>
+              <term>Value</term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term>SEEK_SET</term>
+              <description>the new file offset will be the current offset plus offset.</description>
+            </item>
+            <item>
+              <term>SEEK_CUR</term>
+              <description>the new file offset will be offset.</description>
+            </item>
+            <item>
+              <term>SEEK_END</term>
+              <description>the new file offset will be the end of the file plus offset. </description>
+            </item>
+          </list>
+If we seek past the end of a file, the new file region contains 0. </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.lseek" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="lstat">
+      <MemberSignature Language="C#" Value="public static int lstat (string filename, out Mono.Posix.Stat stat);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="stat" Type="Mono.Posix.Stat&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="filename">a <see cref="T:System.String" /></param>
+        <param name="stat">a <see cref="T:Mono.Posix.Stat" /></param>
+        <summary>Retrieves via output paramter the file status struct for a file.</summary>
+        <returns> a <see cref="T:System.Int32" />. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="P:Mono.Unix.Native.Syscall.lstat" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.lstat" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="mkdir">
+      <MemberSignature Language="C#" Value="public static int mkdir (string pathname, Mono.Posix.FileMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pathname" Type="System.String" />
+        <Parameter Name="mode" Type="Mono.Posix.FileMode" />
+      </Parameters>
+      <Docs>
+        <param name="pathname">a <see cref="T:System.String" /></param>
+        <param name="mode">a <see cref="T:System.Int32" /></param>
+        <summary>Create a directory at 'path' with the given FileMode.</summary>
+        <returns> a <see cref="T:System.Int32" />. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.mkdir" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixDirectory.CreateDirectory" />
+        <altmember cref="M:Mono.Unix.UnixDirectoryInfo.Create" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.mkdir" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="nice">
+      <MemberSignature Language="C#" Value="public static int nice (int increment);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="increment" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="increment">a <see cref="T:System.Int32" /></param>
+        <summary>Change the priority of the current process by given increment.</summary>
+        <returns> a <see cref="T:System.Int32" />. On success, zero is returned. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.nice" /> instead.</para>
+          <para>Adds 'increment' to the priority of the calling task. Only a task with superuser privileges may specify a negative inc.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.nice" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="open">
+      <MemberSignature Language="C#" Value="public static int open (string pathname, Mono.Posix.OpenFlags flags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pathname" Type="System.String" />
+        <Parameter Name="flags" Type="Mono.Posix.OpenFlags" />
+      </Parameters>
+      <Docs>
+        <param name="pathname">a <see cref="T:System.String" /></param>
+        <param name="flags">a <see cref="T:System.Int32" /></param>
+        <summary>Creates/opens a file 'pathname' using the given file open flags.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.open" /> instead.</para>
+          <para>On success, a file descriptor for the file is returned. This file descriptor is the lowest numbered unused descriptor. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.open" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="open">
+      <MemberSignature Language="C#" Value="public static int open (string pathname, Mono.Posix.OpenFlags flags, Mono.Posix.FileMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pathname" Type="System.String" />
+        <Parameter Name="flags" Type="Mono.Posix.OpenFlags" />
+        <Parameter Name="mode" Type="Mono.Posix.FileMode" />
+      </Parameters>
+      <Docs>
+        <param name="pathname">a <see cref="T:System.String" /></param>
+        <param name="flags">a <see cref="T:System.Int32" /></param>
+        <param name="mode">a <see cref="T:System.Int32" /></param>
+        <summary>Creates/opens a file 'pathname' using the given open and file mode flags.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.open" /> instead.</para>
+          <para>On success, a file descriptor for the file is returned. This file descriptor is the lowest numbered unused descriptor. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.open" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="opendir">
+      <MemberSignature Language="C#" Value="public static IntPtr opendir (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">a <see cref="T:System.String" /></param>
+        <summary>Opens a directory at 'path'.</summary>
+        <returns>a <see cref="T:System.IntPtr" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.opendir" /> instead.</para>
+          <example>
+            <code lang="C#">
+	
+public static void Main(string[] argv)
+{
+	IntPtr dir = Syscall.opendir("/tmp");
+	string nextentry = Syscall.readdir(dir);
+	
+	while(nextentry!=null)
+	{
+		Console.WriteLine(nextentry);
+		nextentry = Syscall.readdir(dir);
+	}
+}
+	
+  </code>
+          </example>
+        </remarks>
+        <altmember cref="T:Mono.Unix.UnixDirectory" />
+        <altmember cref="T:Mono.Unix.UnixDirectoryInfo" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.opendir" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="pause">
+      <MemberSignature Language="C#" Value="public static int pause ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Pause the current process. The task sleeps until a signal is received.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.pause" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.pause" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="read">
+      <MemberSignature Language="C#" Value="public static IntPtr read (int fileDescriptor, void* buf, IntPtr count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileDescriptor" Type="System.Int32" />
+        <Parameter Name="buf" Type="System.Void*" />
+        <Parameter Name="count" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="fileDescriptor">a <see cref="T:System.Int32" /></param>
+        <param name="buf">a <see cref="T:System.Void" /></param>
+        <param name="count">a <see cref="T:System.IntPtr" /></param>
+        <summary>Reads up to count bytes into buf from fileDescriptor. </summary>
+        <returns>a <see cref="T:System.IntPtr" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.read" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.read" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="readdir">
+      <MemberSignature Language="C#" Value="public static string readdir (IntPtr dir);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dir" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="dir">a <see cref="T:System.IntPtr" /></param>
+        <summary>Read entry from a directory IntPtr as string. </summary>
+        <returns>a <see cref="T:System.String" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.readdir" /> instead.</para>
+          <example>
+            <code lang="C#">
+	
+public static void Main(string[] argv)
+{
+	IntPtr dir = Syscall.opendir("/tmp");
+	string nextentry = Syscall.readdir(dir);
+	
+	while(nextentry!=null)
+	{
+		Console.WriteLine(nextentry);
+		nextentry = Syscall.readdir(dir);
+	}
+}
+	
+  </code>
+          </example>
+
+See also opendir()</remarks>
+        <altmember cref="T:Mono.Unix.UnixDirectory" />
+        <altmember cref="T:Mono.Unix.UnixDirectoryInfo" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.readdir" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="readlink">
+      <MemberSignature Language="C#" Value="public static string readlink (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">a <see cref="T:System.String" /></param>
+        <summary>Gets the destination of a symlink as a string. See also read()</summary>
+        <returns>a <see cref="T:System.String" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="P:Mono.Unix.Native.Syscall.readlink" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.readlink" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="rename">
+      <MemberSignature Language="C#" Value="public static int rename (string oldPath, string newPath);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oldPath" Type="System.String" />
+        <Parameter Name="newPath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="oldPath">a <see cref="T:System.String" /></param>
+        <param name="newPath">a <see cref="T:System.String" /></param>
+        <summary>Rename oldPath to newPath.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.rename" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.rename" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="rmdir">
+      <MemberSignature Language="C#" Value="public static int rmdir (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">a <see cref="T:System.String" /></param>
+        <summary>Removes the directory at 'path'.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.rmdir" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixDirectoryInfo.Delete" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.rmdir" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="setgid">
+      <MemberSignature Language="C#" Value="public static int setgid (int gid);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gid" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="gid">a <see cref="T:System.Int32" /></param>
+        <summary>Sets the group ID for the current process to 'gid'.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.setgid" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setgid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="setpgid">
+      <MemberSignature Language="C#" Value="public static int setpgid (int pid, int pgid);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pid" Type="System.Int32" />
+        <Parameter Name="pgid" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="pid">a <see cref="T:System.Int32" /></param>
+        <param name="pgid">a <see cref="T:System.Int32" /></param>
+        <summary>Sets the process group ID for the current process to 'pgid'.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.setpgid" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setpgid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="setregid">
+      <MemberSignature Language="C#" Value="public static int setregid (int rgid, int egid);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgid" Type="System.Int32" />
+        <Parameter Name="egid" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="rgid">a <see cref="T:System.Int32" /></param>
+        <param name="egid">a <see cref="T:System.Int32" /></param>
+        <summary>Sets the real and effective group ID for the current process to 'rgid' and 'egid' respectively.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.setregid" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setregid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="setreuid">
+      <MemberSignature Language="C#" Value="public static int setreuid (int ruid, int euid);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ruid" Type="System.Int32" />
+        <Parameter Name="euid" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="ruid">a <see cref="T:System.Int32" /></param>
+        <param name="euid">a <see cref="T:System.Int32" /></param>
+        <summary>Sets the real and effective user ID for the current process to 'ruid' and 'euid' respectively.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.setreuid" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setreuid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="setsid">
+      <MemberSignature Language="C#" Value="public static int setsid ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Creates a session and sets the process group ID.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.setsid" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setsid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="setuid">
+      <MemberSignature Language="C#" Value="public static int setuid (int uid);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uid" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="uid">a <see cref="T:System.Int32" /></param>
+        <summary>Sets the user ID for the current process to 'uid'.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.setuid" /> instead.</para>
+          <para>often used to generate temp. file names etc.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setuid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="signal">
+      <MemberSignature Language="C#" Value="public static int signal (int signum, Mono.Posix.Syscall.sighandler_t handler);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="signum" Type="System.Int32" />
+        <Parameter Name="handler" Type="Mono.Posix.Syscall+sighandler_t" />
+      </Parameters>
+      <Docs>
+        <param name="signum">a <see cref="T:System.Int32" />.        The signal() function returns the previous value of the signal handler, or SIG_ERR on error  and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.
+
+
+</param>
+        <param name="handler">a <see cref="T:Mono.Posix.Syscall+sighandler_t" /></param>
+        <summary>Register a handler for a given posix signal. </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Stdlib.signal" /> instead.</para>
+          <para>See 'man signal(2)' and 'man signal(7)' for more information and error codes.</para>
+          <example>
+            <code lang="C#">
+/*
+Possible signal values list:
+Signal     Value     Action   Comment
+-----------------------------------------------------------------------              
+SIGHUP        1       Term    Hangup detected on controlling terminal 
+							  or death of controlling process
+SIGINT        2       Term    Interrupt from keyboard
+SIGQUIT       3       Core    Quit from keyboard
+SIGILL        4       Core    Illegal Instruction
+SIGABRT       6       Core    Abort signal from abort(3)
+SIGFPE        8       Core    Floating point exception
+SIGKILL       9       Term    Kill signal
+SIGSEGV      11       Core    Invalid memory reference
+SIGPIPE      13       Term    Broken pipe: write to pipe with no readers
+SIGALRM      14       Term    Timer signal from alarm(2)
+SIGTERM      15       Term    Termination signal
+SIGUSR1   30,10,16    Term    User-defined signal 1
+SIGUSR2   31,12,17    Term    User-defined signal 2
+SIGCHLD   20,17,18    Ign     Child stopped or terminated
+SIGCONT   19,18,25            Continue if stopped
+SIGSTOP   17,19,23    Stop    Stop process
+SIGTSTP   18,20,24    Stop    Stop typed at tty
+SIGTTIN   21,21,26    Stop    tty input for background process
+SIGTTOU   22,22,27    Stop    tty output for background process
+*/	
+using System;
+using Mono.Posix;
+using System.Runtime.InteropServices;
+
+class Test
+{
+	public void SignalCatcher(int v)
+	{
+		Console.WriteLine("Signal received: " + v);
+	}		
+
+	public static void Main(string[] args)
+	{
+		Test t = new Test();
+		Console.Write("waiting for event...");
+		string x = Console.ReadLine();
+	}
+
+	public Test()
+	{
+		Console.WriteLine("signal result: " + Syscall.signal(14, new Syscall.sighandler_t(SignalCatcher)));
+		Syscall.alarm(3);
+	}
+}
+  </code>
+          </example>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Stdlib.signal" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="stat">
+      <MemberSignature Language="C#" Value="public static int stat (string filename, out Mono.Posix.Stat stat);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="stat" Type="Mono.Posix.Stat&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="filename">a <see cref="T:System.String" /></param>
+        <param name="stat">a <see cref="T:Mono.Posix.Stat" /></param>
+        <summary>Retrieves via output paramter the file status struct for a file.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="P:Mono.Unix.Native.Syscall.stat" /> instead.</para>
+          <para>see also lstat()</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.stat" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="strerror">
+      <MemberSignature Language="C#" Value="public static string strerror (int errnum);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="errnum" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="errnum">a <see cref="T:System.Int32" /></param>
+        <summary>Get error message string for 'errnum'.</summary>
+        <returns>a <see cref="T:System.String" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.UnixMarshal.GetErrorDescription" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixMarshal.GetErrorDescription" />
+        <altmember cref="M:Mono.Unix.Native.Stdlib.strerror" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="symlink">
+      <MemberSignature Language="C#" Value="public static int symlink (string oldpath, string newpath);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oldpath" Type="System.String" />
+        <Parameter Name="newpath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="oldpath">a <see cref="T:System.String" /></param>
+        <param name="newpath">a <see cref="T:System.String" /></param>
+        <summary>Create a soft link from oldPath to newPath.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.symlink" /> instead.</para>
+          <para>See also: link().</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.symlink" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="sync">
+      <MemberSignature Language="C#" Value="public static void sync ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>sync forces "dirty" (modified) filesystem buffers to be written to disk.</summary>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.sync" /> instead.</para>
+          <para> The filesystem buffer cache is generally write-behind, for best performance. But since the cache is not persistent, it should be flushed periodically. A sync() call is issued by the update daemon periodically.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.sync" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="umask">
+      <MemberSignature Language="C#" Value="public static int umask (int umask);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="umask" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="umask">a <see cref="T:System.Int32" /></param>
+        <summary>Sets new umask.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.umask" /> instead.</para>
+          <para>Returns previous umask value.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.umask" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="unlink">
+      <MemberSignature Language="C#" Value="public static int unlink (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">a <see cref="T:System.String" /></param>
+        <summary>Deletes a link to a file. </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.unlink" /> instead.</para>
+          <para>If the file is not used and it was the last link, the file is also deleted.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.unlink" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="waitpid">
+      <MemberSignature Language="C#" Value="public static int waitpid (int pid, Mono.Posix.WaitOptions options);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pid" Type="System.Int32" />
+        <Parameter Name="options" Type="Mono.Posix.WaitOptions" />
+      </Parameters>
+      <Docs>
+        <param name="pid">a <see cref="T:System.Int32" /></param>
+        <param name="options">a <see cref="T:System.Int32" /></param>
+        <summary>waitpid() will force a parent process to wait for a child process to stop or terminate. </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.waitpid" /> instead.</para>
+          <para>waitpid() returns the pid of the child. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.waitpid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="waitpid">
+      <MemberSignature Language="C#" Value="public static int waitpid (int pid, out int status, Mono.Posix.WaitOptions options);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pid" Type="System.Int32" />
+        <Parameter Name="status" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="options" Type="Mono.Posix.WaitOptions" />
+      </Parameters>
+      <Docs>
+        <param name="pid">a <see cref="T:System.Int32" /></param>
+        <param name="status">a <see cref="T:System.Int32" /></param>
+        <param name="options">a <see cref="T:System.Int32" /></param>
+        <summary>waitpid() will force a parent process to wait for a child process to stop or terminate. </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.close" /> instead.</para>
+          <para>waitpid() returns the pid of the child. On error, -1 is returned and  <see cref="T:System.Runtime.InteropServices.Marshal" />.GetLastWin32Error is set. 'status' is an output parameter containing the exit code of the child process in question.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.waitpid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WEXITSTATUS">
+      <MemberSignature Language="C#" Value="public static int WEXITSTATUS (int status);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="status" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="status">a <see cref="T:System.Int32" /></param>
+        <summary>WIFEXITSTATUS is a method that take an argument status, of type int, as returned by waitpid(). </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.WEXITSTATUS" /> instead.</para>
+          <para>Returns true (1) if process exited normally.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WEXITSTATUS" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WIFEXITED">
+      <MemberSignature Language="C#" Value="public static int WIFEXITED (int status);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="status" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="status">a <see cref="T:System.Int32" /></param>
+        <summary>WIFEXITED is a method that take an argument status, of type int, as returned by waitpid(). </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.WIFEXITED" /> instead.</para>
+          <para>Result is true (1) if the process has exited.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WIFEXITED" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WIFSIGNALED">
+      <MemberSignature Language="C#" Value="public static int WIFSIGNALED (int status);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="status" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="status">a <see cref="T:System.Int32" /></param>
+        <summary>WIFSIGNALED is a method that take an argument status, of type int, as returned by waitpid().</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.WIFSIGNALED" /> instead.</para>
+          <para>WIFSIGNALED evaluates to true (1) when the process was terminated with a signal.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WIFSIGNALED" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WIFSTOPPED">
+      <MemberSignature Language="C#" Value="public static int WIFSTOPPED (int status);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="status" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="status">a <see cref="T:System.Int32" /></param>
+        <summary>WIFSTOPPED is a method that take an argument status, of type int, as returned by waitpid(). </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.WIFSTOPPED" /> instead.</para>
+          <para>WIFSTOPPED evaluates to true (1) when the process for which the wait() call was made is stopped, or to false (0) otherwise.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WIFSTOPPED" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="write">
+      <MemberSignature Language="C#" Value="public static IntPtr write (int fileDescriptor, void* buf, IntPtr count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileDescriptor" Type="System.Int32" />
+        <Parameter Name="buf" Type="System.Void*" />
+        <Parameter Name="count" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="fileDescriptor">a <see cref="T:System.Int32" /></param>
+        <param name="buf">a <see cref="T:System.Void" /></param>
+        <param name="count">a <see cref="T:System.IntPtr" /></param>
+        <summary>       write  writes  up  to  'count'  bytes  to the file referenced by the file
+       descriptor 'fileDescriptor' from the buffer starting at 'buf'.  
+</summary>
+        <returns>a <see cref="T:System.IntPtr" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.write" /> instead.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.write" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WSTOPSIG">
+      <MemberSignature Language="C#" Value="public static int WSTOPSIG (int status);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="status" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="status">a <see cref="T:System.Int32" /></param>
+        <summary>WSTOPSIG is a method that take an argument status, of type int, as returned by waitpid(). </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.WSTOPSIG" /> instead.</para>
+          <para>Returns the signal which caused the child to stop</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WSTOPSIG" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WTERMSIG">
+      <MemberSignature Language="C#" Value="public static int WTERMSIG (int status);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="status" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="status">a <see cref="T:System.Int32" /></param>
+        <summary>WTERMSIG is a method that take an argument status, of type int, as returned by waitpid(). </summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>
+          <para>This member is obsolete.  Please use
+          <see cref="M:Mono.Unix.Native.Syscall.WTERMSIG" /> instead.</para>
+          <para>Returns the signal which caused the child to terminate.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WTERMSIG" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

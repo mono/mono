@@ -1,0 +1,391 @@
+<Type Name="FilePermissions" FullName="Mono.Unix.Native.FilePermissions">
+  <TypeSignature Language="C#" Value="public enum FilePermissions" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>The FilePermissions enumeration describes file system modes (read,write,execute) as described in the POSIX standard.</summary>
+    <remarks>
+      <para>A <c>FilePermissions</c> is the Unix <c>mode_t</c> type.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ACCESSPERMS">
+      <MemberSignature Language="C#" Value="ACCESSPERMS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Allow all user, group, and others read, write, and execute access (0777).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ALLPERMS">
+      <MemberSignature Language="C#" Value="ALLPERMS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>All permissions enabled, including set user ID and set group ID on execution bits (07777).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DEFFILEMODE">
+      <MemberSignature Language="C#" Value="DEFFILEMODE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Default file mode: permit read and write access to owner, group, others (0666).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IFBLK">
+      <MemberSignature Language="C#" Value="S_IFBLK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Block device.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IFCHR">
+      <MemberSignature Language="C#" Value="S_IFCHR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Character device.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IFDIR">
+      <MemberSignature Language="C#" Value="S_IFDIR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Directory.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IFIFO">
+      <MemberSignature Language="C#" Value="S_IFIFO" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>First In First Out (FIFO).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IFLNK">
+      <MemberSignature Language="C#" Value="S_IFLNK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Symbolic link.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IFMT">
+      <MemberSignature Language="C#" Value="S_IFMT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Bitmask for the file type bitfields.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IFREG">
+      <MemberSignature Language="C#" Value="S_IFREG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Regular file.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IFSOCK">
+      <MemberSignature Language="C#" Value="S_IFSOCK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Socket.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IRGRP">
+      <MemberSignature Language="C#" Value="S_IRGRP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Is readable for group.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IROTH">
+      <MemberSignature Language="C#" Value="S_IROTH" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Is readable for others (everyone).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IRUSR">
+      <MemberSignature Language="C#" Value="S_IRUSR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Is readable by user (owner).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IRWXG">
+      <MemberSignature Language="C#" Value="S_IRWXG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Group has read, write, and execute permissions.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IRWXO">
+      <MemberSignature Language="C#" Value="S_IRWXO" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Others have read, write, and execute permissions.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IRWXU">
+      <MemberSignature Language="C#" Value="S_IRWXU" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Owner has read, write, and execute permissions.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_ISGID">
+      <MemberSignature Language="C#" Value="S_ISGID" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Set-group-id mode, indicating that the effective group ID of any user executing the file should be made the same as the group of the file. </summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_ISUID">
+      <MemberSignature Language="C#" Value="S_ISUID" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Set-user-id mode, indicating that the effective user ID of any user executing the file should be made the same as that of the owner of the file.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_ISVTX">
+      <MemberSignature Language="C#" Value="S_ISVTX" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Is sticky bit set.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IWGRP">
+      <MemberSignature Language="C#" Value="S_IWGRP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Is writable for group.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IWOTH">
+      <MemberSignature Language="C#" Value="S_IWOTH" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Is writable for others (everyone).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IWUSR">
+      <MemberSignature Language="C#" Value="S_IWUSR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Is writable by user (owner).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IXGRP">
+      <MemberSignature Language="C#" Value="S_IXGRP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Is executable for group.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IXOTH">
+      <MemberSignature Language="C#" Value="S_IXOTH" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Is executable for others (everyone).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="S_IXUSR">
+      <MemberSignature Language="C#" Value="S_IXUSR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Is executable for user (owner).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,500 @@
+<Type Name="UnixProcess" FullName="Mono.Unix.UnixProcess">
+  <TypeSignature Language="C#" Value="public sealed class UnixProcess" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      Provides information about a Unix process.
+    </summary>
+    <remarks>
+      <para>
+        The <see cref="T:Mono.Unix.UnixProcess" /> class provides the means 
+        for inspecting and interacting with an operating system process.
+      </para>
+      <para>
+        No mechanism is currently provided to enumerate all processes on the
+        system.  This limitation exists for two reasons:
+      </para>
+      <list type="bullet">
+        <item>
+          <term>POSIX doesn't provide a mechanism to enumerate all
+          processes, so such functionality wouldn't be portable.  Common
+          workarounds include the <c>/proc</c> filesystem, but not all
+          operating systems provide that.
+        </term>
+        </item>
+        <item>
+          <term>Many methods, such as
+          <see cref="M:Mono.Unix.UnixProcess.WaitForExit" />, require that the
+          target process be a child of the current process.  Enumerating all
+          processes on the system would return processes that are not children
+          of the current process, and thus these methods would error.
+        </term>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ExitCode">
+      <MemberSignature Language="C#" Value="public int ExitCode { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the process' exit code.</summary>
+        <value>
+          A <see cref="T:System.In32" /> containing the value the process
+          exited with.
+        </value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <see cref="P:Mono.Unix.UnixProcess.HasExited" /> returns 
+          <see langword="false" />.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WEXITSTATUS" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCurrentProcess">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixProcess GetCurrentProcess ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixProcess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets information about the currently executing process.</summary>
+        <returns>
+          A <see cref="T:Mono.Unix.UnixProcess" /> instance providing
+          information about the current process.
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCurrentProcessId">
+      <MemberSignature Language="C#" Value="public static int GetCurrentProcessId ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets the operating system process ID of the current process.</summary>
+        <returns>
+          A <see cref="T:System.Int32" /> containing the process ID of the
+          current process.
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasExited">
+      <MemberSignature Language="C#" Value="public bool HasExited { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Determines whether the process has exited.</summary>
+        <value>
+          <see langword="true" /> if the process has exited; otherwise, 
+          <see langword="false" />.
+        </value>
+        <remarks>
+          <para>
+            If the process has exited, 
+            <see cref="M:Mono.Unix.UnixProcess.ExitCode" /> contains the
+            process' exit code.
+          </para>
+        </remarks>
+        <exception cref="Mono.Unix.UnixIOException">
+          <para>
+            The calling process has no existing unwaited-for
+            child processes.
+            [<see cref="F:Mono.Unix.Native.Errno.ECHILD" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            No status from the terminated child process is available
+            because the calling process has asked the system to discard
+            such status by ignoring the signal
+            <see cref="F:Mono.Unix.Native.TODO.SIGCHLD" />
+            or setting the flag
+            <see cref="F:Mono.Unix.Native.TODO.SA_NOCLDWAIT" />
+            for that signal.
+            [<see cref="F:Mono.Unix.Native.Errno.ECHILD" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The call was interrupted by a caught signal,
+            or the signal did not have the
+            <see cref="F:Mono.Unix.Native.TODO.SA_RESTART" />
+            flag set.
+            [<see cref="F:Mono.Unix.Native.Errno.EINTR" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WIFEXITED" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasSignaled">
+      <MemberSignature Language="C#" Value="public bool HasSignaled { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Determines whether the process terminated due to an unhandled signal.</summary>
+        <value>
+          <see langword="true" /> if the process terminated due to an unhandled 
+          signal; otherwise, <see langword="false" />.
+        </value>
+        <remarks>
+        </remarks>
+        <exception cref="Mono.Unix.UnixIOException">
+          <para>
+            The calling process has no existing unwaited-for
+            child processes.
+            [<see cref="F:Mono.Unix.Native.Errno.ECHILD" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            No status from the terminated child process is available
+            because the calling process has asked the system to discard
+            such status by ignoring the signal
+            <see cref="F:Mono.Unix.Native.TODO.SIGCHLD" />
+            or setting the flag
+            <see cref="F:Mono.Unix.Native.TODO.SA_NOCLDWAIT" />
+            for that signal.
+            [<see cref="F:Mono.Unix.Native.Errno.ECHILD" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The call was interrupted by a caught signal,
+            or the signal did not have the
+            <see cref="F:Mono.Unix.Native.TODO.SA_RESTART" />
+            flag set.
+            [<see cref="F:Mono.Unix.Native.Errno.EINTR" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WIFSIGNALED" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasStopped">
+      <MemberSignature Language="C#" Value="public bool HasStopped { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Determines whether the process is stopped.</summary>
+        <value>
+          <see langword="true" /> if the process has been stopped; otherwise, 
+          <see langword="false" />.
+        </value>
+        <remarks>
+        </remarks>
+        <exception cref="Mono.Unix.UnixIOException">
+          <para>
+            The calling process has no existing unwaited-for
+            child processes.
+            [<see cref="F:Mono.Unix.Native.Errno.ECHILD" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            No status from the terminated child process is available
+            because the calling process has asked the system to discard
+            such status by ignoring the signal
+            <see cref="F:Mono.Unix.Native.TODO.SIGCHLD" />
+            or setting the flag
+            <see cref="F:Mono.Unix.Native.TODO.SA_NOCLDWAIT" />
+            for that signal.
+            [<see cref="F:Mono.Unix.Native.Errno.ECHILD" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The call was interrupted by a caught signal,
+            or the signal did not have the
+            <see cref="F:Mono.Unix.Native.TODO.SA_RESTART" />
+            flag set.
+            [<see cref="F:Mono.Unix.Native.Errno.EINTR" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WIFSTOPPED" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Id">
+      <MemberSignature Language="C#" Value="public int Id { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Get the operating system proces ID.</summary>
+        <value>
+          A <see cref="T:System.Int32" /> containing the operating system
+          process ID.
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Kill">
+      <MemberSignature Language="C#" Value="public void Kill ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Send the <see cref="F:Mono.Unix.Native.Signum.SIGKILL" /> signal to
+          the process.
+        </summary>
+        <remarks>
+        </remarks>
+        <exception cref="System.InvalidOperationException">
+          <para>
+            The sending process is not the super-user and its effective
+            user id does not match the effective user-id of the receiving process.
+            When signaling a process group, this error is returned if any members
+            of the group could not be signaled.
+            [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.kill" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProcessGroupId">
+      <MemberSignature Language="C#" Value="public int ProcessGroupId { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets the process group ID.</summary>
+        <value>
+          A <see cref="T:System.Int32" /> containing the process group that
+          the process should belong to.
+        </value>
+        <remarks>
+          <para>
+            Process groups are used for distribution of signals, and by 
+            terminals to arbitrate requests for their input: processes that 
+            have the same process group as the terminal are foreground and 
+            may read, while others will block with a signal if they attempt 
+            to read.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpgid" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.setpgid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SessionId">
+      <MemberSignature Language="C#" Value="public int SessionId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the session ID of the process.</summary>
+        <value>
+          A <see cref="T:System.Int32" /> containing the session ID of the
+          process.
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Signal">
+      <MemberSignature Language="C#" Value="public void Signal (Mono.Unix.Native.Signum signal);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="signal" Type="Mono.Unix.Native.Signum" />
+      </Parameters>
+      <Docs>
+        <param name="signal">
+          A <see cref="T:Mono.Unix.Native.Signum" /> containing the signal to
+          send to the process.
+        </param>
+        <summary>Send the <paramref name="signal" /> signal to the process.</summary>
+        <remarks>
+        </remarks>
+        <exception cref="System.InvalidOperationException">
+          <para>
+            The sending process is not the super-user and its effective
+            user id does not match the effective user-id of the receiving 
+            process.  When signaling a process group, this error is returned 
+            if any members of the group could not be signaled.
+            [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+          </para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="StopSignal">
+      <MemberSignature Language="C#" Value="public Mono.Unix.Native.Signum StopSignal { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Retrieves the signal which caused the process to stop.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.Native.Signum" /> containing the signal
+          which caused the process to stop.
+        </value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <see cref="P:Mono.Unix.UnixProcess.HasStopped" /> returns 
+          <see langword="false" />.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WSTOPSIG" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TerminationSignal">
+      <MemberSignature Language="C#" Value="public Mono.Unix.Native.Signum TerminationSignal { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Retrieves the unhandled signal which terminated the process.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.Native.Signum" /> containing the signal
+          which terminated the process.
+        </value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          <see cref="P:Mono.Unix.UnixProcess.HasSignaled" /> returns 
+          <see langword="false" />.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.WTERMSIG" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WaitForExit">
+      <MemberSignature Language="C#" Value="public void WaitForExit ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Wait for the process to exit.</summary>
+        <remarks>
+          <para>
+            Calling this method on the 
+            <see cref="T:Mono.Unix.UnixProcess" /> returned by
+            <see cref="M:Mono.Unix.UnixProcess.GetCurrentProcess" />
+            will generate a 
+            <see cref="T:Mono.Unix.UnixIOException" /> 
+            [<see cref="F:Mono.Unix.Native.Errno.ECHILD" />].
+          </para>
+        </remarks>
+        <exception cref="Mono.Unix.UnixIOException">
+          <para>
+            The calling process has no existing unwaited-for
+            child processes.
+            [<see cref="F:Mono.Unix.Native.Errno.ECHILD" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            No status from the terminated child process is available
+            because the calling process has asked the system to discard
+            such status by ignoring the signal
+            <see cref="F:Mono.Unix.Native.Signum.SIGCHLD" />
+            or setting the flag
+            <see cref="F:Mono.Unix.Native.TODO.SA_NOCLDWAIT" />
+            for that signal.
+            [<see cref="F:Mono.Unix.Native.Errno.ECHILD" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The call was interrupted by a caught signal,
+            or the signal did not have the
+            <see cref="F:Mono.Unix.Native.TODO.SA_RESTART" />
+            flag set.
+            [<see cref="F:Mono.Unix.Native.Errno.EINTR" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.waitpid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

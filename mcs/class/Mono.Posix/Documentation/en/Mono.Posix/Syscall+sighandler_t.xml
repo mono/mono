@@ -1,0 +1,27 @@
+<Type Name="Syscall+sighandler_t" FullName="Mono.Posix.Syscall+sighandler_t">
+  <TypeSignature Language="C#" Value="public delegate void Syscall.sighandler_t(int v);" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="v" Type="System.Int32" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="v">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>
+      <para>This type is obsolete.  Please use 
+    <see cref="T:Mono.Unix.Native.SignalHandler" /> instead.</para>
+    </remarks>
+    <altmember cref="T:Mono.Unix.Native.SignalHandler" />
+    <altmember cref="M:Mono.Unix.Native.Stdlib.signal" />
+  </Docs>
+</Type>

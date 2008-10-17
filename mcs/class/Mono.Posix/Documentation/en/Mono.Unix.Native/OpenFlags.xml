@@ -1,0 +1,236 @@
+<Type Name="OpenFlags" FullName="Mono.Unix.Native.OpenFlags">
+  <TypeSignature Language="C#" Value="public enum OpenFlags" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>Possible <see cref="M:Mono.Unix.Native.Syscall.open" /><paramref name="flags" /> values.</summary>
+    <remarks>Do 'man 2 open' for more information.</remarks>
+    <altmember cref="M:Mono.Unix.Native.Syscall.open" />
+  </Docs>
+  <Members>
+    <Member MemberName="O_APPEND">
+      <MemberSignature Language="C#" Value="O_APPEND" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Open for appending.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_ASYNC">
+      <MemberSignature Language="C#" Value="O_ASYNC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_CREAT">
+      <MemberSignature Language="C#" Value="O_CREAT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Create.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_DIRECT">
+      <MemberSignature Language="C#" Value="O_DIRECT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Eliminate or reduce cache effects.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_DIRECTORY">
+      <MemberSignature Language="C#" Value="O_DIRECTORY" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_EXCL">
+      <MemberSignature Language="C#" Value="O_EXCL" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Open exclusive.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_LARGEFILE">
+      <MemberSignature Language="C#" Value="O_LARGEFILE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Enable large-file support.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_NOCTTY">
+      <MemberSignature Language="C#" Value="O_NOCTTY" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>No controlling terminal.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_NOFOLLOW">
+      <MemberSignature Language="C#" Value="O_NOFOLLOW" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Do not follow symlinks.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_NONBLOCK">
+      <MemberSignature Language="C#" Value="O_NONBLOCK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Open in non-blocking mode if possible.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_RDONLY">
+      <MemberSignature Language="C#" Value="O_RDONLY" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Read-only.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_RDWR">
+      <MemberSignature Language="C#" Value="O_RDWR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Read-Write.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_SYNC">
+      <MemberSignature Language="C#" Value="O_SYNC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Open for synchronous I/O.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_TRUNC">
+      <MemberSignature Language="C#" Value="O_TRUNC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Truncate on opening if necessary.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="O_WRONLY">
+      <MemberSignature Language="C#" Value="O_WRONLY" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Write-only.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

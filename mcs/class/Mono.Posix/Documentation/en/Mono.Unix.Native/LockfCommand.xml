@@ -1,0 +1,80 @@
+<Type Name="LockfCommand" FullName="Mono.Unix.Native.LockfCommand">
+  <TypeSignature Language="C#" Value="public enum LockfCommand" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Possible <see cref="M:Mono.Unix.Native.Syscall.lockf" /><paramref name="cmd" /> values.</summary>
+    <remarks>
+    </remarks>
+    <altmember cref="M:Mono.Unix.Native.Syscall.lockf" />
+  </Docs>
+  <Members>
+    <Member MemberName="F_LOCK">
+      <MemberSignature Language="C#" Value="F_LOCK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.LockfCommand</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Lock a section for exclusive use.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F_TEST">
+      <MemberSignature Language="C#" Value="F_TEST" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.LockfCommand</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Test a sectoin for locks by other processes.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F_TLOCK">
+      <MemberSignature Language="C#" Value="F_TLOCK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.LockfCommand</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Test and lock a section for exclusive use.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="F_ULOCK">
+      <MemberSignature Language="C#" Value="F_ULOCK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.LockfCommand</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Unlock locked sections.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

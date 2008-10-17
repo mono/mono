@@ -1,0 +1,577 @@
+<Type Name="UnixUserInfo" FullName="Mono.Unix.UnixUserInfo">
+  <TypeSignature Language="C#" Value="public sealed class UnixUserInfo" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Provides information about a Unix user.</summary>
+    <remarks>
+      <para>
+        The <see cref="T:Mono.Unix.UnixUserInfo" /> type is a FxDG-compliant
+        wrapper over the <see cref="T:Mono.Unix.Native.Passwd" /> native type.
+        It represents a single entry from the local password database, 
+        typically <c>/etc/passwd</c>.
+      </para>
+      <para>
+        Unix users are part of the file system access rules.  
+      </para>
+      <para>
+        Access to file system objects 
+        (as represented by <see cref="T:Mono.Unix.UnixFileSystemInfo" />)
+        is controlled by the file system access permissions, 
+        <see cref="P:Mono.Unix.UnixFileSystemInfo.FileAccessPermissions" />.
+        <see cref="T:Mono.Unix.FileAccessPermissions" /> is a nine-bit field
+        specifying read, write, and execute access for the owner, group, and
+        everyone else (other).
+      </para>
+      <para>
+        Access by the file's owner is controlled by the bits specified by
+        <c>
+        (<see cref="P:Mono.Unix.UnixFileSystemInfo.FileAccessPermissions" />
+        &amp; 
+        <see cref="F:Mono.Unix.FileAccessPermissions.UserReadWriteExecute" />)</c>.
+        The owner permissions supersede group permissions and other
+        permissions, even if the owner belongs to the group.
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixUserInfo (Mono.Unix.Native.Passwd passwd);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="passwd" Type="Mono.Unix.Native.Passwd" />
+      </Parameters>
+      <Docs>
+        <param name="passwd">
+          A <see cref="T:Mono.Unix.Native.Passwd" /> containing the user 
+          to get information about.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of 
+          <see cref="T:Mono.Unix.UnixUserInfo" /> by using the specified
+          <see cref="T:Mono.Unix.Native.Passwd" /> entry.
+        </summary>
+        <remarks>
+          <para>
+            This constructor wraps <paramref name="passwd" />,
+            providing framework-compliant naming conventions over the native
+            <see cref="T:Mono.Unix.Native.Passwd" /> type.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixUserInfo (long user);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="user" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="user">
+          A <see cref="T:System.Int64" /> containing the user id to get
+          information about.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of 
+          <see cref="T:Mono.Unix.UnixUserInfo" /> by looking up the specified
+          user id in the local password database file.
+        </summary>
+        <remarks>
+          <para>
+            This constructor looks up the specified user id in the local
+            password database.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          The user id <paramref name="user" /> does not exist in the lcoal
+          password database.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpwuid_r" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixUserInfo (string user);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="user" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="user">
+          A <see cref="T:System.String" /> containing the user to get
+          information about.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of 
+          <see cref="T:Mono.Unix.UnixUserInfo" /> by looking up the specified
+          user name in the local password database file.
+        </summary>
+        <remarks>
+          <para>
+            This constructor looks up the specified user name in the local
+            password database.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          The user name <paramref name="user" /> does not exist in the lcoal
+          password database.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpwnam_r" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixUserInfo (uint user);" />
+      <MemberType>Constructor</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="user" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="user">
+          A <see cref="T:System.UInt32" /> containing the user id to get
+          information about.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of 
+          <see cref="T:Mono.Unix.UnixUserInfo" /> by looking up the specified
+          user id in the local password database file.
+        </summary>
+        <remarks>
+          <para>
+            This constructor looks up the specified user id in the local
+            password database.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          The user id <paramref name="user" /> does not exist in the lcoal
+          password database.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpwuid_r" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetLocalUsers">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixUserInfo[] GetLocalUsers ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixUserInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets all local users defined in the local password database.</summary>
+        <returns>
+          A <see cref="T:Mono.Unix.UnixUserInfo" /> array containing
+          information about all users in the local password database.
+        </returns>
+        <remarks>
+        </remarks>
+        <exception cref="T:Mono.Unix.UnixIOException">
+          Insufficient memory to allocate the 
+          <see cref="T:Mono.Unix.Native.Passwd" /> structure.
+          [<see cref="F:Mono.Unix.Native.Errno.ENOMEM" />]
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetLoginName">
+      <MemberSignature Language="C#" Value="public static string GetLoginName ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets the login name of the user executing this process.</summary>
+        <returns>
+          A <see cref="T:System.String" /> containing the login name of the
+          user executing this process.
+        </returns>
+        <remarks>
+          <para>
+            It's generally more useful to use the <c>LOGNAME</c> environment
+            variable to find out who the user is, as this provides more
+            flexibility.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getlogin_r" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRealUser">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixUserInfo GetRealUser ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixUserInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Get's information about the process' real user.</summary>
+        <returns>
+          A <see cref="T:Mono.Unix.UnixUserInfo" /> containing information
+          about the real user the process is executing as.
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRealUserId">
+      <MemberSignature Language="C#" Value="public static long GetRealUserId ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets the real user id of the process.</summary>
+        <returns>
+          A <see cref="T:System.Int64" /> containing the real user id of the
+          process.
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Syscall.getuid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Group">
+      <MemberSignature Language="C#" Value="public Mono.Unix.UnixGroupInfo Group { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixGroupInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets information about the user's group.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.UnixGroupInfo" /> containing information
+          about the group the user belongs to.
+        </value>
+        <remarks>
+          <para>
+            This is equivalent to 
+            <see cref="C:Mono.Unix.UnixGroupInfo" />(<see cref="P:Mono.Unix.UnixUserInfo.GroupId" />).
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GroupId">
+      <MemberSignature Language="C#" Value="public long GroupId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the user's group id.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the users's group id.
+        </value>
+        <remarks>
+          <para>
+            Access to file system objects 
+            (as represented by <see cref="T:Mono.Unix.UnixFileSystemInfo" />)
+            is controlled by the file system access permissions, 
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.FileAccessPermissions" />.
+            <see cref="T:Mono.Unix.FileAccessPermissions" /> is a nine-bit field
+            specifying read, write, and execute access for the owner, group, and
+            everyone else (other).
+          </para>
+          <para>
+            Access by the file's owner group is controlled by the bits
+            specified by <c>
+            (<see cref="P:Mono.Unix.UnixFileSystemInfo.FileAccessPermissions" />
+            &amp; 
+            <see cref="F:Mono.Unix.FileAccessPermissions.GroupReadWriteExecute" />)</c>.
+            All group members get these access permissions, except for the file's
+            owner (if they belong to the file's owner group).
+          </para>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Passwd.pw_gid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GroupName">
+      <MemberSignature Language="C#" Value="public string GroupName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the users's group's name.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the group name that the
+          user belongs to.
+        </value>
+        <remarks>
+          <para>
+            This is equivalent to calling
+            <see cref="P:Mono.Unix.UnixUserInfo.Group" />.<see cref="P:Mono.Unix.UnixGroupInfo.GroupName" />.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HomeDirectory">
+      <MemberSignature Language="C#" Value="public string HomeDirectory { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the user's home directory.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the user's home
+          directory.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Passwd.pw_dir" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Password">
+      <MemberSignature Language="C#" Value="public string Password { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the user's password.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the user's password.
+        </value>
+        <remarks>
+          <para>
+            In years past, this <i>used</i> to contain the user's password.
+            This was later found to be a security problem, as it made it
+            easier to crack the passwords of other users.
+          </para>
+          <para>
+            Currently, the actual user password is not stored in the password
+            database, so this property is of little actual use.
+          </para>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Passwd.pw_passwd" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RealName">
+      <MemberSignature Language="C#" Value="public string RealName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the user's real name.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the user's actual name, 
+          complete with spaces, first name, last name, and anything else the
+          user wishes to provide.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Passwd.pw_gecos" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ShellProgram">
+      <MemberSignature Language="C#" Value="public string ShellProgram { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the user's login shell program.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the user's login shell
+          program.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Passwd.pw_shell" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToPasswd">
+      <MemberSignature Language="C#" Value="public Mono.Unix.Native.Passwd ToPasswd ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Passwd</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Converts this <see cref="T:Mono.Unix.UnixUserInfo" /> instance into
+          an equivalent <see cref="T:Mono.Unix.Native.Passwd" /> instance.
+        </summary>
+        <returns>
+          A <see cref="T:Mono.Unix.Native.Passwd" /> instance containingn the
+          same information as this instance.
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UserId">
+      <MemberSignature Language="C#" Value="public long UserId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the user's id.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the user's id.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Passwd.pw_uid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UserName">
+      <MemberSignature Language="C#" Value="public string UserName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the user's login name.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the user's login name.
+        </value>
+        <remarks>
+          <para>
+            This is what the user logs in to the computer as, and is generally
+            limited to eight characters in length.
+          </para>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Passwd.pw_name" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

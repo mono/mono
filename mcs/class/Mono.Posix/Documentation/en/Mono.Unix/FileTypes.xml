@@ -1,0 +1,122 @@
+<Type Name="FileTypes" FullName="Mono.Unix.FileTypes">
+  <TypeSignature Language="C#" Value="public enum FileTypes" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Unix filesystem types.</summary>
+    <remarks>
+    </remarks>
+    <altmember cref="P:Mono.Unix.UnixFileSystemInfo.FileType" />
+    <altmember cref="P:Mono.Unix.UnixStream.FileType" />
+  </Docs>
+  <Members>
+    <Member MemberName="BlockDevice">
+      <MemberSignature Language="C#" Value="BlockDevice" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>File is a block devices, such as a hard disk 
+          (<c>/dev/hda1</c>, etc.).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CharacterDevice">
+      <MemberSignature Language="C#" Value="CharacterDevice" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>File is a character device (such as a TTY).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Directory">
+      <MemberSignature Language="C#" Value="Directory" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>File is a directory.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Fifo">
+      <MemberSignature Language="C#" Value="Fifo" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>File is a first-in first-out queue.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegularFile">
+      <MemberSignature Language="C#" Value="RegularFile" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>File is a regular file.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Socket">
+      <MemberSignature Language="C#" Value="Socket" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>File is a Unix socket.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SymbolicLink">
+      <MemberSignature Language="C#" Value="SymbolicLink" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>File is a symbolic link.  To obtain the link target, use 
+          <see cref="P:Mono.Unix.UnixSymbolicLinkInfo.Contents" />,
+          <see cref="P:Mono.Unix.UnixSymbolicLinkInfo.ContentsPath" /> or
+          <see cref="M:Mono.Unix.Native.Syscall.readlink" />.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

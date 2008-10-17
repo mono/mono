@@ -1,0 +1,70 @@
+<Type Name="SignalAction" FullName="Mono.Unix.Native.SignalAction">
+  <TypeSignature Language="C#" Value="public enum SignalAction" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      The set of actions to perform on receipt of a Unix signal.
+    </summary>
+    <remarks>
+    </remarks>
+    <altmember cref="M:Mono.Unix.Native.Stdlib.SetSignalAction" />
+  </Docs>
+  <Members>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SignalAction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The default action should be performed when the signal
+          is received.
+				</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Error">
+      <MemberSignature Language="C#" Value="Error" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SignalAction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          An error should be generated when the signal is received.
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Ignore">
+      <MemberSignature Language="C#" Value="Ignore" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SignalAction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The signal should be ignored.
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

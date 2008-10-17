@@ -1,0 +1,164 @@
+<Type Name="PollEvents" FullName="Mono.Unix.Native.PollEvents">
+  <TypeSignature Language="C#" Value="public enum PollEvents" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>Events which may be <see cref="M:Mono.Unix.Native.Syscall.poll" />(2)ed for.</summary>
+    <remarks />
+    <altmember cref="F:Mono.Unix.Native.Pollfd.events" />
+    <altmember cref="F:Mono.Unix.Native.Pollfd.revents" />
+  </Docs>
+  <Members>
+    <Member MemberName="POLLERR">
+      <MemberSignature Language="C#" Value="POLLERR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>An exceptional condition has occurred on the device or socket.  This flag is always checked, even if not present in the <see cref="F:Mono.Unix.Native.Pollfd.events" /> bitmask.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="POLLHUP">
+      <MemberSignature Language="C#" Value="POLLHUP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The device or socket has been disconnected.  This flag is always checked, even if not present in the <see cref="F:Mono.Unix.Native.Pollfd.events" /> bitmask.  Note that POLLHUP and POLLOUT should never be present in the <see cref="F:Mono.Unix.Native.Pollfd.revents" /> bitmask at the same time.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="POLLIN">
+      <MemberSignature Language="C#" Value="POLLIN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Data other than high priority data may be read without blocking.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="POLLNVAL">
+      <MemberSignature Language="C#" Value="POLLNVAL" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The file descriptor is not open.  This flag is always checked, even if not present in the <see cref="F:Mono.Unix.Native.Pollfd.events" /> bitmask.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="POLLOUT">
+      <MemberSignature Language="C#" Value="POLLOUT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="POLLPRI">
+      <MemberSignature Language="C#" Value="POLLPRI" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>High priority data may be read without blocking.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="POLLRDBAND">
+      <MemberSignature Language="C#" Value="POLLRDBAND" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Data with a non-zero priority may be read without blocking.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="POLLRDNORM">
+      <MemberSignature Language="C#" Value="POLLRDNORM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Normal data may be written without blocking.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="POLLWRBAND">
+      <MemberSignature Language="C#" Value="POLLWRBAND" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Data with a non-zero priority may be written without blocking</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="POLLWRNORM">
+      <MemberSignature Language="C#" Value="POLLWRNORM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Normal data may be written without blocking.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,518 @@
+<Type Name="Signum" FullName="Mono.Unix.Native.Signum">
+  <TypeSignature Language="C#" Value="public enum Signum" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>List of available signals.</summary>
+    <remarks>
+      <para>Do 'man 7 signal' for more information. Some signals here are not posix.1 standard. See also Stdlib.signal() for more information. </para>
+      <para>Not all signals are available on all platforms.</para>
+    </remarks>
+    <altmember cref="T:Mono.Unix.UnixSignal" />
+    <altmember cref="M:Mono.Unix.Native.Stdlib.raise" />
+    <altmember cref="M:Mono.Unix.Native.Stdlib.signal" />
+    <altmember cref="M:Mono.Unix.Native.Syscall.kill" />
+    <altmember cref="M:Mono.Unix.Native.Syscall.psignal" />
+    <altmember cref="M:Mono.Unix.Native.Syscall.strsignal" />
+    <altmember cref="M:Mono.Unix.Native.Syscall.WTERMSIG" />
+    <altmember cref="M:Mono.Unix.Native.Syscall.WSTOPSIG" />
+  </Docs>
+  <Members>
+    <Member MemberName="SIGABRT">
+      <MemberSignature Language="C#" Value="SIGABRT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Abort signal from abort.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGALRM">
+      <MemberSignature Language="C#" Value="SIGALRM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Timer signal from alarm.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGBUS">
+      <MemberSignature Language="C#" Value="SIGBUS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Bus error (bad memory access).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGCHLD">
+      <MemberSignature Language="C#" Value="SIGCHLD" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Child stopped or terminated.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGCLD">
+      <MemberSignature Language="C#" Value="SIGCLD" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGCONT">
+      <MemberSignature Language="C#" Value="SIGCONT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Continue if stopped.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGFPE">
+      <MemberSignature Language="C#" Value="SIGFPE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Floating point exception.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGHUP">
+      <MemberSignature Language="C#" Value="SIGHUP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Hangup detected on controlling terminal or death of controlling process.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGILL">
+      <MemberSignature Language="C#" Value="SIGILL" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Illegal Instruction.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGINT">
+      <MemberSignature Language="C#" Value="SIGINT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Interrupt from keyboard.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGIO">
+      <MemberSignature Language="C#" Value="SIGIO" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>I/O now possible (4.2 BSD).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGIOT">
+      <MemberSignature Language="C#" Value="SIGIOT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGKILL">
+      <MemberSignature Language="C#" Value="SIGKILL" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Kill signal.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGPIPE">
+      <MemberSignature Language="C#" Value="SIGPIPE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Broken pipe: write to pipe with no readers.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGPOLL">
+      <MemberSignature Language="C#" Value="SIGPOLL" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGPROF">
+      <MemberSignature Language="C#" Value="SIGPROF" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Profiling timer expired.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGPWR">
+      <MemberSignature Language="C#" Value="SIGPWR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGQUIT">
+      <MemberSignature Language="C#" Value="SIGQUIT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Quit from keyboard.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGSEGV">
+      <MemberSignature Language="C#" Value="SIGSEGV" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary> Invalid memory reference.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGSTKFLT">
+      <MemberSignature Language="C#" Value="SIGSTKFLT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGSTOP">
+      <MemberSignature Language="C#" Value="SIGSTOP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Stop process.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGSYS">
+      <MemberSignature Language="C#" Value="SIGSYS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Bad argument to routine (SVID).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGTERM">
+      <MemberSignature Language="C#" Value="SIGTERM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Termination signal.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGTRAP">
+      <MemberSignature Language="C#" Value="SIGTRAP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Trace/breakpoint trap.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGTSTP">
+      <MemberSignature Language="C#" Value="SIGTSTP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Stop typed at tty.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGTTIN">
+      <MemberSignature Language="C#" Value="SIGTTIN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>tty input for background process.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGTTOU">
+      <MemberSignature Language="C#" Value="SIGTTOU" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>tty output for background process.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGUNUSED">
+      <MemberSignature Language="C#" Value="SIGUNUSED" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGURG">
+      <MemberSignature Language="C#" Value="SIGURG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Urgent condition on socket (4.2 BSD).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGUSR1">
+      <MemberSignature Language="C#" Value="SIGUSR1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>User-defined signal 1.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGUSR2">
+      <MemberSignature Language="C#" Value="SIGUSR2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>User-defined signal 2.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGVTALRM">
+      <MemberSignature Language="C#" Value="SIGVTALRM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Virtual alarm clock (4.2 BSD).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGWINCH">
+      <MemberSignature Language="C#" Value="SIGWINCH" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Window resize signal (4.3 BSD, Sun).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGXCPU">
+      <MemberSignature Language="C#" Value="SIGXCPU" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>CPU time limit exceeded (4.2 BSD).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SIGXFSZ">
+      <MemberSignature Language="C#" Value="SIGXFSZ" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>File size limit exceeded (4.2 BSD).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

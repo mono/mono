@@ -1,0 +1,128 @@
+<Overview>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Mono.Posix">
+      <Type Name="AccessMode" Kind="Enumeration" />
+      <Type Name="Catalog" Kind="Class" />
+      <Type Name="FileMode" Kind="Enumeration" />
+      <Type Name="OpenFlags" Kind="Enumeration" />
+      <Type Name="PeerCred" Kind="Class" />
+      <Type Name="Signals" Kind="Enumeration" />
+      <Type Name="Stat" Kind="Structure" />
+      <Type Name="StatMode" Kind="Enumeration" />
+      <Type Name="StatModeMasks" Kind="Enumeration" />
+      <Type Name="Syscall" Kind="Class" />
+      <Type Name="Syscall+sighandler_t" Kind="Delegate" />
+      <Type Name="UnixEndPoint" Kind="Class" />
+      <Type Name="WaitOptions" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="Mono.Remoting.Channels.Unix">
+      <Type Name="UnixChannel" Kind="Class" />
+      <Type Name="UnixClientChannel" Kind="Class" />
+      <Type Name="UnixServerChannel" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Unix">
+      <Type Name="AbstractUnixEndPoint" Kind="Class" />
+      <Type Name="Catalog" Kind="Class" />
+      <Type Name="FileAccessPattern" Kind="Enumeration" />
+      <Type Name="FileAccessPermissions" Kind="Enumeration" />
+      <Type Name="FileHandleOperations" Kind="Class" />
+      <Type Name="FileSpecialAttributes" Kind="Enumeration" />
+      <Type Name="FileTypes" Kind="Enumeration" />
+      <Type Name="PeerCred" Kind="Class" />
+      <Type Name="StdioFileStream" Kind="Class" />
+      <Type Name="UnixClient" Kind="Class" />
+      <Type Name="UnixDirectoryInfo" Kind="Class" />
+      <Type Name="UnixDriveInfo" Kind="Class" />
+      <Type Name="UnixDriveType" Kind="Enumeration" />
+      <Type Name="UnixEncoding" Kind="Class" />
+      <Type Name="UnixEndPoint" Kind="Class" />
+      <Type Name="UnixEnvironment" Kind="Class" />
+      <Type Name="UnixFileInfo" Kind="Class" />
+      <Type Name="UnixFileSystemInfo" Kind="Class" />
+      <Type Name="UnixGroupInfo" Kind="Class" />
+      <Type Name="UnixIOException" Kind="Class" />
+      <Type Name="UnixListener" Kind="Class" />
+      <Type Name="UnixMarshal" Kind="Class" />
+      <Type Name="UnixPath" Kind="Class" />
+      <Type Name="UnixPipes" Kind="Structure" />
+      <Type Name="UnixProcess" Kind="Class" />
+      <Type Name="UnixSignal" Kind="Class" />
+      <Type Name="UnixStream" Kind="Class" />
+      <Type Name="UnixSymbolicLinkInfo" Kind="Class" />
+      <Type Name="UnixUserInfo" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Unix.Native">
+      <Type Name="AccessModes" Kind="Enumeration" />
+      <Type Name="CdeclFunction" Kind="Class" />
+      <Type Name="ConfstrName" Kind="Enumeration" />
+      <Type Name="DirectoryNotifyFlags" Kind="Enumeration" />
+      <Type Name="Dirent" Kind="Class" />
+      <Type Name="Errno" Kind="Enumeration" />
+      <Type Name="FcntlCommand" Kind="Enumeration" />
+      <Type Name="FilePermissions" Kind="Enumeration" />
+      <Type Name="FilePosition" Kind="Class" />
+      <Type Name="Flock" Kind="Structure" />
+      <Type Name="Fstab" Kind="Class" />
+      <Type Name="Group" Kind="Class" />
+      <Type Name="LockfCommand" Kind="Enumeration" />
+      <Type Name="LockType" Kind="Enumeration" />
+      <Type Name="MlockallFlags" Kind="Enumeration" />
+      <Type Name="MmapFlags" Kind="Enumeration" />
+      <Type Name="MmapProts" Kind="Enumeration" />
+      <Type Name="MountFlags" Kind="Enumeration" />
+      <Type Name="MremapFlags" Kind="Enumeration" />
+      <Type Name="MsyncFlags" Kind="Enumeration" />
+      <Type Name="NativeConvert" Kind="Class" />
+      <Type Name="OpenFlags" Kind="Enumeration" />
+      <Type Name="Passwd" Kind="Class" />
+      <Type Name="PathconfName" Kind="Enumeration" />
+      <Type Name="PollEvents" Kind="Enumeration" />
+      <Type Name="Pollfd" Kind="Structure" />
+      <Type Name="PosixFadviseAdvice" Kind="Enumeration" />
+      <Type Name="PosixMadviseAdvice" Kind="Enumeration" />
+      <Type Name="SeekFlags" Kind="Enumeration" />
+      <Type Name="SignalAction" Kind="Enumeration" />
+      <Type Name="SignalHandler" Kind="Delegate" />
+      <Type Name="Signum" Kind="Enumeration" />
+      <Type Name="Stat" Kind="Structure" />
+      <Type Name="Statvfs" Kind="Structure" />
+      <Type Name="Stdlib" Kind="Class" />
+      <Type Name="Syscall" Kind="Class" />
+      <Type Name="SysconfName" Kind="Enumeration" />
+      <Type Name="SyslogFacility" Kind="Enumeration" />
+      <Type Name="SyslogLevel" Kind="Enumeration" />
+      <Type Name="SyslogOptions" Kind="Enumeration" />
+      <Type Name="Timespec" Kind="Structure" />
+      <Type Name="Timeval" Kind="Structure" />
+      <Type Name="Timezone" Kind="Structure" />
+      <Type Name="Utimbuf" Kind="Structure" />
+      <Type Name="Utsname" Kind="Class" />
+      <Type Name="WaitOptions" Kind="Enumeration" />
+      <Type Name="XattrFlags" Kind="Enumeration" />
+    </Namespace>
+  </Types>
+  <Title>Untitled</Title>
+  <Assemblies>
+    <Assembly Name="Mono.Posix" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("Unix Integration Classes")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Mono.Posix.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+</Overview>

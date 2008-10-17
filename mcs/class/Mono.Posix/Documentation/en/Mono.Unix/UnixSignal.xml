@@ -1,0 +1,646 @@
+<Type Name="UnixSignal" FullName="Mono.Unix.UnixSignal">
+  <TypeSignature Language="C#" Value="public class UnixSignal : System.Threading.WaitHandle" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Threading.WaitHandle</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      Represents the number of times a Unix signal has been emitted.
+    </summary>
+    <remarks>
+      <para>
+        Unix signals are used (generally) for two things:
+      </para>
+      <list type="bullet">
+        <item>
+          <term>
+          Asynchronous alerts about events that occur within a process, such as 
+          illegal instruction (<see cref="F:Mono.Unix.Native.Signum.SIGILL" />),
+          floating point exception (<see cref="F:Mono.Unix.Native.Signum.SIGFPE" />),
+          bus error (<see cref="F:Mono.Unix.Native.Signum.SIGBUS" />),
+          invalid memory access (<see cref="F:Mono.Unix.Native.Signum.SIGSEGV" />),
+          I/O is possible (<see cref="F:Mono.Unix.Native.Signum.SIGIO" />),
+          etc.
+        </term>
+        </item>
+        <item>
+          <term>
+          Asynchronous alerts of external "events", such as
+          termanal hangup (<see cref="F:Mono.Unix.Native.Signum.SIGHUP" />),
+          keyboard interrupt (<see cref="F:Mono.Unix.Native.Signum.SIGINT" />),
+          broken pipe (<see cref="F:Mono.Unix.Native.Signum.SIGPIPE" />),
+          program-defined actions 
+          (<see cref="F:Mono.Unix.Native.Signum.SIGUSR1" />,
+          <see cref="F:Mono.Unix.Native.Signum.SIGUSR2" />),
+          child exit (<see cref="F:Mono.Unix.Native.Signum.SIGCHLD" />),
+          etc.
+        </term>
+        </item>
+      </list>
+      <para>
+        The key nature about signals is that they are asynchronous.  In a
+        single threaded program, when a signal occurs the executing thread is
+        "hijacked" (no matter what it was previously doing) in order to
+        execute a (optionally registered) signal handler, and then the thread
+        resumes what it was previously doing (if possible; the signal handler
+        may abort the process as part of its execution).
+      </para>
+      <para>
+        In a multi-threaded program, a thread is selected at random among the
+        threads that can handle the signal, and that thread is hijacked to run
+        the signal handler before continuing (while the other threads continue
+        to execute in ignorance that a signal is occuring).
+      </para>
+      <para>
+        Tradtionally, <see cref="M:Mono.Unix.Native.Stdlib.signal" /> is used
+        to register a signal handler for a signal, and the registered handler
+        is invoked when the signal is generated.  However, due to the
+        "hijacking" nature of the signal handling process, what the signal
+        handler could do is <i>severely</i> restricted: it must not invoke
+        non-reentrant library functions, and can only modify global data and
+        execute a limited set of system calls such as 
+        <see cref="M:Mono.Unix.Native.Syscall.read" /> and
+        <see cref="M:Mono.Unix.Native.Syscall.write" />.
+      </para>
+      <para>
+        Managed code throws an additional wrench in the works, as the platform
+        invocation mechanism is neither reentrant nor signal safe. Consequently,
+        managed code <i>can not</i> be safely and reliably used as a signal
+        handler (as would traditionally be done with <c>signal</c>(2)), thus
+        the <see cref="T:Mono.Unix.UnixSignal" /> type.
+      </para>
+      <para>
+        A <see cref="T:Mono.Unix.UnixSignal" /> instance represents the number
+        of times that a Unix signal has been emitted.  That's all.
+        <c>UnixSignal</c> instances support:
+      </para>
+      <list type="bullet">
+        <item>
+          <term>
+          Accessing the number of times the Unix signal has been emitted via
+          the <see cref="P:Mono.Unix.UnixSignal.Count" />
+          and <see cref="P:Mono.Unix.UnixSignal.IsSet" /> properties.
+        </term>
+        </item>
+        <item>
+          <term>
+          Clearing the count with <see cref="M:Mono.Unix.UnixSignal.Reset" />.
+        </term>
+        </item>
+        <item>
+          <term>
+          Sleeping until a signal has been emitted via
+          <see cref="M:Mono.Unix.UnixSignal.WaitAny" /> and
+          <see cref="M:Mono.Unix.UnixSignal.WaitOne" />.
+        </term>
+        </item>
+      </list>
+      <para>
+        In order to operate, this class uses an internal unmanaged signal
+        handler to represent the count information.  Consequently, the count
+        will only be updated as long as no other mechanism is used to change
+        the registered signal handler, such as
+        <see cref="M:Mono.Unix.Native.Stdlib.signal" /> or
+        <see cref="M:Mono.Unix.Native.Stdlib.SetSignalAction" />.  If you use
+        <see cref="M:Mono.Unix.Native.Stdlib.signal" /> or
+        <see cref="M:Mono.Unix.Native.Stdlib.SetSignalAction" /> for the same
+        signal as a created <c>UnixSignal</c> instance, the UnixSignal
+        instance will stop operating as documented.  Don't Do That (TM).
+      </para>
+      <para>
+        There is currently a limit of 64 concurrent <c>UnixSignal</c>
+        instances within a process.
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixSignal (Mono.Unix.Native.Signum signum);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="signum" Type="Mono.Unix.Native.Signum" />
+      </Parameters>
+      <Docs>
+        <param name="signum">
+          A <see cref="T:Mono.Unix.Native.Signum" /> value specifying which
+          Unix signal this instance should count.
+        </param>
+        <summary>
+          Creates and initializes a <see cref="T:Mono.Unix.UnixSignal" />
+          class instance.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Unix.UnixSignal.Signum" /> property of the new
+            instance using <paramref name="signum" />.
+          </para>
+          <para>
+            Once this constructor completes execution, all signal emissions
+            between the completion of the constructor and the invocation of
+            <see cref="M:System.Threading.WaitHandle.Close" /> will be
+            counted, updating the <see cref="M:Mono.Unix.UnixSignal.Count" />
+            property.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          The internal signal handler could not be registered.
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="signum" /> is not a valid signal value.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The number of times the <see cref="P:Mono.Unix.UnixSignal.Signum" />
+          signal has been emitted since construction or the last call to
+          <see cref="M:Mono.Unix.UnixSignal.Reset" />.
+        </summary>
+        <value>
+          A <see cref="T:System.Int32" /> containing the number of the
+          of times the <see cref="P:Mono.Unix.UnixSignal.Signum" />
+          signal has been emitted.
+        </value>
+        <remarks>
+          To clear the count, either assign 0 to the 
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> property or use 
+          <see cref="M:Mono.Unix.UnixSignal.Reset" />.
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The current instance has already been disposed.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">
+          A <see cref="T:System.Boolean" />; if <see langword="true" />, then
+          this invocation is due to a 
+          <see cref="M:System.Threading.WaitHandle.Close" /> call; 
+          if <see langword="false" />, this invocation is from within the
+          finalizer.
+        </param>
+        <summary>
+          Cleanup all unmanaged resources.
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            This method releases all unmanaged resources held by the current
+            instance.  When <paramref name="disposing" /> is 
+            <see langword="true" />, this method releases all resources held
+            by any managed objects referenced by the current instance.  This
+            method invokes the <c>Dispose()</c> method of each referenced
+            object.
+          </block>
+          <block subset="none" type="overrides">
+            Override this mthod to dispose of resources allocated by types
+            derived from <see cref="T:Mono.Unix.UnixSignal" />.  When
+            overriding 
+            <see cref="M:Mono.Unix.UnixSignal.Dispose(System.Boolean)" />,
+            be careful not to reference objects that have been previously 
+            disposed an earlier call to <c>Dispose</c> or <c>Close</c>.  
+            <c>Dispose</c> can be called multiple times by other objects.
+          </block>
+          <block subset="none" type="usage">
+            This method is called by the protected
+            <see cref="M:System.Threading.WaitHandle.Dispose(System.Boolean)" />
+            method and the <see cref="M:System.Object.Finalize" /> method.
+            <c>Dispose()</c> invokes this method with the 
+            <paramref name="disposing" /> parameter set to 
+            <see langword="true" />. 
+            <see cref="M:System.Object.Finalize" /> invokes 
+            <c>Dispose</c> with <paramref name="disposing" /> set to 
+            <see langword="false" />.
+          </block>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsSet">
+      <MemberSignature Language="C#" Value="public bool IsSet { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Returns <see langword="true" /> if 
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> is greater than 0.
+        </summary>
+        <value>
+          A <see cref="T:System.Boolean" /> specifying whether or not 
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> is greater than 0.
+        </value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The current instance has already been disposed.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public bool Reset ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Clears the <see cref="P:Mono.Unix.UnixSignal.Count" /> property; the
+          return value specifies whether or not 
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> was not equal to 0
+          before it was cleared.
+        </summary>
+        <returns>
+          A <see cref="T:System.Boolean" /> specifying whether or not the 
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> property was not equal
+          to 0 before it was cleared.  If <see langword="true" /> is returned,
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> was not 0; if
+          <see langword="false" /> is returned, 
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> was 0.
+        </returns>
+        <remarks>
+          <para>
+            This method atomically checks and clears the 
+            <see cref="P:Mono.Unix.UnixSignal.Count" /> property, and should
+            be preferred over manually checking and clearing the 
+            <see cref="P:Mono.Unix.UnixSignal.Count" /> property.
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The current instance has already been disposed.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Signum">
+      <MemberSignature Language="C#" Value="public Mono.Unix.Native.Signum Signum { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Signum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The Unix signal this instance is counting.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.Native.Signum" /> value specifying which
+          Unix signal this instance is counting.
+        </value>
+        <remarks>
+          <para>
+            This value is set in the 
+            <see cref="C:Mono.Unix.UnixSignal(Mono.Unix.Native.Signum)" />
+            constructor.
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The current instance has already been disposed.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="C#" Value="public static int WaitAny (Mono.Unix.UnixSignal[] signals);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="signals" Type="Mono.Unix.UnixSignal[]" />
+      </Parameters>
+      <Docs>
+        <param name="signals">
+          A <see cref="T:Mono.Unix.UnixSignal" /> array containing the 
+          <see cref="T:Mono.Unix.UnixSignal" /> instances to wait on.
+        </param>
+        <summary>
+          Blocks the current thread until one of the 
+          <see cref="T:Mono.Unix.UnixSignal" /> instances within 
+          <paramref name="signals" /> has a non-zero 
+          <see cref="P:Mono.Unix.UnixSignal.Count" />.
+        </summary>
+        <returns>
+          Returns a <see cref="T:System.Int32" /> set to the index of the
+          element in <paramref name="signals" /> that received a signal.
+        </returns>
+        <remarks>
+          <para>
+            This method is equivalent to calling 
+            <c>UnixSignal.WaitAny(<paramref name="signals" />, -1)</c>.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="signals" /> is <see langword="null" />.
+        </exception>
+        <exception cref="T:System.InvalidOperationException">
+          One of the <see cref="T:Mono.Unix.UnixSignal" /> instances within
+          <paramref name="signals" /> was disposed.
+        </exception>
+        <altmember cref="M:Mono.Unix.UnixSignal.WaitAny(Mono.Unix.UnixSignal[],System.Int32)" />
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="C#" Value="public static int WaitAny (Mono.Unix.UnixSignal[] signals, int millisecondsTimeout);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="signals" Type="Mono.Unix.UnixSignal[]" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="signals">
+          A <see cref="T:Mono.Unix.UnixSignal" /> array containing the 
+          <see cref="T:Mono.Unix.UnixSignal" /> instances to wait on.
+        </param>
+        <param name="millisecondsTimeout">
+          A <see cref="T:System.Int32" /> specifying the number of
+          milliseconds to wait before the method should return.  <c>-1</c>
+          represents an infinite timeout.
+        </param>
+        <summary>
+          Blocks the current thread until one of the 
+          <see cref="T:Mono.Unix.UnixSignal" /> instances within 
+          <paramref name="signals" /> has a non-zero 
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> or the timeout expires.
+        </summary>
+        <returns>
+          If the method doesn't timeout, returns a 
+          <see cref="T:System.Int32" /> set to the index of the
+          element in <paramref name="signals" /> that received a signal.
+          If the method does timeout, then 
+          <paramref name="millisecondsTimeout" /> is returned.
+        </returns>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="signals" /> is <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="millisecondsTimeout" /> is less than <c>-1</c>.
+        </exception>
+        <exception cref="T:System.InvalidOperationException">
+          One of the <see cref="T:Mono.Unix.UnixSignal" /> instances within
+          <paramref name="signals" /> was disposed.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="C#" Value="public static int WaitAny (Mono.Unix.UnixSignal[] signals, TimeSpan timeout);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="signals" Type="Mono.Unix.UnixSignal[]" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="signals">
+          A <see cref="T:Mono.Unix.UnixSignal" /> array containing the 
+          <see cref="T:Mono.Unix.UnixSignal" /> instances to wait on.
+        </param>
+        <param name="timeout">
+          A <see cref="T:System.TimeSpan" /> specifying how long the method
+          should wait before returning.  Use a <see cref="T:System.TimeSpan" />
+          with a <see cref="P:System.TimeSpan.TotalMilliseconds" /> value of
+          <c>-1</c> for an infinite timeout.
+        </param>
+        <summary>
+          Blocks the current thread until one of the 
+          <see cref="T:Mono.Unix.UnixSignal" /> instances within 
+          <paramref name="signals" /> has a non-zero 
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> or the timeout expires.
+        </summary>
+        <returns>
+          If the method doesn't timeout, returns a 
+          <see cref="T:System.Int32" /> set to the index of the
+          element in <paramref name="signals" /> that received a signal.
+          If the method does timeout, then <paramref name="timeout" />'s 
+          <see cref="P:System.TimeSpan.TotalMilliseconds" /> value cast to a
+          <see cref="T:System.Int32" /> is returned.
+        </returns>
+        <remarks>
+          <para>
+            This is equivalent to 
+            <c>UnixSignal.WaitAny(<paramref name="signals" />,
+            timeout.TotalMilliseconds)</c>.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="signals" /> is <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="timeout" />'s 
+          <see cref="P:System.TimeSpan.TotalMilliseconds" /> property is less
+          than <c>-1</c> or greater than <see cref="F:System.Int32.MaxValue" />.
+        </exception>
+        <exception cref="T:System.InvalidOperationException">
+          One of the <see cref="T:Mono.Unix.UnixSignal" /> instances within
+          <paramref name="signals" /> was disposed.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public override bool WaitOne ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Blocks the current thread until the curent instance has a non-zero 
+          <see cref="P:Mono.Unix.UnixSignal.Count" />.
+        </summary>
+        <returns>
+          Returns <see langword="true" /> when the current instance receives a
+          signal.
+        </returns>
+        <remarks>
+          <para>
+            The caller of this method blocks indefinitely until the
+            <see cref="P:Mono.Unix.UnixSignal.Signum" /> signal is received by
+            the current process and the 
+            <see cref="P:Mono.Unix.UnixSignal.Count" /> property is non-zero.
+          </para>
+          <para>
+            This method is equivalent to calling <c>WaitOne(-1)</c>.
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The current instance has already been disposed.
+        </exception>
+        <altmember cref="M:Mono.Unix.UnixSignal.WaitOne(System.Int32)" />
+      </Docs>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public override bool WaitOne (int millisecondsTimeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="millisecondsTimeout">
+          A <see cref="T:System.Int32" /> containing the maximum number of
+          milliseconds the current thread should block before returning.
+        </param>
+        <param name="exitContext">
+          This parameter must be <see langword="false" />.
+        </param>
+        <summary>
+          Blocks the current thread until the curent instance has a non-zero 
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> or the timeout expires.
+        </summary>
+        <returns>
+          Returns <see langword="true" /> when the current instance receives a
+          signal, otherwise <see langword="false" /> is returned if the
+          timeout is exceeded.
+        </returns>
+        <remarks>
+          <para>
+            The caller of this method blocks for up to 
+            <paramref name="millisecondsTimeout" /> for the 
+            <see cref="P:Mono.Unix.UnixSignal.Signum" /> signal to be received 
+            by the current process and the 
+            <see cref="P:Mono.Unix.UnixSignal.Count" /> property to become 
+            non-zero.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="millisecondsTimeout" /> is less than <c>-1</c>.
+        </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <paramref name="exitContext" /> is <see langword="true" />.
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The current instance has already been disposed.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public override bool WaitOne (TimeSpan timeout, bool exitContext);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="exitContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">
+          A <see cref="T:System.TimeSpan" /> specifying how long the method
+          should wait before returning.  Use a <see cref="T:System.TimeSpan" />
+          with a <see cref="P:System.TimeSpan.TotalMilliseconds" /> value of
+          <c>-1</c> for an infinite timeout.
+        </param>
+        <param name="exitContext">
+          This parameter must be <see langword="false" />.
+        </param>
+        <summary>
+          Blocks the current thread until the curent instance has a non-zero 
+          <see cref="P:Mono.Unix.UnixSignal.Count" /> or the timeout expires.
+        </summary>
+        <returns>
+          Returns <see langword="true" /> when the current instance receives a
+          signal, otherwise <see langword="false" /> is returned if the
+          timeout is exceeded.
+        </returns>
+        <remarks>
+          <para>
+            The caller of this method blocks for up to 
+            <c>timeout.TotalMilliseconds</c> milliseconds for the
+            <see cref="P:Mono.Unix.UnixSignal.Signum" /> signal to be received 
+            by the current process and the 
+            <see cref="P:Mono.Unix.UnixSignal.Count" /> property to become 
+            non-zero.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="timeout" />'s 
+          <see cref="P:System.TimeSpan.TotalMilliseconds" /> property is less
+          than <c>-1</c> or greater than <see cref="F:System.Int32.MaxValue" />.
+        </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <paramref name="exitContext" /> is <see langword="true" />.
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The current instance has already been disposed.
+        </exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

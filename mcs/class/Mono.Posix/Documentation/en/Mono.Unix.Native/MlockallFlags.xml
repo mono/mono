@@ -1,0 +1,58 @@
+<Type Name="MlockallFlags" FullName="Mono.Unix.Native.MlockallFlags">
+  <TypeSignature Language="C#" Value="public enum MlockallFlags" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <altmember cref="M:Mono.Unix.Native.Syscall.mlockall" />
+  </Docs>
+  <Members>
+    <Member MemberName="MCL_CURRENT">
+      <MemberSignature Language="C#" Value="MCL_CURRENT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.MlockallFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Lock all pages currently mapped into the process's address
+        space.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MCL_FUTURE">
+      <MemberSignature Language="C#" Value="MCL_FUTURE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.MlockallFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Lock all pages mapped into the process's address space in the
+        future, at the time the mapping is established.  Note that this may
+        cause future mappings to fail if those mappings cause resource limits
+        to be exceeded.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

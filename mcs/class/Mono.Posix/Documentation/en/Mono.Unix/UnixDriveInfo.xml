@@ -1,0 +1,448 @@
+<Type Name="UnixDriveInfo" FullName="Mono.Unix.UnixDriveInfo">
+  <TypeSignature Language="C#" Value="public sealed class UnixDriveInfo" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Represents information about Unix volumes.</summary>
+    <remarks>
+      <para>
+        The <see cref="T:Mono.Unix.UnixDriveInfo" /> class presents
+        information about a Unix mount point or special file.  It allows basic
+        querying about the filesystem
+      </para>
+      <list type="bullet">
+        <item>
+          <term>
+          Total size and free disk space
+          (<see cref="P:Mono.Unix.UnixDriveInfo.TotalSize" /> and
+          <see cref="P:Mono.Unix.UnixDriveInfo.TotalFreeSpace" />).
+        </term>
+        </item>
+        <item>
+          <term>
+          Querying of all availble disk drives, 
+          <see cref="M:Mono.Unix.UnixDriveInfo.GetDrives" />, 
+          visible through <c>/etc/fstab</c>.
+        </term>
+        </item>
+      </list>
+      <para>
+        Information provided this type may not be valid for any significant
+        period of time, due to potential race conditions with other processes
+        running on the system or because of other actions being performed
+        within the current process.
+      </para>
+      <para>
+        The only gurantee is that the information provided <i>was</i> valid at
+        some point in time, <i>or</i> an 
+        <see cref="T:System.InvalidOperationException" /> will be thrown
+        when attempting to access the provided information.
+        <block subset="none" type="note">
+          To clarify, most properties will attempt to refresh the information
+          before returning it so that the information retrieved is as
+          up-to-date as possible, but it cannot take everything into
+          consideration.
+        </block></para>
+      <para>
+        Check the individual method and property documentation to determine 
+        if and when an exception will be thrown.
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixDriveInfo (string mountPoint);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="mountPoint" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="mountPoint">
+          A <see cref="T:System.String" /> containing the Unix mount point to
+          get information about.
+        </param>
+        <summary>
+          Creates a <see cref="T:Mono.Unix.UnixDriveInfo" /> instance
+          containing information about a Unix mount point and volume.
+        </summary>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="mountPoint" /> isn't a valid mount point.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="mountPoint" /> is <see langword="null" />.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getfsfile" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AvailableFreeSpace">
+      <MemberSignature Language="C#" Value="public long AvailableFreeSpace { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the available free space for the drive.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the total available
+          free space on the drive.
+        </value>
+        <remarks>
+          <para>
+            The available free space is the space that normal users are able
+            to write to (in the absense of file system quotas which may
+            further limit how much disk space users can fill).  The drive may
+            have some space reserved for the super-user (<c>root</c>).
+          </para>
+          <para>
+            Use <see cref="P:Mono.Unix.UnixDriveInfo.TotalFreeSpace" /> for
+            the total free space, including space reserved for the super-user.
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          There was an error retrieving the total disk space.  
+          The volume may not be mounted.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DriveFormat">
+      <MemberSignature Language="C#" Value="public string DriveFormat { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Retrieves the file system format of the 
+          <paramref name="mountPoint" /> volume.
+        </summary>
+        <value>
+          A <see cref="T:System.String" /> containing the file system format
+          of the specified mount point.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Fstab.fs_vfstype" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DriveType">
+      <MemberSignature Language="C#" Value="public Mono.Unix.UnixDriveType DriveType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixDriveType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the drive type.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.UnixDriveType" /> specifying which type of
+          drive this mount point is.
+        </value>
+        <remarks>
+          Currently, this always returns 
+          <see cref="F:Mono.Unix.UnixDriveType.Unknown" />.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDrives">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixDriveInfo[] GetDrives ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixDriveInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets information about all drives listed in <c>/etc/fstab</c>.</summary>
+        <returns>
+          A <see cref="T:Mono.Unix.UnixDriveInfo" /> array containing all
+          drives listed in <c>/etc/fstab</c>.
+        </returns>
+        <remarks>
+          <para>
+            This method only <i>conceptually</i> reads <c>/etc/fstab</c>;
+            it actually uses the corresponding 
+            <see cref="T:Mono.Unix.Native.Syscall" /> APIs, which may or may 
+            not actually read <c>/etc/fstab</c> (check your operating system
+            documentation).
+          </para>
+          <para>
+            This method does not return <c>/etc/fstab</c> entries which do not
+            correspond to actual mount points.  
+            <see cref="F:Mono.Unix.Native.Fstab.fs_file" /> must start with a 
+            forward-slash ("/").
+          </para>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          There was an error calling 
+          <see cref="M:Mono.Unix.Native.Syscall.setfsent" />.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setfsent" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getfsent" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.endfsent" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetForSpecialFile">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixDriveInfo GetForSpecialFile (string specialFile);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixDriveInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="specialFile" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="specialFile">
+          A <see cref="T:System.String" /> containing the "special file"
+          (block device, generally the first field in <c>/etc/fstab</c>).
+        </param>
+        <summary>
+          Creates a <see cref="T:Mono.Unix.UnixDriveInfo" /> instance
+          containing information about the specified block device name.
+        </summary>
+        <returns>
+          A <see cref="T:Mono.Unix.UnixDriveInfo" /> instance containing
+          information about the specified special file (block device).
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getfsspec" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReady">
+      <MemberSignature Language="C#" Value="public bool IsReady { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Returns a <see cref="T:System.Boolean" /> indicating whether the
+          specified mount point is connected and queryable.
+        </summary>
+        <value>
+          A <see cref="T:System.Boolean" /> indicating whether the
+          specified mount point is connected and queryable.
+        </value>
+        <remarks>
+          <para>
+            This property generates no exceptions.
+          </para>
+          <para>
+            If this property returns <see langword="true" />, then the other
+            properties should not generate
+            <see cref="T:System.InvalidOperationException" />s.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaximumFilenameLength">
+      <MemberSignature Language="C#" Value="public long MaximumFilenameLength { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the maximum filename length.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the maximum number of
+          bytes that may make up a filename.  This value varies from
+          filesystem to filesystem.
+        </value>
+        <remarks>
+          <para>
+            The operating system does not specify an encoding for filenames,
+            it just stores the bytes given to it.  Since 
+            <see cref="T:System.String" /> is a UTF-16 string encoding, each
+            character may require more than one byte to store in the
+            filesystem.  Consequently the maximum filename length can
+            <i>not</i> be directly compared against
+            <see cref="P:System.String.Length" />.
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          There was an error retrieving the maximum filename length.
+          The volume may not be mounted.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the mount point.</summary>
+        <value>
+          A <see cref="T:System.String" /> containinig the mount point of the
+          Unix volume.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Fstab.fs_file" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RootDirectory">
+      <MemberSignature Language="C#" Value="public Mono.Unix.UnixDirectoryInfo RootDirectory { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixDirectoryInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets information about the mount point directory.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.UnixDirectoryInfo" /> instance containing
+          information about the mount point directory.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Fstab.fs_file" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TotalFreeSpace">
+      <MemberSignature Language="C#" Value="public long TotalFreeSpace { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the total free space on the volume.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the total free space on
+          the Unix volume.
+        </value>
+        <remarks>
+          <para>
+            The total free space includes all the free space on the Unix
+            volume, and may include space the normal users are not able to
+            write to, either because of disk quotas or because space is
+            reserved for the super-user (<c>root</c>).
+          </para>
+          <para>
+            Use <see cref="P:Mono.Unix.UnixDriveInfo.AvailableFreeSpace" /> for
+            the available free space, excluding space reserved for the 
+            super-user.
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          There was an error retrieving the total free space.  
+          The volume may not be mounted.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TotalSize">
+      <MemberSignature Language="C#" Value="public long TotalSize { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the total size of the Unix volume.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the total size of the
+          volume.
+        </value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          There was an error retrieving the total size.  
+          The volume may not be mounted.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VolumeLabel">
+      <MemberSignature Language="C#" Value="public string VolumeLabel { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the block device name.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the block device for
+          this volume.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Fstab.fs_spec" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

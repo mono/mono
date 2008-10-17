@@ -1,0 +1,887 @@
+<Type Name="UnixEnvironment" FullName="Mono.Unix.UnixEnvironment">
+  <TypeSignature Language="C#" Value="public sealed class UnixEnvironment" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Provides the current settings for, and information about, the
+      execution environment.</summary>
+    <remarks>
+      <para>
+        Use this class to retrieve the following information:
+      </para>
+      <list type="bullet">
+        <item>
+          <term>
+          User and Group information
+        </term>
+        </item>
+        <item>
+          <term>
+          Session creation
+        </term>
+        </item>
+        <item>
+          <term>
+          Process group creation
+        </term>
+        </item>
+        <item>
+          <term>
+          Configuration value lookup
+        </term>
+        </item>
+        <item>
+          <term>
+          Supplementary group information
+        </term>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateSession">
+      <MemberSignature Language="C#" Value="public static int CreateSession ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Create a new session.</summary>
+        <returns>
+          A <see cref="T:System.Int32" /> containing the return value of the 
+          <see cref="M:Mono.Unix.Native.Syscall.setsid" /> call.  This can be
+          ignored, since it will be translated into an exception if it's an
+          error anyway.
+        </returns>
+        <remarks>
+          <para>
+            This method creates a new session.  The calling process is the 
+            session leader of the new session, is the process group leader of 
+            a new process group and has no controlling terminal.  The calling 
+            process is the only process in either the session or the process 
+            group.
+          </para>
+        </remarks>
+        <exception cref="System.InvalidOperationException">
+          <para>
+            The calling process is already a process group leader, or the 
+            process group ID of a process other than the calling process 
+            matches the process ID of the calling process.
+            [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setsid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CurrentDirectory">
+      <MemberSignature Language="C#" Value="public static string CurrentDirectory { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets the current directory of the process.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the current directory of
+          the process.
+        </value>
+        <remarks>
+          <para>The <paramref name="value" /> argument is permitted to specify
+          relative or absolute path information. Relative path information is 
+          interpreted as relative to the current working directory. 
+          <block subset="none" type="note">To obtain the current working 
+          directory, see 
+          <see cref="M:Mono.Unix.UnixDirectoryInfo.GetCurrentDirectory" qualify="true" />.
+          </block></para>
+        </remarks>
+        <exception cref="T:System.UnauthorizedAccessException">
+          Permission to read or search a component of the current working
+          directory was denied.
+          [<see cref="F:Mono.Unix.Native.Errno.EACCESS" />]
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          The current working directory has been unlinked.
+          [<see cref="F:Mono.Unix.Native.Errno.ENOENT" />]
+        </exception>
+        <altmember cref="M:Mono.Unix.UnixDirectoryInfo.GetCurrentDirectory" />
+        <altmember cref="M:Mono.Unix.UnixDirectoryInfo.SetCurrentDirectory" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EffectiveGroup">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixGroupInfo EffectiveGroup { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixGroupInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets information about the effective group of the process.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.UnixGroupInfo" /> containing information
+          about the effective group of the process.
+        </value>
+        <remarks>
+          <para>
+            The 
+            <see cref="P:Mono.Unix.UnixEnvironment.EffectiveGroup" />
+            gives the process additional permissions during the execution of 
+            <see cref="F:Mono.Unix.FileSpecialAttributes.SetGroupId" />
+            mode processes.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveUser" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealGroup" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealUser" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getegid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EffectiveGroupId">
+      <MemberSignature Language="C#" Value="public static long EffectiveGroupId { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the effective group ID of the process.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing nthe effective group ID
+          of the process.
+        </value>
+        <remarks>
+          <para>
+            The 
+            <see cref="P:Mono.Unix.UnixEnvironment.EffectiveGroupId" />
+            gives the process additional permissions during the execution of 
+            <see cref="F:Mono.Unix.FileSpecialAttributes.SetGroupId" />
+            mode processes.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveUserId" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealGroupId" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealUserId" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getegid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EffectiveUser">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixUserInfo EffectiveUser { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixUserInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets information about the effective user of the process.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.UnixUserInfo" /> containing information
+          about the effective user of the process.
+        </value>
+        <remarks>
+          <para>
+            The 
+            <see cref="P:Mono.Unix.UnixEnvironment.EffectiveUser" /> gives
+            the process additional permissions during execution of 
+            <see cref="F:Mono.Unix.FileSpecialAttributes.SetUserId" />
+            mode processes.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveGroup" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealGroup" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealUser" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.geteuid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EffectiveUserId">
+      <MemberSignature Language="C#" Value="public static long EffectiveUserId { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the effective user ID of the process.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the effective user ID of
+          the process.
+        </value>
+        <remarks>
+          <para>
+            The 
+            <see cref="P:Mono.Unix.UnixEnvironment.EffectiveUserId" /> gives
+            the process additional permissions during execution of 
+            <see cref="F:Mono.Unix.FileSpecialAttributes.SetUserId" />
+            mode processes.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveGroupId" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealGroupId" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealUserId" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.geteuid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetConfigurationString">
+      <MemberSignature Language="C#" Value="public static string GetConfigurationString (Mono.Unix.Native.ConfstrName name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="Mono.Unix.Native.ConfstrName" />
+      </Parameters>
+      <Docs>
+        <param name="name">
+          A <see cref="T:Mono.Unix.Native.ConfstrName" /> value containing the
+          configuration value to retrieve.
+        </param>
+        <summary>
+          Retrieve the value of the configuration value 
+          <paramref name="name" />.
+        </summary>
+        <returns>
+          A <see cref="T:System.String" /> containing the value of the
+          configuration variable <paramref name="name" />.
+        </returns>
+        <remarks>
+        </remarks>
+        <exception cref="System.ArgumentException">
+          <para>
+            The value of the
+            <paramref name="name" />
+            argument is invalid.
+            [<see cref="F:Mono.Unix.Native.Errno.EINVAL" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.confstr" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetConfigurationValue">
+      <MemberSignature Language="C#" Value="public static long GetConfigurationValue (Mono.Unix.Native.SysconfName name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="Mono.Unix.Native.SysconfName" />
+      </Parameters>
+      <Docs>
+        <param name="name">
+          A <see cref="T:Mono.Unix.Native.SysconfName" /> value containing the
+          configurable system limit or option variable to lookup.
+        </param>
+        <summary>
+          Retrieve the value of the configurable system limit or 
+          option value <paramref name="name" />.
+        </summary>
+        <returns>
+          A <see cref="T:System.Int64" /> containing the value of the 
+          configurable system limit or option value <paramref name="name" />.
+        </returns>
+        <remarks>
+          <para>
+            This method provides a way for applications to determine the 
+            current value of a configurable system limit or option variable.  
+            The <paramref name="name" /> argument specifies the system 
+            variable to be queried.  
+          </para>
+        </remarks>
+        <exception cref="System.ArgumentException">
+          <para>
+            The value of the
+            <paramref name="name" />
+            argument is invalid.
+            [<see cref="F:Mono.Unix.Native.Errno.EINVAL" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.sysconf" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetParentProcess">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixProcess GetParentProcess ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixProcess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets information about the parent process.</summary>
+        <returns>
+          A <see cref="T:Mono.Unix.UnixProcess" /> instance containing
+          information about the parent process.
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetParentProcessId">
+      <MemberSignature Language="C#" Value="public static int GetParentProcessId ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets the process ID of the parent process.</summary>
+        <returns>
+          A <see cref="T:System.Int32" /> containing the process ID of the
+          parent process.
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getppid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetProcessGroup">
+      <MemberSignature Language="C#" Value="public static int GetProcessGroup ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets the process group ID of the current process.</summary>
+        <returns>
+          A <see cref="T:System.Int32" /> containing the process group ID of
+          the current process.
+        </returns>
+        <remarks>
+          <para>
+            Process groups are used for distribution of signals, and by 
+            terminals to arbitrate requests for their input: processes that 
+            have the same process group as the terminal are foreground and 
+            may read, while others will block with a signal if they attempt 
+            to read.
+          </para>
+          <para>
+            This system call is thus used by programs such as <c>csh</c>(1) 
+            to create process groups in implementing job control.  The 
+            <see cref="M:Mono.Unix.Native.Syscall.tcgetpgrp" />() and 
+            <see cref="M:Mono.Unix.Native.Syscall.tcsetpgrp" />()
+            calls are used to get/set the process group of the control terminal.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getpgrp" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSupplementaryGroupIds">
+      <MemberSignature Language="C#" Value="public static long[] GetSupplementaryGroupIds ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets the current group access list.</summary>
+        <returns>
+          A <see cref="T:System.Int64" /> array containing the group access
+          list of the current process.
+        </returns>
+        <remarks>
+          <para>
+            The group access list is a list of groups which the current
+            process belongs to.  These groups are used for file access checks
+            when the 
+            <see cref="P:Mono.Unix.UnixEnvironment.RealUser" /> is not the
+            file's
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.OwnerUser" />; each of
+            the supplementary groups is checked against
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.OwnerGroup" /> to see if
+            group access applies, before using the  "other"
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.FileAccessPermissions" />.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getgroups" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSupplementaryGroups">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixGroupInfo[] GetSupplementaryGroups ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixGroupInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets the current group access list.</summary>
+        <returns>
+          A <see cref="T:Mono.Unix.UnixGroupInfo" /> array containing
+          information about the group access list of the current process.
+        </returns>
+        <remarks>
+          <para>
+            The group access list is a list of groups which the current
+            process belongs to.  These groups are used for file access checks
+            when the 
+            <see cref="P:Mono.Unix.UnixEnvironment.RealUser" /> is not the
+            file's
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.OwnerUser" />; each of
+            the supplementary groups is checked against
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.OwnerGroup" /> to see if
+            group access applies, before using the  "other"
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.FileAccessPermissions" />.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getgroups" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetUserShells">
+      <MemberSignature Language="C#" Value="public static string[] GetUserShells ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets all user shells.</summary>
+        <returns>
+          A <see cref="T:System.String" /> array containing all user shells on
+          the system.
+        </returns>
+        <remarks>
+          <para>
+            A user shell is defined by the system manager in the shells
+            database as described in <c>shells</c>(5) (frequently the file
+            <c>/etc/shells</c>).  If the shells database is not available,
+            then this returns an array containing the elements <c>/bin/sh</c>
+            and <c>/bin/csh</c>.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setusershell" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getusershell" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.endusershell" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Login">
+      <MemberSignature Language="C#" Value="public static string Login { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the login name.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the login name of the
+          user executing the process.
+        </value>
+        <remarks>
+          <para>
+            This is identical to 
+            <see cref="P:Mono.Unix.UnixEnvironment.UserName" />.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MachineName">
+      <MemberSignature Language="C#" Value="public static string MachineName { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets the machine name of the machine the process is
+          running on.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the machine name.
+        </value>
+        <remarks>
+          <para>
+            Only the super-user can change the machine name.
+          </para>
+        </remarks>
+        <exception cref="System.InvalidOperationException">
+          <para>
+            The caller tried to set the host name and was not the super-user.
+            [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.gethostname" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.sethostname" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RealGroup">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixGroupInfo RealGroup { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixGroupInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets information about the real group of the process.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.UnixGroupInfo" /> containing information
+          about the real group of the process.
+        </value>
+        <remarks>
+          <para>
+            The real group is the group of the user who invoked the program.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveGroup" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveUser" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealUser" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getgid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RealGroupId">
+      <MemberSignature Language="C#" Value="public static long RealGroupId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the real group ID of the process.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the real group ID of the
+          process.
+        </value>
+        <remarks>
+          <para>
+            The real group ID is the group of the user who invoked the program.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveGroupId" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveUserId" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealUserId" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getgid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RealUser">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixUserInfo RealUser { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixUserInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets information about the real user of the process.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.UnixUserInfo" /> containing information
+          about the real user of the process.
+        </value>
+        <remarks>
+          <para>
+            The real user is the user who invoked the program.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveGroup" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveUser" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealGroup" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getuid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RealUserId">
+      <MemberSignature Language="C#" Value="public static long RealUserId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the real user ID of the process.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the real user ID of the
+          process.
+        </value>
+        <remarks>
+          <para>
+            The real user ID is that of the user who invoked the program.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveGroupId" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.EffectiveUserId" />
+        <altmember cref="M:Mono.Unix.UnixEnvironment.RealGroupId" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.getuid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetNiceValue">
+      <MemberSignature Language="C#" Value="public static void SetNiceValue (int inc);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inc" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="inc">
+          A <see cref="T:System.Int32" /> containing the value to add to the
+          current process' <i>nice value</i>.
+        </param>
+        <summary>Subtraces <paramref name="inc" /> from the process' priority.</summary>
+        <remarks>
+          <para>
+            The process' <i>nice value</i> is a value subtraced from the 
+            process' priority.  The higher the value of 
+            <paramref name="inc" />, the lower the priority of the process
+          </para>
+        </remarks>
+        <exception cref="T:Mono.Unix.UnixIOException">
+          <paramref name="inc" /> is negative but the caller is not the
+          super-user.
+          [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.nice" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetProcessGroup">
+      <MemberSignature Language="C#" Value="public static void SetProcessGroup ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Set the process group of the current process.</summary>
+        <remarks>
+          <para>
+            If the affected process is not the invoking process, then it must 
+            be a child of the invoking process, and both processes must be in 
+            the same session.
+          </para>
+        </remarks>
+        <exception cref="System.InvalidOperationException">
+          <para>
+            The target process is a session leader.
+            [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+          </para>
+        </exception>
+        <exception cref="Mono.Unix.UnixIOException">
+          <para>
+            The target process is not the calling process or
+            a child of the calling process.
+            [<see cref="F:Mono.Unix.Native.Errno.ESRCH" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The requested process is a child of the calling process,
+            but it has performed an
+            <see cref="F:Mono.Unix.Native.Syscall.exec" />(3)
+            operation.
+            [<see cref="F:Mono.Unix.Native.Errno.EACCES" />]
+          </para>
+        </exception>
+        <altmember cref="P:Mono.Unix.UnixProcess.ProcessGroupId" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.setpgrp" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetSupplementaryGroupIds">
+      <MemberSignature Language="C#" Value="public static void SetSupplementaryGroupIds (long[] list);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="list" Type="System.Int64[]" />
+      </Parameters>
+      <Docs>
+        <param name="list">
+          A <see cref="T:System.Int64" /> array containing the
+          new group access list.
+        </param>
+        <summary>
+          Set the group access list of the current process.
+        </summary>
+        <remarks>
+          <para>
+            Only the super-user may set new groups.
+          </para>
+          <para>
+            The group access list is a list of groups which the current
+            process belongs to.  These groups are used for file access checks
+            when the 
+            <see cref="P:Mono.Unix.UnixEnvironment.RealUser" /> is not the
+            file's
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.OwnerUser" />; each of
+            the supplementary groups is checked against
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.OwnerGroup" /> to see if
+            group access applies, before using the  "other"
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.FileAccessPermissions" />.
+          </para>
+        </remarks>
+        <exception cref="System.InvalidOperationException">
+          <para>
+            The caller is not the super-user.
+            [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setgroups" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetSupplementaryGroups">
+      <MemberSignature Language="C#" Value="public static void SetSupplementaryGroups (Mono.Unix.UnixGroupInfo[] groups);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="groups" Type="Mono.Unix.UnixGroupInfo[]" />
+      </Parameters>
+      <Docs>
+        <param name="groups">
+          A <see cref="T:Mono.Unix.UnixGroupInfo" /> array containing the
+          new group access list.
+        </param>
+        <summary>
+          Set the group access list of the current process.
+        </summary>
+        <remarks>
+          <para>
+            Only the super-user may set new groups.
+          </para>
+          <para>
+            The group access list is a list of groups which the current
+            process belongs to.  These groups are used for file access checks
+            when the 
+            <see cref="P:Mono.Unix.UnixEnvironment.RealUser" /> is not the
+            file's
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.OwnerUser" />; each of
+            the supplementary groups is checked against
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.OwnerGroup" /> to see if
+            group access applies, before using the  "other"
+            <see cref="P:Mono.Unix.UnixFileSystemInfo.FileAccessPermissions" />.
+          </para>
+        </remarks>
+        <exception cref="System.InvalidOperationException">
+          <para>
+            The caller is not the super-user.
+            [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.setgroups" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UserName">
+      <MemberSignature Language="C#" Value="public static string UserName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the user name of the user executing the process.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the username of the user
+          executing the process.
+        </value>
+        <remarks>
+          <para>
+            This is the username of the <i>real</i> user id.
+          </para>
+          <para>
+            This is equivalent to calling
+            <see cref="P:Mono.Unix.UnixEnvironment.RealUser" />.<see cref="P:Mono.Unix.UnixUserInfo.UserName" />.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

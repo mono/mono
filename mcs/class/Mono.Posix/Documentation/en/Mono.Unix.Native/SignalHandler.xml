@@ -1,0 +1,148 @@
+<Type Name="SignalHandler" FullName="Mono.Unix.Native.SignalHandler">
+  <TypeSignature Language="C#" Value="public delegate void SignalHandler(int signal);" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="signal" Type="System.Int32" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="signal">The signal to handle.</param>
+    <summary>A delegate to handle POSIX signals.</summary>
+    <remarks>
+      <para>
+When this delegate is invoked from signal context (that is, the operating system invokes the delegate), the delegate must be very careful, as processing elsewhere was interrupted at some arbitrary point.  This is similar, yet different to multi-threading issues.</para>
+      <para>In particular, from managed code the only safe thing to do is modify a variable.  Calling any function, even POSIX reentrant functions, will not be safe (as Mono's P/Invoke marshaller isn't reentrant).
+</para>
+      <para>See also: http://www-106.ibm.com/developerworks/linux/library/l-reent.html.</para>
+      <para>The POSIX 1003.1-2003 list of reentrant functions is:
+<see cref="M:Mono.Unix.Native.Syscall._Exit" />, 
+<see cref="M:Mono.Unix.Native.Syscall._exit" />, 
+<see cref="M:Mono.Unix.Native.Syscall.abort" />, 
+<see cref="M:Mono.Unix.Native.Syscall.accept" />, 
+<see cref="M:Mono.Unix.Native.Syscall.access" />, 
+<see cref="M:Mono.Unix.Native.Syscall.aio_error" />, 
+<see cref="M:Mono.Unix.Native.Syscall.aio_return" />, 
+<see cref="M:Mono.Unix.Native.Syscall.aio_suspend" />, 
+<see cref="M:Mono.Unix.Native.Syscall.alarm" />, 
+<see cref="M:Mono.Unix.Native.Syscall.bind" />, 
+<see cref="M:Mono.Unix.Native.Syscall.cfgetispeed" />, 
+<see cref="M:Mono.Unix.Native.Syscall.cfgetospeed" />, 
+<see cref="M:Mono.Unix.Native.Syscall.cfsetispeed" />, 
+<see cref="M:Mono.Unix.Native.Syscall.cfsetospeed" />, 
+<see cref="M:Mono.Unix.Native.Syscall.chdir" />, 
+<see cref="M:Mono.Unix.Native.Syscall.chmod" />, 
+<see cref="M:Mono.Unix.Native.Syscall.chown" />, 
+<see cref="M:Mono.Unix.Native.Syscall.clock_gettime" />, 
+<see cref="M:Mono.Unix.Native.Syscall.close" />, 
+<see cref="M:Mono.Unix.Native.Syscall.connect" />, 
+<see cref="M:Mono.Unix.Native.Syscall.creat" />, 
+<see cref="M:Mono.Unix.Native.Syscall.dup" />, 
+<see cref="M:Mono.Unix.Native.Syscall.dup2" />, 
+<see cref="M:Mono.Unix.Native.Syscall.execle" />, 
+<see cref="M:Mono.Unix.Native.Syscall.execve" />, 
+<see cref="M:Mono.Unix.Native.Syscall.fchmod" />, 
+<see cref="M:Mono.Unix.Native.Syscall.fchown" />, 
+<see cref="M:Mono.Unix.Native.Syscall.fcntl" />, 
+<see cref="M:Mono.Unix.Native.Syscall.fdatasync" />, 
+<see cref="M:Mono.Unix.Native.Syscall.fork" />, 
+<see cref="M:Mono.Unix.Native.Syscall.fpathconf" />, 
+<see cref="M:Mono.Unix.Native.Syscall.fstat" />, 
+<see cref="M:Mono.Unix.Native.Syscall.fsync" />, 
+<see cref="M:Mono.Unix.Native.Syscall.ftruncate" />, 
+<see cref="M:Mono.Unix.Native.Syscall.getegid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.geteuid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.getgid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.getgroups" />, 
+<see cref="M:Mono.Unix.Native.Syscall.getpeername" />, 
+<see cref="M:Mono.Unix.Native.Syscall.getpgrp" />, 
+<see cref="M:Mono.Unix.Native.Syscall.getpid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.getppid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.getsockname" />, 
+<see cref="M:Mono.Unix.Native.Syscall.getsockopt" />, 
+<see cref="M:Mono.Unix.Native.Syscall.getuid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.kill" />, 
+<see cref="M:Mono.Unix.Native.Syscall.link" />, 
+<see cref="M:Mono.Unix.Native.Syscall.listen" />, 
+<see cref="M:Mono.Unix.Native.Syscall.lseek" />, 
+<see cref="M:Mono.Unix.Native.Syscall.lstat" />, 
+<see cref="M:Mono.Unix.Native.Syscall.mkdir" />, 
+<see cref="M:Mono.Unix.Native.Syscall.mkfifo" />, 
+<see cref="M:Mono.Unix.Native.Syscall.open" />, 
+<see cref="M:Mono.Unix.Native.Syscall.pathconf" />, 
+<see cref="M:Mono.Unix.Native.Syscall.pause" />, 
+<see cref="M:Mono.Unix.Native.Syscall.pipe" />, 
+<see cref="M:Mono.Unix.Native.Syscall.poll" />, 
+<see cref="M:Mono.Unix.Native.Syscall.posix_trace_event" />, 
+<see cref="M:Mono.Unix.Native.Syscall.pselect" />, 
+<see cref="M:Mono.Unix.Native.Syscall.raise" />, 
+<see cref="M:Mono.Unix.Native.Syscall.read" />, 
+<see cref="M:Mono.Unix.Native.Syscall.readlink" />, 
+<see cref="M:Mono.Unix.Native.Syscall.recv" />, 
+<see cref="M:Mono.Unix.Native.Syscall.recvfrom" />, 
+<see cref="M:Mono.Unix.Native.Syscall.recvmsg" />, 
+<see cref="M:Mono.Unix.Native.Syscall.rename" />, 
+<see cref="M:Mono.Unix.Native.Syscall.rmdir" />, 
+<see cref="M:Mono.Unix.Native.Syscall.select" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sem_post" />, 
+<see cref="M:Mono.Unix.Native.Syscall.send" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sendmsg" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sendto" />, 
+<see cref="M:Mono.Unix.Native.Syscall.setgid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.setpgid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.setsid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.setsockopt" />, 
+<see cref="M:Mono.Unix.Native.Syscall.setuid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.shutdown" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigaction" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigaddset" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigdelset" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigemptyset" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigfillset" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigismember" />, 
+<see cref="M:Mono.Unix.Native.Syscall.signal" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigpause" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigpending" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigprocmask" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigqueue" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigset" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sigsuspend" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sleep" />, 
+<see cref="M:Mono.Unix.Native.Syscall.socket" />, 
+<see cref="M:Mono.Unix.Native.Syscall.socketpair" />, 
+<see cref="M:Mono.Unix.Native.Syscall.stat" />, 
+<see cref="M:Mono.Unix.Native.Syscall.symlink" />, 
+<see cref="M:Mono.Unix.Native.Syscall.sysconf" />, 
+<see cref="M:Mono.Unix.Native.Syscall.tcdrain" />, 
+<see cref="M:Mono.Unix.Native.Syscall.tcflow" />, 
+<see cref="M:Mono.Unix.Native.Syscall.tcflush" />, 
+<see cref="M:Mono.Unix.Native.Syscall.tcgetattr" />, 
+<see cref="M:Mono.Unix.Native.Syscall.tcgetpgrp" />, 
+<see cref="M:Mono.Unix.Native.Syscall.tcsendbreak" />, 
+<see cref="M:Mono.Unix.Native.Syscall.tcsetattr" />, 
+<see cref="M:Mono.Unix.Native.Syscall.tcsetpgrp" />, 
+<see cref="M:Mono.Unix.Native.Syscall.time" />, 
+<see cref="M:Mono.Unix.Native.Syscall.timer_getoverrun" />, 
+<see cref="M:Mono.Unix.Native.Syscall.timer_gettime" />, 
+<see cref="M:Mono.Unix.Native.Syscall.timer_settime" />, 
+<see cref="M:Mono.Unix.Native.Syscall.times" />, 
+<see cref="M:Mono.Unix.Native.Syscall.umask" />, 
+<see cref="M:Mono.Unix.Native.Syscall.uname" />, 
+<see cref="M:Mono.Unix.Native.Syscall.unlink" />, 
+<see cref="M:Mono.Unix.Native.Syscall.utime" />, 
+<see cref="M:Mono.Unix.Native.Syscall.wait" />, 
+<see cref="M:Mono.Unix.Native.Syscall.waitpid" />, 
+<see cref="M:Mono.Unix.Native.Syscall.write" />.
+</para>
+    </remarks>
+    <altmember cref="M:Mono.Unix.Native.Stdlib.signal" />
+  </Docs>
+</Type>

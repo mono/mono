@@ -1,0 +1,83 @@
+<Type Name="PeerCred" FullName="Mono.Unix.PeerCred">
+  <TypeSignature Language="C#" Value="public class PeerCred" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>When using Unix domain sockets (via <see cref="T:Mono.Unix.UnixEndPoint" /> or <see cref="T:Mono.Unix.UnixClient" />, for example) most operating systems support the passing of credentials through the socket.  Generally, the process id (PID) of the application on the other side of the connection as well as the group ID (GID) and user ID (UID) of the executing user are available.  This is done via the kernel and cannot be spoofed, so this can be used to reliably authenticate a Unix socket connection.
+</summary>
+    <remarks>Not all operating systems support this and the values of <see cref="P:Mono.Unix.PeerCred.GroupID" />, <see cref="P:Mono.Unix.PeerCred.ProcessID" />, and <see cref="P:Mono.Unix.PeerCred.UserID" /> may all be zero.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PeerCred (System.Net.Sockets.Socket sock);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="sock" Type="System.Net.Sockets.Socket" />
+      </Parameters>
+      <Docs>
+        <param name="sock">A <see cref="T:System.Net.Sockets.Socket" />, but this must be a Unix domain socket.</param>
+        <summary>Reads the peer credentials from a Unix domain socket.</summary>
+        <remarks>If the <see cref="T:System.Net.Sockets.Socket" /> passed in is not a Unix domain socket, <see cref="T:System.ArgumentException" /> is thrown.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GroupID">
+      <MemberSignature Language="C#" Value="public int GroupID { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The Unix group ID</summary>
+        <value>The Unix group ID of the connection's peer.</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProcessID">
+      <MemberSignature Language="C#" Value="public int ProcessID { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The process ID</summary>
+        <value>The process ID of the connection's peer.</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UserID">
+      <MemberSignature Language="C#" Value="public int UserID { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The Unix user ID</summary>
+        <value>The Unix user ID of the connection's peer.</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

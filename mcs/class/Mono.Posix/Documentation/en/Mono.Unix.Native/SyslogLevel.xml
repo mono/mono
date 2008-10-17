@@ -1,0 +1,139 @@
+<Type Name="SyslogLevel" FullName="Mono.Unix.Native.SyslogLevel">
+  <TypeSignature Language="C#" Value="public enum SyslogLevel" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>System logging levels.</summary>
+    <remarks>Possible <see cref="M:Mono.Unix.Native.Syscall.syslog" /><paramref name="level" /> values.</remarks>
+    <altmember cref="M:Mono.Unix.Native.Syscall.syslog" />
+    <altmember cref="M:Mono.Unix.Native.Syscall.setlogmask" />
+  </Docs>
+  <Members>
+    <Member MemberName="LOG_ALERT">
+      <MemberSignature Language="C#" Value="LOG_ALERT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SyslogLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A condition that should be corrected immediately, such as a
+        corrupted system database.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LOG_CRIT">
+      <MemberSignature Language="C#" Value="LOG_CRIT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SyslogLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Critical conditions, e.g., hard device errors.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LOG_DEBUG">
+      <MemberSignature Language="C#" Value="LOG_DEBUG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SyslogLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Messages that contain information normally of use only when
+        debugging a program.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LOG_EMERG">
+      <MemberSignature Language="C#" Value="LOG_EMERG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SyslogLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A panic condition.  This is normally broadcast to all users.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LOG_ERR">
+      <MemberSignature Language="C#" Value="LOG_ERR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SyslogLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Errors.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LOG_INFO">
+      <MemberSignature Language="C#" Value="LOG_INFO" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SyslogLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Informational messages.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LOG_NOTICE">
+      <MemberSignature Language="C#" Value="LOG_NOTICE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SyslogLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Conditions that are not error conditions, but should possibly
+        be handled specially.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LOG_WARNING">
+      <MemberSignature Language="C#" Value="LOG_WARNING" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.SyslogLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Warning messages.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

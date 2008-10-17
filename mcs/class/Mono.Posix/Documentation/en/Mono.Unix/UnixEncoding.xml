@@ -1,0 +1,583 @@
+<Type Name="UnixEncoding" FullName="Mono.Unix.UnixEncoding">
+  <TypeSignature Language="C#" Value="public class UnixEncoding : System.Text.Encoding" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Text.Encoding</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>A Unix filename <see cref="T:System.Text.Encoding" />.</summary>
+    <remarks>
+      <para>Unix filenames are an interesting construct, as there is no 
+    encoding.  The operating system kernel only maintains a sequence of bytes
+    for the filename, with no encoding implied.  This makes it non-trivial (or
+    impossible) to determine what encoding a filename is in -- it could be
+    UTF-8, ASCII, Shift-JIS, or some binary data inserted by a freak 
+    <c>touch</c>(1) accident (try <c>touch "$(printf "test\xffname")"</c>
+    within a <c>bash</c>(1) shell for an example).</para>
+      <para>On the other hand, developers and users expect filenames to be
+    strings, and the <see cref="T:System.String" /> type is a UTF-16 encoded
+    string.  This consequently requires that all filesystem byte sequences be
+    converted into some UTF-16 encoded string so that files can be used
+    sensibly.</para>
+      <para>All filenames strings provided to/from the 
+    <see cref="N:Mono.Unix" /> and <see cref="N:Mono.Unix.Native" /> types are 
+    passed through <c>UnixEncoding</c>.
+    <c>UnixEncoding</c> does the following:</para>
+      <list type="bullet">
+        <item>
+          <term>
+            <para>When unmarshaling a filename from unmanaged to managed code
+      (such as with <see cref="M:Mono.Unix.Native.Syscall.readdir" />),
+      <c>UnixEncoding</c> will first try to decode the string as a UTF-8
+      string.</para>
+            <para>If the UTF-8 decode fails, any "invalid" characters will be
+      represented as the <see cref="T:System.Char" /> sequence of 
+      <see cref="F:Mono.Unix.UnixEncoding.EscapeByte" /> followed by the
+      "offending" byte cast to a char.</para>
+          </term>
+        </item>
+        <item>
+          <term>
+      When marshaling a filename from managed to unmanaged code (such as
+      via <see cref="M:Mono.Unix.Native.Syscall.open" /> or 
+      <see cref="M:Mono.Unix.Native.Syscall.stat" />), the filename will be 
+      encoded using UTF-8 unless 
+      <see cref="F:Mono.Unix.UnixEncoding.EscapeByte" /> is encountered, 
+      in which case the <c>EscapeByte</c> character will be skipped
+      and the following character will be marshaled as a byte.
+      </term>
+        </item>
+      </list>
+      <para>The upshot to all this is that <c>Mono.Unix</c> and
+    <c>Mono.Unix.Native</c> can list, access, and open all files on your 
+    filesystem, regardless of encoding.</para>
+      <para>The downside is that all such support is only within the
+    <c>Mono.Unix</c> and <c>Mono.Unix.Native</c> namespaces.  You won't be
+    able to pass non-Unicode filenames as command-line arguments.</para>
+      <para>In short, it's a Glorious Hack.  Rejoice.  Or something.</para>
+      <para>What this means:</para>
+      <list type="bullet">
+        <item>
+          <term>
+      Any filename on disk, in any encoding (or lack thereof), can be
+      found and used with the <c>Mono.Unix</c> and <c>Mono.Unix.Native</c> 
+      types.
+      </term>
+        </item>
+        <item>
+          <term>
+      You don't need to specify the encoding of filenames (which could be
+      wrong anyway, since a directory may contain files in more than one 
+      encoding).
+      </term>
+        </item>
+        <item>
+          <term>
+      Printing or otherwise saving/displaying the filename may be 
+      incorrect, since it contains extra escaping that's relevant only to 
+      the <c>Mono.Unix</c> and <c>Mono.Unix.Native</c> classes.  I'm not 
+      losing any sleep over this, because if the encoding is unknown the 
+      strings couldn't be displayed correctly anyway...
+      </term>
+        </item>
+        <item>
+          <term>
+            <para>You may not be able to use the 
+      <see cref="N:System.IO" /> classes to use a file 
+      obtained via <c>Mono.Unix</c> and <c>Mono.Unix.Native</c> classes.  
+      This is because <c>System.IO</c>
+      doesn't know about <c>UnixEncoding</c> and the escape mechanism it uses.
+      I don't consider this to be a problem, as the <c>System.IO</c> classes 
+      couldn't open these files anyway -- they weren't returned by
+      <see cref="M:System.IO.Directory.GetFiles" />, and they were effectively 
+      invisible to normal Mono programs.  They still are.</para>
+            <para>If the filename contains <c>Mono.Unix.UnixEncoding.EscapeByte</c>, 
+      then you won't be able to use <c>System.IO</c> with that file.  If the 
+      filename doesn't contain <c>EscapeByte</c>, it can be used with 
+      <c>System.IO</c>.</para>
+          </term>
+        </item>
+        <item>
+          <term>
+      You still can't specify filenames in arbitrary encodings on the 
+      mono command line.  Mono will still try to decode these as either
+      UTF-8 strings or as an encoding listed in the 
+      <c>MONO_EXTERNAL_ENCODINGS</c> environment variable.
+      </term>
+        </item>
+      </list>
+      <para>Questions &amp; Answers</para>
+      <list type="table">
+        <listheader>
+          <term>
+          </term>
+          <description>
+          </description>
+        </listheader>
+        <item>
+          <term>Q</term>
+          <description>Why UTF-8?  Why not use 
+        <see cref="M:System.Text.Encoding.Default" />?</description>
+        </item>
+        <item>
+          <term>A</term>
+          <description>Because UTF-8 is sane and should always be used. :-)</description>
+        </item>
+        <item>
+          <term>Q</term>
+          <description>Seriously?</description>
+        </item>
+        <item>
+          <term>A</term>
+          <description>
+            <para>Ha ha only serious.  Plus, since a directory can contain files in 
+        more than one encoding, and expecting the developer to provide the
+        right encoding for each file would require the developer to be 
+        clairvoyant.</para>
+            <para>Plus, using UTF-8 allows any Unicode character to be used in a 
+        filename (which could be considered as a bad thing, depending).</para>
+          </description>
+        </item>
+        <item>
+          <term>Q</term>
+          <description>What is 
+        <see cref="M:Mono.Unix.UnixEncoding.EscapeByte" />?</description>
+        </item>
+        <item>
+          <term>A</term>
+          <description>
+        U+0000.  Since this is the terminating null, it by definition cannot 
+        appear within a Unix filename, so it's a sane choice.
+        </description>
+        </item>
+        <item>
+          <term>Q</term>
+          <description>
+        Why not use <c>byte[]</c> instead of 
+        <see cref="System.String" />s for filenames in 
+        <see cref="M:Mono.Unix.Native.Syscall.open" />, 
+        <see cref="M:Mono.Unix.Native.Syscall.stat" />, etc.?
+        </description>
+        </item>
+        <item>
+          <term>A</term>
+          <description>
+            <para>Because <c>byte[]</c> is fugly to work with, so it would need to 
+        be offered in addition to the string versions, which would double all 
+        the file-related APIs.  Do you really want to explain the difference
+        between these APIs?</para>
+            <example>
+              <code lang="C#">
+public static int open (string pathname, OpenFlags flags);
+public static int open (byte[] pathname, OpenFlags flags);
+        </code>
+            </example>
+            <para>(Hint: if you do want to explain the difference between these
+        you're masochistic.)</para>
+            <para>Furthermore, what should 
+        <see cref="F:Mono.Unix.Native.Dirent.d_name" /> be (or
+        <see cref="F:Mono.Unix.Native.Fstab.fs_file" />, or any other 
+        string-typed structure member)?  If it's a <c>byte[]</c>, developers 
+        will still need a way to convert it to a string for debugging and 
+        display to the user, but the developer can't know what encoding to use 
+        (it could be anything), so this becomes an impossible problem.  
+        <c>UnixEncoding</c> may be a Glorious Hack, but at least it leaves the 
+        API usage unambiguous.</para>
+          </description>
+        </item>
+        <item>
+          <term>Q</term>
+          <description>
+        .NET doesn't have these limitations!  Why does Mono?
+        </description>
+        </item>
+        <item>
+          <term>A</term>
+          <description>
+        Because Windows stores all filenames on disk as Unicode (and has 
+        since Windows NT 3.1 and/or the introduction of Long Filenames in
+        Windows 95), so it doesn't need to worry (as much) about the
+        arbitrary filename encoding problem.  Short filenames might be in a
+        local encoding, but CIFS uses Unicode, so you can't be accessing
+        non-Unicode filenames over a network share.
+        </description>
+        </item>
+        <item>
+          <term>Q</term>
+          <description>
+        Why doesn't Mono do this (or something like it) so that System.IO 
+        can read and process all files?
+        </description>
+        </item>
+        <item>
+          <term>A</term>
+          <description>
+            <para>Priorities. :-)</para>
+            <para>Plus, I thought it would be easy for Mono to do this, but after 
+        implementing this type I'm not sure the other 
+        maintainers would wish to deal with the issues of arbitrary 
+        filename encodings.</para>
+            <para>Plus, most current Linux distros default to using UTF-8 already,
+        so (hopefully) this won't be an issue for too much longer
+        (10 years?).</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixEncoding ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>Constructs a new instance of the 
+        <see cref="T:Mono.Unix.UnixEncoding" /> class.</summary>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EscapeByte">
+      <MemberSignature Language="C#" Value="public static readonly char EscapeByte;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The character which precedes all characters which need
+        escaping during managed-&gt;unmanaged marshaling.</summary>
+        <remarks>This character is U+0000.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetByteCount">
+      <MemberSignature Language="C#" Value="public override int GetByteCount (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetByteCount">
+      <MemberSignature Language="C#" Value="public override int GetByteCount (char[] chars, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chars" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="chars">To be added.</param>
+        <param name="index">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public override byte[] GetBytes (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public override int GetBytes (char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="chars" Type="System.Char[]" />
+        <Parameter Name="charIndex" Type="System.Int32" />
+        <Parameter Name="charCount" Type="System.Int32" />
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="byteIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="chars">To be added.</param>
+        <param name="charIndex">To be added.</param>
+        <param name="charCount">To be added.</param>
+        <param name="bytes">To be added.</param>
+        <param name="byteIndex">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public override int GetBytes (string s, int charIndex, int charCount, byte[] bytes, int byteIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="charIndex" Type="System.Int32" />
+        <Parameter Name="charCount" Type="System.Int32" />
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="byteIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="charIndex">To be added.</param>
+        <param name="charCount">To be added.</param>
+        <param name="bytes">To be added.</param>
+        <param name="byteIndex">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCharCount">
+      <MemberSignature Language="C#" Value="public override int GetCharCount (byte[] bytes, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">To be added.</param>
+        <param name="index">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetChars">
+      <MemberSignature Language="C#" Value="public override int GetChars (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="byteIndex" Type="System.Int32" />
+        <Parameter Name="byteCount" Type="System.Int32" />
+        <Parameter Name="chars" Type="System.Char[]" />
+        <Parameter Name="charIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">To be added.</param>
+        <param name="byteIndex">To be added.</param>
+        <param name="byteCount">To be added.</param>
+        <param name="chars">To be added.</param>
+        <param name="charIndex">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDecoder">
+      <MemberSignature Language="C#" Value="public override System.Text.Decoder GetDecoder ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Decoder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEncoder">
+      <MemberSignature Language="C#" Value="public override System.Text.Encoder GetEncoder ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMaxByteCount">
+      <MemberSignature Language="C#" Value="public override int GetMaxByteCount (int charCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="charCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="charCount">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMaxCharCount">
+      <MemberSignature Language="C#" Value="public override int GetMaxCharCount (int byteCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="byteCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="byteCount">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetPreamble">
+      <MemberSignature Language="C#" Value="public override byte[] GetPreamble ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Instance">
+      <MemberSignature Language="C#" Value="public static readonly System.Text.Encoding Instance;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>A default <see cref="T:Mono.Unix.UnixEncoding" /> instance.</summary>
+        <remarks>This member can be used instead of constructing a new
+        <see cref="T:Mono.Unix.UnixEncoding" /> instance.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

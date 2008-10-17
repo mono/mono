@@ -1,0 +1,881 @@
+<Type Name="StdioFileStream" FullName="Mono.Unix.StdioFileStream">
+  <TypeSignature Language="C#" Value="public class StdioFileStream : System.IO.Stream" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.IO.Stream</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>A <see cref="T:System.IO.Stream" /> wrapper over the <c>FILE</c> 
+    type.</summary>
+    <remarks>
+      <para>
+        <see cref="T:Mono.Unix.StdioFileStream" /> is used for reading and 
+        writing files on a file system and interoperating with the standard
+        ANSI/ISO C <c>FILE</c> pointer data type.
+      </para>
+      <para>
+        <see cref="T:Mono.Unix.StdioFileStream" /> objects support 
+        random access to files using the 
+        <see cref="M:System.IO.Stream.Seek(System.Int64,System.IO.SeekOrigin)" /> 
+        method, and the 
+        <see cref="P:System.IO.Stream.CanSeek" /> properties of 
+        <see cref="T:Mono.Unix.StdioFileStream" /> instances 
+        encapsulating files are set to <see langword="true" />. 
+        The 
+        <see cref="M:System.IO.Stream.Seek(System.Int64,System.IO.SeekOrigin)" /> 
+        method allows the read/write position to be moved to any position 
+        within the file. This is done with byte offset reference point 
+        parameters. The byte offset is relative to the seek reference point, 
+        which can be the beginning, the current position, or the end of the 
+        underlying file, as represented by the three values of the
+        <see cref="T:System.IO.SeekOrigin" /> enumeration.
+      </para>
+      <para>
+        If a <see cref="T:Mono.Unix.StdioFileStream" /> encapsulates a 
+        device that does not support seeking, its 
+        <see cref="P:System.IO.FileStream.CanSeek" /> property is 
+        <see langword="false" />. 
+        <block subset="none" type="note">
+          For additional information, see 
+          <see cref="P:System.IO.Stream.CanSeek" />.
+        </block></para>
+      <example>
+        <para>
+          The following example demonstrates the use of a 
+          <see cref="T:Mono.Unix.StdioFileStream" /> object.
+        </para>
+        <code lang="C#">using System;
+using System.IO;
+using Mono.Unix;
+
+class Directory {
+   public static void Main(String[] args) { 
+      StdioFileStream fs = new StdioFileStream ("log.txt", "ab");
+      StreamWriter w = new StreamWriter(fs);         
+
+      Log ("Test1", w);
+      Log ("Test2", w);
+ 
+      w.Close(); // Close the writer and underlying file.     
+
+      fs = new StdioFileStream("log.txt", "rb");
+
+      StreamReader r = new StreamReader(fs);        
+      r.BaseStream.Seek(0, SeekOrigin.Begin);   
+      DumpLog (r);
+   }
+
+   public static void Log (String logMessage, StreamWriter w) {
+      w.Write("Log Entry : ");
+      w.WriteLine("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
+      w.WriteLine(":");
+      w.WriteLine(":{0}", logMessage);
+      w.WriteLine ("-------------------------------");
+      w.Flush();  
+   }
+
+   public static void DumpLog (StreamReader r) {
+      while (r.Peek() &gt; -1) { // While not at the end of the file, write to standard output.     
+        Console.WriteLine(r.ReadLine());
+      }
+
+      r.Close();
+   }
+}
+</code>
+        <para>Some example output is </para>
+        <c>
+          <para>Log Entry : 9:26:21 AM Friday, July 06, 2001</para>
+          <para>:</para>
+          <para>:Test1</para>
+          <para>-------------------------------</para>
+          <para>Log Entry : 9:26:21 AM Friday, July 06, 2001</para>
+          <para>:</para>
+          <para>:Test2</para>
+          <para>-------------------------------</para>
+        </c>
+      </example>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StdioFileStream (IntPtr fileStream);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="fileStream" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="fileStream">
+          A <see cref="T:System.IntPtr" /> containing a <c>FILE</c> pointer.
+        </param>
+        <summary>Creates a <see cref="T:Mono.Unix.StdioFileStream" /> type,
+        wrapping the existing unmanaged <c>FILE</c> pointer 
+        <paramref name="fileStream" />.</summary>
+        <remarks>
+          <para>By default, <paramref name="fileStream" /> is owned by the
+          created <see cref="T:Mono.Unix.StdioFileStream" /> instance.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="fileStream" /> is an invalid <c>FILE</c> pointer.
+        </exception>
+        <altmember cref="C:Mono.Unix.StdioFileStream(IntPtr, bool)" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StdioFileStream (string path);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the file name to open.</param>
+        <summary>Opens <paramref name="path" /> for reading.</summary>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> or <paramref name="mode" /> is 
+          <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> is a <c>0</c>-length string.
+        </exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">
+          <paramref name="path" /> could not be opened.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StdioFileStream (IntPtr fileStream, bool ownsHandle);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="fileStream" Type="System.IntPtr" />
+        <Parameter Name="ownsHandle" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="fileStream">A <see cref="T:System.IntPtr" /> containing a <c>FILE</c> pointer</param>
+        <param name="ownsHandle">A <see cref="T:System.Boolean" /> specifying whether or not the created 
+          <see cref="T:Mono.Unix.StdioFileStream" /> instance "owns" 
+          <paramref name="fileStream" />.</param>
+        <summary>Creates a <see cref="T:Mono.Unix.StdioFileStream" /> type,
+        wrapping the existing unmanaged <c>FILE</c> pointer 
+        <paramref name="fileStream" />.</summary>
+        <remarks>If <paramref name="ownsHandle" /> is <see langword="true" />,
+        then <paramref name="fileStream" /> will be closed via 
+        <see cref="M:Mono.Unix.Native.Stdlib.fclose" /> when 
+        <see cref="M:Mono.Unix.StdioFileStream.Close" /> is invoked (which is
+        also called from the finalizer and from the 
+        <see cref="T:System.IDisposable" /> implementation).  Otherwise,
+        <paramref name="fileStream" /> will only be flushed on 
+        <see cref="M:Mono.Unix.StdioFileStream.Close" /> and not actually
+        closed.</remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="fileStream" /> is an invalid <c>FILE</c> pointer.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StdioFileStream (IntPtr fileStream, System.IO.FileAccess access);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="fileStream" Type="System.IntPtr" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+      </Parameters>
+      <Docs>
+        <param name="fileStream">A <see cref="T:System.IntPtr" /> containing a <c>FILE</c> pointer</param>
+        <param name="access">A <see cref="T:System.IO.FileAccess" /> value
+          that determins how the file may be accessed by the 
+          <see cref="T:Mono.Unix.StdioFileStream" /> object.  This parameter is 
+          used to specify the initial values of the 
+          <see cref="P:System.IO.Stream.CanRead" /> and
+          <see cref="P:System.IO.Stream.CanWrite" /> properties.</param>
+        <summary>Creates a <see cref="T:Mono.Unix.StdioFileStream" /> type,
+        wrapping the existing unmanaged <c>FILE</c> pointer
+        <paramref name="fileStream" /> with the specified file 
+        <paramref name="access" />.</summary>
+        <remarks>
+          <para>By default, <paramref name="fileStream" /> is owned by the
+          created <see cref="T:Mono.Unix.StdioFileStream" /> instance.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="fileStream" /> is an invalid <c>FILE</c> pointer.
+        </exception>
+        <altmember cref="C:Mono.Unix.StdioFileStream(IntPtr, System.IO.FileAccess, bool)" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StdioFileStream (string path, System.IO.FileAccess access);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the file name to open.</param>
+        <param name="access">A <see cref="T:System.IO.FileAccess" /> value
+        that determins how the file may be accessed by the 
+        <see cref="T:Mono.Unix.StdioFileStream" /> object.  This parameter is 
+        used to specify the initial values of the 
+        <see cref="P:System.IO.Stream.CanRead" /> and
+        <see cref="P:System.IO.Stream.CanWrite" /> properties.</param>
+        <summary>Opens <paramref name="path" /> with the specified file access
+        <paramref name="access" />.</summary>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> or <paramref name="mode" /> is 
+          <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> is a <c>0</c>-length string.
+        </exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">
+          <paramref name="path" /> could not be opened.
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="access" /> is not one of 
+          <see cref="F:System.IO.FileAccess.Read" />,
+          <see cref="F:System.IO.FileAccess.Write" />, or
+          <see cref="F:System.IO.FileAccess.ReadWrite" />.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StdioFileStream (string path, System.IO.FileMode mode);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the file name to open.</param>
+        <param name="mode">A <see cref="T:System.IO.FileMode" /> value that
+        determines how to open or create the file.</param>
+        <summary>Opens <paramref name="path" /> with the specified file mode
+        <paramref name="mode" />.</summary>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> or <paramref name="mode" /> is 
+          <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> is a <c>0</c>-length string.
+        </exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">
+          <paramref name="path" /> could not be opened.
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="path" /> exists and 
+          <see cref="F:System.IO.FileMode.CreateNew" /> was specified.
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path" /> doesn't exist and 
+          <see cref="F:System.IO.FileMode.Open" /> was specified.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StdioFileStream (string path, string mode);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the file name to open.</param>
+        <param name="mode">A <see cref="T:System.String" /> specifying how to access <paramref name="path" />.</param>
+        <summary>Opens <paramref name="path" /> with the specified 
+        <paramref name="mode" />.</summary>
+        <remarks>
+          <para>The argument <paramref name="mode" /> points to a string 
+          beginning with one of the following sequences (Additional characters 
+          may follow these sequences.):</para>
+          <list type="table">
+            <listheader>
+              <term>
+                <paramref name="mode" />
+              </term>
+              <description>Description</description>
+            </listheader>
+            <item>
+              <term>
+                <c>"r"</c>
+              </term>
+              <description> Open text file for reading.  The stream is positioned at the beginning of the file.</description>
+            </item>
+            <item>
+              <term>
+                <c>"r+"</c>
+              </term>
+              <description>Open for reading and writing.  The stream is positioned at the beginning of the file.</description>
+            </item>
+            <item>
+              <term>
+                <c>"w"</c>
+              </term>
+              <description>Truncate file to zero length or create text file for writing.  The stream is positioned at the beginning of the file.</description>
+            </item>
+            <item>
+              <term>
+                <c>"w+"</c>
+              </term>
+              <description>Open for reading and writing.  The file is created if it does not exist, otherwise it is truncated.  The stream is positioned at the beginning of the file.</description>
+            </item>
+            <item>
+              <term>
+                <c>"a"</c>
+              </term>
+              <description>Open for writing.  The file is created if it does not exist.  The stream is positioned at the end of the file.  Subsequent writes to the file will always end up at the then current end of file, irrespective of any intervening <see cref="M:System.IO.Stream.Seek" /> call or similar.</description>
+            </item>
+            <item>
+              <term>
+                <c>"a+"</c>
+              </term>
+              <description>Open for reading and writing.  The file is created if it does not exist.  The stream is positioned at the end of the file.  Subsequent writes to the file will always end up at the then current end of file, irrespective of any intervening <see cref="M:System.IO.Stream.Seek" /> or similar.</description>
+            </item>
+          </list>
+          <para>The <paramref name="mode" /> string can also include the letter 
+          "b" either as a third character or as a character between the 
+          characters in any of the two-character strings described above, and 
+          is used to enable <i>binary</i> reading/writing on platforms which 
+          have different text/binary encodings (read: Microsoft Windows).  The 
+          default (non-<c>b</c><paramref name="mode" />) is text encoding.</para>
+          <para>Any created files will have mode <c>S_IRUSR | S_IWUSR | S_IRGRP | 
+          S_IWGRP | S_IROTH | S_IWOTH</c> (0666), as modified by the process' 
+          umask value (see <see cref="M:Mono.Unix.Native.Syscall.umask" />(2)).
+          </para>
+          <para>ANSI C requires that a file positioning function intervene 
+          between output and input, unless an input operation encounters 
+          end-of-file.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> or <paramref name="mode" /> is 
+          <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> is a <c>0</c>-length string.
+        </exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">
+          <paramref name="path" /> could not be opened.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Stdlib.fopen" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StdioFileStream (IntPtr fileStream, System.IO.FileAccess access, bool ownsHandle);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="fileStream" Type="System.IntPtr" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="ownsHandle" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="fileStream">A <see cref="T:System.IntPtr" /> containing a <c>FILE</c> pointer</param>
+        <param name="access">A <see cref="T:System.IO.FileAccess" /> value
+          that determins how the file may be accessed by the 
+          <see cref="T:Mono.Unix.StdioFileStream" /> object.  This parameter is 
+          used to specify the initial values of the 
+          <see cref="P:System.IO.Stream.CanRead" /> and
+          <see cref="P:System.IO.Stream.CanWrite" /> properties.</param>
+        <param name="ownsHandle">A <see cref="T:System.Boolean" /> specifying whether or not the created 
+          <see cref="T:Mono.Unix.StdioFileStream" /> instance "owns" 
+          <paramref name="fileStream" />.</param>
+        <summary>Creates a <see cref="T:Mono.Unix.StdioFileStream" /> type,
+        wrapping the existing unmanaged <c>FILE</c> pointer
+        <paramref name="fileStream" /> with the specified file 
+        <paramref name="access" />.</summary>
+        <remarks>If <paramref name="ownsHandle" /> is <see langword="true" />,
+        then <paramref name="fileStream" /> will be closed via 
+        <see cref="M:Mono.Unix.Native.Stdlib.fclose" /> when 
+        <see cref="M:Mono.Unix.StdioFileStream.Close" /> is invoked (which is
+        also called from the finalizer and from the 
+        <see cref="T:System.IDisposable" /> implementation).  Otherwise,
+        <paramref name="fileStream" /> will only be flushed on 
+        <see cref="M:Mono.Unix.StdioFileStream.Close" /> and not actually
+        closed.</remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="fileStream" /> is an invalid <c>FILE</c> pointer.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StdioFileStream (string path, System.IO.FileMode mode, System.IO.FileAccess access);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+      </Parameters>
+      <Docs>
+        <param name="path">A <see cref="T:System.String" /> containing the file name to open.</param>
+        <param name="mode">A <see cref="T:System.IO.FileMode" /> value that
+        determines how to open or create the file.</param>
+        <param name="access">A <see cref="T:System.IO.FileAccess" /> value
+        that determins how the file may be accessed by the 
+        <see cref="T:Mono.Unix.StdioFileStream" /> object.  This parameter is 
+        used to specify the initial values of the 
+        <see cref="P:System.IO.Stream.CanRead" /> and
+        <see cref="P:System.IO.Stream.CanWrite" /> properties.</param>
+        <summary>Opens <paramref name="path" /> with the specified file mode 
+        <paramref name="mode" /> and file access
+        <paramref name="access" />.</summary>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> or <paramref name="mode" /> is 
+          <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="path" /> is a <c>0</c>-length string.
+        </exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">
+          <paramref name="path" /> could not be opened.
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="path" /> exists and 
+          <see cref="F:System.IO.FileMode.CreateNew" /> was specified.
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          <paramref name="path" /> doesn't exist and 
+          <see cref="F:System.IO.FileMode.Open" /> was specified.
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="access" /> is not one of 
+          <see cref="F:System.IO.FileAccess.Read" />,
+          <see cref="F:System.IO.FileAccess.Write" />, or
+          <see cref="F:System.IO.FileAccess.ReadWrite" />.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanRead">
+      <MemberSignature Language="C#" Value="public override bool CanRead { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanSeek">
+      <MemberSignature Language="C#" Value="public override bool CanSeek { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanWrite">
+      <MemberSignature Language="C#" Value="public override bool CanWrite { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~StdioFileStream ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public override void Flush ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Handle">
+      <MemberSignature Language="C#" Value="public IntPtr Handle { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The underlying <c>FILE</c> pointer.</summary>
+        <value>A <see cref="T:System.IntPtr" /> containing the underlying
+					<c>FILE</c> pointer.
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidFileStream">
+      <MemberSignature Language="C#" Value="public static readonly IntPtr InvalidFileStream;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>An invalid <c>FILE</c> pointer.</summary>
+        <remarks>This is <see cref="F:System.IntPtr.Zero" />.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="C#" Value="public override long Length { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Position">
+      <MemberSignature Language="C#" Value="public override long Position { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public override int Read (byte[] buffer, int offset, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="offset">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RestoreFilePosition">
+      <MemberSignature Language="C#" Value="public void RestoreFilePosition (Mono.Unix.Native.FilePosition pos);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pos" Type="Mono.Unix.Native.FilePosition" />
+      </Parameters>
+      <Docs>
+        <param name="pos">
+          A <see cref="T:Mono.Unix.Native.FilePosition" /> from which to
+          restore the file position.
+        </param>
+        <summary>Set the current file position saved in a 
+        <see cref="T:Mono.Unix.Native.FilePosition" /> instance.</summary>
+        <remarks>
+          <para>The <see cref="T:Mono.Unix.Native.FilePosition" /> type holds
+        a platform-specific representation of a file position.  This is useful
+        when the underlying standard C library cannot hold a file position in
+        a <c>long</c> data type.  For example, on 32-bit platforms a
+        <c>long</c> is usually 32-bits in size; thus valid file
+        positions as used from <see cref="P:System.IO.Stream.Position" />
+        cannot be set past 2^31 bytes (effectively limiting you to 2GB files).
+        </para>
+          <para>Use this member if your underlying platform doesn't support
+        <see cref="M:System.IO.Stream.Seek" />ing within large files, or you
+        need to save text stream information.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Stdlib.fsetpos" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Rewind">
+      <MemberSignature Language="C#" Value="public void Rewind ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Set <see cref="P:Mono.Unix.StdioFileStream.Position" /> 
+        to the beginning of the file.</summary>
+        <remarks>This is equivalent to <see cref="M:System.IO.Stream.Seek" />(0, 
+        <see cref="F:System.IO.SeekOrigin.Begin" />);</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SaveFilePosition">
+      <MemberSignature Language="C#" Value="public void SaveFilePosition (Mono.Unix.Native.FilePosition pos);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pos" Type="Mono.Unix.Native.FilePosition" />
+      </Parameters>
+      <Docs>
+        <param name="pos">
+          A <see cref="T:Mono.Unix.Native.FilePosition" /> in which to save 
+          the current file position.
+        </param>
+        <summary>Save the current file position into a 
+        <see cref="T:Mono.Unix.Native.FilePosition" /> instance.</summary>
+        <remarks>
+          <para>The <see cref="T:Mono.Unix.Native.FilePosition" /> type holds
+        a platform-specific representation of a file position.  This is useful
+        when the underlying standard C library cannot hold a file position in
+        a <c>long</c> data type.  For example, on 32-bit platforms a
+        <c>long</c> is usually 32-bits in size; thus valid file
+        positions as used from <see cref="P:System.IO.Stream.Position" />
+        cannot be set past 2^31 bytes (effectively limiting you to 2GB files).
+        </para>
+          <para>Use this member if your underlying platform doesn't support
+        <see cref="M:System.IO.Stream.Seek" />ing within large files, or you
+        need to save text stream information.</para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.Stdlib.fgetpos" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Seek">
+      <MemberSignature Language="C#" Value="public override long Seek (long offset, System.IO.SeekOrigin origin);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="origin" Type="System.IO.SeekOrigin" />
+      </Parameters>
+      <Docs>
+        <param name="offset">To be added.</param>
+        <param name="origin">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetLength">
+      <MemberSignature Language="C#" Value="public override void SetLength (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StandardError">
+      <MemberSignature Language="C#" Value="public static readonly IntPtr StandardError;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The standard error file stream.</summary>
+        <remarks>This is the 
+        <see cref="F:Mono.Unix.Native.Stdlib.stderr" /> global variable.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StandardInput">
+      <MemberSignature Language="C#" Value="public static readonly IntPtr StandardInput;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The standard input file stream.</summary>
+        <remarks>This is the 
+        <see cref="F:Mono.Unix.Native.Stdlib.stdin" /> global variable.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StandardOutput">
+      <MemberSignature Language="C#" Value="public static readonly IntPtr StandardOutput;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The standard output file stream.</summary>
+        <remarks>This is the 
+        <see cref="F:Mono.Unix.Native.Stdlib.stdout" /> global variable.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public override void Write (byte[] buffer, int offset, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="offset">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

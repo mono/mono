@@ -1,0 +1,1537 @@
+<Type Name="UnixStream" FullName="Mono.Unix.UnixStream">
+  <TypeSignature Language="C#" Value="public sealed class UnixStream : System.IO.Stream" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.IO.Stream</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>A <see cref="T:System.IO.Stream" /> wrapper over Unix file
+      descriptors.</summary>
+    <remarks>
+      <para>
+        <see cref="T:Mono.Unix.UnixStream" /> is used for reading from and 
+        writing to Unix file descriptors.
+      </para>
+      <para>
+        <see cref="T:Mono.Unix.UnixStream" /> objects <i>may</i> support 
+        random access to files using the 
+        <see cref="M:System.IO.Stream.Seek(System.Int64,System.IO.SeekOrigin)" /> 
+        method (it depends on whether the underlying file descriptor supports
+        seeking), and the 
+        <see cref="P:System.IO.Stream.CanSeek" /> properties of 
+        <see cref="T:Mono.Unix.UnixStream" /> instances 
+        encapsulating file descriptors are set depending on the capabilities
+        of the underlying file descriptor.
+        The 
+        <see cref="M:System.IO.Stream.Seek(System.Int64,System.IO.SeekOrigin)" /> 
+        method allows the read/write position to be moved to any position 
+        within the file. This is done with byte offset reference point 
+        parameters. The byte offset is relative to the seek reference point, 
+        which can be the beginning, the current position, or the end of the 
+        underlying file, as represented by the three values of the
+        <see cref="T:System.IO.SeekOrigin" /> enumeration.
+      </para>
+      <para>
+        If a <see cref="T:Mono.Unix.StdioFileStream" /> encapsulates a 
+        device that does not support seeking, its 
+        <see cref="P:System.IO.FileStream.CanSeek" /> property is 
+        <see langword="false" />. 
+        <block subset="none" type="note">
+          For additional information, see 
+          <see cref="P:System.IO.Stream.CanSeek" />.
+        </block></para>
+      <example>
+        <para>
+          The following example demonstrates the use of a 
+          <see cref="T:Mono.Unix.UnixStream" /> object.
+        </para>
+        <code lang="C#">using System;
+using System.IO;
+using Mono.Unix;
+using Mono.Unix.Native;
+
+class Directory {
+   public static void Main(string[] args) { 
+      int fd = Syscall.open ("log.txt",
+         OpenFlags.O_WRONLY | OpenFlags.O_CREAT | 
+         OpenFlags.O_APPEND | OpenFlags.O_LARGEFILE);
+      UnixStream fs = new UnixStream (fd);
+      StreamWriter w = new StreamWriter(fs);         
+
+      Log ("Test1", w);
+      Log ("Test2", w);
+ 
+      w.Close(); // Close the writer and underlying file.     
+
+      fd = Syscall.open ("log.txt", 
+         OpenFlags.O_RDONLY | OpenFlags.O_LARGEFILE);
+      fs = new UnixStream(fd);
+
+      StreamReader r = new StreamReader(fs);        
+      r.BaseStream.Seek(0, SeekOrigin.Begin);   
+      DumpLog (r);
+   }
+
+   public static void Log (string logMessage, StreamWriter w) {
+      w.Write("Log Entry : ");
+      w.WriteLine("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
+      w.WriteLine(":");
+      w.WriteLine(":{0}", logMessage);
+      w.WriteLine ("-------------------------------");
+      w.Flush();  
+   }
+
+   public static void DumpLog (StreamReader r) {
+      while (r.Peek() &gt; -1) { // While not at the end of the file, write to standard output.     
+         Console.WriteLine(r.ReadLine());
+      }
+
+      r.Close();
+   }
+}
+</code>
+        <para>Some example output is </para>
+        <c>
+          <para>Log Entry : 9:26:21 AM Friday, July 06, 2001</para>
+          <para>:</para>
+          <para>:Test1</para>
+          <para>-------------------------------</para>
+          <para>Log Entry : 9:26:21 AM Friday, July 06, 2001</para>
+          <para>:</para>
+          <para>:Test2</para>
+          <para>-------------------------------</para>
+        </c>
+      </example>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixStream (int fileDescriptor);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="fileDescriptor" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="fileDescriptor">
+          A <see cref="T:System.Int32" /> containing a file descriptor.
+        </param>
+        <summary>
+          Creates and initializes a <see cref="T:Mono.Unix.UnixStream" />
+          instance, wrapping the specified file descriptor 
+          <paramref name="fileDescriptor" />.
+        </summary>
+        <remarks>
+          <para>By default, <paramref name="fileStream" /> is owned by the
+          created <see cref="T:Mono.Unix.StdioFileStream" /> instance.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="fileDescriptor" /> is equal to 
+          <see cref="F:Mono.Unix.UnixStream.InvalidFileDescriptor" />.
+        </exception>
+        <altmember cref="C:Mono.Unix.UnixStream(int, bool)" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixStream (int fileDescriptor, bool ownsHandle);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="fileDescriptor" Type="System.Int32" />
+        <Parameter Name="ownsHandle" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="fileDescriptor">
+          A <see cref="T:System.Int32" /> containing a file descriptor.
+        </param>
+        <param name="ownsHandle">
+          A <see cref="T:System.Boolean" /> specifying whether or not the
+          created <see cref="T:Mono.Unix.UnixStream" /> instance "owns" 
+          <paramref name="fileDescriptor" />.
+        </param>
+        <summary>
+          Creates and initializes a <see cref="T:Mono.Unix.UnixStream" />
+          instance, wrapping the specified file descriptor 
+          <paramref name="fileDescriptor" />.
+        </summary>
+        <remarks>
+          <para>
+            If <paramref name="ownsHandle" /> is <see langword="true" />,
+            then <paramref name="fileDescriptor" /> will be closed via 
+            <see cref="M:Mono.Unix.Native.Syscall.close" /> when 
+            <see cref="M:Mono.Unix.UnixStream.Close" /> is invoked (which 
+            is also called from the finalizer and from the 
+            <see cref="T:System.IDisposable" /> implementation).  Otherwise,
+            <paramref name="fileDescriptor" /> will only be flushed on 
+            <see cref="M:Mono.Unix.UnixStream.Close" /> and not actually
+            closed.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="fileDescriptor" /> is equal to 
+          <see cref="F:Mono.Unix.UnixStream.InvalidFileDescriptor" />.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AdviseFileAccessPattern">
+      <MemberSignature Language="C#" Value="public void AdviseFileAccessPattern (Mono.Unix.FileAccessPattern pattern);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pattern" Type="Mono.Unix.FileAccessPattern" />
+      </Parameters>
+      <Docs>
+        <param name="pattern">
+          A <see cref="T:Mono.Unix.FileAccessPattern" /> containing the file 
+          access pattern to suggest.
+        </param>
+        <summary>Advises a file access pattern for a file stream.</summary>
+        <remarks>
+          <para>
+            <c>AdviseFileAccessPattern</c> is used to announce an intention
+          to access file data with a specific pattern, allowing the kernel to
+          perform appropriate optimizations.</para>
+          <para>
+            <paramref name="pattern" /> applies to a region starting at
+          <paramref name="offset" /> and extending for <paramref name="len" />
+          bytes (or until end-of-file if <paramref name="len" /> is <c>0</c>)
+          within the file specified by <paramref name="stream" />.  The specified
+          region need not currently exist.</para>
+          <para>The specified pattern is not binding; it merely constitutes an
+          expectation on behalf of the application.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="stream" /> is not a valid file stream.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="advice" /> is not a value.
+          </para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="stream" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="stream" /> 
+          refers to a pipe or FIFO.</exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.posix_fadvise" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AdviseFileAccessPattern">
+      <MemberSignature Language="C#" Value="public void AdviseFileAccessPattern (Mono.Unix.FileAccessPattern pattern, long offset, long len);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pattern" Type="Mono.Unix.FileAccessPattern" />
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="len" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="pattern">
+          A <see cref="T:Mono.Unix.FileAccessPattern" /> containing the file 
+          access pattern to suggest.
+        </param>
+        <param name="offset">
+          A <see cref="T:System.Int64" /> containing the start of the range to suggest 
+          the <paramref name="pattern" /> access pattern.
+        </param>
+        <param name="len">
+          A <see cref="T:System.Int64" /> containing the length of the range
+          to suggest the <paramref name="pattern" />
+          access pattern.  If <c>0</c>, <paramref name="pattern" /> is suggested 
+          until end-of-file.
+        </param>
+        <summary>Advises a file access pattern for a file stream.</summary>
+        <remarks>
+          <para>
+            <c>AdviseFileAccessPattern</c> is used to announce an intention
+          to access file data with a specific pattern, allowing the kernel to
+          perform appropriate optimizations.</para>
+          <para>
+            <paramref name="pattern" /> applies to a region starting at
+          <paramref name="offset" /> and extending for <paramref name="len" />
+          bytes (or until end-of-file if <paramref name="len" /> is <c>0</c>)
+          within the file specified by <paramref name="stream" />.  The specified
+          region need not currently exist.</para>
+          <para>The specified pattern is not binding; it merely constitutes an
+          expectation on behalf of the application.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="stream" /> is not a valid file stream.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="advice" /> is not a value.
+          </para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="stream" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="stream" /> 
+          refers to a pipe or FIFO.</exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.posix_fadvise" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanRead">
+      <MemberSignature Language="C#" Value="public override bool CanRead { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanSeek">
+      <MemberSignature Language="C#" Value="public override bool CanSeek { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanWrite">
+      <MemberSignature Language="C#" Value="public override bool CanWrite { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FileAccessPermissions">
+      <MemberSignature Language="C#" Value="public Mono.Unix.FileAccessPermissions FileAccessPermissions { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets the file system entry access permissions.</summary>
+        <value>A <see cref="T:Mono.Unix.FileAccessPermissions" /> value which
+          controls access to the file system entry.</value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FileSpecialAttributes">
+      <MemberSignature Language="C#" Value="public Mono.Unix.FileSpecialAttributes FileSpecialAttributes { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileSpecialAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets the file system entry special attributes.</summary>
+        <value>A <see cref="T:Mono.Unix.FileSpecialAttributes" /> value which
+          contains the file special attributes to use.</value>
+        <remarks>
+          <para>Callers may need to be the super user (often the <c>root</c>
+            user) to change the file special attributes.
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FileType">
+      <MemberSignature Language="C#" Value="public Mono.Unix.FileTypes FileType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the type of this file system entry.</summary>
+        <value>A <see cref="T:Mono.Unix.FileTypes" /> value specifying the type
+          of this file system entry.</value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~UnixStream ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public override void Flush ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetConfigurationValue">
+      <MemberSignature Language="C#" Value="public long GetConfigurationValue (Mono.Unix.Native.PathconfName name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="Mono.Unix.Native.PathconfName" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:Mono.Unix.Native.PathconfName" />
+          value specifying which configuration value to retreive.</param>
+        <summary>Gets a configurable system limit or option variable
+          associated with 
+          <see cref="P:Mono.Unix.UnixStream.Handle" />.
+        </summary>
+        <returns>A <see cref="T:System.Int64" /> containing the value
+          of the configuration variable <paramref name="name" />.
+          If there is no value for the configuration variable 
+          <paramref name="name" />, then <c>-1</c> is returned.
+        </returns>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          The implementation does not support an association of 
+          <paramref name="name" /> with 
+          <see cref="P:Mono.Unix.UnixStream.Handle" />.
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          An I/O error occurred while reading from or writing to the file
+          system.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.fpathconf" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Handle">
+      <MemberSignature Language="C#" Value="public int Handle { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The underlying file descriptor.</summary>
+        <value>A <see cref="T:System.Int32" /> containing the underlying file
+          descriptor value.</value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InvalidFileDescriptor">
+      <MemberSignature Language="C#" Value="public const int InvalidFileDescriptor = -1;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>-1</MemberValue>
+      <Docs>
+        <summary>An invalid file descriptor.</summary>
+        <remarks>This is the value <c>-1</c>.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="C#" Value="public override long Length { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OwnerGroup">
+      <MemberSignature Language="C#" Value="public Mono.Unix.UnixGroupInfo OwnerGroup { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixGroupInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets information about the owner group.</summary>
+        <value>A <see cref="T:Mono.Unix.UnixGroupInfo" /> instance containing
+          information about the owner group.</value>
+        <remarks>
+          <para>This is identical to <see cref="C:Mono.Unix.UnixGroupInfo" />(<see cref="P:Mono.Unix.UnixStream.OwnerGroupId" />).
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <altmember cref="F:Mono.Unix.Native.Stat.st_gid" />
+        <altmember cref="F:Mono.Unix.Native.Syscall.fstat" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OwnerGroupId">
+      <MemberSignature Language="C#" Value="public long OwnerGroupId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the owner group id.</summary>
+        <value>A <see cref="T:System.Int64" /> containing the owner group id.</value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <altmember cref="F:Mono.Unix.Native.Stat.st_gid" />
+        <altmember cref="F:Mono.Unix.Native.Syscall.fstat" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OwnerUser">
+      <MemberSignature Language="C#" Value="public Mono.Unix.UnixUserInfo OwnerUser { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixUserInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets information about the owner user.</summary>
+        <value>A <see cref="T:Mono.Unix.UnixUserInfo" /> containing information
+          about the owner user.</value>
+        <remarks>
+          <para>This is identical to <see cref="C:Mono.Unix.UnixUserInfo" />(<see cref="P:Mono.Unix.UnixStream.OwnerUserId" />).
+          </para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <altmember cref="F:Mono.Unix.Native.Stat.st_uid" />
+        <altmember cref="F:Mono.Unix.Native.Syscall.fstat" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OwnerUserId">
+      <MemberSignature Language="C#" Value="public long OwnerUserId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the owner user id.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the owner user id.
+        </value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <altmember cref="F:Mono.Unix.Native.Stat.st_uid" />
+        <altmember cref="F:Mono.Unix.Native.Syscall.fstat" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Position">
+      <MemberSignature Language="C#" Value="public override long Position { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Protection">
+      <MemberSignature Language="C#" Value="public Mono.Unix.Native.FilePermissions Protection { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets or sets the file system entry protection.</summary>
+        <value>A <see cref="T:Mono.Unix.Native.FilePermissions" /> value
+          containing the file system entry protection.</value>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <altmember cref="F:Mono.Unix.Native.Stat.st_mode" />
+        <altmember cref="F:Mono.Unix.Native.Syscall.fstat" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public override int Read (byte[] buffer, int offset, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="offset">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadAtOffset">
+      <MemberSignature Language="C#" Value="public int ReadAtOffset (byte[] buffer, int offset, int count, long fileOffset);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="fileOffset" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">
+          A <see cref="T:System.Byte" /> array.  When this method returns, the
+          elements between <paramref name="offset" /> and 
+          <paramref name="(offset + count)" /> are replaced by the bytes read
+          from the current source.
+        </param>
+        <param name="offset">
+          A <see cref="T:System.Int32" /> that specifies the zero-based byte
+          offset within <paramref name="buffer" /> at which to begin storing
+          the data read from the current stream.
+        </param>
+        <param name="count">
+          A <see cref="T:System.Int32" /> that specifies the maximum number of
+          bytes to be read from the current stream.
+        </param>
+        <param name="fileOffset">
+          A <see cref="T:System.Int64" /> specifying the byte offset within
+          the file to begin reading.
+        </param>
+        <summary>
+          Reads a sequence of bytes from the current stream <i>without</i>
+          advancing the position within the stream.
+        </summary>
+        <returns>
+          A <see cref="T:System.Int32" /> that specifies the number of bytes
+          read into the buffer, or zero if the end of the stream has been
+          reached before any data can be read.
+        </returns>
+        <remarks>
+          <para>
+            Unlike <see cref="M:System.IO.Stream.Read" />, this method does
+            not modify <see cref="P:System.IO.Stream.Position" />.
+          </para>
+          <para>
+            <block subset="none" type="note">
+              Use the <see cref="P:System.IO.Stream.CanRead" /> property to 
+              determine whether the current instance supports reading.
+            </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="(offset + count)" /> is greater than the length of 
+            <paramref name="buffer" />.
+          </para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="offset" /> or <paramref name="count" /> is negative.
+        </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>
+            The file descriptor is associated with a file system and file type that
+            do not allow regular read operations on it.
+            [<see cref="F:Mono.Unix.Native.Errno.EOPNOTSUPP" />]
+          </para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          The stream does not support reading.
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.OverflowException">
+          <para>
+            The file descriptor is associated with a regular file,
+            <paramref name="count" />
+            is greater than 0,
+            <paramref name="fileOffset" />
+            is before the end-of-file, and
+            <paramref name="fileOffset" />
+            is greater than or equal to the offset maximum established
+            for this file system.
+            [<see cref="F:Mono.Unix.Native.Errno.EOVERFLOW" />]
+          </para>
+        </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+          <para>
+            The file descriptor is associated with a directory residing
+            on a file system that does not allow regular read operations on
+            directories (e.g.NFS).
+            [<see cref="F:Mono.Unix.Native.Errno.EISDIR" />]
+          </para>
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <para>
+            An I/O error occurred while reading from the file system.
+            [<see cref="F:Mono.Unix.Native.Errno.EIO" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The file descriptor is associated with a pipe, socket, or FIFO.
+            [<see cref="F:Mono.Unix.Native.Errno.ESPIPE" />]
+          </para>
+        </exception>
+        <exception cref="T:Mono.Unix.UnixIOException">
+          <para>
+            The file was marked for non-blocking I/O,
+            and no data were ready to be read.
+            [<see cref="F:Mono.Unix.Native.Errno.EAGAIN" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.pread" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Seek">
+      <MemberSignature Language="C#" Value="public override long Seek (long offset, System.IO.SeekOrigin origin);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="origin" Type="System.IO.SeekOrigin" />
+      </Parameters>
+      <Docs>
+        <param name="offset">To be added.</param>
+        <param name="origin">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SendTo">
+      <MemberSignature Language="C#" Value="public void SendTo (Mono.Unix.UnixStream output);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="output" Type="Mono.Unix.UnixStream" />
+      </Parameters>
+      <Docs>
+        <param name="output">
+          A <see cref="T:Mono.Unix.UnixStream" /> specifying where to copy the
+          current stream contents to.
+        </param>
+        <summary>
+          Copies all the data from this stream to the specified 
+          <see cref="T:Mono.Unix.UnixStream" /><paramref name="output" />.
+        </summary>
+        <remarks>
+          <para>
+            This performs an in-kernel copy between the file descriptor 
+            <see cref="P:Mono.Unix.UnixStream.Handle" /> and 
+            <paramref name="output" />.  Either or both may be a socket.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <see cref="T:Mono.Unix.UnixStream.Handle" /> was not opened for
+            reading or <paramref name="output" /> was not opened for writing.
+            [<see cref="F:Mono.Unix.Native.Errno.EBADF" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            Descriptor is not valid or locked.
+            [<see cref="F:Mono.Unix.Native.Errno.EINVAL" />]
+          </para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.IO.IOException">
+            Unspecified error while reading from 
+            <see cref="P:Mono.Unix.UnixStream.Handle" />.
+            [<see cref="F:Mono.Unix.Native.Errno.EIO" />]
+        </exception>
+        <exception cref="T:Mono.Unix.UnixIOException">
+          <para>
+            Non-blocking I/O has been selected using
+            <see cref="F:Mono.Unix.Native.OpenFlags.O_NONBLOCK" /> and the
+            write would block.
+            [<see cref="F:Mono.Unix.Native.Errno.EAGAIN" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            Insufficient memory to read from 
+            <see cref="P:Mono.Unix.UnixStream.Handle" />.
+            [<see cref="F:Mono.Unix.Native.Errno.ENOMEM" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.sendfile" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SendTo">
+      <MemberSignature Language="C#" Value="public void SendTo (Mono.Unix.UnixStream output, ulong count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="output" Type="Mono.Unix.UnixStream" />
+        <Parameter Name="count" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="output">
+          A <see cref="T:Mono.Unix.UnixStream" /> specifying where to copy the
+          current stream contents to.
+        </param>
+        <param name="count">
+          A <see cref="T:System.UInt64" /> containing the number of bytes to
+          copy from the current stream into <paramref name="output" />.
+        </param>
+        <summary>
+          Copies data from this stream to the specified 
+          <see cref="T:Mono.Unix.UnixStream" /><paramref name="output" />.
+        </summary>
+        <remarks>
+          <para>
+            This performs an in-kernel copy between the file descriptor 
+            <see cref="P:Mono.Unix.UnixStream.Handle" /> and 
+            <paramref name="output" />.  Either or both may be a socket.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <see cref="T:Mono.Unix.UnixStream.Handle" /> was not opened for
+            reading or <paramref name="output" /> was not opened for writing.
+            [<see cref="F:Mono.Unix.Native.Errno.EBADF" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            Descriptor is not valid or locked.
+            [<see cref="F:Mono.Unix.Native.Errno.EINVAL" />]
+          </para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.IO.IOException">
+            Unspecified error while reading from 
+            <see cref="P:Mono.Unix.UnixStream.Handle" />.
+            [<see cref="F:Mono.Unix.Native.Errno.EIO" />]
+        </exception>
+        <exception cref="T:Mono.Unix.UnixIOException">
+          <para>
+            Non-blocking I/O has been selected using
+            <see cref="F:Mono.Unix.Native.OpenFlags.O_NONBLOCK" /> and the
+            write would block.
+            [<see cref="F:Mono.Unix.Native.Errno.EAGAIN" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            Insufficient memory to read from 
+            <see cref="P:Mono.Unix.UnixStream.Handle" />.
+            [<see cref="F:Mono.Unix.Native.Errno.ENOMEM" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.sendfile" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="SendTo">
+      <MemberSignature Language="C#" Value="public void SendTo (int out_fd, ulong count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="out_fd" Type="System.Int32" />
+        <Parameter Name="count" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="out_fd">
+          A <see cref="T:System.Int32" /> containing the file descriptor to
+          copy the current stream contents to.
+        </param>
+        <param name="count">
+          A <see cref="T:System.UInt64" /> containing the number of bytes to
+          copy from the current stream into <paramref name="out_fd" />.
+        </param>
+        <summary>
+          Copies data from this stream to the specified file descriptor
+          <paramref name="out_fd" />.
+        </summary>
+        <remarks>
+          <para>
+            This performs an in-kernel copy between the file descriptor 
+            <see cref="P:Mono.Unix.UnixStream.Handle" /> and 
+            <paramref name="out_fd" />.  Either or both may be a socket.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <see cref="T:Mono.Unix.UnixStream.Handle" /> was not opened for
+            reading or <paramref name="out_fd" /> was not opened for writing.
+            [<see cref="F:Mono.Unix.Native.Errno.EBADF" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            Descriptor is not valid or locked.
+            [<see cref="F:Mono.Unix.Native.Errno.EINVAL" />]
+          </para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.IO.IOException">
+            Unspecified error while reading from 
+            <see cref="P:Mono.Unix.UnixStream.Handle" />.
+            [<see cref="F:Mono.Unix.Native.Errno.EIO" />]
+        </exception>
+        <exception cref="T:Mono.Unix.UnixIOException">
+          <para>
+            Non-blocking I/O has been selected using
+            <see cref="F:Mono.Unix.Native.OpenFlags.O_NONBLOCK" /> and the
+            write would block.
+            [<see cref="F:Mono.Unix.Native.Errno.EAGAIN" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            Insufficient memory to read from 
+            <see cref="P:Mono.Unix.UnixStream.Handle" />.
+            [<see cref="F:Mono.Unix.Native.Errno.ENOMEM" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.sendfile" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="SetLength">
+      <MemberSignature Language="C#" Value="public override void SetLength (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetOwner">
+      <MemberSignature Language="C#" Value="public void SetOwner (string user);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="user" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="user">A <see cref="T:System.String" /> containing the
+          user name to use for the new user-id and group-id.</param>
+        <summary>Set the owner user ID and owner group ID of
+          <see cref="P:Mono.Unix.UnixStream.Handle" />.
+        </summary>
+        <remarks>
+          <para>The user <paramref name="user" /> is looked up in the local 
+            password database and the resulting 
+            <see cref="P:Mono.Unix.UnixUserInfo.UserId" /> and 
+            <see cref="P:Mono.Unix.UnixUserInfo.GroupId" /> are used as the new
+            owner user id and owner group id for
+            <see cref="P:Mono.Unix.UnixStream.Handle" />.
+          </para>
+          <para>
+            If this is called by the non-super user (usually the <c>root</c>
+            user), then the 
+            <see cref="F:Mono.Unix.FileSpecialAttributes.SetUserId" /> and
+            <see cref="F:Mono.Unix.FileSpecialAttributes.SetGroupId" /> bits
+            are cleared.
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          The effective user ID does not match the owner of the file and the
+          effective user ID is not the super-user.
+            [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          A component of <see cref="P:Mono.Unix.UnixStream.Handle" /> 
+          that must exist does not exist.
+            [<see cref="F:Mono.Unix.Native.Errno.ENOENT" />]
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <para>
+            <see cref="P:Mono.Unix.UnixStream.Handle" /> resides on a
+          read-only file system.
+            [<see cref="F:Mono.Unix.Native.Errno.EROFS" />]
+          </para>
+          <para>-or-</para>
+          <para>An I/O error occurred while making the directory entry or
+          allocating the inode.
+            [<see cref="F:Mono.Unix.Native.Errno.EIO" />]
+          </para>
+        </exception>
+        <altmember cref="T:Mono.Unix.UnixUserInfo" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.chown" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetOwner">
+      <MemberSignature Language="C#" Value="public void SetOwner (long user, long group);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="user" Type="System.Int64" />
+        <Parameter Name="group" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="user">A <see cref="T:System.Int64" /> containing the user
+          id of the new owner user.  If <c>-1</c>, the owner user id is
+          unchanged.</param>
+        <param name="group">A <see cref="T:System.Int64" /> containing the
+          group id of the new owner group.  If <c>-1</c>, the owner group id is
+          unchanged.</param>
+        <summary>Set the owner user ID and owner group ID of
+          <see cref="P:Mono.Unix.UnixStream.Handle" />.
+        </summary>
+        <remarks>
+          <para>
+            If this is called by the non-super user (usually the <c>root</c>
+            user), then the 
+            <see cref="F:Mono.Unix.FileSpecialAttributes.SetUserId" /> and
+            <see cref="F:Mono.Unix.FileSpecialAttributes.SetGroupId" /> bits
+            are cleared.
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          The effective user ID does not match the owner of the file and the
+          effective user ID is not the super-user.
+            [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          A component of <see cref="P:Mono.Unix.UnixStream.Handle" /> 
+          that must exist does not exist.
+            [<see cref="F:Mono.Unix.Native.Errno.ENOENT" />]
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <para>
+            <see cref="P:Mono.Unix.UnixStream.Handle" /> resides on a
+          read-only file system.
+            [<see cref="F:Mono.Unix.Native.Errno.EROFS" />]
+          </para>
+          <para>-or-</para>
+          <para>An I/O error occurred while making the directory entry or
+          allocating the inode.
+            [<see cref="F:Mono.Unix.Native.Errno.EIO" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.chown" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetOwner">
+      <MemberSignature Language="C#" Value="public void SetOwner (string user, string group);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="user" Type="System.String" />
+        <Parameter Name="group" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="user">A <see cref="T:System.String" /> containing the 
+          user name of the owner user id to use.</param>
+        <param name="group">A <see cref="T:System.String" /> containing the 
+          group name of the owner group id to use.</param>
+        <summary>Set the owner user ID and owner group ID of
+          <see cref="P:Mono.Unix.UnixStream.Handle" />.
+        </summary>
+        <remarks>
+          <para>
+            If this is called by the non-super user (usually the <c>root</c>
+            user), then the 
+            <see cref="F:Mono.Unix.FileSpecialAttributes.SetUserId" /> and
+            <see cref="F:Mono.Unix.FileSpecialAttributes.SetGroupId" /> bits
+            are cleared.
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          The effective user ID does not match the owner of the file and the
+          effective user ID is not the super-user.
+            [<see cref="F:Mono.Unix.Native.Errno.EPERM" />]
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.IO.FileNotFoundException">
+          A component of <see cref="P:Mono.Unix.UnixStream.Handle" /> 
+          that must exist does not exist.
+            [<see cref="F:Mono.Unix.Native.Errno.ENOENT" />]
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <para>
+            <see cref="P:Mono.Unix.UnixStream.Handle" /> resides on a
+          read-only file system.
+            [<see cref="F:Mono.Unix.Native.Errno.EROFS" />]
+          </para>
+          <para>-or-</para>
+          <para>An I/O error occurred while making the directory entry or
+          allocating the inode.
+            [<see cref="F:Mono.Unix.Native.Errno.EIO" />]
+          </para>
+        </exception>
+        <altmember cref="T:Mono.Unix.UnixUserInfo" />
+        <altmember cref="T:Mono.Unix.UnixGroupInfo" />
+        <altmember cref="M:Mono.Unix.Native.Syscall.chown" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StandardErrorFileDescriptor">
+      <MemberSignature Language="C#" Value="public const int StandardErrorFileDescriptor = 2;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>2</MemberValue>
+      <Docs>
+        <summary>The standard error file descriptor.</summary>
+        <remarks>This is the value <c>2</c>.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StandardInputFileDescriptor">
+      <MemberSignature Language="C#" Value="public const int StandardInputFileDescriptor = 0;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>0</MemberValue>
+      <Docs>
+        <summary>The standard input file descriptor.</summary>
+        <remarks>This is the value <c>0</c>.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StandardOutputFileDescriptor">
+      <MemberSignature Language="C#" Value="public const int StandardOutputFileDescriptor = 1;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>1</MemberValue>
+      <Docs>
+        <summary>The standard output file descriptor.</summary>
+        <remarks>This is the value <c>1</c>.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public override void Write (byte[] buffer, int offset, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="offset">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteAtOffset">
+      <MemberSignature Language="C#" Value="public void WriteAtOffset (byte[] buffer, int offset, int count, long fileOffset);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="fileOffset" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">
+          A <see cref="T:System.Byte" /> array containing the data to write.
+          The elements between <paramref name="offset" /> and 
+          <paramref name="(offset + count)" /> are written to the stream.
+        </param>
+        <param name="offset">
+          A <see cref="T:System.Int32" /> that specifies the zero-based byte
+          offset within <paramref name="buffer" /> at which to begin copying
+          bytes to the current stream.
+        </param>
+        <param name="count">
+          A <see cref="T:System.Int32" /> that specifies the maximum number of
+          bytes to be written to the current stream.
+        </param>
+        <param name="fileOffset">
+          A <see cref="T:System.Int64" /> specifying the byte offset within
+          the file to begin writing.
+        </param>
+        <summary>
+          Writes a sequence of bytes to the current stream <i>without</i>
+          advancing the position within the stream.
+        </summary>
+        <remarks>
+          <para>
+            Unlike <see cref="M:System.IO.Stream.Write" />, this method does
+            not modify <see cref="P:System.IO.Stream.Position" />.
+          </para>
+          <para>
+            <block subset="none" type="note">
+              Use the <see cref="P:System.IO.Stream.CanWrite" /> property to 
+              determine whether the current instance supports writing.
+            </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="(offset + count)" /> is greater than the length of 
+            <paramref name="buffer" />.
+          </para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="offset" /> or <paramref name="count" /> is negative.
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+          The stream does not support writing.
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+          The stream has been closed.
+        </exception>
+        <exception cref="T:System.IO.IOException">
+          <para>
+            There is no free space remaining on the file system
+            containing the file.
+            [<see cref="F:Mono.Unix.Native.Errno.ENOSPC" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            An I/O error occurred while reading from or writing to the file system.
+            [<see cref="F:Mono.Unix.Native.Errno.EIO" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            An attempt was made to write over a disk label area at the beginning
+            of a slice.
+            Use <c><b>disklabel</b>(8) -W</c>
+            to enable writing on the disk label area.
+            [<see cref="F:Mono.Unix.Native.Errno.EROFS" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The file descriptor is associated with a pipe, socket, or FIFO.
+            [<see cref="F:Mono.Unix.Native.Errno.ESPIPE" />]
+          </para>
+        </exception>
+        <exception cref="T:Mono.Unix.UnixIOException">
+          <para>
+            An attempt is made to write to a pipe that is not open
+            for reading by any process.
+            [<see cref="F:Mono.Unix.Native.Errno.EPIPE" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            An attempt is made to write to a socket of type
+            <see cref="F:Mono.Unix.Native.TODO.SOCK_STREAM" />
+            that is not connected to a peer socket.
+            [<see cref="F:Mono.Unix.Native.Errno.EPIPE" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            An attempt was made to write a file that exceeds the process's
+            file size limit or the maximum file size.
+            [<see cref="F:Mono.Unix.Native.Errno.EFBIG" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The user's quota of disk blocks on the file system
+            containing the file has been exhausted.
+            [<see cref="F:Mono.Unix.Native.Errno.EDQUOT" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            A signal interrupted the write before it could be completed.
+            [<see cref="F:Mono.Unix.Native.Errno.EINTR" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The file was marked for non-blocking I/O,
+            and no data could be written immediately.
+            [<see cref="F:Mono.Unix.Native.Errno.EAGAIN" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The destination is no longer available when writing to a
+            UNIX
+            domain datagram socket on which
+            <see cref="M:Mono.Unix.Native.Syscall.connect" />(2)
+            had been used to set a destination address.
+            [<see cref="F:Mono.Unix.Native.Errno.EDESTADDRREQ" />]
+          </para>
+          <para>-or-</para>
+          <para>
+            The mbuf pool has been completely exhausted when writing to a socket.
+            [<see cref="F:Mono.Unix.Native.Errno.ENOBUFS" />]
+          </para>
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.pwrite" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

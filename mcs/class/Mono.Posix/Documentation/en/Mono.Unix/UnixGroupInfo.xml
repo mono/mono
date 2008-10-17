@@ -1,0 +1,364 @@
+<Type Name="UnixGroupInfo" FullName="Mono.Unix.UnixGroupInfo">
+  <TypeSignature Language="C#" Value="public sealed class UnixGroupInfo" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Provides information about a Unix group.</summary>
+    <remarks>
+      <para>
+        The <see cref="T:Mono.Unix.UnixGroupInfo" /> type is a FxDG-compliant
+        wrapper over the <see cref="T:Mono.Unix.Native.Group" /> native type.
+        It represents a single entry from the local group database, typically
+        <c>/etc/group</c>.
+      </para>
+      <para>
+        Unix Groups are part of the file system access rules.  
+      </para>
+      <para>
+        Access to file system objects 
+        (as represented by <see cref="T:Mono.Unix.UnixFileSystemInfo" />)
+        is controlled by the file system access permissions, 
+        <see cref="P:Mono.Unix.UnixFileSystemInfo.FileAccessPermissions" />.
+        <see cref="T:Mono.Unix.FileAccessPermissions" /> is a nine-bit field
+        specifying read, write, and execute access for the owner, group, and
+        everyone else (other).
+      </para>
+      <para>
+        Access by the file's owner group is controlled by the bits
+        specified by <c>
+        (<see cref="P:Mono.Unix.UnixFileSystemInfo.FileAccessPermissions" />
+        &amp; 
+        <see cref="F:Mono.Unix.FileAccessPermissions.GroupReadWriteExecute" />)</c>.
+        All group members get these access permissions, except for the file's
+        owner (if they belong to the file's owner group).
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixGroupInfo (Mono.Unix.Native.Group group);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="group" Type="Mono.Unix.Native.Group" />
+      </Parameters>
+      <Docs>
+        <param name="group">
+          A <see cref="T:Mono.Unix.Native.Group" /> containing the 
+          group to get information about.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of 
+          <see cref="T:Mono.Unix.UnixGroupInfo" /> by using the specified 
+          <see cref="T:Mono.Unix.Native.Group" /> entry.
+        </summary>
+        <remarks>
+          This constructor wraps <paramref name="group" />,
+          providing framework-compliant naming conventions over the native 
+          <see cref="T:Mono.Unix.Native.Group" /> type.
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixGroupInfo (long group);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="group" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="group">
+          A <see cref="T:System.Int64" /> containing the group id to get
+          information about.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of 
+          <see cref="T:Mono.Unix.UnixGroupInfo" /> by looking up the specifed
+          group id in the local group database file.
+        </summary>
+        <remarks>
+          This constructor looks up the specified group id in the local
+          group database.
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          The group id <paramref name="group" /> does not exist in the local
+          group database.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getgrgid_r" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixGroupInfo (string group);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="group" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="group">
+          A <see cref="T:System.String" /> containing the group to get
+          information about.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of 
+          <see cref="T:Mono.Unix.UnixGroupInfo" /> by looking up the specifed
+          group name in the local group database file.
+        </summary>
+        <remarks>
+          This constructor looks up the specified group name in the local
+          group database.
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          The group name <paramref name="group" /> does not exist in the 
+          local group database.
+        </exception>
+        <altmember cref="M:Mono.Unix.Native.Syscall.getgrnam_r" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetLocalGroups">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.UnixGroupInfo[] GetLocalGroups ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixGroupInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets all groups listed in the local group database.</summary>
+        <returns>
+          A <see cref="T:Mono.Unix.UnixGroupInfo" /> array containing
+          information about all the local groups.
+        </returns>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <para>An I/O error occurred.
+          [<see cref="F:Mono.Unix.Native.Errno.EIO" />]
+          </para>
+        </exception>
+        <exception cref="T:Mono.Unix.UnixIOException">
+          <para>Too many file descriptors in use by the process.
+          [<see cref="F:Mono.Unix.Native.Errno.EMFILE" />]
+          </para>
+          <para>-or-</para>
+          <para>Too many files are currently open in the system.
+          [<see cref="F:Mono.Unix.Native.Errno.ENFILE" />]
+          </para>
+          <para>-or-</para>
+          <para>Insufficient memory to allocate the group information
+          structure.
+          [<see cref="F:Mono.Unix.Native.Errno.ENOMEM" />]
+          </para>
+        </exception>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMemberNames">
+      <MemberSignature Language="C#" Value="public string[] GetMemberNames ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Gets the names of all group members.
+        </summary>
+        <returns>
+          A <see cref="T:System.String" /> array containing the names of all
+          group members.
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Group.gr_mem" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMembers">
+      <MemberSignature Language="C#" Value="public Mono.Unix.UnixUserInfo[] GetMembers ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.UnixUserInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Get information about all the group members.</summary>
+        <returns>
+          A <see cref="T:Mono.Unix.UnixUserInfo" /> array containing
+          information about all the group members.
+        </returns>
+        <remarks>
+          This is equivalent to creating a 
+          <see cref="T:Mono.Unix.UnixUserInfo" /> instance over each name
+          returned by <see cref="M:Mono.Unix.UnixGroupInfo.GetMemberNames" />.
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Group.gr_mem" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GroupId">
+      <MemberSignature Language="C#" Value="public long GroupId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the group id.</summary>
+        <value>
+          A <see cref="T:System.Int64" /> containing the group's id.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Group.gr_gid" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GroupName">
+      <MemberSignature Language="C#" Value="public string GroupName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the group name.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the group name.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Group.gr_name" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Password">
+      <MemberSignature Language="C#" Value="public string Password { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the group password.</summary>
+        <value>
+          A <see cref="T:System.String" /> containing the group password.
+        </value>
+        <remarks>
+          The group password isn't actually used for anything...
+        </remarks>
+        <altmember cref="F:Mono.Unix.Native.Group.gr_passwd" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToGroup">
+      <MemberSignature Language="C#" Value="public Mono.Unix.Native.Group ToGroup ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Group</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Converts this <see cref="T:Mono.Unix.UnixGroupInfo" /> instance into
+          an equivalent <see cref="T:Mono.Unix.Native.Group" /> instance.
+        </summary>
+        <returns>
+          A <see cref="T:Mono.Unix.Native.Group" /> instance containing the
+          same information as this instance.
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

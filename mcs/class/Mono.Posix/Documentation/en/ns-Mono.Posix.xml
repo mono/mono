@@ -1,0 +1,8 @@
+<Namespace Name="Mono.Posix">
+  <Docs>
+    <summary>The deprecated Mono.Posix namespace, use 
+      <see cref="N:Mono.Unix" /> instead.
+    </summary>
+    <remarks>This namespace provides functionality to access Posix/Unix features.  It has been deprecated in favor of the new <see cref="N:Mono.Unix" /> namespace.</remarks>
+  </Docs>
+</Namespace>

@@ -1,0 +1,116 @@
+<Type Name="FileAccessPattern" FullName="Mono.Unix.FileAccessPattern">
+  <TypeSignature Language="C#" Value="public enum FileAccessPattern" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Possible operating system hints for future file data access.</summary>
+    <remarks>
+      <para>Operating systems maintain a cache of all open files to speed up
+    performance for common tasks.  The default caching behavior may not be
+    appropriate for some tasks.  The <c>FileAccessPattern</c> enumeration
+    contains possible alternate caching behaviors that your operating system
+    may support.</para>
+    </remarks>
+    <altmember cref="M:Mono.Unix.FileHandleOperations.AdviseFileAccessPattern" />
+    <altmember cref="M:Mono.Unix.UnixStream.AdviseFileAccessPattern" />
+  </Docs>
+  <Members>
+    <Member MemberName="FlushCache">
+      <MemberSignature Language="C#" Value="FlushCache" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The specified data will not be needed, and should be removed
+        from the disk cache if present.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NoReuse">
+      <MemberSignature Language="C#" Value="NoReuse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The specified data will not be re-used (i.e. it will only be
+        used once), so it shouldn't be kept around in the disk cache after it
+        has been used..</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Normal">
+      <MemberSignature Language="C#" Value="Normal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>No advice given.  This is the default.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreLoad">
+      <MemberSignature Language="C#" Value="PreLoad" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The specified data will soon be accessed, so it should be
+        pre-loaded.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Random">
+      <MemberSignature Language="C#" Value="Random" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The specified data will be accessed in a random order.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Sequential">
+      <MemberSignature Language="C#" Value="Sequential" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+        The application will access file data in a sequential order (from
+        beginning of file to end of file).
+        </summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,569 @@
+<Type Name="UnixPath" FullName="Mono.Unix.UnixPath">
+  <TypeSignature Language="C#" Value="public sealed class UnixPath" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This type is safe for multithreaded operations.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      Performs operations on <see cref="T:System.String" /> instances that
+      contain file or directory path information.
+    </summary>
+    <remarks>
+      <para>
+        A path is a string that provides the location of a file or directory. 
+        A path does not necessarily point to a location on disk; for example, 
+        a path may map to a location in memory or on a device. Paths are
+        composed of the components described below. Component names are shown 
+        in <paramref name="italics " /> and the following table describes the 
+        symbols used in component definitions:
+      </para>
+      <list type="table">
+        <listheader>
+          <term>Symbol</term>
+          <description>Description</description>
+        </listheader>
+        <item>
+          <term> &lt; &gt;</term>
+          <description>Indicates a path component.</description>
+        </item>
+        <item>
+          <term> { } </term>
+          <description>
+            Indicates a grouping; either all components in a grouping are 
+            present, or none are permitted to be present.
+          </description>
+        </item>
+        <item>
+          <term> *</term>
+          <description>
+            Indicates that the component or grouping that immediately precedes
+            this symbol can appear zero, one, or multiple times.
+          </description>
+        </item>
+        <item>
+          <term> ?</term>
+          <description>
+            Indicates that the component or grouping that immediately precedes
+            this symbol can appear zero, or one times.
+          </description>
+        </item>
+        <item>
+          <term> +</term>
+          <description>Indicates string concatenation.</description>
+        </item>
+      </list>
+      <para>The components that define a path are as follows:</para>
+      <para>
+        <paramref name="Directory Name" />: A string that specifies one or 
+        more directory levels in a file system. If a directory name contains
+        multiple levels, a <paramref name="directory separator character" /> 
+        separates the levels; however, a directory name does not begin or
+        end with a directory separator character. In the example path 
+        <c>/foo/bar/bat.txt</c>, the directory name is "<c>foo/bar</c>". 
+        <see cref="M:Mono.Unix.UnixPath.GetDirectoryName(System.String)" /> 
+        returns the directory name component of a path.  Note that this method 
+        does include a beginning separator character if one is included
+        in the specified path.
+      </para>
+      <para>
+        <paramref name="Directory Separator Character" />: An 
+        implementation-defined constant string containing a single printable
+        non-alphanumeric character used to separate levels in a file system. 
+        In the example path <c>/foo/bar/bat.txt</c>, the directory separator 
+        character is "<c>/</c>". 
+        The <see cref="F:Mono.Unix.UnixPath.DirectorySeparatorChar" /> and 
+        <see cref="F:Mono.Unix.UnixPath.AltDirectorySeparatorChar" /> store
+        implementation-defined directory separator characters.
+      </para>
+      <para>
+        <paramref name="Extension" />: A string that consists of the 
+        characters at the end of a file name, from and including the last 
+        <paramref name="extension separator character" />. The minimum and
+        maximum lengths of extension components are platform-specific. In the 
+        example path "<c>/foo/bar/bat.txt</c>", the 
+        <paramref name="extension" /> is "<c>.txt</c>". The 
+        <see cref="M:System.IO.Path.GetExtension(System.String)" /> method 
+        returns the extension component of a path.
+      </para>
+      <para>
+        <paramref name="Extension Separator Character" />: An 
+        implementation-defined constant string composed of a single character 
+        that appears after the last character in the 
+        <paramref name="file base" /> component indicating the beginning of 
+        the <paramref name="extension" /> component. If the extension separator 
+        character "<paramref name="." />" is the first character in a 
+        <paramref name="file name" />, it is not interpreted as a extension 
+        separator character.  If more than one extension separator 
+        character appears in a file name, only the last occurrence is the
+        extension separator character; all other occurrences are part of the 
+        file base component.  In the example path "<c>/foo/bar/bat.txt</c>", 
+        the extension separator character is "<c>.</c>".
+      </para>
+      <para>
+        <paramref name="File Base" />: A string containing the 
+        <paramref name="file name" /> with the <paramref name="extension" /> 
+        component removed. In the example path "<c>/foo/bar/bat.txt</c>", 
+        the file base is "<c>bat</c>".  The 
+        <see cref="M:System.IO.Path.GetFileNameWithoutExtension(System.String)" /> 
+        method returns the file base component of a path.
+      </para>
+      <para>
+        <paramref name="File Name" />: A string containing all information 
+        required to uniquely identify a file within a directory. This 
+        component is defined as follows:
+      </para>
+      <para>
+        <c>&lt;file base&gt;{+&lt;extension&gt;}?</c>
+      </para>
+      <para>
+        The file name component is commonly referred to as a relative 
+        file name. In the example path "<c>/foo/bar/bat.txt</c>", the 
+        file name is "<c>bat.txt</c>". The 
+        <see cref="M:Mono.Unix.UnixPath.GetFileName(System.String)" />
+        method returns the file name component of a path.
+      </para>
+      <para>
+        <paramref name="Full Directory Name" />: A string containing all 
+        information required to uniquely identify a directory within a file
+        system. This component is defined as follows:
+      </para>
+      <para>
+        <c>&lt;path root&gt;+&lt;directory name&gt;</c>
+      </para>
+      <para>
+        The full directory name component is commonly referred to as the 
+        absolute directory name. In the example path "<c>/foo/bar/bat.txt</c>", 
+        the full directory name is "<c>/foo/bar</c>".
+      </para>
+      <para>
+        <paramref name="Full Path" />: A string containing all information 
+        required to uniquely identify a file within a file system. This 
+        component is defined as follows:
+      </para>
+      <para>
+        <c>&lt;full directory name&gt;+&lt;directory separator 
+        character&gt;+&lt;file name&gt;</c>
+      </para>
+      <para>
+        The full path component is commonly referred to as the absolute 
+        file name. In the example path "<c>/foo/bar/bat.txt</c>", the full 
+        path is "<c>/foo/bar/bat.txt</c>". 
+        The <see cref="M:Mono.Unix.UnixPath.GetFullPath(System.String)" /> 
+        method returns the full path component.
+      </para>
+      <para>
+        <paramref name="Path Root" />: A string containing all information 
+        required to uniquely identify the highest level in a file system. 
+        The component is defined as follows:
+      </para>
+      <para>
+        <c>{&lt;volume identifier&gt;+&lt;volume separator 
+        character&gt;}?+&lt;directory separator character&gt;</c>
+      </para>
+      <para>
+        In the example path <c>/foo/bar/bat.txt</c> , the path root is 
+        "<c>/</c>". 
+        The <see cref="M:Mono.Unix.UnixPath.GetPathRoot(System.String)" />
+        method returns the <paramref name="path root" /> component.
+      </para>
+      <para>
+        The exact format of a path is determined by the current platform. 
+        On some systems, paths containing file names can contain extensions. 
+        The format of an extension is platform dependent; for example, some 
+        systems limit extensions to three characters, while others do not. 
+        The current platform and possibly the current file system determine 
+        the set of characters used to separate the elements of a path, and 
+        the set of characters that cannot be used when specifying paths.
+        Because of these differences, the fields of the 
+        <see cref="T:Mono.Unix.UnixPath" /> class as well as the exact behavior
+        of some members of the <see cref="T:Mono.Unix.UnixPath" /> class are 
+        determined by the current platform and/or file system.
+      </para>
+      <para>
+        A path contains either absolute or relative location information. 
+        Absolute paths fully specify a location: the file or directory can be 
+        uniquely identified regardless of the current location. A full path or 
+        full directory name component is present in an absolute path. 
+        Relative paths specify a partial location: the current working 
+        directory is used as the starting point when locating a file specified 
+        with a relative path.
+        <block subset="none" type="note">
+          To determine the current working directory, call 
+          <see cref="M:Mono.Unix.UnixDirectoryInfo.GetCurrentDirectory" />.
+        </block></para>
+      <para>
+        Most members of the <see langword="UnixPath" /> class do not interact 
+        with the file system and do not verify the existence of the file or 
+        directory specified by a path string. 
+        <see cref="T:Mono.Unix.UnixPath" /> members that modify a path string, 
+        such as 
+        <see cref="M:Mono.Unix.UnixPath.Combine(System.String,System.String)" />, 
+        have no effect on files and directories in the file system. 
+        <see cref="T:Mono.Unix.UnixPath" /> members do, however, validate the 
+        contents of a specified path string, and throw 
+        <see cref="T:System.ArgumentException" /> if the string contains 
+        characters that are not valid in path strings, as defined by the 
+        current platform and file system. Implementations are required to 
+        preserve the case of file and directory path strings, and to be case 
+        sensitive if and only if the current platform is case-sensitive.
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AltDirectorySeparatorChar">
+      <MemberSignature Language="C#" Value="public static readonly char AltDirectorySeparatorChar;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Provides a character used to separate directory levels in a
+          hierarchical file system.
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>This is the value <c>/</c>.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Combine">
+      <MemberSignature Language="C#" Value="public static string Combine (string path1, string[] paths);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path1" Type="System.String" />
+        <Parameter Name="paths" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="path1">
+          A <see cref="T:System.String" /> containing the
+          first path.
+        </param>
+        <param name="paths">
+          A <see cref="T:System.String" /> array containing paths to append to
+          <paramref name="path1" />.
+        </param>
+        <summary>Concatentates multiple path strings.</summary>
+        <returns>
+          <para>
+            A <see cref="T:System.String" /> containing 
+            <paramref name="path1" /> followed by each sequential element in
+            <paramref name="paths" />.
+          </para>
+          <para>
+            If any of the specified paths is a zero-length string, it is ig
+          </para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DirectorySeparatorChar">
+      <MemberSignature Language="C#" Value="public static readonly char DirectorySeparatorChar;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Provides a character used to separate directory levels in a
+          hierarchical file system.
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>This is the value <c>/</c>.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCanonicalPath">
+      <MemberSignature Language="C#" Value="public static string GetCanonicalPath (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCompleteRealPath">
+      <MemberSignature Language="C#" Value="public static string GetCompleteRealPath (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDirectoryName">
+      <MemberSignature Language="C#" Value="public static string GetDirectoryName (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetFileName">
+      <MemberSignature Language="C#" Value="public static string GetFileName (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetFullPath">
+      <MemberSignature Language="C#" Value="public static string GetFullPath (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetInvalidPathChars">
+      <MemberSignature Language="C#" Value="public static char[] GetInvalidPathChars ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetPathRoot">
+      <MemberSignature Language="C#" Value="public static string GetPathRoot (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetRealPath">
+      <MemberSignature Language="C#" Value="public static string GetRealPath (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPathRooted">
+      <MemberSignature Language="C#" Value="public static bool IsPathRooted (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PathSeparator">
+      <MemberSignature Language="C#" Value="public static readonly char PathSeparator;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Provides a character to separate path strings in environment
+          variables.
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>This is the value <c>:</c>.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadLink">
+      <MemberSignature Language="C#" Value="public static string ReadLink (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TryReadLink">
+      <MemberSignature Language="C#" Value="public static string TryReadLink (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VolumeSeparatorChar">
+      <MemberSignature Language="C#" Value="public static readonly char VolumeSeparatorChar;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Provides a character to separate volumes from volume-specific paths.
+        </summary>
+        <remarks>
+          <para>This field is read-only.</para>
+          <para>This is the value <c>/</c>.</para>
+          <para>
+            This field is basically useless, since Unix uses a
+            singly-rooted file system, all volumes are sub-directories of the
+            path <c>/</c>.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,111 @@
+<Type Name="MmapProts" FullName="Mono.Unix.Native.MmapProts">
+  <TypeSignature Language="C#" Value="public enum MmapProts" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>Possible <see cref="M:Mono.Unix.Native.Syscall.mmap" /><paramref name="prot" /> values.</summary>
+    <remarks>
+    </remarks>
+    <altmember cref="M:Mono.Unix.Native.Syscall.mmap" />
+  </Docs>
+  <Members>
+    <Member MemberName="PROT_EXEC">
+      <MemberSignature Language="C#" Value="PROT_EXEC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.MmapProts</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Pages may be executed.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PROT_GROWSDOWN">
+      <MemberSignature Language="C#" Value="PROT_GROWSDOWN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.MmapProts</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PROT_GROWSUP">
+      <MemberSignature Language="C#" Value="PROT_GROWSUP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.MmapProts</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PROT_NONE">
+      <MemberSignature Language="C#" Value="PROT_NONE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.MmapProts</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Pages may not be accessed.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PROT_READ">
+      <MemberSignature Language="C#" Value="PROT_READ" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.MmapProts</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Pages may be read.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PROT_WRITE">
+      <MemberSignature Language="C#" Value="PROT_WRITE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.MmapProts</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Pages may be written.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,1884 @@
+<Type Name="Errno" FullName="Mono.Unix.Native.Errno">
+  <TypeSignature Language="C#" Value="public enum Errno" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Error values.</summary>
+    <remarks>
+      <para>
+        Various error numbers that can be signaled by 
+        <see cref="T:Mono.Unix.Native.Syscall" /> methods.  
+        The most recent error can be retrieved from 
+        <see cref="M:Mono.Unix.Native.Stdlib.GetLastError" />.
+      </para>
+      <para>
+        The value of these members may not match the actual <c>errno</c> value
+        used by your operating system.  Use
+        <see cref="T:Mono.Unix.Native.NativeConvert" /> to convert between the
+        native <c>errno</c> value and an 
+        <see cref="T:Mono.Unix.Native.Errno" /> value.
+      </para>
+    </remarks>
+    <altmember cref="M:Mono.Unix.Native.Stdlib.GetLastError" />
+    <altmember cref="M:Mono.Unix.Native.NativeConvert.FromErrno" />
+    <altmember cref="M:Mono.Unix.Native.NativeConvert.ToErrno" />
+  </Docs>
+  <Members>
+    <Member MemberName="E2BIG">
+      <MemberSignature Language="C#" Value="E2BIG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Argument list too long</i>.  The number of bytes used for the argument and environment list of the new process exceeded the current limit of 65536 bytes (NCARGS in <c>sys/param.h</c>).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EACCES">
+      <MemberSignature Language="C#" Value="EACCES" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Permission denied</i>.  An attempt was made to access a file in a way forbidden by its file access permissions.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EADDRINUSE">
+      <MemberSignature Language="C#" Value="EADDRINUSE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Address already in use</i>.  Only one usage of each address is normally permitted.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EADDRNOTAVAIL">
+      <MemberSignature Language="C#" Value="EADDRNOTAVAIL" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Cannot assign requested address</i>.  Normally results from an attempt to create a socket with an address not on this machine.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EADV">
+      <MemberSignature Language="C#" Value="EADV" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EAFNOSUPPORT">
+      <MemberSignature Language="C#" Value="EAFNOSUPPORT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Address family not supported by protocol family</i>.  An address incompatible with the requested protocol was used.  For example, you shouldn’t necessarily expect to be able to use NS addresses with ARPA Internet protocols.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EAGAIN">
+      <MemberSignature Language="C#" Value="EAGAIN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Resource temporarily unavailable</i>.  This is a temporary condition and later calls to the same routine may complete normally.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EALREADY">
+      <MemberSignature Language="C#" Value="EALREADY" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Operation already in progress</i>.  An operation was attempted on a non-blocking object that already had an operation in progress.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EBADE">
+      <MemberSignature Language="C#" Value="EBADE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EBADF">
+      <MemberSignature Language="C#" Value="EBADF" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Bad file descriptor</i>.  A file descriptor argument was out of range, referred to no open file, or a read (write) request was made to a file that was only open for writing (reading).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EBADFD">
+      <MemberSignature Language="C#" Value="EBADFD" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Bad file descriptor</i>.  A file descriptor argument was out of range, referred to no open file, or a read (write) request was made to a file that was only open for writing (reading).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EBADMSG">
+      <MemberSignature Language="C#" Value="EBADMSG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EBADR">
+      <MemberSignature Language="C#" Value="EBADR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EBADRQC">
+      <MemberSignature Language="C#" Value="EBADRQC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EBADSLT">
+      <MemberSignature Language="C#" Value="EBADSLT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EBFONT">
+      <MemberSignature Language="C#" Value="EBFONT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EBUSY">
+      <MemberSignature Language="C#" Value="EBUSY" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Device busy</i>.  An attempt to use a system resource which was in use at the time in a manner which would have conflicted with the request.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ECHILD">
+      <MemberSignature Language="C#" Value="ECHILD" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>No child processes</i>.  A 
+				<see cref="M:Mono.Unix.Native.Syscall.wait" />(2) or 
+				<see cref="M:Mono.Unix.Native.Syscall.waitpid" />(2)
+				function was executed by a process that had no existing or unwaited-for child processes.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ECHRNG">
+      <MemberSignature Language="C#" Value="ECHRNG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ECOMM">
+      <MemberSignature Language="C#" Value="ECOMM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ECONNABORTED">
+      <MemberSignature Language="C#" Value="ECONNABORTED" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Software caused connection abort</i>.  A connection abort was caused internal to your host machine.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ECONNREFUSED">
+      <MemberSignature Language="C#" Value="ECONNREFUSED" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Connection refused</i>.  No connection could be made because the target machine actively refused it.  This usually results from trying to connect to a service that is inactive on the foreign host.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ECONNRESET">
+      <MemberSignature Language="C#" Value="ECONNRESET" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Connection reset by peer</i>.  A connection was forcibly closed by a peer.  This normally results from a loss of the connection on the remote socket due to a timeout or a reboot.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EDEADLK">
+      <MemberSignature Language="C#" Value="EDEADLK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Resource deadlock avoided</i>.  An attempt was made to lock a system resource that would have resulted in a deadlock situation</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EDEADLOCK">
+      <MemberSignature Language="C#" Value="EDEADLOCK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EDESTADDRREQ">
+      <MemberSignature Language="C#" Value="EDESTADDRREQ" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Destination address required</i>.  A required address was omitted from an operation on a socket.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EDOM">
+      <MemberSignature Language="C#" Value="EDOM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Numerical argument out of domain</i>.  A numerical input argument was outside the defined domain of the mathematical function.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EDOTDOT">
+      <MemberSignature Language="C#" Value="EDOTDOT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EDQUOT">
+      <MemberSignature Language="C#" Value="EDQUOT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Disc quota exceeded</i>.  A 
+				<see cref="M:Mono.Unix.Native.Syscall.write" />(2) 
+				to an ordinary file, the creation of a directory or symbolic link, or the creation of a directory entry failed because the user’s quota of disk blocks was exhausted, or the allocation of an inode for a newly created file failed because the user’s quota of inodes was exhausted.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EEXIST">
+      <MemberSignature Language="C#" Value="EEXIST" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>File exists</i>.  An existing file was mentioned in an inappropriate context, for instance, as the new link name in a 
+				<see cref="M:Mono.Unix.Native.Syscall.link" />(2) system call</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EFAULT">
+      <MemberSignature Language="C#" Value="EFAULT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Bad address</i>.  The system detected an invalid address in attempting to use an argument of a call.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EFBIG">
+      <MemberSignature Language="C#" Value="EFBIG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>File too large</i>.  The size of a file exceeded the maximum.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EHOSTDOWN">
+      <MemberSignature Language="C#" Value="EHOSTDOWN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Host is down</i>.  A socket operation failed because the destination host was down.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EHOSTUNREACH">
+      <MemberSignature Language="C#" Value="EHOSTUNREACH" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>No route to host</i>.  A socket operation was attempted to an unreachable host.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EIDRM">
+      <MemberSignature Language="C#" Value="EIDRM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Identifier removed</i>.  An IPC identifier was removed while the current process was waiting on it.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EILSEQ">
+      <MemberSignature Language="C#" Value="EILSEQ" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Illegal byte sequence</i>.  While decoding a multibyte character the function came along an invalid or an incomplete sequence of bytes or the given wide character is invalid.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EINPROGRESS">
+      <MemberSignature Language="C#" Value="EINPROGRESS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Operation now in progress</i>.  An operation that takes a long time to complete (such as a 
+				<see cref="M:Mono.Unix.Native.Syscall.connect" />(2)) was attempted on a non-blocking object (see 
+				<see cref="M:Mono.Unix.Native.Syscall.fcntl" />(2)).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EINTR">
+      <MemberSignature Language="C#" Value="EINTR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Interrupted system call</i>.  An asynchronous signal 
+				(such as <see cref="F:Mono.Unix.Native.Signum.SIGINT" /> or 
+				<see cref="F:Mono.Unix.Native.Signum.SIGQUIT" />) 
+				was caught by the process during the 
+				execution of an interruptible function.  If the signal handler 
+				performs a normal return, the interrupted system call will seem to 
+				have returned the error condition.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EINVAL">
+      <MemberSignature Language="C#" Value="EINVAL" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Invalid argument</i>.  Some invalid argument was supplied.  
+				(For example, specifying an undefined signal to a 
+				<see cref="M:Mono.Unix.Native.Stdlib.signal" />(3) function or a 
+				<see cref="M:Mono.Unix.Native.Syscall.kill" />(2) system call).</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EIO">
+      <MemberSignature Language="C#" Value="EIO" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Input/output error</i>.  Some physical input or output error occurred.  This error will not be reported until a subsequent operation on the same file descriptor and may be lost (over written) by any subsequent errors.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EISCONN">
+      <MemberSignature Language="C#" Value="EISCONN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Socket is already connected</i>.  A 
+             <see cref="M:Mono.Unix.Native.Syscall.connect" />(2) request was made on an already
+             connected socket; or, a 
+						 <see cref="M:Mono.Unix.Native.Syscall.sendto" />(2) or 
+						 <see cref="M:Mono.Unix.Native.Syscall.sendmsg" />(2) request on a connected socket
+             specified a destination when already connected.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EISDIR">
+      <MemberSignature Language="C#" Value="EISDIR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Is a directory</i>.  An attempt was made to open a directory with write mode specified.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EISNAM">
+      <MemberSignature Language="C#" Value="EISNAM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EL2HLT">
+      <MemberSignature Language="C#" Value="EL2HLT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EL2NSYNC">
+      <MemberSignature Language="C#" Value="EL2NSYNC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EL3HLT">
+      <MemberSignature Language="C#" Value="EL3HLT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EL3RST">
+      <MemberSignature Language="C#" Value="EL3RST" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ELIBACC">
+      <MemberSignature Language="C#" Value="ELIBACC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ELIBBAD">
+      <MemberSignature Language="C#" Value="ELIBBAD" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ELIBEXEC">
+      <MemberSignature Language="C#" Value="ELIBEXEC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ELIBMAX">
+      <MemberSignature Language="C#" Value="ELIBMAX" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ELIBSCN">
+      <MemberSignature Language="C#" Value="ELIBSCN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ELNRNG">
+      <MemberSignature Language="C#" Value="ELNRNG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ELOOP">
+      <MemberSignature Language="C#" Value="ELOOP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Too many levels of symbolic links</i>.  
+				A path name lookup involved more than 32 (MAXSYMLINKS) symbolic links</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EMEDIUMTYPE">
+      <MemberSignature Language="C#" Value="EMEDIUMTYPE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EMFILE">
+      <MemberSignature Language="C#" Value="EMFILE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Too many open files</i>.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EMLINK">
+      <MemberSignature Language="C#" Value="EMLINK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Too many links</i>.  Maximum allowable hard links to a single file has been exceeded.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EMSGSIZE">
+      <MemberSignature Language="C#" Value="EMSGSIZE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Message too long</i>.  A message sent on a socket was larger than the internal message buffer or some other network limit.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EMULTIHOP">
+      <MemberSignature Language="C#" Value="EMULTIHOP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENAMETOOLONG">
+      <MemberSignature Language="C#" Value="ENAMETOOLONG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>File name too long</i>.  A component of a path name exceeded <c>{NAME_MAX}</c> characters, or an entire path name exceeded <c>{PATH_MAX}</c> characters.  (See also the description of 
+				<see cref="F:Mono.Unix.Native.PathConf._PC_NO_TRUNC" /> in 
+				<see cref="M:Mono.Unix.Native.Syscall.pathconf" />(2).)</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENAVAIL">
+      <MemberSignature Language="C#" Value="ENAVAIL" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENETDOWN">
+      <MemberSignature Language="C#" Value="ENETDOWN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Network is down</i>.  A socket operation encountered a dead network.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENETRESET">
+      <MemberSignature Language="C#" Value="ENETRESET" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Network dropped connection on reset</i>.  The host you were connected to crashed and rebooted.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENETUNREACH">
+      <MemberSignature Language="C#" Value="ENETUNREACH" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Network is unreachable</i>.  A socket operation was attempted to an unreachable network.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENFILE">
+      <MemberSignature Language="C#" Value="ENFILE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Too many open files in system</i>.  Maximum number of file descriptors allowable on the system has been reached and a requests for an open cannot be satisfied until at least one has been closed.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOANO">
+      <MemberSignature Language="C#" Value="ENOANO" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOBUFS">
+      <MemberSignature Language="C#" Value="ENOBUFS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>No buffer space available</i>.  An operation on a socket or pipe was not performed because the system lacked sufficient buffer space or because a queue was full.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOCSI">
+      <MemberSignature Language="C#" Value="ENOCSI" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENODATA">
+      <MemberSignature Language="C#" Value="ENODATA" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENODEV">
+      <MemberSignature Language="C#" Value="ENODEV" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Operation not supported by device</i>.  An attempt was made to apply an inappropriate function to a device, for example, trying to read a write-only device such as a printer.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOENT">
+      <MemberSignature Language="C#" Value="ENOENT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>No such file or directory</i>.  A component of a specified pathname did not exist, or the pathname was an empty string.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOEXEC">
+      <MemberSignature Language="C#" Value="ENOEXEC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Exec format error</i>.  A request was made to execute a file that, although it has the appropriate permissions, was not in the format required for an executable file.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOLCK">
+      <MemberSignature Language="C#" Value="ENOLCK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>No locks available</i>.  A system-imposed limit on the number of simultaneous file locks was reached.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOLINK">
+      <MemberSignature Language="C#" Value="ENOLINK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>No locks available</i>.  A system-imposed limit on the number of simultaneous file locks was reached.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOMEDIUM">
+      <MemberSignature Language="C#" Value="ENOMEDIUM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOMEM">
+      <MemberSignature Language="C#" Value="ENOMEM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Cannot allocate memory</i>.  The new process image required more memory than was allowed by the hardware or by system-imposed memory management constraints.  A lack of swap space is normally temporary; however, a lack of core is not.  Soft limits may be increased to their corresponding hard limits.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOMSG">
+      <MemberSignature Language="C#" Value="ENOMSG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>No message of desired type</i>.  An IPC message queue does not contain a message of the desired type, or a message catalog does not contain the requested message.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENONET">
+      <MemberSignature Language="C#" Value="ENONET" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOPKG">
+      <MemberSignature Language="C#" Value="ENOPKG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOPROTOOPT">
+      <MemberSignature Language="C#" Value="ENOPROTOOPT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Prootocol not available</i>.  A bad option or level was specified in a
+             <see cref="M:Mono.Unix.Native.Syscall.getsockopt" />(2) or 
+						 <see cref="M:Mono.Unix.Native.Syscall.setsockopt" />(2) call.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOSPC">
+      <MemberSignature Language="C#" Value="ENOSPC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>No space left on device</i>.  A 
+				<see cref="M:Mono.Unix.Native.Syscall.write" />(2) to an ordinary file, 
+				the creation of a directory or symbolic link, or the creation of a directory entry failed because no more disk blocks were available on the file system, or the allocation of an inode for a newly created file failed because no more inodes were available on the file system.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOSR">
+      <MemberSignature Language="C#" Value="ENOSR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOSTR">
+      <MemberSignature Language="C#" Value="ENOSTR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOSYS">
+      <MemberSignature Language="C#" Value="ENOSYS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Function not implemented</i>.  Attempted a system call that is not available on this system.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOTBLK">
+      <MemberSignature Language="C#" Value="ENOTBLK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Block device required</i>.  A block device operation was attempted on a non-block device or file.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOTCONN">
+      <MemberSignature Language="C#" Value="ENOTCONN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Socket is not connected</i>.  An request to send or receive data was disallowed because the socket was not connected and (when sending on a datagram socket) no address was supplied.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOTDIR">
+      <MemberSignature Language="C#" Value="ENOTDIR" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Not a directory</i>.  A component of the specified pathname existed, but it was not a directory, when a directory was expected.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOTEMPTY">
+      <MemberSignature Language="C#" Value="ENOTEMPTY" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Directory not empty</i>.  A directory with entries other than ‘.’ and ‘..’ was supplied to a remove directory or rename call.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOTNAM">
+      <MemberSignature Language="C#" Value="ENOTNAM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOTSOCK">
+      <MemberSignature Language="C#" Value="ENOTSOCK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Socket operation on non-socket</i>.  Self-explanatory</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOTTY">
+      <MemberSignature Language="C#" Value="ENOTTY" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Inappropriate ioctl for device</i>.  A control function 
+				(see <see cref="M:Mono.Unix.Native.Syscall.ioctl" />(2)) 
+				was attempted for a file or special device for which the operation was inappropriate.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENOTUNIQ">
+      <MemberSignature Language="C#" Value="ENOTUNIQ" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ENXIO">
+      <MemberSignature Language="C#" Value="ENXIO" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Device not configured</i>.  Input or output on a special file referred to a device that did not exist, or made a request beyond the limits of the device.  This error may also occur when, for example, a tape drive is not online or no disk pack is loaded on a drive.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EOPNOTSUPP">
+      <MemberSignature Language="C#" Value="EOPNOTSUPP" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Operation not supported</i>.  The attempted operation is not supported for the type of object referenced.  Usually this occurs when a file descriptor refers to a file or socket that cannot support this operation, for example, trying to accept a connection on a datagram socket.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EOVERFLOW">
+      <MemberSignature Language="C#" Value="EOVERFLOW" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Value too large to be stored in data type</i>.  A numerical result of the function was too large to be stored in the caller provided space.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EPERM">
+      <MemberSignature Language="C#" Value="EPERM" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Operation not permitted</i>.  An attempt was made to perform an operation limited to processes with appropriate privileges or to the owner of a file or other resources.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EPFNOSUPPORT">
+      <MemberSignature Language="C#" Value="EPFNOSUPPORT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Protocol family not supported</i>.  The protocol family has not been configured into the system or no implementation for it exists.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EPIPE">
+      <MemberSignature Language="C#" Value="EPIPE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Broken pipe</i>.  A write on a pipe, socket or FIFO for which there is no process to read the data.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EPROTO">
+      <MemberSignature Language="C#" Value="EPROTO" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EPROTONOSUPPORT">
+      <MemberSignature Language="C#" Value="EPROTONOSUPPORT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Protocol not supported</i>.  The protocol has not been configured into the system or no implementation for it exists.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EPROTOTYPE">
+      <MemberSignature Language="C#" Value="EPROTOTYPE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Protocol wrong type for socket</i>.  A protocol was specified that does not support the semantics of the socket type requested.  For example, you cannot use the ARPA Internet UDP protocol with type SOCK_STREAM.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ERANGE">
+      <MemberSignature Language="C#" Value="ERANGE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Result too large</i>.  A numerical result of the function was too large to fit in the available space (perhaps exceeded precision)</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EREMCHG">
+      <MemberSignature Language="C#" Value="EREMCHG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EREMOTE">
+      <MemberSignature Language="C#" Value="EREMOTE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EREMOTEIO">
+      <MemberSignature Language="C#" Value="EREMOTEIO" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ERESTART">
+      <MemberSignature Language="C#" Value="ERESTART" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EROFS">
+      <MemberSignature Language="C#" Value="EROFS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Read-only</i> file system.  An attempt was made to modify a file or directory on a file system that was read-only at the time.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ESHUTDOWN">
+      <MemberSignature Language="C#" Value="ESHUTDOWN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Cannot send after socket shutdown</i>.  A request to send data was disallowed because the socket had already been shut down with a previous 
+				<see cref="M:Mono.Unix.Native.Syscall.shutdown" />(2) call.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ESOCKTNOSUPPORT">
+      <MemberSignature Language="C#" Value="ESOCKTNOSUPPORT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Socket type not supported</i>.  The support for the socket type has not been configured into the system or no implementation for it exists.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ESPIPE">
+      <MemberSignature Language="C#" Value="ESPIPE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Illegal seek</i>.  An 
+				<see cref="M:Mono.Unix.Native.Syscall.lseek" />(2) system call 
+				was issued on a socket, pipe or FIFO.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ESRCH">
+      <MemberSignature Language="C#" Value="ESRCH" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>No such process</i>.  No process could be found corresponding to that specified by the given process ID.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ESRMNT">
+      <MemberSignature Language="C#" Value="ESRMNT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ESTALE">
+      <MemberSignature Language="C#" Value="ESTALE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Stale NFS file handle</i>.  An attempt was made to access an open file (on an NFS file system) which is now unavailable as referenced by the file descriptor.  This may indicate the file was deleted on the NFS server or some other catastrophic event occurred.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ESTRPIPE">
+      <MemberSignature Language="C#" Value="ESTRPIPE" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ETIME">
+      <MemberSignature Language="C#" Value="ETIME" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ETIMEDOUT">
+      <MemberSignature Language="C#" Value="ETIMEDOUT" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Operation timed out</i>.  A 
+				<see cref="M:Mono.Unix.Native.Syscall.connect" />(2) or 
+				<see cref="M:Mono.Unix.Native.Syscall.send" />(2) request failed because the
+        connected party did not properly respond after a period of time.  (The timeout period is dependent on the communication protocol.)</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ETOOMANYREFS">
+      <MemberSignature Language="C#" Value="ETOOMANYREFS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ETXTBSY">
+      <MemberSignature Language="C#" Value="ETXTBSY" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Text file busy</i>.  The new process was a pure procedure (shared text) file which was open for writing by another process, or while the pure procedure file was being executed an 
+				<see cref="M:Mono.Unix.Native.Syscall.open" />(2) call requested write access.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EUCLEAN">
+      <MemberSignature Language="C#" Value="EUCLEAN" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EUNATCH">
+      <MemberSignature Language="C#" Value="EUNATCH" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EUSERS">
+      <MemberSignature Language="C#" Value="EUSERS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Too many users</i>.  The quota system ran out of table entries.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EWOULDBLOCK">
+      <MemberSignature Language="C#" Value="EWOULDBLOCK" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EXDEV">
+      <MemberSignature Language="C#" Value="EXDEV" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <i>Cross-device link</i>.  A hard link to a file on another file system was attempted.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EXFULL">
+      <MemberSignature Language="C#" Value="EXFULL" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

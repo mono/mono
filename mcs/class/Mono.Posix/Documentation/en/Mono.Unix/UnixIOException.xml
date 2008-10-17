@@ -1,0 +1,392 @@
+<Type Name="UnixIOException" FullName="Mono.Unix.UnixIOException">
+  <TypeSignature Language="C#" Value="public class UnixIOException : System.IO.IOException" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.IO.IOException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Represents errors that are generated from Unix system calls.</summary>
+    <remarks>
+      <para>
+				If an exception is generated due to an operating system-level error
+				(as opposed to invalid arguments or some fully managed reason), the
+				exception thrown will either inherit from 
+				<see cref="T:Mono.Unix.UnixIOException" />, or the
+				<see cref="P:System.Exception.InnerException" /> property will be a
+				type inheriting from <c>UnixIOException</c>.  In either case, the
+				<see cref="P:Mono.Unix.UnixIOException.ErrorCode" /> property will
+				contain the underlying error number that generated the exception.
+				This error number can be used to look up additional information if
+				necessary.
+			</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixIOException ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>
+          Constructs and initializes a new instance of the 
+          <see cref="T:Mono.Unix.UnixIOException" /> class using the last
+          error generated.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Unix.UnixIOException.NativeErrorCode" />
+            property to the value returned by
+            <see cref="M:System.Runtime.InteropServices.Marshal.GetLastWin32Error" />,
+            and initializes the 
+            <see cref="P:System.Exception.Message" /> property to a
+            system-supplied message that describes the last error.
+          </para>
+          <para>
+            The <see cref="P:System.Exception.InnerException" /> property is
+            initialized to <see langword="null" />.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          The value returned by 
+          <see cref="M:System.Runtime.InteropServices.Marshal.GetLastWin32Error" />
+          is not a valid error value on this platform.
+        </exception>
+        <altmember cref="M:System.Runtime.InteropServices.Marshal.GetLastWin32Error" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixIOException (Mono.Unix.Native.Errno errno);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="errno" Type="Mono.Unix.Native.Errno" />
+      </Parameters>
+      <Docs>
+        <param name="errno">
+          A <see cref="T:Mono.Unix.Native.Errno" /> that specifies which 
+          error occurred.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of the 
+          <see cref="T:Mono.Unix.UnixIOException" /> class using the specified
+          error value.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Unix.UnixIOException.ErrorCode" />
+            property to <paramref name="errno" />, and initializes the
+            <see cref="P:System.Exception.Message" /> property to a
+            system-supplied message that describes <paramref name="errno" />.
+          </para>
+          <para>
+            The <see cref="P:System.Exception.InnerException" /> property is
+            initialized to <see langword="null" />.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          The value <paramref name="errno" />
+          is not a valid error value on this platform.
+        </exception>
+        <altmember cref="M:Mono.Unix.UnixMarshal.GetErrorDescription" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixIOException (int errno);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="errno" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="errno">
+          A <see cref="T:System.Int32" /> that specifies which error occurred.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of the 
+          <see cref="T:Mono.Unix.UnixIOException" /> class using the
+          specified error value.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Unix.UnixIOException.NativeErrorCode" />
+            property to <paramref name="errno" />, and initializes the
+            <see cref="P:System.Exception.Message" /> property to a
+            system-supplied message that describes <paramref name="errno" />.
+          </para>
+          <para>
+            The <see cref="P:System.Exception.InnerException" /> property is
+            initialized to <see langword="null" />.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          The value <paramref name="errno" />
+          is not a valid error value on this platform.
+        </exception>
+        <altmember cref="M:Mono.Unix.UnixMarshal.GetErrorDescription" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixIOException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">
+          A <see cref="T:System.String" /> that describes the error.  The
+          contents of <paramref name="message" /> is intended to be understood
+          by humans.  The caller of this constructor is required to ensure
+          that this string has been localized for the current system culture.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of the 
+          <see cref="T:Mono.Unix.UnixIOException" /> class using the specified
+          message.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Unix.UnixIOException.ErrorCode" />
+            property to 0, and initializes the
+            <see cref="P:System.Exception.Message" /> property to 
+            <paramref name="message" />.
+          </para>
+          <para>
+            The <see cref="P:System.Exception.InnerException" /> property is
+            initialized to <see langword="null" />.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixIOException (Mono.Unix.Native.Errno errno, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="errno" Type="Mono.Unix.Native.Errno" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="errno">
+          A <see cref="T:System.Int32" /> that specifies which error occurred.
+        </param>
+        <param name="inner">
+          An instance of <see cref="T:System.Exception" /> that is the cause
+          of the current exception.  If <paramref name="inner" /> is 
+          non-<see langword="null" />, then the current Exception was raised
+          in a catch block handling <paramref name="inner" />.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of the 
+          <see cref="T:Mono.Unix.UnixIOException" /> class using the specified
+          error value and nested exception.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Unix.UnixIOException.NativeErrorCode" />
+            property to <paramref name="errno" />, initializes the
+            <see cref="P:System.Exception.Message" /> property to a
+            system-supplied message that describes <paramref name="errno" />,
+            and initializes the 
+            <see cref="P:System.Exception.InnerException" /> property to
+            <paramref name="inner" />.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          The value <paramref name="errno" />
+          is not a valid error value on this platform.
+        </exception>
+        <altmember cref="M:Mono.Unix.UnixMarshal.GetErrorDescription" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixIOException (int errno, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="errno" Type="System.Int32" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="errno">
+          A <see cref="T:System.Int32" /> that specifies which error occurred.
+        </param>
+        <param name="inner">
+          An instance of <see cref="T:System.Exception" /> that is the cause
+          of the current exception.  If <paramref name="inner" /> is 
+          non-<see langword="null" />, then the current Exception was raised
+          in a catch block handling <paramref name="inner" />.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of the 
+          <see cref="T:Mono.Unix.UnixIOException" /> class using the
+          sxpecified error value and nested exception.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Unix.UnixIOException.NativeErrorCode" />
+            property to <paramref name="errno" />, initializes the
+            <see cref="P:System.Exception.Message" /> property to a
+            system-supplied message that describes <paramref name="errno" />,
+            and initializes the 
+            <see cref="P:System.Exception.InnerException" /> property to
+            <paramref name="inner" />.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          The value <paramref name="errno" />
+          is not a valid error value on this platform.
+        </exception>
+        <altmember cref="M:Mono.Unix.UnixMarshal.GetErrorDescription" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected UnixIOException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">
+          A <see cref="T:System.Runtime.Serialization.SerializationInfo" />
+          instance.
+        </param>
+        <param name="context">
+          A <see cref="System.Runtime.Serialization.StreamingContext" />
+          instance.
+        </param>
+        <summary>Serialization constructor.</summary>
+        <remarks>This constructor is intended to be used by the system for
+          serialization purposes.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixIOException (string message, Exception inner);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">
+          A <see cref="T:System.String" /> that describes the error.  The
+          contents of <paramref name="message" /> is intended to be understood
+          by humans.  The caller of this constructor is required to ensure
+          that this string has been localized for the current system culture.
+        </param>
+        <param name="inner">
+          An instance of <see cref="T:System.Exception" /> that is the cause
+          of the current exception.  If <paramref name="inner" /> is 
+          non-<see langword="null" />, then the current Exception was raised
+          in a catch block handling <paramref name="inner" />.
+        </param>
+        <summary>
+          Constructs and initializes a new instance of the 
+          <see cref="T:Mono.Unix.UnixIOException" /> class using the specified
+          error value and nested exception.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Unix.UnixIOException.ErrorCode" />
+            property to 0, initializes the
+            <see cref="P:System.Exception.Message" /> property to 
+            <paramref name="message" />, and initializes the
+            <see cref="P:System.Exception.InnerException" /> property 
+            to <paramref name="inner" />.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ErrorCode">
+      <MemberSignature Language="C#" Value="public Mono.Unix.Native.Errno ErrorCode { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Errno</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the logical error value specified in the constructor.</summary>
+        <value>
+          A <see cref="T:Mono.Unix.Native.Errno" /> value describing the error
+          specified in the constructor.
+        </value>
+        <remarks>
+          <para>
+            This is the translated value of 
+            <see cref="P:Mono.Unix.UnixIOException.NativeErrorCode" />.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Unix.Native.NativeConvert.ToErrno" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NativeErrorCode">
+      <MemberSignature Language="C#" Value="public int NativeErrorCode { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the native error value specified in the constructor.</summary>
+        <value>
+          A <see cref="T:System.Int32" /> containing the native error value
+          specified in the constructor.
+        </value>
+        <remarks>
+          <para>
+            The native error value and the value of 
+            <see cref="P:Mono.Unix.UnixIOException.ErrorCode" /> are not going
+            to be the same on all platforms.
+          </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

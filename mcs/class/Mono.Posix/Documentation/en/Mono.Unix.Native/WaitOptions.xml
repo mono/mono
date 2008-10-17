@@ -1,0 +1,51 @@
+<Type Name="WaitOptions" FullName="Mono.Unix.Native.WaitOptions">
+  <TypeSignature Language="C#" Value="public enum WaitOptions" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>Wait options for the <see cref="M:Mono.Unix.Native.Syscall.waitpid" /> syscall method.</summary>
+    <remarks />
+    <altmember cref="M:Mono.Unix.Native.Syscall.waitpid" />
+  </Docs>
+  <Members>
+    <Member MemberName="WNOHANG">
+      <MemberSignature Language="C#" Value="WNOHANG" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.WaitOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Return immediately if no child has exited.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WUNTRACED">
+      <MemberSignature Language="C#" Value="WUNTRACED" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.WaitOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Return for children which are stopped (but not traced), and whose status has not been reported. Status for traced children which are stopped is provided also without this option.</summary>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>
