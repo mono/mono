@@ -10,7 +10,7 @@ LOCAL_MCS_FLAGS = \
 	/resource:Resources/monodoc-ecma.xsd,monodoc-ecma.xsd                       \
 	/resource:Resources/overview.xsl,overview.xsl                               \
 	/resource:Resources/stylesheet.xsl,stylesheet.xsl                           \
-	/r:$(topdir)/class/lib/$(PROFILE)/monodoc.dll
+	/r:$(topdir)/class/lib/net_1_1/monodoc.dll
 
 MDOC_RESOURCES = \
 	Resources/defaulttemplate.xsl     \

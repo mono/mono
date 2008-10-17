@@ -1,5 +1,10 @@
 2008-10-17  Jonathan Pryor <jpryor@novell.com>
 
+	* Makefile: Reference the monodoc.dll from the net_1_1 profile, as 
+	  that's the only one that will get built.
+
+2008-10-17  Jonathan Pryor <jpryor@novell.com>
+
 	* Makefile: Fix $(EXTRA_DISTFILES) so that `make distcheck` doesn't
 	  fail on mdoc anymore...
 
