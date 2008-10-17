@@ -1,4 +1,8 @@
 
+Fri Oct 17 10:51:32 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: fixed check for interface type.
+
 Thu Oct 16 20:59:11 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.c: check for NULL setup before it's referenced.
