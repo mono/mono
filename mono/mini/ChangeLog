@@ -1,5 +1,9 @@
 2008-10-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Tests for new methods in Vector4ui.
+
+2008-10-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Add packed int shuffle.
 	
 	* cpu-x86.md: Same.
