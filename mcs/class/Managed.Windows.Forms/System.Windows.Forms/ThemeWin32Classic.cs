@@ -2752,9 +2752,39 @@ namespace System.Windows.Forms
 						if (rect.Width <= 0)
 							continue;
 
-						dc.DrawString (col.Text, control.Font,
-							       SystemBrushes.ControlText,
-							       rect, col.Format);
+#if NET_2_0
+						int image_index;
+						if (control.SmallImageList == null)
+							image_index = -1;
+						else 
+							image_index = col.ImageKey == String.Empty ? col.ImageIndex : control.SmallImageList.Images.IndexOfKey (col.ImageKey);
+
+						if (image_index > -1 && image_index < control.SmallImageList.Images.Count) {
+							int image_width = control.SmallImageList.ImageSize.Width + 5;
+							int text_width = (int)dc.MeasureString (col.Text, control.Font).Width;
+							int x_origin = rect.X;
+
+							switch (col.TextAlign) {
+								case HorizontalAlignment.Left:
+									break;
+								case HorizontalAlignment.Right:
+									x_origin = rect.Right - (text_width + image_width);
+									break;
+								case HorizontalAlignment.Center:
+									x_origin = (rect.Width - (text_width + image_width)) / 2 + rect.X;
+									break;
+							}
+
+							if (x_origin < rect.X)
+								x_origin = rect.X;
+
+							control.SmallImageList.Draw (dc, new Point (x_origin, rect.Y), image_index);
+							rect.X += image_width;
+							rect.Width -= image_width;
+						}
+#endif
+
+						dc.DrawString (col.Text, control.Font, SystemBrushes.ControlText, rect, col.Format);
 					}
 					int right = control.GetReorderedColumn (control.Columns.Count - 1).Rect.Right - control.h_marker;
 					if (right < control.Right) {

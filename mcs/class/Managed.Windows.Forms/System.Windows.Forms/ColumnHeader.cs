@@ -212,6 +212,9 @@ namespace System.Windows.Forms
 
 				image_index = value;
 				image_key = String.Empty;
+
+				if (owner != null)
+					owner.header_control.Invalidate ();
 			}
 		}
 
@@ -228,6 +231,9 @@ namespace System.Windows.Forms
 			set {
 				image_key = value == null ? String.Empty : value;
 				image_index = -1;
+
+				if (owner != null)
+					owner.header_control.Invalidate ();
 			}
 		}
 

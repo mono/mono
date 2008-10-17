@@ -1,3 +1,12 @@
+2008-10-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ColumnHeader.cs: Invalidate ListView.header_control when setting
+	ImageIndex/ImageKey.
+	* ThemeWin32Classic.cs: When drawing the column header, draw a image
+	for the column if available, and make the required adjustments to the
+	text location.
+	Fixes #435105.
+
 2008-10-17  Neville Gao <nevillegao@gmail.com>
 
 	* StatusBarPanel.cs: Control enabled to support accessibility.
