@@ -1,5 +1,10 @@
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
+	* Makefile: Use NO_INSTALL to prevent installation instead of using
+	  do-install and do-uninstall.
+
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
 	* Makefile: Add fixup-docs target, to simplify importing NDesk.Options
 	  documentation for use in Mono.Options
 

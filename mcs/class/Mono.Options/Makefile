@@ -5,6 +5,8 @@ include ../../build/rules.make
 LIBRARY = Mono.Options.dll
 LIBRARY_PACKAGE = none
 
+NO_INSTALL = yes
+
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll
 TEST_MCS_FLAGS = /r:Mono.Posix.dll /r:System.dll
 
@@ -13,12 +15,16 @@ mono_options_DATA = Mono.Options/Options.cs
 
 include ../../build/library.make
 
-do-install:
+install-local: install-source
+
+uninstall-local: uninstall-source
+
+install-source:
 	-$(MKINSTALLDIRS) $(mono_options_DIR)
 	$(INSTALL) -m 644 $(mono_options_DATA) $(mono_options_DIR)
 
-do-uninstall:
-	-rm -Rf $(mono_options_DIR)
+uninstall-source:
+	-rm -f $(mono_options_DIR)/Options.cs
 
 fixup-docs:
 	for f in `find Documentation/en -name \*.xml` ; do \
