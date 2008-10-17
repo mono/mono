@@ -35,6 +35,7 @@ bin_SCRIPTS = \
 	$(scripts_service)	\
 	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)	\
+	mod			\
 	mono-test-install
 
 scripts_1_0_compat = \
@@ -90,6 +91,7 @@ scripts_2_0 = \
 	ilasm2$(SCRIPT_SUFFIX)			\
 	mconfig$(SCRIPT_SUFFIX)			\
 	mkbundle2$(SCRIPT_SUFFIX)		\
+	mdoc$(SCRIPT_SUFFIX)                    \
 	mono-api-info2$(SCRIPT_SUFFIX) 		\
 	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
 	monop2$(SCRIPT_SUFFIX) 			\
@@ -121,7 +123,7 @@ scripts_service = mono-service mono-service2
 scripts_nunit = nunit-console$(SCRIPT_SUFFIX) nunit-console2$(SCRIPT_SUFFIX)
 scripts_rpmhelpers = mono-find-provides mono-find-requires
 
-CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_2_1) $(scripts_defaults) $(scripts_1_0_compat) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires 
+CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_2_1) $(scripts_defaults) $(scripts_1_0_compat) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =			\
@@ -131,6 +133,7 @@ EXTRA_DIST =			\
 	script_umask.bat.in	\
 	smcs.in			\
 	smcs.bat.in		\
+	mod.in			\
 	mono-service.in		\
 	mono-find-provides.in	\
 	mono-find-requires.in	\
@@ -191,6 +194,10 @@ nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
 
 smcs$(SCRIPT_SUFFIX): $(SMCS_IN) Makefile
 	$(REWRITE2_1) -e "s,@""exe_name@,smcs,g" $(srcdir)/$(SMCS_IN) | $(FILTER) > $@.tmp
+	mv $@.tmp $@
+
+mod$(SCRIPT_SUFFIX): mod.in Makefile
+	$(REWRITE2) -e "s,@""exe_name@,mod,g" $(srcdir)/mod.in > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_1_0): $(SCRIPT_IN) Makefile
