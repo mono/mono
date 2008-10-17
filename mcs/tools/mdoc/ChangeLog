@@ -1,3 +1,8 @@
+2008-10-17  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Only provide a Main() method and
+	  use Mono.GetOptions when targeting .NET 1.0 (i.e. monodocer1.exe).
+
 2008-10-16  Jonathan Pryor <jpryor@novell.com>
 
 Migration from monodoc/tools to mcs/tools/mdoc...

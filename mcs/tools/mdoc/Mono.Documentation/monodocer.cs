@@ -14,9 +14,9 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.XPath;
 
+#if NET_1_0
 using Mono.GetOptions;
 
-#if NET_1_0
 using MemberInfoEnumerable = System.Collections.IEnumerable;
 using MyXmlNodeList        = System.Collections.ArrayList;
 using StringList           = System.Collections.ArrayList;
@@ -30,14 +30,95 @@ using StringToStringMap    = System.Collections.Generic.Dictionary<string, strin
 using StringToXmlNodeMap   = System.Collections.Generic.Dictionary<string, System.Xml.XmlNode>;
 #endif
 
-[assembly: AssemblyTitle("Monodocer - The Mono Documentation Tool")]
-[assembly: AssemblyCopyright("Copyright (c) 2004 Joshua Tauberer <tauberer@for.net>\nreleased under the GPL.")]
-[assembly: AssemblyDescription("A tool for creating and updating Mono XML documentation files for assemblies.")]
-
-[assembly: Mono.UsageComplement("")]
-
 namespace Mono.Documentation {
-public class Updater {
+
+class MDocUpdaterOptions 
+#if NET_1_0
+	: Options
+#endif
+{
+#if NET_1_0
+	[Option("The root {directory} of an assembly's documentation files.")]
+#endif
+	public string path = null;
+
+#if NET_1_0
+	[Option("When updating documentation, write the updated files to this {path}.")]
+#endif
+	public string updateto = null;
+
+#if NET_1_0
+	[Option(-1, "The assembly to document.  Specify a {file} path or the name of a GAC'd assembly.")]
+#endif
+	public string[] assembly = null;
+
+#if NET_1_0
+	[Option(-1, "Document only the {type name}d by this argument.")]
+#endif
+	public string[] type = null;
+
+#if NET_1_0
+	[Option("Update only the types in this {namespace}.")]
+#endif
+	public string @namespace = null;
+
+#if NET_1_0
+	[Option("Allow monodocer to delete members from files.")]
+#endif
+	public bool delete = false;
+
+#if NET_1_0
+	[Option("Include overridden methods in documentation.")]
+#endif
+	public bool overrides = false;
+
+#if NET_1_0
+	[Option("Don't update members.")]
+#endif
+	public bool ignoremembers = false;
+
+#if NET_1_0
+	[Option("Don't rename documentation XML files for missing types.  IGNORED.")]
+#endif
+	public bool ignore_extra_docs = false;
+
+#if NET_1_0
+	[Option("The {name} of the project this documentation is for.")]
+#endif
+	public string name;
+
+#if NET_1_0
+	[Option("An XML documentation {file} made by the /doc option of mcs/csc the contents of which will be imported.")]
+#endif
+	public string importslashdoc;
+	
+#if NET_1_0
+	[Option("An ECMA or monodoc-generated XML documemntation {file} to import.")]
+#endif
+	public string importecmadoc;
+
+#if NET_1_0
+	[Option("Import either a /doc or ECMA documentation file.")]
+#endif
+	public string import;
+
+#if NET_1_0
+	[Option("Indent the XML files nicely.")]
+#endif
+	public bool pretty = false;
+	
+#if NET_1_0
+	[Option("Create a <since/> element for added types/members with the value {since}.")]
+#endif
+	public string since;
+
+#if NET_1_0
+	[Option("Show full stack trace on error.")]
+#endif
+	public bool show_exceptions;
+}
+
+class MDocUpdater {
 	
 	static string srcPath;
 	static Assembly[] assemblies;
@@ -65,65 +146,22 @@ public class Updater {
 	const BindingFlags DefaultBindingFlags = 
 		BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 	
-	private class Opts : Options {
-		[Option("The root {directory} of an assembly's documentation files.")]
-		public string path = null;
-
-		[Option("When updating documentation, write the updated files to this {path}.")]
-		public string updateto = null;
-
-		[Option(-1, "The assembly to document.  Specify a {file} path or the name of a GAC'd assembly.")]
-		public string[] assembly = null;
-
-		[Option(-1, "Document only the {type name}d by this argument.")]
-		public string[] type = null;
-
-		[Option("Update only the types in this {namespace}.")]
-		public string @namespace = null;
-
-		[Option("Allow monodocer to delete members from files.")]
-		public bool delete = false;
-
-		[Option("Include overridden methods in documentation.")]
-		public bool overrides = false;
-
-		[Option("Don't update members.")]
-		public bool ignoremembers = false;
-
-		[Option("Don't rename documentation XML files for missing types.  IGNORED.")]
-		public bool ignore_extra_docs = false;
-
-		[Option("The {name} of the project this documentation is for.")]
-		public string name;
-
-		[Option("An XML documentation {file} made by the /doc option of mcs/csc the contents of which will be imported.")]
-		public string importslashdoc;
-		
-		[Option("An ECMA or monodoc-generated XML documemntation {file} to import.")]
-		public string importecmadoc;
-
-		[Option("Import either a /doc or ECMA documentation file.")]
-		public string import;
-
-		[Option("Indent the XML files nicely.")]
-		public bool pretty = false;
-		
-		[Option("Create a <since/> element for added types/members with the value {since}.")]
-		public string since;
-
-		[Option("Show full stack trace on error.")]
-		public bool show_exceptions;
-	}
-	
-	public static void Main(string[] args) {
-		Opts opts = new Opts();
+#if NET_1_0
+	public static void Main(string[] args)
+	{
+		MDocUpdaterOptions opts = new MDocUpdaterOptions ();
 		opts.ProcessArgs(args);
 
 		if (args.Length == 0) {
 			opts.DoHelp();
 			return;
 		}
+		Run (opts);
+	}
+#endif
 		
+	public static void Run (MDocUpdaterOptions opts)
+	{
 		nooverrides = !opts.overrides;
 		delete = opts.delete;
 		ignoremembers = opts.ignoremembers;
@@ -638,7 +676,7 @@ public class Updater {
 #if NET_1_0
 		IEnumerable
 #else
-		IEnumerable<Mono.Documentation.Updater.DocsTypeInfo>
+		IEnumerable<Mono.Documentation.MDocUpdater.DocsTypeInfo>
 #endif
 		GetTypes (Assembly assembly, string[] forTypes)
 	{
@@ -911,8 +949,9 @@ public class Updater {
 				
 				// Duplicated
 				if (seenmembers.ContainsKey (sig)) {
-					if (object.ReferenceEquals (oldmember, seenmembers [sig]))
-						; // ignore, already seen
+					if (object.ReferenceEquals (oldmember, seenmembers [sig])) {
+						// ignore, already seen
+					}
 					else if (DefaultMemberComparer.Compare (oldmember, seenmembers [sig]) == 0)
 						DeleteMember ("Duplicate Member Found", output, oldmember, todelete);
 					else
