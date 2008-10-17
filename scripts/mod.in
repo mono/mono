@@ -1,0 +1,19 @@
+#!/bin/sh
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+monodocdir=@monodocdir@
+
+if test "x$1" = x; then
+    echo Usage is: mod TOPIC
+    exit 1;
+fi
+
+if `which lynx >& /dev/null` > /dev/null; then
+    @RUNTIME@ $monodocdir/mod.exe "$1" | lynx -dump -stdin -force_html | ${PAGER:-more}
+else
+    tmp=$HOME/.monodoc-tmp-$$
+    @RUNTIME@ $monodocdir/mod.exe "$1" > $tmp
+    links -dump -force-html $tmp | ${PAGER:-more}
+    rm $tmp
+fi
