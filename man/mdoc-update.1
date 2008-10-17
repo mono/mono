@@ -1,0 +1,75 @@
+.\" 
+.\" mdoc-update manual page.
+.\" (C) 2008 Jonathan Pryor
+.\" Author:
+.\"   Jonathan Pryor (jpryor@novell.com)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH "mdoc-update" 1
+.SH NAME
+mdoc update \- \fBmdoc\fR(5) documentation format support
+.SH SYNOPSIS
+\fBmdoc update\fR [OPTIONS]* ASSEMBLIES
+.SH DESCRIPTION
+\fBmdoc update\fR is responsible for the following:
+.TP
+.B *
+Creating documentation stubs based on \fIASSEMBLIES\fR.  The stub-creation
+process will create new \fBmdoc\fR(5) XML files for each type within
+\fIASSEMBLIES\fR, and provide documentation stubs for each member of those
+types.
+.TP
+.B *
+Update documentation stubs based on \fIASSEMBLIES\fR.  Existing \fBmdoc\fR(5)
+documentation can be updated to reflect changes within \fIASSEMBLIES\fR, such
+as added types and members, while preserving existing documentation.
+.Sp
+In some limited circumstances, renames will be tracked, minimizing the
+documentation burden when e.g. a parameter is renamed.
+circumstances, 
+creates stubs and updates documentation in the \fBmdoc\fR(5)
+documentation format from \fIASSEMBLIES\fR.
+.PP
+\fBmdoc update\fR does not rely on documentation found within source code.
+.PP
+See \fBmdoc\fR(1) and \fBmdoc\fR(5) for more information.
+.SH OPTIONS
+.TP
+.B \-\-delete
+Allow \fBmdoc update\fR to delete members from documentation files.  
+The only members deleted are members which are no longer present within
+\fIASSEMBLIES\fR and are not present in any other assembly versions.
+.Sp
+If a type is no longer present, the documentation file is \fInot\fR
+deleted, but is instead \fIrenamed\fR to have a \fB.remove \fR extension.
+.Sp
+Version detection is done with the \fI//AssemblyVersion\fR elements; if there
+are no \fI//AssemblyVersion\fR elements for a given \fI<Type>\fR or 
+\fI<Member/>\fR, then the \fI<Type>\fR will be renamed and/or the 
+\fI<Member/>\fR will be removed.
+.TP
+\fB\-i\fR, \fB\-\-import\fR=\fIFILE\fR
+Import documentation found within \fIFILE\fR.
+.Sp
+\fIFILE\fR may contain either \fIcsc /doc\fR XML or \fIECMA-335\fR XML.
+.TP
+\fB\-o\fR, \fB\-\-out\fB=\fIDIRECTORY\fR
+Place the generated stubs into \fIDIRECTORY\fR.
+.Sp
+When updating documentation, \fIDIRECTORY\fR is also the source directory.
+.B \-h, \-?, \-\-help
+Display a help message and exit.
+.SH SEE ALSO
+mdoc(1), 
+mdoc(5), 
+mdoc-assemble(1),
+mdoc-export-html(1),
+mdoc-validate(1),
+.SH MAILING LISTS
+.TP
+Visit http://lists.ximian.com/mailman/listinfo/mono-docs-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com for details
