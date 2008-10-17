@@ -205,6 +205,74 @@ namespace Mono.Simd
 			return res;
 		}
 
+		public static unsafe Vector16b Average (Vector16b va, Vector16b vb) {
+			Vector16b res = new Vector16b ();
+			byte *a = &va.v0;
+			byte *b = &vb.v0;
+			byte *c = &res.v0;
+			for (int i = 0; i < 16; ++i)
+				*c++ = (byte) ((*a++ + *b++ + 1) >> 1);
+			return res;
+		}
+
+		public static unsafe Vector16b Max (Vector16b va, Vector16b vb) {
+			Vector16b res = new Vector16b ();
+			byte *a = &va.v0;
+			byte *b = &vb.v0;
+			byte *c = &res.v0;
+			for (int i = 0; i < 16; ++i)
+				*c++ = (byte) System.Math.Max(*a++, *b++);
+			return res;
+		}
+
+
+		public static unsafe Vector16b Min (Vector16b va, Vector16b vb) {
+			Vector16b res = new Vector16b ();
+			byte *a = &va.v0;
+			byte *b = &vb.v0;
+			byte *c = &res.v0;
+			for (int i = 0; i < 16; ++i)
+				*c++ = (byte) System.Math.Min(*a++, *b++);
+			return res;
+		}
+
+		public static unsafe int ExtractByteMask (Vector16b va) {
+			int res = 0;
+			byte *a = (byte*)&va;
+			for (int i = 0; i < 16; ++i)
+				res |= (*a++ & 0x80) >> 7 << i;
+			return res;
+		}
+
+
+		public static unsafe Vector8us SumOfAbsoluteDifferences (Vector16b va, Vector16b vb) {
+			Vector8us res = new Vector8us ();
+			byte *a = &va.v0;
+			byte *b = &vb.v0;
+
+			int tmp = 0;
+			for (int i = 0; i < 8; ++i)
+				tmp += System.Math.Abs ((int)*a++ - (int)*b++);
+			res.V0 = (ushort)tmp;
+
+			tmp = 0;
+			for (int i = 0; i < 8; ++i)
+				tmp += System.Math.Abs ((int)*a++ - (int)*b++);
+			res.V4 = (ushort)tmp;
+
+			return res;
+		}
+
+		public static unsafe Vector16b CompareEqual (Vector16b va, Vector16b vb) {
+			Vector16b res = new Vector16b ();
+			byte *a = &va.v0;
+			byte *b = &vb.v0;
+			byte *c = &res.v0;
+			for (int i = 0; i < 16; ++i)
+				*c++ = (byte) (*a++ == *b++ ? -1 : 0);
+			return res;
+		}
+
 		public static unsafe explicit operator Vector4f(Vector16b v)
 		{
 			Vector4f* p = (Vector4f*)&v;

@@ -1,3 +1,8 @@
+2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector16b.cs: Added Min, Max, Average, ExtractByteMask,
+	SumOfAbsoluteDifferences and CompareEqual.
+
 2008-10-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector8us.cs: Added Min, Max, Average, ExtractByteMask and
