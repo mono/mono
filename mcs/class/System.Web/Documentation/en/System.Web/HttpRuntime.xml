@@ -1,0 +1,290 @@
+<Type Name="HttpRuntime" FullName="System.Web.HttpRuntime">
+  <TypeSignature Language="C#" Value="public sealed class HttpRuntime" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyPublicKey>
+    </AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>The main driver for processing Http requests.</summary>
+    <remarks>The HttpRuntime class drives the processing of an incoming request.
+
+<para>
+   To process a request an incoming HTTP request an object of type <see cref="T:System.Web.HttpWorkerRequest" /> is created.  This object acts as a gateway between the System.Web runtime and the web server (two implementations are distributed with Mono: mod_mono to integrate with the Apache server and XSP a lightweight testing server).
+</para><para>
+    The <see cref="T:System.Web.HttpRequest.ProcessRequest (System.Web.HttpWorkerRequest)" /> method drives the request.  It determines based on the url what handler must be employed.  Handlers are registered in the system.web/httpHandler section of the machine.config and per-directory Web.config files. 
+</para><para>
+    The request is then passed to the proper http handler.  For example files ending in .aspx are processed by the internal PageHandlerFactory, files ending in .ashx are processed by the SimplerHandlerFactory and so on.
+</para><para>
+   Users can define their own handlers by listing it on the web.config file like this:
+</para><example><code lang="Web.config">
+    &lt;configuration&gt;
+     &lt;system.web&gt;
+        &lt;httpHandlers&gt;
+          &lt;add verb="GET" path="*.diff" type="GenerateCuteDiff.dll"/&gt;
+        &lt;/httpHandlers&gt;
+     &lt;/system.web&gt;
+    &lt;/configuration&gt;
+  </code></example><para>
+In this example requests made with the HTTP GET method to files ending in the extension "diff" will be handled by GenerateCuteDiff type.  The library must be available on either the GAC or the bin/ directory of the path where the file lives. 
+</para><para>
+    Handlers must implement the <see cref="T:System.Web.IHttpHandlerFactory" /> or <see cref="T:System.Web.IHttpHandler" /> interfaces.
+</para></remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public HttpRuntime ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>HttpRuntime constructor.</summary>
+        <remarks>There is no need to create instances of HttpRuntime.  This is probably a mistake in the original implementation of this class, as all of its public methods and properties are static.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppDomainAppId">
+      <MemberSignature Language="C#" Value="public static string AppDomainAppId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppDomainAppPath">
+      <MemberSignature Language="C#" Value="public static string AppDomainAppPath { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Physical application directory for the application.</summary>
+        <value>The physical directory path.</value>
+        <remarks>The physical path for the application being executed in the current application domain.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppDomainAppVirtualPath">
+      <MemberSignature Language="C#" Value="public static string AppDomainAppVirtualPath { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The virtual path for the current application.</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppDomainId">
+      <MemberSignature Language="C#" Value="public static string AppDomainId { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The unique AppDomain ID.</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AspInstallDirectory">
+      <MemberSignature Language="C#" Value="public static string AspInstallDirectory { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The directory where the runtime lives.</summary>
+        <value>The path where the system libraries are installed.</value>
+        <remarks>This directory is also the directory where all the other assemblies and compilers are located.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BinDirectory">
+      <MemberSignature Language="C#" Value="public static string BinDirectory { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Cache">
+      <MemberSignature Language="C#" Value="public static System.Web.Caching.Cache Cache { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.Caching.Cache</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The cache object</summary>
+        <value>The <see cref="T:System.Web.Caching.Cache" /> object.</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public static void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ClrInstallDirectory">
+      <MemberSignature Language="C#" Value="public static string ClrInstallDirectory { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The directory where the runtime files reside.</summary>
+        <value>The directory where all assemblies for the runtime resides.</value>
+        <remarks>In Mono this directory contains the assemblies, it does not contain other configuration elements which are installed in a Unix compliant way.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CodegenDir">
+      <MemberSignature Language="C#" Value="public static string CodegenDir { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsOnUNCShare">
+      <MemberSignature Language="C#" Value="public static bool IsOnUNCShare { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'bool'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MachineConfigurationDirectory">
+      <MemberSignature Language="C#" Value="public static string MachineConfigurationDirectory { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProcessRequest">
+      <MemberSignature Language="C#" Value="public static void ProcessRequest (System.Web.HttpWorkerRequest wr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="wr" Type="System.Web.HttpWorkerRequest" />
+      </Parameters>
+      <Docs>
+        <param name="wr">An <see cref="T:System.Web.HttpWorkerRequest" /> instance.</param>
+        <summary>Processes a request.</summary>
+        <remarks>This method executes the HTTP pipeline.
+
+<para>
+The provided object is the interface between the pipeline and the HTTP Request.   
+</para><para>
+The <see cref="T:System.Web.HttpWorkerRequest" /> class defines the interface that must be exposed by a server so that it can be hooked up to ASP.NET'.   Typically this is a front-end for an incoming HTTP request from the network, but an implementation can do anything it wants and this can be used to process ASP.NET requests even without a network connection.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UnloadAppDomain">
+      <MemberSignature Language="C#" Value="public static void UnloadAppDomain ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

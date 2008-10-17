@@ -1,0 +1,39 @@
+<Type Name="IHierarchicalEnumerable" FullName="System.Web.UI.IHierarchicalEnumerable">
+  <TypeSignature Language="C#" Value="public interface IHierarchicalEnumerable : System.Collections.IEnumerable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="GetHierarchyData">
+      <MemberSignature Language="C#" Value="public System.Web.UI.IHierarchyData GetHierarchyData (object enumeratedItem);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.IHierarchyData</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="enumeratedItem" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="enumeratedItem">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

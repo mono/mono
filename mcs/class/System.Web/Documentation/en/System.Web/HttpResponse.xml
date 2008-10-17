@@ -1,0 +1,1143 @@
+<Type Name="HttpResponse" FullName="System.Web.HttpResponse">
+  <TypeSignature Language="C#" Value="public sealed class HttpResponse" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyPublicKey>
+    </AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>An object that provides methods and properties to produce the HTTP response.</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public HttpResponse (System.IO.TextWriter writer);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">a <see cref="T:System.IO.TextWriter" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddCacheDependency">
+      <MemberSignature Language="C#" Value="public void AddCacheDependency (System.Web.Caching.CacheDependency[] dependencies);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dependencies" Type="System.Web.Caching.CacheDependency[]" />
+      </Parameters>
+      <Docs>
+        <param name="dependencies">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddCacheItemDependencies">
+      <MemberSignature Language="C#" Value="public void AddCacheItemDependencies (System.Collections.ArrayList cacheKeys);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cacheKeys" Type="System.Collections.ArrayList" />
+      </Parameters>
+      <Docs>
+        <param name="cacheKeys">a <see cref="T:System.Collections.ArrayList" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddCacheItemDependencies">
+      <MemberSignature Language="C#" Value="public void AddCacheItemDependencies (string[] cacheKeys);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cacheKeys" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="cacheKeys">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddCacheItemDependency">
+      <MemberSignature Language="C#" Value="public void AddCacheItemDependency (string cacheKey);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cacheKey" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="cacheKey">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddFileDependencies">
+      <MemberSignature Language="C#" Value="public void AddFileDependencies (System.Collections.ArrayList filenames);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filenames" Type="System.Collections.ArrayList" />
+      </Parameters>
+      <Docs>
+        <param name="filenames">a <see cref="T:System.Collections.ArrayList" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddFileDependencies">
+      <MemberSignature Language="C#" Value="public void AddFileDependencies (string[] filenames);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filenames" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="filenames">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddFileDependency">
+      <MemberSignature Language="C#" Value="public void AddFileDependency (string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddHeader">
+      <MemberSignature Language="C#" Value="public void AddHeader (string name, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">The HTTP header name.</param>
+        <param name="value">The value for the header.</param>
+        <summary>Adds a header to the HTTP request.</summary>
+        <remarks>This routine merely calls AppendHeader and was originally flagged as being left here for compatibility for old ASP applications.
+
+<para>
+Read the description in <see cref="M:System.Web.HttpResponse.AppendHeader" /> for more information.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendCookie">
+      <MemberSignature Language="C#" Value="public void AppendCookie (System.Web.HttpCookie cookie);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cookie" Type="System.Web.HttpCookie" />
+      </Parameters>
+      <Docs>
+        <param name="cookie">The cookie to add.</param>
+        <summary>Appends an <see cref="T:System.Web.HttpCookie" /> to the response.</summary>
+        <remarks>This is equivalent to: Response.Cookies.Add (cookie).</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendHeader">
+      <MemberSignature Language="C#" Value="public void AppendHeader (string name, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">The name of the HTTP header.</param>
+        <param name="value">The value for the header.</param>
+        <summary>Appends a new header to the HTTP response.</summary>
+        <remarks>This method will add the given header and value to the HTTP response when the headers are sent.
+
+<para>
+If this routine is invoked after the headers have been sent to the client (for example if <see cref="M:System.Web.HttpResponse.Flush()" /> has been called or Buffering is off and output has been written) this will throw a an <see cref="T:System.Web.HttpException" />.
+</para><para>
+A number of headers are handled specially by this routine, these are:
+
+<list type="bullet"><item><term>"Content-Length": the value in the header must be an integer that can be parsed by Int32.Parse or an exception will be thrown.   Setting this header manually will force the size of the buffer to be at most the size specified.  Any further output will be ignored.   This will also have the side effect of disabling "chunked" transfers for HTTP 1.1 clients.</term></item><item><term>"Content-Type": The value will not be appended, but only a single copy of this header will be sent on the reply.</term></item><item><term>"Transfer-Encoding": Setting this value will disable chunked transfers.</term></item><item><term>"Cache-Control": This header will only be sent once, and it defaults to private.  You can use this to work around the limitation in the <see cref="P:System.Web.HttpResponse.CacheControl" /> property.</term></item></list></para><para>
+If a header is appended various times the response output will contain multiple instances of the header.  For example:
+</para><example><code lang="C#">
+     Response.AppendHeader ("MyHeader", "A");
+     Response.AppendHeader ("MyHeader", "B");
+  </code><para />
+
+Will produce the following on the HTTP response:
+
+<para /><code lang="HTTP traffic">
+MyHeader: A
+MyHeader: B
+</code></example></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AppendToLog">
+      <MemberSignature Language="C#" Value="public void AppendToLog (string param);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="param" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="param">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ApplyAppPathModifier">
+      <MemberSignature Language="C#" Value="public string ApplyAppPathModifier (string virtualPath);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="virtualPath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="virtualPath">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'string'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BinaryWrite">
+      <MemberSignature Language="C#" Value="public void BinaryWrite (byte[] buffer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A byte buffer to write back.</param>
+        <summary>Writes a byte buffer without encoding to the response stream.</summary>
+        <remarks>The contents of this buffer are sent back to the client without being altered by the current encoding of the response.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Buffer">
+      <MemberSignature Language="C#" Value="public bool Buffer { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Controls whether to buffer the response before sending the data to the client.</summary>
+        <value>The current state of buffering.</value>
+        <remarks>This controls whether HttpResponse should buffer the output before it is delivered to a client.  The default is <see langword="true" />.
+
+<para>
+The buffering can be changed during the execution back and forth if needed.   Notice that changing the buffering state will not flush the current contents held in the output buffer, the contents will only be flushed out on the next write operation or by manually calling <see cref="T:System.Web.HttpResponse.Flush" /></para><para>
+This property is the same as <see cref="P:System.Web.HttpResponse.BufferOutput" /></para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BufferOutput">
+      <MemberSignature Language="C#" Value="public bool BufferOutput { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Controls whether to buffer the response before sending the data to the client. </summary>
+        <value>Whether output is currently being buffered.</value>
+        <remarks>This controls whether HttpResponse should buffer the output before it is delivered to a client.  The default is <see langword="true" />.
+
+<para>
+The buffering can be changed during the execution back and forth if needed.
+</para><para>
+This property is the same as <see cref="P:System.Web.HttpResponse.Buffer" /></para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Cache">
+      <MemberSignature Language="C#" Value="public System.Web.HttpCachePolicy Cache { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.HttpCachePolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'HttpCachePolicy'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CacheControl">
+      <MemberSignature Language="C#" Value="public string CacheControl { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Charset">
+      <MemberSignature Language="C#" Value="public string Charset { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>The character set used on the HTTP response.</summary>
+        <value>The current character set.</value>
+        <remarks>The character set is appended to the current content type on the "Content-Type" HTTP header.  This character set is the <see cref="P:System.Text.Encoding.WebName" /> of the ContentEncoding set on the response.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Clears the contents so far.</summary>
+        <remarks>This clears all the generated output from the internal buffer.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ClearContent">
+      <MemberSignature Language="C#" Value="public void ClearContent ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Clears the contents so far.</summary>
+        <remarks>The same as <see cref="M:System.Web.HttpResponse.Clear()" />, this clears all the output so far on the internal buffer.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ClearHeaders">
+      <MemberSignature Language="C#" Value="public void ClearHeaders ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Clears any headers that might have been set previously.</summary>
+        <remarks>This clears all the header definitions that might have been added with <see cref="M:System.Web.HttpResponse.AppendHeader" />.
+
+<para>
+   This throws an <see cref="T:System.Web.HttpException" /> if the headers have already been sent to the client (for example, if the user has called the <see cref="M:System.Web.HttpResponse.Flush" /> method.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContentEncoding">
+      <MemberSignature Language="C#" Value="public System.Text.Encoding ContentEncoding { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The encoding used for writing the response.</summary>
+        <value>a <see cref="T:System.Text.Encoding" /></value>
+        <remarks>This is the encoding used to write the response.   
+<para>
+The encoding can be changed any number of times during the request processing, but the value sent on the Content-Type HTTP header is the value set at the time that the headers are sent back (the first time the contents are flushed).
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ContentType">
+      <MemberSignature Language="C#" Value="public string ContentType { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>The value of the "Content-Type" header (identifies the MIME type of the current response).</summary>
+        <value>The current Content-Type value.</value>
+        <remarks>The default value is text/html.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Cookies">
+      <MemberSignature Language="C#" Value="public System.Web.HttpCookieCollection Cookies { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.HttpCookieCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The Cookies that will be sent back to the client.</summary>
+        <value>A collection with all the cookies being sent back to the client.</value>
+        <remarks>This starts empty and the developer can add one or more cookies to the response.
+
+
+<example><code lang="C#">
+      Response.Cookies.Add (new HttpCookie ("username", "miguel"));
+  </code></example></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="End">
+      <MemberSignature Language="C#" Value="public void End ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Stops processing the page.</summary>
+        <remarks>This stops procesing the page at this point.
+
+<para>
+   This aborts the current thread of execution and forces the pipeline to flush all the output that it has accumulated so far.
+</para><para>
+   Unlike <see cref="T:System.Web.HttpApplication.CompleteRequest" /> this forces an immediate termination, while complete request is used to stop further stages of the application pipeline from executing and is typically used by module developers.
+</para><para>
+   This call does not return.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Expires">
+      <MemberSignature Language="C#" Value="public int Expires { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'int'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExpiresAbsolute">
+      <MemberSignature Language="C#" Value="public DateTime ExpiresAbsolute { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'DateTime'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Filter">
+      <MemberSignature Language="C#" Value="public System.IO.Stream Filter { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <value>a <see cref="T:System.IO.Stream" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public void Flush ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Flushes all the accumulated data so far.</summary>
+        <remarks>HttpResponse by default will buffer all of the output before it is sent to the client.  To control the delivery of the data developers can use this method (or alternatively set the <see cref="P:System.Web.HttpResponse.Buffer" /> property to false).
+
+<para>
+   If chunked transfers are enabled for this response, this will try to use the chunked transfer.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HeaderEncoding">
+      <MemberSignature Language="C#" Value="public System.Text.Encoding HeaderEncoding { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsClientConnected">
+      <MemberSignature Language="C#" Value="public bool IsClientConnected { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns whether the client is still connected.</summary>
+        <value>
+          <see langword="true" /> if the client is still connected, <see langword="false" /> otherwise.</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsRequestBeingRedirected">
+      <MemberSignature Language="C#" Value="public bool IsRequestBeingRedirected { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Output">
+      <MemberSignature Language="C#" Value="public System.IO.TextWriter Output { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.TextWriter</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>A <see cref="T:System.IO.TextWriter" /> to write the HTTP response.</summary>
+        <value>The textwriter.</value>
+        <remarks>The text writer uses the encoding specified in the <see cref="P:System.Web.HttpResponse.ContentEncoding" />.  This writer is TextWriter wrapper on top of the <see cref="P:System.Web.HttpResponse.OutputStream" /> stream.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OutputStream">
+      <MemberSignature Language="C#" Value="public System.IO.Stream OutputStream { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>A write-only stream for producing the HTTP response.</summary>
+        <value>a <see cref="T:System.IO.Stream" /></value>
+        <remarks>This is a write-only stream for producing the HTTP response output.  Any attempts to Seek or poke at the position will throw an exception.
+<para>
+The stream buffering is controlled by the <see cref="P:System.Web.HttpResponse.Buffer" /> state.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pics">
+      <MemberSignature Language="C#" Value="public void Pics (string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">The value to set the header to.</param>
+        <summary>Adds the given value to the PICS-Label header.</summary>
+        <remarks>This sets the value of the PICS-Label HTTP header.
+
+
+<para>
+See http://www.w3.org/PICS/labels.html for more details.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Redirect">
+      <MemberSignature Language="C#" Value="public void Redirect (string url);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="url" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="url">The url to be redirected to.</param>
+        <summary>To be added</summary>
+        <remarks>This sends an HTTP 302 status code back to the client and clears all of the headers and content generated so far. The contents are replaced with a dummy HTML page that will point to the new page in case that the client does not automatically follow the redirection.
+
+<para>
+   No further processing is done after calling this method, the method does not return.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Redirect">
+      <MemberSignature Language="C#" Value="public void Redirect (string url, bool endResponse);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="url" Type="System.String" />
+        <Parameter Name="endResponse" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="url">The url to redirect to.</param>
+        <param name="endResponse">Whether processing must be stopped immediately.</param>
+        <summary>Instructs the client to be redirected to a new url.</summary>
+        <remarks>This redirects the HTTP client to the new location.
+
+<para>
+   This sends an HTTP 302 status code back to the client and clears all of the headers and content generated so far.  The contents are replaced with a dummy HTML page that will point to the new page in case that the client does not automatically follow the redirection.
+</para><para>If <paramref name="endResponse" /> is <see langword="true" /> then processing is stopped at this point and controls is not returned to the caller.</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RedirectLocation">
+      <MemberSignature Language="C#" Value="public string RedirectLocation { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The redirection location on the HTTP headers.</summary>
+        <value>The redirect</value>
+        <remarks>
+          <para>
+This is a low-level request, for the Location header to be complete you must also update the StatusCode to one of the valid redirection codes (3xx).  See the <see cref="M:System.Web.HttpResponse.Redirect(string)" /> and <see cref="M:System.Web.HttpResponse.Redirect(string,bool)" /> methods for a high-level interface to redirection.
+</para>
+          <para>
+If set this property controls whether the header "Location" in the HTTP headers is set.  If the value is <see langword="null" /> the header is not sent, any other values will cause the "Location" header to be sent.
+</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveOutputCacheItem">
+      <MemberSignature Language="C#" Value="public static void RemoveOutputCacheItem (string path);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetCookie">
+      <MemberSignature Language="C#" Value="public void SetCookie (System.Web.HttpCookie cookie);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cookie" Type="System.Web.HttpCookie" />
+      </Parameters>
+      <Docs>
+        <param name="cookie">The cookie to add.</param>
+        <summary>Appends the given cookie to the results that will be sent back to the client.</summary>
+        <remarks>The cookie is added to the list of cookies that will be sent back to the HTTP client.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Status">
+      <MemberSignature Language="C#" Value="public string Status { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Sets the HTTP status return.</summary>
+        <value>The current HTTP status.</value>
+        <remarks>This property represents the entire status response which includes a status code and a status description.  
+
+<para>
+   When this value is set, the components of it are parsed into a status code and a status description (the values can be obtained from the <see cref="P:System.Web.HttpResponse.StatusCode" /> and <see cref="P:System.Web.HttpResponse.StatusDescription" /> properties.
+</para><para>
+   The following is a list of the RFC defined status codes:
+</para><list type="table"><listheader><term>HTTP Status Code</term><description>Status Description</description></listheader><item><term>100</term><description>Continue</description></item><item><term>101</term><description>Switching Protocols</description></item><item><term>200</term><description>OK</description></item><item><term>201</term><description>Created</description></item><item><term>202</term><description>Accepted</description></item><item><term>203</term><description>Non-Authoritative Information</description></item><item><term>204</term><description>No Content</description></item><item><term>205</term><description>Reset Content</description></item><item><term>206</term><description>Partial Content</description></item><item><term>300</term><description>Multiple Choices</description></item><item><term>301</term><description>Moved Permanently</description></item><item><term>302</term><description>Found</description></item><item><term>303</term><description>See Other</description></item><item><term>304</term><description>Not Modified</description></item><item><term>305</term><description>Use Proxy</description></item><item><term>307</term><description>Temporary Redirect</description></item><item><term>400</term><description>Bad Request</description></item><item><term>401</term><description>Unauthorized</description></item><item><term>402</term><description>Payment Required</description></item><item><term>403</term><description>Forbidden</description></item><item><term>404</term><description>Not Found</description></item><item><term>405</term><description>Method Not Allowed</description></item><item><term>406</term><description>Not Acceptable</description></item><item><term>407</term><description>Proxy Authentication Required</description></item><item><term>408</term><description>Request Time-out</description></item><item><term>409</term><description>Conflict</description></item><item><term>410</term><description>Gone</description></item><item><term>411</term><description>Length Required</description></item><item><term>412</term><description>Precondition Failed</description></item><item><term>413</term><description>Request Entity Too Large</description></item><item><term>414</term><description>Request-URI Too Large</description></item><item><term>415</term><description>Unsupported Media Type</description></item><item><term>416</term><description>Requested range not satisfiable</description></item><item><term>417</term><description>Expectation Failed</description></item><item><term>500</term><description>Internal Server Error</description></item><item><term>501</term><description>Not Implemented</description></item><item><term>502</term><description>Bad Gateway</description></item><item><term>503</term><description>Service Unavailable</description></item><item><term>504</term><description>Gateway Time-out</description></item><item><term>505</term><description>HTTP Version not supported</description></item></list></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StatusCode">
+      <MemberSignature Language="C#" Value="public int StatusCode { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>The HTTP status code that will be returned to the client.</summary>
+        <value>The current status code. Defaults to 200.</value>
+        <remarks>This property controls the HTTP status code that is sent back to the HTTP client.
+
+<para>
+If the setter method is called after the headers have been set, an <see cref="T:System.Web.HttpException" /> will be thrown.
+</para><para>
+   The following is a list of the RFC defined status codes:
+</para><list type="table"><listheader><term>HTTP Status Code</term><description>Status Description</description></listheader><item><term>100</term><description>Continue</description></item><item><term>101</term><description>Switching Protocols</description></item><item><term>200</term><description>OK</description></item><item><term>201</term><description>Created</description></item><item><term>202</term><description>Accepted</description></item><item><term>203</term><description>Non-Authoritative Information</description></item><item><term>204</term><description>No Content</description></item><item><term>205</term><description>Reset Content</description></item><item><term>206</term><description>Partial Content</description></item><item><term>300</term><description>Multiple Choices</description></item><item><term>301</term><description>Moved Permanently</description></item><item><term>302</term><description>Found</description></item><item><term>303</term><description>See Other</description></item><item><term>304</term><description>Not Modified</description></item><item><term>305</term><description>Use Proxy</description></item><item><term>307</term><description>Temporary Redirect</description></item><item><term>400</term><description>Bad Request</description></item><item><term>401</term><description>Unauthorized</description></item><item><term>402</term><description>Payment Required</description></item><item><term>403</term><description>Forbidden</description></item><item><term>404</term><description>Not Found</description></item><item><term>405</term><description>Method Not Allowed</description></item><item><term>406</term><description>Not Acceptable</description></item><item><term>407</term><description>Proxy Authentication Required</description></item><item><term>408</term><description>Request Time-out</description></item><item><term>409</term><description>Conflict</description></item><item><term>410</term><description>Gone</description></item><item><term>411</term><description>Length Required</description></item><item><term>412</term><description>Precondition Failed</description></item><item><term>413</term><description>Request Entity Too Large</description></item><item><term>414</term><description>Request-URI Too Large</description></item><item><term>415</term><description>Unsupported Media Type</description></item><item><term>416</term><description>Requested range not satisfiable</description></item><item><term>417</term><description>Expectation Failed</description></item><item><term>500</term><description>Internal Server Error</description></item><item><term>501</term><description>Not Implemented</description></item><item><term>502</term><description>Bad Gateway</description></item><item><term>503</term><description>Service Unavailable</description></item><item><term>504</term><description>Gateway Time-out</description></item><item><term>505</term><description>HTTP Version not supported</description></item></list></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StatusDescription">
+      <MemberSignature Language="C#" Value="public string StatusDescription { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>The HTTP description sent on the response.</summary>
+        <value>The current status description that will be returned to the client.</value>
+        <remarks>The status description is described in RFC 2616, section 6.1.1
+
+<para>
+   The following is a list of the RFC defined status codes:
+</para><list type="table"><listheader><term>HTTP Status Code</term><description>Status Description</description></listheader><item><term>100</term><description>Continue</description></item><item><term>101</term><description>Switching Protocols</description></item><item><term>200</term><description>OK</description></item><item><term>201</term><description>Created</description></item><item><term>202</term><description>Accepted</description></item><item><term>203</term><description>Non-Authoritative Information</description></item><item><term>204</term><description>No Content</description></item><item><term>205</term><description>Reset Content</description></item><item><term>206</term><description>Partial Content</description></item><item><term>300</term><description>Multiple Choices</description></item><item><term>301</term><description>Moved Permanently</description></item><item><term>302</term><description>Found</description></item><item><term>303</term><description>See Other</description></item><item><term>304</term><description>Not Modified</description></item><item><term>305</term><description>Use Proxy</description></item><item><term>307</term><description>Temporary Redirect</description></item><item><term>400</term><description>Bad Request</description></item><item><term>401</term><description>Unauthorized</description></item><item><term>402</term><description>Payment Required</description></item><item><term>403</term><description>Forbidden</description></item><item><term>404</term><description>Not Found</description></item><item><term>405</term><description>Method Not Allowed</description></item><item><term>406</term><description>Not Acceptable</description></item><item><term>407</term><description>Proxy Authentication Required</description></item><item><term>408</term><description>Request Time-out</description></item><item><term>409</term><description>Conflict</description></item><item><term>410</term><description>Gone</description></item><item><term>411</term><description>Length Required</description></item><item><term>412</term><description>Precondition Failed</description></item><item><term>413</term><description>Request Entity Too Large</description></item><item><term>414</term><description>Request-URI Too Large</description></item><item><term>415</term><description>Unsupported Media Type</description></item><item><term>416</term><description>Requested range not satisfiable</description></item><item><term>417</term><description>Expectation Failed</description></item><item><term>500</term><description>Internal Server Error</description></item><item><term>501</term><description>Not Implemented</description></item><item><term>502</term><description>Bad Gateway</description></item><item><term>503</term><description>Service Unavailable</description></item><item><term>504</term><description>Gateway Time-out</description></item><item><term>505</term><description>HTTP Version not supported</description></item></list></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SuppressContent">
+      <MemberSignature Language="C#" Value="public bool SuppressContent { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Controls whether the page will generate any output.</summary>
+        <value>Whether content is currently being supressed (boolean).</value>
+        <remarks>If the value is set to true no output will be produced.   The value can be altered any number of times, it is only consulted at the last stage of processing the request.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TransmitFile">
+      <MemberSignature Language="C#" Value="public void TransmitFile (string filename);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public void Write (char ch);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ch" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="ch">A character to write.</param>
+        <summary>Writes a char to the HTTP ouput stream.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public void Write (object obj);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The object to write out.</param>
+        <summary>Writes the object to the HTTP response stream.</summary>
+        <remarks>This will invoke <see cref="M:System.Object.ToString()" /> method and then write the result to the output stream using the current encoding.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public void Write (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The string to write.</param>
+        <summary>Writes a string to the HTTP output stream.</summary>
+        <remarks>The string is written to the HTTP output stream using the encoding specified in <see cref="P:System.Web.ContentEncoding" />.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public void Write (char[] buffer, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">The buffer to write from.</param>
+        <param name="index">Index into the buffer to start writing from.</param>
+        <param name="count">Number of bytes to write.</param>
+        <summary>Writes an array of chars to the HTTP output stream.</summary>
+        <remarks>This writes the specified number of bytes to the HTTP output stream.  If either int arguments are negative or if the operation would overflow the buffer an exception is thrown.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteFile">
+      <MemberSignature Language="C#" Value="public void WriteFile (string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">A file to send back.</param>
+        <summary>Writes the contents of a file back to the client.</summary>
+        <remarks>If buffering has been turned off, the file will be sent right away.  If buffering has been turned on, the file will be sent as part of the flushing stage.  The method will fail if you send a temporary file that is deleted before your process completes. 
+
+<para>
+If you need to send the contents of a temporary file, consider using the <see cref="T:System.Web.HttpResponse.Write(string,bool)" /> method to read the contents of the file into memory.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteFile">
+      <MemberSignature Language="C#" Value="public void WriteFile (string filename, bool readIntoMemory);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="readIntoMemory" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="filename">The filename to send back.</param>
+        <param name="readIntoMemory">Whether to load the file into the in-memory buffer, or queue the file for sending later.</param>
+        <summary>Writes the contents of a file back to the client.</summary>
+        <remarks>Sends the contents of the file back to the client.  If <paramref name="readIntoMemory" /> is <see langword="true" /> the contents of the file are loaded into the output buffer, this is convenient if the data to be sent is a temporary file that will be deleted before the request processing is completed.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteFile">
+      <MemberSignature Language="C#" Value="public void WriteFile (IntPtr fileHandle, long offset, long size);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileHandle" Type="System.IntPtr" />
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="fileHandle">An operating system handle to a file.</param>
+        <param name="offset">Offset in the file handle to start sending data from.</param>
+        <param name="size">Total size of bytes to send back to the client.</param>
+        <summary>Writes a section of a file handle to the response stream.</summary>
+        <remarks>This sends the contents of the file to the client.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteFile">
+      <MemberSignature Language="C#" Value="public void WriteFile (string filename, long offset, long size);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="filename">The filename.</param>
+        <param name="offset">Starting offset in the file.</param>
+        <param name="size">The total number of bytes to send back.</param>
+        <summary>Writes a section of a file back to the response stream.</summary>
+        <remarks>This sends the contents of the file to the client.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteSubstitution">
+      <MemberSignature Language="C#" Value="public void WriteSubstitution (System.Web.HttpResponseSubstitutionCallback callback);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.Web.HttpResponseSubstitutionCallback" />
+      </Parameters>
+      <Docs>
+        <param name="callback">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

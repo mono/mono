@@ -1,0 +1,113 @@
+<Type Name="IStateRuntime" FullName="System.Web.SessionState.IStateRuntime">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public interface IStateRuntime" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyPublicKey>
+    </AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.Guid("7297744b-e188-40bf-b7e9-56698d25cf44")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ProcessRequest">
+      <MemberSignature Language="C#" Value="public void ProcessRequest (IntPtr tracker, int verb, string uri, int exclusive, int timeout, int lockCookieExists, int lockCookie, int contentLength, IntPtr content);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="tracker" Type="System.IntPtr" />
+        <Parameter Name="verb" Type="System.Int32" />
+        <Parameter Name="uri" Type="System.String" />
+        <Parameter Name="exclusive" Type="System.Int32" />
+        <Parameter Name="timeout" Type="System.Int32" />
+        <Parameter Name="lockCookieExists" Type="System.Int32" />
+        <Parameter Name="lockCookie" Type="System.Int32" />
+        <Parameter Name="contentLength" Type="System.Int32" />
+        <Parameter Name="content" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="tracker">To be added: an object of type 'IntPtr'</param>
+        <param name="verb">To be added: an object of type 'int'</param>
+        <param name="uri">To be added: an object of type 'string'</param>
+        <param name="exclusive">To be added: an object of type 'int'</param>
+        <param name="timeout">To be added: an object of type 'int'</param>
+        <param name="lockCookieExists">To be added: an object of type 'int'</param>
+        <param name="lockCookie">To be added: an object of type 'int'</param>
+        <param name="contentLength">To be added: an object of type 'int'</param>
+        <param name="content">To be added: an object of type 'IntPtr'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProcessRequest">
+      <MemberSignature Language="C#" Value="public void ProcessRequest (IntPtr tracker, int verb, string uri, int exclusive, int extraFlags, int timeout, int lockCookieExists, int lockCookie, int contentLength, IntPtr content);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="tracker" Type="System.IntPtr" />
+        <Parameter Name="verb" Type="System.Int32" />
+        <Parameter Name="uri" Type="System.String" />
+        <Parameter Name="exclusive" Type="System.Int32" />
+        <Parameter Name="extraFlags" Type="System.Int32" />
+        <Parameter Name="timeout" Type="System.Int32" />
+        <Parameter Name="lockCookieExists" Type="System.Int32" />
+        <Parameter Name="lockCookie" Type="System.Int32" />
+        <Parameter Name="contentLength" Type="System.Int32" />
+        <Parameter Name="content" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="tracker">To be added.</param>
+        <param name="verb">To be added.</param>
+        <param name="uri">To be added.</param>
+        <param name="exclusive">To be added.</param>
+        <param name="extraFlags">To be added.</param>
+        <param name="timeout">To be added.</param>
+        <param name="lockCookieExists">To be added.</param>
+        <param name="lockCookie">To be added.</param>
+        <param name="contentLength">To be added.</param>
+        <param name="content">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="StopProcessing">
+      <MemberSignature Language="C#" Value="public void StopProcessing ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

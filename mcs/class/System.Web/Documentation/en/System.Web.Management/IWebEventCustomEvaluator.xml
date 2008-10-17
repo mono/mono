@@ -1,0 +1,37 @@
+<Type Name="IWebEventCustomEvaluator" FullName="System.Web.Management.IWebEventCustomEvaluator">
+  <TypeSignature Language="C#" Value="public interface IWebEventCustomEvaluator" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="CanFire">
+      <MemberSignature Language="C#" Value="public bool CanFire (System.Web.Management.WebBaseEvent raised_event, System.Web.Management.RuleFiringRecord record);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="raised_event" Type="System.Web.Management.WebBaseEvent" />
+        <Parameter Name="record" Type="System.Web.Management.RuleFiringRecord" />
+      </Parameters>
+      <Docs>
+        <param name="raised_event">To be added.</param>
+        <param name="record">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

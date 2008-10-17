@@ -1,0 +1,56 @@
+<Type Name="IAppDomainFactory" FullName="System.Web.Hosting.IAppDomainFactory">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public interface IAppDomainFactory" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyPublicKey>
+    </AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.Guid("e6e21054-a7dc-4378-877d-b7f4a2d7e8ba")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public object Create (string module, string typeName, string appId, string appPath, string strUrlOfAppOrigin, int iZone);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="module" Type="System.String" />
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="appId" Type="System.String" />
+        <Parameter Name="appPath" Type="System.String" />
+        <Parameter Name="strUrlOfAppOrigin" Type="System.String" />
+        <Parameter Name="iZone" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="module">To be added: an object of type 'string'</param>
+        <param name="typeName">To be added: an object of type 'string'</param>
+        <param name="appId">To be added: an object of type 'string'</param>
+        <param name="appPath">To be added: an object of type 'string'</param>
+        <param name="strUrlOfAppOrigin">To be added: an object of type 'string'</param>
+        <param name="iZone">To be added: an object of type 'int'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'object'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

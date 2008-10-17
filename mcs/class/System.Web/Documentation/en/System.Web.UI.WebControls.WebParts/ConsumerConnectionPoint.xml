@@ -1,0 +1,87 @@
+<Type Name="ConsumerConnectionPoint" FullName="System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint">
+  <TypeSignature Language="C#" Value="public class ConsumerConnectionPoint : System.Web.UI.WebControls.WebParts.ConnectionPoint" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Web.UI.WebControls.WebParts.ConnectionPoint</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ConsumerConnectionPoint (System.Reflection.MethodInfo callBack, Type interFace, Type control, string name, string id, bool allowsMultiConnections);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="callBack" Type="System.Reflection.MethodInfo" />
+        <Parameter Name="interFace" Type="System.Type" />
+        <Parameter Name="control" Type="System.Type" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="id" Type="System.String" />
+        <Parameter Name="allowsMultiConnections" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="callBack">To be added.</param>
+        <param name="interFace">To be added.</param>
+        <param name="control">To be added.</param>
+        <param name="name">To be added.</param>
+        <param name="id">To be added.</param>
+        <param name="allowsMultiConnections">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetObject">
+      <MemberSignature Language="C#" Value="public virtual void SetObject (System.Web.UI.Control control, object data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="control" Type="System.Web.UI.Control" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="control">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SupportsConnection">
+      <MemberSignature Language="C#" Value="public virtual bool SupportsConnection (System.Web.UI.Control control, System.Web.UI.WebControls.WebParts.TypeCollection interfaces);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="control" Type="System.Web.UI.Control" />
+        <Parameter Name="interfaces" Type="System.Web.UI.WebControls.WebParts.TypeCollection" />
+      </Parameters>
+      <Docs>
+        <param name="control">To be added.</param>
+        <param name="interfaces">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

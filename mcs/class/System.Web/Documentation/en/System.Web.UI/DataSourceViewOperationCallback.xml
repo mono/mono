@@ -1,0 +1,25 @@
+<Type Name="DataSourceViewOperationCallback" FullName="System.Web.UI.DataSourceViewOperationCallback">
+  <TypeSignature Language="C#" Value="public delegate bool DataSourceViewOperationCallback(int recordsAffected, Exception exception);" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="recordsAffected" Type="System.Int32" />
+    <Parameter Name="exception" Type="System.Exception" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Boolean</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="recordsAffected">To be added.</param>
+    <param name="exception">To be added.</param>
+    <summary>To be added.</summary>
+    <value>To be added.</value>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

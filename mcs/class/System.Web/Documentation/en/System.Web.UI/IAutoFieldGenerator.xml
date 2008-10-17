@@ -1,0 +1,41 @@
+<Type Name="IAutoFieldGenerator" FullName="System.Web.UI.IAutoFieldGenerator">
+  <TypeSignature Language="C#" Value="public interface IAutoFieldGenerator" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Web.AspNetHostingPermission(System.Security.Permissions.SecurityAction.InheritanceDemand, Level=System.Web.AspNetHostingPermissionLevel.Minimal)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Web.AspNetHostingPermission(System.Security.Permissions.SecurityAction.LinkDemand, Level=System.Web.AspNetHostingPermissionLevel.Minimal)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="GenerateFields">
+      <MemberSignature Language="C#" Value="public System.Collections.ICollection GenerateFields (System.Web.UI.Control control);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ICollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="control" Type="System.Web.UI.Control" />
+      </Parameters>
+      <Docs>
+        <param name="control">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,40 @@
+<Type Name="IBindableControl" FullName="System.Web.UI.IBindableControl">
+  <TypeSignature Language="C#" Value="public interface IBindableControl" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Web.AspNetHostingPermission(System.Security.Permissions.SecurityAction.InheritanceDemand, Level=System.Web.AspNetHostingPermissionLevel.Minimal)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Web.AspNetHostingPermission(System.Security.Permissions.SecurityAction.LinkDemand, Level=System.Web.AspNetHostingPermissionLevel.Minimal)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ExtractValues">
+      <MemberSignature Language="C#" Value="public void ExtractValues (System.Collections.Specialized.IOrderedDictionary dictionary);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dictionary" Type="System.Collections.Specialized.IOrderedDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="dictionary">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

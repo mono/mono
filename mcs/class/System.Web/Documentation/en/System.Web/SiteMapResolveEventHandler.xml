@@ -1,0 +1,25 @@
+<Type Name="SiteMapResolveEventHandler" FullName="System.Web.SiteMapResolveEventHandler">
+  <TypeSignature Language="C#" Value="public delegate System.Web.SiteMapNode SiteMapResolveEventHandler(object sender, SiteMapResolveEventArgs e);" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="e" Type="System.Web.SiteMapResolveEventArgs" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Web.SiteMapNode</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="sender">To be added.</param>
+    <param name="e">To be added.</param>
+    <summary>To be added.</summary>
+    <value>To be added.</value>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

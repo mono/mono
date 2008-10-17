@@ -1,0 +1,24 @@
+<Type Name="HttpWorkerRequest+EndOfSendNotification" FullName="System.Web.HttpWorkerRequest+EndOfSendNotification">
+  <TypeSignature Language="C#" Value="public delegate void HttpWorkerRequest.EndOfSendNotification(HttpWorkerRequest wr, object extraData);" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="wr" Type="System.Web.HttpWorkerRequest" />
+    <Parameter Name="extraData" Type="System.Object" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="wr">To be added.</param>
+    <param name="extraData">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

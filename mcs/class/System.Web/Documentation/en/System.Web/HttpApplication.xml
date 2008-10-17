@@ -1,0 +1,1666 @@
+<Type Name="HttpApplication" FullName="System.Web.HttpApplication">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public class HttpApplication : System.ComponentModel.IComponent, System.Web.IHttpAsyncHandler" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyPublicKey>
+    </AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ComponentModel.IComponent</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Web.IHttpAsyncHandler</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ComponentModel.ToolboxItem(false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>Base class for all ASP.NET applications.</summary>
+    <remarks>This class is the base class for ASP.NET applications.  
+
+An application exists on a directory, and if such directory contains a Global.asax file, the contents of that file are used to create a derived type of HttpApplication.   The runtime will create one or more classes derived from HttpApplication to handle incoming requests for a directory (an application).  The number of live instances at any given time  is typically capped by the number of available threads on the thread pool and the instances are reused across different clients and incoming requests.
+
+<para>
+   HttpApplication implements the <see cref="T:System.Web.IHttpHandler" /> and <see cref="T:System.Web.IHttpAsyncHandler" /> which are used to drive the execution of incoming requests.   Handing of a request is initiated by  invoking the <see cref="M:System.Web.IHttpHandler.ProcessRequest()" /> method for a synchronous operation or <see cref="M:System.Web.IHttpAsyncHandler.BeginProcessRequest" /> to initiate a processing asynchronously. 
+</para><para>
+   The application will load and initialize all of the modules listed in the system.web/httpModules section in the machine.config and web.config files.  The modules work by hooking up to different stages of the HTTP processing pipeline described below.
+</para><para>
+   The application execution pipeline is made up of a number of steps to which HTTP Modules can hook up. HTTP Modules are types that implement the <see cref="T:System.Web.IHttpModule" /> interface and they hook up to or or more of the stages of the Http Application pipeline synchronously (by adding their handler to one of HttpApplication's events) or asynchronously by using one or more of the AddOn methods of HttpApplication.
+</para><para>
+   Steps are executed in order and the application will only move to the next stage of execution when all of the hooks (synchronous and asynchronous) have been executed for the given stage.  
+</para><list type="table"><listheader><term>Stage</term><description>Description</description></listheader><item><term>BeginRequest</term><description>The first stage of the pipeline processing.</description></item><item><term>AuthenticateRequest</term><description>Authentication stage.  For example the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> hooks up to this stage to implement forms authentication.</description></item><item><term>AuthorizeRequest</term><description>The autorization stage.  For example the <see cref="T:System.Web.Security.UrlAuthorizationModule" /> uses this synchronously.</description></item><item><term>ResolveRequestCache</term><description>Caching is handled at this stage.  For example Mono's internal OutputCacheModule hooks up to this event to provide caching functionality (if the page has enabled caching).</description></item><item><term>AcquireRequestState</term><description>Allows session state providers to be written.  Mono provides three session state providers: InProc, StateServer and SQLServer based on the data from the "system.web/sessionState" section on machine.config and web.config.</description></item><item><term>PreRequestHandlerExecute</term><description>An even to hook up before the actual request is handled by the application handler</description></item><item><term>Application handler.</term><description>This is where user-defined code is executed.</description></item><item><term>PostRequestHandlerExecute</term><description>Executed immediately after the application request has been executed.</description></item><item><term>ReleaseRequestState</term><description>Invoked to release any resources associated with the session state.</description></item><item><term>UpdateRequestCache</term><description>Should be used to update the cache if any.</description></item><item><term>EndRequest</term><description>The last step of the request processing.  Unlike the previous stages, this stage will always be executed regardless of whether a module called <see cref="M:System.Web.HttpApplication.CompleteRequest()" /> or not.</description></item></list><para>
+   If buffering is enabled (the default) the page will be flushed after the EndRequest stage has been completed. 
+</para><para>
+   Two other events are triggered: before writing the HTTP headers (<see cref="E:System.Web.HttpApplication.PreSendRequestHeaders" />) and one before the content of the HTTP request is sent (<see cref="E:System.Web.HttpApplication.PreSendRequestContent" />).
+</para></remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public HttpApplication ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Initializes the HttpApplication class.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AcquireRequestState">
+      <MemberSignature Language="C#" Value="public event EventHandler AcquireRequestState;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnAcquireRequestStateAsync">
+      <MemberSignature Language="C#" Value="public void AddOnAcquireRequestStateAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnAcquireRequestStateAsync">
+      <MemberSignature Language="C#" Value="public void AddOnAcquireRequestStateAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnAuthenticateRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnAuthenticateRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnAuthenticateRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnAuthenticateRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnAuthorizeRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnAuthorizeRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnAuthorizeRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnAuthorizeRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnBeginRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnBeginRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.BeginRequest" /> event.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnBeginRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnBeginRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnEndRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnEndRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.EndRequest" /> event.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnEndRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnEndRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnLogRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnLogRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnLogRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnLogRequestAsync (System.Web.BeginEventHandler beginHandler, System.Web.EndEventHandler endHandler, object state);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="beginHandler" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="endHandler" Type="System.Web.EndEventHandler" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="beginHandler">To be added.</param>
+        <param name="endHandler">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnMapRequestHandlerAsync">
+      <MemberSignature Language="C#" Value="public void AddOnMapRequestHandlerAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnMapRequestHandlerAsync">
+      <MemberSignature Language="C#" Value="public void AddOnMapRequestHandlerAsync (System.Web.BeginEventHandler beginHandler, System.Web.EndEventHandler endHandler, object state);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="beginHandler" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="endHandler" Type="System.Web.EndEventHandler" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="beginHandler">To be added.</param>
+        <param name="endHandler">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostAcquireRequestStateAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostAcquireRequestStateAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostAcquireRequestStateAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostAcquireRequestStateAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostAuthenticateRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostAuthenticateRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostAuthenticateRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostAuthenticateRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostAuthorizeRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostAuthorizeRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostAuthorizeRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostAuthorizeRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostLogRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostLogRequestAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostLogRequestAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostLogRequestAsync (System.Web.BeginEventHandler beginHandler, System.Web.EndEventHandler endHandler, object state);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="beginHandler" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="endHandler" Type="System.Web.EndEventHandler" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="beginHandler">To be added.</param>
+        <param name="endHandler">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostMapRequestHandlerAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostMapRequestHandlerAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostMapRequestHandlerAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostMapRequestHandlerAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostReleaseRequestStateAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostReleaseRequestStateAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostReleaseRequestStateAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostReleaseRequestStateAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostRequestHandlerExecuteAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostRequestHandlerExecuteAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.PostRequestHandlerExecute" /> event.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnPostRequestHandlerExecuteAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostRequestHandlerExecuteAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostResolveRequestCacheAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostResolveRequestCacheAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostResolveRequestCacheAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostResolveRequestCacheAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostUpdateRequestCacheAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostUpdateRequestCacheAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPostUpdateRequestCacheAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPostUpdateRequestCacheAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnPreRequestHandlerExecuteAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPreRequestHandlerExecuteAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>
+Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.PreRequestHandlerExecute" /> event.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnPreRequestHandlerExecuteAsync">
+      <MemberSignature Language="C#" Value="public void AddOnPreRequestHandlerExecuteAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnReleaseRequestStateAsync">
+      <MemberSignature Language="C#" Value="public void AddOnReleaseRequestStateAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnReleaseRequestStateAsync">
+      <MemberSignature Language="C#" Value="public void AddOnReleaseRequestStateAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnResolveRequestCacheAsync">
+      <MemberSignature Language="C#" Value="public void AddOnResolveRequestCacheAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.ResolveRequestCache" /> event.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnResolveRequestCacheAsync">
+      <MemberSignature Language="C#" Value="public void AddOnResolveRequestCacheAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOnUpdateRequestCacheAsync">
+      <MemberSignature Language="C#" Value="public void AddOnUpdateRequestCacheAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.UpdateRequestCache" /> event.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddOnUpdateRequestCacheAsync">
+      <MemberSignature Language="C#" Value="public void AddOnUpdateRequestCacheAsync (System.Web.BeginEventHandler bh, System.Web.EndEventHandler eh, object data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bh" Type="System.Web.BeginEventHandler" />
+        <Parameter Name="eh" Type="System.Web.EndEventHandler" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bh">To be added.</param>
+        <param name="eh">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Application">
+      <MemberSignature Language="C#" Value="public System.Web.HttpApplicationState Application { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.HttpApplicationState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'HttpApplicationState'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="AuthenticateRequest">
+      <MemberSignature Language="C#" Value="public event EventHandler AuthenticateRequest;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AuthorizeRequest">
+      <MemberSignature Language="C#" Value="public event EventHandler AuthorizeRequest;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BeginRequest">
+      <MemberSignature Language="C#" Value="public event EventHandler BeginRequest;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompleteRequest">
+      <MemberSignature Language="C#" Value="public void CompleteRequest ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Stops the execution of the request pipeline.</summary>
+        <remarks>This methods stops the execution of the HttpApplication pipeline and completes the request.
+
+<para>
+   If this method is invoked at any stage in the pipeline processing (described in more detail in <see cref="T:System.Web.HttpApplication" />) the remaining steps of the pipeline are not executed.  The only step executed is the EndRequest step.
+</para></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Context">
+      <MemberSignature Language="C#" Value="public System.Web.HttpContext Context { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.HttpContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'HttpContext'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public virtual void Dispose ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Notifies the application that it is being disposed.</summary>
+        <remarks>This method will notify all loaded modules that they are being stopped by invoking their <see cref="M:System.Web.IHttpModule.Dispose()" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Disposed">
+      <MemberSignature Language="C#" Value="public virtual event EventHandler Disposed;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndRequest">
+      <MemberSignature Language="C#" Value="public event EventHandler EndRequest;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Error">
+      <MemberSignature Language="C#" Value="public virtual event EventHandler Error;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Events">
+      <MemberSignature Language="C#" Value="protected System.ComponentModel.EventHandlerList Events { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.EventHandlerList</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <value>a <see cref="T:System.ComponentModel.EventHandlerList" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetVaryByCustomString">
+      <MemberSignature Language="C#" Value="public virtual string GetVaryByCustomString (System.Web.HttpContext context, string custom);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Web.HttpContext" />
+        <Parameter Name="custom" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="context">To be added: an object of type 'HttpContext'</param>
+        <param name="custom">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'string'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Init">
+      <MemberSignature Language="C#" Value="public virtual void Init ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LogRequest">
+      <MemberSignature Language="C#" Value="public event EventHandler LogRequest;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MapRequestHandler">
+      <MemberSignature Language="C#" Value="public event EventHandler MapRequestHandler;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Modules">
+      <MemberSignature Language="C#" Value="public System.Web.HttpModuleCollection Modules { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.HttpModuleCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'HttpModuleCollection'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="PostAcquireRequestState">
+      <MemberSignature Language="C#" Value="public event EventHandler PostAcquireRequestState;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PostAuthenticateRequest">
+      <MemberSignature Language="C#" Value="public event EventHandler PostAuthenticateRequest;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PostAuthorizeRequest">
+      <MemberSignature Language="C#" Value="public event EventHandler PostAuthorizeRequest;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PostLogRequest">
+      <MemberSignature Language="C#" Value="public event EventHandler PostLogRequest;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PostMapRequestHandler">
+      <MemberSignature Language="C#" Value="public event EventHandler PostMapRequestHandler;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PostReleaseRequestState">
+      <MemberSignature Language="C#" Value="public event EventHandler PostReleaseRequestState;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PostRequestHandlerExecute">
+      <MemberSignature Language="C#" Value="public event EventHandler PostRequestHandlerExecute;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PostResolveRequestCache">
+      <MemberSignature Language="C#" Value="public event EventHandler PostResolveRequestCache;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PostUpdateRequestCache">
+      <MemberSignature Language="C#" Value="public event EventHandler PostUpdateRequestCache;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PreRequestHandlerExecute">
+      <MemberSignature Language="C#" Value="public event EventHandler PreRequestHandlerExecute;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreSendRequestContent">
+      <MemberSignature Language="C#" Value="public event EventHandler PreSendRequestContent;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Event invoked before the contents of the HTTP contents is sent
+</summary>
+        <remarks>This event is triggered before the actual HTTP content is sent. Unlike most other events in the HttpApplication, this event is not available to be executed asynchronously.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreSendRequestHeaders">
+      <MemberSignature Language="C#" Value="public event EventHandler PreSendRequestHeaders;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Event invoked before the contents of the HTTP request headers are sent.</summary>
+        <remarks>This event is triggered before the actual HTTP headers are sent.  Unlike most other events in the HttpApplication, this event is not available to be executed asynchronously.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReleaseRequestState">
+      <MemberSignature Language="C#" Value="public event EventHandler ReleaseRequestState;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Request">
+      <MemberSignature Language="C#" Value="public System.Web.HttpRequest Request { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.HttpRequest</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'HttpRequest'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ResolveRequestCache">
+      <MemberSignature Language="C#" Value="public event EventHandler ResolveRequestCache;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Response">
+      <MemberSignature Language="C#" Value="public System.Web.HttpResponse Response { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.HttpResponse</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'HttpResponse'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Server">
+      <MemberSignature Language="C#" Value="public System.Web.HttpServerUtility Server { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.HttpServerUtility</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'HttpServerUtility'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Session">
+      <MemberSignature Language="C#" Value="public System.Web.SessionState.HttpSessionState Session { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.SessionState.HttpSessionState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'SessionState.HttpSessionState'</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Site">
+      <MemberSignature Language="C#" Value="public System.ComponentModel.ISite Site { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.ISite</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <value>a <see cref="T:System.ComponentModel.ISite" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="System.Web.IHttpAsyncHandler.BeginProcessRequest">
+      <MemberSignature Language="C#" Value="IAsyncResult IHttpAsyncHandler.BeginProcessRequest (System.Web.HttpContext context, AsyncCallback cb, object extraData);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Web.HttpContext" />
+        <Parameter Name="cb" Type="System.AsyncCallback" />
+        <Parameter Name="extraData" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="context">To be added.</param>
+        <param name="cb">To be added.</param>
+        <param name="extraData">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Web.IHttpAsyncHandler.EndProcessRequest">
+      <MemberSignature Language="C#" Value="void IHttpAsyncHandler.EndProcessRequest (IAsyncResult result);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Web.IHttpHandler.IsReusable">
+      <MemberSignature Language="C#" Value="bool System.Web.IHttpHandler.IsReusable { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Web.IHttpHandler.ProcessRequest">
+      <MemberSignature Language="C#" Value="void IHttpHandler.ProcessRequest (System.Web.HttpContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Web.HttpContext" />
+      </Parameters>
+      <Docs>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateRequestCache">
+      <MemberSignature Language="C#" Value="public event EventHandler UpdateRequestCache;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="User">
+      <MemberSignature Language="C#" Value="public System.Security.Principal.IPrincipal User { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.IPrincipal</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <value>a <see cref="T:System.Security.Principal.IPrincipal" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+</Type>

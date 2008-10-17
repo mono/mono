@@ -1,0 +1,59 @@
+<Type Name="IStyleSheet" FullName="System.Web.UI.IStyleSheet">
+  <TypeSignature Language="C#" Value="public interface IStyleSheet" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="CreateStyleRule">
+      <MemberSignature Language="C#" Value="public void CreateStyleRule (System.Web.UI.WebControls.Style style, System.Web.UI.IUrlResolutionService urlResolver, string selection);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="style" Type="System.Web.UI.WebControls.Style" />
+        <Parameter Name="urlResolver" Type="System.Web.UI.IUrlResolutionService" />
+        <Parameter Name="selection" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="style">To be added.</param>
+        <param name="urlResolver">To be added.</param>
+        <param name="selection">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RegisterStyle">
+      <MemberSignature Language="C#" Value="public void RegisterStyle (System.Web.UI.WebControls.Style style, System.Web.UI.IUrlResolutionService urlResolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="style" Type="System.Web.UI.WebControls.Style" />
+        <Parameter Name="urlResolver" Type="System.Web.UI.IUrlResolutionService" />
+      </Parameters>
+      <Docs>
+        <param name="style">To be added.</param>
+        <param name="urlResolver">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

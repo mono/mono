@@ -1,0 +1,173 @@
+<Type Name="SmtpMail" FullName="System.Web.Mail.SmtpMail">
+  <TypeSignature Language="C#" Value="public class SmtpMail" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyPublicKey>
+    </AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>This class is used for sending e-mails over the SMTP protocol.</summary>
+    <remarks>
+      <para>
+        This class provides methods for sending e-mails over the SMTP protocol. It exposes this
+	functionallity through the <see cref="M:System.Web.Mail.SmtpMail.Send(string,string,string,string)" /> and 
+	<see cref="M:System.Web.Mail.SmtpMail.Send(MailMessage)" /> methods. The e-mail is sent over the
+	SMTP protocol using an SMTP server which address is defined in <see cref="P:System.Web.Mail.SmtpMail.SmtpServer" />.
+      </para>
+      <para>
+        This example shows the typical usage of the SmtpMail class. To run this sample you have to change the
+	e-mail addresses and the SMTP server to real ones.
+	<example><code lang="C#">
+using System;
+using System.Web.Mail;
+
+public class SmtpTest {
+    
+    public static void Main (String[] args) 
+    {
+	MailMessage message = new MailMessage();
+	message.From = "per@foo.bar";
+	message.To = "ola@foo.bar";
+	message.Subject = "Hello, E-Mail world!";
+	message.Body = "This is a test mail.";
+
+	SmtpMail.SmtpServer = "mail.foo.bar";
+	SmtpMail.Send (message);
+    }
+}
+	  </code></example></para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public static void Send (System.Web.Mail.MailMessage message);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.Web.Mail.MailMessage" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message to be sent by the <c>Send</c> method.</param>
+        <summary>Sends a MailMessage which represents an e-mail over the SMTP protocol.</summary>
+        <remarks>
+          <para>
+	    This method sends an e-mail to the recipients specified in the <see cref="T:System.Web.Mail.MailMessage" />  parameter
+	    <paramref name="message" />. The e-mail is sent over the SMTP protocol through the server
+	    specified in <see cref="P:System.Web.Mail.SmtpMail.SmtpServer" />.
+	  </para>
+          <para>
+	    This example shows the typical usage of the <c>SmtpMail.Send</c> method. To run this sample you have to change the
+	    e-mail addresses and the SMTP server to real ones.
+	    <example><code lang="C#">
+using System;
+using System.Web.Mail;
+
+public class SmtpTest {
+    
+    public static void Main (String[] args) 
+    {
+	MailMessage message = new MailMessage();
+	message.From = "per@foo.bar";
+	message.To = "ola@foo.bar";
+	message.Subject = "Hello, E-Mail world!";
+	message.Body = "This is a test mail.";
+
+	SmtpMail.SmtpServer = "mail.foo.bar";
+	SmtpMail.Send (message);
+    }
+}
+              </code></example></para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public static void Send (string from, string to, string subject, string messageText);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="from" Type="System.String" />
+        <Parameter Name="to" Type="System.String" />
+        <Parameter Name="subject" Type="System.String" />
+        <Parameter Name="messageText" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="from">The sender of the e-mail. This will be shown in the From field of the e-mail.</param>
+        <param name="to">The reciever of the e-mail. This will be shown in the To field of the e-mail</param>
+        <param name="subject">The subject of the e-mail.</param>
+        <param name="messageText">The body of the e-mail.</param>
+        <summary>A method that sends e-mail messages.</summary>
+        <remarks>
+          <para>
+	    This is a method that sends an e-mail message over the SMTP protocol. It connects
+	    to the SMTP server as specified in <see cref="P:System.Web.Mail.SmtpMail.SmtpServer" /> and
+	    sends the e-mail to <paramref name="to" />. This method is a simplified version of 
+	    <see cref="M:System.Web.Mail.SmtpMail.Send(MailMessage)" /> which is actually used by this
+	    method for sending e-mails.
+	  </para>
+          <para>
+	    Here is a simple example to show how to send an e-mail.
+	    <example><code lang="C#">
+using System;
+using System.Web.Mail;
+
+public class SmtpTest {
+    
+    public static void Main (String[] args) 
+    {
+	SmtpMail.SmtpServer = "mail.foo.bar";
+	SmtpMail.Send ("per@foo.bar","ola@foo.bar","Hello, E-Mail world!","This is a test mail.");
+    }
+}
+              </code></example></para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SmtpServer">
+      <MemberSignature Language="C#" Value="public static string SmtpServer { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This property tells the <c>Send</c> methods which SMTP server they should use.</summary>
+        <value>A string representing the SMTP server address that the e-mails should be sent through.</value>
+        <remarks>
+          <para>
+	    This property represents the address of the SMTP server that the <c>Send</c> methods should use
+	    when sending e-mail messages. I the address is not set then the <c>Send</c> methods will try
+	    to connect to the local machine and check if there is an SMTP server running there.
+	  </para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("The recommended alternative is System.Net.Mail.SmtpClient.")</AttributeName>
+    </Attribute>
+  </Attributes>
+</Type>

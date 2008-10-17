@@ -1,0 +1,23 @@
+<Type Name="HttpResponseSubstitutionCallback" FullName="System.Web.HttpResponseSubstitutionCallback">
+  <TypeSignature Language="C#" Value="public delegate string HttpResponseSubstitutionCallback(HttpContext context);" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="context" Type="System.Web.HttpContext" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.String</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="context">To be added.</param>
+    <summary>To be added.</summary>
+    <value>To be added.</value>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

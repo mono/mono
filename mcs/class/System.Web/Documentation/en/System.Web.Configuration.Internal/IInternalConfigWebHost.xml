@@ -1,0 +1,65 @@
+<Type Name="IInternalConfigWebHost" FullName="System.Web.Configuration.Internal.IInternalConfigWebHost">
+  <TypeSignature Language="C#" Value="public interface IInternalConfigWebHost" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="GetConfigPathFromSiteIDAndVPath">
+      <MemberSignature Language="C#" Value="public string GetConfigPathFromSiteIDAndVPath (string siteID, string vpath);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="siteID" Type="System.String" />
+        <Parameter Name="vpath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="siteID">To be added.</param>
+        <param name="vpath">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSiteIDAndVPathFromConfigPath">
+      <MemberSignature Language="C#" Value="public void GetSiteIDAndVPathFromConfigPath (string configPath, out string siteID, out string vpath);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="configPath" Type="System.String" />
+        <Parameter Name="siteID" Type="System.String&amp;" RefType="out" />
+        <Parameter Name="vpath" Type="System.String&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="configPath">To be added.</param>
+        <param name="siteID">To be added.</param>
+        <param name="vpath">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

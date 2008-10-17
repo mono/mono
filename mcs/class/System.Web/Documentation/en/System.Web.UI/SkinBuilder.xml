@@ -1,0 +1,57 @@
+<Type Name="SkinBuilder" FullName="System.Web.UI.SkinBuilder">
+  <TypeSignature Language="C#" Value="public sealed class SkinBuilder : System.Web.UI.ControlBuilder" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Web.UI.ControlBuilder</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SkinBuilder (System.Web.UI.ThemeProvider provider, System.Web.UI.Control control, System.Web.UI.ControlBuilder skinBuilder, string themePath);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="provider" Type="System.Web.UI.ThemeProvider" />
+        <Parameter Name="control" Type="System.Web.UI.Control" />
+        <Parameter Name="skinBuilder" Type="System.Web.UI.ControlBuilder" />
+        <Parameter Name="themePath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="provider">To be added.</param>
+        <param name="control">To be added.</param>
+        <param name="skinBuilder">To be added.</param>
+        <param name="themePath">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ApplyTheme">
+      <MemberSignature Language="C#" Value="public System.Web.UI.Control ApplyTheme ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.Control</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

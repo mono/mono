@@ -1,0 +1,70 @@
+<Type Name="ObjectDataSourceSelectingEventArgs" FullName="System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs">
+  <TypeSignature Language="C#" Value="public class ObjectDataSourceSelectingEventArgs : System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ObjectDataSourceSelectingEventArgs (System.Collections.Specialized.IOrderedDictionary inputParameters, System.Web.UI.DataSourceSelectArguments arguments, bool executeSelectCount);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="inputParameters" Type="System.Collections.Specialized.IOrderedDictionary" />
+        <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
+        <Parameter Name="executeSelectCount" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="inputParameters">To be added.</param>
+        <param name="arguments">To be added.</param>
+        <param name="executeSelectCount">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Arguments">
+      <MemberSignature Language="C#" Value="public System.Web.UI.DataSourceSelectArguments Arguments { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.DataSourceSelectArguments</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ExecutingSelectCount">
+      <MemberSignature Language="C#" Value="public bool ExecutingSelectCount { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

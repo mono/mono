@@ -1,0 +1,63 @@
+<Type Name="ProvidersHelper" FullName="System.Web.Configuration.ProvidersHelper">
+  <TypeSignature Language="C#" Value="public static class ProvidersHelper" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="InstantiateProvider">
+      <MemberSignature Language="C#" Value="public static System.Configuration.Provider.ProviderBase InstantiateProvider (System.Configuration.ProviderSettings providerSettings, Type providerType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Configuration.Provider.ProviderBase</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="providerSettings" Type="System.Configuration.ProviderSettings" />
+        <Parameter Name="providerType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="providerSettings">To be added.</param>
+        <param name="providerType">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InstantiateProviders">
+      <MemberSignature Language="C#" Value="public static void InstantiateProviders (System.Configuration.ProviderSettingsCollection configProviders, System.Configuration.Provider.ProviderCollection providers, Type providerType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="configProviders" Type="System.Configuration.ProviderSettingsCollection" />
+        <Parameter Name="providers" Type="System.Configuration.Provider.ProviderCollection" />
+        <Parameter Name="providerType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="configProviders">To be added.</param>
+        <param name="providers">To be added.</param>
+        <param name="providerType">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

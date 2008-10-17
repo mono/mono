@@ -1,0 +1,23 @@
+<Type Name="ExtractTemplateValuesMethod" FullName="System.Web.UI.ExtractTemplateValuesMethod">
+  <TypeSignature Language="C#" Value="public delegate System.Collections.Specialized.IOrderedDictionary ExtractTemplateValuesMethod(Control control);" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="control" Type="System.Web.UI.Control" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="control">To be added.</param>
+    <summary>To be added.</summary>
+    <value>To be added.</value>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

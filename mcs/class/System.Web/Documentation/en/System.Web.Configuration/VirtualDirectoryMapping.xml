@@ -1,0 +1,120 @@
+<Type Name="VirtualDirectoryMapping" FullName="System.Web.Configuration.VirtualDirectoryMapping">
+  <TypeSignature Language="C#" Value="public sealed class VirtualDirectoryMapping" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public VirtualDirectoryMapping (string physicalDirectory, bool isAppRoot);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="physicalDirectory" Type="System.String" />
+        <Parameter Name="isAppRoot" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="physicalDirectory">To be added.</param>
+        <param name="isAppRoot">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public VirtualDirectoryMapping (string physicalDirectory, bool isAppRoot, string configFileBaseName);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="physicalDirectory" Type="System.String" />
+        <Parameter Name="isAppRoot" Type="System.Boolean" />
+        <Parameter Name="configFileBaseName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="physicalDirectory">To be added.</param>
+        <param name="isAppRoot">To be added.</param>
+        <param name="configFileBaseName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ConfigFileBaseName">
+      <MemberSignature Language="C#" Value="public string ConfigFileBaseName { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsAppRoot">
+      <MemberSignature Language="C#" Value="public bool IsAppRoot { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PhysicalDirectory">
+      <MemberSignature Language="C#" Value="public string PhysicalDirectory { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VirtualDirectory">
+      <MemberSignature Language="C#" Value="public string VirtualDirectory { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>
