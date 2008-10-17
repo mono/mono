@@ -1,4 +1,4 @@
-// Permission is hereby granted, free of charge, to any person obtaining
+/// Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
@@ -2516,14 +2516,14 @@ namespace System.Windows.Forms
 						
 #if NET_2_0
 					//UIA Framework event: Item Removed
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, object_items [index]));
 #endif
 
 					object_items[index] = value;
 					
 #if NET_2_0
 					//UIA Framework event: Item Added
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
 #endif					
 
 					owner.CollectionChanged ();
@@ -2594,7 +2594,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 				//UIA Framework event: Items list cleared
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, -1));
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
 #endif
 			}
 
@@ -2660,7 +2660,7 @@ namespace System.Windows.Forms
 				
 #if NET_2_0
 				//UIA Framework event: Item Added
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
 #endif
 			}
 
@@ -2679,13 +2679,19 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
+
+#if NET_2_0
+				//UIA Framework element removed
+				object removed = object_items [index];
+#endif
+
 				owner.selected_indices.Remove (index);
 				object_items.RemoveAt (index);
 				owner.CollectionChanged ();
 				
 #if NET_2_0
 				//UIA Framework event: Item Removed
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, removed));
 #endif
 			}
 			#endregion Public Methods
@@ -2701,7 +2707,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 				//UIA Framework event: Item Added
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, cnt));
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
 #endif
 
 				return cnt;

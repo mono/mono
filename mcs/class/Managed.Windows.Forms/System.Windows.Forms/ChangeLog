@@ -1,3 +1,8 @@
+2008-10-17  Mario Carrion <mcarrion@novell.com>
+
+	* ComboBox.cs, ListBox.cs: Using added/removed item in 
+	  OnUIACollectionChangedEvent instead of index.
+
 2008-10-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: When we are sorting the items, if the item's type

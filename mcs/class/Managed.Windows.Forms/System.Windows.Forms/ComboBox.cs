@@ -848,6 +848,10 @@ namespace System.Windows.Forms
 			get { return textbox_ctrl; }
 		}
 
+		internal ListBox UIAListBox {
+			get { return listbox_ctrl; }
+		}
+
 		#endregion UIA Framework Properties
 
 		#region Public Methods
@@ -2005,14 +2009,14 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 					//UIA Framework event: Item Removed
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, object_items [index]));
 #endif
 
 					object_items[index] = value;
 					
 #if NET_2_0
 					//UIA Framework event: Item Added
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
 #endif
 
 					if (owner.listbox_ctrl != null)
@@ -2070,7 +2074,7 @@ namespace System.Windows.Forms
 				
 #if NET_2_0
 				//UIA Framework event: Items list cleared
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, -1));
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
 #endif
 			}
 			
@@ -2137,7 +2141,7 @@ namespace System.Windows.Forms
 					object_items.Insert (index, item);
 #if NET_2_0
 					//UIA Framework event: Item added
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
 #endif					
 				}
 				
@@ -2163,12 +2167,17 @@ namespace System.Windows.Forms
 				if (index == owner.SelectedIndex)
 					owner.SelectedIndex = -1;
 
+#if NET_2_0
+				object removed = object_items [index];
+#endif
+
+
 				object_items.RemoveAt (index);
 				owner.UpdatedItems ();
 				
 #if NET_2_0
 				//UIA Framework event: Item removed
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, removed));
 #endif
 			}
 			#endregion Public Methods
@@ -2193,7 +2202,7 @@ namespace System.Windows.Forms
 								
 #if NET_2_0
 							//UIA Framework event: Item added
-							OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+							OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
 #endif
 
 							return index;
@@ -2205,7 +2214,7 @@ namespace System.Windows.Forms
 				
 #if NET_2_0
 				//UIA Framework event: Item added
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, object_items.Count - 1));
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
 #endif
 				
 				return object_items.Count - 1;
