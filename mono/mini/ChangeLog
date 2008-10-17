@@ -1,3 +1,23 @@
+2008-10-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Remove the aot restriction when
+	encoding generic type handles.
+
+	* ir-emit.h (NEW_AOTCONST_TOKEN): Add a generic_context argument.
+	(NEW_TYPE_FROM_HANDLE_CONST): Add a generic_context argument.
+
+	* ir-emit.h: Rewrite the EMIT_NEW_XXXCONST macros to use the NEW_XXXCONST
+	macros + MONO_ADD_INS.
+
+	* mini.c (mono_jump_info_token_new2): New function which takes a generic
+	context as well.
+
+	* mini.h (MonoJumpInfoToken): Include fields for a generic context.
+
+	* mini.h: Bump aot file format version.
+
+	* aot-compiler.c aot-runtime.c: Update after changes to MonoJumpInfoToken.
+
 2008-10-17  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-x86.h, mini-x86.c, exceptions-x86.c: Align stack on all
