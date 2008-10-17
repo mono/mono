@@ -1,3 +1,8 @@
+2008-10-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector4ui.cs: Added Min, Max, Average, ExtractByteMask,
+	Shuffle and CompareEqual.
+
 2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector16b.cs: Added Min, Max, Average, ExtractByteMask,

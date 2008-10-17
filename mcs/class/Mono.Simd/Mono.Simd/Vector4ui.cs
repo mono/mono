@@ -115,6 +115,41 @@ namespace Mono.Simd
 			return res;
 		}
 
+		public static unsafe Vector4ui Average (Vector4ui v1, Vector4ui v2)
+		{
+			return new Vector4ui ((v1.x + v2.x + 1) >> 1, (v1.y + v2.y + 1) >> 1, (v1.z + v2.z + 1) >> 1, (v1.w + v2.w + 1) >> 1);
+		}
+
+		public static unsafe Vector4ui Max (Vector4ui v1, Vector4ui v2)
+		{
+			return new Vector4ui (System.Math.Max (v1.x, v2.x), System.Math.Max (v1.y, v2.y), System.Math.Max (v1.z, v2.z), System.Math.Max (v1.w, v2.w));
+		}
+
+		public static unsafe Vector4ui Min (Vector4ui v1, Vector4ui v2)
+		{
+			return new Vector4ui (System.Math.Min (v1.x, v2.x), System.Math.Min (v1.y, v2.y), System.Math.Min (v1.z, v2.z), System.Math.Min (v1.w, v2.w));
+		}
+
+		public static unsafe int ExtractByteMask (Vector4ui va) {
+			int res = 0;
+			byte *a = (byte*)&va;
+			for (int i = 0; i < 16; ++i)
+				res |= (*a++ & 0x80) >> 7 << i;
+			return res;
+		}
+
+		public static unsafe Vector4ui Shuffle (Vector4ui v1, ShuffleSel sel)
+		{
+			uint *ptr = (uint*)&v1;
+			int idx = (int)sel;
+			return new Vector4ui (*(ptr + ((idx >> 0) & 0x3)),*(ptr + ((idx >> 2) & 0x3)),*(ptr + ((idx >> 4) & 0x3)),*(ptr + ((idx >> 6) & 0x3)));
+		}
+
+		public static unsafe Vector4ui CompareEqual (Vector4ui v1, Vector4ui v2)
+		{
+			return new Vector4ui ((uint)(v1.x ==  v2.x ? -1 : 0), (uint)(v1.y ==  v2.y ? -1 : 0), (uint)(v1.z ==  v2.z ? -1 : 0), (uint)(v1.w ==  v2.w ? -1 : 0));
+		}
+
   		public static unsafe explicit operator Vector4f (Vector4ui v1)
 		{
 			Vector4f* p = (Vector4f*)&v1;
