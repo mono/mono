@@ -1,0 +1,156 @@
+.\" 
+.\" monodocs2html manual page.
+.\" (C) 2006 Jonathan Pryor
+.\" Author:
+.\"   Jonathan Pryor (jonpryor@vt.edu)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH "monodocs2html" 1
+.SH NAME
+monodocs2html \- Translate Monodoc XML to HTML
+.SH SYNOPSIS
+.B monodocs2html 
+\-source:SOURCE_DIR \-dest:DEST_DIR
+[OPTIONS]*
+.SH DESCRIPTION
+\fImonodocs2html\fR has been obsoleted by \fBmdoc\fR(1).  See the
+\fBmdoc-export-html\fR(1) man page.
+.PP
+.I monodocs2html
+is a program that creates HTML documentation from the Monodoc documentation
+XML files.
+.SH OPTIONS
+.TP
+.I \-dest:DEST_DIR
+Write the HTML files into the directory
+.I DEST_DIR
+\&.
+.TP
+.I \-dumptemplate
+Dump the default page template to standard output so that you can use it as a
+base for a new template for use with the 
+.I \-template
+option.
+.TP
+.I \-ext:FILE_EXTENSION
+.I FILE_EXTENSION
+is the file extension for generated files.
+.Sp
+This defaults to
+.I html
+\&.
+.TP
+.I \-?, \-help
+Show program argument information.
+.TP
+.I \-onlytype:TYPE
+Only generate HTML for the type
+.I TYPE
+\&.
+.TP
+.I \-source:SOURCE_DIR
+.I SOURCE_DIR
+is the base directory containing the Monodoc XML documentation.
+.Sp
+This directory should contain an
+.I index.xml
+file, the
+.I namespace-name.xml
+files (one for each namespace), and
+.I namespace-name
+directories (one for each namespace), which will contain the 
+.I type.xml
+files holding the monodoc documentation.
+.TP
+.I \-template:TEMPLATE
+Generate HTML using the page template
+.I TEMPLATE
+\&.
+.TP
+.I \-V, \-version
+Display version and licensing information.
+.SH TEMPLATE FORMAT
+The template file is an XSLT which needs to process the following input XML
+document:
+.nf
+	<Page>
+	  <CollectionTitle>Collection Title</CollectionTitle>
+	  <PageTitle>Page Title</PageTitle>
+	  <Summary>Page Summary</Summary>
+	  <Signature>Type Declaration</Signature>
+	  <Remarks>Type Remarks</Remarks>
+	  <Members>Type Members</Members>
+	  <Copyright>Documentation Copyright</Copyright>
+	</Page>
+.fi
+The generated HTML also makes use of the following CSS classes, which should
+be defined so that output is nicely formatted:
+.RS
+.ne 8
+.TP
+.I .CollectionTitle
+.TP
+.I .PageTitle
+.TP
+.I .Summary
+.TP
+.I .Signature
+.TP
+.I .Remarks
+.TP
+.I .Members
+.TP
+.I .Copyright
+.TP
+.I .Section
+.TP
+.I .SectionBox
+.TP
+.I .NamespaceName
+.TP
+.I .NamespaceSummary
+.TP
+.I .MemberName
+.TP
+.I .MemberSignature
+.TP
+.I .MemberBox
+.TP
+.I .Subsection
+.TP
+.I .SubsectionBox
+.TP
+.I .SignatureTable
+.TP
+.I .EnumerationsTable
+.TP
+.I .CodeExampleTable
+.TP
+.I .MembersListing
+.TP
+.I .TypesListing
+.TP
+.I .InnerSignatureTable
+.TP
+.I .TypePermissionsTable
+.ne
+.RE
+.SH HTML LINKS
+All members within the HTML file have a
+.I id
+attribute to permit linking to a specific member.  The value of the 
+.I id
+attribute is the String ID of the specified member.
+See the 
+.B STRING ID FORMAT
+section of the 
+.B monodocer
+man page for more information.
+.SH MAILING LISTS
+.TP
+Visit http://lists.ximian.com/mailman/listinfo/mono-docs-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com for details
