@@ -1,5 +1,9 @@
 2008-10-18  Raja R Harinath  <harinath@hurrynot.org>
 
+	* docs/Makefile (DISTFILES): Don't use 'find' to list files.
+
+2008-10-18  Raja R Harinath  <harinath@hurrynot.org>
+
 	* Makefile (net_2_0_SUBDIRS): Add 'docs'.
 	* docs/Makefile: Build documentation only in the net_2_0 profile.
 

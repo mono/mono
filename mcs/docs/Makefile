@@ -12,7 +12,7 @@ DISTFILES = \
 	new-anonymous-design.txt    \
 	order.txt                   \
 	$(DOC_SOURCE_FILES)         \
-	$(shell find ecma334 -name \*.xml)
+	$(wildcard ecma334/*.xml)
 
 DOC_SOURCE_FILES = \
 	cs-errors.source            \
