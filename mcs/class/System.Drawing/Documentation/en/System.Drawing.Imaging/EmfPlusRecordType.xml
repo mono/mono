@@ -1,0 +1,4068 @@
+<Type Name="EmfPlusRecordType" FullName="System.Drawing.Imaging.EmfPlusRecordType">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public enum EmfPlusRecordType" />
+  <AssemblyInfo>
+    <AssemblyName>System.Drawing</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 07 D1 FA 57 C4 AE D9 F0 A3 2E 84 AA 0F AE FD 0D E9 E8 FD 6A EC 8F 87 FB 03 76 6C 83 4C 99 92 1E B2 3B E7 9A D9 D5 DC C1 DD 9A D2 36 13 21 02 90 0B 72 3C F9 80 95 7F C4 E1 77 10 8F C6 07 77 4F 29 E8 32 0E 92 EA 05 EC E4 E8 21 C0 A5 EF E8 F1 64 5C 4C 0C 93 C1 AB 99 28 5D 62 2C AA 65 2C 1D FA D6 3D 74 5D 6F 2D E5 F1 7E 5E AF 0F C4 96 3D 26 1C 8A 12 43 65 18 20 6D C0 93 34 4D 5A D2 93]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="BeginContainer">
+      <MemberSignature Language="C#" Value="BeginContainer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BeginContainerNoParams">
+      <MemberSignature Language="C#" Value="BeginContainerNoParams" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="Clear" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Comment">
+      <MemberSignature Language="C#" Value="Comment" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawArc">
+      <MemberSignature Language="C#" Value="DrawArc" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawBeziers">
+      <MemberSignature Language="C#" Value="DrawBeziers" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawClosedCurve">
+      <MemberSignature Language="C#" Value="DrawClosedCurve" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawCurve">
+      <MemberSignature Language="C#" Value="DrawCurve" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawDriverString">
+      <MemberSignature Language="C#" Value="DrawDriverString" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawEllipse">
+      <MemberSignature Language="C#" Value="DrawEllipse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawImage">
+      <MemberSignature Language="C#" Value="DrawImage" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawImagePoints">
+      <MemberSignature Language="C#" Value="DrawImagePoints" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawLines">
+      <MemberSignature Language="C#" Value="DrawLines" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawPath">
+      <MemberSignature Language="C#" Value="DrawPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawPie">
+      <MemberSignature Language="C#" Value="DrawPie" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawRects">
+      <MemberSignature Language="C#" Value="DrawRects" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawString">
+      <MemberSignature Language="C#" Value="DrawString" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfAbortPath">
+      <MemberSignature Language="C#" Value="EmfAbortPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfAlphaBlend">
+      <MemberSignature Language="C#" Value="EmfAlphaBlend" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfAngleArc">
+      <MemberSignature Language="C#" Value="EmfAngleArc" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfArcTo">
+      <MemberSignature Language="C#" Value="EmfArcTo" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfBeginPath">
+      <MemberSignature Language="C#" Value="EmfBeginPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfBitBlt">
+      <MemberSignature Language="C#" Value="EmfBitBlt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfChord">
+      <MemberSignature Language="C#" Value="EmfChord" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfCloseFigure">
+      <MemberSignature Language="C#" Value="EmfCloseFigure" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfColorCorrectPalette">
+      <MemberSignature Language="C#" Value="EmfColorCorrectPalette" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfColorMatchToTargetW">
+      <MemberSignature Language="C#" Value="EmfColorMatchToTargetW" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfCreateBrushIndirect">
+      <MemberSignature Language="C#" Value="EmfCreateBrushIndirect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfCreateColorSpace">
+      <MemberSignature Language="C#" Value="EmfCreateColorSpace" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfCreateColorSpaceW">
+      <MemberSignature Language="C#" Value="EmfCreateColorSpaceW" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfCreateDibPatternBrushPt">
+      <MemberSignature Language="C#" Value="EmfCreateDibPatternBrushPt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfCreateMonoBrush">
+      <MemberSignature Language="C#" Value="EmfCreateMonoBrush" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfCreatePalette">
+      <MemberSignature Language="C#" Value="EmfCreatePalette" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfCreatePen">
+      <MemberSignature Language="C#" Value="EmfCreatePen" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfDeleteColorSpace">
+      <MemberSignature Language="C#" Value="EmfDeleteColorSpace" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfDeleteObject">
+      <MemberSignature Language="C#" Value="EmfDeleteObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfDrawEscape">
+      <MemberSignature Language="C#" Value="EmfDrawEscape" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfEllipse">
+      <MemberSignature Language="C#" Value="EmfEllipse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfEndPath">
+      <MemberSignature Language="C#" Value="EmfEndPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfEof">
+      <MemberSignature Language="C#" Value="EmfEof" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfExcludeClipRect">
+      <MemberSignature Language="C#" Value="EmfExcludeClipRect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfExtCreateFontIndirect">
+      <MemberSignature Language="C#" Value="EmfExtCreateFontIndirect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfExtCreatePen">
+      <MemberSignature Language="C#" Value="EmfExtCreatePen" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfExtEscape">
+      <MemberSignature Language="C#" Value="EmfExtEscape" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfExtFloodFill">
+      <MemberSignature Language="C#" Value="EmfExtFloodFill" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfExtSelectClipRgn">
+      <MemberSignature Language="C#" Value="EmfExtSelectClipRgn" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfExtTextOutA">
+      <MemberSignature Language="C#" Value="EmfExtTextOutA" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfExtTextOutW">
+      <MemberSignature Language="C#" Value="EmfExtTextOutW" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfFillPath">
+      <MemberSignature Language="C#" Value="EmfFillPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfFillRgn">
+      <MemberSignature Language="C#" Value="EmfFillRgn" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfFlattenPath">
+      <MemberSignature Language="C#" Value="EmfFlattenPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfForceUfiMapping">
+      <MemberSignature Language="C#" Value="EmfForceUfiMapping" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfFrameRgn">
+      <MemberSignature Language="C#" Value="EmfFrameRgn" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfGdiComment">
+      <MemberSignature Language="C#" Value="EmfGdiComment" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfGlsBoundedRecord">
+      <MemberSignature Language="C#" Value="EmfGlsBoundedRecord" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfGlsRecord">
+      <MemberSignature Language="C#" Value="EmfGlsRecord" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfGradientFill">
+      <MemberSignature Language="C#" Value="EmfGradientFill" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfHeader">
+      <MemberSignature Language="C#" Value="EmfHeader" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfIntersectClipRect">
+      <MemberSignature Language="C#" Value="EmfIntersectClipRect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfInvertRgn">
+      <MemberSignature Language="C#" Value="EmfInvertRgn" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfLineTo">
+      <MemberSignature Language="C#" Value="EmfLineTo" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfMaskBlt">
+      <MemberSignature Language="C#" Value="EmfMaskBlt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfMax">
+      <MemberSignature Language="C#" Value="EmfMax" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfMin">
+      <MemberSignature Language="C#" Value="EmfMin" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfModifyWorldTransform">
+      <MemberSignature Language="C#" Value="EmfModifyWorldTransform" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfMoveToEx">
+      <MemberSignature Language="C#" Value="EmfMoveToEx" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfNamedEscpae">
+      <MemberSignature Language="C#" Value="EmfNamedEscpae" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfOffsetClipRgn">
+      <MemberSignature Language="C#" Value="EmfOffsetClipRgn" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPaintRgn">
+      <MemberSignature Language="C#" Value="EmfPaintRgn" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPie">
+      <MemberSignature Language="C#" Value="EmfPie" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPixelFormat">
+      <MemberSignature Language="C#" Value="EmfPixelFormat" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPlgBlt">
+      <MemberSignature Language="C#" Value="EmfPlgBlt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPlusRecordBase">
+      <MemberSignature Language="C#" Value="EmfPlusRecordBase" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyBezier">
+      <MemberSignature Language="C#" Value="EmfPolyBezier" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyBezier16">
+      <MemberSignature Language="C#" Value="EmfPolyBezier16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyBezierTo">
+      <MemberSignature Language="C#" Value="EmfPolyBezierTo" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyBezierTo16">
+      <MemberSignature Language="C#" Value="EmfPolyBezierTo16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyDraw">
+      <MemberSignature Language="C#" Value="EmfPolyDraw" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyDraw16">
+      <MemberSignature Language="C#" Value="EmfPolyDraw16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolygon">
+      <MemberSignature Language="C#" Value="EmfPolygon" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolygon16">
+      <MemberSignature Language="C#" Value="EmfPolygon16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyline">
+      <MemberSignature Language="C#" Value="EmfPolyline" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyline16">
+      <MemberSignature Language="C#" Value="EmfPolyline16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyLineTo">
+      <MemberSignature Language="C#" Value="EmfPolyLineTo" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolylineTo16">
+      <MemberSignature Language="C#" Value="EmfPolylineTo16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyPolygon">
+      <MemberSignature Language="C#" Value="EmfPolyPolygon" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyPolygon16">
+      <MemberSignature Language="C#" Value="EmfPolyPolygon16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyPolyline">
+      <MemberSignature Language="C#" Value="EmfPolyPolyline" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyPolyline16">
+      <MemberSignature Language="C#" Value="EmfPolyPolyline16" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyTextOutA">
+      <MemberSignature Language="C#" Value="EmfPolyTextOutA" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfPolyTextOutW">
+      <MemberSignature Language="C#" Value="EmfPolyTextOutW" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfRealizePalette">
+      <MemberSignature Language="C#" Value="EmfRealizePalette" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfRectangle">
+      <MemberSignature Language="C#" Value="EmfRectangle" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfReserved069">
+      <MemberSignature Language="C#" Value="EmfReserved069" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfReserved117">
+      <MemberSignature Language="C#" Value="EmfReserved117" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfResizePalette">
+      <MemberSignature Language="C#" Value="EmfResizePalette" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfRestoreDC">
+      <MemberSignature Language="C#" Value="EmfRestoreDC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfRoundArc">
+      <MemberSignature Language="C#" Value="EmfRoundArc" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfRoundRect">
+      <MemberSignature Language="C#" Value="EmfRoundRect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSaveDC">
+      <MemberSignature Language="C#" Value="EmfSaveDC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfScaleViewportExtEx">
+      <MemberSignature Language="C#" Value="EmfScaleViewportExtEx" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfScaleWindowExtEx">
+      <MemberSignature Language="C#" Value="EmfScaleWindowExtEx" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSelectClipPath">
+      <MemberSignature Language="C#" Value="EmfSelectClipPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSelectObject">
+      <MemberSignature Language="C#" Value="EmfSelectObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSelectPalette">
+      <MemberSignature Language="C#" Value="EmfSelectPalette" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetArcDirection">
+      <MemberSignature Language="C#" Value="EmfSetArcDirection" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetBkColor">
+      <MemberSignature Language="C#" Value="EmfSetBkColor" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetBkMode">
+      <MemberSignature Language="C#" Value="EmfSetBkMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetBrushOrgEx">
+      <MemberSignature Language="C#" Value="EmfSetBrushOrgEx" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetColorAdjustment">
+      <MemberSignature Language="C#" Value="EmfSetColorAdjustment" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetColorSpace">
+      <MemberSignature Language="C#" Value="EmfSetColorSpace" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetDIBitsToDevice">
+      <MemberSignature Language="C#" Value="EmfSetDIBitsToDevice" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetIcmMode">
+      <MemberSignature Language="C#" Value="EmfSetIcmMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetIcmProfileA">
+      <MemberSignature Language="C#" Value="EmfSetIcmProfileA" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetIcmProfileW">
+      <MemberSignature Language="C#" Value="EmfSetIcmProfileW" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetLayout">
+      <MemberSignature Language="C#" Value="EmfSetLayout" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetLinkedUfis">
+      <MemberSignature Language="C#" Value="EmfSetLinkedUfis" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetMapMode">
+      <MemberSignature Language="C#" Value="EmfSetMapMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetMapperFlags">
+      <MemberSignature Language="C#" Value="EmfSetMapperFlags" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetMetaRgn">
+      <MemberSignature Language="C#" Value="EmfSetMetaRgn" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetMiterLimit">
+      <MemberSignature Language="C#" Value="EmfSetMiterLimit" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetPaletteEntries">
+      <MemberSignature Language="C#" Value="EmfSetPaletteEntries" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetPixelV">
+      <MemberSignature Language="C#" Value="EmfSetPixelV" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetPolyFillMode">
+      <MemberSignature Language="C#" Value="EmfSetPolyFillMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetROP2">
+      <MemberSignature Language="C#" Value="EmfSetROP2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetStretchBltMode">
+      <MemberSignature Language="C#" Value="EmfSetStretchBltMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetTextAlign">
+      <MemberSignature Language="C#" Value="EmfSetTextAlign" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetTextColor">
+      <MemberSignature Language="C#" Value="EmfSetTextColor" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetTextJustification">
+      <MemberSignature Language="C#" Value="EmfSetTextJustification" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetViewportExtEx">
+      <MemberSignature Language="C#" Value="EmfSetViewportExtEx" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetViewportOrgEx">
+      <MemberSignature Language="C#" Value="EmfSetViewportOrgEx" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetWindowExtEx">
+      <MemberSignature Language="C#" Value="EmfSetWindowExtEx" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetWindowOrgEx">
+      <MemberSignature Language="C#" Value="EmfSetWindowOrgEx" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSetWorldTransform">
+      <MemberSignature Language="C#" Value="EmfSetWorldTransform" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfSmallTextOut">
+      <MemberSignature Language="C#" Value="EmfSmallTextOut" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfStartDoc">
+      <MemberSignature Language="C#" Value="EmfStartDoc" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfStretchBlt">
+      <MemberSignature Language="C#" Value="EmfStretchBlt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfStretchDIBits">
+      <MemberSignature Language="C#" Value="EmfStretchDIBits" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfStrokeAndFillPath">
+      <MemberSignature Language="C#" Value="EmfStrokeAndFillPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfStrokePath">
+      <MemberSignature Language="C#" Value="EmfStrokePath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfTransparentBlt">
+      <MemberSignature Language="C#" Value="EmfTransparentBlt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EmfWidenPath">
+      <MemberSignature Language="C#" Value="EmfWidenPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndContainer">
+      <MemberSignature Language="C#" Value="EndContainer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndOfFile">
+      <MemberSignature Language="C#" Value="EndOfFile" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FillClosedCurve">
+      <MemberSignature Language="C#" Value="FillClosedCurve" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FillEllipse">
+      <MemberSignature Language="C#" Value="FillEllipse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FillPath">
+      <MemberSignature Language="C#" Value="FillPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FillPie">
+      <MemberSignature Language="C#" Value="FillPie" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FillPolygon">
+      <MemberSignature Language="C#" Value="FillPolygon" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FillRects">
+      <MemberSignature Language="C#" Value="FillRects" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FillRegion">
+      <MemberSignature Language="C#" Value="FillRegion" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDC">
+      <MemberSignature Language="C#" Value="GetDC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Header">
+      <MemberSignature Language="C#" Value="Header" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Invalid">
+      <MemberSignature Language="C#" Value="Invalid" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="C#" Value="Max" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="C#" Value="Min" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MultiFormatEnd">
+      <MemberSignature Language="C#" Value="MultiFormatEnd" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MultiFormatSection">
+      <MemberSignature Language="C#" Value="MultiFormatSection" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MultiFormatStart">
+      <MemberSignature Language="C#" Value="MultiFormatStart" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MultiplyWorldTransform">
+      <MemberSignature Language="C#" Value="MultiplyWorldTransform" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Object">
+      <MemberSignature Language="C#" Value="Object" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OffsetClip">
+      <MemberSignature Language="C#" Value="OffsetClip" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResetClip">
+      <MemberSignature Language="C#" Value="ResetClip" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResetWorldTransform">
+      <MemberSignature Language="C#" Value="ResetWorldTransform" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Restore">
+      <MemberSignature Language="C#" Value="Restore" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RotateWorldTransform">
+      <MemberSignature Language="C#" Value="RotateWorldTransform" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="Save" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ScaleWorldTransform">
+      <MemberSignature Language="C#" Value="ScaleWorldTransform" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetAntiAliasMode">
+      <MemberSignature Language="C#" Value="SetAntiAliasMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetClipPath">
+      <MemberSignature Language="C#" Value="SetClipPath" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetClipRect">
+      <MemberSignature Language="C#" Value="SetClipRect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetClipRegion">
+      <MemberSignature Language="C#" Value="SetClipRegion" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetCompositingMode">
+      <MemberSignature Language="C#" Value="SetCompositingMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetCompositingQuality">
+      <MemberSignature Language="C#" Value="SetCompositingQuality" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetInterpolationMode">
+      <MemberSignature Language="C#" Value="SetInterpolationMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetPageTransform">
+      <MemberSignature Language="C#" Value="SetPageTransform" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetPixelOffsetMode">
+      <MemberSignature Language="C#" Value="SetPixelOffsetMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetRenderingOrigin">
+      <MemberSignature Language="C#" Value="SetRenderingOrigin" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetTextContrast">
+      <MemberSignature Language="C#" Value="SetTextContrast" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetTextRenderingHint">
+      <MemberSignature Language="C#" Value="SetTextRenderingHint" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetWorldTransform">
+      <MemberSignature Language="C#" Value="SetWorldTransform" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Total">
+      <MemberSignature Language="C#" Value="Total" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TranslateWorldTransform">
+      <MemberSignature Language="C#" Value="TranslateWorldTransform" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfAnimatePalette">
+      <MemberSignature Language="C#" Value="WmfAnimatePalette" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfArc">
+      <MemberSignature Language="C#" Value="WmfArc" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfBitBlt">
+      <MemberSignature Language="C#" Value="WmfBitBlt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfChord">
+      <MemberSignature Language="C#" Value="WmfChord" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfCreateBrushIndirect">
+      <MemberSignature Language="C#" Value="WmfCreateBrushIndirect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfCreateFontIndirect">
+      <MemberSignature Language="C#" Value="WmfCreateFontIndirect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfCreatePalette">
+      <MemberSignature Language="C#" Value="WmfCreatePalette" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfCreatePatternBrush">
+      <MemberSignature Language="C#" Value="WmfCreatePatternBrush" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfCreatePenIndirect">
+      <MemberSignature Language="C#" Value="WmfCreatePenIndirect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfCreateRegion">
+      <MemberSignature Language="C#" Value="WmfCreateRegion" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfDeleteObject">
+      <MemberSignature Language="C#" Value="WmfDeleteObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfDibBitBlt">
+      <MemberSignature Language="C#" Value="WmfDibBitBlt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfDibCreatePatternBrush">
+      <MemberSignature Language="C#" Value="WmfDibCreatePatternBrush" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfDibStretchBlt">
+      <MemberSignature Language="C#" Value="WmfDibStretchBlt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfEllipse">
+      <MemberSignature Language="C#" Value="WmfEllipse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfEscape">
+      <MemberSignature Language="C#" Value="WmfEscape" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfExcludeClipRect">
+      <MemberSignature Language="C#" Value="WmfExcludeClipRect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfExtFloodFill">
+      <MemberSignature Language="C#" Value="WmfExtFloodFill" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfExtTextOut">
+      <MemberSignature Language="C#" Value="WmfExtTextOut" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfFillRegion">
+      <MemberSignature Language="C#" Value="WmfFillRegion" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfFloodFill">
+      <MemberSignature Language="C#" Value="WmfFloodFill" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfFrameRegion">
+      <MemberSignature Language="C#" Value="WmfFrameRegion" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfIntersectClipRect">
+      <MemberSignature Language="C#" Value="WmfIntersectClipRect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfInvertRegion">
+      <MemberSignature Language="C#" Value="WmfInvertRegion" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfLineTo">
+      <MemberSignature Language="C#" Value="WmfLineTo" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfMoveTo">
+      <MemberSignature Language="C#" Value="WmfMoveTo" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfOffsetCilpRgn">
+      <MemberSignature Language="C#" Value="WmfOffsetCilpRgn" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfOffsetViewportOrg">
+      <MemberSignature Language="C#" Value="WmfOffsetViewportOrg" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfOffsetWindowOrg">
+      <MemberSignature Language="C#" Value="WmfOffsetWindowOrg" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfPaintRegion">
+      <MemberSignature Language="C#" Value="WmfPaintRegion" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfPatBlt">
+      <MemberSignature Language="C#" Value="WmfPatBlt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfPie">
+      <MemberSignature Language="C#" Value="WmfPie" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfPolygon">
+      <MemberSignature Language="C#" Value="WmfPolygon" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfPolyline">
+      <MemberSignature Language="C#" Value="WmfPolyline" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfPolyPolygon">
+      <MemberSignature Language="C#" Value="WmfPolyPolygon" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfRealizePalette">
+      <MemberSignature Language="C#" Value="WmfRealizePalette" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfRecordBase">
+      <MemberSignature Language="C#" Value="WmfRecordBase" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfRectangle">
+      <MemberSignature Language="C#" Value="WmfRectangle" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfResizePalette">
+      <MemberSignature Language="C#" Value="WmfResizePalette" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfRestoreDC">
+      <MemberSignature Language="C#" Value="WmfRestoreDC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfRoundRect">
+      <MemberSignature Language="C#" Value="WmfRoundRect" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSaveDC">
+      <MemberSignature Language="C#" Value="WmfSaveDC" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfScaleViewportExt">
+      <MemberSignature Language="C#" Value="WmfScaleViewportExt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfScaleWindowExt">
+      <MemberSignature Language="C#" Value="WmfScaleWindowExt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSelectClipRegion">
+      <MemberSignature Language="C#" Value="WmfSelectClipRegion" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSelectObject">
+      <MemberSignature Language="C#" Value="WmfSelectObject" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSelectPalette">
+      <MemberSignature Language="C#" Value="WmfSelectPalette" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetBkColor">
+      <MemberSignature Language="C#" Value="WmfSetBkColor" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetBkMode">
+      <MemberSignature Language="C#" Value="WmfSetBkMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetDibToDev">
+      <MemberSignature Language="C#" Value="WmfSetDibToDev" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetLayout">
+      <MemberSignature Language="C#" Value="WmfSetLayout" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetMapMode">
+      <MemberSignature Language="C#" Value="WmfSetMapMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetMapperFlags">
+      <MemberSignature Language="C#" Value="WmfSetMapperFlags" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetPalEntries">
+      <MemberSignature Language="C#" Value="WmfSetPalEntries" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetPixel">
+      <MemberSignature Language="C#" Value="WmfSetPixel" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetPolyFillMode">
+      <MemberSignature Language="C#" Value="WmfSetPolyFillMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetRelAbs">
+      <MemberSignature Language="C#" Value="WmfSetRelAbs" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetROP2">
+      <MemberSignature Language="C#" Value="WmfSetROP2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetStretchBltMode">
+      <MemberSignature Language="C#" Value="WmfSetStretchBltMode" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetTextAlign">
+      <MemberSignature Language="C#" Value="WmfSetTextAlign" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetTextCharExtra">
+      <MemberSignature Language="C#" Value="WmfSetTextCharExtra" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetTextColor">
+      <MemberSignature Language="C#" Value="WmfSetTextColor" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetTextJustification">
+      <MemberSignature Language="C#" Value="WmfSetTextJustification" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetViewportExt">
+      <MemberSignature Language="C#" Value="WmfSetViewportExt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetViewportOrg">
+      <MemberSignature Language="C#" Value="WmfSetViewportOrg" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetWindowExt">
+      <MemberSignature Language="C#" Value="WmfSetWindowExt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfSetWindowOrg">
+      <MemberSignature Language="C#" Value="WmfSetWindowOrg" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfStretchBlt">
+      <MemberSignature Language="C#" Value="WmfStretchBlt" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfStretchDib">
+      <MemberSignature Language="C#" Value="WmfStretchDib" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WmfTextOut">
+      <MemberSignature Language="C#" Value="WmfTextOut" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.EmfPlusRecordType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

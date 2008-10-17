@@ -1,0 +1,1892 @@
+<Type Name="PaperKind" FullName="System.Drawing.Printing.PaperKind">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public enum PaperKind" />
+  <AssemblyInfo>
+    <AssemblyName>System.Drawing</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 07 D1 FA 57 C4 AE D9 F0 A3 2E 84 AA 0F AE FD 0D E9 E8 FD 6A EC 8F 87 FB 03 76 6C 83 4C 99 92 1E B2 3B E7 9A D9 D5 DC C1 DD 9A D2 36 13 21 02 90 0B 72 3C F9 80 95 7F C4 E1 77 10 8F C6 07 77 4F 29 E8 32 0E 92 EA 05 EC E4 E8 21 C0 A5 EF E8 F1 64 5C 4C 0C 93 C1 AB 99 28 5D 62 2C AA 65 2C 1D FA D6 3D 74 5D 6F 2D E5 F1 7E 5E AF 0F C4 96 3D 26 1C 8A 12 43 65 18 20 6D C0 93 34 4D 5A D2 93]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="A2">
+      <MemberSignature Language="C#" Value="A2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A3">
+      <MemberSignature Language="C#" Value="A3" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A3Extra">
+      <MemberSignature Language="C#" Value="A3Extra" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A3ExtraTransverse">
+      <MemberSignature Language="C#" Value="A3ExtraTransverse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A3Rotated">
+      <MemberSignature Language="C#" Value="A3Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A3Transverse">
+      <MemberSignature Language="C#" Value="A3Transverse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A4">
+      <MemberSignature Language="C#" Value="A4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A4Extra">
+      <MemberSignature Language="C#" Value="A4Extra" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A4Plus">
+      <MemberSignature Language="C#" Value="A4Plus" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A4Rotated">
+      <MemberSignature Language="C#" Value="A4Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A4Small">
+      <MemberSignature Language="C#" Value="A4Small" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A4Transverse">
+      <MemberSignature Language="C#" Value="A4Transverse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A5">
+      <MemberSignature Language="C#" Value="A5" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A5Extra">
+      <MemberSignature Language="C#" Value="A5Extra" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A5Rotated">
+      <MemberSignature Language="C#" Value="A5Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A5Transverse">
+      <MemberSignature Language="C#" Value="A5Transverse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A6">
+      <MemberSignature Language="C#" Value="A6" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="A6Rotated">
+      <MemberSignature Language="C#" Value="A6Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="APlus">
+      <MemberSignature Language="C#" Value="APlus" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B4">
+      <MemberSignature Language="C#" Value="B4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B4Envelope">
+      <MemberSignature Language="C#" Value="B4Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B4JisRotated">
+      <MemberSignature Language="C#" Value="B4JisRotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B5">
+      <MemberSignature Language="C#" Value="B5" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B5Envelope">
+      <MemberSignature Language="C#" Value="B5Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B5Extra">
+      <MemberSignature Language="C#" Value="B5Extra" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B5JisRotated">
+      <MemberSignature Language="C#" Value="B5JisRotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B5Transverse">
+      <MemberSignature Language="C#" Value="B5Transverse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B6Envelope">
+      <MemberSignature Language="C#" Value="B6Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B6Jis">
+      <MemberSignature Language="C#" Value="B6Jis" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="B6JisRotated">
+      <MemberSignature Language="C#" Value="B6JisRotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BPlus">
+      <MemberSignature Language="C#" Value="BPlus" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="C3Envelope">
+      <MemberSignature Language="C#" Value="C3Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="C4Envelope">
+      <MemberSignature Language="C#" Value="C4Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="C5Envelope">
+      <MemberSignature Language="C#" Value="C5Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="C65Envelope">
+      <MemberSignature Language="C#" Value="C65Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="C6Envelope">
+      <MemberSignature Language="C#" Value="C6Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CSheet">
+      <MemberSignature Language="C#" Value="CSheet" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Custom">
+      <MemberSignature Language="C#" Value="Custom" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DLEnvelope">
+      <MemberSignature Language="C#" Value="DLEnvelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DSheet">
+      <MemberSignature Language="C#" Value="DSheet" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ESheet">
+      <MemberSignature Language="C#" Value="ESheet" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Executive">
+      <MemberSignature Language="C#" Value="Executive" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Folio">
+      <MemberSignature Language="C#" Value="Folio" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GermanLegalFanfold">
+      <MemberSignature Language="C#" Value="GermanLegalFanfold" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GermanStandardFanfold">
+      <MemberSignature Language="C#" Value="GermanStandardFanfold" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InviteEnvelope">
+      <MemberSignature Language="C#" Value="InviteEnvelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsoB4">
+      <MemberSignature Language="C#" Value="IsoB4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ItalyEnvelope">
+      <MemberSignature Language="C#" Value="ItalyEnvelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseDoublePostcard">
+      <MemberSignature Language="C#" Value="JapaneseDoublePostcard" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseDoublePostcardRotated">
+      <MemberSignature Language="C#" Value="JapaneseDoublePostcardRotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseEnvelopeChouNumber3">
+      <MemberSignature Language="C#" Value="JapaneseEnvelopeChouNumber3" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseEnvelopeChouNumber3Rotated">
+      <MemberSignature Language="C#" Value="JapaneseEnvelopeChouNumber3Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseEnvelopeChouNumber4">
+      <MemberSignature Language="C#" Value="JapaneseEnvelopeChouNumber4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseEnvelopeChouNumber4Rotated">
+      <MemberSignature Language="C#" Value="JapaneseEnvelopeChouNumber4Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseEnvelopeKakuNumber2">
+      <MemberSignature Language="C#" Value="JapaneseEnvelopeKakuNumber2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseEnvelopeKakuNumber2Rotated">
+      <MemberSignature Language="C#" Value="JapaneseEnvelopeKakuNumber2Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseEnvelopeKakuNumber3">
+      <MemberSignature Language="C#" Value="JapaneseEnvelopeKakuNumber3" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseEnvelopeKakuNumber3Rotated">
+      <MemberSignature Language="C#" Value="JapaneseEnvelopeKakuNumber3Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseEnvelopeYouNumber4">
+      <MemberSignature Language="C#" Value="JapaneseEnvelopeYouNumber4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapaneseEnvelopeYouNumber4Rotated">
+      <MemberSignature Language="C#" Value="JapaneseEnvelopeYouNumber4Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapanesePostcard">
+      <MemberSignature Language="C#" Value="JapanesePostcard" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="JapanesePostcardRotated">
+      <MemberSignature Language="C#" Value="JapanesePostcardRotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Ledger">
+      <MemberSignature Language="C#" Value="Ledger" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Legal">
+      <MemberSignature Language="C#" Value="Legal" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LegalExtra">
+      <MemberSignature Language="C#" Value="LegalExtra" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Letter">
+      <MemberSignature Language="C#" Value="Letter" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LetterExtra">
+      <MemberSignature Language="C#" Value="LetterExtra" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LetterExtraTransverse">
+      <MemberSignature Language="C#" Value="LetterExtraTransverse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LetterPlus">
+      <MemberSignature Language="C#" Value="LetterPlus" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LetterRotated">
+      <MemberSignature Language="C#" Value="LetterRotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LetterSmall">
+      <MemberSignature Language="C#" Value="LetterSmall" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LetterTransverse">
+      <MemberSignature Language="C#" Value="LetterTransverse" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MonarchEnvelope">
+      <MemberSignature Language="C#" Value="MonarchEnvelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Note">
+      <MemberSignature Language="C#" Value="Note" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Number10Envelope">
+      <MemberSignature Language="C#" Value="Number10Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Number11Envelope">
+      <MemberSignature Language="C#" Value="Number11Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Number12Envelope">
+      <MemberSignature Language="C#" Value="Number12Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Number14Envelope">
+      <MemberSignature Language="C#" Value="Number14Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Number9Envelope">
+      <MemberSignature Language="C#" Value="Number9Envelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PersonalEnvelope">
+      <MemberSignature Language="C#" Value="PersonalEnvelope" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Prc16K">
+      <MemberSignature Language="C#" Value="Prc16K" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Prc16KRotated">
+      <MemberSignature Language="C#" Value="Prc16KRotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Prc32K">
+      <MemberSignature Language="C#" Value="Prc32K" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Prc32KBig">
+      <MemberSignature Language="C#" Value="Prc32KBig" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Prc32KBigRotated">
+      <MemberSignature Language="C#" Value="Prc32KBigRotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Prc32KRotated">
+      <MemberSignature Language="C#" Value="Prc32KRotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber1">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber1" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber10">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber10" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber10Rotated">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber10Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber1Rotated">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber1Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber2">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber2" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber2Rotated">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber2Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber3">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber3" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber3Rotated">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber3Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber4">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber4" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber4Rotated">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber4Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber5">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber5" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber5Rotated">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber5Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber6">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber6" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber6Rotated">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber6Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber7">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber7" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber7Rotated">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber7Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber8">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber8" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber8Rotated">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber8Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber9">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber9" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrcEnvelopeNumber9Rotated">
+      <MemberSignature Language="C#" Value="PrcEnvelopeNumber9Rotated" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Quarto">
+      <MemberSignature Language="C#" Value="Quarto" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Standard10x11">
+      <MemberSignature Language="C#" Value="Standard10x11" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Standard10x14">
+      <MemberSignature Language="C#" Value="Standard10x14" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Standard11x17">
+      <MemberSignature Language="C#" Value="Standard11x17" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Standard12x11">
+      <MemberSignature Language="C#" Value="Standard12x11" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Standard15x11">
+      <MemberSignature Language="C#" Value="Standard15x11" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Standard9x11">
+      <MemberSignature Language="C#" Value="Standard9x11" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Statement">
+      <MemberSignature Language="C#" Value="Statement" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Tabloid">
+      <MemberSignature Language="C#" Value="Tabloid" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TabloidExtra">
+      <MemberSignature Language="C#" Value="TabloidExtra" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="USStandardFanfold">
+      <MemberSignature Language="C#" Value="USStandardFanfold" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Printing.PaperKind</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

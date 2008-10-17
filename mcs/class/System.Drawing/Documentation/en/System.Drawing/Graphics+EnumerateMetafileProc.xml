@@ -1,0 +1,31 @@
+<Type Name="Graphics+EnumerateMetafileProc" FullName="System.Drawing.Graphics+EnumerateMetafileProc">
+  <TypeSignature Language="C#" Value="public delegate bool Graphics.EnumerateMetafileProc(EmfPlusRecordType recordType, int flags, int dataSize, IntPtr data, PlayRecordCallback callbackData);" />
+  <AssemblyInfo>
+    <AssemblyName>System.Drawing</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="recordType" Type="System.Drawing.Imaging.EmfPlusRecordType" />
+    <Parameter Name="flags" Type="System.Int32" />
+    <Parameter Name="dataSize" Type="System.Int32" />
+    <Parameter Name="data" Type="System.IntPtr" />
+    <Parameter Name="callbackData" Type="System.Drawing.Imaging.PlayRecordCallback" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Boolean</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="recordType">To be added.</param>
+    <param name="flags">To be added.</param>
+    <param name="dataSize">To be added.</param>
+    <param name="data">To be added.</param>
+    <param name="callbackData">To be added.</param>
+    <summary>To be added.</summary>
+    <value>To be added.</value>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

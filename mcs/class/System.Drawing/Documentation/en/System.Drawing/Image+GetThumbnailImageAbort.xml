@@ -1,0 +1,20 @@
+<Type Name="Image+GetThumbnailImageAbort" FullName="System.Drawing.Image+GetThumbnailImageAbort">
+  <TypeSignature Language="C#" Value="public delegate bool Image.GetThumbnailImageAbort();" />
+  <AssemblyInfo>
+    <AssemblyName>System.Drawing</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters />
+  <ReturnValue>
+    <ReturnType>System.Boolean</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <summary>To be added.</summary>
+    <value>To be added.</value>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

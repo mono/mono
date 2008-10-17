@@ -1,0 +1,265 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.Drawing" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.Dependency("System,", System.Runtime.CompilerServices.LoadHint.Always)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComCompatibleVersion(1, 0, 3300, 0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.Drawing.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.Drawing.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.Drawing.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System.Drawing">
+      <Type Name="Bitmap" Kind="Class" />
+      <Type Name="Brush" Kind="Class" />
+      <Type Name="Brushes" Kind="Class" />
+      <Type Name="BufferedGraphics" Kind="Class" />
+      <Type Name="BufferedGraphicsContext" Kind="Class" />
+      <Type Name="BufferedGraphicsManager" Kind="Class" />
+      <Type Name="CharacterRange" Kind="Structure" />
+      <Type Name="Color" Kind="Structure" />
+      <Type Name="ColorConverter" Kind="Class" />
+      <Type Name="ColorTranslator" Kind="Class" />
+      <Type Name="ContentAlignment" Kind="Enumeration" />
+      <Type Name="CopyPixelOperation" Kind="Enumeration" />
+      <Type Name="Font" Kind="Class" />
+      <Type Name="FontConverter" Kind="Class" />
+      <Type Name="FontConverter+FontNameConverter" Kind="Class" />
+      <Type Name="FontConverter+FontUnitConverter" Kind="Class" />
+      <Type Name="FontFamily" Kind="Class" />
+      <Type Name="FontStyle" Kind="Enumeration" />
+      <Type Name="Graphics" Kind="Class" />
+      <Type Name="Graphics+DrawImageAbort" Kind="Delegate" />
+      <Type Name="Graphics+EnumerateMetafileProc" Kind="Delegate" />
+      <Type Name="GraphicsUnit" Kind="Enumeration" />
+      <Type Name="Icon" Kind="Class" />
+      <Type Name="IconConverter" Kind="Class" />
+      <Type Name="IDeviceContext" Kind="Interface" />
+      <Type Name="Image" Kind="Class" />
+      <Type Name="Image+GetThumbnailImageAbort" Kind="Delegate" />
+      <Type Name="ImageAnimator" Kind="Class" />
+      <Type Name="ImageConverter" Kind="Class" />
+      <Type Name="ImageFormatConverter" Kind="Class" />
+      <Type Name="KnownColor" Kind="Enumeration" />
+      <Type Name="Pen" Kind="Class" />
+      <Type Name="Pens" Kind="Class" />
+      <Type Name="Point" Kind="Structure" />
+      <Type Name="PointConverter" Kind="Class" />
+      <Type Name="PointF" Kind="Structure" />
+      <Type Name="Rectangle" Kind="Structure" />
+      <Type Name="RectangleConverter" Kind="Class" />
+      <Type Name="RectangleF" Kind="Structure" />
+      <Type Name="Region" Kind="Class" />
+      <Type Name="RotateFlipType" Kind="Enumeration" />
+      <Type Name="Size" Kind="Structure" />
+      <Type Name="SizeConverter" Kind="Class" />
+      <Type Name="SizeF" Kind="Structure" />
+      <Type Name="SizeFConverter" Kind="Class" />
+      <Type Name="SolidBrush" Kind="Class" />
+      <Type Name="StringAlignment" Kind="Enumeration" />
+      <Type Name="StringDigitSubstitute" Kind="Enumeration" />
+      <Type Name="StringFormat" Kind="Class" />
+      <Type Name="StringFormatFlags" Kind="Enumeration" />
+      <Type Name="StringTrimming" Kind="Enumeration" />
+      <Type Name="StringUnit" Kind="Enumeration" />
+      <Type Name="SystemBrushes" Kind="Class" />
+      <Type Name="SystemColors" Kind="Class" />
+      <Type Name="SystemFonts" Kind="Class" />
+      <Type Name="SystemIcons" Kind="Class" />
+      <Type Name="SystemPens" Kind="Class" />
+      <Type Name="TextureBrush" Kind="Class" />
+      <Type Name="ToolboxBitmapAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Drawing.Design">
+      <Type Name="CategoryNameCollection" Kind="Class" />
+      <Type Name="IPropertyValueUIService" Kind="Interface" />
+      <Type Name="IToolboxItemProvider" Kind="Interface" />
+      <Type Name="IToolboxService" Kind="Interface" />
+      <Type Name="IToolboxUser" Kind="Interface" />
+      <Type Name="PaintValueEventArgs" Kind="Class" />
+      <Type Name="PropertyValueUIHandler" Kind="Delegate" />
+      <Type Name="PropertyValueUIItem" Kind="Class" />
+      <Type Name="PropertyValueUIItemInvokeHandler" Kind="Delegate" />
+      <Type Name="ToolboxComponentsCreatedEventArgs" Kind="Class" />
+      <Type Name="ToolboxComponentsCreatedEventHandler" Kind="Delegate" />
+      <Type Name="ToolboxComponentsCreatingEventArgs" Kind="Class" />
+      <Type Name="ToolboxComponentsCreatingEventHandler" Kind="Delegate" />
+      <Type Name="ToolboxItem" Kind="Class" />
+      <Type Name="ToolboxItemCollection" Kind="Class" />
+      <Type Name="ToolboxItemCreatorCallback" Kind="Delegate" />
+      <Type Name="UITypeEditor" Kind="Class" />
+      <Type Name="UITypeEditorEditStyle" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Drawing.Drawing2D">
+      <Type Name="AdjustableArrowCap" Kind="Class" />
+      <Type Name="Blend" Kind="Class" />
+      <Type Name="ColorBlend" Kind="Class" />
+      <Type Name="CombineMode" Kind="Enumeration" />
+      <Type Name="CompositingMode" Kind="Enumeration" />
+      <Type Name="CompositingQuality" Kind="Enumeration" />
+      <Type Name="CoordinateSpace" Kind="Enumeration" />
+      <Type Name="CustomLineCap" Kind="Class" />
+      <Type Name="DashCap" Kind="Enumeration" />
+      <Type Name="DashStyle" Kind="Enumeration" />
+      <Type Name="FillMode" Kind="Enumeration" />
+      <Type Name="FlushIntention" Kind="Enumeration" />
+      <Type Name="GraphicsContainer" Kind="Class" />
+      <Type Name="GraphicsPath" Kind="Class" />
+      <Type Name="GraphicsPathIterator" Kind="Class" />
+      <Type Name="GraphicsState" Kind="Class" />
+      <Type Name="HatchBrush" Kind="Class" />
+      <Type Name="HatchStyle" Kind="Enumeration" />
+      <Type Name="InterpolationMode" Kind="Enumeration" />
+      <Type Name="LinearGradientBrush" Kind="Class" />
+      <Type Name="LinearGradientMode" Kind="Enumeration" />
+      <Type Name="LineCap" Kind="Enumeration" />
+      <Type Name="LineJoin" Kind="Enumeration" />
+      <Type Name="Matrix" Kind="Class" />
+      <Type Name="MatrixOrder" Kind="Enumeration" />
+      <Type Name="PathData" Kind="Class" />
+      <Type Name="PathGradientBrush" Kind="Class" />
+      <Type Name="PathPointType" Kind="Enumeration" />
+      <Type Name="PenAlignment" Kind="Enumeration" />
+      <Type Name="PenType" Kind="Enumeration" />
+      <Type Name="PixelOffsetMode" Kind="Enumeration" />
+      <Type Name="QualityMode" Kind="Enumeration" />
+      <Type Name="RegionData" Kind="Class" />
+      <Type Name="SmoothingMode" Kind="Enumeration" />
+      <Type Name="WarpMode" Kind="Enumeration" />
+      <Type Name="WrapMode" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Drawing.Imaging">
+      <Type Name="BitmapData" Kind="Class" />
+      <Type Name="ColorAdjustType" Kind="Enumeration" />
+      <Type Name="ColorChannelFlag" Kind="Enumeration" />
+      <Type Name="ColorMap" Kind="Class" />
+      <Type Name="ColorMapType" Kind="Enumeration" />
+      <Type Name="ColorMatrix" Kind="Class" />
+      <Type Name="ColorMatrixFlag" Kind="Enumeration" />
+      <Type Name="ColorMode" Kind="Enumeration" />
+      <Type Name="ColorPalette" Kind="Class" />
+      <Type Name="EmfPlusRecordType" Kind="Enumeration" />
+      <Type Name="EmfType" Kind="Enumeration" />
+      <Type Name="Encoder" Kind="Class" />
+      <Type Name="EncoderParameter" Kind="Class" />
+      <Type Name="EncoderParameters" Kind="Class" />
+      <Type Name="EncoderParameterValueType" Kind="Enumeration" />
+      <Type Name="EncoderValue" Kind="Enumeration" />
+      <Type Name="FrameDimension" Kind="Class" />
+      <Type Name="ImageAttributes" Kind="Class" />
+      <Type Name="ImageCodecFlags" Kind="Enumeration" />
+      <Type Name="ImageCodecInfo" Kind="Class" />
+      <Type Name="ImageFlags" Kind="Enumeration" />
+      <Type Name="ImageFormat" Kind="Class" />
+      <Type Name="ImageLockMode" Kind="Enumeration" />
+      <Type Name="Metafile" Kind="Class" />
+      <Type Name="MetafileFrameUnit" Kind="Enumeration" />
+      <Type Name="MetafileHeader" Kind="Class" />
+      <Type Name="MetafileType" Kind="Enumeration" />
+      <Type Name="MetaHeader" Kind="Class" />
+      <Type Name="PaletteFlags" Kind="Enumeration" />
+      <Type Name="PixelFormat" Kind="Enumeration" />
+      <Type Name="PlayRecordCallback" Kind="Delegate" />
+      <Type Name="PropertyItem" Kind="Class" />
+      <Type Name="WmfPlaceableFileHeader" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Drawing.Printing">
+      <Type Name="Duplex" Kind="Enumeration" />
+      <Type Name="InvalidPrinterException" Kind="Class" />
+      <Type Name="Margins" Kind="Class" />
+      <Type Name="MarginsConverter" Kind="Class" />
+      <Type Name="PageSettings" Kind="Class" />
+      <Type Name="PaperKind" Kind="Enumeration" />
+      <Type Name="PaperSize" Kind="Class" />
+      <Type Name="PaperSource" Kind="Class" />
+      <Type Name="PaperSourceKind" Kind="Enumeration" />
+      <Type Name="PreviewPageInfo" Kind="Class" />
+      <Type Name="PreviewPrintController" Kind="Class" />
+      <Type Name="PrintAction" Kind="Enumeration" />
+      <Type Name="PrintController" Kind="Class" />
+      <Type Name="PrintDocument" Kind="Class" />
+      <Type Name="PrinterResolution" Kind="Class" />
+      <Type Name="PrinterResolutionKind" Kind="Enumeration" />
+      <Type Name="PrinterSettings" Kind="Class" />
+      <Type Name="PrinterSettings+PaperSizeCollection" Kind="Class" />
+      <Type Name="PrinterSettings+PaperSourceCollection" Kind="Class" />
+      <Type Name="PrinterSettings+PrinterResolutionCollection" Kind="Class" />
+      <Type Name="PrinterSettings+StringCollection" Kind="Class" />
+      <Type Name="PrinterUnit" Kind="Enumeration" />
+      <Type Name="PrinterUnitConvert" Kind="Class" />
+      <Type Name="PrintEventArgs" Kind="Class" />
+      <Type Name="PrintEventHandler" Kind="Delegate" />
+      <Type Name="PrintingPermission" Kind="Class" />
+      <Type Name="PrintingPermissionAttribute" Kind="Class" />
+      <Type Name="PrintingPermissionLevel" Kind="Enumeration" />
+      <Type Name="PrintPageEventArgs" Kind="Class" />
+      <Type Name="PrintPageEventHandler" Kind="Delegate" />
+      <Type Name="PrintRange" Kind="Enumeration" />
+      <Type Name="QueryPageSettingsEventArgs" Kind="Class" />
+      <Type Name="QueryPageSettingsEventHandler" Kind="Delegate" />
+      <Type Name="StandardPrintController" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Drawing.Text">
+      <Type Name="FontCollection" Kind="Class" />
+      <Type Name="GenericFontFamilies" Kind="Enumeration" />
+      <Type Name="HotkeyPrefix" Kind="Enumeration" />
+      <Type Name="InstalledFontCollection" Kind="Class" />
+      <Type Name="PrivateFontCollection" Kind="Class" />
+      <Type Name="TextRenderingHint" Kind="Enumeration" />
+    </Namespace>
+  </Types>
+  <Title>System.Drawing</Title>
+</Overview>

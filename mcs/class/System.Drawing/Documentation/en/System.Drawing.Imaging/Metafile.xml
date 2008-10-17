@@ -1,0 +1,1037 @@
+<Type Name="Metafile" FullName="System.Drawing.Imaging.Metafile">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class Metafile : System.Drawing.Image" />
+  <AssemblyInfo>
+    <AssemblyName>System.Drawing</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 07 D1 FA 57 C4 AE D9 F0 A3 2E 84 AA 0F AE FD 0D E9 E8 FD 6A EC 8F 87 FB 03 76 6C 83 4C 99 92 1E B2 3B E7 9A D9 D5 DC C1 DD 9A D2 36 13 21 02 90 0B 72 3C F9 80 95 7F C4 E1 77 10 8F C6 07 77 4F 29 E8 32 0E 92 EA 05 EC E4 E8 21 C0 A5 EF E8 F1 64 5C 4C 0C 93 C1 AB 99 28 5D 62 2C AA 65 2C 1D FA D6 3D 74 5D 6F 2D E5 F1 7E 5E AF 0F C4 96 3D 26 1C 8A 12 43 65 18 20 6D C0 93 34 4D 5A D2 93]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Drawing.Image</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ComponentModel.Editor("System.Drawing.Design.MetafileEditor, System.Drawing.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.Drawing.Design.UITypeEditor))</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string filename);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr henhmetafile, bool deleteEmf);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="henhmetafile" Type="System.IntPtr" />
+        <Parameter Name="deleteEmf" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="henhmetafile">To be added: an object of type 'IntPtr'</param>
+        <param name="deleteEmf">To be added: an object of type 'bool'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr referenceHdc, System.Drawing.Imaging.EmfType emfType);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="emfType" Type="System.Drawing.Imaging.EmfType" />
+      </Parameters>
+      <Docs>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="emfType">To be added: an object of type 'EmfType'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr hmetafile, System.Drawing.Imaging.WmfPlaceableFileHeader wmfHeader);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="hmetafile" Type="System.IntPtr" />
+        <Parameter Name="wmfHeader" Type="System.Drawing.Imaging.WmfPlaceableFileHeader" />
+      </Parameters>
+      <Docs>
+        <param name="hmetafile">To be added: an object of type 'IntPtr'</param>
+        <param name="wmfHeader">To be added: an object of type 'WmfPlaceableFileHeader'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr referenceHdc, System.Drawing.Rectangle frameRect);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+      </Parameters>
+      <Docs>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr referenceHdc, System.Drawing.RectangleF frameRect);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+      </Parameters>
+      <Docs>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr referenceHdc, System.Drawing.Imaging.EmfType emfType, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="emfType" Type="System.Drawing.Imaging.EmfType" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="emfType">To be added: an object of type 'EmfType'</param>
+        <param name="description">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr hmetafile, System.Drawing.Imaging.WmfPlaceableFileHeader wmfHeader, bool deleteWmf);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="hmetafile" Type="System.IntPtr" />
+        <Parameter Name="wmfHeader" Type="System.Drawing.Imaging.WmfPlaceableFileHeader" />
+        <Parameter Name="deleteWmf" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="hmetafile">To be added: an object of type 'IntPtr'</param>
+        <param name="wmfHeader">To be added: an object of type 'WmfPlaceableFileHeader'</param>
+        <param name="deleteWmf">To be added: an object of type 'bool'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr referenceHdc, System.Drawing.Rectangle frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+      </Parameters>
+      <Docs>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr referenceHdc, System.Drawing.RectangleF frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+      </Parameters>
+      <Docs>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc, System.Drawing.Imaging.EmfType type);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc, System.Drawing.Rectangle frameRect);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc, System.Drawing.RectangleF frameRect);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.Imaging.EmfType type);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.Rectangle frameRect);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.RectangleF frameRect);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr referenceHdc, System.Drawing.Rectangle frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+      </Parameters>
+      <Docs>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr referenceHdc, System.Drawing.RectangleF frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+      </Parameters>
+      <Docs>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc, System.Drawing.Imaging.EmfType type, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <param name="description">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc, System.Drawing.Rectangle frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc, System.Drawing.RectangleF frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.Imaging.EmfType type, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <param name="description">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.Rectangle frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.RectangleF frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr referenceHdc, System.Drawing.Rectangle frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <param name="description">To be added.</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (IntPtr referenceHdc, System.Drawing.RectangleF frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <param name="description">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc, System.Drawing.Rectangle frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc, System.Drawing.RectangleF frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.Rectangle frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.Rectangle frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="description">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.RectangleF frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.RectangleF frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="description">To be added.</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc, System.Drawing.Rectangle frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <param name="description">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (System.IO.Stream stream, IntPtr referenceHdc, System.Drawing.RectangleF frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <param name="description">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.Rectangle frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <param name="description">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Metafile (string fileName, IntPtr referenceHdc, System.Drawing.RectangleF frameRect, System.Drawing.Imaging.MetafileFrameUnit frameUnit, System.Drawing.Imaging.EmfType type, string description);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="referenceHdc" Type="System.IntPtr" />
+        <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
+        <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
+        <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
+        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
+        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
+        <param name="type">To be added: an object of type 'EmfType'</param>
+        <param name="description">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHenhmetafile">
+      <MemberSignature Language="C#" Value="public IntPtr GetHenhmetafile ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'IntPtr'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMetafileHeader">
+      <MemberSignature Language="C#" Value="public System.Drawing.Imaging.MetafileHeader GetMetafileHeader ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.MetafileHeader</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'MetafileHeader'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMetafileHeader">
+      <MemberSignature Language="C#" Value="public static System.Drawing.Imaging.MetafileHeader GetMetafileHeader (IntPtr henhmetafile);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.MetafileHeader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="henhmetafile" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="henhmetafile">To be added: an object of type 'IntPtr'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'MetafileHeader'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMetafileHeader">
+      <MemberSignature Language="C#" Value="public static System.Drawing.Imaging.MetafileHeader GetMetafileHeader (System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.MetafileHeader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added: an object of type 'IO.Stream'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'MetafileHeader'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMetafileHeader">
+      <MemberSignature Language="C#" Value="public static System.Drawing.Imaging.MetafileHeader GetMetafileHeader (string fileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.MetafileHeader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'MetafileHeader'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMetafileHeader">
+      <MemberSignature Language="C#" Value="public static System.Drawing.Imaging.MetafileHeader GetMetafileHeader (IntPtr henhmetafile, System.Drawing.Imaging.WmfPlaceableFileHeader wmfHeader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Imaging.MetafileHeader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="henhmetafile" Type="System.IntPtr" />
+        <Parameter Name="wmfHeader" Type="System.Drawing.Imaging.WmfPlaceableFileHeader" />
+      </Parameters>
+      <Docs>
+        <param name="henhmetafile">To be added.</param>
+        <param name="wmfHeader">To be added: an object of type 'WmfPlaceableFileHeader'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'MetafileHeader'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PlayRecord">
+      <MemberSignature Language="C#" Value="public void PlayRecord (System.Drawing.Imaging.EmfPlusRecordType recordType, int flags, int dataSize, byte[] data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="recordType" Type="System.Drawing.Imaging.EmfPlusRecordType" />
+        <Parameter Name="flags" Type="System.Int32" />
+        <Parameter Name="dataSize" Type="System.Int32" />
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="recordType">To be added: an object of type 'EmfPlusRecordType'</param>
+        <param name="flags">To be added: an object of type 'int'</param>
+        <param name="dataSize">To be added: an object of type 'int'</param>
+        <param name="data">To be added: an object of type 'byte []'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>
