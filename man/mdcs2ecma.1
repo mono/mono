@@ -1,0 +1,41 @@
+.\" 
+.\" mdcs2ecma manual page.
+.\" (C) 2006 Jonathan Pryor
+.\" Author:
+.\"   Jonathan Pryor (jonpryor@vt.edu)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH "mdcs2ecma" 1
+.SH NAME
+mdcs2ecma \- Convert CSC /doc Documentation Into ECMA documentation.
+.SH SYNOPSIS
+.B mdcs2ecma
+.I SLASHDOC-FILE
+.I ASSEMBLY
+.I OUTPUT
+.I LIBRARY-TYPE
+.SH DESCRIPTION
+.I mdcs2ecma
+is a program that converts 
+.I CSC /doc
+generated XML documentation into single-file ECMA documentation.
+.PP
+Note that single-file ECMA documentation is the format used by the ECMA
+standard,
+.I NOT
+the one-file-per-type ECMA format typically used by Mono.
+.PP
+This program is unmaintained.  Use
+.B monodocer -importslashdoc:SLASHDOC-FILE -assembly:ASSEMBLY -path:OUTPUT
+instead.
+.PP
+.SH MAILING LISTS
+.TP
+Visit http://lists.ximian.com/mailman/listinfo/mono-docs-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com for details
+.SH SEE ALSO
+.BR monodocer(1)
