@@ -1,18 +1,22 @@
+2008-10-17  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionWriter.cs: remove dead code.
+	* Mono.Cecil.Cil/ISymbolWriter.cs: simplify Write method.
+
 2008-10-17	Rodrigo B. de Oliveira <rodrigobamboo@gmail.com>
 
 	* Mono.Cecil.Cil/CodeWriter.cs
 	* Mono.Cecil.Cil/MethodBody.cs:
 		mcs-cecil-local-var-1.diff patch enabling better handling of local
-		variable debugging information applied. Patch was
-		provided here:
-			http://groups.google.com/group/mono-cecil/browse_thread/thread/c714ae6ad2a9d092/f8b0f92caefeca14
-		
+		variable debugging information applied.
+		Patch by Juerg Billeter <j@bitron.ch>
+
 2008-10-17	Rodrigo B. de Oliveira <rodrigobamboo@gmail.com>
 
 	* Mono.Cecil/ConstructorCollection.cs
 	* Mono.Cecil.Binary/ImageReader.cs:
 		Compact Framework compilation fixes.
-	
+
 2008-10-14  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/SecurityDeclarationReader.cs: protect against

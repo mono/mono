@@ -738,10 +738,10 @@ namespace Mono.Cecil {
 					TableComparers.NestedClass.Instance);
 			th.Sorted |= ((long) 1 << NestedClassTable.RId);
 
-			if (th.HasTable (InterfaceImplTable.RId))
-				m_tableWriter.GetInterfaceImplTable ().Rows.Sort (
+			if (th.HasTable(InterfaceImplTable.RId))
+				m_tableWriter.GetInterfaceImplTable().Rows.Sort(
 					TableComparers.InterfaceImpl.Instance);
-			th.Sorted |= ((long) 1 << InterfaceImplTable.RId);
+			th.Sorted |= ((long)1 << InterfaceImplTable.RId);
 
 			if (th.HasTable (ConstantTable.RId))
 				m_tableWriter.GetConstantTable ().Rows.Sort (
@@ -1502,22 +1502,7 @@ namespace Mono.Cecil {
 			if (!meth.HasBody)
 				return;
 
-			m_symbolWriter.Write (meth.Body, GetVariablesSig (meth));
-		}
-
-		byte [][] GetVariablesSig (MethodDefinition meth)
-		{
-			VariableDefinitionCollection variables = meth.Body.Variables;
-			byte [][] signatures = new byte [variables.Count][];
-			for (int i = 0; i < variables.Count; i++) {
-				signatures [i] = GetVariableSig (variables [i]);
-			}
-			return signatures;
-		}
-
-		byte [] GetVariableSig (VariableDefinition var)
-		{
-			return m_sigWriter.CompressLocalVar (m_codeWriter.GetLocalVariableSig (var));
+			m_symbolWriter.Write (meth.Body);
 		}
 	}
 }

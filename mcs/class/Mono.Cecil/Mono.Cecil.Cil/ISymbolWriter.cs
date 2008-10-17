@@ -32,6 +32,6 @@ namespace Mono.Cecil.Cil {
 
 	public interface ISymbolWriter : IDisposable {
 
-		void Write (MethodBody body, byte [][] variables);
+		void Write (MethodBody body);
 	}
 }
