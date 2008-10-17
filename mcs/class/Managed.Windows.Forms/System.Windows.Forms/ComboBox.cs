@@ -2221,9 +2221,30 @@ namespace System.Windows.Forms
 
 			internal void Sort ()
 			{
-				object_items.Sort ();
+				// If the objects the user put here don't have their own comparer,
+				// use one that compares based on the object's ToString
+				if (object_items.Count > 0 && object_items[0] is IComparer)
+					object_items.Sort ();
+				else
+					object_items.Sort (new ObjectComparer (owner));
 			}
 
+			private class ObjectComparer : IComparer
+			{
+				private ListControl owner;
+				
+				public ObjectComparer (ListControl owner)
+				{
+					this.owner = owner;
+				}
+				
+				#region IComparer Members
+				public int Compare (object x, object y)
+				{
+					return string.Compare (owner.GetItemText (x), owner.GetItemText (y));
+				}
+				#endregion
+			}
 			#endregion Private Methods
 		}
 

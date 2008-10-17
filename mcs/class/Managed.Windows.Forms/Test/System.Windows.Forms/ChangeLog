@@ -1,3 +1,7 @@
+2008-10-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBoxTest.cs: Add test for bug #436328.
+
 2008-10-15  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TimerTest.cs: Enabling test case for bug #325033, because it's 

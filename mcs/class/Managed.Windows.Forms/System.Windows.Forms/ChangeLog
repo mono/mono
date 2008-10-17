@@ -1,3 +1,10 @@
+2008-10-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: When we are sorting the items, if the item's type
+	doesn't support IComparer, use a default one that compares based
+	off the item's visible text.
+	[Fixes bug #436328]
+
 2008-10-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ColumnHeader.cs: Invalidate ListView.header_control when setting

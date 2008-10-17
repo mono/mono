@@ -1325,6 +1325,33 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 #endif
+
+		private struct ComboVal
+		{
+			public string text;
+
+			public ComboVal (string t)
+			{
+				text = t;
+			}
+
+			public override string ToString ()
+			{
+				return text;
+			}
+		}
+		
+		[Test]
+		public void SortTest ()
+		{
+			// Test sorting of objects with no IComparer
+			// should not crash
+
+			ComboBox cmb = new ComboBox ();
+			cmb.Items.Add (new ComboVal ("B"));
+			cmb.Items.Add (new ComboVal ("A"));
+			cmb.Sorted = true;
+		}
 	}
 
 	[TestFixture]
