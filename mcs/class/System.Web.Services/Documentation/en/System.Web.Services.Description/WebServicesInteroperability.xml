@@ -1,0 +1,90 @@
+<Type Name="WebServicesInteroperability" FullName="System.Web.Services.Description.WebServicesInteroperability">
+  <TypeSignature Language="C#" Value="public sealed class WebServicesInteroperability" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web.Services</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="CheckConformance">
+      <MemberSignature Language="C#" Value="public static bool CheckConformance (System.Web.Services.WsiProfiles claims, System.Web.Services.Description.ServiceDescription service, System.Web.Services.Description.BasicProfileViolationCollection violations);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="claims" Type="System.Web.Services.WsiProfiles" />
+        <Parameter Name="service" Type="System.Web.Services.Description.ServiceDescription" />
+        <Parameter Name="violations" Type="System.Web.Services.Description.BasicProfileViolationCollection" />
+      </Parameters>
+      <Docs>
+        <param name="claims">To be added.</param>
+        <param name="service">To be added.</param>
+        <param name="violations">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CheckConformance">
+      <MemberSignature Language="C#" Value="public static bool CheckConformance (System.Web.Services.WsiProfiles claims, System.Web.Services.Description.ServiceDescriptionCollection services, System.Web.Services.Description.BasicProfileViolationCollection violations);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="claims" Type="System.Web.Services.WsiProfiles" />
+        <Parameter Name="services" Type="System.Web.Services.Description.ServiceDescriptionCollection" />
+        <Parameter Name="violations" Type="System.Web.Services.Description.BasicProfileViolationCollection" />
+      </Parameters>
+      <Docs>
+        <param name="claims">To be added.</param>
+        <param name="services">To be added.</param>
+        <param name="violations">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CheckConformance">
+      <MemberSignature Language="C#" Value="public static bool CheckConformance (System.Web.Services.WsiProfiles claims, System.Web.Services.Description.WebReference webReference, System.Web.Services.Description.BasicProfileViolationCollection violations);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="claims" Type="System.Web.Services.WsiProfiles" />
+        <Parameter Name="webReference" Type="System.Web.Services.Description.WebReference" />
+        <Parameter Name="violations" Type="System.Web.Services.Description.BasicProfileViolationCollection" />
+      </Parameters>
+      <Docs>
+        <param name="claims">To be added.</param>
+        <param name="webReference">To be added.</param>
+        <param name="violations">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

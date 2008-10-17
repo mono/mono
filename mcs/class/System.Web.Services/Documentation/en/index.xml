@@ -1,0 +1,258 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.Web.Services" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.Web.Services.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.Web.Services.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.Web.Services.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System.Web.Services">
+      <Type Name="WebMethodAttribute" Kind="Class" />
+      <Type Name="WebService" Kind="Class" />
+      <Type Name="WebServiceAttribute" Kind="Class" />
+      <Type Name="WebServiceBindingAttribute" Kind="Class" />
+      <Type Name="WsiProfiles" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Web.Services.Configuration">
+      <Type Name="DiagnosticsElement" Kind="Class" />
+      <Type Name="PriorityGroup" Kind="Enumeration" />
+      <Type Name="ProtocolElement" Kind="Class" />
+      <Type Name="ProtocolElementCollection" Kind="Class" />
+      <Type Name="SoapEnvelopeProcessingElement" Kind="Class" />
+      <Type Name="SoapExtensionTypeElement" Kind="Class" />
+      <Type Name="SoapExtensionTypeElementCollection" Kind="Class" />
+      <Type Name="TypeElement" Kind="Class" />
+      <Type Name="TypeElementCollection" Kind="Class" />
+      <Type Name="WebServiceProtocols" Kind="Enumeration" />
+      <Type Name="WebServicesSection" Kind="Class" />
+      <Type Name="WsdlHelpGeneratorElement" Kind="Class" />
+      <Type Name="WsiProfilesElement" Kind="Class" />
+      <Type Name="WsiProfilesElementCollection" Kind="Class" />
+      <Type Name="XmlFormatExtensionAttribute" Kind="Class" />
+      <Type Name="XmlFormatExtensionPointAttribute" Kind="Class" />
+      <Type Name="XmlFormatExtensionPrefixAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Web.Services.Description">
+      <Type Name="BasicProfileViolation" Kind="Class" />
+      <Type Name="BasicProfileViolationCollection" Kind="Class" />
+      <Type Name="BasicProfileViolationEnumerator" Kind="Class" />
+      <Type Name="Binding" Kind="Class" />
+      <Type Name="BindingCollection" Kind="Class" />
+      <Type Name="DocumentableItem" Kind="Class" />
+      <Type Name="FaultBinding" Kind="Class" />
+      <Type Name="FaultBindingCollection" Kind="Class" />
+      <Type Name="HttpAddressBinding" Kind="Class" />
+      <Type Name="HttpBinding" Kind="Class" />
+      <Type Name="HttpOperationBinding" Kind="Class" />
+      <Type Name="HttpUrlEncodedBinding" Kind="Class" />
+      <Type Name="HttpUrlReplacementBinding" Kind="Class" />
+      <Type Name="Import" Kind="Class" />
+      <Type Name="ImportCollection" Kind="Class" />
+      <Type Name="InputBinding" Kind="Class" />
+      <Type Name="Message" Kind="Class" />
+      <Type Name="MessageBinding" Kind="Class" />
+      <Type Name="MessageCollection" Kind="Class" />
+      <Type Name="MessagePart" Kind="Class" />
+      <Type Name="MessagePartCollection" Kind="Class" />
+      <Type Name="MimeContentBinding" Kind="Class" />
+      <Type Name="MimeMultipartRelatedBinding" Kind="Class" />
+      <Type Name="MimePart" Kind="Class" />
+      <Type Name="MimePartCollection" Kind="Class" />
+      <Type Name="MimeTextBinding" Kind="Class" />
+      <Type Name="MimeTextMatch" Kind="Class" />
+      <Type Name="MimeTextMatchCollection" Kind="Class" />
+      <Type Name="MimeXmlBinding" Kind="Class" />
+      <Type Name="NamedItem" Kind="Class" />
+      <Type Name="Operation" Kind="Class" />
+      <Type Name="OperationBinding" Kind="Class" />
+      <Type Name="OperationBindingCollection" Kind="Class" />
+      <Type Name="OperationCollection" Kind="Class" />
+      <Type Name="OperationFault" Kind="Class" />
+      <Type Name="OperationFaultCollection" Kind="Class" />
+      <Type Name="OperationFlow" Kind="Enumeration" />
+      <Type Name="OperationInput" Kind="Class" />
+      <Type Name="OperationMessage" Kind="Class" />
+      <Type Name="OperationMessageCollection" Kind="Class" />
+      <Type Name="OperationOutput" Kind="Class" />
+      <Type Name="OutputBinding" Kind="Class" />
+      <Type Name="Port" Kind="Class" />
+      <Type Name="PortCollection" Kind="Class" />
+      <Type Name="PortType" Kind="Class" />
+      <Type Name="PortTypeCollection" Kind="Class" />
+      <Type Name="ProtocolImporter" Kind="Class" />
+      <Type Name="ProtocolReflector" Kind="Class" />
+      <Type Name="Service" Kind="Class" />
+      <Type Name="ServiceCollection" Kind="Class" />
+      <Type Name="ServiceDescription" Kind="Class" />
+      <Type Name="ServiceDescriptionBaseCollection" Kind="Class" />
+      <Type Name="ServiceDescriptionCollection" Kind="Class" />
+      <Type Name="ServiceDescriptionFormatExtension" Kind="Class" />
+      <Type Name="ServiceDescriptionFormatExtensionCollection" Kind="Class" />
+      <Type Name="ServiceDescriptionImporter" Kind="Class" />
+      <Type Name="ServiceDescriptionImportStyle" Kind="Enumeration" />
+      <Type Name="ServiceDescriptionImportWarnings" Kind="Enumeration" />
+      <Type Name="ServiceDescriptionReflector" Kind="Class" />
+      <Type Name="Soap12AddressBinding" Kind="Class" />
+      <Type Name="Soap12Binding" Kind="Class" />
+      <Type Name="Soap12BodyBinding" Kind="Class" />
+      <Type Name="Soap12FaultBinding" Kind="Class" />
+      <Type Name="Soap12HeaderBinding" Kind="Class" />
+      <Type Name="Soap12OperationBinding" Kind="Class" />
+      <Type Name="SoapAddressBinding" Kind="Class" />
+      <Type Name="SoapBinding" Kind="Class" />
+      <Type Name="SoapBindingStyle" Kind="Enumeration" />
+      <Type Name="SoapBindingUse" Kind="Enumeration" />
+      <Type Name="SoapBodyBinding" Kind="Class" />
+      <Type Name="SoapExtensionImporter" Kind="Class" />
+      <Type Name="SoapExtensionReflector" Kind="Class" />
+      <Type Name="SoapFaultBinding" Kind="Class" />
+      <Type Name="SoapHeaderBinding" Kind="Class" />
+      <Type Name="SoapHeaderFaultBinding" Kind="Class" />
+      <Type Name="SoapOperationBinding" Kind="Class" />
+      <Type Name="SoapProtocolImporter" Kind="Class" />
+      <Type Name="SoapTransportImporter" Kind="Class" />
+      <Type Name="Types" Kind="Class" />
+      <Type Name="WebReference" Kind="Class" />
+      <Type Name="WebReferenceCollection" Kind="Class" />
+      <Type Name="WebReferenceOptions" Kind="Class" />
+      <Type Name="WebServicesInteroperability" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Web.Services.Discovery">
+      <Type Name="ContractReference" Kind="Class" />
+      <Type Name="ContractSearchPattern" Kind="Class" />
+      <Type Name="DiscoveryClientDocumentCollection" Kind="Class" />
+      <Type Name="DiscoveryClientProtocol" Kind="Class" />
+      <Type Name="DiscoveryClientProtocol+DiscoveryClientResultsFile" Kind="Class" />
+      <Type Name="DiscoveryClientReferenceCollection" Kind="Class" />
+      <Type Name="DiscoveryClientResult" Kind="Class" />
+      <Type Name="DiscoveryClientResultCollection" Kind="Class" />
+      <Type Name="DiscoveryDocument" Kind="Class" />
+      <Type Name="DiscoveryDocumentLinksPattern" Kind="Class" />
+      <Type Name="DiscoveryDocumentReference" Kind="Class" />
+      <Type Name="DiscoveryDocumentSearchPattern" Kind="Class" />
+      <Type Name="DiscoveryExceptionDictionary" Kind="Class" />
+      <Type Name="DiscoveryReference" Kind="Class" />
+      <Type Name="DiscoveryReferenceCollection" Kind="Class" />
+      <Type Name="DiscoveryRequestHandler" Kind="Class" />
+      <Type Name="DiscoverySearchPattern" Kind="Class" />
+      <Type Name="DynamicDiscoveryDocument" Kind="Class" />
+      <Type Name="ExcludePathInfo" Kind="Class" />
+      <Type Name="SchemaReference" Kind="Class" />
+      <Type Name="SoapBinding" Kind="Class" />
+      <Type Name="XmlSchemaSearchPattern" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Web.Services.Protocols">
+      <Type Name="AnyReturnReader" Kind="Class" />
+      <Type Name="HtmlFormParameterReader" Kind="Class" />
+      <Type Name="HtmlFormParameterWriter" Kind="Class" />
+      <Type Name="HttpGetClientProtocol" Kind="Class" />
+      <Type Name="HttpMethodAttribute" Kind="Class" />
+      <Type Name="HttpPostClientProtocol" Kind="Class" />
+      <Type Name="HttpSimpleClientProtocol" Kind="Class" />
+      <Type Name="HttpWebClientProtocol" Kind="Class" />
+      <Type Name="InvokeCompletedEventArgs" Kind="Class" />
+      <Type Name="InvokeCompletedEventHandler" Kind="Delegate" />
+      <Type Name="LogicalMethodInfo" Kind="Class" />
+      <Type Name="LogicalMethodTypes" Kind="Enumeration" />
+      <Type Name="MatchAttribute" Kind="Class" />
+      <Type Name="MimeFormatter" Kind="Class" />
+      <Type Name="MimeParameterReader" Kind="Class" />
+      <Type Name="MimeParameterWriter" Kind="Class" />
+      <Type Name="MimeReturnReader" Kind="Class" />
+      <Type Name="NopReturnReader" Kind="Class" />
+      <Type Name="PatternMatcher" Kind="Class" />
+      <Type Name="ServerProtocol" Kind="Class" />
+      <Type Name="ServerProtocolFactory" Kind="Class" />
+      <Type Name="ServerType" Kind="Class" />
+      <Type Name="Soap12FaultCodes" Kind="Class" />
+      <Type Name="SoapClientMessage" Kind="Class" />
+      <Type Name="SoapDocumentMethodAttribute" Kind="Class" />
+      <Type Name="SoapDocumentServiceAttribute" Kind="Class" />
+      <Type Name="SoapException" Kind="Class" />
+      <Type Name="SoapExtension" Kind="Class" />
+      <Type Name="SoapExtensionAttribute" Kind="Class" />
+      <Type Name="SoapFaultSubCode" Kind="Class" />
+      <Type Name="SoapHeader" Kind="Class" />
+      <Type Name="SoapHeaderAttribute" Kind="Class" />
+      <Type Name="SoapHeaderCollection" Kind="Class" />
+      <Type Name="SoapHeaderDirection" Kind="Enumeration" />
+      <Type Name="SoapHeaderException" Kind="Class" />
+      <Type Name="SoapHeaderHandling" Kind="Class" />
+      <Type Name="SoapHeaderMapping" Kind="Class" />
+      <Type Name="SoapHttpClientProtocol" Kind="Class" />
+      <Type Name="SoapMessage" Kind="Class" />
+      <Type Name="SoapMessageStage" Kind="Enumeration" />
+      <Type Name="SoapParameterStyle" Kind="Enumeration" />
+      <Type Name="SoapProtocolVersion" Kind="Enumeration" />
+      <Type Name="SoapRpcMethodAttribute" Kind="Class" />
+      <Type Name="SoapRpcServiceAttribute" Kind="Class" />
+      <Type Name="SoapServerMessage" Kind="Class" />
+      <Type Name="SoapServerMethod" Kind="Class" />
+      <Type Name="SoapServerProtocol" Kind="Class" />
+      <Type Name="SoapServerProtocolFactory" Kind="Class" />
+      <Type Name="SoapServerType" Kind="Class" />
+      <Type Name="SoapServiceRoutingStyle" Kind="Enumeration" />
+      <Type Name="SoapUnknownHeader" Kind="Class" />
+      <Type Name="TextReturnReader" Kind="Class" />
+      <Type Name="UrlEncodedParameterWriter" Kind="Class" />
+      <Type Name="UrlParameterReader" Kind="Class" />
+      <Type Name="UrlParameterWriter" Kind="Class" />
+      <Type Name="ValueCollectionParameterReader" Kind="Class" />
+      <Type Name="WebClientAsyncResult" Kind="Class" />
+      <Type Name="WebClientProtocol" Kind="Class" />
+      <Type Name="WebServiceHandlerFactory" Kind="Class" />
+      <Type Name="XmlReturnReader" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>System.Web.Services</Title>
+</Overview>

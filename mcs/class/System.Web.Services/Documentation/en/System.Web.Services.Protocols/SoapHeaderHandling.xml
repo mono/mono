@@ -1,0 +1,196 @@
+<Type Name="SoapHeaderHandling" FullName="System.Web.Services.Protocols.SoapHeaderHandling">
+  <TypeSignature Language="C#" Value="public sealed class SoapHeaderHandling" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web.Services</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SoapHeaderHandling ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EnsureHeadersUnderstood">
+      <MemberSignature Language="C#" Value="public static void EnsureHeadersUnderstood (System.Web.Services.Protocols.SoapHeaderCollection headers);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="headers" Type="System.Web.Services.Protocols.SoapHeaderCollection" />
+      </Parameters>
+      <Docs>
+        <param name="headers">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHeaderMembers">
+      <MemberSignature Language="C#" Value="public static void GetHeaderMembers (System.Web.Services.Protocols.SoapHeaderCollection headers, object target, System.Web.Services.Protocols.SoapHeaderMapping[] mappings, System.Web.Services.Protocols.SoapHeaderDirection direction, bool client);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="headers" Type="System.Web.Services.Protocols.SoapHeaderCollection" />
+        <Parameter Name="target" Type="System.Object" />
+        <Parameter Name="mappings" Type="System.Web.Services.Protocols.SoapHeaderMapping[]" />
+        <Parameter Name="direction" Type="System.Web.Services.Protocols.SoapHeaderDirection" />
+        <Parameter Name="client" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="headers">To be added.</param>
+        <param name="target">To be added.</param>
+        <param name="mappings">To be added.</param>
+        <param name="direction">To be added.</param>
+        <param name="client">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadHeaders">
+      <MemberSignature Language="C#" Value="public string ReadHeaders (System.Xml.XmlReader reader, System.Xml.Serialization.XmlSerializer serializer, System.Web.Services.Protocols.SoapHeaderCollection headers, System.Web.Services.Protocols.SoapHeaderMapping[] mappings, System.Web.Services.Protocols.SoapHeaderDirection direction, string envelopeNS, string encodingStyle, bool checkRequiredHeaders);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
+        <Parameter Name="headers" Type="System.Web.Services.Protocols.SoapHeaderCollection" />
+        <Parameter Name="mappings" Type="System.Web.Services.Protocols.SoapHeaderMapping[]" />
+        <Parameter Name="direction" Type="System.Web.Services.Protocols.SoapHeaderDirection" />
+        <Parameter Name="envelopeNS" Type="System.String" />
+        <Parameter Name="encodingStyle" Type="System.String" />
+        <Parameter Name="checkRequiredHeaders" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="serializer">To be added.</param>
+        <param name="headers">To be added.</param>
+        <param name="mappings">To be added.</param>
+        <param name="direction">To be added.</param>
+        <param name="envelopeNS">To be added.</param>
+        <param name="encodingStyle">To be added.</param>
+        <param name="checkRequiredHeaders">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetHeaderMembers">
+      <MemberSignature Language="C#" Value="public static void SetHeaderMembers (System.Web.Services.Protocols.SoapHeaderCollection headers, object target, System.Web.Services.Protocols.SoapHeaderMapping[] mappings, System.Web.Services.Protocols.SoapHeaderDirection direction, bool client);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="headers" Type="System.Web.Services.Protocols.SoapHeaderCollection" />
+        <Parameter Name="target" Type="System.Object" />
+        <Parameter Name="mappings" Type="System.Web.Services.Protocols.SoapHeaderMapping[]" />
+        <Parameter Name="direction" Type="System.Web.Services.Protocols.SoapHeaderDirection" />
+        <Parameter Name="client" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="headers">To be added.</param>
+        <param name="target">To be added.</param>
+        <param name="mappings">To be added.</param>
+        <param name="direction">To be added.</param>
+        <param name="client">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteHeaders">
+      <MemberSignature Language="C#" Value="public static void WriteHeaders (System.Xml.XmlWriter writer, System.Xml.Serialization.XmlSerializer serializer, System.Web.Services.Protocols.SoapHeaderCollection headers, System.Web.Services.Protocols.SoapHeaderMapping[] mappings, System.Web.Services.Protocols.SoapHeaderDirection direction, bool isEncoded, string defaultNS, bool serviceDefaultIsEncoded, string envelopeNS);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
+        <Parameter Name="headers" Type="System.Web.Services.Protocols.SoapHeaderCollection" />
+        <Parameter Name="mappings" Type="System.Web.Services.Protocols.SoapHeaderMapping[]" />
+        <Parameter Name="direction" Type="System.Web.Services.Protocols.SoapHeaderDirection" />
+        <Parameter Name="isEncoded" Type="System.Boolean" />
+        <Parameter Name="defaultNS" Type="System.String" />
+        <Parameter Name="serviceDefaultIsEncoded" Type="System.Boolean" />
+        <Parameter Name="envelopeNS" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="serializer">To be added.</param>
+        <param name="headers">To be added.</param>
+        <param name="mappings">To be added.</param>
+        <param name="direction">To be added.</param>
+        <param name="isEncoded">To be added.</param>
+        <param name="defaultNS">To be added.</param>
+        <param name="serviceDefaultIsEncoded">To be added.</param>
+        <param name="envelopeNS">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteUnknownHeaders">
+      <MemberSignature Language="C#" Value="public static void WriteUnknownHeaders (System.Xml.XmlWriter writer, System.Web.Services.Protocols.SoapHeaderCollection headers, string envelopeNS);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="headers" Type="System.Web.Services.Protocols.SoapHeaderCollection" />
+        <Parameter Name="envelopeNS" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="headers">To be added.</param>
+        <param name="envelopeNS">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>
