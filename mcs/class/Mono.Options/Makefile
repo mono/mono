@@ -19,3 +19,8 @@ do-install:
 
 do-uninstall:
 	-rm -Rf $(mono_options_DIR)
+
+fixup-docs:
+	for f in `find Documentation/en -name \*.xml` ; do \
+		sed -i 's/NDesk.Options/Mono.Options/g' $$f ; \
+	done

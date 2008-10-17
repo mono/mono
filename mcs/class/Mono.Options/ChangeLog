@@ -1,3 +1,8 @@
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile: Add fixup-docs target, to simplify importing NDesk.Options
+	  documentation for use in Mono.Options
+
 2008-10-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Don't bother installing Mono.Options.dll into the GAC (or
