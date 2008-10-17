@@ -1,5 +1,10 @@
 2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* Makefile: Generate a monodoc.dll.config (installed by gacutil), so
+	  that monodoc.dll can find the documentation sources.
+
+2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* Mono.Documentation/ManifestResourceResolver.cs, 
 	  Mono.Documentation/XmlDocUtils.cs: Make types public so that they
 	  can be used from ../mdoc/mdoc.exe.

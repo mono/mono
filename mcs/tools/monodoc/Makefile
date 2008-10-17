@@ -67,7 +67,12 @@ LIB_MCS_FLAGS = \
 
 include ../../build/library.make
 
-$(the_lib) : Makefile
+$(the_lib): Makefile
+
+all-local: $(the_lib).config
+
+$(the_lib).config: Makefile
+	sed 's,@monodoc_refdir@,$(mono_libdir)/monodoc,g' monodoc.dll.config.in > $@
 
 test: Test/man-provider-test.exe
 
