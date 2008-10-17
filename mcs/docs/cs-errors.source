@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<monodoc>
+  <source provider="error" basefile="cs-errors" path="cs-errors"/>
+</monodoc>
