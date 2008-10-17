@@ -1,0 +1,76 @@
+<Type Name="Formatting" FullName="System.Xml.Formatting" FullNameSP="System_Xml_Formatting" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable Formatting extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum Formatting" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Specifies formatting options for the <see cref="T:System.Xml.XmlTextWriter" /> class.
+   </para>
+    </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Indented">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.Formatting Indented = 1" />
+      <MemberSignature Language="C#" Value="Indented" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.Formatting</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Indented</MemberValue>
+      <Docs>
+        <summary>
+          <para> Causes child elements to be indented
+      according to the <see cref="P:System.Xml.XmlTextWriter.Indentation" /> and <see cref="P:System.Xml.XmlTextWriter.IndentChar" />
+      settings.
+      This option
+      
+      indents element content only; mixed content is not affected.</para>
+          <block subset="none" type="note">
+            <para>For the XML 1.0 definitions of these terms, see the W3C documentation 
+         (http://www.w3.org/TR/1998/REC-xml-19980210#sec-element-content and http://www.w3.org/TR/1998/REC-xml-19980210#sec-mixed-content).</para>
+          </block>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.Formatting None = 0" />
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.Formatting</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>None</MemberValue>
+      <Docs>
+        <summary>
+          <para> No special formatting is applied. This is the default.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

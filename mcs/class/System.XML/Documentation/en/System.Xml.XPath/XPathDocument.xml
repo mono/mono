@@ -1,0 +1,169 @@
+<Type Name="XPathDocument" FullName="System.Xml.XPath.XPathDocument">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public class XPathDocument : System.Xml.XPath.IXPathNavigable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>This class is not thread safe.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Xml.XPath.IXPathNavigable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>Represents an XML document and provides a read access to the document navigator.</summary>
+    <remarks>
+      <para>This class implements IXPathNavigable interface and class provides a fast and readonly access to the document through <see cref="T:System.Xml.XPath.XPathNavigator" />.
+	</para>
+      <para>There are two IXPathNavigable implementations in System.Xml.dll. One is XmlDocument and it creates the XPathNavigator that is based on its own Document Object Model. XPathDocument is the another one and it creates the XPathNavigator that is readonly and optimized to navigate the document.
+	</para>
+      <para>Note: XmlDocument's XPathNavigator is many times slower than that of this class when it is used to navigate previous siblings.
+	</para>
+      <para>To create compatible XPathNavigator to that of XmlDocument, XmlValidatingReader is required to create the internal document structure from source (otherwise, no ID type attributes are recognized and thus <see cref="M:System.Xml.XPath.XPathNavigator.MoveToId" /> method will result in different navigation). When an XPathDocument is constructed from URI string or Stream, it creates XmlValidatingReader.
+	</para>
+      <para>Note: In contrast, using XmlTextReader instead of URI string, Stream, or TextReader enables performance boost, since XmlValidatingReader is slower than XmlTextReader.
+	</para>
+      <para>
+	To keep whitespace nodes in the document, <see cref="F:System.Xml.XmlSpace.Preserve" /> is required in the constructor (to keep compatibility with XPathDocument, <see cref="P:System.Xml.XmlDocument.PreserveWhitespace" /> must be set to true.
+	</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XPathDocument (System.IO.Stream stream);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">A <see cref="System.IO.Stream" /> instance to be used as the input XML.</param>
+        <summary>Creates a new instance of this class, validating the input document and disregarding whitespace nodes.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XPathDocument (System.IO.TextReader reader);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="reader" Type="System.IO.TextReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">A <see cref="System.IO.TextReader" /> instance to be used as the input XML.</param>
+        <summary>Creates a new instance of this class, disregarding whitespace nodes.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XPathDocument (string uri);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="uri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="uri">A string that represents the URI for the input XML.</param>
+        <summary>Creates a new instance of this class, validating the input document and disregarding whitespace nodes.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XPathDocument (System.Xml.XmlReader reader);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">An <see cref="System.Xml.XmlReader" /> instance to be used as the input XML.</param>
+        <summary>Creates a new instance of this class, disregarding whitespace nodes.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XPathDocument (string uri, System.Xml.XmlSpace space);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="uri" Type="System.String" />
+        <Parameter Name="space" Type="System.Xml.XmlSpace" />
+      </Parameters>
+      <Docs>
+        <param name="uri">To be added.</param>
+        <param name="space">A <see cref="System.Xml.XmlSpace" /> value that indicates whitespace handling.</param>
+        <summary>Creates a new instance of this class, with specified whitespace handling, validating the document.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XPathDocument (System.Xml.XmlReader reader, System.Xml.XmlSpace space);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="space" Type="System.Xml.XmlSpace" />
+      </Parameters>
+      <Docs>
+        <param name="reader">An <see cref="System.Xml.XmlReader" /> instance to be used as the input XML.</param>
+        <param name="space">A <see cref="System.Xml.XmlSpace" /> value that indicates whitespace handling.</param>
+        <summary>Creates a new instance of this class, with specific whitespace handling.</summary>
+        <remarks>
+          <para>To support ID type attributes with this constructor, the input reader must be <see cref="System.Xml.XmlValidatingReader" /> that provides Datatype.
+		</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateNavigator">
+      <MemberSignature Language="C#" Value="public System.Xml.XPath.XPathNavigator CreateNavigator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Creates an instance of the <see cref="System.Xml.XPath.XPathNavigator" /> supported by this class.</summary>
+        <returns>The <see cref="System.Xml.XPath.XPathNavigator" /> instance created by this class.</returns>
+        <remarks>
+          <para>This class returns a faster and read-only XPathNavigator implementation. The returned XPathNavigator always point to XPath Root node, the document itself (see <see cref="F:System.Xml.XPath.XPathNodeType.Root" />).
+		</para>
+          <para>Technically, the XPathNavigator implementation is designed to represent the document as indexed node tree structure.
+		</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

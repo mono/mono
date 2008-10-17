@@ -1,0 +1,287 @@
+<Type Name="NameTable" FullName="System.Xml.NameTable" FullNameSP="System_Xml_NameTable" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public NameTable extends System.Xml.XmlNameTable" />
+  <TypeSignature Language="C#" Value="public class NameTable : System.Xml.XmlNameTable" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>This class is multi-read threadsafe but not threadsafe for read/write.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Xml.XmlNameTable</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Creates a table that stores unique instances of <see cref="T:System.String" qualify="true" /> objects.</para>
+    </summary>
+    <remarks>
+      <para>Only a single instance of any given string is stored even if the string is
+      added multiple times to the table.</para>
+      <para>Using this class provides an efficient means for an XML parser to use the
+      same <see cref="T:System.String" qualify="true" />
+      object for all repeated element and attribute names in an XML document. If the
+      same object is used for all repeated names, the efficiency of name
+      comparisons is increased by allowing the names to be compared using
+      object comparisons rather than string comparisons.</para>
+      <block subset="none" type="note">
+        <para>This class implements a single-threaded <see cref="T:System.Xml.XmlNameTable" /> .</para>
+        <para>This class is used internally by the <see cref="T:System.Xml.XmlNamespaceManager" />,
+<see cref="T:System.Xml.XmlParserContext" />, and <see cref="T:System.Xml.XmlTextReader" /> classes to store element and attribute names.</para>
+      </block>
+    </remarks>
+    <example>
+      <para> The following example demonstrates the difference between
+      equal string values and equal <see cref="T:System.String" qualify="true" /> objects using
+      the <see cref="T:System.Xml.NameTable" />
+      class.
+      </para>
+      <code lang="C#">using System;
+using System.Text;
+using System.Xml;
+
+class Ntable {
+
+  public static void Main() {
+
+    NameTable nameTable = new NameTable();
+
+    string str1 = "sunny";
+    StringBuilder strBuilder = new StringBuilder();
+    string str2 = 
+      strBuilder.Append("sun").Append("ny").ToString();
+    Console.WriteLine( "{0} : {1}",
+                       str1, str2 );
+    Console.WriteLine( "{0} : {1}",
+                       str1 == str2,
+                       (Object)str1==(Object)str2 );
+
+    string str3 = nameTable.Add(str1);
+    string str4 = nameTable.Add(str2);
+    Console.WriteLine( "{0} : {1}",
+                       str3, str4 );
+    Console.WriteLine( "{0} : {1}",
+                       str3 == str4,
+                       (Object)str3==(Object)str4 );
+  }
+}
+   </code>
+      <para>The output is</para>
+      <para>sunny : sunny</para>
+      <para>True : False</para>
+      <para>sunny : sunny</para>
+      <para>True : True</para>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public NameTable ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of
+      the <see cref="T:System.Xml.NameTable" /> class.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string Add(string key)" />
+      <MemberSignature Language="C#" Value="public override string Add (string key);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="key">The <see cref="T:System.String" /> to add.</param>
+        <summary>
+          <para> Adds the specified <see cref="T:System.String" qualify="true" /> to the table if a <see cref="T:System.String" qualify="true" />
+instance with the same value does not already exist in the table.</para>
+        </summary>
+        <returns>
+          <para>
+            <paramref name="key" />, if it did not exist in the 
+   table at the time of the call, or the <see cref="T:System.String" /> instance previously stored in the table with a value equal to
+<paramref name="key" />.</para>
+        </returns>
+        <remarks>
+          <para>Only a single instance of any given <see cref="T:System.String" /> is stored in the table. If the value of <paramref name="key" /> is 
+   already stored in the table, the <see cref="T:System.String" /> instance with that value is
+   returned.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.Xml.XmlNameTable.Add(System.Char[],System.Int32,System.Int32)" qualify="true" />(<see langword="String" />).</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="key" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string Add(class System.Char[] key, int32 start, int32 len)" />
+      <MemberSignature Language="C#" Value="public override string Add (char[] key, int start, int len);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Char[]" />
+        <Parameter Name="start" Type="System.Int32" />
+        <Parameter Name="len" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="key">A <see cref="T:System.Char" qualify="true" /> array containing the string to add.</param>
+        <param name="start">A <see cref="T:System.Int32" qualify="true" /> specifying the zero-based index into the array of the first character of the string.</param>
+        <param name="len">A <see cref="T:System.Int32" qualify="true" /> containing the number of characters in the string.</param>
+        <summary>
+          <para>Adds the <see cref="T:System.String" qualify="true" /> equivalent of a specified subset of a
+<see cref="T:System.Char" qualify="true" /> array to the table if the string equivalent does not already exist in the
+table.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" qualify="true" /> equivalent of the 
+   specified subset of the <see cref="T:System.Char" qualify="true" /> array that is stored in the
+   table, or <see cref="F:System.String.Empty" qualify="true" />
+   if <paramref name="len" /> is
+   zero.</para>
+        </returns>
+        <remarks>
+          <para>Only a single instance of any given <see cref="T:System.String" /> is stored in the table. Calling this method with the 
+   same subset (containing the same characters) of any <see cref="T:System.Char" qualify="true" /> array, returns
+   the same instance of the <see cref="T:System.String" qualify="true" /> equivalent.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.Xml.XmlNameTable.Add(System.Char[],System.Int32,System.Int32)" qualify="true" />(<see langword="Char" />[], <see langword="Int32" />, <see langword="Int32" />).</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IndexOutOfRangeException">
+          <para>
+            <paramref name="start" /> &lt; 0.</para>
+          <para>- or -</para>
+          <para>
+            <paramref name="start" /> &gt;= <paramref name="key" />.Length.</para>
+          <para>- or -</para>
+          <para>
+            <paramref name="len" /> &gt; <paramref name="key" />.Length - <paramref name="start" />.</para>
+          <para>The above conditions do not cause an exception to be thrown if <paramref name="len" /> = 0.</para>
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">len &lt; 0.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Get">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string Get(string value)" />
+      <MemberSignature Language="C#" Value="public override string Get (string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.String" qualify="true" /> to look up.</param>
+        <summary>
+          <para>Looks up the value of the specified <see cref="T:System.String" qualify="true" /> in the table.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> instance previously stored in the table with a value 
+   equal to <paramref name="value" /> , or
+<see langword="null" /> if 
+   it does not exist.</para>
+        </returns>
+        <remarks>
+          <para>Only a single instance of any given <see cref="T:System.String" /> is stored in the table. If the value of 
+<paramref name="value" /> is already stored in the table, the <see cref="T:System.String" /> instance with that value is returned.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.Xml.XmlNameTable.Get(System.Char[],System.Int32,System.Int32)" qualify="true" />(<see langword="String" />).</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="value" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Get">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string Get(class System.Char[] key, int32 start, int32 len)" />
+      <MemberSignature Language="C#" Value="public override string Get (char[] key, int start, int len);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Char[]" />
+        <Parameter Name="start" Type="System.Int32" />
+        <Parameter Name="len" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="key">A <see cref="T:System.Char" qualify="true" /> array containing the string to look up.</param>
+        <param name="start">A <see cref="T:System.Int32" qualify="true" /> specifying the zero-based index into the array of the first character of the string.</param>
+        <param name="len">A <see cref="T:System.Int32" qualify="true" /> containing the number of characters in the string.</param>
+        <summary>
+          <para>Looks up the <see cref="T:System.String" qualify="true" /> equivalent to a specified subset of a
+<see cref="T:System.Char" qualify="true" /> array in the table.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" qualify="true" /> equivalent of the specified subset of the <see cref="T:System.Char" qualify="true" /> array that is 
+   stored in the table, or <see langword="null" /> if the
+   equivalent <see cref="T:System.String" /> is not
+   in the table.</para>
+        </returns>
+        <remarks>
+          <para>Only a single instance of any given <see cref="T:System.String" /> is stored in the table. Calling this method with the same subset (containing the same characters) of 
+   any <see cref="T:System.Char" qualify="true" />
+   array, returns the same instance of the <see cref="T:System.String" qualify="true" /> equivalent, if it
+   exists.</para>
+          <block subset="none" type="note">
+            <para>This method overrides <see cref="M:System.Xml.XmlNameTable.Get(System.Char[],System.Int32,System.Int32)" qualify="true" />(<see langword="Char" />[], <see langword="Int32" />, <see langword="Int32" />).</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.IndexOutOfRangeException">
+          <para>
+            <paramref name="start" />
+          </para>
+          <para> &lt; 0. </para>
+          <para>- or -</para>
+          <para>
+            <paramref name="start" /> &gt;= <paramref name="key" />.Length.</para>
+          <para>- or -</para>
+          <para>
+            <paramref name="len" /> &gt; <paramref name="key" />.Length - <paramref name="start" />.</para>
+          <para>The above conditions do not cause an exception to be thrown if <paramref name="len" /> = 0.</para>
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">len &lt; 0.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

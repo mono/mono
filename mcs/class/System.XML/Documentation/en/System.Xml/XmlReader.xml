@@ -1,0 +1,3830 @@
+<Type Name="XmlReader" FullName="System.Xml.XmlReader" FullNameSP="System_Xml_XmlReader" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract XmlReader extends System.Object" />
+  <TypeSignature Language="C#" Value="public abstract class XmlReader : IDisposable" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Represents a reader that provides non-cached, forward-only access
+      to XML data.</para>
+    </summary>
+    <remarks>
+      <para> This class provides forward-only,
+      read-only access to a stream of XML data. This class enforces the rules of
+      well-formed XML but does not perform data validation.</para>
+      <para> This class conforms to the W3C Extensible Markup
+      Language (XML) 1.0 and the Namespaces
+      in XML recommendations. </para>
+      <para> A given set of
+      XML data is modeled as a tree of nodes. The different types of
+      nodes are specified in the <see cref="T:System.Xml.XmlNodeType" qualify="true" /> enumeration. The reader is advanced to the next node
+      using the <see cref="M:System.Xml.XmlReader.Read" /> method.
+      The current node refers to the node on which the reader
+      is positioned. The following table lists the node properties exposed for the
+      current
+      node. </para>
+      <list type="table">
+        <listheader>
+          <term>Property</term>
+          <description>Description</description>
+        </listheader>
+        <item>
+          <term> AttributeCount</term>
+          <description> The
+            number of attributes on the
+            node.</description>
+        </item>
+        <item>
+          <term> BaseUri</term>
+          <description>The
+            base URI of
+            the node.</description>
+        </item>
+        <item>
+          <term> Depth</term>
+          <description>The
+            depth of the
+            node in the tree.</description>
+        </item>
+        <item>
+          <term> HasAttributes</term>
+          <description>Whether the node has attributes.</description>
+        </item>
+        <item>
+          <term> HasValue</term>
+          <description>Whether the node can have a text value.</description>
+        </item>
+        <item>
+          <term> IsDefault</term>
+          <description>Whether an <see langword="Attribute" /> node was
+         generated from the default value defined in the DTD or schema.</description>
+        </item>
+        <item>
+          <term> IsEmptyElement</term>
+          <description>Whether an <see langword="Element" /> node is empty.</description>
+        </item>
+        <item>
+          <term> LocalName</term>
+          <description>The local name of the node.</description>
+        </item>
+        <item>
+          <term> Name</term>
+          <description>The
+      qualified name of the node, equal to
+   <see langword="Prefix" />:<see langword="LocalName" />.</description>
+        </item>
+        <item>
+          <term> NamespaceUri</term>
+          <description>The
+      URI defining the namespace associated with the node.</description>
+        </item>
+        <item>
+          <term> NodeType</term>
+          <description>The <see cref="T:System.Xml.XmlNodeType" qualify="true" /> of the
+   node.</description>
+        </item>
+        <item>
+          <term> Prefix</term>
+          <description>A
+      shorthand reference to the namespace associated with the node.</description>
+        </item>
+        <item>
+          <term> QuoteChar</term>
+          <description>The
+      quotation mark character used to enclose the value of an
+      attribute.</description>
+        </item>
+        <item>
+          <term> Value</term>
+          <description>The
+      text value of the node.</description>
+        </item>
+        <item>
+          <term> XmlLang</term>
+          <description>The
+      <c>xml:lang</c> scope within which the node
+      resides.</description>
+        </item>
+      </list>
+      <para> This class does not expand default attributes or general
+   entities. Any general entities encountered are returned as a single empty
+<see langword="EntityReference" /> node. </para>
+      <para>This class checks that a Document Type Definition (DTD) is well-formed, but does not validate using the
+   DTD.</para>
+      <para>To read strongly typed data, use the <see cref="T:System.Xml.XmlConvert" /> class. </para>
+      <para>This class throws a <see cref="T:System.Xml.XmlException" /> on XML parse errors.
+After an exception is thrown, the state of the reader is not predictable. For
+example, the reported node type might be different than the actual node type of
+the current node.</para>
+      <block subset="none" type="note">
+        <para>This class is <see langword="abstract" /> and implemented in the <see cref="T:System.Xml.XmlTextReader" />
+class.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected XmlReader ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Constructs a new instance of the <see cref="T:System.Xml.XmlReader" /> class.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AttributeCount">
+      <MemberSignature Language="ILASM" Value=".property int32 AttributeCount { public hidebysig virtual abstract specialname int32 get_AttributeCount() }" />
+      <MemberSignature Language="C#" Value="public abstract int AttributeCount { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the number of attributes on the current node.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Int32" qualify="true" /> containing the
+   number of attributes on the current node, or zero if the current node does not support attributes.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+      This property is only relevant to the <see langword="DocumentType" />,
+   <see langword="Element" />, and <see langword="XmlDeclaration" /> node types of the
+   <see cref="T:System.Xml.XmlNodeType" />
+   enumeration. Other node types do not have attributes.
+</block>
+          </para>
+          <block subset="none" type="behaviors">
+            <para>As described
+      above.</para>
+            <para> This property is
+      read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BaseURI">
+      <MemberSignature Language="ILASM" Value=".property string BaseURI { public hidebysig virtual abstract specialname string get_BaseURI() }" />
+      <MemberSignature Language="C#" Value="public abstract string BaseURI { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the base Uniform Resource Identifier (URI) of the current node. </para>
+        </summary>
+        <value>
+          <para>The base URI of the current node.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> A networked XML document is comprised of chunks of
+      data aggregated using various W3C standard inclusion mechanisms and
+      therefore contains nodes that come from different places. DTD entities are an example
+      of this, but this is not limited to DTDs. The base URI tells where these nodes
+      come from. If there is no base URI for the nodes being returned (for example,
+      they were parsed from an in-memory string), <see cref="F:System.String.Empty" qualify="true" />
+      
+      is returned.
+      </block>
+          </para>
+          <block subset="none" type="behaviors">
+            <para>As described
+      above.</para>
+            <para> This property is
+      read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanReadBinaryContent">
+      <MemberSignature Language="C#" Value="public virtual bool CanReadBinaryContent { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanReadValueChunk">
+      <MemberSignature Language="C#" Value="public virtual bool CanReadValueChunk { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanResolveEntity">
+      <MemberSignature Language="ILASM" Value=".property bool CanResolveEntity { public hidebysig virtual specialname bool get_CanResolveEntity() }" />
+      <MemberSignature Language="C#" Value="public virtual bool CanResolveEntity { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a value indicating whether this reader can parse
+      and resolve entities.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Boolean" qualify="true" />
+equal to <see langword="false" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This property
+         returns <see langword="true" /> to indicate the reader can parse and resolve
+         entities; otherwise, <see langword=" false" />.</para>
+            <para>This property is
+         read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="default"> This property
+      always returns <see langword=" false" />. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override this property
+      to return <see langword="true" /> for
+      implementations that support schema or
+      DTD information.</block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this
+      property to determine whether the reader can parse and resolve entities.
+   </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Close()" />
+      <MemberSignature Language="C#" Value="public abstract void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Changes the <see cref="P:System.Xml.XmlReader.ReadState" /> to <see cref="F:System.Xml.ReadState.Closed" />.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> This method
+      releases any resources allocated by the current instance, changes the <see cref="P:System.Xml.XmlReader.ReadState" />
+      to <see cref="F:System.Xml.ReadState.Closed" qualify="true" />, and calls the <see langword="Close" />
+      method of any underlying <see cref="T:System.IO.Stream" qualify="true" /> or <see cref="T:System.IO.TextReader" qualify="true" /> instance.
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (System.IO.TextReader reader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.IO.TextReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (string url);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="url" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="url">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (System.IO.Stream stream, System.Xml.XmlReaderSettings settings);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <param name="settings">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (System.IO.TextReader reader, System.Xml.XmlReaderSettings settings);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.IO.TextReader" />
+        <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="settings">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (string url, System.Xml.XmlReaderSettings settings);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="url" Type="System.String" />
+        <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
+      </Parameters>
+      <Docs>
+        <param name="url">To be added.</param>
+        <param name="settings">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (System.Xml.XmlReader reader, System.Xml.XmlReaderSettings settings);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="settings">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (System.IO.Stream stream, System.Xml.XmlReaderSettings settings, string baseUri);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
+        <Parameter Name="baseUri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <param name="settings">To be added.</param>
+        <param name="baseUri">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (System.IO.Stream stream, System.Xml.XmlReaderSettings settings, System.Xml.XmlParserContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
+        <Parameter Name="context" Type="System.Xml.XmlParserContext" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <param name="settings">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (System.IO.TextReader reader, System.Xml.XmlReaderSettings settings, string baseUri);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.IO.TextReader" />
+        <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
+        <Parameter Name="baseUri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="settings">To be added.</param>
+        <param name="baseUri">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (System.IO.TextReader reader, System.Xml.XmlReaderSettings settings, System.Xml.XmlParserContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.IO.TextReader" />
+        <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
+        <Parameter Name="context" Type="System.Xml.XmlParserContext" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="settings">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlReader Create (string url, System.Xml.XmlReaderSettings settings, System.Xml.XmlParserContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="url" Type="System.String" />
+        <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
+        <Parameter Name="context" Type="System.Xml.XmlParserContext" />
+      </Parameters>
+      <Docs>
+        <param name="url">To be added.</param>
+        <param name="settings">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Depth">
+      <MemberSignature Language="ILASM" Value=".property int32 Depth { public hidebysig virtual abstract specialname int32 get_Depth() }" />
+      <MemberSignature Language="C#" Value="public abstract int Depth { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the depth of
+      the current node in the XML document.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" qualify="true" />
+containing the depth of the current node in the XML document. </para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described
+         above.</para>
+            <para> This property is
+         read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EOF">
+      <MemberSignature Language="ILASM" Value=".property bool EOF { public hidebysig virtual abstract specialname bool get_EOF() }" />
+      <MemberSignature Language="C#" Value="public abstract bool EOF { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a value indicating whether the <see cref="P:System.Xml.XmlReader.ReadState" />
+is <see cref="F:System.Xml.ReadState.EndOfFile" qualify="true" />, signifying the reader is positioned at the end of the
+stream.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the reader is positioned at the end
+   of the stream; otherwise, <see langword="false" />. </para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described
+         above.</para>
+            <para> This property is
+         read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string GetAttribute(int32 i)" />
+      <MemberSignature Language="C#" Value="public abstract string GetAttribute (int i);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="i" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="i">A <see cref="T:System.Int32" qualify="true" /> specifying the zero-based index of the attribute relative to the containing element.</param>
+        <summary>
+          <para>Returns the value of the attribute with the specified index relative to the containing element.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the value of the specified attribute.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> This method does not move the
+      reader. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="i" /> is less than 0, or greater than or equal to the <see cref="P:System.Xml.XmlReader.AttributeCount" /> of the containing element.</exception>
+        <example>
+          <para>For an example demonstrating this method, see <see cref="M:System.Xml.XmlTextReader.GetAttribute(System.Int32)" />(<see cref="T:System.String" />, <see cref="T:System.String" />).</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string GetAttribute(string name)" />
+      <MemberSignature Language="C#" Value="public abstract string GetAttribute (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the qualified name of the attribute.</param>
+        <summary>
+          <para>Returns the value of the attribute with the specified qualified name.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the value of the specified attribute, or <see langword="null" /> if the
+attribute is not found.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> This method does not move the
+      reader. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <example>
+          <para>For an example demonstrating this method, see <see cref="M:System.Xml.XmlTextReader.GetAttribute(System.Int32)" />(<see cref="T:System.String" />, <see cref="T:System.String" />).</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string GetAttribute(string name, string namespaceURI)" />
+      <MemberSignature Language="C#" Value="public abstract string GetAttribute (string localName, string namespaceName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceName">To be added.</param>
+        <summary>
+          <para>Returns the value of the attribute with the specified local
+      name and namespace URI.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the value of the specified attribute, or <see langword="null" /> if the
+attribute is not found.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> This method does not move the
+      reader. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <example>
+          <para>For an example demonstrating this method, see <see cref="M:System.Xml.XmlTextReader.GetAttribute(System.Int32)" />(<see cref="T:System.String" />, <see cref="T:System.String" />).</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasAttributes">
+      <MemberSignature Language="ILASM" Value=".property bool HasAttributes { public hidebysig virtual specialname bool get_HasAttributes() }" />
+      <MemberSignature Language="C#" Value="public virtual bool HasAttributes { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a value indicating whether the current node has any attributes.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the current node has attributes; otherwise,
+<see langword="false" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described
+         above.</para>
+            <para> This property is
+         read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="default"> This property
+      returns <see langword="true" /> if the <see cref="P:System.Xml.XmlReader.AttributeCount" /> property of the current node is greater than zero. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this 
+      property to customize the behavior of this property in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this property to determine whether the current node has any attributes.
+   </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasValue">
+      <MemberSignature Language="ILASM" Value=".property bool HasValue { public hidebysig virtual abstract specialname bool get_HasValue() }" />
+      <MemberSignature Language="C#" Value="public abstract bool HasValue { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a value indicating whether the current node can have an associated text
+      value.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Boolean" qualify="true" />
+where <see langword="true" /> indicates the node on which the reader is currently
+positioned can have an associated text value; otherwise,
+<see langword="false" />.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+      The following members of the <see cref="T:System.Xml.XmlNodeType" />
+      enumeration can have an associated value: <see langword="Attribute" />,
+      <see langword="CDATA" />, <see langword="Comment" />, <see langword="DocumentType" />,
+      <see langword="ProcessingInstruction" />, <see langword="SignificantWhitespace" />,
+      <see langword="Text" />, <see langword="Whitespace" />, and
+      <see langword="XmlDeclaration" />.
+      </block>
+          </para>
+          <block subset="none" type="behaviors">
+            <para>As described
+         above.</para>
+            <para> This property is
+         read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsDefault">
+      <MemberSignature Language="ILASM" Value=".property bool IsDefault { public hidebysig virtual abstract specialname bool get_IsDefault() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsDefault { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets a value indicating whether the current node is an
+      attribute that was generated from the default value defined
+      in the DTD or schema.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Boolean" qualify="true" />
+where <see langword="true" /> indicates the
+current node is an attribute whose value was generated from the default value
+defined in the DTD or schema; <see langword="false" /> indicates the attribute value was
+explicitly set. </para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described
+         above.</para>
+            <para> This property is
+         read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides">
+     This property
+      should return
+   <see langword="false" />
+   for implementations that do not support schema or DTD information.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsEmptyElement">
+      <MemberSignature Language="ILASM" Value=".property bool IsEmptyElement { public hidebysig virtual abstract specialname bool get_IsEmptyElement() }" />
+      <MemberSignature Language="C#" Value="public abstract bool IsEmptyElement { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets a value indicating whether the current node is an
+      empty element (for example, <c>&lt;MyElement /&gt;</c>).</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the
+   current node is an element (<see cref="P:System.Xml.XmlReader.NodeType" />
+   equals <see cref="F:System.Xml.XmlNodeType.Element" />) that ends with "<c>/&gt;</c>", otherwise,<see langword=" false" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>A corresponding <see langword="EndElement" /> node is not
+      generated for empty elements.</para>
+            <para>This property
+      is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsName(string str)" />
+      <MemberSignature Language="C#" Value="public static bool IsName (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" qualify="true" /> specifying the name to validate.</param>
+        <summary>
+          <para> Determines whether
+      the specified string is a valid XML name.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the name
+   is valid; otherwise, <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para> This method uses the W3C XML
+         1.0 Recommendation (http://www.w3.org/TR/2000/REC-xml-20001006#NT-Name) to determine whether the name is valid.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsNameToken">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsNameToken(string str)" />
+      <MemberSignature Language="C#" Value="public static bool IsNameToken (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">A <see cref="T:System.String" qualify="true" /> specifying the name to validate.</param>
+        <summary>
+          <para> Determines whether the specified
+      string is a valid XML name token (Nmtoken).</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates
+   the name is valid; otherwise <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para> This method uses the W3C XML 1.0 Recommendation (http://www.w3.org/TR/2000/REC-xml-20001006#NT-Nmtoken
+         ) to determine whether the name token is valid.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsStartElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool IsStartElement()" />
+      <MemberSignature Language="C#" Value="public virtual bool IsStartElement ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Determines if a node containing content is an
+   <see langword="Element" />
+   node.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the node is an
+<see langword="Element" /> 
+node; <see langword="false" />
+otherwise.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method calls the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method, which 
+   determines whether
+   the current node can contain content and, if not, moves the reader
+   to the next content node or the end of the input stream. When the reader
+   is positioned on a content node, the node is checked to determine if it is
+   an <see langword="Element" />
+   node. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">  Override this 
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+
+</block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method to
+   determine whether the node returned by the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method is an <see langword=" Element" />
+   node.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsStartElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool IsStartElement(string name)" />
+      <MemberSignature Language="C#" Value="public virtual bool IsStartElement (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the qualified name of an element.</param>
+        <summary>
+          <para> Determines if a node containing content is an <see langword="Element" /> node
+   with the specified qualified name.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" />
+where <see langword="true" /> indicates the node is an
+<see langword="Element" /> node with the specified name; <see langword="false" /> 
+otherwise.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> This method
+      calls the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method, which
+      determines whether the current node can
+      contain content and, if not, moves the reader to the next content node or
+      the end of the input stream. When the reader is positioned on a content node,
+      the node is checked to determine if it is an <see langword="Element" /> node with a <see cref="P:System.Xml.XmlReader.Name" /> property equal
+      to <paramref name=" name" />.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this 
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method to
+      determine whether the node returned by the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method is an <see langword=" Element" /> node with the specified name.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsStartElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool IsStartElement(string localname, string ns)" />
+      <MemberSignature Language="C#" Value="public virtual bool IsStartElement (string localName, string namespaceName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceName">To be added.</param>
+        <summary>
+          <para> Determines if a node containing content is an
+   <see langword="Element" /> node with the specified local name
+      and namespace URI. </para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the node
+   is an <see langword="Element" /> node with the specified local name and namespace
+   URI; <see langword="false" />
+   otherwise.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> This method
+      calls the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method, which
+      determines whether the current node can
+      contain content and, if not, moves the reader to the next content node or
+      the end of the input stream. When the reader is positioned on a content node,
+      the node is checked to determine if it is an <see langword="Element" /> node with <see cref="P:System.Xml.XmlReader.LocalName" />
+      and <see cref="P:System.Xml.XmlReader.NamespaceURI" /> properties equal to
+   <paramref name="localname" /> and <paramref name=" ns" />, respectively. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method to
+      determine whether the node returned by the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method
+      is an <see langword=" Element" /> node with the specified local
+      name and namespace URI.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="ILASM" Value=".property string Item[int32 i] { public hidebysig virtual abstract specialname string get_Item(int32 i) }" />
+      <MemberSignature Language="C#" Value="public virtual string this[int i] { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="i" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="i">A <see cref="T:System.Int32" qualify="true" /> specifying the zero-based index of the attribute relative to the containing element.</param>
+        <summary>
+          <para>Retrieves the value of the attribute with the specified index relative to the containing element.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> containing the value of the attribute.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> This property does not move the reader.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="i" /> is less than 0 or greater than or equal to the <see cref="P:System.Xml.XmlReader.AttributeCount" /> of the containing element.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="ILASM" Value=".property string Item[string name] { public hidebysig virtual abstract specialname string get_Item(string name) }" />
+      <MemberSignature Language="C#" Value="public virtual string this[string name] { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the qualified name of the attribute.</param>
+        <summary>
+          <para>Retrieves the value of the attribute with the specified qualified name.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> containing the value of the specified attribute, or
+<see langword="null" /> 
+if the attribute is not found.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This property does not move the reader.</para>
+            <para>If the reader
+         is positioned on a <see langword="DocumentType" />
+         
+         node, this method can be used to get the PUBLIC and
+         SYSTEM literals.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="ILASM" Value=".property string Item[string name, string namespaceURI] { public hidebysig virtual abstract specialname string get_Item(string name, string namespaceURI) }" />
+      <MemberSignature Language="C#" Value="public virtual string this[string name, string namespaceURI] { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>
+          <para>Retrieves the value of the attribute with the specified local name and namespace URI.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the value of the specified attribute, or <see langword="null" /> if the
+attribute is not found.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> This property does not move the reader. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+      to provide the functionality described above, as there is no default implementation.
+   </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LocalName">
+      <MemberSignature Language="ILASM" Value=".property string LocalName { public hidebysig virtual abstract specialname string get_LocalName() }" />
+      <MemberSignature Language="C#" Value="public abstract string LocalName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the local name of the current node.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the local name of the current node or, for node types that do not
+have a name (like <see langword="Text" />, <see langword="Comment" /> , and so on),
+<see cref="F:System.String.Empty" qualify="true" />.</para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described
+      above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LookupNamespace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string LookupNamespace(string prefix)" />
+      <MemberSignature Language="C#" Value="public abstract string LookupNamespace (string prefix);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">A <see cref="T:System.String" qualify="true" /> specifying the prefix whose namespace URI is to be resolved. To return the default namespace, specify <see cref="F:System.String.Empty" qualify="true" />. </param>
+        <summary>
+          <para> Resolves a namespace prefix in the scope of the current element.
+      </para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" qualify="true" /> containing the
+   namespace URI to which the prefix maps. If <paramref name="prefix" /> is not in <see cref="P:System.Xml.XmlReader.NameTable" /> or no matching namespace is found, <see langword="null" /> is returned.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MoveToAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void MoveToAttribute(int32 i)" />
+      <MemberSignature Language="C#" Value="public virtual void MoveToAttribute (int i);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="i" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="i">A <see cref="T:System.Int32" qualify="true" /> specifying the zero-based index of the attribute relative to the containing element.</param>
+        <summary>
+          <para>Moves the position of the current instance to the attribute with the specified index relative to the containing element.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> After calling
+      this method, the <see cref="P:System.Xml.XmlReader.Name" />,
+      <see cref="P:System.Xml.XmlReader.NamespaceURI" />, and <see cref="P:System.Xml.XmlReader.Prefix" /> properties reflect the properties of current attribute.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="i" /> is less than 0 or greater than or equal to the <see cref="P:System.Xml.XmlReader.AttributeCount" /> of the containing element.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MoveToAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool MoveToAttribute(string name)" />
+      <MemberSignature Language="C#" Value="public abstract bool MoveToAttribute (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the qualified name of the attribute.</param>
+        <summary>
+          <para>Moves the position of the current instance to the attribute with the specified qualified
+      name.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" />
+where <see langword="true" /> indicates the attribute was found; otherwise,
+<see langword="false" />. If <see langword="false" />, the reader's position does 
+not change.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> After calling
+      this method, the <see cref="P:System.Xml.XmlReader.Name" />,
+      <see cref="P:System.Xml.XmlReader.NamespaceURI" />, and <see cref="P:System.Xml.XmlReader.Prefix" /> properties reflect the properties of current attribute.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MoveToAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool MoveToAttribute(string name, string ns)" />
+      <MemberSignature Language="C#" Value="public abstract bool MoveToAttribute (string localName, string namespaceName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceName">To be added.</param>
+        <summary>
+          <para>Moves the position of the current instance to the attribute with the specified local name and
+      namespace URI.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" />
+where <see langword="true" /> indicates the attribute was found; otherwise,
+<see langword="false" />. If <see langword="false" />, the position of the current 
+instance does not change.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> After calling
+      this method, the <see cref="P:System.Xml.XmlReader.Name" />,
+      <see cref="P:System.Xml.XmlReader.NamespaceURI" />, and <see cref="P:System.Xml.XmlReader.Prefix" /> properties reflect the properties of current attribute.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MoveToContent">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual valuetype System.Xml.XmlNodeType MoveToContent()" />
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNodeType MoveToContent ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Determines whether the current node can contain content and, if not,
+      moves the position of the current instance to the next content node or the
+      end of the input stream.</para>
+        </summary>
+        <returns>
+          <para> The <see cref="T:System.Xml.XmlNodeType" /><see langword=" " />of the content
+   node, or <see cref="F:System.Xml.XmlNodeType.None" /> if the
+   position
+   of the reader has reached the end of the input stream.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+      The following members of <see cref="T:System.Xml.XmlNodeType" /> can contain content:
+   <see langword="Attribute" />, <see langword="CDATA" />, <see langword="Element" />, <see langword="EndElement" />,
+   <see langword="EntityReference" />, <see langword="EndEntity" />, and <see langword="Text" />.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors"> As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="default"> If the
+      current node is an <see langword="Attribute" /> node, this method
+      moves the position of the reader
+      back to the <see langword="Element" /> node that owns the attribute. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to determine whether the current
+      node can contain content and, if not, move the position of the reader to the next content node.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MoveToElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool MoveToElement()" />
+      <MemberSignature Language="C#" Value="public abstract bool MoveToElement ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Moves the position of the current instance to the node that contains the current
+      <see langword="Attribute" /> node.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the position of the reader was moved; <see langword="false" /> indicates the reader was not positioned on an <see langword="Attribute" /> node and
+   therefore the position of the reader was not
+   moved.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+      The <see langword="DocumentType" />, <see langword="Element" />, and<see langword=" XmlDeclaration" /> members of <see cref="T:System.Xml.XmlNodeType" /> can contain
+      attributes.
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors"> As described
+      above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MoveToFirstAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool MoveToFirstAttribute()" />
+      <MemberSignature Language="C#" Value="public abstract bool MoveToFirstAttribute ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Moves the position of the current instance to the first attribute associated with the current node.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" />
+where <see langword="true" /> indicates the current node contains at least one attribute; otherwise,
+<see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> If <see cref="P:System.Xml.XmlReader.AttributeCount" /> is non-zero,
+   the position of
+   the reader
+   moves to the first attribute; otherwise, the position of the reader does not change. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MoveToNextAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool MoveToNextAttribute()" />
+      <MemberSignature Language="C#" Value="public abstract bool MoveToNextAttribute ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Moves the position of the current instance to the next attribute associated with the current node.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the position of the reader moved to the next attribute; <see langword="false" /> if there were no more attributes.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="ILASM" Value=".property string Name { public hidebysig virtual abstract specialname string get_Name() }" />
+      <MemberSignature Language="C#" Value="public virtual string Name { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the qualified name of the current node.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the qualified name of the current node or, for node types that do not
+have a name (like <see langword="Text" />, <see langword="Comment" /> , and so on),
+<see cref="F:System.String.Empty" qualify="true" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para> The qualified name is equivalent to
+         the <see cref="P:System.Xml.XmlReader.LocalName" />
+         
+         prefixed with <see cref="P:System.Xml.XmlReader.Prefix" /> and the
+         ':' character. For example, <see cref="P:System.Xml.XmlReader.Name" /> is
+         "bk:book" for the element <c>&lt;bk:book&gt;</c>.
+      </para>
+            <para> The name returned is dependent on the <see cref="P:System.Xml.XmlReader.NodeType" /> of the node. The following node types
+   return the listed values. All other node types return an empty string.</para>
+            <list type="table">
+              <listheader>
+                <term>Node Type</term>
+                <description>Name</description>
+              </listheader>
+              <item>
+                <term>
+                  <see langword="Attribute" />
+                </term>
+                <description>The name of the attribute.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="DocumentType" />
+                </term>
+                <description>The document type name.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="Element" />
+                </term>
+                <description>The tag name.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="EntityReference" />
+                </term>
+                <description>The name of the entity referenced.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="ProcessingInstruction" />
+                </term>
+                <description>The target of the processing
+   instruction.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="XmlDeclaration" />
+                </term>
+                <description>The literal string "xml".</description>
+              </item>
+            </list>
+            <para>This property is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NamespaceURI">
+      <MemberSignature Language="ILASM" Value=".property string NamespaceURI { public hidebysig virtual abstract specialname string get_NamespaceURI() }" />
+      <MemberSignature Language="C#" Value="public abstract string NamespaceURI { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the namespace URI associated with the node on which the reader is positioned. </para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" qualify="true" /> containing the namespace URI of the current node or, if
+   no namespace URI is associated with the current node, <see cref="F:System.String.Empty" qualify="true" />.
+   </para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This property is relevant to <see langword="Element" />
+   and <see langword="Attribute" />
+   
+   nodes
+   only.</para>
+            <para>Namespaces conform to the W3C "Namespaces in XML" recommendation,
+   REC-xml-names-19990114. </para>
+            <para>This property is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NameTable">
+      <MemberSignature Language="ILASM" Value=".property class System.Xml.XmlNameTable NameTable { public hidebysig virtual abstract specialname class System.Xml.XmlNameTable get_NameTable() }" />
+      <MemberSignature Language="C#" Value="public abstract System.Xml.XmlNameTable NameTable { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNameTable</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the name table used by the current instance to store
+      and look up element and attribute names, prefixes, and namespaces.</para>
+        </summary>
+        <value>
+          <para>The <see cref="T:System.Xml.XmlNameTable" qualify="true" /> used by the current
+   instance.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>Element and attribute names,
+         prefixes, and namespaces are stored as individual <see cref="T:System.String" qualify="true" /> objects when a document is
+         read.</para>
+            <para>This property is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NodeType">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Xml.XmlNodeType NodeType { public hidebysig virtual abstract specialname valuetype System.Xml.XmlNodeType get_NodeType() }" />
+      <MemberSignature Language="C#" Value="public abstract System.Xml.XmlNodeType NodeType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the type of the current node.</para>
+        </summary>
+        <value>
+          <para>One of the members of the <see cref="T:System.Xml.XmlNodeType" /> enumeration representing the type of the current
+   node. </para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This property does not return the following <see cref="T:System.Xml.XmlNodeType" /> members:
+      <see langword="Document" />, <see langword="DocumentFragment" />,
+      <see langword="Entity" />, <see langword="EndEntity" />, and
+      <see langword="Notation" />.</para>
+            <para>This property is
+      read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Prefix">
+      <MemberSignature Language="ILASM" Value=".property string Prefix { public hidebysig virtual abstract specialname string get_Prefix() }" />
+      <MemberSignature Language="C#" Value="public abstract string Prefix { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the namespace prefix associated with the current node.
+      </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the namespace prefix associated with the current node. </para>
+        </value>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> A namespace prefix
+      is used as a reference for a namespace URI and is defined in an element
+      declaration. For example, <c>&lt;someElement xmlns:bk="someURL"&gt;</c>, defines a
+   prefix name "bk".
+</block>
+          </para>
+          <block subset="none" type="behaviors">
+            <para>As described
+      above.</para>
+            <para> This property is
+      read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="QuoteChar">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Char QuoteChar { public hidebysig virtual abstract specialname valuetype System.Char get_QuoteChar() }" />
+      <MemberSignature Language="C#" Value="public virtual char QuoteChar { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the quotation mark character used to enclose the value of an attribute.
+      </para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Char" qualify="true" /> specifying the quotation mark character (" or ') used to enclose the value of
+   an attribute.
+   </para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described
+         above.</para>
+            <para> This property is
+         read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool Read()" />
+      <MemberSignature Language="C#" Value="public abstract bool Read ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Moves the position of the current instance to the next node in the stream, exposing its properties.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" />
+where <see langword="true" /> indicates the node was read successfully, and
+<see langword="false" /> indicates there were no more nodes to read.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">
+      This method must be overridden in order to provide the functionality as described herein, as there is no default implementation.
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="usage">When a reader
+      is first created and initialized, there is no information available. Calling
+      this method is required to read the first node.
+      </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadAttributeValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool ReadAttributeValue()" />
+      <MemberSignature Language="C#" Value="public abstract bool ReadAttributeValue ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Parses an attribute value into one or more
+   <see langword="Text" />, <see langword="EntityReference" />, and <see langword="EndEntity" />
+   nodes.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the attribute value was parsed, and
+<see langword="false" /> indicates the reader was not 
+   positioned on an attribute node or all the attribute values have been read.</para>
+          <see langword="" />
+        </returns>
+        <remarks>
+          <block subset="none" type="note">
+            <para> To parse an
+      <see langword="EntityReference" /> node, call the <see cref="M:System.Xml.XmlReader.ResolveEntity" /> method. After the node is parsed into child nodes, call
+         the <see cref="M:System.Xml.XmlReader.ReadAttributeValue" />
+         method again to read the value of the entity.</para>
+            <para>The
+      <see cref="P:System.Xml.XmlReader.Depth" /> of an
+         attribute value node is one plus the depth of the attribute node. When general entity references
+         are stepped into or out of, the <see cref="P:System.Xml.XmlReader.Depth" />
+         
+         increments or decrements by one, respectively.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">
+      As described above.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">
+      
+      Implementations that cannot expand general entities should return general
+      entities as a single empty (<see cref="P:System.Xml.XmlReader.Value" /> equals <see cref="F:System.String.Empty" qualify="true" />)
+   <see langword="EntityReference" />
+   node.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method after calling <see cref="M:System.Xml.XmlReader.MoveToAttribute(System.String)" /> to
+read through the <see langword="Text" /> , <see langword="EntityReference," /> or <see langword="EndEntity" />
+nodes that make up the attribute
+value. Call the <see cref="M:System.Xml.XmlReader.ResolveEntity" /> method to resolve the
+<see langword="EntityReference" /> 
+nodes. </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAs">
+      <MemberSignature Language="C#" Value="public virtual object ReadContentAs (Type type, System.Xml.IXmlNamespaceResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="resolver">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsBase64">
+      <MemberSignature Language="C#" Value="public virtual int ReadContentAsBase64 (byte[] buffer, int offset, int length);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="offset">To be added.</param>
+        <param name="length">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsBinHex">
+      <MemberSignature Language="C#" Value="public virtual int ReadContentAsBinHex (byte[] buffer, int offset, int length);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="offset">To be added.</param>
+        <param name="length">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsBoolean">
+      <MemberSignature Language="C#" Value="public virtual bool ReadContentAsBoolean ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsDateTime">
+      <MemberSignature Language="C#" Value="public virtual DateTime ReadContentAsDateTime ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsDecimal">
+      <MemberSignature Language="C#" Value="public virtual decimal ReadContentAsDecimal ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsDouble">
+      <MemberSignature Language="C#" Value="public virtual double ReadContentAsDouble ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsFloat">
+      <MemberSignature Language="C#" Value="public virtual float ReadContentAsFloat ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsInt">
+      <MemberSignature Language="C#" Value="public virtual int ReadContentAsInt ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsLong">
+      <MemberSignature Language="C#" Value="public virtual long ReadContentAsLong ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsObject">
+      <MemberSignature Language="C#" Value="public virtual object ReadContentAsObject ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadContentAsString">
+      <MemberSignature Language="C#" Value="public virtual string ReadContentAsString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAs">
+      <MemberSignature Language="C#" Value="public virtual object ReadElementContentAs (Type type, System.Xml.IXmlNamespaceResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="resolver">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAs">
+      <MemberSignature Language="C#" Value="public virtual object ReadElementContentAs (Type type, System.Xml.IXmlNamespaceResolver resolver, string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="resolver">To be added.</param>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsBase64">
+      <MemberSignature Language="C#" Value="public virtual int ReadElementContentAsBase64 (byte[] buffer, int offset, int length);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="offset">To be added.</param>
+        <param name="length">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsBinHex">
+      <MemberSignature Language="C#" Value="public virtual int ReadElementContentAsBinHex (byte[] buffer, int offset, int length);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="offset">To be added.</param>
+        <param name="length">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsBoolean">
+      <MemberSignature Language="C#" Value="public virtual bool ReadElementContentAsBoolean ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsBoolean">
+      <MemberSignature Language="C#" Value="public virtual bool ReadElementContentAsBoolean (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsDateTime">
+      <MemberSignature Language="C#" Value="public virtual DateTime ReadElementContentAsDateTime ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsDateTime">
+      <MemberSignature Language="C#" Value="public virtual DateTime ReadElementContentAsDateTime (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsDecimal">
+      <MemberSignature Language="C#" Value="public virtual decimal ReadElementContentAsDecimal ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsDecimal">
+      <MemberSignature Language="C#" Value="public virtual decimal ReadElementContentAsDecimal (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsDouble">
+      <MemberSignature Language="C#" Value="public virtual double ReadElementContentAsDouble ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsDouble">
+      <MemberSignature Language="C#" Value="public virtual double ReadElementContentAsDouble (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsFloat">
+      <MemberSignature Language="C#" Value="public virtual float ReadElementContentAsFloat ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsFloat">
+      <MemberSignature Language="C#" Value="public virtual float ReadElementContentAsFloat (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsInt">
+      <MemberSignature Language="C#" Value="public virtual int ReadElementContentAsInt ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsInt">
+      <MemberSignature Language="C#" Value="public virtual int ReadElementContentAsInt (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsLong">
+      <MemberSignature Language="C#" Value="public virtual long ReadElementContentAsLong ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsLong">
+      <MemberSignature Language="C#" Value="public virtual long ReadElementContentAsLong (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsObject">
+      <MemberSignature Language="C#" Value="public virtual object ReadElementContentAsObject ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsObject">
+      <MemberSignature Language="C#" Value="public virtual object ReadElementContentAsObject (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsString">
+      <MemberSignature Language="C#" Value="public virtual string ReadElementContentAsString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementContentAsString">
+      <MemberSignature Language="C#" Value="public virtual string ReadElementContentAsString (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadElementString()" />
+      <MemberSignature Language="C#" Value="public virtual string ReadElementString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Reads the contents of a text-only element.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.String" qualify="true" /> containing the contents of the element.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> This method calls the
+      <see cref="M:System.Xml.XmlReader.MoveToContent" /> method and, if
+      the returned node is an <see langword="Element" /> node, calls the <see cref="M:System.Xml.XmlReader.ReadString" />
+      method to read the contents. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this 
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to read the contents of a text-only element.
+      </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">The node is not an <see langword="Element" /> node, the element does not contain a simple text value, or an error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadElementString(string name)" />
+      <MemberSignature Language="C#" Value="public virtual string ReadElementString (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the qualified name of an element.</param>
+        <summary>
+          <para>Reads the contents of a text-only element with the specified qualified
+      name.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" /> containing the contents of the element.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method calls the
+      <see cref="M:System.Xml.XmlReader.MoveToContent" /> method and, if
+      the returned node is an <see langword="Element" /> node,
+      compares the <see cref="P:System.Xml.XmlReader.Name" /> property of the node
+      to <paramref name=" name" />. If they are equal, this method calls the <see cref="M:System.Xml.XmlReader.ReadString" /> method to read
+      the contents of the element. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this 
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to read the contents of a text-only element with the specified qualified name.
+      </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">The node is not an <see langword="Element" /> node, the <see cref="P:System.Xml.XmlReader.Name" /> property of the <see langword="Element" /> node does not equal <paramref name="name" />, the element does not contain a simple text value, or an error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadElementString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadElementString(string localname, string ns)" />
+      <MemberSignature Language="C#" Value="public virtual string ReadElementString (string localName, string namespaceName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceName">To be added.</param>
+        <summary>
+          <para>Reads the contents of a text-only
+      element with the specified local name and namespace URI.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" /> containing the contents of the element.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> This method
+      calls the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method. If the returned node is an
+   <see langword="Element" /> node, this method compares the <see cref="P:System.Xml.XmlReader.LocalName" />
+   and <see cref="P:System.Xml.XmlReader.NamespaceURI" /> properties of the node to <paramref name="localname" /> and
+<paramref name="ns" />, respectively. If they are equal, this method calls the <see cref="M:System.Xml.XmlReader.ReadString" /> 
+method to read
+the contents of the element. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this
+   method to customize the behavior of this method in types derived from
+   the <see cref="T:System.Xml.XmlReader" />
+   class.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to
+   read the contents of a text-only element with the specified local name and namespace URI.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">The node is not an <see langword="Element" /> node, the <see cref="P:System.Xml.XmlReader.LocalName" /> property of the <see langword="Element" /> node does not equal <paramref name="localname" />, or the <see cref="P:System.Xml.XmlReader.NamespaceURI" /> property of the <see langword="Element" /> node does not equal <paramref name="ns" />, the element does not contain a simple text value, or an error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadEndElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void ReadEndElement()" />
+      <MemberSignature Language="C#" Value="public virtual void ReadEndElement ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Reads an <see langword="EndElement" /> node and advances the reader to
+   the next node.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> This method
+      calls the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method, which determines whether the
+      current node can contain content and, if not, moves the reader to the next
+      content node or the end of the input stream. The node the reader ends up
+      positioned on is checked to determine if it is an <see langword="EndElement" />
+      node. If so, the node is read and the reader is moved to the next node.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">  Override this 
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method to
+      read an <see langword="EndElement" /> node and advance the reader to the next node.
+      </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">The node is not an <see langword="EndElement" /> node or an error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadInnerXml">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string ReadInnerXml()" />
+      <MemberSignature Language="C#" Value="public virtual string ReadInnerXml ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Reads the contents of the current node, including child nodes and markup.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the XML content, or <see cref="F:System.String.Empty" qualify="true" /> if the current node is neither an element nor
+attribute, or has no child nodes.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para> The current node and corresponding end node are not returned. </para>
+            <para>If the current node is an element, after the call to this method, the reader
+         is positioned after the corresponding end element.</para>
+            <para>If the current node is an attribute, the position of the reader is not changed.</para>
+            <block subset="none" type="note">
+              <para> For a comparison
+      between this method and the <see cref="M:System.Xml.XmlReader.ReadOuterXml" /> method, see <see cref="M:System.Xml.XmlTextReader.ReadInnerXml" qualify="true" />.</para>
+            </block>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">The XML was not well-formed, or an error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadOuterXml">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string ReadOuterXml()" />
+      <MemberSignature Language="C#" Value="public virtual string ReadOuterXml ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Reads the current node and its contents, including child nodes and markup.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the XML content, or <see cref="F:System.String.Empty" qualify="true" /> if the current node is neither an element nor
+attribute.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para> The current node and corresponding end node are returned. </para>
+            <para>If the current node is an element, after the call to this method, the reader
+         is positioned after the corresponding end element.</para>
+            <para>If the current node is an attribute, the position of the reader is not changed.</para>
+            <block subset="none" type="note">
+              <para> For a comparison
+      between this method and the <see cref="M:System.Xml.XmlReader.ReadOuterXml" /> method, see <see cref="M:System.Xml.XmlTextReader.ReadInnerXml" qualify="true" />.</para>
+            </block>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">The XML was not well-formed, or an error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadStartElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void ReadStartElement()" />
+      <MemberSignature Language="C#" Value="public virtual void ReadStartElement ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Reads an <see langword="Element" /> node and advances the reader to the next
+   node.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method
+      calls the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method, which determines whether the
+      current node can contain content and, if not, moves the reader to the next
+      content node or the end of the input stream. The node the reader ends up
+      positioned on is checked to determine if it is an <see langword="Element" />
+      node. If so, the node is read and the reader is moved to the next node. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this 
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method to
+      read an <see langword="Element" /> node and advance the reader to the next node.
+      </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">The node is not an <see langword="Element" /> node or an error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadStartElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void ReadStartElement(string name)" />
+      <MemberSignature Language="C#" Value="public virtual void ReadStartElement (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the qualified name of an element.</param>
+        <summary>
+          <para>Reads an <see langword="Element" />
+node with the specified qualified name and advances
+the reader to the next node.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method calls
+      the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method and, if the returned node is an
+      <see langword="Element" /> node, compares the <see cref="P:System.Xml.XmlReader.Name" /> property of the node to
+      <paramref name="name" />. If they are equal, this method calls the <see cref="M:System.Xml.XmlReader.Read" />
+   method to read the element and move to the next node. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">  Override this 
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+
+</block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method to
+   read an <see langword="Element" /> node with the specified
+   qualified name, and advance the reader to the next node.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">The node is not an <see langword="Element" /> node, the <see cref="P:System.Xml.XmlReader.Name" /> property of the <see langword="Element" /> node does not equal <paramref name="name" />, or an error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadStartElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void ReadStartElement(string localname, string ns)" />
+      <MemberSignature Language="C#" Value="public virtual void ReadStartElement (string localName, string namespaceName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceName">To be added.</param>
+        <summary>
+          <para>Reads an <see langword="Element" /> node with the specified local name and
+   namespace URI and advances the reader to the next node.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method calls
+      the <see cref="M:System.Xml.XmlReader.MoveToContent" /> method. If the returned node is an
+   <see langword="Element" /> node, this method compares the <see cref="P:System.Xml.XmlReader.LocalName" />
+   and <see cref="P:System.Xml.XmlReader.NamespaceURI" /> properties of the node to <paramref name="localname" />
+   and <paramref name="ns" />, respectively. If they are equal, this method calls the <see cref="M:System.Xml.XmlReader.Read" />
+   method to read the element and move to the next node. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this
+   method to customize the behavior of this method in types derived from
+   the <see cref="T:System.Xml.XmlReader" />
+   class.
+</block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method to
+   read an <see langword="Element" /> node with the specified
+   local name and namespace URI, and advance the reader to the next node.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">The node is not an <see langword="Element" /> node, the <see cref="P:System.Xml.XmlReader.LocalName" /> property of the <see langword="Element" /> node does not equal <paramref name="localname" />, the <see cref="P:System.Xml.XmlReader.NamespaceURI" /> property of the <see langword="Element" /> node does not equal <paramref name="ns" />, or an error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadState">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Xml.ReadState ReadState { public hidebysig virtual abstract specialname valuetype System.Xml.ReadState get_ReadState() }" />
+      <MemberSignature Language="C#" Value="public abstract System.Xml.ReadState ReadState { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.ReadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the read state of the reader.
+      </para>
+        </summary>
+        <value>
+          <para> One of the members of the <see cref="T:System.Xml.ReadState" /> enumeration.
+   </para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described
+         above.</para>
+            <para> This property is
+         read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string ReadString()" />
+      <MemberSignature Language="C#" Value="public virtual string ReadString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Reads the contents of an element or text node as a string.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the contents of the <see langword="Element" /> or <see langword="Text" />
+node, or <see cref="F:System.String.Empty" qualify="true" /> if the reader is positioned on any other type of
+node.</para>
+        </returns>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>If positioned on an <see langword="Element" /> node, this method concatenates all
+      <see langword="Text" />, <see langword="SignificantWhitespace" />,
+      <see langword="Whitespace" />, and <see langword="CDATA" /> node types, and returns the concatenated
+      data as the element content. If none of these node types exist,
+      <see cref="F:System.String.Empty" qualify="true" />
+   is returned. Concatenation
+   stops when any markup is encountered, which can occur in a mixed content
+   model or when an element end tag is read.</para>
+            <para>If positioned on an element <see langword="Text" /> node, this method performs the same
+concatenation from the <see langword="Text" /> node to the element end tag. If the
+reader is positioned on an attribute <see langword="Text" /> node, this method has the same functionality as
+if the reader were position on the element start tag. </para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadSubtree">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlReader ReadSubtree ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadToDescendant">
+      <MemberSignature Language="C#" Value="public virtual bool ReadToDescendant (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadToDescendant">
+      <MemberSignature Language="C#" Value="public virtual bool ReadToDescendant (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadToFollowing">
+      <MemberSignature Language="C#" Value="public virtual bool ReadToFollowing (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadToFollowing">
+      <MemberSignature Language="C#" Value="public virtual bool ReadToFollowing (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadToNextSibling">
+      <MemberSignature Language="C#" Value="public virtual bool ReadToNextSibling (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadToNextSibling">
+      <MemberSignature Language="C#" Value="public virtual bool ReadToNextSibling (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadValueChunk">
+      <MemberSignature Language="C#" Value="public virtual int ReadValueChunk (char[] buffer, int offset, int length);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="offset">To be added.</param>
+        <param name="length">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResolveEntity">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void ResolveEntity()" />
+      <MemberSignature Language="C#" Value="public abstract void ResolveEntity ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Resolves the entity
+      reference for <see langword="EntityReference" /> nodes.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para> This method
+         parses the entity reference into child nodes. When the parsing is finished a
+         new <see cref="F:System.Xml.XmlNodeType.EndEntity" qualify="true" /> node is
+         placed
+         in the
+         stream to close the <see langword="EntityReference" />
+         
+         scope. To step into the entity after this
+         method has been called, call the <see cref="M:System.Xml.XmlReader.ReadAttributeValue" /> method if the entity is part of an attribute value,
+         or the <see cref="M:System.Xml.XmlReader.Read" /> method if the entity is part of element
+         content.</para>
+            <para> If this method is not called, the parser moves to the
+         next node past the entity (child nodes are bypassed).</para>
+          </block>
+          <block subset="none" type="overrides">
+            <para>This method must be overridden in order to provide the functionality as described in
+         the Behaviors and Usage sections, as there is no default implementation.</para>
+            <para>This method is required
+         to throw an exception for implementations that do not support schema or DTD
+         information. In this case, the <see cref="P:System.Xml.XmlReader.CanResolveEntity" />
+         property is required to return
+      <see langword=" false" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="usage"> Use this method
+      to resolve the entity reference for <see langword=" EntityReference" /> nodes. Before calling
+      this method, determine whether the reader can resolve an entity by
+      checking the <see cref="P:System.Xml.XmlReader.CanResolveEntity" /> property. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The reader is not positioned on a <see cref="F:System.Xml.XmlNodeType.EntityReference" /> node.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SchemaInfo">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.Schema.IXmlSchemaInfo SchemaInfo { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.IXmlSchemaInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Settings">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlReaderSettings Settings { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReaderSettings</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Skip">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Skip()" />
+      <MemberSignature Language="C#" Value="public virtual void Skip ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Skips over the current element and moves the position of the current instance to the next node in the stream.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> If the reader
+      is positioned on a non-empty <see langword="Element" /> node (<see cref="P:System.Xml.XmlReader.IsEmptyElement" /> equals <see langword="false" />), the position of the reader is moved to the node following the
+      corresponding <see langword="EndElement" /> node. The properties of the
+      nodes that are skipped over are not exposed. If the reader is positioned on any
+      other node type, the position of the reader is moved to the next node, in this
+      case behaving like the <see cref="M:System.Xml.XmlReader.Read" />
+      
+      method. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> This method
+      calls the <see cref="M:System.Xml.XmlReader.MoveToElement" /> method before skipping to the next node. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">
+      Override this
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlReader" />
+      class.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method to skip over the current node.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">The XML was not well-formed, or an error occurred while parsing the XML.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="ILASM" Value=".property string Value { public hidebysig virtual abstract specialname string get_Value() }" />
+      <MemberSignature Language="C#" Value="public abstract string Value { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the text value of the current node.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> containing the text value of the current node.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>The value returned depends on the <see cref="P:System.Xml.XmlReader.NodeType" />. The following table lists node types that have a value to return. All
+      other node types return <see cref="F:System.String.Empty" qualify="true" />.</para>
+            <list type="table">
+              <listheader>
+                <term>Node Type</term>
+                <description>Value</description>
+              </listheader>
+              <item>
+                <term>
+                  <see langword="Attribute" />
+                </term>
+                <description>The value of the attribute.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="CDATA" />
+                </term>
+                <description>The content of the CDATA section.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="Comment" />
+                </term>
+                <description>The content of the comment.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="DocumentType" />
+                </term>
+                <description>The internal subset.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="ProcessingInstruction" />
+                </term>
+                <description>The entire content, excluding the target.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="SignificantWhitespace" />
+                </term>
+                <description>The white space between markup in a mixed content
+   model, or in the scope of <c>xml:space = "preserve"</c>.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="Text" />
+                </term>
+                <description>
+                  <para>The content of the text node.</para>
+                </description>
+              </item>
+              <item>
+                <term>
+                  <see langword="Whitespace" />
+                </term>
+                <description>The white space between markup.</description>
+              </item>
+              <item>
+                <term>
+                  <see langword="XmlDeclaration" />
+                </term>
+                <description>The content of the declaration.</description>
+              </item>
+            </list>
+            <para>This property is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ValueType">
+      <MemberSignature Language="C#" Value="public virtual Type ValueType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlLang">
+      <MemberSignature Language="ILASM" Value=".property string XmlLang { public hidebysig virtual abstract specialname string get_XmlLang() }" />
+      <MemberSignature Language="C#" Value="public virtual string XmlLang { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the current <c>xml:lang</c> scope.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> containing the
+   current <c>xml:lang</c> scope.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described
+         above.</para>
+            <para> This property is
+         read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlSpace">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Xml.XmlSpace XmlSpace { public hidebysig virtual abstract specialname valuetype System.Xml.XmlSpace get_XmlSpace() }" />
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlSpace XmlSpace { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlSpace</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the current <c>xml:space</c> scope.</para>
+        </summary>
+        <value>
+          <para>One of the members of the <see cref="T:System.Xml.XmlSpace" />
+enumeration. If no <c>xml:space</c> scope exists, this property defaults to
+<see cref="F:System.Xml.XmlSpace.None" />.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described
+         above.</para>
+            <para> This property is
+         read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

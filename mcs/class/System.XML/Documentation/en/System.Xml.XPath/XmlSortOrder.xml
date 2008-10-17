@@ -1,0 +1,51 @@
+<Type Name="XmlSortOrder" FullName="System.Xml.XPath.XmlSortOrder">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public enum XmlSortOrder" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>This is an enumeration type. It is always thread safe.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>The order in which a query is sorted.</summary>
+    <remarks>This is used to control the sorting of an XPathExpression.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Ascending">
+      <MemberSignature Language="C#" Value="Ascending" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XmlSortOrder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Sort from lowest to highest.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Descending">
+      <MemberSignature Language="C#" Value="Descending" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XmlSortOrder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Sort from highest to lowest.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

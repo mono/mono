@@ -1,0 +1,2241 @@
+<Type Name="XmlWriter" FullName="System.Xml.XmlWriter" FullNameSP="System_Xml_XmlWriter" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract XmlWriter extends System.Object" />
+  <TypeSignature Language="C#" Value="public abstract class XmlWriter : IDisposable" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para> Represents a writer that provides a non-cached, forward-only means of generating streams or files containing XML data.</para>
+    </summary>
+    <remarks>
+      <para>The output of this class conforms to the W3C Extensible Markup Language (XML)
+      1.0 and the Namespaces in XML recommendations.</para>
+      <block subset="none" type="note">
+        <para>This class is <see langword="abstract" /> and is implemented in the <see cref="T:System.Xml.XmlTextWriter" />
+   class.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected XmlWriter ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Constructs a new instance of the <see cref="T:System.Xml.XmlWriter" /> class.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Close()" />
+      <MemberSignature Language="C#" Value="public abstract void Close ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Closes the writer.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This method closes any remaining open elements or
+         attributes.</para>
+            <para> This method calls
+         the <see cref="M:System.Xml.XmlWriter.Flush" />
+         method to flush the underlying buffered stream and then closes the stream.</para>
+            <para> This method sets
+         the <see cref="P:System.Xml.XmlWriter.WriteState" /> to <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlWriter Create (System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlWriter Create (System.IO.TextWriter writer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlWriter Create (string file);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="file" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="file">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlWriter Create (System.Text.StringBuilder builder);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="builder" Type="System.Text.StringBuilder" />
+      </Parameters>
+      <Docs>
+        <param name="builder">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlWriter Create (System.Xml.XmlWriter writer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlWriter Create (System.IO.Stream stream, System.Xml.XmlWriterSettings settings);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="settings" Type="System.Xml.XmlWriterSettings" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <param name="settings">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlWriter Create (System.IO.TextWriter writer, System.Xml.XmlWriterSettings settings);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+        <Parameter Name="settings" Type="System.Xml.XmlWriterSettings" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="settings">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlWriter Create (string file, System.Xml.XmlWriterSettings settings);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="file" Type="System.String" />
+        <Parameter Name="settings" Type="System.Xml.XmlWriterSettings" />
+      </Parameters>
+      <Docs>
+        <param name="file">To be added.</param>
+        <param name="settings">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlWriter Create (System.Text.StringBuilder builder, System.Xml.XmlWriterSettings settings);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="builder" Type="System.Text.StringBuilder" />
+        <Parameter Name="settings" Type="System.Xml.XmlWriterSettings" />
+      </Parameters>
+      <Docs>
+        <param name="builder">To be added.</param>
+        <param name="settings">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlWriter Create (System.Xml.XmlWriter writer, System.Xml.XmlWriterSettings settings);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="settings" Type="System.Xml.XmlWriterSettings" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="settings">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Flush()" />
+      <MemberSignature Language="C#" Value="public abstract void Flush ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Clears all buffers and causes any buffered data to be written to the
+      underlying stream.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LookupPrefix">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string LookupPrefix(string ns)" />
+      <MemberSignature Language="C#" Value="public abstract string LookupPrefix (string ns);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="ns">A <see cref="T:System.String" qualify="true" /> specifying the namespace URI.</param>
+        <summary>
+          <para> Retrieves the prefix defined in the current
+      namespace scope for the specified namespace URI.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" /> containing the corresponding prefix, or <see cref="F:System.String.Empty" qualify="true" /> if
+   the prefix is not found and <paramref name="ns" /> is the default namespace, or
+<see langword="null" /> if no matching namespace URI is found in the current scope.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+      to provide the functionality described above, as there is no default implementation.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="ns " />is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Settings">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlWriterSettings Settings { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriterSettings</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteAttributes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteAttributes(class System.Xml.XmlReader reader, bool defattr)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteAttributes (System.Xml.XmlReader reader, bool defattr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="defattr" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="reader">A <see cref="T:System.Xml.XmlReader" /> from which to copy the attributes.</param>
+        <param name="defattr">A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> specifies to copy the default attributes from <paramref name="reader" />; otherwise, <see langword="false" />.</param>
+        <summary>
+          <para> Writes the attributes found at the current position of a
+   <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">If the reader
+      is positioned on an <see langword="Element" /> or <see langword="XmlDeclaration" />
+      node, this method writes all the contained attributes. If the reader is
+      positioned on an <see langword=" Attribute" />
+      
+      node, this method writes the current attribute, then the rest of the attributes
+      until the closing tag is reached. If the reader is positioned on any other node type, this method throws an exception.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">This method
+      positions the reader by calling its <see cref="M:System.Xml.XmlReader.MoveToFirstAttribute" qualify="true" /> and <see cref="M:System.Xml.XmlReader.MoveToNextAttribute" qualify="true" /> methods, and retrieves the value of the attributes
+      by calling the <see cref="M:System.Xml.XmlReader.ReadAttributeValue" qualify="true" /> method of the
+      reader.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">Override
+      this method to remove any content that would invalidate the document.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method
+      to write all the attributes found at the current position.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="reader" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <exception cref="T:System.Xml.XmlException">
+          <paramref name="reader" /> is not positioned on a node of <see cref="T:System.Xml.XmlNodeType" /><see langword="Attribute" />, <see langword="Element" />, or <see langword="XmlDeclaration" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteAttributeString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void WriteAttributeString(string localName, string value)" />
+      <MemberSignature Language="C#" Value="public void WriteAttributeString (string localName, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">A <see cref="T:System.String" qualify="true" /> specifying the local name of the attribute.</param>
+        <param name="value">A <see cref="T:System.String" qualify="true" /> specifying the value of the attribute.</param>
+        <param name="value">To be added.</param>
+        <summary>
+          <para> Writes a new attribute with the specified local name and value.</para>
+        </summary>
+        <remarks>
+          <para>This method calls the following methods in order to
+      write a complete attribute:</para>
+          <para>
+            <see cref="!:System.Xml.XmlWriter.WriteStartAttribute" />(<see langword="null" />, <paramref name="localName" />, <see langword="null" />)</para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteString(System.String)" />(<paramref name="value" />)</para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteEndAttribute" />()</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteAttributeString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void WriteAttributeString(string localName, string ns, string value)" />
+      <MemberSignature Language="C#" Value="public void WriteAttributeString (string localName, string ns, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">A <see cref="T:System.String" qualify="true" /> specifying the local name of the attribute.</param>
+        <param name="ns">A <see cref="T:System.String" qualify="true" /> specifying the namespace URI of the attribute.</param>
+        <param name="value">A <see cref="T:System.String" qualify="true" /> specifying the value of the attribute.</param>
+        <param name="ns">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>
+          <para> Writes a new attribute with the specified local name, namespace URI, and
+      value.</para>
+        </summary>
+        <remarks>
+          <para>This method calls the following methods in order to
+      write a complete attribute:</para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteStartAttribute(System.String,System.String)" />(<see langword="null" />, <paramref name="localName" />, <paramref name="ns" />)</para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteString(System.String)" />(<paramref name="value" />)</para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteEndAttribute" />()</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteAttributeString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void WriteAttributeString(string prefix, string localName, string ns, string value)" />
+      <MemberSignature Language="C#" Value="public void WriteAttributeString (string prefix, string localName, string ns, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">A <see cref="T:System.String" qualify="true" /> specifying the namespace prefix of the attribute.</param>
+        <param name="localName">A <see cref="T:System.String" qualify="true" /> specifying the local name of the attribute.</param>
+        <param name="ns">A <see cref="T:System.String" qualify="true" /> specifying the namespace URI of the attribute.</param>
+        <param name="value">A <see cref="T:System.String" qualify="true" /> specifying the value of the attribute.</param>
+        <param name="localName">To be added.</param>
+        <param name="ns">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>
+          <para> Writes a new attribute with the specified prefix, local
+      name, namespace URI, and value.</para>
+        </summary>
+        <remarks>
+          <para>This method calls the following methods in order to write a complete
+      attribute:</para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteStartAttribute(System.String,System.String)" />(<paramref name="prefix" />, <paramref name="localName" />,
+<paramref name="ns" />)</para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteString(System.String)" />(<paramref name="value" />)</para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteEndAttribute" />()</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" /> .</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteBase64">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteBase64(class System.Byte[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteBase64 (byte[] buffer, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Byte" qualify="true" /> array containing the bytes to encode.</param>
+        <param name="index">A <see cref="T:System.Int32" qualify="true" /> specifying the position within the array of the first byte to encode.</param>
+        <param name="count">A <see cref="T:System.Int32" qualify="true" /> specifying the number of bytes to encode.</param>
+        <summary>
+          <para>Encodes the specified binary bytes as Base64 and writes out
+      the resulting text.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note"> Base64 encoding
+      represents byte sequences in a text form comprised of the 65 US-ASCII characters
+      (A-Z, a-z, 0-9, +, / ,= ) where each character encodes 6 bits of the binary
+      data. For more information on Base64 encoding, see RFC 2045 ( http://www.ietf.org/rfc/rfc2045).
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors"> As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">The buffer length minus <paramref name="index" /> is less than <paramref name="count" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> or <paramref name="count" /> is less than zero.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteBinHex">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteBinHex(class System.Byte[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteBinHex (byte[] buffer, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Byte" qualify="true" /> array containing the bytes to encode. </param>
+        <param name="index">A <see cref="T:System.Int32" qualify="true" /> specifying the position within the array of the first byte to encode. </param>
+        <param name="count">A <see cref="T:System.Int32" qualify="true" /> specifying the number of bytes to encode. </param>
+        <summary>
+          <para> Encodes the specified binary bytes as BinHex and writes the resulting text.
+      </para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="note">
+      For information on BinHex encoding, see RFC 1741
+      (http://www.ietf.org/rfc/rfc1741).
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="behaviors"> As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">The buffer length minus <paramref name="index" /> is less than <paramref name="count" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> or <paramref name="count" /> is less than zero.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteCData">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteCData(string text)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteCData (string text);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">A <see cref="T:System.String" qualify="true" /> specifying the text to place inside the CDATA block.</param>
+        <summary>
+          <para>Writes out a CDATA block containing
+      the specified text.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This method writes <c>&lt;![CDATA[</c><paramref name="text" /><c>]]&gt;</c>.</para>
+            <para> If <paramref name="text       " /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, this method writes an empty CDATA block,
+         <c>&lt;![CDATA[]]&gt;</c>.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The text would result in a non-well formed XML document.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteCharEntity">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteCharEntity(valuetype System.Char ch)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteCharEntity (char ch);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ch" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="ch">The <see cref="T:System.Char" qualify="true" /> for which to generate the entity.</param>
+        <summary>
+          <para>Forces the
+      generation of a character entity for the specified Unicode character value.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method forces the
+      generation of a character entity for the specified Unicode character value and writes the Unicode character in hexadecimal character entity
+      reference format.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The character is in the surrogate pair character range, 0xd800 - 0xdfff, or the text would result in a non-well formed XML document.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteChars">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteChars(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteChars (char[] buffer, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Char" qualify="true" /> array containing the text to write. </param>
+        <param name="index">A <see cref="T:System.Int32" qualify="true" /> specifying the position within the array of the start of the text to write. </param>
+        <param name="count">A <see cref="T:System.Int32" qualify="true" /> specifying the number of characters to write. </param>
+        <summary>
+          <para> Writes text a buffer at a time.
+      </para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">
+              <para> When
+      overriding this method, throw an exception if surrogate pair characters
+      would be split across multiple buffer writes. This exception must be caught in
+      order to continue writing the next surrogate pair characters. The XML specification defines the valid ranges for surrogate pairs.
+      </para>
+              <para>This method must be overridden in order to provide the functionality described above, as there is no default implementation.      </para>
+            </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">The buffer length minus <paramref name="index" /> is less than <paramref name="count" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> or <paramref name="count" /> is less than zero.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteComment">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteComment(string text)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteComment (string text);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">A <see cref="T:System.String" qualify="true" /> containing the text to place inside the comment.</param>
+        <summary>
+          <para> Writes a comment containing
+      the specified text.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This method writes <c>&lt;!--</c><paramref name="text" /><c>--&gt;</c>.</para>
+            <para>If <paramref name="text" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, this method
+   writes a comment with no content, <c>&lt;!----&gt;</c>.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The text would result in a non-well formed XML document.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteDocType">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteDocType(string name, string pubid, string sysid, string subset)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteDocType (string name, string pubid, string sysid, string subset);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="pubid" Type="System.String" />
+        <Parameter Name="sysid" Type="System.String" />
+        <Parameter Name="subset" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the name of the document type.</param>
+        <param name="pubid">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the public identifier, which is an alternative to the system identifier.</para>
+        </param>
+        <param name="sysid">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the system identifier, which is the URI of the DTD (document type definition) for the document.</para>
+        </param>
+        <param name="subset">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying a URI that contains markup declarations. </para>
+        </param>
+        <summary>
+          <para> Writes the document type declaration with the specified name
+      and optional attributes.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method
+      writes the document type declaration with the specified name and optional attributes.
+      The optional attributes, <paramref name="pubid" />, <paramref name="sysid" />, and <paramref name="subset" />, are not
+      checked for invalid characters.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</para>
+          <para>-or-</para>
+          <para>The value for <paramref name="name" /> would result in invalid XML.</para>
+        </exception>
+        <exception cref="T:System.InvalidOperationException">This method was called outside the prolog (after the root element).</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteElementString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void WriteElementString(string localName, string value)" />
+      <MemberSignature Language="C#" Value="public void WriteElementString (string localName, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the local name of the element.</para>
+        </param>
+        <param name="value">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the value of the element.</para>
+        </param>
+        <param name="value">To be added.</param>
+        <summary>
+          <para> Writes an element with the specified local name and value.</para>
+        </summary>
+        <remarks>
+          <para>This method is equivalent to <see cref="M:System.Xml.XmlWriter.WriteElementString(System.String,System.String)" />(<paramref name="localName" />,
+<see langword="null" />, <paramref name="value" />).</para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteElementString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void WriteElementString(string localName, string ns, string value)" />
+      <MemberSignature Language="C#" Value="public void WriteElementString (string localName, string ns, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the local name of the element.</para>
+        </param>
+        <param name="ns">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the namespace URI to associate with the element.</para>
+        </param>
+        <param name="value">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the value of the element.</para>
+        </param>
+        <param name="value">To be added.</param>
+        <summary>
+          <para> Writes an element with the specified local name, namespace URI, and value.</para>
+        </summary>
+        <remarks>
+          <para>This method calls the following methods to write a complete element:</para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteStartElement(System.String,System.String)" />(<paramref name="localName" />, <paramref name="ns" />)</para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteString(System.String)" />(<paramref name="value" />) - this method is not called if <paramref name="value" /> is either <see langword="null" /> or
+<see cref="F:System.String.Empty" qualify="true" /></para>
+          <para>
+            <see cref="M:System.Xml.XmlWriter.WriteEndElement" />()</para>
+          <para>If any of the input parameters are <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, the element is written with that parameter missing.</para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteElementString">
+      <MemberSignature Language="C#" Value="public void WriteElementString (string prefix, string localName, string ns, string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">To be added.</param>
+        <param name="localName">To be added.</param>
+        <param name="ns">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteEndAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteEndAttribute()" />
+      <MemberSignature Language="C#" Value="public abstract void WriteEndAttribute ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Closes the attribute started with the <see cref="M:System.Xml.XmlWriter.WriteStartAttribute(System.String,System.String)" /> method.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override the <see cref="M:System.Xml.XmlWriter.WriteStartAttribute(System.String,System.String)" />, <see cref="M:System.Xml.XmlWriter.WriteAttributeString(System.String,System.String,System.String)" />, and <see cref="M:System.Xml.XmlWriter.WriteEndElement" /> methods so these methods also
+   close any attributes that are open when they are called.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Attribute" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteEndDocument">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteEndDocument()" />
+      <MemberSignature Language="C#" Value="public abstract void WriteEndDocument ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Closes open elements and attributes and sets the
+      <see cref="P:System.Xml.XmlWriter.WriteState" /> back to the <see cref="F:System.Xml.WriteState.Start" qualify="true" />
+   state.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method closes all elements and attributes created by
+      the <see cref="M:System.Xml.XmlWriter.WriteStartElement(System.String,System.String)" /> and <see cref="M:System.Xml.XmlWriter.WriteStartAttribute(System.String,System.String)" /> methods,
+      respectively, that are open when the <see cref="M:System.Xml.XmlWriter.WriteEndDocument" />
+      method is called.
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">
+      This method must be overridden in order to provide the functionality as described herein, as there is no default implementation.
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> After calling this method, the current instance can be used to write a new XML
+      document.
+      </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">The current instance is in the wrong <see cref="T:System.Xml.WriteState" qualify="true" />, or the document does not have a root element.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteEndElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteEndElement()" />
+      <MemberSignature Language="C#" Value="public abstract void WriteEndElement ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Closes an open element and pops the corresponding namespace scope.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method closes one element and pops
+      the corresponding namespace scope. If the open element does not contain content, it is closed as an empty element using "<c> /&gt;</c>"; otherwise an end element is written.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">No element was open, or the <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteEntityRef">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteEntityRef(string name)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteEntityRef (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> specifying the name of the entity reference.</param>
+        <summary>
+          <para> Writes an entity reference with the specified name.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method writes <c>%</c><paramref name="name" /><c>;</c>.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="name" /> is either <see langword="null" /> or <see cref="F:System.String.Empty" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteFullEndElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteFullEndElement()" />
+      <MemberSignature Language="C#" Value="public abstract void WriteFullEndElement ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Closes an open element and pops the
+      corresponding namespace scope.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method
+      closes one element and pops the corresponding namespace scope. This
+      method writes an end element regardless of whether there is any content in the element.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">No element was open, or the <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteName(string name)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteName (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the name to write.</param>
+        <summary>
+          <para> Writes the specified name, ensuring it is a
+      valid name according to the W3C XML 1.0 recommendation (http://www.w3.org/TR/1998/REC-xml-19980210#NT-Name).</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method writes the specified name, ensuring it is a
+      valid name according to the W3C XML 1.0 recommendation.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />; or <paramref name="name" /> is not a valid XML Name.</para>
+        </exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteNmToken">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteNmToken(string name)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteNmToken (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the name to write.</param>
+        <summary>
+          <para> Writes the specified name, ensuring it is a valid name token (Nmtoken) according to
+      the W3C XML 1.0 recommendation (http://www.w3.org/TR/1998/REC-xml-19980210#NT-Name).</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />; or <paramref name="name" /> is not a valid XML Nmtoken.</para>
+        </exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteNode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteNode(class System.Xml.XmlReader reader, bool defattr)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteNode (System.Xml.XmlReader reader, bool defattr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="defattr" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="reader">A <see cref="T:System.Xml.XmlReader" /> from which to copy the attributes.</param>
+        <param name="defattr">A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> specifies to copy the default attributes from <paramref name="reader" />; otherwise, <see langword="false" />.</param>
+        <summary>
+          <para> Writes the node found at the current position of the
+      specified <see cref="T:System.Xml.XmlReader" />, and all
+      sub-nodes.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> After the nodes are
+      read, <paramref name="reader" /> is moved to the next node at the same depth as the current node.</block>
+          </para>
+          <para>
+            <block subset="none" type="default">
+      
+      If <paramref name="reader" /> is in
+      the <see cref="F:System.Xml.ReadState.Initial" /><see cref="P:System.Xml.XmlReader.ReadState" qualify="true" />, this method moves <paramref name="reader" /> to the end of the stream. If
+   <paramref name="reader" /> is
+      in the <see cref="F:System.Xml.ReadState.EndOfFile" /><see cref="P:System.Xml.XmlReader.ReadState" />, this method is non-operational.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlWriter" />
+      class.
+   </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method
+      to write the node found at the current position and all sub-nodes.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="reader" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <example>
+          <para> The following example uses a <see cref="T:System.Xml.XmlTextReader" /> and
+   a <see cref="T:System.Xml.XmlTextWriter" /> to copy an XML file, specified in the command line, to the
+   console.</para>
+          <code lang="C#">using System;
+using System.Xml;
+
+public class Copier {
+
+  public static void Main(string[] args) {
+
+    XmlTextReader xtReader = new XmlTextReader(args[0]);
+    XmlTextWriter xtWriter =
+      new XmlTextWriter(Console.Out);
+    xtWriter.WriteNode(xtReader, false);
+    xtWriter.Close();
+    xtReader.Close();
+  }
+}
+</code>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteNode">
+      <MemberSignature Language="C#" Value="public virtual void WriteNode (System.Xml.XPath.XPathNavigator navigator, bool defattr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="navigator" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="defattr" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="navigator">To be added.</param>
+        <param name="defattr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteProcessingInstruction">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteProcessingInstruction(string name, string text)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteProcessingInstruction (string name, string text);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the name of the processing instruction.</param>
+        <param name="text">A <see cref="T:System.String" qualify="true" /> specifying the text to include in the processing instruction.</param>
+        <param name="text">To be added.</param>
+        <summary>
+          <para> Writes a processing instruction with the specified name
+      and text.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This method writes <c>&lt;?</c><paramref name="name" /><paramref name="text" /><c>?&gt;</c>.</para>
+            <para>If <paramref name="text" /> is
+<see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, this method writes a processing 
+instruction with no text content, <c>&lt;?</c><paramref name="name" /><c>?&gt;</c>.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para> The text would result in a non-well formed XML document.</para>
+          <para> - or -</para>
+          <para>
+            <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</para>
+          <para> - or -</para>
+          <para>This method is being used to create an XML declaration after <see cref="M:System.Xml.XmlWriter.WriteStartDocument" /> has already been called. </para>
+        </exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteQualifiedName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteQualifiedName(string localName, string ns)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteQualifiedName (string localName, string ns);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">A <see cref="T:System.String" qualify="true" /> specifying the local name to write.</param>
+        <param name="ns">A <see cref="T:System.String" qualify="true" /> specifying the namespace URI to associate with <paramref name="localname" />.</param>
+        <param name="ns">To be added.</param>
+        <summary>
+          <para> Writes the qualified name.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method writes the qualified name. If <paramref name="ns" />
+maps to the
+current default namespace, no prefix is generated. When writing attribute values, this method generates a prefix if <paramref name="ns" />
+is not found. When writing element content, it throws an exception if
+<paramref name="ns" /> is not found.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="localName" /> is <see langword="null" />, is <see cref="F:System.String.Empty" qualify="true" />, or is not a valid XML name.</para>
+        </exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <exception cref="T:System.Xml.XmlException">
+          <paramref name="localName" /> is not a valid XML name.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteRaw">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteRaw(string data)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteRaw (string data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="data">A <see cref="T:System.String" qualify="true" /> specifying the text to write.</param>
+        <summary>
+          <para> Writes raw text from a string.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method writes
+      raw text from a string. This method does not encode any characters.
+      If <paramref name="data" /> is <see langword="null" />, <see cref="F:System.String.Empty" /> is written.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteRaw">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteRaw(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteRaw (char[] buffer, int index, int count);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">A <see cref="T:System.Char" qualify="true" /> array containing the text to write. </param>
+        <param name="index">A <see cref="T:System.Int32" qualify="true" /> specifying the position within the array of the start of the text to write. </param>
+        <param name="count">A <see cref="T:System.Int32" qualify="true" /> specifying the number of characters to write. </param>
+        <summary>
+          <para> Writes raw text from a character array.
+      </para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">This method writes raw text from a character array. This method does not encode any characters.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.ArgumentException">The buffer length minus <paramref name="index" /> is less than <paramref name="count" />.</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> or <paramref name="count" /> is less than zero.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteStartAttribute">
+      <MemberSignature Language="C#" Value="public void WriteStartAttribute (string localName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteStartAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void WriteStartAttribute(string localName, string ns)" />
+      <MemberSignature Language="C#" Value="public void WriteStartAttribute (string localName, string ns);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">A <see cref="T:System.String" qualify="true" /> specifying the local name of the attribute.</param>
+        <param name="ns">A <see cref="T:System.String" qualify="true" /> specifying the namespace URI of the attribute.</param>
+        <param name="ns">To be added.</param>
+        <summary>
+          <para> Writes the start of an attribute.</para>
+        </summary>
+        <remarks>
+          <para>This method calls <see cref="M:System.Xml.XmlWriter.WriteStartAttribute(System.String,System.String)" />(<see langword="null" />,
+<paramref name="localName" />, <paramref name="ns" />).</para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteStartAttribute">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteStartAttribute(string prefix, string localName, string ns)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteStartAttribute (string prefix, string localName, string ns);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">A <see cref="T:System.String" qualify="true" /> specifying the namespace prefix of the attribute.</param>
+        <param name="localName">A <see cref="T:System.String" qualify="true" /> specifying the local name of the attribute.</param>
+        <param name="ns">A <see cref="T:System.String" qualify="true" /> specifying the namespace URI associated with the attribute.</param>
+        <param name="localName">To be added.</param>
+        <param name="ns">To be added.</param>
+        <summary>
+          <para> Writes the start of an attribute with the specified
+      prefix and name, and associates the prefix with the specified namespace URI.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>If any of the input parameters are <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, the start attribute is written with that parameter missing.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides">
+              <para>When overriding
+   this method, close any open attributes before writing the new
+   attribute. </para>
+              <para>This method must be overridden in order to provide the functionality described above, as there is no default implementation.</para>
+            </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not one of the following:<see cref="F:System.Xml.WriteState.Attribute" qualify="true" /> or <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteStartDocument">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteStartDocument()" />
+      <MemberSignature Language="C#" Value="public abstract void WriteStartDocument ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Writes the XML declaration with the version "1.0" and no standalone attribute.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>Character encoding is set when the class in instantiated.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors"> As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Start" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteStartDocument">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteStartDocument(bool standalone)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteStartDocument (bool standalone);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="standalone" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="standalone">A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates to write "standalone= yes"; <see langword="false" /> indicates to write "standalone=no".</param>
+        <summary>
+          <para> Writes the XML declaration with the version "1.0" and the
+      standalone attribute.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>Character encoding is set when the class in instantiated.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors"> As described
+      above.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Start" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteStartElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void WriteStartElement(string localName)" />
+      <MemberSignature Language="C#" Value="public void WriteStartElement (string localName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the local name of the element.</para>
+        </param>
+        <summary>
+          <para> Writes a start element with the specified name.</para>
+        </summary>
+        <remarks>
+          <para>This method calls <see cref="M:System.Xml.XmlWriter.WriteStartElement(System.String,System.String)" />(<see langword="null" />, <paramref name="localName" />,
+<see langword="null" />).</para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteStartElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void WriteStartElement(string localName, string ns)" />
+      <MemberSignature Language="C#" Value="public void WriteStartElement (string localName, string ns);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the local name of the element.</para>
+        </param>
+        <param name="ns">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the namespace URI to associate with the element.</para>
+        </param>
+        <summary>
+          <para> Writes a start element with the specified name, and associates it with the
+      given namespace.</para>
+        </summary>
+        <remarks>
+          <para> This method calls <see cref="M:System.Xml.XmlWriter.WriteStartElement(System.String,System.String)" />(<see langword="null" />,
+<paramref name="localName" />, <paramref name="ns" />).</para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteStartElement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteStartElement(string prefix, string localName, string ns)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteStartElement (string prefix, string localName, string ns);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">A <see cref="T:System.String" qualify="true" /> specifying the namespace prefix of the element.</param>
+        <param name="localName">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the local name of the element.</para>
+        </param>
+        <param name="ns">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the namespace URI to associate with the element.</para>
+        </param>
+        <summary>
+          <para> Writes a start element with the specified name,
+      and associates it with the given namespace and prefix.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para> This method writes a start element and name, and associates it with a namespace and prefix.
+         If the namespace is already in scope and has an associated prefix, that prefix is automatically written also. </para>
+            <para>If any of the input parameters are <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, the start element is written with that parameter missing.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> When
+   overriding this method, also override the <see cref="M:System.Xml.XmlWriter.WriteEndElement" />, <see cref="M:System.Xml.XmlWriter.WriteString(System.String)" />, and <see cref="M:System.Xml.XmlWriter.WriteRaw(System.Char[],System.Int32,System.Int32)" /> methods so they close any
+   open start
+   element. </block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this method
+   to write a specified start element and name, and associate it with a given namespace
+   and prefix. Write any attributes using the <see cref="M:System.Xml.XmlWriter.WriteStartAttribute(System.String,System.String)" />, <see cref="M:System.Xml.XmlWriter.WriteString(System.String)" />, and <see cref="M:System.Xml.XmlWriter.WriteEndAttribute" /> methods, then close the element using
+   the <see cref="M:System.Xml.XmlWriter.WriteEndElement" />
+   method.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <example>
+          <para>See <see cref="M:System.Xml.XmlTextWriter.WriteStartElement(System.String,System.String,System.String)" /> for an example demonstrating this method.</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteState">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Xml.WriteState WriteState { public hidebysig virtual abstract specialname valuetype System.Xml.WriteState get_WriteState() }" />
+      <MemberSignature Language="C#" Value="public abstract System.Xml.WriteState WriteState { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.WriteState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the write state of the writer.</para>
+        </summary>
+        <value>
+          <para> One of the members of the <see cref="T:System.Xml.WriteState" /> enumeration.
+   </para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described above.</para>
+            <para>This property is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides">
+      This property must be overridden in order to provide the functionality as described herein, as there is no default implementation.
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="usage">Use this property to query the current state, for
+      example, whether the writer is newly initialized, writing specific XML structures, or
+      closed. </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteString(string text)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteString (string text);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">A <see cref="T:System.String" qualify="true" /> specifying the text to write. </param>
+        <summary>
+          <para> Writes the specified text.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This method performs the following conversions before writing the text:</para>
+            <list type="bullet">
+              <item>
+                <term>            The characters '&amp;', '&lt;', and '&gt;' are
+            replaced with "&amp;amp;", "&amp;lt;", and "&amp;gt;", respectively.</term>
+              </item>
+              <item>
+                <term>            Character values in the range 0x-0x1F (excluding the
+            white space characters 0x9, 0x10, and 0x13) are replaced with numeric
+            character entities ("&amp;#0;" through "&amp;#0x1F").</term>
+              </item>
+              <item>
+                <term>            If called in the context of an attribute value, double
+            and single quotes are replaced with "&amp;quot;" and "&amp;apos;"
+            respectively.</term>
+              </item>
+            </list>
+            <para>If <paramref name="text" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, this method writes a text
+   node with no data content.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteSurrogateCharEntity">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteSurrogateCharEntity(valuetype System.Char lowChar, valuetype System.Char highChar)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteSurrogateCharEntity (char lowChar, char highChar);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="lowChar" Type="System.Char" />
+        <Parameter Name="highChar" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="lowChar">A <see cref="T:System.Char" qualify="true" /> containing the low surrogate. This must be a value between 0xDC00 and 0xDFFF. </param>
+        <param name="highChar">A <see cref="T:System.Char" qualify="true" /> containing the high surrogate. This must be a value between 0xD800 and 0xDBFF.</param>
+        <param name="highChar">To be added.</param>
+        <summary>
+          <para> Generates and writes the surrogate character entity
+      for the surrogate character pair.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>Applications encode DOM strings using UTF-16. For
+         both HTML and XML, the document character set (and therefore the notation of
+         numeric character references) is based on UCS [ISO-10646]. A single numeric
+         character reference in a source document might therefore in some cases correspond
+         to two 16-bit units in a DOM string (a high surrogate and a low surrogate). These 16-bit units are referred to as
+         a surrogate pair.</para>
+            <para>For more information regarding surrogates or characters,
+         refer to section 3.7 of the Unicode 3.0/Unicode 2.0 standard located at
+         http://www.unicode.org, or section 2.2 of
+         the W3C XML 1.0 Recommendation located at http://www.w3.org/TR/REC-xml#charsets.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">
+      This method generates and writes the surrogate character
+      entity for a surrogate character pair. The surrogate character entity is written in hexadecimal
+      format. The range for surrogate characters is #x10000 to #x10FFFF. The following formula is used
+      to generate the surrogate character entity: <c>(</c><paramref name="highChar" /><c> - 0xD800) * 0x400 + (</c><paramref name="lowChar" /><c> - 0xDC00) + 0x10000</c>.
+   
+</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">An invalid surrogate character pair was passed.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (bool value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (DateTime value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (object value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (float value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (string value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteWhitespace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void WriteWhitespace(string ws)" />
+      <MemberSignature Language="C#" Value="public abstract void WriteWhitespace (string ws);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ws" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="ws">A <see cref="T:System.String" qualify="true" /> containing the white space characters.</param>
+        <summary>
+          <para> Writes the given white space.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors">As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order
+      to provide the functionality described above, as there is no default implementation.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="ws" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" /> or contains non-white space characters.</exception>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlLang">
+      <MemberSignature Language="ILASM" Value=".property string XmlLang { public hidebysig virtual abstract specialname string get_XmlLang() }" />
+      <MemberSignature Language="C#" Value="public virtual string XmlLang { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the language attribute, <c>xml:lang</c>, specifying the
+   language in which the content and attribute values of the current element are written.
+   </para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" />
+containing the language attribute, or <see langword="null" /> if the language
+attribute is not specified for the element.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described above.</para>
+            <para>This property is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlSpace">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Xml.XmlSpace XmlSpace { public hidebysig virtual abstract specialname valuetype System.Xml.XmlSpace get_XmlSpace() }" />
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlSpace XmlSpace { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlSpace</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the white space attribute, <c>xml:space</c>, specifying how white space is
+   handled in the current element. </para>
+        </summary>
+        <value>
+          <para>One of the members of the <see cref="T:System.Xml.XmlSpace" qualify="true" /> enumeration, or <see cref="F:System.Xml.XmlSpace.None" /> if the white space
+   attribute is not specified for the element. </para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>As described above.</para>
+            <para>This property is read-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order
+   to provide the functionality described above, as there is no default implementation.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

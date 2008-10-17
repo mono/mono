@@ -1,0 +1,45 @@
+<Type Name="XmlSchemaInference+InferenceOption" FullName="System.Xml.Schema.XmlSchemaInference+InferenceOption">
+  <TypeSignature Language="C#" Value="public enum XmlSchemaInference.InferenceOption" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="Relaxed">
+      <MemberSignature Language="C#" Value="Relaxed" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaInference+InferenceOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Restricted">
+      <MemberSignature Language="C#" Value="Restricted" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaInference+InferenceOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

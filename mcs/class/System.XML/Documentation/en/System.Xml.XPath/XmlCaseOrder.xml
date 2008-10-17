@@ -1,0 +1,67 @@
+<Type Name="XmlCaseOrder" FullName="System.Xml.XPath.XmlCaseOrder">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public enum XmlCaseOrder" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>This is an enumeration type. It is always thread safe.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Tells XPath how to treat case when sorting.</summary>
+    <remarks>This can be used to fine-tune sorting.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="LowerFirst">
+      <MemberSignature Language="C#" Value="LowerFirst" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XmlCaseOrder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Lower case first.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XmlCaseOrder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Ignore case when sorting.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="UpperFirst">
+      <MemberSignature Language="C#" Value="UpperFirst" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XmlCaseOrder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Upper case first.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

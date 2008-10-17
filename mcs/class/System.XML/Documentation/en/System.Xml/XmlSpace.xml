@@ -1,0 +1,94 @@
+<Type Name="XmlSpace" FullName="System.Xml.XmlSpace" FullNameSP="System_Xml_XmlSpace" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable XmlSpace extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum XmlSpace" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para>Specifies the white
+      space attribute, <c>xml:space</c>, which indicates whether white space should be preserved in an element.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>This enumeration is used by instances of the <see cref="T:System.Xml.XmlParserContext" />,
+   <see cref="T:System.Xml.XmlTextReader" />, and <see cref="T:System.Xml.XmlTextWriter" /> classes.</para>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Default">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlSpace Default = 1" />
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlSpace</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Default</MemberValue>
+      <Docs>
+        <summary>
+          <para>
+            <c>xml:space = "default"</c> is in scope.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlSpace None = 0" />
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlSpace</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>None</MemberValue>
+      <Docs>
+        <summary>
+          <para>No <c>xml:space</c> attribute is in scope.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Preserve">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlSpace Preserve = 2" />
+      <MemberSignature Language="C#" Value="Preserve" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlSpace</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Preserve</MemberValue>
+      <Docs>
+        <summary>
+          <para>
+            <c>xml:space = "preserve"</c> is in scope.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

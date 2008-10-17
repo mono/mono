@@ -1,0 +1,2080 @@
+<Type Name="XmlConvert" FullName="System.Xml.XmlConvert" FullNameSP="System_Xml_XmlConvert" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public XmlConvert extends System.Object" />
+  <TypeSignature Language="C#" Value="public class XmlConvert" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>Encodes and decodes XML names and provides methods for converting
+      between common language infrastructure (CLI) types and XML Schema Definition
+      language (XSD) types. When converting data types, the values returned are locale independent.</para>
+    </summary>
+    <remarks>
+      <para>Element and attribute names or ID values are limited to a 
+      range of XML characters according to the Extensible Markup Language (XML) 1.0
+      (Second Edition) recommendation, located at
+      www.w3.org/TR/2000/REC-xml-20001006.html. When names contain invalid characters, they need to be translated into valid XML
+      names.</para>
+      <para> Many languages
+      and applications allow Unicode characters in their names, which are not valid in XML names.
+      For example, if 'Order Detail' were a column heading in a database, the database
+      allows the space between the words Order and Detail. However, in XML, the space
+      between Order and Detail is considered an invalid XML character. Thus, the
+      space, the invalid character, needs to be converted into an escaped hexadecimal
+      encoding and can be decoded later.</para>
+      <para> 
+      The <see cref="M:System.Xml.XmlConvert.EncodeName(System.String)" /> and <see cref="M:System.Xml.XmlConvert.DecodeName(System.String)" /> methods are
+      used to translate invalid
+      XML names into valid XML names and vice versa.</para>
+      <para>
+        <see cref="T:System.Xml.XmlConvert" /> 
+provides methods that enable the conversion of a <see cref="T:System.String" />
+to a
+CLI data type and vice-versa. Locale settings
+are not taken into account during data conversion.</para>
+      <para>
+        <see cref="T:System.Xml.XmlConvert" /> also provides 
+methods that convert between XML Schema Definition (XSD) data types (see http://www.w3.org/TR/xmlschema-2/#built-in-datatypes) and their
+corresponding common language infrastructure (CLI) data
+types. The following table shows the XSD
+data types and their corresponding CLI data types.</para>
+      <list type="table">
+        <listheader>
+          <term>XSD
+         data type</term>
+          <description>CLI
+         data type</description>
+        </listheader>
+        <item>
+          <term> hexBinary</term>
+          <description>A
+      <see cref="T:System.Byte" qualify="true" /> array</description>
+        </item>
+        <item>
+          <term> base64Binary</term>
+          <description>A
+      <see cref="T:System.Byte" qualify="true" />
+      array</description>
+        </item>
+        <item>
+          <term> Boolean</term>
+          <description>
+            <see cref="T:System.Boolean" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> Byte</term>
+          <description>
+            <see cref="T:System.SByte" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> normalizedString</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> Date</term>
+          <description>
+            <see cref="T:System.DateTime" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> duration</term>
+          <description>
+            <see cref="T:System.TimeSpan" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> dateTime</term>
+          <description>
+            <see cref="T:System.DateTime" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> decimal</term>
+          <description>
+            <see cref="T:System.Decimal" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> Double</term>
+          <description>
+            <see cref="T:System.Double" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> ENTITIES</term>
+          <description>A <see cref="T:System.String" qualify="true" /> array</description>
+        </item>
+        <item>
+          <term> ENTITY</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> Float</term>
+          <description>
+            <see cref="T:System.Single" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> gMonthDay</term>
+          <description>
+            <see cref="T:System.DateTime" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> gDay</term>
+          <description>
+            <see cref="T:System.DateTime" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> gYear</term>
+          <description>
+            <see cref="T:System.DateTime" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> gYearMonth</term>
+          <description>
+            <see cref="T:System.DateTime" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> ID</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> IDREF</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> IDREFS</term>
+          <description>A
+   <see cref="T:System.String" qualify="true" /> array</description>
+        </item>
+        <item>
+          <term> int</term>
+          <description>
+            <see cref="T:System.Int32" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> integer</term>
+          <description>
+            <see cref="T:System.Decimal" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> language</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> long</term>
+          <description>
+            <see cref="T:System.Int64" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> month</term>
+          <description>
+            <see cref="T:System.DateTime" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> Name</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> NCName</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> negativeInteger</term>
+          <description>
+            <see cref="T:System.Decimal" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> NMTOKEN</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> NMTOKENS</term>
+          <description>A
+   <see cref="T:System.String" qualify="true" /> array</description>
+        </item>
+        <item>
+          <term> nonNegativeInteger</term>
+          <description>
+            <see cref="T:System.Decimal" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> nonPositiveInteger</term>
+          <description>
+            <see cref="T:System.Decimal" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> NOTATION</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> positiveInteger</term>
+          <description>
+            <see cref="T:System.Decimal" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> short</term>
+          <description>
+            <see cref="T:System.Int16" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> string</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> time</term>
+          <description>
+            <see cref="T:System.DateTime" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> timePeriod</term>
+          <description>
+            <see cref="T:System.DateTime" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> token</term>
+          <description>
+            <see cref="T:System.String" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> unsignedByte</term>
+          <description>
+            <see cref="T:System.Byte" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> unsignedInt</term>
+          <description>
+            <see cref="T:System.UInt32" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> unsignedLong</term>
+          <description>
+            <see cref="T:System.UInt64" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> unsignedShort</term>
+          <description>
+            <see cref="T:System.UInt16" qualify="true" />
+          </description>
+        </item>
+        <item>
+          <term> anyURI</term>
+          <description>
+            <see cref="T:System.Uri" qualify="true" />
+          </description>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public XmlConvert ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Constructs a new instance of the <see cref="T:System.Xml.XmlConvert" /> class.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DecodeName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string DecodeName(string name)" />
+      <MemberSignature Language="C#" Value="public static string DecodeName (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> specifying the name to be decoded.</param>
+        <summary>
+          <para> Decodes a name.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the decoded name.</para>
+        </returns>
+        <remarks>
+          <para> Names are decoded using the following rules:</para>
+          <list type="bullet">
+            <item>
+              <term>
+         
+         Names are decoded from left to right.</term>
+            </item>
+            <item>
+              <term>
+         
+         Any sequence <c>_xHHHH_</c> (where <c>HHHH</c> stands for a valid, four
+      digit hexadecimal UCS-2 code) that has not been previously decoded is
+      transformed into the corresponding Unicode 2.1 (Unicode 3.0 if supported by
+      the application) character.</term>
+            </item>
+            <item>
+              <term>
+      
+      No
+      
+      short forms are recognized. They are passed on without translation. For
+      example, "_x70_" or "__" are not decoded.</term>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This method does the reverse of the <see cref="M:System.Xml.XmlConvert.EncodeName(System.String)" />, <see cref="M:System.Xml.XmlConvert.EncodeLocalName(System.String)" />, and <see cref="M:System.Xml.XmlConvert.EncodeNmToken(System.String)" /> methods.</para>
+          </block>
+        </remarks>
+        <example>
+          <para>The following example demonstrates the valid and invalid
+      character formats for decoding.</para>
+          <code lang="C#">using System;
+using System.Xml;
+
+public class App {
+
+  public static void Main() {
+
+    Console.WriteLine( "{0} : {1} : {2}",
+      // _x0069_ decodes to i
+      XmlConvert.DecodeName("Order #1_x0069_"),
+
+      // missing beginning _
+      XmlConvert.DecodeName("Order #1x0069_"),
+
+      // short form
+      XmlConvert.DecodeName("Order #1_x69_") ); 
+  }
+}
+   </code>
+          <para>The output is</para>
+          <para>Order #1i : Order #1x0069_ : Order #1_x69_</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EncodeLocalName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string EncodeLocalName(string name)" />
+      <MemberSignature Language="C#" Value="public static string EncodeLocalName (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> specifying the name to be encoded.</param>
+        <summary>
+          <para> Converts a name to a valid XML local name.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the XML local name. If <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />, <paramref name="name" /> is returned.</para>
+        </returns>
+        <remarks>
+          <para>This method is similar to the <see cref="M:System.Xml.XmlConvert.EncodeName(System.String)" /> method except that it encodes the colon (:) character, which
+   guarantees that the name can be used as the local name part of a namespace
+   qualified name.</para>
+        </remarks>
+        <example>
+          <para>The following example compares the <see cref="M:System.Xml.XmlConvert.EncodeLocalName(System.String)" />, <see cref="M:System.Xml.XmlConvert.EncodeName(System.String)" />, and <see cref="M:System.Xml.XmlConvert.EncodeNmToken(System.String)" /> methods when the name to be encoded is "7:+".</para>
+          <code lang="C#">using System;
+using System.Xml;
+
+public class App {
+
+  public static void Main() {
+
+    Console.WriteLine( "LocalName  {0}",
+      XmlConvert.EncodeLocalName("7:+") ); 
+    Console.WriteLine( "Name  {0}",
+      XmlConvert.EncodeName("7:+") );
+    Console.WriteLine( "NmToken  {0}",
+      XmlConvert.EncodeNmToken("7:+") );
+  }
+}
+</code>
+          <para>The output is</para>
+          <para>LocalName _x0037__x003A__x002B_</para>
+          <para>Name _x0037_:_x002B_</para>
+          <para>NmToken 7:_x002B_</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EncodeName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string EncodeName(string name)" />
+      <MemberSignature Language="C#" Value="public static string EncodeName (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> specifying the name to be encoded.</param>
+        <summary>
+          <para> Converts a
+      name to a valid XML name.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the XML name. If <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />, <paramref name="name" /> is returned.</para>
+        </returns>
+        <remarks>
+          <para>This method translates invalid characters, such as spaces or half-width
+      Katakana, that need to be mapped to XML names without the support or presence of
+      schemas. The invalid characters are translated into escaped numeric entity
+      encodings.</para>
+          <para>The escape character is '_'. Any XML name character that does not conform to
+      the W3C Extensible Markup Language (XML) 1.0 specification is escaped as
+      <c>_xHHHH_</c>. The <c>HHHH</c> string stands for the four-digit hexadecimal UCS-2 code for the
+      character in most significant bit first order. For example, the name "Order
+      Details" is encoded as "Order<c>_x0020_</c>Details".</para>
+          <para> The underscore character does not need to be escaped
+      unless it is followed by a character sequence that together with the underscore can be misinterpreted as an escape sequence
+      when decoding the name. No short forms are encoded. For example, the
+      forms "_x20_" and "__" are not encoded.</para>
+          <para> This method guarantees the name is valid according to the XML specification.
+      It allows colons in any position, which means the name might still be invalid according
+      to the W3C Namespace Specification (www.w3.org/TR/REC-xml-names). To guarantee it is a valid namespace qualified
+      name use the <see cref="M:System.Xml.XmlConvert.EncodeLocalName(System.String)" />
+      method for the prefix and local name
+      parts and join the result with a colon.</para>
+        </remarks>
+        <example>
+          <para>See the <see cref="M:System.Xml.XmlConvert.EncodeLocalName(System.String)" /> method for an example comparing the <see cref="M:System.Xml.XmlConvert.EncodeLocalName(System.String)" />, <see cref="M:System.Xml.XmlConvert.EncodeName(System.String)" />, and <see cref="M:System.Xml.XmlConvert.EncodeNmToken(System.String)" /> methods.</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EncodeNmToken">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string EncodeNmToken(string name)" />
+      <MemberSignature Language="C#" Value="public static string EncodeNmToken (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> specifying the name to be encoded.</param>
+        <summary>
+          <para> Converts
+      a name to a valid XML name token.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" /> containing the XML name token. If <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />, <paramref name="name" /> is
+   returned.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para>See the <see cref="M:System.Xml.XmlConvert.EncodeLocalName(System.String)" /> method for an example comparing the
+<see cref="M:System.Xml.XmlConvert.EncodeLocalName(System.String)" />, <see cref="M:System.Xml.XmlConvert.EncodeName(System.String)" />, and <see cref="M:System.Xml.XmlConvert.EncodeNmToken(System.String)" /> methods.</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToBoolean">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool ToBoolean(string s)" />
+      <MemberSignature Language="C#" Value="public static bool ToBoolean (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.Boolean" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Boolean" /> equivalent of
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This method removes leading and trailing white space. After this trimming, valid strings are "1" and "true", which return
+   <see langword="true" />, and "0" and "false", which return <see langword="false" />.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> does not represent a <see cref="T:System.Boolean" /> value.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToByte">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int8 ToByte(string s)" />
+      <MemberSignature Language="C#" Value="public static byte ToByte (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.Byte" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Byte" /> equivalent of
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <see cref="M:System.Byte.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.Byte.MinValue" /> or greater than <see cref="F:System.Byte.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToChar">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Char ToChar(string s)" />
+      <MemberSignature Language="C#" Value="public static char ToChar (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The string containing a single character to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.Char" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Char" /> equivalent of
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <see cref="M:System.Char.Parse(System.String)" />(<paramref name="s" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> contains more than one character.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToDateTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime ToDateTime(string s)" />
+      <MemberSignature Language="C#" Value="public static DateTime ToDateTime (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.DateTime" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.DateTime" /> equivalent of <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <paramref name="s" /> is required to be in one of the following string formats or
+   a <see cref="T:System.FormatException" /> is thrown.</para>
+          <para> "yyyy-MM-ddTHH:mm:ss"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.f"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.ff"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fff"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.ffff"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fffff"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.ffffff"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fffffff"</para>
+          <para> "yyyy-MM-ddTHH:mm:ssZ"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fZ"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.ffZ"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fffZ"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.ffffZ"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fffffZ"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.ffffffZ"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fffffffZ"</para>
+          <para> "yyyy-MM-ddTHH:mm:sszzzzzz"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fzzzzzz"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.ffzzzzzz"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fffzzzzzz"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.ffffzzzzzz"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fffffzzzzzz"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.ffffffzzzzzz"</para>
+          <para> "yyyy-MM-ddTHH:mm:ss.fffffffzzzzzz"</para>
+          <para> "HH:mm:ss"</para>
+          <para> "HH:mm:ss.f"</para>
+          <para> "HH:mm:ss.ff"</para>
+          <para> "HH:mm:ss.fff"</para>
+          <para> "HH:mm:ss.ffff"</para>
+          <para> "HH:mm:ss.fffff"</para>
+          <para> "HH:mm:ss.ffffff"</para>
+          <para> "HH:mm:ss.fffffff"</para>
+          <para> "HH:mm:ssZ"</para>
+          <para> "HH:mm:ss.fZ"</para>
+          <para> "HH:mm:ss.ffZ"</para>
+          <para> "HH:mm:ss.fffZ"</para>
+          <para> "HH:mm:ss.ffffZ"</para>
+          <para> "HH:mm:ss.fffffZ"</para>
+          <para> "HH:mm:ss.ffffffZ"</para>
+          <para> "HH:mm:ss.fffffffZ"</para>
+          <para> "HH:mm:sszzzzzz"</para>
+          <para> "HH:mm:ss.fzzzzzz"</para>
+          <para> "HH:mm:ss.ffzzzzzz"</para>
+          <para> "HH:mm:ss.fffzzzzzz"</para>
+          <para> "HH:mm:ss.ffffzzzzzz"</para>
+          <para> "HH:mm:ss.fffffzzzzzz"</para>
+          <para> "HH:mm:ss.ffffffzzzzzz"</para>
+          <para> "HH:mm:ss.fffffffzzzzzz"</para>
+          <para> "yyyy-MM-dd"</para>
+          <para> "yyyy-MM-ddZ"</para>
+          <para> "yyyy-MM-ddzzzzzz"</para>
+          <para> "yyyy-MM"</para>
+          <para> "yyyy-MMZ"</para>
+          <para> "yyyy-MMzzzzzz"</para>
+          <para> "yyyy"</para>
+          <para> "yyyyZ"</para>
+          <para> "yyyyzzzzzz"</para>
+          <para> "--MM-dd"</para>
+          <para> "--MM-ddZ"</para>
+          <para> "--MM-ddzzzzzz"</para>
+          <para> "---dd"</para>
+          <para> "---ddZ"</para>
+          <para> "---ddzzzzzz"</para>
+          <para> "--MM--"</para>
+          <para> "--MM--Z"</para>
+          <para> "--MM--zzzzzz"</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <para>
+            <paramref name="s" /> is <see cref="F:System.String.Empty" /> or is not in the correct format.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToDateTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime ToDateTime(string s, string format)" />
+      <MemberSignature Language="C#" Value="public static DateTime ToDateTime (string s, string format);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="format" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <param name="format">A <see cref="T:System.String" /> specifying the format used to validate <paramref name="s" />.</param>
+        <param name="format">To be added.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.DateTime" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.DateTime" /> equivalent of <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" />(<paramref name="s" />, <paramref name="format" />, <see cref="P:System.Globalization.DateTimeFormatInfo.InvariantInfo" />, <see cref="F:System.Globalization.DateTimeStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.DateTimeStyles.AllowTrailingWhite" />).</para>
+          <para>Valid formats include "yyyy-MM-ddTHH:mm:sszzzzzz" and its subsets.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <para>
+            <paramref name="s" /> or <paramref name="format" /> is <see cref="F:System.String.Empty" /> .</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="s" /> does not contain a date and time that corresponds to <paramref name="format" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToDateTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime ToDateTime(string s, class System.String[] formats)" />
+      <MemberSignature Language="C#" Value="public static DateTime ToDateTime (string s, string[] formats);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="formats" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <param name="formats">A <see cref="T:System.String" /> array specifying formats used to validate <paramref name="s" />.</param>
+        <param name="formats">To be added.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.DateTime" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.DateTime" /> equivalent of <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" />(<paramref name="s" />, <paramref name="formats" />, <see cref="P:System.Globalization.DateTimeFormatInfo.InvariantInfo" />, <see cref="F:System.Globalization.DateTimeStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.DateTimeStyles.AllowTrailingWhite" />).</para>
+          <para>This method allows <paramref name="s" /> to
+be validated against multiple formats.</para>
+          <para>Valid formats include "yyyy-MM-ddTHH:mm:sszzzzzz" and its subsets.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <para>
+            <paramref name="s" /> or an element of <paramref name="formats" /> is <see cref="F:System.String.Empty" />.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="s" /> does not contain a date and time that corresponds to any of the elements of <paramref name="formats" />.</para>
+        </exception>
+        <example>
+          <para>The following example converts a <see cref="T:System.String" /> to a <see cref="T:System.DateTime" /> and writes the
+   result to the console.</para>
+          <code lang="C#">using System;
+using System.Xml;
+
+public class App {
+
+  public static void Main() {
+
+    String someDate = "1966-09-19T03:45:11Z";
+    String[] datetimeFormats = new String[]
+      {"HH:mm:ss", "yyyy-MM-ddTHH:mm:ssZ"};
+    DateTime dateTime =
+      XmlConvert.ToDateTime(someDate, datetimeFormats);
+    Console.WriteLine( "{0}", dateTime.ToString() );
+  }
+}
+</code>
+          <para>The output is</para>
+          <para>9/18/1966 8:45:11 PM</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToDateTime">
+      <MemberSignature Language="C#" Value="public static DateTime ToDateTime (string value, System.Xml.XmlDateTimeSerializationMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="mode" Type="System.Xml.XmlDateTimeSerializationMode" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToDateTimeOffset">
+      <MemberSignature Language="C#" Value="public static DateTimeOffset ToDateTimeOffset (string s);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTimeOffset</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToDateTimeOffset">
+      <MemberSignature Language="C#" Value="public static DateTimeOffset ToDateTimeOffset (string s, string format);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTimeOffset</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="format" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="format">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToDateTimeOffset">
+      <MemberSignature Language="C#" Value="public static DateTimeOffset ToDateTimeOffset (string s, string[] formats);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTimeOffset</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="formats" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <param name="formats">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToDecimal">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal ToDecimal(string s)" />
+      <MemberSignature Language="C#" Value="public static decimal ToDecimal (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Decimal</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.Decimal" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Decimal" />
+equivalent of <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <see cref="M:System.Decimal.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />|<see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" />|<see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.Decimal.MinValue" /> or greater than <see cref="F:System.Decimal.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToDouble">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 ToDouble(string s)" />
+      <MemberSignature Language="C#" Value="public static double ToDouble (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.Double" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Double" />
+equivalent of <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="s" /> is "-INF", this method returns <see cref="F:System.Double.NegativeInfinity" />.</para>
+          <para>If <paramref name="s" /> is "INF", this method returns <see cref="F:System.Double.PositiveInfinity" />.</para>
+          <para>Otherwise, this method calls <see cref="M:System.Double.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />|<see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" />|<see cref="F:System.Globalization.NumberStyles.AllowExponent" />|<see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.Double.MinValue" /> or greater than <see cref="F:System.Double.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToGuid">
+      <MemberSignature Language="C#" Value="public static Guid ToGuid (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToInt16">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 ToInt16(string s)" />
+      <MemberSignature Language="C#" Value="public static short ToInt16 (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.Int16" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Int16" />
+equivalent of <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <see cref="M:System.Int16.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />|<see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.Int16.MinValue" /> or greater than <see cref="F:System.Int16.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToInt32">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 ToInt32(string s)" />
+      <MemberSignature Language="C#" Value="public static int ToInt32 (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.Int32" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Int32" />
+equivalent of <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <see cref="M:System.Int32.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />|<see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.Int32.MinValue" /> or greater than <see cref="F:System.Int32.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToInt64">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 ToInt64(string s)" />
+      <MemberSignature Language="C#" Value="public static long ToInt64 (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.Int64" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Int64" />
+equivalent of <paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <see cref="M:System.Int64.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />|<see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.Int64.MinValue" /> or greater than <see cref="F:System.Int64.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToSByte">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int8 ToSByte(string s)" />
+      <MemberSignature Language="C#" Value="public static sbyte ToSByte (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.SByte" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.SByte" /> equivalent of
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use
+   <see cref="M:System.Xml.XmlConvert.ToInt16(System.String)" />(<see cref="T:System.String" />).</para>
+          <para>This method calls <see cref="M:System.SByte.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />|<see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.SByte.MinValue" /> or greater than <see cref="F:System.SByte.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToSingle">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 ToSingle(string s)" />
+      <MemberSignature Language="C#" Value="public static float ToSingle (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.Single" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.Single" /> equivalent of
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="s" /> is "-INF", this method returns <see cref="F:System.Single.NegativeInfinity" />.</para>
+          <para>If <paramref name="s" /> is "INF", this method returns <see cref="F:System.Single.PositiveInfinity" />.</para>
+          <para>Otherwise, this method calls <see cref="M:System.Single.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />|<see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" />|<see cref="F:System.Globalization.NumberStyles.AllowExponent" />|<see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.Single.MinValue" /> or greater than <see cref="F:System.Single.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(bool value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (bool value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Boolean" /> to convert.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.Boolean" /> to a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> "true" or the <see cref="T:System.String" />
+"false".</para>
+        </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(unsigned int8 value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (byte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Byte" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.Byte" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <paramref name="value" />.ToString(<see langword="null" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" /> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (char value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Char" /> to convert.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.Char" /> to a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <paramref name="value" />.ToString(<see langword="null" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(valuetype System.DateTime value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (DateTime value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.DateTime" /> to convert.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.DateTime" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <see cref="M:System.Xml.XmlConvert.ToString(System.Boolean)" />(<paramref name="value" />, 
+   "yyyy-MM-ddTHH:mm:ss.fffffffzzzzzz").</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public static string ToString (DateTimeOffset value);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.DateTimeOffset" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(decimal value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (decimal value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Decimal" /> to convert.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.Decimal" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <paramref name="value" />.ToString(<see langword="null" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" /> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(float64 value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (double value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Char" /> to convert.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.Char" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="value" /> is <see cref="F:System.Double.NegativeInfinity" />, this method returns "-INF".</para>
+          <para>If <paramref name="value" /> is <see cref="F:System.Double.PositiveInfinity" />, this method returns "INF".</para>
+          <para>Otherwise, this method calls <paramref name="value" />.ToString("R", <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public static string ToString (Guid value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Guid" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(int16 value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (short value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int16" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.Int16" /> to a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <paramref name="value" />.ToString(<see langword="null" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" /> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(int32 value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int32" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.Int32" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <paramref name="value" />.ToString(<see langword="null" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" /> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(int64 value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (long value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Int64" /> to convert.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.Int64" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This method calls <paramref name="value" />.ToString(<see langword="null" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(int8 value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (sbyte value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.SByte" /> to convert.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.SByte" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use
+   <see cref="M:System.Xml.XmlConvert.ToString(System.Boolean)" />(<see cref="T:System.Int16" />).</para>
+          <para>This method calls <paramref name="value" />.ToString(<see langword="null" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" /> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(float32 value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (float value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.Single" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.Single" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="value" /> is <see cref="F:System.Double.NegativeInfinity" />, this method returns "-INF".</para>
+          <para>If <paramref name="value" /> is <see cref="F:System.Double.PositiveInfinity" />, this method returns "INF".</para>
+          <para>Otherwise, this method calls <paramref name="value" />.ToString("R", <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>1</Excluded>
+      <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(valuetype System.TimeSpan value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (TimeSpan value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.TimeSpan" /> to convert.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.TimeSpan" /> to a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <example>
+          <para> The following example converts a <see cref="T:System.TimeSpan" /> to a <see cref="T:System.String" /> and writes the result
+   to the console.</para>
+          <code lang="C#">using System;
+using System.Xml;
+
+public class App {
+
+  public static void Main() {
+
+    TimeSpan timeSpan = new TimeSpan(3, 11, 59, 6, 128);
+    Console.WriteLine( "{0}",
+      XmlConvert.ToString(timeSpan) );
+  }
+}
+</code>
+          <para>The output is</para>
+          <para>P3DT11H59M6.128S</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(unsigned int16 value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (ushort value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt16" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt16" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.UInt16" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant
+      alternative, use <see cref="M:System.Xml.XmlConvert.ToString(System.Boolean)" />(<see cref="T:System.Int32" />).</para>
+          <para>This method calls <paramref name="value" />.ToString(<see langword="null" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" /> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (uint value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt32" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.UInt32" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use
+   <see cref="M:System.Xml.XmlConvert.ToString(System.Boolean)" />(<see cref="T:System.Int64" />).</para>
+          <para>This method calls <paramref name="value" />.ToString(<see langword="null" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" /> ).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public static string ToString (ulong value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.UInt64" /> to convert.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.UInt64" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" />.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use
+   <see cref="M:System.Xml.XmlConvert.ToString(System.Boolean)" />(<see cref="T:System.Decimal" />).</para>
+          <para>This method calls <paramref name="value" />.ToString(<see langword="null" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string ToString(valuetype System.DateTime value, string format)" />
+      <MemberSignature Language="C#" Value="public static string ToString (DateTime value, string format);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.DateTime" />
+        <Parameter Name="format" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">The <see cref="T:System.DateTime" /> to convert.</param>
+        <param name="format">A <see cref="T:System.String" /> specifying the format to apply to <paramref name="value" />. Valid formats include "yyyy-MM-ddTHH:mm:sszzzzzz" and its subsets. </param>
+        <param name="format">To be added.</param>
+        <summary>
+          <para> Converts a <see cref="T:System.DateTime" /> to a <see cref="T:System.String" /> .</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /> representation of <paramref name="value" /> in the specified format..</para>
+        </returns>
+        <remarks>
+          <para> This method calls <paramref name="value" />.ToString(<paramref name="format" />, <see cref="P:System.Globalization.DateTimeFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public static string ToString (DateTime value, System.Xml.XmlDateTimeSerializationMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.DateTime" />
+        <Parameter Name="mode" Type="System.Xml.XmlDateTimeSerializationMode" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public static string ToString (DateTimeOffset value, string format);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.DateTimeOffset" />
+        <Parameter Name="format" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="format">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToTimeSpan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan ToTimeSpan(string s)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan ToTimeSpan (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.TimeSpan" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.TimeSpan" /> equivalent of
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format to represent a <see cref="T:System.TimeSpan" /> value.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToUInt16">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int16 ToUInt16(string s)" />
+      <MemberSignature Language="C#" Value="public static ushort ToUInt16 (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.UInt16" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.UInt16" /> equivalent of
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use
+   <see cref="M:System.Xml.XmlConvert.ToInt32(System.String)" />(<see cref="T:System.String" />).</para>
+          <para>This method calls <see cref="M:System.UInt16.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />|<see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.UInt16.MinValue" /> or greater than <see cref="F:System.UInt16.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToUInt32">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int32 ToUInt32(string s)" />
+      <MemberSignature Language="C#" Value="public static uint ToUInt32 (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.UInt32" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.UInt32" /> equivalent of
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use
+   <see cref="M:System.Xml.XmlConvert.ToInt64(System.String)" />(<see cref="T:System.String" />).</para>
+          <para>This method calls <see cref="M:System.UInt32.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />|<see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.UInt32.MinValue" /> or greater than <see cref="F:System.UInt32.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ToUInt64">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int64 ToUInt64(string s)" />
+      <MemberSignature Language="C#" Value="public static ulong ToUInt64 (string s);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The <see cref="T:System.String" /> to convert.</param>
+        <summary>
+          <para>Converts a <see cref="T:System.String" /> to a <see cref="T:System.UInt64" /> equivalent.</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.UInt64" /> equivalent of
+<paramref name="s" />.</para>
+        </returns>
+        <remarks>
+          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use
+   <see cref="M:System.Xml.XmlConvert.ToDecimal(System.String)" />(<see cref="T:System.String" />).</para>
+          <para>This method calls <see cref="M:System.UInt64.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />|<see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />|<see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" />).</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is a null reference.</exception>
+        <exception cref="T:System.FormatException">
+          <paramref name="s" /> is not in the correct format.</exception>
+        <exception cref="T:System.OverflowException">
+          <paramref name="s" /> represents a number less than <see cref="F:System.UInt64.MinValue" /> or greater than <see cref="F:System.UInt64.MaxValue" />. </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="VerifyName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string VerifyName(string name)" />
+      <MemberSignature Language="C#" Value="public static string VerifyName (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">A <see cref="T:System.String" /> specifying the name to verify.</param>
+        <summary>
+          <para> Verifies that the name is a valid name as defined in
+      the W3C Extended Markup Language recommendation (REC-xml-names-19990114).</para>
+        </summary>
+        <returns>
+          <para>The <see cref="T:System.String" /><paramref name="name" />, if it is a valid XML name.</para>
+        </returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />.</exception>
+        <exception cref="T:System.Xml.XmlException">
+          <paramref name="name" /> is not a valid XML name.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VerifyNCName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string VerifyNCName(string name)" />
+      <MemberSignature Language="C#" Value="public static string VerifyNCName (string ncname);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ncname" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="ncname">A <see cref="T:System.String" /> specifying the name to verify.</param>
+        <summary>
+          <para>Verifies that the name is a valid qualified name as defined in the
+      W3C Extended Markup Language recommendation (REC-xml-names-19990114).</para>
+        </summary>
+        <returns>
+          <para> The <see cref="T:System.String" /><paramref name="name" />, if it is a valid XML qualified name.</para>
+        </returns>
+        <remarks>
+          <para>If <paramref name="name" /> contains a colon, <see cref="T:System.Xml.XmlException" /> is
+   thrown.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />.</exception>
+        <exception cref="T:System.Xml.XmlException">
+          <paramref name="name" /> is not a valid XML qualified name.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VerifyNMTOKEN">
+      <MemberSignature Language="C#" Value="public static string VerifyNMTOKEN (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VerifyTOKEN">
+      <MemberSignature Language="C#" Value="public static string VerifyTOKEN (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

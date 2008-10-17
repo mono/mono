@@ -1,0 +1,761 @@
+<Type Name="XslTransform" FullName="System.Xml.Xsl.XslTransform">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class XslTransform" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>All the dynamic members are not designed to be thread safe.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Handles XSL Transformation (XSLT)</summary>
+    <remarks>
+      <para>
+	This class handles XSL Transformation version 1.0 (see <a href="http://www.w3.org/TR/xslt">World Wide Web Consortium (W3C) Recommendation</a>).</para>
+      <para>
+	To process XSLT, a stylesheet document and an input document to the transformation is required. Both of them need to be supplied as a string URI, <see cref="T:System.IO.Stream" />, <see cref="T:System.IO.TextReader" />, <see cref="T:System.Xml.XmlReader" />, <see cref="T:System.Xml.XPath.IXPathNavigable" />, or <see cref="T:System.Xml.XPath.XPathNavigator" />. All of them turns into <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
+      <para>
+	XslTransform loads one stylesheet via <see cref="M:System.Xml.Xsl.XslTransform.Load" /> method, and reads the transformation input via <see cref="M:System.Xml.Xsl.XslTransform.Transform" /> method.
+	</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XslTransform ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>The constructor.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (string url);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="url" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="url">A string that represents the stylesheet URI that is being loaded.</param>
+        <summary>Loads and compiles the stylesheet. The call to this method is equivalent to Load (url, xmlResolver) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> that is set in advance.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XmlReader stylesheet);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stylesheet" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="stylesheet">A <see cref="T:System.Xml.XmlReader" /> that represents the stylesheet document.</param>
+        <summary>Loads and compiles the stylesheet. The call to this method is equivalent to Load (stylesheet, xmlResolver) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> that is set in advance.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XPath.IXPathNavigable stylesheet);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stylesheet" Type="System.Xml.XPath.IXPathNavigable" />
+      </Parameters>
+      <Docs>
+        <param name="stylesheet">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that represents the stylesheet document.</param>
+        <summary>Loads and compiles the stylesheet. The call to this method is equivalent to Load (stylesheet.CreateNavigator (), xmlResolver, null) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> that is set in advance.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XPath.XPathNavigator stylesheet);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stylesheet" Type="System.Xml.XPath.XPathNavigator" />
+      </Parameters>
+      <Docs>
+        <param name="stylesheet">A <see cref="T:System.Xml.XmlReader" /> that represents the stylesheet document.</param>
+        <summary>Loads and compiles the stylesheet. The call to this method is equivalent to Load (new XPathDocument (stylesheet), xmlResolver, null) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> that is set in advance.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (string url, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="url" Type="System.String" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="url">A string that represents the stylesheet URI that is being loaded.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve inported or included documents.</param>
+        <summary>Loads and compiles the stylesheet. As for stylesheet compilation details, see Load (XPathNavigator, XmlResolver) for details.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XmlReader stylesheet, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stylesheet" Type="System.Xml.XmlReader" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="stylesheet">A <see cref="T:System.Xml.XmlReader" /> that represents the stylesheet document.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve inported or included documents.</param>
+        <summary>Loads and compiles the stylesheet. The call to this method is equivalent to Load (new XPathDocument (stylesheet), resolver).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XPath.IXPathNavigable stylesheet, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stylesheet" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="stylesheet">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that represents the stylesheet document.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve inported or included documents.</param>
+        <summary>Loads and compiles the stylesheet. The call to this method is equivalent to Load (stylesheet.CreateNavigator (), resolver, null).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XPath.XPathNavigator stylesheet, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stylesheet" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="stylesheet">A <see cref="T:System.Xml.XPath.XPathNavigator" /> that represents the stylesheet document.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve inported or included documents.</param>
+        <summary>Loads and compiles the stylesheet. The call to this method is equivalent to Load (stylesheet, resolver, null).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XmlReader stylesheet, System.Xml.XmlResolver resolver, System.Security.Policy.Evidence evidence);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stylesheet" Type="System.Xml.XmlReader" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+        <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="stylesheet">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that represents the stylesheet document.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve inported or included documents.</param>
+        <param name="evidence">Not in use as yet. It will be used to load compiled stylesheet script assemblies.</param>
+        <summary>Loads and compiles the stylesheet. The call to this method is equivalent to Load (new XPathDocument (stylesheet).CreateNavigator (), resolver, evidence).</summary>
+        <remarks>
+          <para>Note: Evidence is not used as yet.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XPath.IXPathNavigable stylesheet, System.Xml.XmlResolver resolver, System.Security.Policy.Evidence evidence);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stylesheet" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+        <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="stylesheet">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that represents the stylesheet document.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve inported or included documents.</param>
+        <param name="evidence">Not in use as yet. It will be used to load compiled stylesheet script assemblies.</param>
+        <summary>Loads and compiles the stylesheet. The call to this method is equivalent to Load (stylesheet.CreateNavigator (), resolver, evidence).</summary>
+        <remarks>
+          <para>Note: Evidence is not used as yet.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XPath.XPathNavigator stylesheet, System.Xml.XmlResolver resolver, System.Security.Policy.Evidence evidence);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stylesheet" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+        <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <param name="stylesheet">To be added.</param>
+        <param name="resolver">To be added.</param>
+        <param name="evidence">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (string inputfile, string outputfile);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputfile" Type="System.String" />
+        <Parameter Name="outputfile" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="inputfile">A string that represents the input URI</param>
+        <param name="outputfile">A string that represents the output URI</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is the same as Transform (inputfile, outputfile, xmlResolver) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> that is set in advance. See Transform (XPathNavigator, XsltArgumentList, XmlWriter, XmlResolver) override for details.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlReader Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator instance.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is equivalent to Transform (input.CreateNavigator (), args, xmlResolver) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> property that was set in advance.</summary>
+        <returns>A <see cref="T:System.Xml.XmlReader" /> that holds the transformation output.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlReader Transform (System.Xml.XPath.XPathNavigator input, System.Xml.Xsl.XsltArgumentList args);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator instance.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is equivalent to Transform (input, args, xmlResolver) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> property that was set in advance).</summary>
+        <returns>A <see cref="T:System.Xml.XmlReader" /> instance that holds the transformation result.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (string inputfile, string outputfile, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputfile" Type="System.String" />
+        <Parameter Name="outputfile" Type="System.String" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="inputfile">A string that represents the input URI</param>
+        <param name="outputfile">A string that represents the output URI</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve external documents referenced by document() function.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. About transformation, see Transform (XPathNavigator, XsltArgumentList, XmlWriter, XmlResolver) for details.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args, System.IO.Stream output);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator instance.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.IO.Stream" /> that is used to write the transformation result.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is mostly the same as Transform (input, args, new XmlTextWriter (output)), though not equivalent about encoding detection.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args, System.IO.TextWriter output);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator instance.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.IO.TextWriter" /> that is used to write the transformation result.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is equivalent to Transform (input.CreateNavigator (), args, output, xmlResolver) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> property that was set in advance).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlReader Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator instance.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve external documents referenced by document() function.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is equivalent to Transform (input.CreateNavigator (), args, resolver).</summary>
+        <returns>A <see cref="T:System.Xml.XmlReader" /> instance that holds the transformation result.</returns>
+        <remarks>There is no way to use this XmlResolver externally.
+		</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args, System.Xml.XmlWriter output);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator instance.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.Xml.XmlWriter" /> that is used to write the transformation result.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is equivalent to Transform (input.CreateNavigator (), args, output, xmlResolver) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> property that was set in advance).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.XPathNavigator input, System.Xml.Xsl.XsltArgumentList args, System.IO.Stream output);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator instance.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.IO.Stream" /> that is used to write the transformation result.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is equivalent to Transform (input, args, output, xmlResolver) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> property that was set in advance).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.XPathNavigator input, System.Xml.Xsl.XsltArgumentList args, System.IO.TextWriter output);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.XPathNavigator" /> that represens the input document.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.IO.TextWriter" /> that is used to write the transformation result.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is equivalent to Transform (input, args, output, xmlResolver) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> property that was set in advance).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlReader Transform (System.Xml.XPath.XPathNavigator input, System.Xml.Xsl.XsltArgumentList args, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.XPathNavigator" /> that represents an input document.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve external documents referenced by document() function.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. About transformation, see Transform (XPathNavigator, XsltArgumentList, XmlWriter, XmlResolver) for details.</summary>
+        <returns>A <see cref="T:System.Xml.XmlReader" /> instance that holds the transformation result.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.XPathNavigator input, System.Xml.Xsl.XsltArgumentList args, System.Xml.XmlWriter output);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator instance.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.Xml.XmlWriter" /> that is used to write the transformation result.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is equivalent to Transform (input, args, output, xmlResolver) where xmlResolver is the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> property that was set in advance).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args, System.IO.Stream output, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.IO.Stream" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator document.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.IO.Stream" /> that is used to write transformation result.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve external documents referenced by document() function.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. About transformation, see Transform (XPathNavigator, XsltArgumentList, XmlWriter, XmlResolver) for details.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args, System.IO.TextWriter output, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.IO.TextWriter" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator document.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.IO.TextWriter" /> that is used to write transformation result.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve external documents referenced by document() function.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. About transformation, see Transform (XPathNavigator, XsltArgumentList, XmlWriter, XmlResolver) for details.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args, System.Xml.XmlWriter output, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.Xml.XmlWriter" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.IXPathNavigable" /> that is used to create input XPathNavigator document.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.Xml.XmlWriter" /> that is used to write transformation result.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve external documents referenced by document() function.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. The call to this method is equivalent to Transform (input.CreateNavigator (), args, output, resolver).</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.XPathNavigator input, System.Xml.Xsl.XsltArgumentList args, System.IO.Stream output, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.IO.Stream" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.XPathNavigator" /> that represents the input document.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.IO.Stream" /> that is used to write transformation result.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve external documents referenced by document() function.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. About transformation, see Transform (XPathNavigator, XsltArgumentList, XmlWriter, XmlResolver) for details.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.XPathNavigator input, System.Xml.Xsl.XsltArgumentList args, System.IO.TextWriter output, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.IO.TextWriter" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.XPathNavigator" /> that represents the input document.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.IO.TextWriter" /> that is used to write transformation result.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve external documents referenced by document() function.</param>
+        <summary>Transforms the input document with already-loaded stylesheet. About transformation, see Transform (XPathNavigator, XsltArgumentList, XmlWriter, XmlResolver) for details.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.XPathNavigator input, System.Xml.Xsl.XsltArgumentList args, System.Xml.XmlWriter output, System.Xml.XmlResolver resolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.XPathNavigator" />
+        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="output" Type="System.Xml.XmlWriter" />
+        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <param name="input">A <see cref="T:System.Xml.XPath.XPathNavigator" /> that represents the input document.</param>
+        <param name="args">A <see cref="T:System.Xml.Xsl.XsltArgumentList" /> that is used to provide extension objects and/or parameters.</param>
+        <param name="output">A <see cref="T:System.Xml.XmlWriter" /> that is used to write transformation result.</param>
+        <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve external documents referenced by document() function.</param>
+        <summary>Transforms the input document with already-loaded stylesheet.</summary>
+        <remarks>
+          <para>
+		This method processes XSL transformation. See W3C XSL Transformation recommendation for the transformation details.
+		</para>
+          <para>When a dynamic transformation error (not stylesheet compilation error) happened, a <see cref="T:System.Xml.Xsl.XsltException" /> will be thrown.
+		</para>
+          <para>For security reason, supplied XmlResolver is used to resolve external documents by such as XSLT document() function (see W3C specification for the details). If not explicitly passed as an argument, <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> is used. If the property was not set, then <see cref="T:System.Xml.XmlUrlResolver" /> is used by default (not safe; that resolves any documents specified).
+		</para>
+          <para>
+		This class can handle user-defined extension objects. To use extension objects, specify an extension object via <see cref="M:System.Xml.Xsl.XsltArgumentList.AddExtensionObjdect" /> method of "args" parameter instance. Extension objects are accessible in the stylesheet as an extension function. Extension objects are mapped from namespaceUri to object. The type of an extension object is not limited; the transformation engine invokes the specified methods using reflection.
+		</para>
+          <para>Note: since extension objects are usual CLI object, there are some limitation on function names. For example, EXSLT ( http://www.exslt.org ) can never be fully implemented, since that specification for example contains "date-time()" function.
+		</para>
+          <para>Also, "transformation parameters" is supported, which can be specified via <see cref="M:System.Xml.Xsl.XsltArgumentList.AddParameter" /> method of "args" parameter instance. The acceptable types of the parameters are the same as <see cref="T:System.Xml.XPath.XPathResultType" /> accepts.
+		</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlResolver">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlResolver XmlResolver { set; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlResolver</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Obsolete: Used to resolve external resources.</summary>
+        <value>It does not have getter.</value>
+        <remarks>This property is used to resolve includes and imports specified in the stylesheet.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <Member MemberName="Load">
+    <MemberSignature Language="C#" Value="public void Load(System.Xml.XPath.XPathNavigator stylesheet, System.Xml.XmlResolver resolver, System.Security.Policy.Evidence evidence)" />
+    <MemberType>Method</MemberType>
+    <ReturnValue>
+      <ReturnType>System.Void</ReturnType>
+    </ReturnValue>
+    <Parameters>
+      <Parameter Name="stylesheet" Type="System.Xml.XPath.XPathNavigator" />
+      <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+      <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+    </Parameters>
+    <Docs>
+      <summary>Loads and compiles the stylesheet.</summary>
+      <param name="stylesheet">A <see cref="T:System.Xml.XPath.XPathNavigator" /> that represents the stylesheet document.</param>
+      <param name="resolver">A <see cref="T:System.Xml.XmlResolver" /> that is used to resolve inported or included documents.</param>
+      <param name="evidence">Not in use as yet. It will be used to load compiled stylesheet script assemblies.</param>
+      <remarks>
+        <para>This method compiles the stylesheet from <see cref="System.Xml.XPath.XPathNavigator" /> instance.
+</para>
+        <para>If the input was not valid stylesheet, an <see cref="T:System.Xml.Xsl.XslCompileException" /> will be thrown. Note that XSLT allows simplified syntax; the input does not always have XSLT "transform" (or "stylesheet") document element.
+</para>
+        <para>If there were XSLT "include" or "import" elements, then parameter "resolver" is used to resolve external resources. If it was not explicitly provided, then the value of <see cref="P:System.Xml.Xsl.XslTransform.XmlResolver" /> (that is set in advance) is used. If is was not set explicitly, then a <see cref="T:System.Xml.XmlUrlResolver" /> instance is used.
+</para>
+        <para>See also <see cref="M:System.Xml.Xsl.XslTransform.Transform" /> for the transformation details.
+</para>
+        <para>Note: Evidence is not used as yet.</para>
+      </remarks>
+    </Docs>
+  </Member>
+</Type>

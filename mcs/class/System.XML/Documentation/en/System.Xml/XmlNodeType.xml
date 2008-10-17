@@ -1,0 +1,518 @@
+<Type Name="XmlNodeType" FullName="System.Xml.XmlNodeType" FullNameSP="System_Xml_XmlNodeType" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable XmlNodeType extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum XmlNodeType" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para>Specifies the type of node.</para>
+    </summary>
+    <remarks>
+      <para>A given set of XML data is modeled as a tree of nodes. 
+      This enumeration specifies the different node types.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Attribute">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType Attribute = 2" />
+      <MemberSignature Language="C#" Value="Attribute" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Attribute</MemberValue>
+      <Docs>
+        <summary>
+          <para> An
+ attribute.
+ </para>
+          <para> Example XML: <c>id="123"</c></para>
+          <para> An <see langword="Attribute" /> node can have the
+following child node types: <see langword="Text" /> and
+<see langword="EntityReference" />. The <see langword="Attribute" /> node does not 
+appear as the child node of any other node type. It is not considered a
+child node of an <see langword="Element" />
+.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CDATA">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType CDATA = 4" />
+      <MemberSignature Language="C#" Value="CDATA" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>CDATA</MemberValue>
+      <Docs>
+        <summary>
+          <para>A CDATA
+      
+      section.</para>
+          <para>Example XML: <c>
+      &lt;![CDATA[escaped text]]&gt;</c></para>
+          <para> CDATA sections are used to escape blocks of text that would otherwise
+   be recognized as markup. A <see langword="CDATA" /> node cannot have any child
+   nodes. It can appear as the child of the <see langword="DocumentFragment" />,
+<see langword="EntityReference" />, and <see langword="Element" /> nodes.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Comment">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType Comment = 8" />
+      <MemberSignature Language="C#" Value="Comment" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Comment</MemberValue>
+      <Docs>
+        <summary>
+          <para> A comment.
+      </para>
+          <para> Example XML: <c> &lt;!-- comment --&gt;</c></para>
+          <para> A <see langword="Comment" /> node cannot have any child
+nodes. It can appear as the child of the <see langword="Document" />,
+<see langword="DocumentFragment" />, <see langword="Element" />, and 
+<see langword="EntityReference" /> 
+nodes.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Document">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType Document = 9" />
+      <MemberSignature Language="C#" Value="Document" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Document</MemberValue>
+      <Docs>
+        <summary>
+          <para> A document object that, as the root of the document tree, provides access
+ to the entire XML document.
+ </para>
+          <para> A <see langword="Document" /> node 
+ can have the following child node types:
+<see langword="XmlDeclaration" /> 
+, <see langword="Element" /> (maximum of one),
+<see langword="ProcessingInstruction" />, <see langword="Comment" />, and 
+<see langword="DocumentType" /> 
+. It cannot
+appear as the child of any node types.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DocumentFragment">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType DocumentFragment = 11" />
+      <MemberSignature Language="C#" Value="DocumentFragment" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DocumentFragment</MemberValue>
+      <Docs>
+        <summary>
+          <para> A document fragment.
+      </para>
+          <para> The <see langword="DocumentFragment" /> node associates a
+   node or sub-tree with a document without actually being contained within the
+   document. A <see langword="DocumentFragment" /> node can have the following child
+   node types: <see langword="Element" />, <see langword="ProcessingInstruction" />,
+<see langword="Comment" />, <see langword="Text" />, <see langword="CDATA" />, and 
+<see langword="EntityReference" /> 
+. It
+cannot appear as the child of any node types.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DocumentType">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType DocumentType = 10" />
+      <MemberSignature Language="C#" Value="DocumentType" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>DocumentType</MemberValue>
+      <Docs>
+        <summary>
+          <para> The document type declaration, indicated by the following tag.
+      </para>
+          <para> Example XML: <c>&lt;!DOCTYPE ...&gt;</c></para>
+          <para> A <see langword="DocumentType" /> node can have the 
+following child node types: <see langword="Notation" /> and
+<see langword="Entity" />. It can appear as the child of the 
+<see langword="Document" /> 
+node.
+</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Element">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType Element = 1" />
+      <MemberSignature Language="C#" Value="Element" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Element</MemberValue>
+      <Docs>
+        <summary>
+          <para> An element.
+      </para>
+          <para> Example XML: <c>&lt;name&gt;</c></para>
+An <see langword="Element" /> node can have the
+following child node types: <see langword="Element" />, <see langword="Text" />,
+<see langword="Comment" />, <see langword="ProcessingInstruction" />, 
+<see langword="CDATA" />, and <see langword="EntityReference" />. It can be the 
+child of the <see langword="Document" />, <see langword="DocumentFragment" />,
+<see langword="EntityReference" />, and <see langword="Element" />
+nodes.
+</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndElement">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType EndElement = 15" />
+      <MemberSignature Language="C#" Value="EndElement" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>EndElement</MemberValue>
+      <Docs>
+        <summary>
+          <para> An end element.</para>
+          <para>Example XML: <c>&lt;/name&gt;</c></para>
+          <para>Returned when <see cref="T:System.Xml.XmlReader" /> gets to the end of an element.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndEntity">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType EndEntity = 16" />
+      <MemberSignature Language="C#" Value="EndEntity" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>EndEntity</MemberValue>
+      <Docs>
+        <summary>
+          <para>Returned when <see cref="T:System.Xml.XmlReader" /> gets to the end of the entity
+   replacement as a result of a call to <see cref="M:System.Xml.XmlReader.ResolveEntity" />
+   .</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Entity">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType Entity = 6" />
+      <MemberSignature Language="C#" Value="Entity" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Entity</MemberValue>
+      <Docs>
+        <summary>
+          <para>An entity declaration.</para>
+          <para>Example XML: <c>&lt;!ENTITY ...&gt;</c></para>
+          <para>An <see langword="Entity" /> node can have child nodes 
+   that represent the expanded entity (for example, <see langword="Text" /> and
+<see langword="EntityReference" /> nodes). It can appear as the child of the 
+<see langword="DocumentType" /> 
+node.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EntityReference">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType EntityReference = 5" />
+      <MemberSignature Language="C#" Value="EntityReference" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>EntityReference</MemberValue>
+      <Docs>
+        <summary>
+          <para>A reference to an entity.</para>
+          <para>Example XML: <c>&amp;num;</c></para>
+          <para> An <see langword="EntityReference" /> node can have the 
+   following child node types: <see langword="Element" />,
+<see langword="ProcessingInstruction" />, <see langword="Comment" />, 
+<see langword="Text" />, <see langword="CDATA" />, and 
+<see langword="EntityReference" />. It can appear as the child of the 
+<see langword="Attribute" />, <see langword="DocumentFragment" />, 
+<see langword="Element" />, and <see langword="EntityReference" /> 
+
+nodes.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType None = 0" />
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>None</MemberValue>
+      <Docs>
+        <summary>
+          <para>This is returned by the <see cref="T:System.Xml.XmlReader" /> if a read 
+   method has not been called or if no more nodes
+   are available to be read.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Notation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType Notation = 12" />
+      <MemberSignature Language="C#" Value="Notation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Notation</MemberValue>
+      <Docs>
+        <summary>
+          <para> A notation in the document type declaration.
+      </para>
+          <para> Example XML: <c>&lt;!NOTATION ...&gt;</c></para>
+          <para> A <see langword="Notation" /> node cannot have any child 
+nodes. It can appear as the child of the <see langword="DocumentType" />
+node.
+</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProcessingInstruction">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType ProcessingInstruction = 7" />
+      <MemberSignature Language="C#" Value="ProcessingInstruction" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>ProcessingInstruction</MemberValue>
+      <Docs>
+        <summary>
+          <para> A processing instruction.
+      </para>
+          <para> Example XML: <c>&lt;?pi test?&gt;</c></para>
+          <para> A <see langword="ProcessingInstruction" /> node cannot have 
+any child nodes. It can appear as the child of the <see langword="Document" />,
+<see langword="DocumentFragment" />, <see langword="Element" />, and 
+<see langword="EntityReference" /> 
+nodes.
+</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SignificantWhitespace">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType SignificantWhitespace = 14" />
+      <MemberSignature Language="C#" Value="SignificantWhitespace" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SignificantWhitespace</MemberValue>
+      <Docs>
+        <summary>
+          <para> White space between markup in a mixed content model or white
+      space within the <c>xml:space="preserve"</c> scope.
+   </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Text">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType Text = 3" />
+      <MemberSignature Language="C#" Value="Text" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Text</MemberValue>
+      <Docs>
+        <summary>
+          <para> The
+      text content of a node.
+      </para>
+          <para> A <see langword="Text" /> node cannot have any child nodes. 
+   It can appear as the child node of the <see langword="Attribute" />,
+<see langword="DocumentFragment" />, <see langword="Element" />, and 
+<see langword="EntityReference" /> 
+nodes.
+</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Whitespace">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType Whitespace = 13" />
+      <MemberSignature Language="C#" Value="Whitespace" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Whitespace</MemberValue>
+      <Docs>
+        <summary>
+          <para> White space between markup.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlDeclaration">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.XmlNodeType XmlDeclaration = 17" />
+      <MemberSignature Language="C#" Value="XmlDeclaration" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>XmlDeclaration</MemberValue>
+      <Docs>
+        <summary>
+          <para> The XML declaration.
+ </para>
+          <para> Example XML: <c>&lt;?xml version="1.0"?&gt;</c></para>
+          <para> The <see langword="XmlDeclaration" /> 
+node must be the first node in the document. It cannot have children. It is a
+child of the <see langword="Document" />
+node. It can have attributes that provide version
+and encoding information.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

@@ -1,0 +1,24 @@
+<Type Name="XmlSerializationReadCallback" FullName="System.Xml.Serialization.XmlSerializationReadCallback">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public delegate object XmlSerializationReadCallback();" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added</summary>
+    <value>To be added.</value>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members />
+  <Parameters>
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Object</ReturnType>
+  </ReturnValue>
+</Type>

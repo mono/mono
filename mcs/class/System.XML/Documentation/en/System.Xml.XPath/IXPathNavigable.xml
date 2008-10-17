@@ -1,0 +1,34 @@
+<Type Name="IXPathNavigable" FullName="System.Xml.XPath.IXPathNavigable">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public interface IXPathNavigable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Thread safety depends on the implementation.</ThreadSafetyStatement>
+  <Interfaces />
+  <Docs>
+    <summary>Represents an interface to provide XPathNavigator instance.</summary>
+    <remarks>This interface provides the way to create XPathNavigator instance.  Two XPathNavigable implementation are available in System.XML.dll: XPathDocument and XmlDocument. See <see cref="T:System.Xml.XPath.XPathDocument" /> for the detailed differences of those implementations.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateNavigator">
+      <MemberSignature Language="C#" Value="public System.Xml.XPath.XPathNavigator CreateNavigator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Creates an instance of the <see cref="System.Xml.XPath.XPathNavigator" /> provided by the implemantation of this interface.</summary>
+        <returns>The <see cref="System.Xml.XPath.XPathNavigator" /> instance created by the implementation of this interface.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

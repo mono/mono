@@ -1,0 +1,204 @@
+<Type Name="XPathExpression" FullName="System.Xml.XPath.XPathExpression">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class XPathExpression" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>All the dynamic members are not designed to be thread safe. This class cannot be used parallely in multiple thread for XPath evaluation.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Represents a compiled XPath expression that is ready for evaluation. This class is mainly used to avoid multiple-time compilation of XPath expression string. To create XPathExpression instance, <see cref="M:System.Xml.XPath.XPathNavigator.Compile" /> is used.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AddSort">
+      <MemberSignature Language="C#" Value="public abstract void AddSort (object expr, System.Collections.IComparer comparer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expr" Type="System.Object" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <param name="expr">To be added.</param>
+        <param name="comparer">An <see cref="T:System.Collections.IComparer" /> instance that is used to sort results.</param>
+        <summary>Indicates this instance that the evaluation result of this expression must be sorted in the specified order.</summary>
+        <remarks>With this IComparer parameter, it is possible to sort result values in custom sorting.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddSort">
+      <MemberSignature Language="C#" Value="public abstract void AddSort (object expr, System.Xml.XPath.XmlSortOrder order, System.Xml.XPath.XmlCaseOrder caseOrder, string lang, System.Xml.XPath.XmlDataType dataType);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expr" Type="System.Object" />
+        <Parameter Name="order" Type="System.Xml.XPath.XmlSortOrder" />
+        <Parameter Name="caseOrder" Type="System.Xml.XPath.XmlCaseOrder" />
+        <Parameter Name="lang" Type="System.String" />
+        <Parameter Name="dataType" Type="System.Xml.XPath.XmlDataType" />
+      </Parameters>
+      <Docs>
+        <param name="expr">A <see cref="T:System.String" /> or <see cref="T:System.Xml.XPath.XPathExpression" /> instance that represents an XPath expression.</param>
+        <param name="order">An <see cref="T:System.Xml.XPath.XmlSortOrder" /> value that indicates if the sorting is done in ascending or descending.</param>
+        <param name="caseOrder">An <see cref="T:System.Xml.XPath.XmlCaseOrder" /> value that indicates the character case ordering (lower-first, upper-first or ignore the case).</param>
+        <param name="lang">A string that represents language that is used for case order evaluation.</param>
+        <param name="dataType">A <see cref="T:System.Xml.XPath.XmlDataType" /> value that indicates if the sorting is done by string comparison or numeric comparison.</param>
+        <summary>Indicates this instance that the evaluation result of this expression must be sorted in the specified order.</summary>
+        <remarks>Sorting feature is typically used internally in XSLT "for-each" expression. Thus, this method is designed to be capable of processing XSLT conformant sorting.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public abstract System.Xml.XPath.XPathExpression Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathExpression</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Clones this instance and returns the copy.</summary>
+        <returns>An XPathExpression that is the copy of this instance.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Compile">
+      <MemberSignature Language="C#" Value="public static System.Xml.XPath.XPathExpression Compile (string xpath);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xpath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="xpath">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Compile">
+      <MemberSignature Language="C#" Value="public static System.Xml.XPath.XPathExpression Compile (string xpath, System.Xml.IXmlNamespaceResolver nsmgr);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xpath" Type="System.String" />
+        <Parameter Name="nsmgr" Type="System.Xml.IXmlNamespaceResolver" />
+      </Parameters>
+      <Docs>
+        <param name="xpath">To be added.</param>
+        <param name="nsmgr">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Expression">
+      <MemberSignature Language="C#" Value="public abstract string Expression { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>This property is a string representation of this XPath expression.</summary>
+        <value>The string that represents the XPath expression.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReturnType">
+      <MemberSignature Language="C#" Value="public abstract System.Xml.XPath.XPathResultType ReturnType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathResultType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Represents the return type of this XPath expression.</summary>
+        <value>An <see cref="T:System.Xml.XPath.XPathResultType" /> value that indicates the return type.</value>
+        <remarks>The return type varies for each XPath expression and it might be <see cref="F:System.Xml.XPath.XPathResultType.Any" />. For example, the return type of a variable binding expression (e.g. "$foo") can be anything.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetContext">
+      <MemberSignature Language="C#" Value="public abstract void SetContext (System.Xml.IXmlNamespaceResolver nsResolver);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nsResolver" Type="System.Xml.IXmlNamespaceResolver" />
+      </Parameters>
+      <Docs>
+        <param name="nsResolver">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetContext">
+      <MemberSignature Language="C#" Value="public abstract void SetContext (System.Xml.XmlNamespaceManager nsManager);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nsManager" Type="System.Xml.XmlNamespaceManager" />
+      </Parameters>
+      <Docs>
+        <param name="nsManager">an <see cref="T:System.Xml.XmlNamespaceManager" /> to be used as XPath evaluation context.</param>
+        <summary>Sets an <see cref="T:System.Xml.XmlNamespaceManager" /> instance as an XPath evaluation context, especially to provide namespace mappings in XPath.</summary>
+        <remarks>
+          <para>
+		This method sets an XmlNamespaceManager as XPath (and thus XSLT) evaluation context. This class might provide other XSLT context information such as current whitespace preservation value and current variable bindings. (<see cref="T:System.Xml.Xsl.XsltContext" /> is derived from XmlNamespaceManager.)
+		</para>
+          <para>
+		To evaluate compiled XPath expression that was originally just a string that might contain arbitrary namespace prefixes, this class requires a "namespace context" before evaluating prefixed XPath expression. The argument XmlNamespaceManager has a mapping from prefix (that might be used in XPath expression string) and namespace URI. Without this information, XPath evaluation might result in an error (since it cannot determine the namespace URI for the prefix).
+		</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,141 @@
+<Type Name="ReadState" FullName="System.Xml.ReadState" FullNameSP="System_Xml_ReadState" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable ReadState extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum ReadState" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para>Specifies the read state of an instance of a class derived
+      from the <see cref="T:System.Xml.XmlReader" /> class.</para>
+    </summary>
+    <remarks>
+      <para>When a reader is instantiated, the read state is set to
+   <see langword="Initial" />. When the <see cref="M:System.Xml.XmlReader.Read" /> method is called, the read state is
+      changed to <see langword="Interactive" />. If an error occurs during a read
+      operation, the read state is changed to <see langword="Error" />. When the end of the
+      XML data is reached, the read state is set to <see langword="EndOfFile" />. When the
+   <see cref="M:System.Xml.XmlReader.Close" /> method
+      is called, the read state is set to <see langword="Closed" />.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Closed">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.ReadState Closed = 4" />
+      <MemberSignature Language="C#" Value="Closed" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.ReadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Closed</MemberValue>
+      <Docs>
+        <summary>
+          <para>The <see cref="M:System.Xml.XmlReader.Close" /> method has been called.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndOfFile">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.ReadState EndOfFile = 3" />
+      <MemberSignature Language="C#" Value="EndOfFile" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.ReadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>EndOfFile</MemberValue>
+      <Docs>
+        <summary>
+          <para> The end of the XML data has been
+      reached.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Error">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.ReadState Error = 2" />
+      <MemberSignature Language="C#" Value="Error" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.ReadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Error</MemberValue>
+      <Docs>
+        <summary>
+    An error occurred that prevents the
+    read operation from continuing.
+ </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Initial">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.ReadState Initial = 0" />
+      <MemberSignature Language="C#" Value="Initial" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.ReadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Initial</MemberValue>
+      <Docs>
+        <summary>
+          <para>The <see cref="M:System.Xml.XmlReader.Read" /> method has not been called.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Interactive">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.ReadState Interactive = 1" />
+      <MemberSignature Language="C#" Value="Interactive" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.ReadState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Interactive</MemberValue>
+      <Docs>
+        <summary>
+          <para>The <see cref="M:System.Xml.XmlReader.Read" /> method 
+   has
+   been called. Additional methods can now be called on the reader.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

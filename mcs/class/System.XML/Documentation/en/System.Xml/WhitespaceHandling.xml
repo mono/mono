@@ -1,0 +1,94 @@
+<Type Name="WhitespaceHandling" FullName="System.Xml.WhitespaceHandling" FullNameSP="System_Xml_WhitespaceHandling" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public sealed serializable WhitespaceHandling extends System.Enum" />
+  <TypeSignature Language="C#" Value="public enum WhitespaceHandling" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      <para> Specifies the type of white space returned by instances of 
+      the <see cref="T:System.Xml.XmlTextReader" /> class.
+      </para>
+    </summary>
+    <remarks>
+      <para>Significant white space is white space between markup in 
+      a mixed content model, or white space within an element that has the <c>xml:space="preserve"</c> attribute. Insignificant
+      white space is any other white space between markup.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="All">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.WhitespaceHandling All = 0" />
+      <MemberSignature Language="C#" Value="All" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.WhitespaceHandling</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>All</MemberValue>
+      <Docs>
+        <summary>
+          <para>Return both significant and insignificant white space. This is the default. </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.WhitespaceHandling None = 2" />
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.WhitespaceHandling</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>None</MemberValue>
+      <Docs>
+        <summary>
+          <para>Return neither significant nor insignificant white
+      space.</para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Significant">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.WhitespaceHandling Significant = 1" />
+      <MemberSignature Language="C#" Value="Significant" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.WhitespaceHandling</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Significant</MemberValue>
+      <Docs>
+        <summary>
+          <para> Return significant white space only.
+      </para>
+        </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

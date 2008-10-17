@@ -1,0 +1,8 @@
+<Namespace Name="System.Xml.XPath" FullName="System.Xml.XPath" FullNameSP="System.Xml.XPath" Maintainer="Mono">
+  <Docs>
+    <summary>
+		This namespace contains classes for high-performance tree navigation and evaluation of XPath expressions on Xml documents.
+    </summary>
+    <remarks />
+  </Docs>
+</Namespace>

@@ -1,0 +1,332 @@
+<Overview>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System.Xml">
+      <Type Name="ConformanceLevel" Kind="Enumeration" />
+      <Type Name="EntityHandling" Kind="Enumeration" />
+      <Type Name="Formatting" Kind="Enumeration" />
+      <Type Name="IHasXmlNode" Kind="Interface" />
+      <Type Name="IXmlLineInfo" Kind="Interface" />
+      <Type Name="IXmlNamespaceResolver" Kind="Interface" />
+      <Type Name="NameTable" Kind="Class" />
+      <Type Name="NewLineHandling" Kind="Enumeration" />
+      <Type Name="ReadState" Kind="Enumeration" />
+      <Type Name="ValidationType" Kind="Enumeration" />
+      <Type Name="WhitespaceHandling" Kind="Enumeration" />
+      <Type Name="WriteState" Kind="Enumeration" />
+      <Type Name="XmlAttribute" Kind="Class" />
+      <Type Name="XmlAttributeCollection" Kind="Class" />
+      <Type Name="XmlCDataSection" Kind="Class" />
+      <Type Name="XmlCharacterData" Kind="Class" />
+      <Type Name="XmlComment" Kind="Class" />
+      <Type Name="XmlConvert" Kind="Class" />
+      <Type Name="XmlDateTimeSerializationMode" Kind="Enumeration" />
+      <Type Name="XmlDeclaration" Kind="Class" />
+      <Type Name="XmlDocument" Kind="Class" />
+      <Type Name="XmlDocumentFragment" Kind="Class" />
+      <Type Name="XmlDocumentType" Kind="Class" />
+      <Type Name="XmlElement" Kind="Class" />
+      <Type Name="XmlEntity" Kind="Class" />
+      <Type Name="XmlEntityReference" Kind="Class" />
+      <Type Name="XmlException" Kind="Class" />
+      <Type Name="XmlImplementation" Kind="Class" />
+      <Type Name="XmlLinkedNode" Kind="Class" />
+      <Type Name="XmlNamedNodeMap" Kind="Class" />
+      <Type Name="XmlNamespaceManager" Kind="Class" />
+      <Type Name="XmlNamespaceScope" Kind="Enumeration" />
+      <Type Name="XmlNameTable" Kind="Class" />
+      <Type Name="XmlNode" Kind="Class" />
+      <Type Name="XmlNodeChangedAction" Kind="Enumeration" />
+      <Type Name="XmlNodeChangedEventArgs" Kind="Class" />
+      <Type Name="XmlNodeChangedEventHandler" Kind="Delegate" />
+      <Type Name="XmlNodeList" Kind="Class" />
+      <Type Name="XmlNodeOrder" Kind="Enumeration" />
+      <Type Name="XmlNodeReader" Kind="Class" />
+      <Type Name="XmlNodeType" Kind="Enumeration" />
+      <Type Name="XmlNotation" Kind="Class" />
+      <Type Name="XmlOutputMethod" Kind="Enumeration" />
+      <Type Name="XmlParserContext" Kind="Class" />
+      <Type Name="XmlProcessingInstruction" Kind="Class" />
+      <Type Name="XmlQualifiedName" Kind="Class" />
+      <Type Name="XmlReader" Kind="Class" />
+      <Type Name="XmlReaderSettings" Kind="Class" />
+      <Type Name="XmlResolver" Kind="Class" />
+      <Type Name="XmlSecureResolver" Kind="Class" />
+      <Type Name="XmlSignificantWhitespace" Kind="Class" />
+      <Type Name="XmlSpace" Kind="Enumeration" />
+      <Type Name="XmlText" Kind="Class" />
+      <Type Name="XmlTextReader" Kind="Class" />
+      <Type Name="XmlTextWriter" Kind="Class" />
+      <Type Name="XmlTokenizedType" Kind="Enumeration" />
+      <Type Name="XmlUrlResolver" Kind="Class" />
+      <Type Name="XmlValidatingReader" Kind="Class" />
+      <Type Name="XmlWhitespace" Kind="Class" />
+      <Type Name="XmlWriter" Kind="Class" />
+      <Type Name="XmlWriterSettings" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Xml.Schema">
+      <Type Name="IXmlSchemaInfo" Kind="Interface" />
+      <Type Name="ValidationEventArgs" Kind="Class" />
+      <Type Name="ValidationEventHandler" Kind="Delegate" />
+      <Type Name="XmlAtomicValue" Kind="Class" />
+      <Type Name="XmlSchema" Kind="Class" />
+      <Type Name="XmlSchemaAll" Kind="Class" />
+      <Type Name="XmlSchemaAnnotated" Kind="Class" />
+      <Type Name="XmlSchemaAnnotation" Kind="Class" />
+      <Type Name="XmlSchemaAny" Kind="Class" />
+      <Type Name="XmlSchemaAnyAttribute" Kind="Class" />
+      <Type Name="XmlSchemaAppInfo" Kind="Class" />
+      <Type Name="XmlSchemaAttribute" Kind="Class" />
+      <Type Name="XmlSchemaAttributeGroup" Kind="Class" />
+      <Type Name="XmlSchemaAttributeGroupRef" Kind="Class" />
+      <Type Name="XmlSchemaChoice" Kind="Class" />
+      <Type Name="XmlSchemaCollection" Kind="Class" />
+      <Type Name="XmlSchemaCollectionEnumerator" Kind="Class" />
+      <Type Name="XmlSchemaCompilationSettings" Kind="Class" />
+      <Type Name="XmlSchemaComplexContent" Kind="Class" />
+      <Type Name="XmlSchemaComplexContentExtension" Kind="Class" />
+      <Type Name="XmlSchemaComplexContentRestriction" Kind="Class" />
+      <Type Name="XmlSchemaComplexType" Kind="Class" />
+      <Type Name="XmlSchemaContent" Kind="Class" />
+      <Type Name="XmlSchemaContentModel" Kind="Class" />
+      <Type Name="XmlSchemaContentProcessing" Kind="Enumeration" />
+      <Type Name="XmlSchemaContentType" Kind="Enumeration" />
+      <Type Name="XmlSchemaDatatype" Kind="Class" />
+      <Type Name="XmlSchemaDatatypeVariety" Kind="Enumeration" />
+      <Type Name="XmlSchemaDerivationMethod" Kind="Enumeration" />
+      <Type Name="XmlSchemaDocumentation" Kind="Class" />
+      <Type Name="XmlSchemaElement" Kind="Class" />
+      <Type Name="XmlSchemaEnumerationFacet" Kind="Class" />
+      <Type Name="XmlSchemaException" Kind="Class" />
+      <Type Name="XmlSchemaExternal" Kind="Class" />
+      <Type Name="XmlSchemaFacet" Kind="Class" />
+      <Type Name="XmlSchemaForm" Kind="Enumeration" />
+      <Type Name="XmlSchemaFractionDigitsFacet" Kind="Class" />
+      <Type Name="XmlSchemaGroup" Kind="Class" />
+      <Type Name="XmlSchemaGroupBase" Kind="Class" />
+      <Type Name="XmlSchemaGroupRef" Kind="Class" />
+      <Type Name="XmlSchemaIdentityConstraint" Kind="Class" />
+      <Type Name="XmlSchemaImport" Kind="Class" />
+      <Type Name="XmlSchemaInclude" Kind="Class" />
+      <Type Name="XmlSchemaInference" Kind="Class" />
+      <Type Name="XmlSchemaInference+InferenceOption" Kind="Enumeration" />
+      <Type Name="XmlSchemaInferenceException" Kind="Class" />
+      <Type Name="XmlSchemaInfo" Kind="Class" />
+      <Type Name="XmlSchemaKey" Kind="Class" />
+      <Type Name="XmlSchemaKeyref" Kind="Class" />
+      <Type Name="XmlSchemaLengthFacet" Kind="Class" />
+      <Type Name="XmlSchemaMaxExclusiveFacet" Kind="Class" />
+      <Type Name="XmlSchemaMaxInclusiveFacet" Kind="Class" />
+      <Type Name="XmlSchemaMaxLengthFacet" Kind="Class" />
+      <Type Name="XmlSchemaMinExclusiveFacet" Kind="Class" />
+      <Type Name="XmlSchemaMinInclusiveFacet" Kind="Class" />
+      <Type Name="XmlSchemaMinLengthFacet" Kind="Class" />
+      <Type Name="XmlSchemaNotation" Kind="Class" />
+      <Type Name="XmlSchemaNumericFacet" Kind="Class" />
+      <Type Name="XmlSchemaObject" Kind="Class" />
+      <Type Name="XmlSchemaObjectCollection" Kind="Class" />
+      <Type Name="XmlSchemaObjectEnumerator" Kind="Class" />
+      <Type Name="XmlSchemaObjectTable" Kind="Class" />
+      <Type Name="XmlSchemaParticle" Kind="Class" />
+      <Type Name="XmlSchemaPatternFacet" Kind="Class" />
+      <Type Name="XmlSchemaRedefine" Kind="Class" />
+      <Type Name="XmlSchemaSequence" Kind="Class" />
+      <Type Name="XmlSchemaSet" Kind="Class" />
+      <Type Name="XmlSchemaSimpleContent" Kind="Class" />
+      <Type Name="XmlSchemaSimpleContentExtension" Kind="Class" />
+      <Type Name="XmlSchemaSimpleContentRestriction" Kind="Class" />
+      <Type Name="XmlSchemaSimpleType" Kind="Class" />
+      <Type Name="XmlSchemaSimpleTypeContent" Kind="Class" />
+      <Type Name="XmlSchemaSimpleTypeList" Kind="Class" />
+      <Type Name="XmlSchemaSimpleTypeRestriction" Kind="Class" />
+      <Type Name="XmlSchemaSimpleTypeUnion" Kind="Class" />
+      <Type Name="XmlSchemaTotalDigitsFacet" Kind="Class" />
+      <Type Name="XmlSchemaType" Kind="Class" />
+      <Type Name="XmlSchemaUnique" Kind="Class" />
+      <Type Name="XmlSchemaUse" Kind="Enumeration" />
+      <Type Name="XmlSchemaValidationException" Kind="Class" />
+      <Type Name="XmlSchemaValidationFlags" Kind="Enumeration" />
+      <Type Name="XmlSchemaValidator" Kind="Class" />
+      <Type Name="XmlSchemaValidity" Kind="Enumeration" />
+      <Type Name="XmlSchemaWhiteSpaceFacet" Kind="Class" />
+      <Type Name="XmlSchemaXPath" Kind="Class" />
+      <Type Name="XmlSeverityType" Kind="Enumeration" />
+      <Type Name="XmlTypeCode" Kind="Enumeration" />
+      <Type Name="XmlValueGetter" Kind="Delegate" />
+    </Namespace>
+    <Namespace Name="System.Xml.Serialization">
+      <Type Name="CodeExporter" Kind="Class" />
+      <Type Name="CodeGenerationOptions" Kind="Enumeration" />
+      <Type Name="CodeIdentifier" Kind="Class" />
+      <Type Name="CodeIdentifiers" Kind="Class" />
+      <Type Name="ImportContext" Kind="Class" />
+      <Type Name="IXmlSerializable" Kind="Interface" />
+      <Type Name="IXmlTextParser" Kind="Interface" />
+      <Type Name="SchemaImporter" Kind="Class" />
+      <Type Name="SoapAttributeAttribute" Kind="Class" />
+      <Type Name="SoapAttributeOverrides" Kind="Class" />
+      <Type Name="SoapAttributes" Kind="Class" />
+      <Type Name="SoapCodeExporter" Kind="Class" />
+      <Type Name="SoapElementAttribute" Kind="Class" />
+      <Type Name="SoapEnumAttribute" Kind="Class" />
+      <Type Name="SoapIgnoreAttribute" Kind="Class" />
+      <Type Name="SoapIncludeAttribute" Kind="Class" />
+      <Type Name="SoapReflectionImporter" Kind="Class" />
+      <Type Name="SoapSchemaExporter" Kind="Class" />
+      <Type Name="SoapSchemaImporter" Kind="Class" />
+      <Type Name="SoapSchemaMember" Kind="Class" />
+      <Type Name="SoapTypeAttribute" Kind="Class" />
+      <Type Name="UnreferencedObjectEventArgs" Kind="Class" />
+      <Type Name="UnreferencedObjectEventHandler" Kind="Delegate" />
+      <Type Name="XmlAnyAttributeAttribute" Kind="Class" />
+      <Type Name="XmlAnyElementAttribute" Kind="Class" />
+      <Type Name="XmlAnyElementAttributes" Kind="Class" />
+      <Type Name="XmlArrayAttribute" Kind="Class" />
+      <Type Name="XmlArrayItemAttribute" Kind="Class" />
+      <Type Name="XmlArrayItemAttributes" Kind="Class" />
+      <Type Name="XmlAttributeAttribute" Kind="Class" />
+      <Type Name="XmlAttributeEventArgs" Kind="Class" />
+      <Type Name="XmlAttributeEventHandler" Kind="Delegate" />
+      <Type Name="XmlAttributeOverrides" Kind="Class" />
+      <Type Name="XmlAttributes" Kind="Class" />
+      <Type Name="XmlChoiceIdentifierAttribute" Kind="Class" />
+      <Type Name="XmlCodeExporter" Kind="Class" />
+      <Type Name="XmlDeserializationEvents" Kind="Structure" />
+      <Type Name="XmlElementAttribute" Kind="Class" />
+      <Type Name="XmlElementAttributes" Kind="Class" />
+      <Type Name="XmlElementEventArgs" Kind="Class" />
+      <Type Name="XmlElementEventHandler" Kind="Delegate" />
+      <Type Name="XmlEnumAttribute" Kind="Class" />
+      <Type Name="XmlIgnoreAttribute" Kind="Class" />
+      <Type Name="XmlIncludeAttribute" Kind="Class" />
+      <Type Name="XmlMapping" Kind="Class" />
+      <Type Name="XmlMappingAccess" Kind="Enumeration" />
+      <Type Name="XmlMemberMapping" Kind="Class" />
+      <Type Name="XmlMembersMapping" Kind="Class" />
+      <Type Name="XmlNamespaceDeclarationsAttribute" Kind="Class" />
+      <Type Name="XmlNodeEventArgs" Kind="Class" />
+      <Type Name="XmlNodeEventHandler" Kind="Delegate" />
+      <Type Name="XmlReflectionImporter" Kind="Class" />
+      <Type Name="XmlReflectionMember" Kind="Class" />
+      <Type Name="XmlRootAttribute" Kind="Class" />
+      <Type Name="XmlSchemaEnumerator" Kind="Class" />
+      <Type Name="XmlSchemaExporter" Kind="Class" />
+      <Type Name="XmlSchemaImporter" Kind="Class" />
+      <Type Name="XmlSchemaProviderAttribute" Kind="Class" />
+      <Type Name="XmlSchemas" Kind="Class" />
+      <Type Name="XmlSerializationCollectionFixupCallback" Kind="Delegate" />
+      <Type Name="XmlSerializationFixupCallback" Kind="Delegate" />
+      <Type Name="XmlSerializationGeneratedCode" Kind="Class" />
+      <Type Name="XmlSerializationReadCallback" Kind="Delegate" />
+      <Type Name="XmlSerializationReader" Kind="Class" />
+      <Type Name="XmlSerializationWriteCallback" Kind="Delegate" />
+      <Type Name="XmlSerializationWriter" Kind="Class" />
+      <Type Name="XmlSerializer" Kind="Class" />
+      <Type Name="XmlSerializerAssemblyAttribute" Kind="Class" />
+      <Type Name="XmlSerializerFactory" Kind="Class" />
+      <Type Name="XmlSerializerImplementation" Kind="Class" />
+      <Type Name="XmlSerializerNamespaces" Kind="Class" />
+      <Type Name="XmlSerializerVersionAttribute" Kind="Class" />
+      <Type Name="XmlTextAttribute" Kind="Class" />
+      <Type Name="XmlTypeAttribute" Kind="Class" />
+      <Type Name="XmlTypeMapping" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Xml.Serialization.Advanced">
+      <Type Name="SchemaImporterExtension" Kind="Class" />
+      <Type Name="SchemaImporterExtensionCollection" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Xml.Serialization.Configuration">
+      <Type Name="DateTimeSerializationSection" Kind="Class" />
+      <Type Name="DateTimeSerializationSection+DateTimeSerializationMode" Kind="Enumeration" />
+      <Type Name="SchemaImporterExtensionElement" Kind="Class" />
+      <Type Name="SchemaImporterExtensionElementCollection" Kind="Class" />
+      <Type Name="SchemaImporterExtensionsSection" Kind="Class" />
+      <Type Name="SerializationSectionGroup" Kind="Class" />
+      <Type Name="XmlSerializerSection" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Xml.XPath">
+      <Type Name="IXPathNavigable" Kind="Interface" />
+      <Type Name="XmlCaseOrder" Kind="Enumeration" />
+      <Type Name="XmlDataType" Kind="Enumeration" />
+      <Type Name="XmlSortOrder" Kind="Enumeration" />
+      <Type Name="XPathDocument" Kind="Class" />
+      <Type Name="XPathException" Kind="Class" />
+      <Type Name="XPathExpression" Kind="Class" />
+      <Type Name="XPathItem" Kind="Class" />
+      <Type Name="XPathNamespaceScope" Kind="Enumeration" />
+      <Type Name="XPathNavigator" Kind="Class" />
+      <Type Name="XPathNodeIterator" Kind="Class" />
+      <Type Name="XPathNodeType" Kind="Enumeration" />
+      <Type Name="XPathResultType" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Xml.Xsl">
+      <Type Name="IXsltContextFunction" Kind="Interface" />
+      <Type Name="IXsltContextVariable" Kind="Interface" />
+      <Type Name="XslCompiledTransform" Kind="Class" />
+      <Type Name="XsltArgumentList" Kind="Class" />
+      <Type Name="XsltCompileException" Kind="Class" />
+      <Type Name="XsltContext" Kind="Class" />
+      <Type Name="XsltException" Kind="Class" />
+      <Type Name="XsltMessageEncounteredEventArgs" Kind="Class" />
+      <Type Name="XsltMessageEncounteredEventHandler" Kind="Delegate" />
+      <Type Name="XslTransform" Kind="Class" />
+      <Type Name="XsltSettings" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>System.Xml</Title>
+  <Assemblies>
+    <Assembly Name="System.Xml" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.Xml.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.Xml.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.Xml.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+</Overview>

@@ -1,0 +1,24 @@
+<Type Name="XsltMessageEncounteredEventHandler" FullName="System.Xml.Xsl.XsltMessageEncounteredEventHandler">
+  <TypeSignature Language="C#" Value="public delegate void XsltMessageEncounteredEventHandler(object sender, XsltMessageEncounteredEventArgs e);" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="e" Type="System.Xml.Xsl.XsltMessageEncounteredEventArgs" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="sender">To be added.</param>
+    <param name="e">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+</Type>

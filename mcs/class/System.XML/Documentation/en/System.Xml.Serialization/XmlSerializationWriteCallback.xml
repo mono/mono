@@ -1,0 +1,25 @@
+<Type Name="XmlSerializationWriteCallback" FullName="System.Xml.Serialization.XmlSerializationWriteCallback">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public delegate void XmlSerializationWriteCallback(object o);" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Docs>
+    <param name="o">To be added.</param>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members />
+  <Parameters>
+    <Parameter Name="o" Type="System.Object" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+</Type>

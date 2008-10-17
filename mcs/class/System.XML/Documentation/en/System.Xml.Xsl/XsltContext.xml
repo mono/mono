@@ -1,0 +1,156 @@
+<Type Name="XsltContext" FullName="System.Xml.Xsl.XsltContext">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class XsltContext : System.Xml.XmlNamespaceManager" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>All the dynamic members are not designed to be thread safe.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Xml.XmlNamespaceManager</BaseTypeName>
+  </Base>
+  <Interfaces>
+  </Interfaces>
+  <Docs>
+    <summary>The context in which an XPath expression is evaluated.</summary>
+    <remarks>This class allows custom XPath functions and variables to declared and used inside XPath expressions.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected XsltContext ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Creates a new XsltContext with a new NameTable.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected XsltContext (System.Xml.NameTable table);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="table" Type="System.Xml.NameTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added: an object of type 'System.Xml.NameTable'</param>
+        <summary>Creates a new XsltContext with the given NameTable.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareDocument">
+      <MemberSignature Language="C#" Value="public abstract int CompareDocument (string baseUri, string nextbaseUri);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseUri" Type="System.String" />
+        <Parameter Name="nextbaseUri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="baseUri">A URI string.</param>
+        <param name="nextbaseUri">Another URI string</param>
+        <summary>Determines if two documents are the same, based on URI string.</summary>
+        <returns>If they are equal, then 0; otherwise, compare two URI strings as string.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreserveWhitespace">
+      <MemberSignature Language="C#" Value="public abstract bool PreserveWhitespace (System.Xml.XPath.XPathNavigator nav);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nav" Type="System.Xml.XPath.XPathNavigator" />
+      </Parameters>
+      <Docs>
+        <param name="nav">A <see cref="T:System.Xml.XPath.XPathNavigator" /> instance whose current node is determined to have whitespaces or not.</param>
+        <summary>Determines if the parameter node's whitespace should be preserved or not.</summary>
+        <returns>True if whitespaces should be preserved; otherwise False.</returns>
+        <remarks>The return value comes from the nearest ancestor's preserve-whitespace or strip-whitespace attribute value.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResolveFunction">
+      <MemberSignature Language="C#" Value="public abstract System.Xml.Xsl.IXsltContextFunction ResolveFunction (string prefix, string name, System.Xml.XPath.XPathResultType[] argTypes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.Xsl.IXsltContextFunction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="argTypes" Type="System.Xml.XPath.XPathResultType[]" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">A string that is resolved to a namespace string that consists of the function's name.</param>
+        <param name="name">A string that represents local part of the name.</param>
+        <param name="argTypes">To be added.</param>
+        <summary>Resolves a function that is in current context and that is identified by the name and argument types.</summary>
+        <returns>An instance of <see cref="T:System.Xml.Xsl.IXsltContextFunction" /> that represents the matching function, or null if no proper function was found.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResolveVariable">
+      <MemberSignature Language="C#" Value="public abstract System.Xml.Xsl.IXsltContextVariable ResolveVariable (string prefix, string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.Xsl.IXsltContextVariable</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">A string that is resolved to a namespace string that consists of the variable's name.</param>
+        <param name="name">A string that represents local part of the name.</param>
+        <summary>Resolves a variable that is in current context and that is identified by the name.</summary>
+        <returns>An instance of <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> that represents the matching variable, or null if no proper variable was found.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Whitespace">
+      <MemberSignature Language="C#" Value="public abstract bool Whitespace { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Represents the current whitespace preservation from current context.</summary>
+        <value>True if preserve; othewise False.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

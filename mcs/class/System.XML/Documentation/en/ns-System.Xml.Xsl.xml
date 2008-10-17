@@ -1,0 +1,8 @@
+<Namespace Name="System.Xml.Xsl" FullName="System.Xml.Xsl" FullNameSP="System.Xml.Xsl" Maintainer="Mono">
+  <Docs>
+    <summary>
+		This namespace contains an implementation of Xml Stylesheet Transformations (XSLT).
+    </summary>
+    <remarks />
+  </Docs>
+</Namespace>

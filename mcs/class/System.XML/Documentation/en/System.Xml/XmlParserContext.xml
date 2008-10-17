@@ -1,0 +1,506 @@
+<Type Name="XmlParserContext" FullName="System.Xml.XmlParserContext" FullNameSP="System_Xml_XmlParserContext" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public XmlParserContext extends System.Object" />
+  <TypeSignature Language="C#" Value="public class XmlParserContext" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Provides all the context information required by instances of
+      the <see cref="T:System.Xml.XmlTextReader" /> class
+      to parse an XML fragment.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Xml.XmlNameTable nt, class System.Xml.XmlNamespaceManager nsMgr, string xmlLang, valuetype System.Xml.XmlSpace xmlSpace)" />
+      <MemberSignature Language="C#" Value="public XmlParserContext (System.Xml.XmlNameTable nt, System.Xml.XmlNamespaceManager nsMgr, string xmlLang, System.Xml.XmlSpace xmlSpace);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
+        <Parameter Name="nsMgr" Type="System.Xml.XmlNamespaceManager" />
+        <Parameter Name="xmlLang" Type="System.String" />
+        <Parameter Name="xmlSpace" Type="System.Xml.XmlSpace" />
+      </Parameters>
+      <Docs>
+        <param name="nt">The <see cref="T:System.Xml.XmlNameTable" /> to use. If <paramref name="nt" /> is <see langword="null" />, this defaults to the <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</param>
+        <param name="nsMgr">The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or <see langword="null" />. </param>
+        <param name="xmlLang">A <see cref="T:System.String" qualify="true" /> specifying the <c>xml:lang</c> scope.</param>
+        <param name="xmlSpace">A <see cref="T:System.Xml.XmlSpace" /> value indicating the <c>xml:space</c> scope. </param>
+        <summary>
+          <para>Constructs and initializes a new instance of the
+   <see cref="T:System.Xml.XmlParserContext" /> class with the specified
+      values.</para>
+        </summary>
+        <remarks>
+          <para>This method is equivalent to <see cref="T:System.Xml.XmlParserContext" />(<paramref name="nt" />, <paramref name="nsMgr" />,
+<see langword="null" />, <see langword="null" />, <see langword="null" />, <see langword="null" />, 
+<see cref="F:System.String.Empty" qualify="true" />, <paramref name="xmlLang" />, 
+<paramref name="xmlSpace" />, <see langword="null" />) constructor.</para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">
+          <paramref name="nt" /> is not the same <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Xml.XmlNameTable nt, class System.Xml.XmlNamespaceManager nsMgr, string xmlLang, valuetype System.Xml.XmlSpace xmlSpace, class System.Text.Encoding enc)" />
+      <MemberSignature Language="C#" Value="public XmlParserContext (System.Xml.XmlNameTable nt, System.Xml.XmlNamespaceManager nsMgr, string xmlLang, System.Xml.XmlSpace xmlSpace, System.Text.Encoding enc);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
+        <Parameter Name="nsMgr" Type="System.Xml.XmlNamespaceManager" />
+        <Parameter Name="xmlLang" Type="System.String" />
+        <Parameter Name="xmlSpace" Type="System.Xml.XmlSpace" />
+        <Parameter Name="enc" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <param name="nt">The <see cref="T:System.Xml.XmlNameTable" /> to use. If <paramref name="nt" /> is <see langword="null" />, this defaults to the <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</param>
+        <param name="nsMgr">The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or <see langword="null" />.</param>
+        <param name="xmlLang">A <see cref="T:System.String" qualify="true" /> specifying the <c>xml:lang</c> scope.</param>
+        <param name="xmlSpace">A <see cref="T:System.Xml.XmlSpace" /> value indicating the <c>xml:space</c> scope. </param>
+        <param name="enc">An instance of a class derived from the <see cref="T:System.Text.Encoding" qualify="true" /> class indicating the encoding to use. </param>
+        <summary>
+          <para>Constructs and initializes a new instance of
+      the <see cref="T:System.Xml.XmlParserContext" />
+      class with the specified values.</para>
+        </summary>
+        <remarks>
+          <para>This method is equivalent to <see cref="T:System.Xml.XmlParserContext" />(<paramref name="nt" />,
+<paramref name="nsMgr" />, <see langword="null" />, <see langword="null" />, <see langword="null" />, 
+<see langword="null" />, <see cref="F:System.String.Empty" qualify="true" />, <paramref name="xmlLang" />, <paramref name="xmlSpace" />, 
+<paramref name="enc" />).</para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">
+          <paramref name="nt" /> is not the same <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Xml.XmlNameTable nt, class System.Xml.XmlNamespaceManager nsMgr, string docTypeName, string pubId, string sysId, string internalSubset, string baseURI, string xmlLang, valuetype System.Xml.XmlSpace xmlSpace)" />
+      <MemberSignature Language="C#" Value="public XmlParserContext (System.Xml.XmlNameTable nt, System.Xml.XmlNamespaceManager nsMgr, string docTypeName, string pubId, string sysId, string internalSubset, string baseURI, string xmlLang, System.Xml.XmlSpace xmlSpace);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
+        <Parameter Name="nsMgr" Type="System.Xml.XmlNamespaceManager" />
+        <Parameter Name="docTypeName" Type="System.String" />
+        <Parameter Name="pubId" Type="System.String" />
+        <Parameter Name="sysId" Type="System.String" />
+        <Parameter Name="internalSubset" Type="System.String" />
+        <Parameter Name="baseURI" Type="System.String" />
+        <Parameter Name="xmlLang" Type="System.String" />
+        <Parameter Name="xmlSpace" Type="System.Xml.XmlSpace" />
+      </Parameters>
+      <Docs>
+        <param name="nt">The <see cref="T:System.Xml.XmlNameTable" /> to use. If <paramref name="nt" /> is <see langword="null" />, this defaults to the <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</param>
+        <param name="nsMgr">The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or <see langword="null" />.</param>
+        <param name="docTypeName">A <see cref="T:System.String" qualify="true" /> specifying the name of the document type declaration.</param>
+        <param name="pubId">A <see cref="T:System.String" qualify="true" /> specifying the public identifier.</param>
+        <param name="sysId">A <see cref="T:System.String" qualify="true" /> specifying the system identifier.</param>
+        <param name="internalSubset">A <see cref="T:System.String" qualify="true" /> specifying the internal DTD subset.</param>
+        <param name="baseURI">A <see cref="T:System.String" qualify="true" /> specifying the base URI for the XML fragment (the location from which the fragment was loaded).</param>
+        <param name="xmlLang">A <see cref="T:System.String" qualify="true" /> containing the <c>xml:lang</c> scope.</param>
+        <param name="xmlSpace">A <see cref="T:System.Xml.XmlSpace" /> value indicating the <c>xml:space</c> scope. </param>
+        <summary>
+          <para>Constructs and initializes a new instance of
+      the <see cref="T:System.Xml.XmlParserContext" />
+      class with the specified values.</para>
+        </summary>
+        <remarks>
+          <para>This method is equivalent to <see cref="T:System.Xml.XmlParserContext" />(<paramref name="nt" />,
+<paramref name="nsMgr" />, <paramref name="docTypeName" />, <paramref name="pubId" />, 
+<paramref name="sysId" />, <paramref name="internalSubset" />, <paramref name="baseUri" />, <paramref name="xmlLang" />, <paramref name="xmlSpace" />, 
+<see langword="null" />).</para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">
+          <paramref name="nt" /> is not the same <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Xml.XmlNameTable nt, class System.Xml.XmlNamespaceManager nsMgr, string docTypeName, string pubId, string sysId, string internalSubset, string baseURI, string xmlLang, valuetype System.Xml.XmlSpace xmlSpace, class System.Text.Encoding enc)" />
+      <MemberSignature Language="C#" Value="public XmlParserContext (System.Xml.XmlNameTable nt, System.Xml.XmlNamespaceManager nsMgr, string docTypeName, string pubId, string sysId, string internalSubset, string baseURI, string xmlLang, System.Xml.XmlSpace xmlSpace, System.Text.Encoding enc);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
+        <Parameter Name="nsMgr" Type="System.Xml.XmlNamespaceManager" />
+        <Parameter Name="docTypeName" Type="System.String" />
+        <Parameter Name="pubId" Type="System.String" />
+        <Parameter Name="sysId" Type="System.String" />
+        <Parameter Name="internalSubset" Type="System.String" />
+        <Parameter Name="baseURI" Type="System.String" />
+        <Parameter Name="xmlLang" Type="System.String" />
+        <Parameter Name="xmlSpace" Type="System.Xml.XmlSpace" />
+        <Parameter Name="enc" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <param name="nt">The <see cref="T:System.Xml.XmlNameTable" /> to use. If <paramref name="nt" /> is <see langword="null" />, this defaults to the <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</param>
+        <param name="nsMgr">The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or <see langword="null" />.</param>
+        <param name="docTypeName">A <see cref="T:System.String" qualify="true" /> specifying the name of the document type declaration.</param>
+        <param name="pubId">A <see cref="T:System.String" qualify="true" /> specifying the public identifier.</param>
+        <param name="sysId">A <see cref="T:System.String" qualify="true" /> specifying the system identifier.</param>
+        <param name="internalSubset">A <see cref="T:System.String" qualify="true" /> specifying the internal DTD subset.</param>
+        <param name="baseURI">A <see cref="T:System.String" qualify="true" /> specifying the base URI for the XML fragment (the location from which the fragment was loaded).</param>
+        <param name="xmlLang">A <see cref="T:System.String" qualify="true" /> specifying the <c>xml:lang</c> scope.</param>
+        <param name="xmlSpace">A <see cref="T:System.Xml.XmlSpace" /> value indicating the <c>xml:space</c> scope. </param>
+        <param name="enc">The <see cref="T:System.Text.Encoding" qualify="true" /> to use. </param>
+        <summary>
+          <para>Constructs and initializes a new instance of
+      the <see cref="T:System.Xml.XmlParserContext" />
+      class with the specified values.</para>
+        </summary>
+        <remarks>
+          <para>The constructor sets <see cref="P:System.Xml.XmlParserContext.BaseURI" /> to <paramref name="baseURI" />, <see cref="P:System.Xml.XmlParserContext.DocTypeName" /> to <paramref name="docTypeName" />, <see cref="P:System.Xml.XmlParserContext.InternalSubset" /> to <paramref name="internalSubset" />, <see cref="P:System.Xml.XmlParserContext.PublicId" /> to <paramref name="pubId" />, <see cref="P:System.Xml.XmlParserContext.SystemId" /> to <paramref name="sysId" />, and <see cref="P:System.Xml.XmlParserContext.XmlLang" /> to <paramref name="xmlLang" />. If
+<see langword="null" /> is passed for any of these parameters, the corresponding 
+   property is set to <see cref="F:System.String.Empty" />. </para>
+          <block subset="none" type="note">
+            <para>The DocumentType (DTD) information stored in this
+      constructor is ignored when an instance of the class is passed to a
+   <see cref="T:System.Xml.XmlTextReader" />.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">
+          <paramref name="nt" /> is not the same <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BaseURI">
+      <MemberSignature Language="ILASM" Value=".property string BaseURI { public hidebysig specialname instance string get_BaseURI() public hidebysig specialname instance void set_BaseURI(string value) }" />
+      <MemberSignature Language="C#" Value="public string BaseURI { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the base URI.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the base URI to use for resolving the DTD file.</para>
+        </value>
+        <remarks>
+          <para>If an attempt is made to set this property to <see langword="null" />, it is 
+   set to <see cref="F:System.String.Empty" />. </para>
+          <block subset="none" type="note">
+            <para>A networked XML document is comprised of chunks of data 
+      aggregated using various W3C standard inclusion mechanisms and therefore can
+      contain nodes that come from different places. The <see cref="P:System.Xml.XmlParserContext.BaseURI" /> property shows where these nodes
+      originated.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DocTypeName">
+      <MemberSignature Language="ILASM" Value=".property string DocTypeName { public hidebysig specialname instance string get_DocTypeName() public hidebysig specialname instance void set_DocTypeName(string value) }" />
+      <MemberSignature Language="C#" Value="public string DocTypeName { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the name of the document type in a document type declaration.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the name of the document type.</para>
+        </value>
+        <remarks>
+          <para>If an attempt is made to set this property to <see langword="null" />, it is
+   set to <see cref="F:System.String.Empty" />. </para>
+          <block subset="none" type="note">
+            <para>A document type declaration is of the following form: </para>
+            <para>&lt;!DOCTYPE <paramref name="DocTypeName" /> PUBLIC "PublicId"
+   "SystemId" [InternalSubset]&gt;</para>
+            <para>This property, along with <see cref="P:System.Xml.XmlParserContext.InternalSubset" />, <see cref="P:System.Xml.XmlParserContext.PublicId" />, and <see cref="P:System.Xml.XmlParserContext.SystemId" /> properties, provide all the document type declaration information.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Encoding">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding Encoding { public hidebysig specialname instance class System.Text.Encoding get_Encoding() public hidebysig specialname instance void set_Encoding(class System.Text.Encoding value) }" />
+      <MemberSignature Language="C#" Value="public System.Text.Encoding Encoding { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the encoding type.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.Text.Encoding" qualify="true" /> indicating the encoding
+   type.</para>
+        </value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InternalSubset">
+      <MemberSignature Language="ILASM" Value=".property string InternalSubset { public hidebysig specialname instance string get_InternalSubset() public hidebysig specialname instance void set_InternalSubset(string value) }" />
+      <MemberSignature Language="C#" Value="public string InternalSubset { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the internal subset in a document type declaration.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> 
+specifying
+the internal subset. </para>
+        </value>
+        <remarks>
+          <para>If an attempt is made to set this property to <see langword="null" />, it is
+   set to <see cref="F:System.String.Empty" />. </para>
+          <block subset="none" type="note">
+            <para>A document type declaration is of the following form: </para>
+            <para>&lt;!DOCTYPE DocTypeName PUBLIC "PublicId" "SystemId"
+      [<paramref name="InternalSubset" />]&gt;</para>
+            <para>This property, along with <see cref="P:System.Xml.XmlParserContext.DocTypeName" />, <see cref="P:System.Xml.XmlParserContext.PublicId" />, and <see cref="P:System.Xml.XmlParserContext.SystemId" /> properties, provide all the document type declaration information.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NamespaceManager">
+      <MemberSignature Language="ILASM" Value=".property class System.Xml.XmlNamespaceManager NamespaceManager { public hidebysig specialname instance class System.Xml.XmlNamespaceManager get_NamespaceManager() public hidebysig specialname instance void set_NamespaceManager(class System.Xml.XmlNamespaceManager value) }" />
+      <MemberSignature Language="C#" Value="public System.Xml.XmlNamespaceManager NamespaceManager { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNamespaceManager</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the <see cref="T:System.Xml.XmlNamespaceManager" /> used by the current
+   instance.</para>
+        </summary>
+        <value>
+          <para> The <see cref="T:System.Xml.XmlNamespaceManager" /> used by the current
+   instance.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para>A <see cref="T:System.Xml.XmlNamespaceManager" /> defines the current namespace scope
+      and provides methods for looking up namespace information.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NameTable">
+      <MemberSignature Language="ILASM" Value=".property class System.Xml.XmlNameTable NameTable { public hidebysig specialname instance class System.Xml.XmlNameTable get_NameTable() public hidebysig specialname instance void set_NameTable(class System.Xml.XmlNameTable value) }" />
+      <MemberSignature Language="C#" Value="public System.Xml.XmlNameTable NameTable { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNameTable</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the <see cref="T:System.Xml.XmlNameTable" /> used by the current instance to look up prefixes
+   and namespace URIs.</para>
+        </summary>
+        <value>
+          <para> The <see cref="T:System.Xml.XmlNameTable" /> used by the current instance.</para>
+        </value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PublicId">
+      <MemberSignature Language="ILASM" Value=".property string PublicId { public hidebysig specialname instance string get_PublicId() public hidebysig specialname instance void set_PublicId(string value) }" />
+      <MemberSignature Language="C#" Value="public string PublicId { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the public identifier in a document type declaration.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> 
+specifying the public identifier.</para>
+        </value>
+        <remarks>
+          <para>If an attempt is made to set this property to <see langword="null" />, it is
+   set to <see cref="F:System.String.Empty" />. </para>
+          <block subset="none" type="note">
+            <para>A document type declaration is of the following form: </para>
+            <para>&lt;!DOCTYPE DocTypeName PUBLIC "<paramref name="PublicId" />"
+   "SystemId" [InternalSubset]&gt;</para>
+            <para>This property, along with <see cref="P:System.Xml.XmlParserContext.DocTypeName" />, <see cref="P:System.Xml.XmlParserContext.InternalSubset" />, and <see cref="P:System.Xml.XmlParserContext.SystemId" /> properties, provide all the document type declaration information.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SystemId">
+      <MemberSignature Language="ILASM" Value=".property string SystemId { public hidebysig specialname instance string get_SystemId() public hidebysig specialname instance void set_SystemId(string value) }" />
+      <MemberSignature Language="C#" Value="public string SystemId { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets or sets the system identifier in a document type declaration.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> 
+specifying the system identifier.</para>
+        </value>
+        <remarks>
+          <para>If an attempt is made to set this property to <see langword="null" />, it is
+   set to <see cref="F:System.String.Empty" />. </para>
+          <block subset="none" type="note">
+            <para>A document type declaration is of the following form: </para>
+            <para>&lt;!DOCTYPE DocTypeName PUBLIC "PublicId"
+      "<paramref name="SystemId" />" [InternalSubset]&gt;</para>
+            <para>This property, along with <see cref="P:System.Xml.XmlParserContext.DocTypeName" />, <see cref="P:System.Xml.XmlParserContext.InternalSubset" />, and <see cref="P:System.Xml.XmlParserContext.PublicId" /> properties, provide all the document type declaration information.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlLang">
+      <MemberSignature Language="ILASM" Value=".property string XmlLang { public hidebysig specialname instance string get_XmlLang() public hidebysig specialname instance void set_XmlLang(string value) }" />
+      <MemberSignature Language="C#" Value="public string XmlLang { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the current <c>xml:lang</c> scope.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the 
+   current <c>xml:lang</c>
+scope. If there is no <c>xml:lang</c> in scope, <see cref="F:System.String.Empty" /> is returned.</para>
+        </value>
+        <remarks>
+          <para>If an attempt is made to set this property to <see langword="null" />, it is
+   set to <see cref="F:System.String.Empty" />. </para>
+          <block subset="none" type="note">
+            <para>The language attribute, <c>xml:lang</c>, specifies the
+   language in which the content and attribute values of the current element are
+   written.</para>
+            <para>For details on valid <c>xml:lang</c> values,
+refer to section 2.12 of the W3C Extensible Markup Language (XML) 1.0
+recommendation.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlSpace">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Xml.XmlSpace XmlSpace { public hidebysig specialname instance valuetype System.Xml.XmlSpace get_XmlSpace() public hidebysig specialname instance void set_XmlSpace(valuetype System.Xml.XmlSpace value) }" />
+      <MemberSignature Language="C#" Value="public System.Xml.XmlSpace XmlSpace { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlSpace</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets or sets the current <c>xml:space</c> scope.</para>
+        </summary>
+        <value>
+          <para>One of the members of the <see cref="T:System.Xml.XmlSpace" /> enumeration
+   indicating the <c>xml:space</c> scope.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The white space attribute, <c>xml:space</c>, specifies how white space is handled in
+      the current element.</para>
+          </block>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

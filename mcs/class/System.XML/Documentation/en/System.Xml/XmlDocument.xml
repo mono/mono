@@ -1,0 +1,1765 @@
+<Type Name="XmlDocument" FullName="System.Xml.XmlDocument">
+  <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlDocument : System.Xml.XmlNode, System.Xml.IHasXmlChildNode" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Xml.XmlNode</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Xml.IHasXmlChildNode</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>The root node of an XML document.</summary>
+    <remarks>
+      <para>An Xml document is the root node of an Xml tree.  The root node contains optional <see cref="T:System.Xml.XmlDeclaration" />, zero or more <see cref="T:System.Xml.XmlProcessingInstruction" />s, zero or more <see cref="T:System.Xml.XmlWhitespace" />s, zero or more <see cref="T:System.Xml.XmlComment" />s, optional <see cref="T:System.Xml.XmlDocumentType" /> which becomes the <see cref="P:System.Xml.XmlDocument.DocumentType" />, and exactly one <see cref="T:System.Xml.XmlElement" /> which is the <see cref="P:System.Xml.XmlDocument.DocumentElement" />.
+      </para>
+      <para>
+Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.DocumentElement" />.  The document element is the top-level element node.  An XmlDocument is not an element; it is the parent of the top-most element.  Whereas all element nodes have parent nodes, XmlDocuments do not have parents.
+      </para>
+      <para>Note that this class and the entire Document Object Model classes in this namespace is part of ECMA-335 CLI standard. Also note that there are many members which has corresponding interface member in any of W3C Document Object Model specifications.
+      </para>
+      <para>
+	XmlDocument provides a set of node editing event system. <see cref="E:System.Xml.XmlDocument.NodeInserting" />, <see cref="E:System.Xml.XmlDocument.NodeInserted" />, <see cref="E:System.Xml.XmlDocument.NodeChanging" />, <see cref="E:System.Xml.XmlDocument.NodeChanged" />, <see cref="E:System.Xml.XmlDocument.NodeRemoving" /> and <see cref="E:System.Xml.XmlDocument.NodeRemoved" /> are the events and all of them are typed as <see cref="T:System.Xml.XmlNodeChangedEventHandler" />.
+	</para>
+      <para>
+	When a child node is being replaced, or the node being inserted is actually attached to another parent, then first <see cref="E:System.Xml.XmlDocument.NodeRemoving" /> is raised. However, when only the character data of a node is changed, then it just raises <see cref="E:System.Xml.XmlDocument.NodeChanging" /> and no insertion and removal events are raised.
+	</para>
+      <para>
+	For attribute nodes, the event system is more complicated. If an attribute is replacing another one, then first <see cref="E:System.Xml.XmlDocument.NodeRemoving" /> is raised. However, if <see cref="P:System.Xml.XmlAttribute.Value" /> is being set, then the behavior varies depending on how many children are under the attribute node. If there was nothing, then this NodeInserting event is raised. If there was only one <see cref="T:System.Xml.XmlCharacterData" /> child, then <see cref="E:System.Xml.XmlDocument.NodeChanging" /> is raised. In other cases, <see cref="E:System.Xml.XmlDocument.NodeRemoving" /> is raised for each existing child, and then this NodeInserting event is raised. Note that in that single character data child case, the target node of <see cref="E:System.Xml.XmlDocument.NodeChanging" /> and <see cref="E:System.Xml.XmlDocument.NodeChanged" /> events is not the attribute node, but the child character data node of the attribute.
+	</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlDocument ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Creates a new object of this type.</summary>
+        <remarks>
+          <para>
+	Creates a new document object. It is equivalent to <see cref="M:System.Xml.XmlDocument.ctor(System.Xml.XmlNameTable)" /> with a new <see cref="T:NameTable" /> object as its argument.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected XmlDocument (System.Xml.XmlImplementation imp);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="imp" Type="System.Xml.XmlImplementation" />
+      </Parameters>
+      <Docs>
+        <param name="imp">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlDocument (System.Xml.XmlNameTable nt);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
+      </Parameters>
+      <Docs>
+        <param name="nt">An <see cref="T:System.Xml.XmlNameTable" /> object to store name strings.</param>
+        <summary>Creates a new object of this type, with the argument <see cref="T:System.Xml.XmlNameTable" /> as its <see cref="P:System.Xml.XmlDocument.NameTable" />.</summary>
+        <remarks>
+          <para>
+	Creates a new document object, using argument <see cref="T:System.Xml.XmlNameTable" /> as its <see cref="P:System.Xml.XmlDocument.NameTable" /> property.
+	</para>
+          <para>
+	The XmlNameTable is added some name strings used in the document object model, such as "#element" (node names), "xml", "lang" and "space" (predefined xml attributes).
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BaseURI">
+      <MemberSignature Language="C#" Value="public override string BaseURI { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CloneNode">
+      <MemberSignature Language="C#" Value="public override System.Xml.XmlNode CloneNode (bool deep);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="deep" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="deep">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateAttribute">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlAttribute CreateAttribute (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlAttribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlAttribute'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateAttribute">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlAttribute CreateAttribute (string qualifiedName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlAttribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="qualifiedName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="qualifiedName">To be added: an object of type 'string'</param>
+        <param name="namespaceURI">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlAttribute'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateAttribute">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlAttribute CreateAttribute (string prefix, string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlAttribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">a string which becomes the prefix of the returned attribute.</param>
+        <param name="localName">a string which becomes the local name of the returned attribute.</param>
+        <param name="namespaceURI">a string which becomes the namespace URI of the returned attribute.</param>
+        <summary>Creates an <see cref="T:System.Xml.XmlAttribute" /> object.</summary>
+        <returns>A new <see cref="T:System.Xml.XmlAttribute" /> instance whose <see cref="P:System.Xml.XmlAttribute.OwnerDocument" /> is this document.</returns>
+        <remarks>
+          <para>
+	Creates a new XmlAttribute instance with specified name components. <paramref name="localName" /> must be a valid XML Name string.
+	</para>
+          <para>
+	If the <paramref name="prefix" /> parameter is "xmlns" or <paramref name="localName" /> is "xmlns" and the prefix is an empty string, then "http://www.w3.org/2000/xmlns/" is automatically supplied for namespace URI of the returned node. Similarly, "http://www.w3.org/XML/1998/namespace" is supplied if the prefix is "xml".
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateCDataSection">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlCDataSection CreateCDataSection (string data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlCDataSection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="data">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlCDataSection'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateComment">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlComment CreateComment (string data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlComment</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="data">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlComment'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDefaultAttribute">
+      <MemberSignature Language="C#" Value="protected virtual System.Xml.XmlAttribute CreateDefaultAttribute (string prefix, string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlAttribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">To be added.</param>
+        <param name="localName">To be added.</param>
+        <param name="namespaceURI">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDocumentFragment">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlDocumentFragment CreateDocumentFragment ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDocumentFragment</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlDocumentFragment'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDocumentType">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlDocumentType CreateDocumentType (string name, string publicId, string systemId, string internalSubset);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDocumentType</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="publicId" Type="System.String" />
+        <Parameter Name="systemId" Type="System.String" />
+        <Parameter Name="internalSubset" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added: an object of type 'string'</param>
+        <param name="publicId">To be added: an object of type 'string'</param>
+        <param name="systemId">To be added: an object of type 'string'</param>
+        <param name="internalSubset">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlDocumentType'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateElement">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlElement CreateElement (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlElement</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlElement'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateElement">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlElement CreateElement (string qualifiedName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlElement</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="qualifiedName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="qualifiedName">To be added: an object of type 'string'</param>
+        <param name="namespaceURI">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlElement'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateElement">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlElement CreateElement (string prefix, string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlElement</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">a string which becomes the prefix of the returned element.</param>
+        <param name="localName">a string which becomes the local name of the returned element.</param>
+        <param name="namespaceURI">a string which becomes the namespace URI of the returned element.</param>
+        <summary>Creates an <see cref="T:System.Xml.XmlElement" /> object.</summary>
+        <returns>A new <see cref="T:System.Xml.XmlElement" /> instance whose <see cref="P:System.Xml.XmlElement.OwnerDocument" /> is this document.</returns>
+        <remarks>
+          <para>
+	Creates a new XmlElement instance with specified name components. <paramref name="localName" /> must be a valid XML Name string.
+	</para>
+          <para>
+	If the <see cref="P:DocumentType" /> of this document exists and there is a corresponding ATTLIST definition for this element, the returned node contains default attributes in its <see cref="P:System.Xml.XmlElement.Attributes" /> property.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateEntityReference">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlEntityReference CreateEntityReference (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlEntityReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlEntityReference'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateNavigator">
+      <MemberSignature Language="C#" Value="public override System.Xml.XPath.XPathNavigator CreateNavigator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateNavigator">
+      <MemberSignature Language="C#" Value="protected virtual System.Xml.XPath.XPathNavigator CreateNavigator (System.Xml.XmlNode node);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.XmlNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateNode">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode CreateNode (string nodeTypeString, string name, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nodeTypeString" Type="System.String" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="nodeTypeString">Node type name that indicates the type of node to be created.</param>
+        <param name="name">Name string of the node to be created.</param>
+        <param name="namespaceURI">Namespace URI string of the node to be created.</param>
+        <summary>Creates an <see cref="T:System.Xml.XmlNode" /> instance.</summary>
+        <returns>An <see cref="T:System.Xml.XmlNode" /> instance as indicated by the parameters.</returns>
+        <remarks>
+          <para>
+	Creates an <see cref="T:System.Xml.XmlNode" /> instance. It internally invokes <see cref="M:System.Xml.XmlDocument.CreateNode(XmlNodeType,string,string)" /> method, with interpreted <see cref="T:System.Xml.XmlNodeType" /> from <paramref name="nodeTypeString" /> parameter, as listed below:
+	</para>
+          <list type="table">
+            <listheader>
+              <term>String</term>
+              <description>Corresponding node type</description>
+            </listheader>
+            <item>
+              <term>attribute</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.Attribute" />
+              </description>
+            </item>
+            <item>
+              <term>cdatasection</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.CDATA" />
+              </description>
+            </item>
+            <item>
+              <term>comment</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.Comment" />
+              </description>
+            </item>
+            <item>
+              <term>document</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.Document" />
+              </description>
+            </item>
+            <item>
+              <term>documentfragment</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.DocumentFragment" />
+              </description>
+            </item>
+            <item>
+              <term>documenttype</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.DocumentType" />
+              </description>
+            </item>
+            <item>
+              <term>element</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.Element" />
+              </description>
+            </item>
+            <item>
+              <term>entityreference</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.EntityReference" />
+              </description>
+            </item>
+            <item>
+              <term>processinginstruction</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.ProcessingInstruction" />
+              </description>
+            </item>
+            <item>
+              <term>significantwhitespace</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.SignificantWhitespace" />
+              </description>
+            </item>
+            <item>
+              <term>text</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.Text" />
+              </description>
+            </item>
+            <item>
+              <term>whitespace</term>
+              <description>
+                <see cref="F:System.Xml.XmlNodeType.Whitespace" />
+              </description>
+            </item>
+          </list>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateNode">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode CreateNode (System.Xml.XmlNodeType type, string name, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Xml.XmlNodeType" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="type">
+          <see cref="T:System.Xml.XmlNodeType" /> that indicates the type of node to be created.</param>
+        <param name="name">Name string of the node to be created.</param>
+        <param name="namespaceURI">Namespace URI string of the node to be created.</param>
+        <summary>Creates an <see cref="T:System.Xml.XmlNode" /> instance.</summary>
+        <returns>An <see cref="T:System.Xml.XmlNode" /> instance as indicated by the parameters.</returns>
+        <remarks>
+          <para>
+	Creates an <see cref="T:System.Xml.XmlNode" /> instance, according to the arguments. It internally invokes <see cref="M:System.Xml.XmlDocument.CreateNode(string,string,string)" />.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateNode">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode CreateNode (System.Xml.XmlNodeType type, string prefix, string name, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Xml.XmlNodeType" />
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="type">
+          <see cref="T:System.Xml.XmlNodeType" /> that indicates the type of node to be created.</param>
+        <param name="prefix">Prefix string of the node to be created.</param>
+        <param name="name">Local name string of the node to be created.</param>
+        <param name="namespaceURI">Namespace URI string of the node to be created.</param>
+        <summary>Creates an <see cref="T:System.Xml.XmlNode" /> instance.</summary>
+        <returns>An <see cref="T:System.Xml.XmlNode" /> instance as indicated by the parameters.</returns>
+        <remarks>
+          <para>
+	Creates an <see cref="T:System.Xml.XmlNode" /> instance, according to the arguments. The type of returned node is determined by the method that it invokes corresponding method for the <paramref name="type" /> argument, as listed below:
+	</para>
+          <list type="table">
+            <listheader>
+              <term>XmlNodeType argument</term>
+              <description>The method used to create returned value</description>
+            </listheader>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.Attribute" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateAttribute" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.CDATA" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateCDataSection" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.Comment" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateComment" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.Document" />
+              </term>
+              <description>returns a new <see cref="T:System.Xml.XmlDocument" /> instance.</description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.DocumentFragment" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateDocumentFragment" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.DocumentType" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateDocumentType" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.Element" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateElement" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.EntityReference" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateEntityReference" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.ProcessingInstruction" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateProcessingInstruction" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.SignificantWhitespace" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateSignificantWhitespace" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.Text" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateTextNode" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.Whitespace" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateWhitespace" />
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Xml.XmlNodeType.XmlDeclaration" />
+              </term>
+              <description>
+                <see cref="M:System.Xml.XmlDocument.CreateXmlDeclaration" />
+              </description>
+            </item>
+          </list>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateProcessingInstruction">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlProcessingInstruction CreateProcessingInstruction (string target, string data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlProcessingInstruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="System.String" />
+        <Parameter Name="data" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added: an object of type 'string'</param>
+        <param name="data">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlProcessingInstruction'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateSignificantWhitespace">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlSignificantWhitespace CreateSignificantWhitespace (string text);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlSignificantWhitespace</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlSignificantWhitespace'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateTextNode">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlText CreateTextNode (string text);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlText</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlText'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateWhitespace">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlWhitespace CreateWhitespace (string text);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWhitespace</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlWhitespace'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateXmlDeclaration">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlDeclaration CreateXmlDeclaration (string version, string encoding, string standalone);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDeclaration</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="version" Type="System.String" />
+        <Parameter Name="encoding" Type="System.String" />
+        <Parameter Name="standalone" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="version">To be added: an object of type 'string'</param>
+        <param name="encoding">To be added: an object of type 'string'</param>
+        <param name="standalone">To be added: an object of type 'string'</param>
+        <summary>To be added</summary>
+        <returns>To be added: an object of type 'XmlDeclaration'</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DocumentElement">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlElement DocumentElement { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlElement</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the document element, if any.</summary>
+        <value>an <see cref="T:System.Xml.XmlElement" /> object that represents the document element, or null if it does not exist yet.</value>
+        <remarks>
+          <para>
+	It represents the document element (root element) of this document. A well-formed XML document must have exactly one element, but this property could be null.
+	</para>
+          <para>
+	This property is an equivalent of "documentElement" attribute of Document interface in W3C Document Object Model Core specification.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DocumentType">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlDocumentType DocumentType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDocumentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the document type definition (DTD).</summary>
+        <value>
+          <see cref="T:System.Xml.XmlDocumentType" /> object that represents the document type definition (DTD) of this document, or null if none as such.</value>
+        <remarks>
+          <para>
+	This property holds an <see cref="T:System.Xml.XmlDocumentType" /> object that represents DTD (document type definition) of this document.
+	</para>
+          <para>
+	DTD node can be created either from <see cref="T:System.Xml.XmlDocument.ReadNode" /> where the input <see cref="T:System.Xml.XmlReader" /> was positioned at DTD, or <see cref="T:System.Xml.XmlDocument.CreateDocumentType" /> method. Note that there is no standard way to provide DTD node in W3C Document Object Model specification. They are just a proprietary extension.
+	</para>
+          <para>
+	This property is an equivalent of "doctype" attribute of Document interface in W3C Document Object Model Core.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetElementById">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlElement GetElementById (string elementId);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlElement</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="elementId" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="elementId">An ID string to identify the target element.</param>
+        <summary>Returns an <see cref="T:System.Xml.XmlElement" /> node whose ID matches the argument string.</summary>
+        <returns>An <see cref="T:System.Xml.XmlElement" /> instance that matches the argument ID, or null if there is no such element.</returns>
+        <remarks>
+          <para>
+	This method tries to find an element whose ID is equivalent to the argument string. ID is assigned only when the element has corresponding attribute whose type is ID. If there is no such element, then this method returns null.
+	</para>
+          <para>
+	The type of an attribute is assumed from its <see cref="P:System.Xml.XmlDocument.DocumentType" /> definition. Note that the name of an attribute is nothing to do with the type. The type of attribute whose name is "id" is not ID unless it is explicitly defined.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetElementsByTagName">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNodeList GetElementsByTagName (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">Name of the target elements to find.</param>
+        <summary>Returns a node list which contains descendant elements of this document which match the specified name.</summary>
+        <returns>
+          <see cref="T:System.Xml.XmlNodeList" /> that contains the resulting elements.</returns>
+        <remarks>
+          <para>
+	It searches such descendant element nodes of this document whose name matches the argument, and returns the list of the matching nodes as an <see cref="T:System.Xml.XmlNodeList" />.
+	</para>
+          <para>
+	If <paramref name="name" /> is "*", then it indicates to match all of the elements.
+	</para>
+          <para>
+	Note that it searches the entire descendants, not limited to the children. Also note that it returns only element nodes.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetElementsByTagName">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNodeList GetElementsByTagName (string localName, string namespaceURI);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="localName">Local name of the target elements to find.</param>
+        <param name="namespaceURI">Namespace URI of the target elements to find.</param>
+        <summary>Returns a node list which contains descendant elements of this document which match the specified name.</summary>
+        <returns>
+          <see cref="T:System.Xml.XmlNodeList" /> that contains the resulting elements.</returns>
+        <remarks>
+          <para>
+	It searches such descendant element nodes of this document whose local name and namespace URI matches the arguments, and returns the list of the matching nodes as an <see cref="T:System.Xml.XmlNodeList" />.
+	</para>
+          <para>
+	If <paramref name="localName" /> is "*", then it indicates to match any of the local name of the elements. If <paramref name="namespaceURI" /> is "*", then it indicates to match any of the namespace URI of the elements.
+	</para>
+          <para>
+	Note that it searches the entire descendants, not limited to the children. Also note that it returns only element nodes.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Implementation">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlImplementation Implementation { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlImplementation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the <see cref="T:System.Xml.XmlImplementation" /> which created this document object, if any.</summary>
+        <value>
+          <see cref="T:System.Xml.XmlImplementation" /> object which created this object, or null if there is no such relevant object.</value>
+        <remarks>
+          <para>
+	If this document is created from <see cref="M:System.Xml.XmlImplementation.CreateDocument" /> method, then this property returns the source <see cref="T:System.Xml.XmlImplementation" /> object. If not, then it returns null.
+	</para>
+          <para>
+	This property is an equivalent of "implementation" attribute of Document interface in W3C Document Object Model Core specification.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ImportNode">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode ImportNode (System.Xml.XmlNode node, bool deep);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.XmlNode" />
+        <Parameter Name="deep" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="node">An <see cref="T:System.Xml.XmlNode" /> to import.</param>
+        <param name="deep">a boolean value that indicates whether this method copies the descendants of the argument node.</param>
+        <summary>Used to import an <see cref="T:System.Xml.XmlNode" /> which comes from another document instance.</summary>
+        <returns>An <see cref="T:System.Xml.XmlNode" /> that is imported.</returns>
+        <remarks>
+          <para>
+	This method is used to "import" a node which resides another XmlDocument. XmlNode objects  cannot be added if its <see cref="P:System.Xml.XmlNode.OwnerDocument" /> is different from this object. This method creates a "clone" of argument node as its own node that can be added to the tree of this document.
+	</para>
+          <para>
+	If <paramref name="deep" /> is specified, then it recursively imports descendant nodes and appended to the corresponding parent node. Regardless of this parameter, attribute nodes are copied. They are not "children" of the owner node.
+	</para>
+          <para>
+	The returned node is "detached". It is not appended to the corresponding <see cref="P:System.Xml.XmlNode.ParentNode" /> of the argument <paramref name="node" /> even if it exists.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InnerXml">
+      <MemberSignature Language="C#" Value="public override string InnerXml { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public override bool IsReadOnly { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public virtual void Load (System.IO.Stream inStream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inStream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="inStream">A <see cref="T:System.IO.Stream" /> object to be loaded. It must be readable.</param>
+        <summary>Read the argument <see cref="T:System.IO.Stream" /> as XML document and loads it as content nodes.</summary>
+        <remarks>
+          <para>Creates an <see cref="T:System.Xml.XmlReader" /> instance from the argument <see cref="T:System.IO.Stream" /> and loads it as contents of this document. It internally creates an <see cref="T:System.Xml.XmlReader" /> instance and invokes <see cref="M:System.Xml.XmlDocument.Load(XmlReader)" />.
+	</para>
+          <para>
+	This method does not validate the input document.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public virtual void Load (System.IO.TextReader txtReader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="txtReader" Type="System.IO.TextReader" />
+      </Parameters>
+      <Docs>
+        <param name="txtReader">A <see cref="T:System.IO.TextReader" /> object to be loaded.</param>
+        <summary>Read the argument <see cref="T:System.IO.TextReader" /> as XML document and loads it as content nodes.</summary>
+        <remarks>
+          <para>Creates an <see cref="T:System.Xml.XmlReader" /> instance from the argument <see cref="T:System.IO.TextReader" /> and loads it as contents of this document. It internally creates an <see cref="T:System.Xml.XmlReader" /> instance and invokes <see cref="M:System.Xml.XmlDocument.Load(XmlReader)" />.
+	</para>
+          <para>
+	This method does not validate the input document.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public virtual void Load (string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">A URI string to load as the document contents.</param>
+        <summary>Read the argument <see cref="T:System.IO.Stream" /> as XML document and loads it as content nodes.</summary>
+        <remarks>
+          <para>Creates an <see cref="T:System.Xml.XmlReader" /> instance from the argument URI string and loads it as contents of this document. It internally creates an <see cref="T:System.Xml.XmlReader" /> instance and invokes <see cref="M:System.Xml.XmlDocument.Load(XmlReader)" />.
+	</para>
+          <para>
+	This method does not validate the input document.
+	</para>
+          <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public virtual void Load (System.Xml.XmlReader xmlReader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlReader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="xmlReader">An <see cref="T:System.Xml.XmlReader" /> instance whose contents are being loaded.</param>
+        <summary>Loads the argument <see cref="T:System.Xml.XmlReader" /> as document content nodes.</summary>
+        <remarks>
+          <para>Loads the argument <see cref="T:System.Xml.XmlReader" /> as its child. It clears existing child nodes and then internally invokes <see cref="M:System.Xml.XmlDocument.ReadNode(XmlReader)" /> and appends the returned nodes as its child.
+	</para>
+          <para>
+	This method does not validate the input document, but if the argument is <see cref="T:System.Xml.XmlValidatingReader" />, then it will report validation errors if any.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LoadXml">
+      <MemberSignature Language="C#" Value="public virtual void LoadXml (string xml);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xml" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="xml">raw XML markup string.</param>
+        <summary>Loads the argument as raw XML string.</summary>
+        <remarks>
+          <para>Loads the argument string as raw XML string. It internally creates an <see cref="T:System.Xml.XmlReader" /> instance and invokes <see cref="M:System.Xml.XmlDocument.Load(XmlReader)" />.
+	</para>
+          <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LocalName">
+      <MemberSignature Language="C#" Value="public override string LocalName { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public override string Name { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NameTable">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlNameTable NameTable { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNameTable</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets an <see cref="T:System.Xml.XmlNameTable" /> object that stores all name strings used in this document.</summary>
+        <value>an <see cref="T:System.Xml.XmlNameTable" /> that stores all name strings.</value>
+        <remarks>
+          <para>
+	This property returns an <see cref="T:System.Xml.XmlNameTable" /> object that stores all name strings used in the entire descendants of this document.
+	</para>
+          <para>
+	It returns the same name table as its constructor was passed. In case that this object is created via the default constructor, it is a new <see cref="T:NameTable" /> object.
+	</para>
+          <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NodeChanged">
+      <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeChanged;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Raised after the value of a node was changed.</summary>
+        <remarks>
+          <para>
+	This event is raised after the value of a node which resides in this document was changed. It is invoked after the value was actually changed.
+	</para>
+          <para>
+	For the entire document event system, see <see cref="T:System.Xml.XmlDocument" />.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NodeChanging">
+      <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeChanging;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Raised before the value of a node is being changed.</summary>
+        <remarks>
+          <para>
+	This event is raised when the value of a node which resides in this document is being changed. It is invoked before the value is actually changed.
+	</para>
+          <para>
+	For the entire document event system, see <see cref="T:System.Xml.XmlDocument" />.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NodeInserted">
+      <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeInserted;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Raised after a node was inserted.</summary>
+        <remarks>
+          <para>
+	This event is raised when a node was inserted as a child of any nodes in this document. It is invoked after the node was actually inserted.
+	</para>
+          <para>
+	For the entire document event system, see <see cref="T:System.Xml.XmlDocument" />.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NodeInserting">
+      <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeInserting;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Raised before a node is being inserted.</summary>
+        <remarks>
+          <para>
+	This event is raised when a node is being inserted as a child or an attribute of any nodes in this document. It is invoked before the node is actually inserted.
+	</para>
+          <para>
+	For the entire document event system, see <see cref="T:System.Xml.XmlDocument" />.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NodeRemoved">
+      <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeRemoved;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Raised after a node was removed.</summary>
+        <remarks>
+          <para>
+	This event is raised after a node was removed from its parent node, or an attribute was removed from its owner element, which resides in this document. It is invoked after the node was actually removed.
+	</para>
+          <para>
+	For the entire document event system, see <see cref="T:System.Xml.XmlDocument" />.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NodeRemoving">
+      <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeRemoving;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Raised before a node is being removed.</summary>
+        <remarks>
+          <para>
+	This event is raised when a node is being removed from its parent node, or an attribute is being removed from its owner element, which resides in this document. It is invoked before the node is actually removed.
+	</para>
+          <para>
+	For the entire document event system, see <see cref="T:System.Xml.XmlDocument" />.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NodeType">
+      <MemberSignature Language="C#" Value="public override System.Xml.XmlNodeType NodeType { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OwnerDocument">
+      <MemberSignature Language="C#" Value="public override System.Xml.XmlDocument OwnerDocument { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDocument</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ParentNode">
+      <MemberSignature Language="C#" Value="public override System.Xml.XmlNode ParentNode { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PreserveWhitespace">
+      <MemberSignature Language="C#" Value="public bool PreserveWhitespace { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets or sets a flag that indicates whether this document preserves whitespace nodes on loading content.</summary>
+        <value>A boolean value that indicates whether this document preserves whitespacenodes when it loads the document content.</value>
+        <remarks>
+          <para>
+	When loading XML content to this document via such methods like <see cref="M:System.Xml.XmlDocument.Load" /> or <see cref="M:System.Xml.XmlDocument.LoadXml" />, this property is used to indicate whether it preserves such nodes whose <see cref="P:System.Xml.XmlReader.NodeType" /> is <see cref="F:XmlNodeType.Whitespace" /> or not. If this property is true, then those whitespace nodes are loaded as <see cref="T:System.Xml.XmlWhitespace" /> nodes. If false, then they are discarded.
+	</para>
+          <para>
+	Whitespace node in XML is such a node whose character data consists only of &amp;#x9; &amp;#xA; &amp;#xD; and &amp;#x20;.
+	</para>
+          <para>
+	The default value is false.
+	</para>
+          <para>
+	This flag does not indicate to ignore significant whitespaces (those whitespace nodes that are descendant of such element that has such "xml:space" attribute whose value is "preserve"), i.e. it does not discard those nodes whose <see cref="P:XmlReader.NodeType" /> is <see cref="F:XmlNodeType.SignificantWhitespace" />. Also, it does not indicate to ignore such text or CDATA section nodes whose character data consist of only whitespace characters.
+	</para>
+          <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadNode">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode ReadNode (System.Xml.XmlReader reader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">An <see cref="T:System.Xml.XmlReader" /> to read.</param>
+        <summary>Read an XML node from argument <see cref="T:System.Xml.XmlReader" /> and returns it as an <see cref="T:System.Xml.XmlNode" /> object.</summary>
+        <returns>An <see cref="T:System.Xml.XmlNode" /> object that represents the node in the argument XmlReader, or null if the reader is not ready to be consumed.</returns>
+        <remarks>
+          <para>
+	This method consumes current node in the argument XmlReader and creates an instance of one of the derived class of <see cref="T:System.Xml.XmlNode" />. The returned node contains all of the children. After this method was invoked, the argument XmlReader is positioned either at the next sibling node in the tree, or at the <see cref="F:System.Xml.XmlNodeType.EndElement" /> of the parent element.
+	</para>
+          <para>
+	If the argument XmlReader is at <see cref="F:System.Xml.ReadState.Initial" /> state, then first it moves to the first node and then consumes it as current node.
+	</para>
+          <para>
+	Unlike <see cref="M:System.Xml.XmlTextReader.Read" />, this method rejects such entity reference nodes whose referenced entity does not exist. In such cases, an <see cref="T:System.Xml.XmlException" /> is thrown.
+	</para>
+          <para>
+	For entity reference nodes, if the argument XmlReader can resolve entities as indicated by <see cref="P:System.Xml.XmlReader.CanResolveEntity" /> property, it resolves the entity using <see cref="M:System.Xml.XmlReader.ResolveEntity" /> method and appends the resolved children as the content of the node, instead of the entity reference node itself.
+	</para>
+          <para>
+	If the argument XmlReader is positioned at <see cref="F:System.Xml.XmlNodeType.EndElement" />, a <see cref="T:System.NullReferenceException" /> is thrown.
+	</para>
+          <para>
+	If the argument XmlReader is neither in the state of <see cref="F:System.Xml.ReadState.Initial" /> nor the state of <see cref="F:System.Xml.ReadState.Interactive" />, then it returns null.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public virtual void Save (System.IO.Stream outStream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="outStream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="outStream">A <see cref="T:System.IO.Stream" /> object to save the entire document. It must be writable.</param>
+        <summary>Writes the entire document into argument <see cref="T:System.IO.Stream" />.</summary>
+        <remarks>
+          <para>
+	Writes the entire document into argument Steram. This method internally creates an XmlWriter instance considering <see cref="P:System.Xml.XmlDeclaration.Encoding" /> property, and invokes <see cref="M:System.Xml.XmlDocument.Save(XmlWriter)" /> method.
+	</para>
+          <para>This method does not close the argument Steram.
+	</para>
+          <para>
+	With this method, the output XML is indented.
+	</para>
+          <para>The output XML might contain XML declaration, in the same way as <see cref="T:System.Xml.XmlTextWriter" /> does, if it is required.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public virtual void Save (System.IO.TextWriter writer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">A <see cref="T:System.IO.TextWriter" /> object to save the entire document.</param>
+        <summary>Writes the entire document into argument <see cref="T:System.IO.TextWriter" />.</summary>
+        <remarks>
+          <para>Writes the entire document into argument TextWriter. This method internally creates an XmlWriter instance and invokes <see cref="M:System.Xml.XmlDocument.Save(XmlWriter)" /> method. 
+	</para>
+          <para>This method does not close the argument TextWriter.
+	</para>
+          <para>
+	With this method, the output XML is indented.
+	</para>
+          <para>The output XML might contain XML declaration, in the same way as <see cref="T:System.Xml.XmlTextWriter" /> does, if it is required.
+	</para>
+          <para>
+	Note that this method does not use <see cref="P:System.Xml.XmlDeclaration.Encoding" /> property to specify output encoding.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public virtual void Save (string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">A filename to save the entire XML document.</param>
+        <summary>Writes the entire document into specified file.</summary>
+        <remarks>
+          <para>
+	  It creates a file from the argument filename and writes the entire document into the file. This method internally creates an XmlWriter instance considering <see cref="P:System.Xml.XmlDeclaration.Encoding" /> property, and invokes <see cref="M:System.Xml.XmlDocument.Save(XmlWriter)" /> method.
+	  </para>
+          <para>
+	  With this method, the output XML is indented.
+	  </para>
+          <para>The output XML might contain XML declaration, in the same way as <see cref="T:System.Xml.XmlTextWriter" /> does, if it is required.
+	  </para>
+          <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public virtual void Save (System.Xml.XmlWriter xmlWriter);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlWriter" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="xmlWriter">An <see cref="T:System.Xml.XmlWriter" /> to save the entire document.</param>
+        <summary>Writes the entire document into argument <see cref="T:System.Xml.XmlWriter" />.</summary>
+        <remarks>
+          <para>
+	Saves the entire document into the argument <see cref="T:System.Xml.XmlWriter" />. It internally invokes <see cref="M:System.Xml.XmlNode.WriteTo" /> method for each child of the document.
+	</para>
+          <para>
+	This method does not close argument XmlWriter.
+	</para>
+          <para>
+	This method does not modify properties of the argument XmlWriter such as <see cref="P:System.Xml.XmlTextWriter.Formatting" />. This method does not write XML declaration if it explicitly exists in this XmlDocument.
+	</para>
+          <para>
+	Note that this method does not use <see cref="P:System.Xml.XmlDeclaration.Encoding" /> property to specify output encoding.
+	</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SchemaInfo">
+      <MemberSignature Language="C#" Value="public override System.Xml.Schema.IXmlSchemaInfo SchemaInfo { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.IXmlSchemaInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Schemas">
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet Schemas { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaSet</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Xml.IHasXmlChildNode.LastLinkedChild">
+      <MemberSignature Language="C#" Value="System.Xml.XmlLinkedNode System.Xml.IHasXmlChildNode.LastLinkedChild { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlLinkedNode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public void Validate (System.Xml.Schema.ValidationEventHandler handler);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handler" Type="System.Xml.Schema.ValidationEventHandler" />
+      </Parameters>
+      <Docs>
+        <param name="handler">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public void Validate (System.Xml.Schema.ValidationEventHandler handler, System.Xml.XmlNode node);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handler" Type="System.Xml.Schema.ValidationEventHandler" />
+        <Parameter Name="node" Type="System.Xml.XmlNode" />
+      </Parameters>
+      <Docs>
+        <param name="handler">To be added.</param>
+        <param name="node">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteContentTo">
+      <MemberSignature Language="C#" Value="public override void WriteContentTo (System.Xml.XmlWriter w);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="w" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="w">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteTo">
+      <MemberSignature Language="C#" Value="public override void WriteTo (System.Xml.XmlWriter w);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="w" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="w">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="XmlResolver">
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlResolver XmlResolver { set; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlResolver</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Sets an xml resolver that is used to resolve external resources.</summary>
+        <value>An <see cref="T:System.Xml.XmlResolver" /> object to resolve external resources, or null to prohibit to resolve external resources.</value>
+        <remarks>
+          <para>
+	This property is used to resolve external resources such as SYSTEM ID in document type or entity declaration. This property is used in such methods as <see cref="M:System.Xml.XmlDocument.Load" />, <see cref="M:System.Xml.XmlDocument.LoadXml" /> or <see cref="P:System.Xml.XmlNode.InnerXml" />.
+	</para>
+          <para>
+	By default this property holds an <see cref="T:System.Xml.XmlUrlResolver" /> object. Setting null to this property indicates that it never tries to resolve external resources.
+	</para>
+          <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

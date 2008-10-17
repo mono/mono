@@ -1,0 +1,183 @@
+<Type Name="XmlResolver" FullName="System.Xml.XmlResolver" FullNameSP="System_Xml_XmlResolver" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public abstract XmlResolver extends System.Object" />
+  <TypeSignature Language="C#" Value="public abstract class XmlResolver" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Resolves external XML resources named by a
+      URI.</para>
+    </summary>
+    <remarks>
+      <para>This class is used to resolve external XML resources such as entities, 
+      document type definitions (DTDs), or schemas. It is also used to process include
+      and import elements found in Extensible StyleSheet Language (XSL) stylesheets or
+      XML Schema Definition language (XSD) schemas.</para>
+      <para>This class is <see langword="abstract" /> and implemented in the <see cref="T:System.Xml.XmlUrlResolver" /> 
+class.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="protected XmlResolver ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Constructs a new instance of the <see cref="T:System.Xml.XmlResolver" /> class.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Credentials">
+      <MemberSignature Language="ILASM" Value=".property class System.Net.ICredentials Credentials { public hidebysig virtual abstract specialname void set_Credentials(class System.Net.ICredentials value) }" />
+      <MemberSignature Language="C#" Value="public abstract System.Net.ICredentials Credentials { set; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Net.ICredentials</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Sets the credentials used to authenticate Web
+      requests.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Net.ICredentials" /> instance
+   containing the
+   credentials.</para>
+        </value>
+        <remarks>
+          <block subset="none" type="behaviors">
+            <para>This property
+         sets the credentials used to authenticate Web requests. If the virtual directory
+         is configured to allow anonymous access, this property does not need to be set.
+         Otherwise, the credentials of the user must be supplied. If credentials are
+         needed but not supplied, the <see cref="T:System.Xml.XmlResolver" />
+         
+         class uses default credentials (<see cref="P:System.Net.CredentialCache.DefaultCredentials" qualify="true" />).</para>
+            <para>This property is write-only.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> This property must be overridden in order to
+      provide the functionality described above, as there is no default implementation.
+   </block>
+          </para>
+        </remarks>
+        <example>
+          <para>See <see cref="P:System.Xml.XmlUrlResolver.Credentials" /> for an example using this property.</para>
+        </example>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEntity">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract object GetEntity(class System.Uri absoluteUri, string role, class System.Type ofObjectToReturn)" />
+      <MemberSignature Language="C#" Value="public abstract object GetEntity (Uri absoluteUri, string role, Type type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="absoluteUri" Type="System.Uri" />
+        <Parameter Name="role" Type="System.String" />
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="absoluteUri">An instance of the <see cref="T:System.Uri" qualify="true" /> class containing an absolute URI.</param>
+        <param name="role">A <see cref="T:System.String" qualify="true" /> containing the <c>xlink:role</c>, or used as an implementation specific argument in other scenarios.</param>
+        <param name="type">To be added.</param>
+        <summary>
+          <para> Maps a URI to an object
+      containing the actual resource that the URI represents.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Object" qualify="true" />
+containing the resource.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> At a minimum, supporting the return of a <see cref="T:System.IO.Stream" qualify="true" /> object is required.
+</block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="absoluteUri" /> is <see langword="null" />.</exception>
+        <exception cref="T:System.Xml.XmlException">
+          <paramref name="ofObjectToReturn" /> is not a supported type.</exception>
+        <exception cref="T:System.NullReferenceException">
+          <paramref name="absoluteUri" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResolveUri">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Uri ResolveUri(class System.Uri baseUri, string relativeUri)" />
+      <MemberSignature Language="C#" Value="public virtual Uri ResolveUri (Uri baseUri, string relativeUri);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseUri" Type="System.Uri" />
+        <Parameter Name="relativeUri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="baseUri">The <see cref="T:System.Uri" qualify="true" /> specifying the base URI used to resolve <paramref name="relativeURI" />.</param>
+        <param name="relativeUri">
+          <para>A <see cref="T:System.String" qualify="true" /> specifying the URI to resolve. The URI can be absolute or relative.</para>
+        </param>
+        <summary>
+          <para>Resolves the absolute URI from the base and relative URIs.</para>
+        </summary>
+        <returns>
+          <para> A <see cref="T:System.Uri" qualify="true" /> containing the absolute URI, or <see langword="null" /> if <paramref name="relativeUri" /> can not be resolved.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> This method must be overridden in order to
+      provide the functionality described above, as there is no default implementation.
+   </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.Xml.XmlException">
+          <paramref name="baseUri" /> and <paramref name="relativeUri" /> are <see langword="null" />.</exception>
+        <exception cref="T:System.Xml.ArgumentException">
+          <paramref name="baseUri" /> and <paramref name="relativeUri" /> are <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

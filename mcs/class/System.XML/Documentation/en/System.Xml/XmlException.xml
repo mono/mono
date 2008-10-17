@@ -1,0 +1,279 @@
+<Type Name="XmlException" FullName="System.Xml.XmlException" FullNameSP="System_Xml_XmlException" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public serializable XmlException extends System.SystemException" />
+  <TypeSignature Language="C#" Value="public class XmlException : SystemException" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.SystemException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Represents the error that occurs when 
+      an XML document or fragment cannot be parsed.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public XmlException ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Xml.XmlException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Xml.XmlException.Message" /> property of the new instance to a system-supplied message that describes the error, such as "An XML error has occurred."   This message takes into account the current system culture.</para>
+          <para>The <see cref="!:System.Xml.XmlException.InnerException" /> property is initialized to <see langword="null" />. The <see cref="P:System.Xml.XmlException.LineNumber" /> and <see cref="P:System.Xml.XmlException.LinePosition" /> properties are initialized to zero.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
+      <MemberSignature Language="C#" Value="public XmlException (string message);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Xml.XmlException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Xml.XmlException.Message" /> property of the new instance using <paramref name="message" />. If the <paramref name="message" /> parameter is <see langword="null" />, the <see cref="P:System.Xml.XmlException.Message" /> property is initialized to the system-supplied message provided by the constructor that takes no arguments.</para>
+          <para>The <see cref="!:System.Xml.XmlException.InnerException" /> property is initialized to <see langword="null" />. The <see cref="P:System.Xml.XmlException.LineNumber" /> and <see cref="P:System.Xml.XmlException.LinePosition" /> properties are initialized to zero.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected XmlException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception innerException)" />
+      <MemberSignature Language="C#" Value="public XmlException (string message, Exception innerException);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="innerException">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="innerException" /> is not a <see langword="null" /> reference, the current exception was raised in a catch block handling <paramref name="innerException" />.</param>
+        <param name="innerException">To be added.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Xml.XmlException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Xml.XmlException.Message" /> property
+   of the new instance using <paramref name="message" /> and the <see cref="!:System.Xml.XmlException.InnerException" /> property using
+<paramref name="innerException" />. If the <paramref name="message" /> parameter is 
+<see langword="null" />, the <see cref="P:System.Xml.XmlException.Message" /> property is set to the system-supplied 
+   message provided by the constructor that takes no arguments. </para>
+          <para>The <see cref="P:System.Xml.XmlException.LineNumber" /> and <see cref="P:System.Xml.XmlException.LinePosition" /> properties are initialized to zero. </para>
+          <para>
+            <block subset="none" type="note"> For more information on inner
+   exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception innerException, int32 lineNumber, int32 linePosition)" />
+      <MemberSignature Language="C#" Value="public XmlException (string message, Exception innerException, int lineNumber, int linePosition);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+        <Parameter Name="lineNumber" Type="System.Int32" />
+        <Parameter Name="linePosition" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        <param name="innerException">An instance of <see cref="T:System.Exception" /> that is the cause of the current Exception. If <paramref name="innerException" /> is non-null, then the current Exception was raised in a catch block handling <paramref name="innerException" /> .</param>
+        <param name="lineNumber">A <see cref="T:System.Int32" /> that specifies the line number where the error occurred.</param>
+        <param name="linePosition">A <see cref="T:System.Int32" /> that specifies the character position where the error occurred.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of the <see cref="T:System.Xml.XmlException" /> class.</para>
+        </summary>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Xml.XmlException.Message" /> property of the new instance using <paramref name="message" />, the <see cref="!:System.Xml.XmlException.InnerException" /> property using <paramref name="innerException" />, the <see cref="P:System.Xml.XmlException.LineNumber" /> property using <paramref name="lineNumber" />, and the <see cref="P:System.Xml.XmlException.LinePosition" /> property using <paramref name="linePosition" />. If the <paramref name="message" /> parameter is <see langword="null" />, the <see cref="P:System.Xml.XmlException.Message" /> property is initialized to the system-supplied message provided by the constructor that takes no arguments.</para>
+          <para>
+            <block subset="none" type="note"> For information on inner exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LineNumber">
+      <MemberSignature Language="ILASM" Value=".property int32 LineNumber { public hidebysig specialname instance int32 get_LineNumber() }" />
+      <MemberSignature Language="C#" Value="public int LineNumber { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the line number where the
+      error occurred.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> containing the line number where the
+   error occurred.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LinePosition">
+      <MemberSignature Language="ILASM" Value=".property int32 LinePosition { public hidebysig specialname instance int32 get_LinePosition() }" />
+      <MemberSignature Language="C#" Value="public int LinePosition { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the character position where the
+      error occurred.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.Int32" /> containing the character position where
+   the error occurred.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>The first character in the line is in position 1. Note that white space 
+      characters at the start of the line are not skipped.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="ILASM" Value=".property string Message { public hidebysig virtual specialname string get_Message() }" />
+      <MemberSignature Language="C#" Value="public override string Message { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the error message that describes the current exception.</para>
+        </summary>
+        <value>
+          <para> A <see cref="T:System.String" /> containing the error message that describes the current exception.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>If the <see cref="P:System.Xml.XmlException.LineNumber" /> property is not equal to zero, the
+   string returned by this property includes the values of the <see cref="P:System.Xml.XmlException.LineNumber" /> and <see cref="P:System.Xml.XmlException.LinePosition" /> properties.</para>
+          <para>
+            <block subset="none" type="note">This property overrides <see cref="P:System.Exception.Message" />.</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SourceUri">
+      <MemberSignature Language="C#" Value="public string SourceUri { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>

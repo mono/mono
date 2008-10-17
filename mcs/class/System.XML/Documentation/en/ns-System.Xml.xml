@@ -1,0 +1,8 @@
+<Namespace Name="System.Xml" FullName="System.Xml" FullNameSP="System.Xml" Maintainer="Mono">
+  <Docs>
+    <summary>
+    	The System.Xml namespace contains classes for reading, writing, and manipulating Xml documents.
+    </summary>
+    <remarks />
+  </Docs>
+</Namespace>

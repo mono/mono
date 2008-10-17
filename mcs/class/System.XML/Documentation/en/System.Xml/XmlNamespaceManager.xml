@@ -1,0 +1,567 @@
+<Type Name="XmlNamespaceManager" FullName="System.Xml.XmlNamespaceManager" FullNameSP="System_Xml_XmlNamespaceManager" Maintainer="ecma">
+  <TypeSignature Language="ILASM" Value=".class public XmlNamespaceManager extends System.Object implements System.Collections.IEnumerable" />
+  <TypeSignature Language="C#" Value="public class XmlNamespaceManager : System.Collections.IEnumerable, System.Xml.IXmlNamespaceResolver" />
+  <MemberOfLibrary>XML</MemberOfLibrary>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Xml.IXmlNamespaceResolver</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+      <para>Resolves, adds, and removes namespaces in a collection and
+      provides scope management for these namespaces. This class is used by
+      the <see cref="T:System.Xml.XmlReader" />
+      and <see cref="T:System.Xml.XmlTextReader" /> classes.</para>
+    </summary>
+    <remarks>
+      <para>This class stores prefixes and namespaces
+      as unique <see cref="T:System.String" qualify="true" />
+      objects.</para>
+      <para>
+        <see cref="T:System.Xml.XmlNamespaceManager" /> assumes all prefixes and
+   namespaces are
+   valid.</para>
+      <para> If the prefix
+   and namespace already exist within the current scope, they will replace the existing prefix/namespace combination. The
+   same prefix and namespace combination can exist across different scopes.</para>
+      <para>The following prefix/namespace pairs are added by default
+   to the <see cref="T:System.Xml.XmlNamespaceManager" />. They can be determined at any
+   scope.</para>
+      <list type="table">
+        <listheader>
+          <term>Prefix</term>
+          <description>Namespace </description>
+        </listheader>
+        <item>
+          <term> xmlns</term>
+          <description>http://www.w3.org/2000/xmlns/
+         (the xmlns prefix namespace)</description>
+        </item>
+        <item>
+          <term> xml</term>
+          <description>http://www.w3.org/XML/1998/namespace (The XML namespace)</description>
+        </item>
+        <item>
+          <term>
+            <see cref="F:System.String.Empty" qualify="true" />
+          </term>
+          <description>
+            <see cref="F:System.String.Empty" />. The empty namespace can be reassigned a
+   different prefix. For example, <c>xmlns=""</c> defines the default namespace to
+be the empty namespace.</description>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Xml.XmlNameTable nameTable)" />
+      <MemberSignature Language="C#" Value="public XmlNamespaceManager (System.Xml.XmlNameTable nameTable);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="nameTable" Type="System.Xml.XmlNameTable" />
+      </Parameters>
+      <Docs>
+        <param name="nameTable">The <see cref="T:System.Xml.XmlNameTable" /> to use.</param>
+        <summary>
+          <para>Constructs and initializes a new instance of
+      the <see cref="T:System.Xml.XmlNamespaceManager" /> class.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="nameTable" />
+   is used to look up prefixes and namespaces.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="nameTable" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddNamespace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void AddNamespace(string prefix, string uri)" />
+      <MemberSignature Language="C#" Value="public virtual void AddNamespace (string prefix, string uri);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="uri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">A <see cref="T:System.String" qualify="true" /> specifying the prefix to associate with the namespace being added. Use <see cref="F:System.String.Empty" qualify="true" /> to add a default namespace.</param>
+        <param name="uri">A <see cref="T:System.String" /> specifying the namespace to add.</param>
+        <param name="uri">To be added.</param>
+        <summary>
+          <para>Adds the given namespace to the collection of namespaces
+      maintained by the current instance in <see cref="P:System.Xml.XmlNamespaceManager.NameTable" />.</para>
+        </summary>
+        <remarks>
+          <block subset="none" type="note">
+            <para>The same prefix and namespace combination can exist
+         across different scopes.</para>
+          </block>
+          <para>
+            <block subset="none" type="behaviors">
+      
+      As described above.</block>
+          </para>
+          <block subset="none" type="default">
+            <para> This
+      method assumes all prefixes and namespaces are valid but does not check
+   <paramref name="prefix" /> and <paramref name="uri" /> for
+      conformance to the W3C specification.</para>
+            <para> If the specified prefix/namespace
+      combination already exists within the current scope,
+      their <see cref="T:System.String" /> instances will be replaced
+      in <see cref="P:System.Xml.XmlNamespaceManager.NameTable" /> with the
+      new <see cref="T:System.String" />
+      instances of <paramref name="prefix" /> and <paramref name="uri" />.</para>
+          </block>
+          <para>
+            <block subset="none" type="overrides"> Override this
+   method to check <paramref name="prefix" /> and <paramref name=" uri" /> for conformance to the W3C specification. </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="prefix" /> is "xml" or "xmlns".</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prefix" /> is <see langword="null" />, or <paramref name="uri" /> is <see langword="null" />.</para>
+        </exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DefaultNamespace">
+      <MemberSignature Language="ILASM" Value=".property string DefaultNamespace { public hidebysig virtual specialname string get_DefaultNamespace() }" />
+      <MemberSignature Language="C#" Value="public virtual string DefaultNamespace { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Gets the namespace URI for the default
+      namespace.</para>
+        </summary>
+        <value>
+          <para>A <see cref="T:System.String" qualify="true" /> containing the
+   namespace URI for the default namespace, or <see cref="F:System.String.Empty" />
+   if there is no default namespace.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+          <para>
+            <block subset="none" type="behaviors"> As described
+      above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> This method is
+      equivalent to calling <see cref="M:System.Xml.XmlNamespaceManager.LookupNamespace(System.String)" />
+      (<see cref="F:System.String.Empty" />). </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this
+      property to customize the behavior of this property in types derived from
+      the <see cref="T:System.Xml.XmlNamespaceManager" />
+      class.
+      </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Collections.IEnumerator GetEnumerator()" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Provides support for iteration over
+      the collection of namespaces maintained by the current instance.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Collections.IEnumerator" qualify="true" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">  Override this
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlNamespaceManager" />
+      class.
+
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="usage"> Use this method to iterate through the collection of
+      namespaces in <see cref="P:System.Xml.XmlNamespaceManager.NameTable" />.
+      </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetNamespacesInScope">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IDictionary&lt;string,string&gt; GetNamespacesInScope (System.Xml.XmlNamespaceScope scope);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="scope" Type="System.Xml.XmlNamespaceScope" />
+      </Parameters>
+      <Docs>
+        <param name="scope">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasNamespace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool HasNamespace(string prefix)" />
+      <MemberSignature Language="C#" Value="public virtual bool HasNamespace (string prefix);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">A <see cref="T:System.String" qualify="true" /> containing the prefix of the namespace to find.</param>
+        <summary>
+          <para>Gets a value indicating whether the supplied prefix has
+      a namespace defined for the current pushed scope.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates there is a
+   namespace defined; otherwise, <see langword="false" />. If <paramref name="prefix" /> is <see langword="null" />, returns <see langword="false" />.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> When
+      <paramref name="prefix" /> is set to <see cref="F:System.String.Empty" qualify="true" />, this method returns
+      <see langword="true" /> to indicate a default empty namespace is defined in the current scope. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlNamespaceManager" />
+      class.
+      </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LookupNamespace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string LookupNamespace(string prefix)" />
+      <MemberSignature Language="C#" Value="public virtual string LookupNamespace (string prefix);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">A <see cref="T:System.String" qualify="true" /> containing the prefix whose namespace URI to resolve. To match the default namespace, pass <see cref="F:System.String.Empty" />.</param>
+        <summary>
+          <para>Gets the namespace URI associated with the specified
+      prefix.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" /> containing the namespace URI for <paramref name="prefix" />, or <see langword="null" />
+if there is
+no mapped namespace.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">  Override this
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlNamespaceManager" />
+      class.
+      </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LookupPrefix">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string LookupPrefix(string uri)" />
+      <MemberSignature Language="C#" Value="public virtual string LookupPrefix (string uri);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="uri">A <see cref="T:System.String" qualify="true" /> containing the namespace to resolve for the prefix.</param>
+        <summary>
+          <para> Gets the prefix associated with the given
+      namespace URI.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.String" qualify="true" /> containing the
+   matching prefix. If there is no mapped prefix, this method returns
+<see langword="null" />. If a <see langword="null" /> 
+value is supplied, then
+<see langword="null" /> is returned.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above.
+      </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlNamespaceManager" />
+      class.
+      </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NameTable">
+      <MemberSignature Language="ILASM" Value=".property class System.Xml.XmlNameTable NameTable { public hidebysig specialname instance class System.Xml.XmlNameTable get_NameTable() }" />
+      <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNameTable NameTable { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNameTable</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para> Gets the name table used by the current instance to look up prefixes and namespace URIs.</para>
+        </summary>
+        <value>
+          <para> The <see cref="T:System.Xml.XmlNameTable" /> used by the current instance.</para>
+        </value>
+        <remarks>
+          <para>This property is read-only.</para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PopScope">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool PopScope()" />
+      <MemberSignature Language="C#" Value="public virtual bool PopScope ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Pops a namespace scope off the stack.</para>
+        </summary>
+        <returns>
+          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates a namespace
+   scope was popped off the stack; <see langword="false" /> indicates there were no namespaces
+   scopes to pop.</para>
+        </returns>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> This method
+      removes all the namespaces that were added to the collection (by calling
+      <see cref="M:System.Xml.XmlNamespaceManager.AddNamespace(System.String,System.String)" />)
+      since the last call to the <see cref="M:System.Xml.XmlNamespaceManager.PopScope" />
+      
+      method. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlNamespaceManager" />
+      class.
+      </block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PushScope">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void PushScope()" />
+      <MemberSignature Language="C#" Value="public virtual void PushScope ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          <para>Pushes a namespace scope onto the stack.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> This method associates the pushed namespace scope
+      with all the namespaces added to the collection (by calling
+      <see cref="M:System.Xml.XmlNamespaceManager.AddNamespace(System.String,System.String)" />) since the last call to the
+      <see cref="M:System.Xml.XmlNamespaceManager.PushScope" />
+   method.</block>
+          </para>
+          <para>
+            <block subset="none" type="overrides">  Override this
+   method to customize the behavior of this method in types derived from
+   the <see cref="T:System.Xml.XmlNamespaceManager" />
+   class.
+</block>
+          </para>
+        </remarks>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveNamespace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void RemoveNamespace(string prefix, string uri)" />
+      <MemberSignature Language="C#" Value="public virtual void RemoveNamespace (string prefix, string uri);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="uri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">A <see cref="T:System.String" qualify="true" /> specifying the prefix.</param>
+        <param name="uri">A <see cref="T:System.String" qualify="true" /> specifying the namespace to remove.</param>
+        <param name="uri">To be added.</param>
+        <summary>
+          <para>Removes the specified namespace associated with the
+      specified prefix from the namespace collection maintained by the current
+      instance.</para>
+        </summary>
+        <remarks>
+          <para>
+            <block subset="none" type="behaviors"> As described above. </block>
+          </para>
+          <para>
+            <block subset="none" type="default"> The namespace
+      removed is from the current namespace scope. Namespaces outside the current
+      scope are ignored. If <paramref name="prefix" /> or <paramref name=" uri" /> does not exist
+      in the collection, this method simply returns. </block>
+          </para>
+          <para>
+            <block subset="none" type="overrides"> Override this
+      method to customize the behavior of this method in types derived from
+      the <see cref="T:System.Xml.XmlNamespaceManager" />
+      class.
+      </block>
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="prefix" /> is <see langword="null" />, or <paramref name="uri" /> is <see langword="null" />.</exception>
+      </Docs>
+      <Excluded>0</Excluded>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="System.Xml.IXmlNamespaceResolver.GetNamespacesInScope">
+      <MemberSignature Language="C#" Value="System.Collections.IDictionary IXmlNamespaceResolver.GetNamespacesInScope (System.Xml.XmlNamespaceScope scope);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionary</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="scope" Type="System.Xml.XmlNamespaceScope" />
+      </Parameters>
+      <Docs>
+        <param name="scope">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
+</Type>
