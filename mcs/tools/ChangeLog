@@ -1,3 +1,8 @@
+2008-10-17  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: clean the Makefile, following the pattern in ../class,
+	to make it easier to add tools.
+
 2008-10-16  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile (DIST_ONLY_SUBDIRS): Add mono-shlib-cop; fixes the build.
