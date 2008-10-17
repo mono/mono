@@ -1,3 +1,8 @@
+
+Fri Oct 17 14:40:50 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* simd-intrinsics.c: remove relocations.
+
 2008-10-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Port the IREM_IMM 
