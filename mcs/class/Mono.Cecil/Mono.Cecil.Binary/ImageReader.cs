@@ -81,8 +81,11 @@ namespace Mono.Cecil.Binary {
 			} catch (Exception e) {
 				if (stream != null)
 					stream.Close ();
-
+#if CF_1_0 || CF_2_0
+				throw new BadImageFormatException ("Invalid PE file: " + file, e);
+#else
 				throw new BadImageFormatException ("Invalid PE file", file, e);
+#endif
 			}
 		}
 
