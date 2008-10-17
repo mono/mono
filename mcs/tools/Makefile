@@ -27,6 +27,7 @@ net_1_1_dirs := \
 	prj2make	\
 	mono-service	\
 	monodoc		\
+	mod		\
 	compiler-tester	\
 	mono-xmltool	\
 	installvst		\
