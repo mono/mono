@@ -1,0 +1,630 @@
+<Type Name="OleDbSchemaGuid" FullName="System.Data.OleDb.OleDbSchemaGuid">
+  <TypeSignature Language="C#" Value="public sealed class OleDbSchemaGuid" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>System.Data</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OleDbSchemaGuid ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Assertions">
+      <MemberSignature Language="C#" Value="public static readonly Guid Assertions = df855bea-fb95-4abc-8932-e57e45c7ddae;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>df855bea-fb95-4abc-8932-e57e45c7ddae</MemberValue>
+    </Member>
+    <Member MemberName="Catalogs">
+      <MemberSignature Language="C#" Value="public static readonly Guid Catalogs = e4a67334-f03c-45af-8b1d-531f99268045;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>e4a67334-f03c-45af-8b1d-531f99268045</MemberValue>
+    </Member>
+    <Member MemberName="Character_Sets">
+      <MemberSignature Language="C#" Value="public static readonly Guid Character_Sets = e4533bdb-0b55-48ee-986d-17d07143657d;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>e4533bdb-0b55-48ee-986d-17d07143657d</MemberValue>
+    </Member>
+    <Member MemberName="Check_Constraints">
+      <MemberSignature Language="C#" Value="public static readonly Guid Check_Constraints = fedf7f5d-cfb4-4635-af02-45eb4bb4e8f3;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>fedf7f5d-cfb4-4635-af02-45eb4bb4e8f3</MemberValue>
+    </Member>
+    <Member MemberName="Check_Constraints_By_Table">
+      <MemberSignature Language="C#" Value="public static readonly Guid Check_Constraints_By_Table = d76547ef-837d-413c-8d76-bab1d7bb014a;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>d76547ef-837d-413c-8d76-bab1d7bb014a</MemberValue>
+    </Member>
+    <Member MemberName="Collations">
+      <MemberSignature Language="C#" Value="public static readonly Guid Collations = 5145b85c-c448-4b9e-8929-4c2de31ffa30;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>5145b85c-c448-4b9e-8929-4c2de31ffa30</MemberValue>
+    </Member>
+    <Member MemberName="Column_Domain_Usage">
+      <MemberSignature Language="C#" Value="public static readonly Guid Column_Domain_Usage = 058acb5e-eb1d-4b6e-8e98-a7d59a959ff1;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>058acb5e-eb1d-4b6e-8e98-a7d59a959ff1</MemberValue>
+    </Member>
+    <Member MemberName="Column_Privileges">
+      <MemberSignature Language="C#" Value="public static readonly Guid Column_Privileges = 43152796-f3b4-4342-9647-008f1060e352;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>43152796-f3b4-4342-9647-008f1060e352</MemberValue>
+    </Member>
+    <Member MemberName="Columns">
+      <MemberSignature Language="C#" Value="public static readonly Guid Columns = 86dcd6e2-9a8c-4c6d-bc1c-e0e334c727c9;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>86dcd6e2-9a8c-4c6d-bc1c-e0e334c727c9</MemberValue>
+    </Member>
+    <Member MemberName="Constraint_Column_Usage">
+      <MemberSignature Language="C#" Value="public static readonly Guid Constraint_Column_Usage = 3a39f999-f481-4293-8b9f-af7e91b4ee7d;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>3a39f999-f481-4293-8b9f-af7e91b4ee7d</MemberValue>
+    </Member>
+    <Member MemberName="Constraint_Table_Usage">
+      <MemberSignature Language="C#" Value="public static readonly Guid Constraint_Table_Usage = d689719b-24b0-4963-a635-097c480edcd2;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>d689719b-24b0-4963-a635-097c480edcd2</MemberValue>
+    </Member>
+    <Member MemberName="DbInfoLiterals">
+      <MemberSignature Language="C#" Value="public static readonly Guid DbInfoLiterals = 7a564da6-f3bc-474b-9e66-71cb47bde5b0;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>7a564da6-f3bc-474b-9e66-71cb47bde5b0</MemberValue>
+    </Member>
+    <Member MemberName="Foreign_Keys">
+      <MemberSignature Language="C#" Value="public static readonly Guid Foreign_Keys = d9e547ce-e62d-4200-b849-566bc3dc29de;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>d9e547ce-e62d-4200-b849-566bc3dc29de</MemberValue>
+    </Member>
+    <Member MemberName="Indexes">
+      <MemberSignature Language="C#" Value="public static readonly Guid Indexes = 69d8523c-96ad-40cb-a89a-ee98d2d6fcec;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>69d8523c-96ad-40cb-a89a-ee98d2d6fcec</MemberValue>
+    </Member>
+    <Member MemberName="Key_Column_Usage">
+      <MemberSignature Language="C#" Value="public static readonly Guid Key_Column_Usage = 65423211-805e-4822-8eb4-f4f6d540056e;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>65423211-805e-4822-8eb4-f4f6d540056e</MemberValue>
+    </Member>
+    <Member MemberName="Primary_Keys">
+      <MemberSignature Language="C#" Value="public static readonly Guid Primary_Keys = c6e5b174-fbd8-4055-b757-8585040e463f;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>c6e5b174-fbd8-4055-b757-8585040e463f</MemberValue>
+    </Member>
+    <Member MemberName="Procedure_Columns">
+      <MemberSignature Language="C#" Value="public static readonly Guid Procedure_Columns = 7148080d-e053-4ada-b79a-9a2ff614a3d4;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>7148080d-e053-4ada-b79a-9a2ff614a3d4</MemberValue>
+    </Member>
+    <Member MemberName="Procedure_Parameters">
+      <MemberSignature Language="C#" Value="public static readonly Guid Procedure_Parameters = 984af700-8fe7-476f-81c2-4b814df67907;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>984af700-8fe7-476f-81c2-4b814df67907</MemberValue>
+    </Member>
+    <Member MemberName="Procedures">
+      <MemberSignature Language="C#" Value="public static readonly Guid Procedures = 61f276ad-4f25-4c26-b4ae-8238e06d56db;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>61f276ad-4f25-4c26-b4ae-8238e06d56db</MemberValue>
+    </Member>
+    <Member MemberName="Provider_Types">
+      <MemberSignature Language="C#" Value="public static readonly Guid Provider_Types = 0bc2da44-d834-4136-9ff0-3cef477784b9;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>0bc2da44-d834-4136-9ff0-3cef477784b9</MemberValue>
+    </Member>
+    <Member MemberName="Referential_Constraints">
+      <MemberSignature Language="C#" Value="public static readonly Guid Referential_Constraints = d2eab85e-49a7-462d-aa22-1d97c74178ae;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>d2eab85e-49a7-462d-aa22-1d97c74178ae</MemberValue>
+    </Member>
+    <Member MemberName="Schemata">
+      <MemberSignature Language="C#" Value="public static readonly Guid Schemata = 2fbd7503-0af3-43d2-92c6-51e78b84dd37;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>2fbd7503-0af3-43d2-92c6-51e78b84dd37</MemberValue>
+    </Member>
+    <Member MemberName="Sql_Languages">
+      <MemberSignature Language="C#" Value="public static readonly Guid Sql_Languages = d60a511d-a07f-4e59-aac2-71c25fab5b02;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>d60a511d-a07f-4e59-aac2-71c25fab5b02</MemberValue>
+    </Member>
+    <Member MemberName="Statistics">
+      <MemberSignature Language="C#" Value="public static readonly Guid Statistics = 03ed9f7d-35bc-45fe-993f-ee7a5f29fb74;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>03ed9f7d-35bc-45fe-993f-ee7a5f29fb74</MemberValue>
+    </Member>
+    <Member MemberName="Table_Constraints">
+      <MemberSignature Language="C#" Value="public static readonly Guid Table_Constraints = 62883c55-082d-42cb-bb00-747985ca6047;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>62883c55-082d-42cb-bb00-747985ca6047</MemberValue>
+    </Member>
+    <Member MemberName="Table_Privileges">
+      <MemberSignature Language="C#" Value="public static readonly Guid Table_Privileges = 1a73f478-8c8e-4ede-b3ec-22ba13ab55a0;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>1a73f478-8c8e-4ede-b3ec-22ba13ab55a0</MemberValue>
+    </Member>
+    <Member MemberName="Table_Statistics">
+      <MemberSignature Language="C#" Value="public static readonly Guid Table_Statistics = 9c944744-cd51-448a-8be4-7095f039d0ef;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>9c944744-cd51-448a-8be4-7095f039d0ef</MemberValue>
+    </Member>
+    <Member MemberName="Tables">
+      <MemberSignature Language="C#" Value="public static readonly Guid Tables = ceac88ba-240c-4bb4-821e-4a49fc013371;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>ceac88ba-240c-4bb4-821e-4a49fc013371</MemberValue>
+    </Member>
+    <Member MemberName="Tables_Info">
+      <MemberSignature Language="C#" Value="public static readonly Guid Tables_Info = 9ff81c59-2b1e-4371-a08b-3a2d373189fa;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>9ff81c59-2b1e-4371-a08b-3a2d373189fa</MemberValue>
+    </Member>
+    <Member MemberName="Translations">
+      <MemberSignature Language="C#" Value="public static readonly Guid Translations = 5578b57e-a682-4f1b-bdb4-f8a14ad6f61e;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>5578b57e-a682-4f1b-bdb4-f8a14ad6f61e</MemberValue>
+    </Member>
+    <Member MemberName="Trustee">
+      <MemberSignature Language="C#" Value="public static readonly Guid Trustee = 521207e2-3a23-42b6-ac78-810a3fce3271;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>521207e2-3a23-42b6-ac78-810a3fce3271</MemberValue>
+    </Member>
+    <Member MemberName="Usage_Privileges">
+      <MemberSignature Language="C#" Value="public static readonly Guid Usage_Privileges = f8113a2b-2934-4c67-ab7b-adbe3ab74973;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>f8113a2b-2934-4c67-ab7b-adbe3ab74973</MemberValue>
+    </Member>
+    <Member MemberName="View_Column_Usage">
+      <MemberSignature Language="C#" Value="public static readonly Guid View_Column_Usage = 2c91ef91-02d8-4d38-ae5a-1e826873d6ea;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>2c91ef91-02d8-4d38-ae5a-1e826873d6ea</MemberValue>
+    </Member>
+    <Member MemberName="View_Table_Usage">
+      <MemberSignature Language="C#" Value="public static readonly Guid View_Table_Usage = 7dcb7f53-1045-4fdf-86a1-d3caaf27c7f5;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>7dcb7f53-1045-4fdf-86a1-d3caaf27c7f5</MemberValue>
+    </Member>
+    <Member MemberName="Views">
+      <MemberSignature Language="C#" Value="public static readonly Guid Views = 9a6345b6-61a0-40fd-9b45-402f3c9c9c3e;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <MemberValue>9a6345b6-61a0-40fd-9b45-402f3c9c9c3e</MemberValue>
+    </Member>
+  </Members>
+</Type>

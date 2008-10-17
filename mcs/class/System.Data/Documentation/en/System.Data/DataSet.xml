@@ -1,0 +1,2063 @@
+<Type Name="DataSet" FullName="System.Data.DataSet">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public class DataSet : System.ComponentModel.MarshalByValueComponent, System.ComponentModel.IListSource, System.ComponentModel.ISupportInitializeNotification, System.Runtime.Serialization.ISerializable, System.Xml.Serialization.IXmlSerializable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Data</AssemblyName>
+    <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.3300.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.ComponentModel.MarshalByValueComponent</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ComponentModel.IListSource</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ComponentModel.ISupportInitializeNotification</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Xml.Serialization.IXmlSerializable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Xml.Serialization.XmlRoot("DataSet")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Xml.Serialization.XmlSchemaProvider("GetDataSetSchema")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.ComponentModel.Designer("Microsoft.VSDesigner.Data.VS.DataSetDesigner, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.ComponentModel.DefaultProperty("DataSetName")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.ComponentModel.ToolboxItem("Microsoft.VSDesigner.Data.VS.DataSetToolboxItem, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>Implements an in-memory cache of data read from a data source</summary>
+    <remarks>
+      <para>DataSet, composing a part of the ADO.NET framework, is a class which represents a "snapshot" of data read from a certain, arbitrary, data source and defines operations that let the programmer access and manipulate the data in the relational. The data sources DataSet can use range from RDBMS to XML files.</para>
+      <para>Data is kept in a collection of <see cref="T:System.Data.DataTable" /> objects which you can relate to each other thanks to the <see cref="T:System.Data.DataRelation" /> class. Data integrity can be enforced in the fashion similar to the RDBMS, using the constraint classes - <see cref="T:System.Data.UniqueConstraint" /> and <see cref="T:System.Data.ForeignKeyConstraint" />.</para>
+      <para>Numerous other ways of manipulating the data exist with the DataSet. It is possible to retrieve a subset of the data that contains only the data that was changed in the current DataSet, one can also merge DataSets, update the data in one DataSet using another DataSet as a source, add, delete and updata rows of data represented by the <see cref="T:System.Data.DataRow" /> class. It is also possible to reject or accept the changes to the data using, respectively, the <see cref="M:System.Data.DataSet.AcceptChanges" /> and the <see cref="M:System.Data.DataSet.RejectChanges" /> methods.</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataSet ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Creates and initializes a new instance of the class.</summary>
+        <remarks>This constructor creates a DataSet with the default name  "NewDataSet".</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataSet (string dataSetName);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="dataSetName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="dataSetName">To be added: an object of type 'string'</param>
+        <summary>Creates and initializes a new instance of the class with the specified name.</summary>
+        <remarks>A name of a DataSet instance is required for the XML representation of the data, which has a root element that needs to contain the name of the represented DataSet.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected DataSet (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">The data used in the process of the object (de)serialization.</param>
+        <param name="context">The source/destination of the serialized stream.</param>
+        <summary>This constructor is used internally by the framework and should not be used in the user programs.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected DataSet (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, bool constructSchema);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+        <Parameter Name="constructSchema" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <param name="constructSchema">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AcceptChanges">
+      <MemberSignature Language="C#" Value="public void AcceptChanges ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Commits all the changes made to this DataSet since it was loaded or since the last time AcceptChanges was called.</summary>
+        <remarks>
+          <para>AcceptChanges is a way to accept data changes within a DataSet in a hierarchical manner. The method is also present in the <see cref="T:System.Data.DataTable" /> and <see cref="T:System.Data.DataRow" /> classes which allows the data acceptance process to descend in the hierarchy. If AcceptChanges is called on the DataSet, the implementation will in turn call the AcceptChanges method on all the DataTable instances in the table collection and the tables will invoke the method on the DataRow objects they own. That allows you to selectively accept changes in a flexible way.</para>
+          <para>Calling AcceptChanges on the DataSet affects the DataRow objects in the way dependant on the state the rows are in at the point of the method call. And so, if a DataRow is in the edit mode, the mode will be successfully ended. If a row is in the Added or Modified state, as indicated by the <see cref="M:System.Data.DataRow.RowState" /> property, it will become Unchanged and the rows found in the Deleted state are removed from the DataSet.</para>
+          <para>A <see cref="T:System.Data.ForeignKeyConstraint" /> found attached to the DataSet causes the <see cref="M:System.Data.ForeignKeyConstraint.AcceptRejectRule" /> to be enforced.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BeginInit">
+      <MemberSignature Language="C#" Value="public void BeginInit ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This method is not meant for use in the user's program.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CaseSensitive">
+      <MemberSignature Language="C#" Value="public bool CaseSensitive { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Gets or sets the value that indicates whether string comparisons within the DataSet are case sensitive.</summary>
+        <value>
+          <see langword="true" /> if string comparisons are case-sensitive, <see langword="false" /> otherwise. The default is <see langword="false" />.</value>
+        <remarks>This property sets the case sensitivity mode for the searching, filtering and and sorting operations performed on the data contained in the DataSet. Setting the property causes the <see cref="P:System.Data.DataTable.CaseSensitive" /> property of all the <see cref="T:System.Data.DataTable" /> objects contained within the DataSet to be set to the same value.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Removes all the data from the DataSet by deleting all the rows from the table collection.</summary>
+        <remarks>If the DataSet data source is <see cref="T:System.Xml.XmlDataDocument" /> then calling this method raises the <see cref="T:System.NotSupportedException" />. In such case, the way to remove the data is to traverse all the tables in the table collection and delete the rows one at a time.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public virtual System.Data.DataSet Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.DataSet</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Makes a copy of the DataSet structure (schemas, relations and constraints) and returns it as a new instance of DataSet. The data is not copied.</summary>
+        <returns>A DataSet with the same structure as the current one, but with no data.</returns>
+        <remarks>If the current object is a subclass of DataSet, the clone will also be of the same type.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="C#" Value="public System.Data.DataSet Copy ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.DataSet</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Copies both the structure (schemas, relations and constraints) of the current object.</summary>
+        <returns>A new object which contains a copy of the current object's schema and data.</returns>
+        <remarks>If the current object is a subclass of DataSet, the clone will also be of the same type.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDataReader">
+      <MemberSignature Language="C#" Value="public System.Data.DataTableReader CreateDataReader ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.DataTableReader</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateDataReader">
+      <MemberSignature Language="C#" Value="public System.Data.DataTableReader CreateDataReader (System.Data.DataTable[] dataTables);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.DataTableReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dataTables" Type="System.Data.DataTable[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="dataTables">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DataSetName">
+      <MemberSignature Language="C#" Value="public string DataSetName { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Gets or sets the name of the DataSet object.</summary>
+        <value>The name of the DataSet object.</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="DefaultViewManager">
+      <MemberSignature Language="C#" Value="public System.Data.DataViewManager DefaultViewManager { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.DataViewManager</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets a custom <see cref="T:System.Data.DataViewManager" /> which allows filtering, searching and navigating the DataSet.</summary>
+        <value>The returned <see cref="T:System.Data.DataViewManager" /> allows you to create custom settings for each <see cref="T:System.Data.DataTable" /> contained within the DataSet object.</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="DetermineSchemaSerializationMode">
+      <MemberSignature Language="C#" Value="protected System.Data.SchemaSerializationMode DetermineSchemaSerializationMode (System.Xml.XmlReader reader);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.SchemaSerializationMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DetermineSchemaSerializationMode">
+      <MemberSignature Language="C#" Value="protected System.Data.SchemaSerializationMode DetermineSchemaSerializationMode (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.SchemaSerializationMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndInit">
+      <MemberSignature Language="C#" Value="public void EndInit ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This method is not meant for use in the user's program. </summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EnforceConstraints">
+      <MemberSignature Language="C#" Value="public bool EnforceConstraints { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Gets or sets a value indicating whether constraint rules are enforced during updates of the DataSet object.</summary>
+        <value>
+          <see langword="true" />, if rules are enforced, <see langword="false" /> otherwise. The default is <see langword="true" />.</value>
+        <remarks>Constraints are set using the <see cref="P:System.Data.DataTable.Constraints" /> property.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ExtendedProperties">
+      <MemberSignature Language="C#" Value="public System.Data.PropertyCollection ExtendedProperties { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.PropertyCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the collection of customized user information associated with the DataSet.</summary>
+        <value>A <see cref="T:System.Data.PropertyCollection" /> with all custom user information.</value>
+        <remarks>The ExtendedProperties property enables you to store custom information with the DataSet. The extended properties must be of type <see cref="T:System.String" /> in order to have them persisted along with the DataSet when writing the latter as XML.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetChanges">
+      <MemberSignature Language="C#" Value="public System.Data.DataSet GetChanges ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.DataSet</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets a DataSet with the changes since the last call to AcceptChanges or since the object was loaded.</summary>
+        <returns>A copy of all the changes which can be operated upon separately to the current object and then merged back in using <see cref="M:System.Data.DataSet.Merge" />, or null reference if no changes are found.</returns>
+        <remarks>The returned copy is structured so that it is easy to merge it back into the original dataset. It is however possible that the copied data will contain Unchanged rows if they were selected because of relationship constraints of the original object.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetChanges">
+      <MemberSignature Language="C#" Value="public System.Data.DataSet GetChanges (System.Data.DataRowState rowStates);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.DataSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rowStates" Type="System.Data.DataRowState" />
+      </Parameters>
+      <Docs>
+        <param name="rowStates">One of the values defined in the <see cref="T:System.Data.DataRowState" /> structure.</param>
+        <summary>Gets a DataSet with the changes since the last call to AcceptChanges or since the object was loaded. The data is filtered by <see cref="T:System.Data.DataRowState" />.</summary>
+        <returns>A filtered copy of all the changes which can be operated upon separately to the current object and then merged back in using DataSet.Merge, or null reference if no changes are found. </returns>
+        <remarks>The returned copy is structured so that it is easy to merge it back into the original dataset. It is however possible that the copied data will contain Unchanged rows if they were selected because of relationship constraints of the original object.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetDataSetSchema">
+      <MemberSignature Language="C#" Value="public static System.Xml.Schema.XmlSchemaComplexType GetDataSetSchema (System.Xml.Schema.XmlSchemaSet schemaSet);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaComplexType</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="schemaSet" Type="System.Xml.Schema.XmlSchemaSet" />
+      </Parameters>
+      <Docs>
+        <param name="schemaSet">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public virtual void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSchemaSerializable">
+      <MemberSignature Language="C#" Value="protected virtual System.Xml.Schema.XmlSchema GetSchemaSerializable ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This method is not meant for use in the user's program.</summary>
+        <returns />
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSerializationData">
+      <MemberSignature Language="C#" Value="protected void GetSerializationData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info" />
+        <param name="context" />
+        <summary>This method is not meant for use in the user's program.</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetXml">
+      <MemberSignature Language="C#" Value="public string GetXml ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the data contained in the DataSet formatted as XML.</summary>
+        <returns>A string which contains the XML representation of the data in the current DataSet.</returns>
+        <remarks>Calling this method is identical to invoking the <see cref="M:System.Data.DataSet.WriteXml" /> method with XmlWriteMode set to IgnoreSchema.
+<block subset="none" type="note"><para>Using GetXml in order to save the XML data into a file has more overhead than calling <see cref="M:System.Data.DataSet.WriteXml" /> directly.
+  </para></block></remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetXmlSchema">
+      <MemberSignature Language="C#" Value="public string GetXmlSchema ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the XSD representation fore the XML schema of the data contained in the current DataSet.</summary>
+        <returns>A string which contains the XSD schema for the XML of the data in the current DataSet.</returns>
+        <remarks>Calling this method is identical to calling <see cref="M:System.Data.DataSet.WriteXmlSchema" />, except that only the primary schema is written.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasChanges">
+      <MemberSignature Language="C#" Value="public bool HasChanges ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns a value that indicates whether the current DataSet has any changes in it (that is any New, Deleted or Modified rows).</summary>
+        <returns>
+          <see langword="true" /> if the current DataSet has changes, <see langword="false" /> otherwise.</returns>
+        <remarks>It is a good idea to call HasChanges before invoking <see cref="M:System.DataSet.GetChanges" />.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasChanges">
+      <MemberSignature Language="C#" Value="public bool HasChanges (System.Data.DataRowState rowStates);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rowStates" Type="System.Data.DataRowState" />
+      </Parameters>
+      <Docs>
+        <param name="rowStates">One of the values defined in the <see cref="M:System.Data.DataRowState" /> structure.</param>
+        <summary>Returns a value that indicates whether the current DataSet has any changes in it (that is any New, Deleted or Modified rows), filtered by <see cref="T:System.Data.DataRowState" /></summary>
+        <returns>
+          <see langword="true" /> if the current DataSet has changes, <see langword="false" /> otherwise.</returns>
+        <remarks>It is a good idea to call HasChanges before invoking <see cref="M:System.DataSet.GetChanges" />.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasErrors">
+      <MemberSignature Language="C#" Value="public bool HasErrors { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets a value indicating whether there are errors in any of the tables within the DataSet object.</summary>
+        <value>
+          <see langword="true" /> if any table contains an error, <see langword="false" /> otherwise.</value>
+        <remarks>This property is set to <see langword="true" /> if any of the tables contained within the DataSet have their <see cref="P:System.Data.DataTable.HasErrors" /> set to <see langword="true" />. It is a simple optimization to check this property before traversing the <see cref="T:System.Data.DataTable" /> collection owned by the DataSet object. If a <see cref="T:System.Data.DataTable" /> has errors, the <see cref="M:System.Data.DataTable.GetErrors" /> method can be used to retrieve an array of <see cref="T:System.Data.DataRow" /> objects that are erroneous.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="InferXmlSchema">
+      <MemberSignature Language="C#" Value="public void InferXmlSchema (System.IO.Stream stream, string[] nsArray);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="nsArray" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="stream">The <see cref="T:System.IO.Stream" /> to read the data from.</param>
+        <param name="nsArray">An array of namespace URIs to be excluded from the inference.</param>
+        <summary>Applies the specified XML schema from the specified <see cref="T:System.IO.Stream" /> to the current DataSet</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InferXmlSchema">
+      <MemberSignature Language="C#" Value="public void InferXmlSchema (System.IO.TextReader reader, string[] nsArray);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.IO.TextReader" />
+        <Parameter Name="nsArray" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="reader">A <see cref="T:System.IO.TextReader" /> object to read the data from.</param>
+        <param name="nsArray">An array of namespace URIs to be excluded from the inference.</param>
+        <summary>Applies the specified XML schema from the specified <see cref="T:System.IO.TextReader" /> to the current DataSet</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InferXmlSchema">
+      <MemberSignature Language="C#" Value="public void InferXmlSchema (string fileName, string[] nsArray);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="nsArray" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">Name of the file to read the data from.</param>
+        <param name="nsArray">An array of namespace URIs to be excluded from the inference.</param>
+        <summary>Applies the specified XML schema from the specified file to the current DataSet</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InferXmlSchema">
+      <MemberSignature Language="C#" Value="public void InferXmlSchema (System.Xml.XmlReader reader, string[] nsArray);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="nsArray" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="reader">A <see cref="T:System.Xml.XmlReader" /> object to read the data from.</param>
+        <param name="nsArray">An array of namespace URIs to be excluded from the inference.</param>
+        <summary>Applies the specified XML schema from the specified <see cref="T:System.Xml.XmlReader" /> to the current DataSet</summary>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Initialized">
+      <MemberSignature Language="C#" Value="public event EventHandler Initialized;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InitializeDerivedDataSet">
+      <MemberSignature Language="C#" Value="protected virtual void InitializeDerivedDataSet ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsBinarySerialized">
+      <MemberSignature Language="C#" Value="protected bool IsBinarySerialized (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsInitialized">
+      <MemberSignature Language="C#" Value="public bool IsInitialized { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Data.IDataReader reader, System.Data.LoadOption loadOption, System.Data.DataTable[] tables);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Data.IDataReader" />
+        <Parameter Name="loadOption" Type="System.Data.LoadOption" />
+        <Parameter Name="tables" Type="System.Data.DataTable[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="loadOption">To be added.</param>
+        <param name="tables">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (System.Data.IDataReader reader, System.Data.LoadOption loadOption, string[] tables);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Data.IDataReader" />
+        <Parameter Name="loadOption" Type="System.Data.LoadOption" />
+        <Parameter Name="tables" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="loadOption">To be added.</param>
+        <param name="tables">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public virtual void Load (System.Data.IDataReader reader, System.Data.LoadOption loadOption, System.Data.FillErrorEventHandler errorHandler, System.Data.DataTable[] tables);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Data.IDataReader" />
+        <Parameter Name="loadOption" Type="System.Data.LoadOption" />
+        <Parameter Name="errorHandler" Type="System.Data.FillErrorEventHandler" />
+        <Parameter Name="tables" Type="System.Data.DataTable[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="loadOption">To be added.</param>
+        <param name="errorHandler">To be added.</param>
+        <param name="tables">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Locale">
+      <MemberSignature Language="C#" Value="public System.Globalization.CultureInfo Locale { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CultureInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Gets or sets the locale information used to compare strings within the table.</summary>
+        <value>A <see cref="T:System.Globalization.CultureInfo" /> that contains data about the user's machine locale. The default is a null reference.</value>
+        <remarks>By default, setting the Locale for a DataSet also sets the Locale for each <see cref="T:System.Data.DataTable" /> object in that DataSet to the same value.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Merge">
+      <MemberSignature Language="C#" Value="public void Merge (System.Data.DataRow[] rows);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rows" Type="System.Data.DataRow[]" />
+      </Parameters>
+      <Docs>
+        <param name="rows">An array of <see cref="T:System.Data.DataRow" /> objects to get the new data from.</param>
+        <summary>Merges an array of <see cref="T:System.Data.DataRow" /> objects into the current DataSet.</summary>
+        <remarks>
+          <para>Merging is a process of combining two DataSet objects that have similar data schemas. A merge is usually done when an application wants to update its local copy of DataSet with the latest changes from the data source and is typically done after a set of operations that change the state of the data in the data source.</para>
+          <para>One common scenario is when an application is instructed by a user to submit new data to the data source associated with the current DataSet. In response to the request the application first calls the <see cref="M:System.Data.DataSet.GetChanges" /> method which returns a smaller set of data which contains the changed rows. After retrieving the changes, the application passes the data down to the data source. If necessary (for example if the data source is an RDBMS which uses stored procedures to further process the data), the application can refresh its local copy of the DataSet from the data source by, again, calling GetChanges on the DataSet object bound to the data source.</para>
+          <para>Merging two DataSet objects may involve combining schemas of the objects as it is possible that the schema in the object being merged in was modified and the changes need to be reflected in the object being merged into. If the DataSet object being merged in contains new columns (that is the <see cref="T:System.Data.DataColumn" /> objects were added, the new schema elements can be added to the target DataSet object by calling the <see cref="M:System.Data.DataSet.Merge()" /> method with the missingSchemaAction set to <see cref="P:System.Data.MissingSchemaAction.Add" />. Merging the schema is always done before merging the data.</para>
+          <para>During the merge all the rows with the <see cref="T:System.Data.DataRowState" /> value of Unchanged, Modified or Deleted are matched against the rows in the target DataSet object with the same primary key. The new rows are copied to the target DataSet object.</para>
+          <para>During the merge all the constraints in the target DataSet object are disabled. They are re-enabled at the end of the merge and if they fail, a <see cref="T:System.Data.ConstraintException" /> exception is raised but the merged in data is left intact in the target DataSet object and the constraints remain disabled. If such situation happens, the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property is set to <see langword="false" /> and all the rows that failed the constraints are marked as erroneous. It will not be possible to set the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property to <see langword="true" /> before the errors are resolved.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Merge">
+      <MemberSignature Language="C#" Value="public void Merge (System.Data.DataSet dataSet);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dataSet" Type="System.Data.DataSet" />
+      </Parameters>
+      <Docs>
+        <param name="dataSet">The DataSet whose data and schema will be merged into the current DataSet.</param>
+        <summary>Merges a specified DataSet and its schema into the current DataSet.</summary>
+        <remarks>
+          <para>Merging is a process of combining two DataSet objects that have similar data schemas. A merge is usually done when an application wants to update its local copy of DataSet with the latest changes from the data source and is typically done after a set of operations that change the state of the data in the data source.</para>
+          <para>One common scenario is when an application is instructed by a user to submit new data to the data source associated with the current DataSet. In response to the request the application first calls the <see cref="M:System.Data.DataSet.GetChanges" /> method which returns a smaller set of data which contains the changed rows. After retrieving the changes, the application passes the data down to the data source. If necessary (for example if the data source is an RDBMS which uses stored procedures to further process the data), the application can refresh its local copy of the DataSet from the data source by, again, calling GetChanges on the DataSet object bound to the data source.</para>
+          <para>Merging two DataSet objects may involve combining schemas of the objects as it is possible that the schema in the object being merged in was modified and the changes need to be reflected in the object being merged into. If the DataSet object being merged in contains new columns (that is the <see cref="T:System.Data.DataColumn" /> objects were added, the new schema elements can be added to the target DataSet object by calling the <see cref="M:System.Data.DataSet.Merge()" /> method with the missingSchemaAction set to <see cref="P:System.Data.MissingSchemaAction.Add" />. Merging the schema is always done before merging the data.</para>
+          <para>During the merge all the rows with the <see cref="T:System.Data.DataRowState" /> value of Unchanged, Modified or Deleted are matched against the rows in the target DataSet object with the same primary key. The new rows are copied to the target DataSet object.</para>
+          <para>During the merge all the constraints in the target DataSet object are disabled. They are re-enabled at the end of the merge and if they fail, a <see cref="T:System.Data.ConstraintException" /> exception is raised but the merged in data is left intact in the target DataSet object and the constraints remain disabled. If such situation happens, the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property is set to <see langword="false" /> and all the rows that failed the constraints are marked as erroneous. It will not be possible to set the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property to <see langword="true" /> before the errors are resolved.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Merge">
+      <MemberSignature Language="C#" Value="public void Merge (System.Data.DataTable table);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="System.Data.DataTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">The <see cref="T:System.Data.DataTable" /> whose data and schema will be merged.</param>
+        <summary>Merges a specified <see cref="T:System.Data.DataTable" /> and its schema into the current DataSet.</summary>
+        <remarks>
+          <para>Merging is a process of combining two DataSet objects that have similar data schemas. A merge is usually done when an application wants to update its local copy of DataSet with the latest changes from the data source and is typically done after a set of operations that change the state of the data in the data source.</para>
+          <para>One common scenario is when an application is instructed by a user to submit new data to the data source associated with the current DataSet. In response to the request the application first calls the <see cref="M:System.Data.DataSet.GetChanges" /> method which returns a smaller set of data which contains the changed rows. After retrieving the changes, the application passes the data down to the data source. If necessary (for example if the data source is an RDBMS which uses stored procedures to further process the data), the application can refresh its local copy of the DataSet from the data source by, again, calling GetChanges on the DataSet object bound to the data source.</para>
+          <para>Merging two DataSet objects may involve combining schemas of the objects as it is possible that the schema in the object being merged in was modified and the changes need to be reflected in the object being merged into. If the DataSet object being merged in contains new columns (that is the <see cref="T:System.Data.DataColumn" /> objects were added, the new schema elements can be added to the target DataSet object by calling the <see cref="M:System.Data.DataSet.Merge()" /> method with the missingSchemaAction set to <see cref="P:System.Data.MissingSchemaAction.Add" />. Merging the schema is always done before merging the data.</para>
+          <para>During the merge all the rows with the <see cref="T:System.Data.DataRowState" /> value of Unchanged, Modified or Deleted are matched against the rows in the target DataSet object with the same primary key. The new rows are copied to the target DataSet object.</para>
+          <para>During the merge all the constraints in the target DataSet object are disabled. They are re-enabled at the end of the merge and if they fail, a <see cref="T:System.Data.ConstraintException" /> exception is raised but the merged in data is left intact in the target DataSet object and the constraints remain disabled. If such situation happens, the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property is set to <see langword="false" /> and all the rows that failed the constraints are marked as erroneous. It will not be possible to set the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property to <see langword="true" /> before the errors are resolved.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Merge">
+      <MemberSignature Language="C#" Value="public void Merge (System.Data.DataSet dataSet, bool preserveChanges);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dataSet" Type="System.Data.DataSet" />
+        <Parameter Name="preserveChanges" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="dataSet">The DataSet whose data and schema will be merged into the current DataSet.</param>
+        <param name="preserveChanges">
+          <see langword="true" /> to preserve changes in the target DataSet, <see langword="false" /> otherwise</param>
+        <summary>Merges a specified DataSet and its schema into the current DataSet, preserving or discarding any changes in this DataSet according to the given argument.</summary>
+        <remarks>
+          <para>Merging is a process of combining two DataSet objects that have similar data schemas. A merge is usually done when an application wants to update its local copy of DataSet with the latest changes from the data source and is typically done after a set of operations that change the state of the data in the data source.</para>
+          <para>One common scenario is when an application is instructed by a user to submit new data to the data source associated with the current DataSet. In response to the request the application first calls the <see cref="M:System.Data.DataSet.GetChanges" /> method which returns a smaller set of data which contains the changed rows. After retrieving the changes, the application passes the data down to the data source. If necessary (for example if the data source is an RDBMS which uses stored procedures to further process the data), the application can refresh its local copy of the DataSet from the data source by, again, calling GetChanges on the DataSet object bound to the data source.</para>
+          <para>Merging two DataSet objects may involve combining schemas of the objects as it is possible that the schema in the object being merged in was modified and the changes need to be reflected in the object being merged into. If the DataSet object being merged in contains new columns (that is the <see cref="T:System.Data.DataColumn" /> objects were added, the new schema elements can be added to the target DataSet object by calling the <see cref="M:System.Data.DataSet.Merge()" /> method with the missingSchemaAction set to <see cref="P:System.Data.MissingSchemaAction.Add" />. Merging the schema is always done before merging the data.</para>
+          <para>During the merge all the rows with the <see cref="T:System.Data.DataRowState" /> value of Unchanged, Modified or Deleted are matched against the rows in the target DataSet object with the same primary key. The new rows are copied to the target DataSet object.</para>
+          <para>During the merge all the constraints in the target DataSet object are disabled. They are re-enabled at the end of the merge and if they fail, a <see cref="T:System.Data.ConstraintException" /> exception is raised but the merged in data is left intact in the target DataSet object and the constraints remain disabled. If such situation happens, the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property is set to <see langword="false" /> and all the rows that failed the constraints are marked as erroneous. It will not be possible to set the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property to <see langword="true" /> before the errors are resolved.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Merge">
+      <MemberSignature Language="C#" Value="public void Merge (System.Data.DataRow[] rows, bool preserveChanges, System.Data.MissingSchemaAction missingSchemaAction);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rows" Type="System.Data.DataRow[]" />
+        <Parameter Name="preserveChanges" Type="System.Boolean" />
+        <Parameter Name="missingSchemaAction" Type="System.Data.MissingSchemaAction" />
+      </Parameters>
+      <Docs>
+        <param name="rows">An array of <see cref="T:System.Data.DataRow" /> objects to be merged into the current DataSet</param>
+        <param name="preserveChanges">
+          <see langword="true" /> to preserve changes in the target DataSet, <see langword="false" /> otherwise</param>
+        <param name="missingSchemaAction">One of the <see cref="T:System.Data.MissingSchemaAction" /> values</param>
+        <summary>Merges an array of <see cref="T:System.Data.DataRow" /> objects into the current DataSet, preserving or discarding changes in the DataSet and handling an incompatible schema according to the given arguments.</summary>
+        <remarks>
+          <para>Merging is a process of combining two DataSet objects that have similar data schemas. A merge is usually done when an application wants to update its local copy of DataSet with the latest changes from the data source and is typically done after a set of operations that change the state of the data in the data source.</para>
+          <para>One common scenario is when an application is instructed by a user to submit new data to the data source associated with the current DataSet. In response to the request the application first calls the <see cref="M:System.Data.DataSet.GetChanges" /> method which returns a smaller set of data which contains the changed rows. After retrieving the changes, the application passes the data down to the data source. If necessary (for example if the data source is an RDBMS which uses stored procedures to further process the data), the application can refresh its local copy of the DataSet from the data source by, again, calling GetChanges on the DataSet object bound to the data source.</para>
+          <para>Merging two DataSet objects may involve combining schemas of the objects as it is possible that the schema in the object being merged in was modified and the changes need to be reflected in the object being merged into. If the DataSet object being merged in contains new columns (that is the <see cref="T:System.Data.DataColumn" /> objects were added, the new schema elements can be added to the target DataSet object by calling the <see cref="M:System.Data.DataSet.Merge()" /> method with the missingSchemaAction set to <see cref="P:System.Data.MissingSchemaAction.Add" />. Merging the schema is always done before merging the data.</para>
+          <para>During the merge all the rows with the <see cref="T:System.Data.DataRowState" /> value of Unchanged, Modified or Deleted are matched against the rows in the target DataSet object with the same primary key. The new rows are copied to the target DataSet object.</para>
+          <para>During the merge all the constraints in the target DataSet object are disabled. They are re-enabled at the end of the merge and if they fail, a <see cref="T:System.Data.ConstraintException" /> exception is raised but the merged in data is left intact in the target DataSet object and the constraints remain disabled. If such situation happens, the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property is set to <see langword="false" /> and all the rows that failed the constraints are marked as erroneous. It will not be possible to set the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property to <see langword="true" /> before the errors are resolved.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Merge">
+      <MemberSignature Language="C#" Value="public void Merge (System.Data.DataSet dataSet, bool preserveChanges, System.Data.MissingSchemaAction missingSchemaAction);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dataSet" Type="System.Data.DataSet" />
+        <Parameter Name="preserveChanges" Type="System.Boolean" />
+        <Parameter Name="missingSchemaAction" Type="System.Data.MissingSchemaAction" />
+      </Parameters>
+      <Docs>
+        <param name="dataSet">The DataSet whose data and schema will be merged into the current DataSet.</param>
+        <param name="preserveChanges">
+          <see langword="true" /> to preserve changes in the target DataSet, <see langword="false" /> otherwise</param>
+        <param name="missingSchemaAction">One of the <see cref="T:System.Data.MissingSchemaAction" /> values</param>
+        <summary>Merges a specified DataSet and its schema with the current DataSet, preserving or discarding changes in the current DataSet and handling an incompatible schema according to the given arguments.</summary>
+        <remarks>
+          <para>Merging is a process of combining two DataSet objects that have similar data schemas. A merge is usually done when an application wants to update its local copy of DataSet with the latest changes from the data source and is typically done after a set of operations that change the state of the data in the data source.</para>
+          <para>One common scenario is when an application is instructed by a user to submit new data to the data source associated with the current DataSet. In response to the request the application first calls the <see cref="M:System.Data.DataSet.GetChanges" /> method which returns a smaller set of data which contains the changed rows. After retrieving the changes, the application passes the data down to the data source. If necessary (for example if the data source is an RDBMS which uses stored procedures to further process the data), the application can refresh its local copy of the DataSet from the data source by, again, calling GetChanges on the DataSet object bound to the data source.</para>
+          <para>Merging two DataSet objects may involve combining schemas of the objects as it is possible that the schema in the object being merged in was modified and the changes need to be reflected in the object being merged into. If the DataSet object being merged in contains new columns (that is the <see cref="T:System.Data.DataColumn" /> objects were added, the new schema elements can be added to the target DataSet object by calling the <see cref="M:System.Data.DataSet.Merge()" /> method with the missingSchemaAction set to <see cref="P:System.Data.MissingSchemaAction.Add" />. Merging the schema is always done before merging the data.</para>
+          <para>During the merge all the rows with the <see cref="T:System.Data.DataRowState" /> value of Unchanged, Modified or Deleted are matched against the rows in the target DataSet object with the same primary key. The new rows are copied to the target DataSet object.</para>
+          <para>During the merge all the constraints in the target DataSet object are disabled. They are re-enabled at the end of the merge and if they fail, a <see cref="T:System.Data.ConstraintException" /> exception is raised but the merged in data is left intact in the target DataSet object and the constraints remain disabled. If such situation happens, the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property is set to <see langword="false" /> and all the rows that failed the constraints are marked as erroneous. It will not be possible to set the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property to <see langword="true" /> before the errors are resolved.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Merge">
+      <MemberSignature Language="C#" Value="public void Merge (System.Data.DataTable table, bool preserveChanges, System.Data.MissingSchemaAction missingSchemaAction);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="System.Data.DataTable" />
+        <Parameter Name="preserveChanges" Type="System.Boolean" />
+        <Parameter Name="missingSchemaAction" Type="System.Data.MissingSchemaAction" />
+      </Parameters>
+      <Docs>
+        <param name="table">The <see cref="T:System.Data.DataTable" /> whose data and schema will be merged.</param>
+        <param name="preserveChanges">
+          <see langword="true" /> to preserve changes in the target DataSet, <see langword="false" /> otherwise</param>
+        <param name="missingSchemaAction">One of the <see cref="T:System.Data.MissingSchemaAction" /> values</param>
+        <summary>Merges a specified <see cref="T:System.Data.DataTable" /> and its schema into the current DataSet, preserving or discarding changes in the DataSet and handling an incompatible schema according to the given arguments.</summary>
+        <remarks>
+          <para>Merging is a process of combining two DataSet objects that have similar data schemas. A merge is usually done when an application wants to update its local copy of DataSet with the latest changes from the data source and is typically done after a set of operations that change the state of the data in the data source.</para>
+          <para>One common scenario is when an application is instructed by a user to submit new data to the data source associated with the current DataSet. In response to the request the application first calls the <see cref="M:System.Data.DataSet.GetChanges" /> method which returns a smaller set of data which contains the changed rows. After retrieving the changes, the application passes the data down to the data source. If necessary (for example if the data source is an RDBMS which uses stored procedures to further process the data), the application can refresh its local copy of the DataSet from the data source by, again, calling GetChanges on the DataSet object bound to the data source.</para>
+          <para>Merging two DataSet objects may involve combining schemas of the objects as it is possible that the schema in the object being merged in was modified and the changes need to be reflected in the object being merged into. If the DataSet object being merged in contains new columns (that is the <see cref="T:System.Data.DataColumn" /> objects were added, the new schema elements can be added to the target DataSet object by calling the <see cref="M:System.Data.DataSet.Merge()" /> method with the missingSchemaAction set to <see cref="P:System.Data.MissingSchemaAction.Add" />. Merging the schema is always done before merging the data.</para>
+          <para>During the merge all the rows with the <see cref="T:System.Data.DataRowState" /> value of Unchanged, Modified or Deleted are matched against the rows in the target DataSet object with the same primary key. The new rows are copied to the target DataSet object.</para>
+          <para>During the merge all the constraints in the target DataSet object are disabled. They are re-enabled at the end of the merge and if they fail, a <see cref="T:System.Data.ConstraintException" /> exception is raised but the merged in data is left intact in the target DataSet object and the constraints remain disabled. If such situation happens, the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property is set to <see langword="false" /> and all the rows that failed the constraints are marked as erroneous. It will not be possible to set the <see cref="P:System.Data.DataSet.EnforceConstraints" /> property to <see langword="true" /> before the errors are resolved.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MergeFailed">
+      <MemberSignature Language="C#" Value="public event System.Data.MergeFailedEventHandler MergeFailed;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.MergeFailedEventHandler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public string Namespace { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Gets or sets the namespace of the DataSet.</summary>
+        <value>The namespace of the DataSet.</value>
+        <remarks>
+          <para>This property is used whenever the DataSet is read or written from/into an XML document.</para>
+          <para>The namespace is used to limit the set of values to read from an XML file when only data is read. Only the XML elements which are marked as belonging to the same namespace will be read into the DataSet.</para>
+          <block subset="none" type="note">
+            <para>
+Setting the property when the namespace already has data will raise the <see cref="T:System.ArgumentException" /> exception.
+  </para>
+          </block>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="OnPropertyChanging">
+      <MemberSignature Language="C#" Value="protected virtual void OnPropertyChanging (System.ComponentModel.PropertyChangedEventArgs pcevent);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pcevent" Type="System.ComponentModel.PropertyChangedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="pcevent">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnRemoveRelation">
+      <MemberSignature Language="C#" Value="protected virtual void OnRemoveRelation (System.Data.DataRelation relation);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="relation" Type="System.Data.DataRelation" />
+      </Parameters>
+      <Docs>
+        <param name="relation">To be added: an object of type 'DataRelation'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnRemoveTable">
+      <MemberSignature Language="C#" Value="protected virtual void OnRemoveTable (System.Data.DataTable table);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="System.Data.DataTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added: an object of type 'DataTable'</param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Prefix">
+      <MemberSignature Language="C#" Value="public string Prefix { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Gets or sets an XML prefix that aliases the namespace of the DataSet.</summary>
+        <value>The XML prefix for the DataSet namespace.</value>
+        <remarks>This property is used throughout an XML document to identify elements which belong to the namespace of the DataSet object (as set by the <see cref="P:System.Data.DataSet.Namespace" /> property).</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="RaisePropertyChanging">
+      <MemberSignature Language="C#" Value="protected void RaisePropertyChanging (string name);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadXml">
+      <MemberSignature Language="C#" Value="public System.Data.XmlReadMode ReadXml (System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.XmlReadMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">The stream to read the data from.</param>
+        <summary>Reads the XML schema and data from the specified stream.</summary>
+        <returns>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</returns>
+        <remarks>
+          <para>This method makes it possible to read the XML data and, optionally, the schema into the DataSet. Reading of the XML schema is possible with any of the overloaded versions of ReadXml that take <see cref="T:System.Data.XmlReadMode" /> as one of their parameters and setting the parameter to the ReadSchema value.</para>
+          <para>Whether or not the forms of ReadXml that do not take the <see cref="T:System.Data.XmlReadMode" /> read the schema, depends on whether the XML source contains the inline schema definition, that is the <see cref="T:System.Data.XmlReadMode" /> Auto setting is used. If the inline schema is found, it will be read and parsed before reading the data, possibly extending and modifying the existing data structure stored in the DataSet. Should any conflicts surface in the process, an exception will be raised. If no inline schema can be found, the existing relational structure is extended through inference, following the structure of the XML document. Should it happen that the structure cannot be extended, an exception will be raised.</para>
+          <para>Writing the schema of the DataSet into an XML file is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXml" /> methods.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXml">
+      <MemberSignature Language="C#" Value="public System.Data.XmlReadMode ReadXml (System.IO.TextReader reader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.XmlReadMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.IO.TextReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">The <see cref="T:System.IO.TextReader" /> object to read the data from.</param>
+        <summary>Reads the XML data from the specified reader object.</summary>
+        <returns>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</returns>
+        <remarks>
+          <para>This method makes it possible to read the XML data and, optionally, the schema into the DataSet. Reading of the XML schema is possible with any of the overloaded versions of ReadXml that take <see cref="T:System.Data.XmlReadMode" /> as one of their parameters and setting the parameter to the ReadSchema value.</para>
+          <para>Whether or not the forms of ReadXml that do not take the <see cref="T:System.Data.XmlReadMode" /> read the schema, depends on whether the XML source contains the inline schema definition, that is the <see cref="T:System.Data.XmlReadMode" /> Auto setting is used. If the inline schema is found, it will be read and parsed before reading the data, possibly extending and modifying the existing data structure stored in the DataSet. Should any conflicts surface in the process, an exception will be raised. If no inline schema can be found, the existing relational structure is extended through inference, following the structure of the XML document. Should it happen that the structure cannot be extended, an exception will be raised.</para>
+          <para>Writing the schema of the DataSet into an XML file is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXml" /> methods.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXml">
+      <MemberSignature Language="C#" Value="public System.Data.XmlReadMode ReadXml (string fileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.XmlReadMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">Name of the file to read the data from.</param>
+        <summary>Reads the XML from the specified file.</summary>
+        <returns>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</returns>
+        <remarks>
+          <para>This method makes it possible to read the XML data and, optionally, the schema into the DataSet. Reading of the XML schema is possible with any of the overloaded versions of ReadXml that take <see cref="T:System.Data.XmlReadMode" /> as one of their parameters and setting the parameter to the ReadSchema value.</para>
+          <para>Whether or not the forms of ReadXml that do not take the <see cref="T:System.Data.XmlReadMode" /> read the schema, depends on whether the XML source contains the inline schema definition, that is the <see cref="T:System.Data.XmlReadMode" /> Auto setting is used. If the inline schema is found, it will be read and parsed before reading the data, possibly extending and modifying the existing data structure stored in the DataSet. Should any conflicts surface in the process, an exception will be raised. If no inline schema can be found, the existing relational structure is extended through inference, following the structure of the XML document. Should it happen that the structure cannot be extended, an exception will be raised.</para>
+          <para>Writing the schema of the DataSet into an XML file is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXml" /> methods.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXml">
+      <MemberSignature Language="C#" Value="public System.Data.XmlReadMode ReadXml (System.Xml.XmlReader reader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.XmlReadMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">The <see cref="T:System.Xml.XmlReader" /> object to read the data from.</param>
+        <summary>Reads the XML data from the specified XML reader object.</summary>
+        <returns>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</returns>
+        <remarks>
+          <para>This method makes it possible to read the XML data and, optionally, the schema into the DataSet. Reading of the XML schema is possible with any of the overloaded versions of ReadXml that take <see cref="T:System.Data.XmlReadMode" /> as one of their parameters and setting the parameter to the ReadSchema value.</para>
+          <para>Whether or not the forms of ReadXml that do not take the <see cref="T:System.Data.XmlReadMode" /> read the schema, depends on whether the XML source contains the inline schema definition, that is the <see cref="T:System.Data.XmlReadMode" /> Auto setting is used. If the inline schema is found, it will be read and parsed before reading the data, possibly extending and modifying the existing data structure stored in the DataSet. Should any conflicts surface in the process, an exception will be raised. If no inline schema can be found, the existing relational structure is extended through inference, following the structure of the XML document. Should it happen that the structure cannot be extended, an exception will be raised.</para>
+          <para>Writing the schema of the DataSet into an XML file is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXml" /> methods.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXml">
+      <MemberSignature Language="C#" Value="public System.Data.XmlReadMode ReadXml (System.IO.Stream stream, System.Data.XmlReadMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.XmlReadMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="mode" Type="System.Data.XmlReadMode" />
+      </Parameters>
+      <Docs>
+        <param name="stream">The stream to read the data from.</param>
+        <param name="mode">One of the <see cref="T:System.Data.XmlReadMode" /> values.</param>
+        <summary>Reads the XML schema and data from the specified stream using the indicated read mode.</summary>
+        <returns>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</returns>
+        <remarks>
+          <para>This method makes it possible to read the XML data and, optionally, the schema into the DataSet. Reading of the XML schema is possible with any of the overloaded versions of ReadXml that take <see cref="T:System.Data.XmlReadMode" /> as one of their parameters and setting the parameter to the ReadSchema value.</para>
+          <para>Whether or not the forms of ReadXml that do not take the <see cref="T:System.Data.XmlReadMode" /> read the schema, depends on whether the XML source contains the inline schema definition, that is the <see cref="T:System.Data.XmlReadMode" /> Auto setting is used. If the inline schema is found, it will be read and parsed before reading the data, possibly extending and modifying the existing data structure stored in the DataSet. Should any conflicts surface in the process, an exception will be raised. If no inline schema can be found, the existing relational structure is extended through inference, following the structure of the XML document. Should it happen that the structure cannot be extended, an exception will be raised.</para>
+          <para>Writing the schema of the DataSet into an XML file is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXml" /> methods.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXml">
+      <MemberSignature Language="C#" Value="public System.Data.XmlReadMode ReadXml (System.IO.TextReader reader, System.Data.XmlReadMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.XmlReadMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.IO.TextReader" />
+        <Parameter Name="mode" Type="System.Data.XmlReadMode" />
+      </Parameters>
+      <Docs>
+        <param name="reader">The <see cref="T:System.IO.TextReader" /> object to read the data from.</param>
+        <param name="mode">One of the <see cref="T:System.Data.XmlReadMode" /> values.</param>
+        <summary>Reads the XML data from the specified reader object using the indicated read mode.</summary>
+        <returns>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</returns>
+        <remarks>
+          <para>This method makes it possible to read the XML data and, optionally, the schema into the DataSet. Reading of the XML schema is possible with any of the overloaded versions of ReadXml that take <see cref="T:System.Data.XmlReadMode" /> as one of their parameters and setting the parameter to the ReadSchema value.</para>
+          <para>Whether or not the forms of ReadXml that do not take the <see cref="T:System.Data.XmlReadMode" /> read the schema, depends on whether the XML source contains the inline schema definition, that is the <see cref="T:System.Data.XmlReadMode" /> Auto setting is used. If the inline schema is found, it will be read and parsed before reading the data, possibly extending and modifying the existing data structure stored in the DataSet. Should any conflicts surface in the process, an exception will be raised. If no inline schema can be found, the existing relational structure is extended through inference, following the structure of the XML document. Should it happen that the structure cannot be extended, an exception wil be raised.</para>
+          <para>Writing the schema of the DataSet into an XML file is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXml" /> methods.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXml">
+      <MemberSignature Language="C#" Value="public System.Data.XmlReadMode ReadXml (string fileName, System.Data.XmlReadMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.XmlReadMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="mode" Type="System.Data.XmlReadMode" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">Name of the file to read the XML data and/or schema from.</param>
+        <param name="mode">One of the <see cref="T:System.Data.XmlReadMode" /> values.</param>
+        <summary>Reads the XML from the specified file using the indicated read mode.</summary>
+        <returns>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</returns>
+        <remarks>
+          <para>This method makes it possible to read the XML data and, optionally, the schema into the DataSet. Reading of the XML schema is possible with any of the overloaded versions of ReadXml that take <see cref="T:System.Data.XmlReadMode" /> as one of their parameters and setting the parameter to the ReadSchema value.</para>
+          <para>Whether or not the forms of ReadXml that do not take the <see cref="T:System.Data.XmlReadMode" /> read the schema, depends on whether the XML source contains the inline schema definition, that is the <see cref="T:System.Data.XmlReadMode" /> Auto setting is used. If the inline schema is found, it will be read and parsed before reading the data, possibly extending and modifying the existing data structure stored in the DataSet. Should any conflicts surface in the process, an exception will be raised. If no inline schema can be found, the existing relational structure is extended through inference, following the structure of the XML document. Should it happen that the structure cannot be extended, an exception will be raised.</para>
+          <para>Writing the schema of the DataSet into an XML file is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXml" /> methods.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXml">
+      <MemberSignature Language="C#" Value="public System.Data.XmlReadMode ReadXml (System.Xml.XmlReader reader, System.Data.XmlReadMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.XmlReadMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="mode" Type="System.Data.XmlReadMode" />
+      </Parameters>
+      <Docs>
+        <param name="reader">The <see cref="T:System.Xml.XmlReader" /> object to read the data from.</param>
+        <param name="mode">One of the <see cref="T:System.Data.XmlReadMode" /> values.</param>
+        <summary>Reads the XML data from the specified XML reader object using the indicated read mode.</summary>
+        <returns>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</returns>
+        <remarks>
+          <para>This method makes it possible to read the XML data and, optionally, the schema into the DataSet. Reading of the XML schema is possible with any of the overloaded versions of ReadXml that take <see cref="T:System.Data.XmlReadMode" /> as one of their parameters and setting the parameter to the ReadSchema value.</para>
+          <para>Whether or not the forms of ReadXml that do not take the <see cref="T:System.Data.XmlReadMode" /> read the schema, depends on whether the XML source contains the inline schema definition, that is the <see cref="T:System.Data.XmlReadMode" /> Auto setting is used. If the inline schema is found, it will be read and parsed before reading the data, possibly extending and modifying the existing data structure stored in the DataSet. Should any conflicts surface in the process, an exception will be raised. If no inline schema can be found, the existing relational structure is extended through inference, following the structure of the XML document. Should it happen that the structure cannot be extended, an exception will be raised.</para>
+          <para>Writing the schema of the DataSet into an XML file is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXml" /> methods.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXmlSchema">
+      <MemberSignature Language="C#" Value="public void ReadXmlSchema (System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">The stream to read the schema from.</param>
+        <summary>Reads the XML schema from the specified stream.</summary>
+        <remarks>
+          <para>Reads the data schema specified in the XSD standard and creates the DataSet structure based on it. The schema includes the table, relation and constraint definitions. ReadXmlSchema can be used before reading the XML data using one of the <see cref="M:System.Data.DataSet.ReadXml" /> overloaded versions which do not take the <see cref="T:System.Data.XmlReadMode" /> parameter.</para>
+          <para>Writing the XML schema is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXmlSchema" /></para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXmlSchema">
+      <MemberSignature Language="C#" Value="public void ReadXmlSchema (System.IO.TextReader reader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.IO.TextReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">The text reader object to read the data from.</param>
+        <summary>Reads the schema from the specified text reader object.</summary>
+        <remarks>
+          <para>Reads the data schema specified in the XSD standard and creates the DataSet structure based on it. The schema includes the table, relation and constraint definitions. ReadXmlSchema can be used before reading the XML data using one of the <see cref="M:System.Data.DataSet.ReadXml" /> overloaded versions which do not take the <see cref="T:System.Data.XmlReadMode" /> parameter.</para>
+          <para>Writing the XML schema is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXmlSchema" /></para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXmlSchema">
+      <MemberSignature Language="C#" Value="public void ReadXmlSchema (string fileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">Name of the file to read the schema from.</param>
+        <summary>Reads the schema from the specified file.</summary>
+        <remarks>
+          <para>Reads the data schema specified in the XSD standard and creates the DataSet structure based on it. The schema includes the table, relation and constraint definitions. ReadXmlSchema can be used before reading the XML data using one of the <see cref="M:System.Data.DataSet.ReadXml" /> overloaded versions which do not take the <see cref="T:System.Data.XmlReadMode" /> parameter.</para>
+          <para>Writing the XML schema is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXmlSchema" /></para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXmlSchema">
+      <MemberSignature Language="C#" Value="public void ReadXmlSchema (System.Xml.XmlReader reader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">The XML reader object to read the schema from.</param>
+        <summary>Reads the schema from the specified XML reader object.</summary>
+        <remarks>
+          <para>Reads the data schema specified in the XSD standard and creates the DataSet structure based on it. The schema includes the table, relation and constraint definitions. ReadXmlSchema can be used before reading the XML data using one of the <see cref="M:System.Data.DataSet.ReadXml" /> overloaded versions which do not take the <see cref="T:System.Data.XmlReadMode" /> parameter.</para>
+          <para>Writing the XML schema is possible using one of the overloaded <see cref="M:System.Data.DataSet.WriteXmlSchema" /></para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ReadXmlSerializable">
+      <MemberSignature Language="C#" Value="protected virtual void ReadXmlSerializable (System.Xml.XmlReader reader);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added: an object of type 'Xml.XmlReader'</param>
+        <summary>This method should not be called by the user's code.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RejectChanges">
+      <MemberSignature Language="C#" Value="public virtual void RejectChanges ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Undoes the changes made to the DataSet since it was created or since the last time <see cref="M:System.Data.DataSet.AcceptChanges" /> was called.</summary>
+        <remarks>
+          <para>Invoking this method causes the DataSet object to call the <see cref="M:System.Data.DataTable.RejectChanges" /> in order to invalidate the changes made to the table stored in the <see cref="P:System.Data.DataSet.Tables" /> collection.</para>
+          <para>
+            <see cref="T:System.Data.DataRow" /> objects contained in the tables stored in the DataSet can be set into edit mode by calling the <see cref="M:System.Data.DataRow.BeginEdit" /> method and out of the edit mode by calling the <see cref="M:System.Data.DataRow.EndEdit" /> method. After the latter method is invoked, it is possible to either reject the changes by calling RejectChanges on the table or DataSet, or accept them by calling the <see cref="M:System.Data.DataSet.AcceptChanges" /> (or <see cref="M:System.Data.DataTable.AcceptChanges" /> of the table the rows belong to) method.</para>
+          <para>Calling the RejectChanges method causes all the rows in the edit mode to cancel the mode, the new rows to be deleted from the table and modified and deleted rows to return back to their <see cref="P:System.Data.DataRowState.Unchanged " /> state.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Relations">
+      <MemberSignature Language="C#" Value="public System.Data.DataRelationCollection Relations { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.DataRelationCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Get the collection of relations that link tables and allow navigation from parent tables to child tables.</summary>
+        <value>A <see cref="T:System.Data.DataRelationCollection" /> that contains a collection of <see cref="T:System.Data.DataRelation" /> objects, a null value if no DataRelation objects exist.</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="RemotingFormat">
+      <MemberSignature Language="C#" Value="public System.Data.SerializationFormat RemotingFormat { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(System.Data.SerializationFormat.Xml)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Data.SerializationFormat</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public virtual void Reset ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Restores the original state of the DataSet object.</summary>
+        <remarks>Resets the object to its original state, that is, removes all the constraints, clears all the tables and deletes all the relations.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SchemaSerializationMode">
+      <MemberSignature Language="C#" Value="public virtual System.Data.SchemaSerializationMode SchemaSerializationMode { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Data.SchemaSerializationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ShouldSerializeRelations">
+      <MemberSignature Language="C#" Value="protected virtual bool ShouldSerializeRelations ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Tells whether the <see cref="P:System.Data.DataSet.Relations" /> property should be serialized.</summary>
+        <returns>
+          <see langword="true" /> if the <see cref="P:System.Data.DataSet.Relations" /> property has been modified from its default state, <see langword="false" /> otherwise.</returns>
+        <remarks>This method can be used when creating a control that incorporates DataSet.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ShouldSerializeTables">
+      <MemberSignature Language="C#" Value="protected virtual bool ShouldSerializeTables ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Tells whether the <see cref="P:System.Data.DataSet.Tables" /> property should be serialized.</summary>
+        <returns>
+          <see langword="true" /> if the <see cref="P:System.Data.DataSet.Tables" /> property has been modified from its default state, <see langword="false" /> otherwise.</returns>
+        <remarks>This method can be used when creating a control that incorporates DataSet.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Site">
+      <MemberSignature Language="C#" Value="public override System.ComponentModel.ISite Site { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.ISite</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Gets or sets an <see cref="T:System.ComponentModel.ISite" /> for the DataSet.</summary>
+        <value>An <see cref="T:System.ComponentModel.ISite" /> for the DataSet.</value>
+        <remarks>Sites bind a <see cref="T:System.ComponentModel.Component" /> to a <see cref="T:System.ComponentModel.Container" /> and enable communication between them, as well as provide a way for the container to manage its components.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="System.ComponentModel.IListSource.ContainsListCollection">
+      <MemberSignature Language="C#" Value="bool System.ComponentModel.IListSource.ContainsListCollection { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ComponentModel.IListSource.GetList">
+      <MemberSignature Language="C#" Value="System.Collections.IList IListSource.GetList ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IList</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
+      <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Xml.Serialization.IXmlSerializable.GetSchema">
+      <MemberSignature Language="C#" Value="System.Xml.Schema.XmlSchema IXmlSerializable.GetSchema ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Xml.Serialization.IXmlSerializable.ReadXml">
+      <MemberSignature Language="C#" Value="void IXmlSerializable.ReadXml (System.Xml.XmlReader reader);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Xml.Serialization.IXmlSerializable.WriteXml">
+      <MemberSignature Language="C#" Value="void IXmlSerializable.WriteXml (System.Xml.XmlWriter writer);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Tables">
+      <MemberSignature Language="C#" Value="public System.Data.DataTableCollection Tables { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.DataTableCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the collection of tables contained in the DataSet.</summary>
+        <value>The <see cref="T:System.Data.DataTableCollection" /> contained by this DataSet; otherwise a <see langword="null" /> value if no <see cref="T:System.Data.DataTable" /> objects exist.</value>
+        <remarks />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="WriteXml">
+      <MemberSignature Language="C#" Value="public void WriteXml (System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">Stream object to write the data to.</param>
+        <summary>Writes the current DataSet data to the specified stream.</summary>
+        <remarks>This method makes it possible to write the DataSet data and/or its schema into an XML document. To write both the schema and the data use one of the overloaded WriteXml versions which take the <see cref="T:System.Data.WriteXmlMode" /> parameter and set it to WriteSchema. To write only the DataSet schema use the <see cref="M:System.Data.DataSet.WriteXmlSchema" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXml">
+      <MemberSignature Language="C#" Value="public void WriteXml (System.IO.TextWriter writer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">Writer object to write the data to.</param>
+        <summary>Writes the data to the specified text writer object.</summary>
+        <remarks>This method makes it possible to write the DataSet data and/or its schema into an XML document. To write both the schema and the data use one of the overloaded WriteXml versions which take the <see cref="T:System.Data.WriteXmlMode" /> parameter and set it to WriteSchema. To write only the DataSet schema use the <see cref="M:System.Data.DataSet.WriteXmlSchema" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXml">
+      <MemberSignature Language="C#" Value="public void WriteXml (string fileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">Name of the file to write the data to.</param>
+        <summary>Writes the data to the specified file.</summary>
+        <remarks>This method makes it possible to write the DataSet data and/or its schema into an XML document. To write both the schema and the data use one of the overloaded WriteXml versions which take the <see cref="T:System.Data.WriteXmlMode" /> parameter and set it to WriteSchema. To write only the DataSet schema use the <see cref="M:System.Data.DataSet.WriteXmlSchema" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXml">
+      <MemberSignature Language="C#" Value="public void WriteXml (System.Xml.XmlWriter writer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">XML writer object to write the data to.</param>
+        <summary>Writes the data to the specified XML writer object.</summary>
+        <remarks>This method makes it possible to write the DataSet data and/or its schema into an XML document. To write both the schema and the data use one of the overloaded WriteXml versions which take the <see cref="T:System.Data.WriteXmlMode" /> parameter and set it to WriteSchema. To write only the DataSet schema use the <see cref="M:System.Data.DataSet.WriteXmlSchema" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXml">
+      <MemberSignature Language="C#" Value="public void WriteXml (System.IO.Stream stream, System.Data.XmlWriteMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="mode" Type="System.Data.XmlWriteMode" />
+      </Parameters>
+      <Docs>
+        <param name="stream">Stream object to write the data to.</param>
+        <param name="mode">One of the <see cref="T:System.Data.XmlWriteMode" /> values.</param>
+        <summary>Writes the current DataSet data to the specified stream using the indicated write mode.</summary>
+        <remarks>This method makes it possible to write the DataSet data and/or its schema into an XML document. To write both the schema and the data use one of the overloaded WriteXml versions which take the <see cref="T:System.Data.WriteXmlMode" /> parameter and set it to WriteSchema. To write only the DataSet schema use the <see cref="M:System.Data.DataSet.WriteXmlSchema" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXml">
+      <MemberSignature Language="C#" Value="public void WriteXml (System.IO.TextWriter writer, System.Data.XmlWriteMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+        <Parameter Name="mode" Type="System.Data.XmlWriteMode" />
+      </Parameters>
+      <Docs>
+        <param name="writer">Writer object to write the data to.</param>
+        <param name="mode">One of the <see cref="T:System.Data.XmlWriteMode" /> values.</param>
+        <summary>Writes the data to the specified text writer object using the indicated write mode.</summary>
+        <remarks>This method makes it possible to write the DataSet data and/or its schema into an XML document. To write both the schema and the data use one of the overloaded WriteXml versions which take the <see cref="T:System.Data.WriteXmlMode" /> parameter and set it to WriteSchema. To write only the DataSet schema use the <see cref="M:System.Data.DataSet.WriteXmlSchema" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXml">
+      <MemberSignature Language="C#" Value="public void WriteXml (string fileName, System.Data.XmlWriteMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="mode" Type="System.Data.XmlWriteMode" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">Name of the file to write the data to.</param>
+        <param name="mode">One of the <see cref="T:System.Data.XmlWriteMode" /> values.</param>
+        <summary>Writes the data to the specified file using the indicated write mode.</summary>
+        <remarks>This method makes it possible to write the DataSet data and/or its schema into an XML document. To write both the schema and the data use one of the overloaded WriteXml versions which take the <see cref="T:System.Data.XmlWriteMode" /> parameter and set it to WriteSchema. To write only the DataSet schema use the <see cref="M:System.Data.DataSet.WriteXmlSchema" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXml">
+      <MemberSignature Language="C#" Value="public void WriteXml (System.Xml.XmlWriter writer, System.Data.XmlWriteMode mode);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="mode" Type="System.Data.XmlWriteMode" />
+      </Parameters>
+      <Docs>
+        <param name="writer">XML writer object to write the data to.</param>
+        <param name="mode">One of the <see cref="T:System.Data.XmlWriteMode" /> values.</param>
+        <summary>Writes the data to the specified XML writer object using the indicated write mode.</summary>
+        <remarks>This method makes it possible to write the DataSet data and/or its schema into an XML document. To write both the schema and the data use one of the overloaded WriteXml versions which take the <see cref="T:System.Data.WriteXmlMode" /> parameter and set it to WriteSchema. To write only the DataSet schema use the <see cref="M:System.Data.DataSet.WriteXmlSchema" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXmlSchema">
+      <MemberSignature Language="C#" Value="public void WriteXmlSchema (System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">Stream object to write the data to.</param>
+        <summary>Write the schema to the specified stream object.</summary>
+        <remarks>WriteXmlSchema writes only the DataSet data schema to an XML document. The schema includes table, relation, and constraint definitions. The schema is written using the XSD standard. To write the data only, or both data and schema to an XML document, use the <see cref="M:System.Data.DataSet.WriteXml" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXmlSchema">
+      <MemberSignature Language="C#" Value="public void WriteXmlSchema (System.IO.TextWriter writer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">Text writer object to write the data to.</param>
+        <summary>Write the schema to the specified text writer object.</summary>
+        <remarks>WriteXmlSchema writes only the DataSet data schema to an XML document. The schema includes table, relation, and constraint definitions. The schema is written using the XSD standard. To write the data only, or both data and schema to an XML document, use the <see cref="M:System.Data.DataSet.WriteXml" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXmlSchema">
+      <MemberSignature Language="C#" Value="public void WriteXmlSchema (string fileName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">Name of the file to write the data to.</param>
+        <summary>Write the schema to the specified file.</summary>
+        <remarks>WriteXmlSchema writes only the DataSet data schema to an XML document. The schema includes table, relation, and constraint definitions. The schema is written using the XSD standard. To write the data only, or both data and schema to an XML document, use the <see cref="M:System.Data.DataSet.WriteXml" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WriteXmlSchema">
+      <MemberSignature Language="C#" Value="public void WriteXmlSchema (System.Xml.XmlWriter writer);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">XML writer to write the data to.</param>
+        <summary>Write the schema to the specified XML writer object.</summary>
+        <remarks>WriteXmlSchema writes only the DataSet data schema to an XML document. The schema includes table, relation, and constraint definitions. The schema is written using the XSD standard. To write the data only, or both data and schema to an XML document, use the <see cref="M:System.Data.DataSet.WriteXml" /> method.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

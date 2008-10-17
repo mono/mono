@@ -1,0 +1,336 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.Data" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComCompatibleVersion(1, 0, 3300, 0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.Data.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.Data.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.Data.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Microsoft.SqlServer.Server">
+      <Type Name="DataAccessKind" Kind="Enumeration" />
+      <Type Name="Format" Kind="Enumeration" />
+      <Type Name="IBinarySerialize" Kind="Interface" />
+      <Type Name="InvalidUdtException" Kind="Class" />
+      <Type Name="SqlFacetAttribute" Kind="Class" />
+      <Type Name="SqlFunctionAttribute" Kind="Class" />
+      <Type Name="SqlMetaData" Kind="Class" />
+      <Type Name="SqlMethodAttribute" Kind="Class" />
+      <Type Name="SqlProcedureAttribute" Kind="Class" />
+      <Type Name="SqlTriggerAttribute" Kind="Class" />
+      <Type Name="SqlTriggerContext" Kind="Class" />
+      <Type Name="SqlUserDefinedAggregateAttribute" Kind="Class" />
+      <Type Name="SqlUserDefinedTypeAttribute" Kind="Class" />
+      <Type Name="SystemDataAccessKind" Kind="Enumeration" />
+      <Type Name="TriggerAction" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Data">
+      <Type Name="AcceptRejectRule" Kind="Enumeration" />
+      <Type Name="CommandBehavior" Kind="Enumeration" />
+      <Type Name="CommandType" Kind="Enumeration" />
+      <Type Name="ConflictOption" Kind="Enumeration" />
+      <Type Name="ConnectionState" Kind="Enumeration" />
+      <Type Name="Constraint" Kind="Class" />
+      <Type Name="ConstraintCollection" Kind="Class" />
+      <Type Name="ConstraintException" Kind="Class" />
+      <Type Name="DataColumn" Kind="Class" />
+      <Type Name="DataColumnChangeEventArgs" Kind="Class" />
+      <Type Name="DataColumnChangeEventHandler" Kind="Delegate" />
+      <Type Name="DataColumnCollection" Kind="Class" />
+      <Type Name="DataException" Kind="Class" />
+      <Type Name="DataRelation" Kind="Class" />
+      <Type Name="DataRelationCollection" Kind="Class" />
+      <Type Name="DataRow" Kind="Class" />
+      <Type Name="DataRowAction" Kind="Enumeration" />
+      <Type Name="DataRowBuilder" Kind="Class" />
+      <Type Name="DataRowChangeEventArgs" Kind="Class" />
+      <Type Name="DataRowChangeEventHandler" Kind="Delegate" />
+      <Type Name="DataRowCollection" Kind="Class" />
+      <Type Name="DataRowState" Kind="Enumeration" />
+      <Type Name="DataRowVersion" Kind="Enumeration" />
+      <Type Name="DataRowView" Kind="Class" />
+      <Type Name="DataSet" Kind="Class" />
+      <Type Name="DataSetDateTime" Kind="Enumeration" />
+      <Type Name="DataSysDescriptionAttribute" Kind="Class" />
+      <Type Name="DataTable" Kind="Class" />
+      <Type Name="DataTableClearEventArgs" Kind="Class" />
+      <Type Name="DataTableClearEventHandler" Kind="Delegate" />
+      <Type Name="DataTableCollection" Kind="Class" />
+      <Type Name="DataTableNewRowEventArgs" Kind="Class" />
+      <Type Name="DataTableNewRowEventHandler" Kind="Delegate" />
+      <Type Name="DataTableReader" Kind="Class" />
+      <Type Name="DataView" Kind="Class" />
+      <Type Name="DataViewManager" Kind="Class" />
+      <Type Name="DataViewRowState" Kind="Enumeration" />
+      <Type Name="DataViewSetting" Kind="Class" />
+      <Type Name="DataViewSettingCollection" Kind="Class" />
+      <Type Name="DBConcurrencyException" Kind="Class" />
+      <Type Name="DbType" Kind="Enumeration" />
+      <Type Name="DeletedRowInaccessibleException" Kind="Class" />
+      <Type Name="DuplicateNameException" Kind="Class" />
+      <Type Name="EvaluateException" Kind="Class" />
+      <Type Name="FillErrorEventArgs" Kind="Class" />
+      <Type Name="FillErrorEventHandler" Kind="Delegate" />
+      <Type Name="ForeignKeyConstraint" Kind="Class" />
+      <Type Name="IColumnMapping" Kind="Interface" />
+      <Type Name="IColumnMappingCollection" Kind="Interface" />
+      <Type Name="IDataAdapter" Kind="Interface" />
+      <Type Name="IDataParameter" Kind="Interface" />
+      <Type Name="IDataParameterCollection" Kind="Interface" />
+      <Type Name="IDataReader" Kind="Interface" />
+      <Type Name="IDataRecord" Kind="Interface" />
+      <Type Name="IDbCommand" Kind="Interface" />
+      <Type Name="IDbConnection" Kind="Interface" />
+      <Type Name="IDbDataAdapter" Kind="Interface" />
+      <Type Name="IDbDataParameter" Kind="Interface" />
+      <Type Name="IDbTransaction" Kind="Interface" />
+      <Type Name="InRowChangingEventException" Kind="Class" />
+      <Type Name="InternalDataCollectionBase" Kind="Class" />
+      <Type Name="InvalidConstraintException" Kind="Class" />
+      <Type Name="InvalidExpressionException" Kind="Class" />
+      <Type Name="IsolationLevel" Kind="Enumeration" />
+      <Type Name="ITableMapping" Kind="Interface" />
+      <Type Name="ITableMappingCollection" Kind="Interface" />
+      <Type Name="KeyRestrictionBehavior" Kind="Enumeration" />
+      <Type Name="LoadOption" Kind="Enumeration" />
+      <Type Name="MappingType" Kind="Enumeration" />
+      <Type Name="MergeFailedEventArgs" Kind="Class" />
+      <Type Name="MergeFailedEventHandler" Kind="Delegate" />
+      <Type Name="MissingMappingAction" Kind="Enumeration" />
+      <Type Name="MissingPrimaryKeyException" Kind="Class" />
+      <Type Name="MissingSchemaAction" Kind="Enumeration" />
+      <Type Name="NoNullAllowedException" Kind="Class" />
+      <Type Name="OperationAbortedException" Kind="Class" />
+      <Type Name="ParameterDirection" Kind="Enumeration" />
+      <Type Name="PropertyAttributes" Kind="Enumeration" />
+      <Type Name="PropertyCollection" Kind="Class" />
+      <Type Name="ReadOnlyException" Kind="Class" />
+      <Type Name="RowNotInTableException" Kind="Class" />
+      <Type Name="Rule" Kind="Enumeration" />
+      <Type Name="SchemaSerializationMode" Kind="Enumeration" />
+      <Type Name="SchemaType" Kind="Enumeration" />
+      <Type Name="SerializationFormat" Kind="Enumeration" />
+      <Type Name="SqlDbType" Kind="Enumeration" />
+      <Type Name="StateChangeEventArgs" Kind="Class" />
+      <Type Name="StateChangeEventHandler" Kind="Delegate" />
+      <Type Name="StatementCompletedEventArgs" Kind="Class" />
+      <Type Name="StatementCompletedEventHandler" Kind="Delegate" />
+      <Type Name="StatementType" Kind="Enumeration" />
+      <Type Name="StrongTypingException" Kind="Class" />
+      <Type Name="SyntaxErrorException" Kind="Class" />
+      <Type Name="TypedDataSetGenerator" Kind="Class" />
+      <Type Name="TypedDataSetGeneratorException" Kind="Class" />
+      <Type Name="UniqueConstraint" Kind="Class" />
+      <Type Name="UpdateRowSource" Kind="Enumeration" />
+      <Type Name="UpdateStatus" Kind="Enumeration" />
+      <Type Name="VersionNotFoundException" Kind="Class" />
+      <Type Name="XmlReadMode" Kind="Enumeration" />
+      <Type Name="XmlWriteMode" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Data.Common">
+      <Type Name="CatalogLocation" Kind="Enumeration" />
+      <Type Name="DataAdapter" Kind="Class" />
+      <Type Name="DataColumnMapping" Kind="Class" />
+      <Type Name="DataColumnMappingCollection" Kind="Class" />
+      <Type Name="DataTableMapping" Kind="Class" />
+      <Type Name="DataTableMappingCollection" Kind="Class" />
+      <Type Name="DbCommand" Kind="Class" />
+      <Type Name="DbCommandBuilder" Kind="Class" />
+      <Type Name="DbConnection" Kind="Class" />
+      <Type Name="DbConnectionStringBuilder" Kind="Class" />
+      <Type Name="DbDataAdapter" Kind="Class" />
+      <Type Name="DBDataPermission" Kind="Class" />
+      <Type Name="DBDataPermissionAttribute" Kind="Class" />
+      <Type Name="DbDataReader" Kind="Class" />
+      <Type Name="DbDataRecord" Kind="Class" />
+      <Type Name="DbDataSourceEnumerator" Kind="Class" />
+      <Type Name="DbEnumerator" Kind="Class" />
+      <Type Name="DbException" Kind="Class" />
+      <Type Name="DbMetaDataCollectionNames" Kind="Class" />
+      <Type Name="DbMetaDataColumnNames" Kind="Class" />
+      <Type Name="DbParameter" Kind="Class" />
+      <Type Name="DbParameterCollection" Kind="Class" />
+      <Type Name="DbProviderConfigurationHandler" Kind="Class" />
+      <Type Name="DbProviderFactories" Kind="Class" />
+      <Type Name="DbProviderFactoriesConfigurationHandler" Kind="Class" />
+      <Type Name="DbProviderFactory" Kind="Class" />
+      <Type Name="DbProviderSpecificTypePropertyAttribute" Kind="Class" />
+      <Type Name="DbTransaction" Kind="Class" />
+      <Type Name="GroupByBehavior" Kind="Enumeration" />
+      <Type Name="IdentifierCase" Kind="Enumeration" />
+      <Type Name="RowUpdatedEventArgs" Kind="Class" />
+      <Type Name="RowUpdatingEventArgs" Kind="Class" />
+      <Type Name="SchemaTableColumn" Kind="Class" />
+      <Type Name="SchemaTableOptionalColumn" Kind="Class" />
+      <Type Name="SupportedJoinOperators" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Data.Odbc">
+      <Type Name="OdbcCommand" Kind="Class" />
+      <Type Name="OdbcCommandBuilder" Kind="Class" />
+      <Type Name="OdbcConnection" Kind="Class" />
+      <Type Name="OdbcConnectionStringBuilder" Kind="Class" />
+      <Type Name="OdbcDataAdapter" Kind="Class" />
+      <Type Name="OdbcDataReader" Kind="Class" />
+      <Type Name="OdbcError" Kind="Class" />
+      <Type Name="OdbcErrorCollection" Kind="Class" />
+      <Type Name="OdbcException" Kind="Class" />
+      <Type Name="OdbcFactory" Kind="Class" />
+      <Type Name="OdbcInfoMessageEventArgs" Kind="Class" />
+      <Type Name="OdbcInfoMessageEventHandler" Kind="Delegate" />
+      <Type Name="OdbcMetaDataCollectionNames" Kind="Class" />
+      <Type Name="OdbcMetaDataColumnNames" Kind="Class" />
+      <Type Name="OdbcParameter" Kind="Class" />
+      <Type Name="OdbcParameterCollection" Kind="Class" />
+      <Type Name="OdbcPermission" Kind="Class" />
+      <Type Name="OdbcPermissionAttribute" Kind="Class" />
+      <Type Name="OdbcRowUpdatedEventArgs" Kind="Class" />
+      <Type Name="OdbcRowUpdatedEventHandler" Kind="Delegate" />
+      <Type Name="OdbcRowUpdatingEventArgs" Kind="Class" />
+      <Type Name="OdbcRowUpdatingEventHandler" Kind="Delegate" />
+      <Type Name="OdbcTransaction" Kind="Class" />
+      <Type Name="OdbcType" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Data.OleDb">
+      <Type Name="OleDbCommand" Kind="Class" />
+      <Type Name="OleDbCommandBuilder" Kind="Class" />
+      <Type Name="OleDbConnection" Kind="Class" />
+      <Type Name="OleDbDataAdapter" Kind="Class" />
+      <Type Name="OleDbDataReader" Kind="Class" />
+      <Type Name="OleDbError" Kind="Class" />
+      <Type Name="OleDbErrorCollection" Kind="Class" />
+      <Type Name="OleDbException" Kind="Class" />
+      <Type Name="OleDbInfoMessageEventArgs" Kind="Class" />
+      <Type Name="OleDbInfoMessageEventHandler" Kind="Delegate" />
+      <Type Name="OleDbLiteral" Kind="Enumeration" />
+      <Type Name="OleDbMetaDataCollectionNames" Kind="Class" />
+      <Type Name="OleDbParameter" Kind="Class" />
+      <Type Name="OleDbParameterCollection" Kind="Class" />
+      <Type Name="OleDbPermission" Kind="Class" />
+      <Type Name="OleDbPermissionAttribute" Kind="Class" />
+      <Type Name="OleDbRowUpdatedEventArgs" Kind="Class" />
+      <Type Name="OleDbRowUpdatedEventHandler" Kind="Delegate" />
+      <Type Name="OleDbRowUpdatingEventArgs" Kind="Class" />
+      <Type Name="OleDbRowUpdatingEventHandler" Kind="Delegate" />
+      <Type Name="OleDbSchemaGuid" Kind="Class" />
+      <Type Name="OleDbTransaction" Kind="Class" />
+      <Type Name="OleDbType" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Data.Sql">
+      <Type Name="SqlDataSourceEnumerator" Kind="Class" />
+      <Type Name="SqlNotificationRequest" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Data.SqlClient">
+      <Type Name="OnChangeEventHandler" Kind="Delegate" />
+      <Type Name="SqlBulkCopy" Kind="Class" />
+      <Type Name="SqlBulkCopyColumnMapping" Kind="Class" />
+      <Type Name="SqlBulkCopyColumnMappingCollection" Kind="Class" />
+      <Type Name="SqlBulkCopyOptions" Kind="Enumeration" />
+      <Type Name="SqlClientFactory" Kind="Class" />
+      <Type Name="SqlClientMetaDataCollectionNames" Kind="Class" />
+      <Type Name="SqlClientPermission" Kind="Class" />
+      <Type Name="SqlClientPermissionAttribute" Kind="Class" />
+      <Type Name="SqlCommand" Kind="Class" />
+      <Type Name="SqlCommandBuilder" Kind="Class" />
+      <Type Name="SqlConnection" Kind="Class" />
+      <Type Name="SqlConnectionStringBuilder" Kind="Class" />
+      <Type Name="SqlDataAdapter" Kind="Class" />
+      <Type Name="SqlDataReader" Kind="Class" />
+      <Type Name="SQLDebugging" Kind="Class" />
+      <Type Name="SqlDependency" Kind="Class" />
+      <Type Name="SqlError" Kind="Class" />
+      <Type Name="SqlErrorCollection" Kind="Class" />
+      <Type Name="SqlException" Kind="Class" />
+      <Type Name="SqlInfoMessageEventArgs" Kind="Class" />
+      <Type Name="SqlInfoMessageEventHandler" Kind="Delegate" />
+      <Type Name="SqlNotificationEventArgs" Kind="Class" />
+      <Type Name="SqlNotificationInfo" Kind="Enumeration" />
+      <Type Name="SqlNotificationSource" Kind="Enumeration" />
+      <Type Name="SqlNotificationType" Kind="Enumeration" />
+      <Type Name="SqlParameter" Kind="Class" />
+      <Type Name="SqlParameterCollection" Kind="Class" />
+      <Type Name="SqlRowsCopiedEventArgs" Kind="Class" />
+      <Type Name="SqlRowsCopiedEventHandler" Kind="Delegate" />
+      <Type Name="SqlRowUpdatedEventArgs" Kind="Class" />
+      <Type Name="SqlRowUpdatedEventHandler" Kind="Delegate" />
+      <Type Name="SqlRowUpdatingEventArgs" Kind="Class" />
+      <Type Name="SqlRowUpdatingEventHandler" Kind="Delegate" />
+      <Type Name="SqlTransaction" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Data.SqlTypes">
+      <Type Name="INullable" Kind="Interface" />
+      <Type Name="SqlAlreadyFilledException" Kind="Class" />
+      <Type Name="SqlBinary" Kind="Structure" />
+      <Type Name="SqlBoolean" Kind="Structure" />
+      <Type Name="SqlByte" Kind="Structure" />
+      <Type Name="SqlBytes" Kind="Class" />
+      <Type Name="SqlChars" Kind="Class" />
+      <Type Name="SqlCompareOptions" Kind="Enumeration" />
+      <Type Name="SqlDateTime" Kind="Structure" />
+      <Type Name="SqlDecimal" Kind="Structure" />
+      <Type Name="SqlDouble" Kind="Structure" />
+      <Type Name="SqlGuid" Kind="Structure" />
+      <Type Name="SqlInt16" Kind="Structure" />
+      <Type Name="SqlInt32" Kind="Structure" />
+      <Type Name="SqlInt64" Kind="Structure" />
+      <Type Name="SqlMoney" Kind="Structure" />
+      <Type Name="SqlNotFilledException" Kind="Class" />
+      <Type Name="SqlNullValueException" Kind="Class" />
+      <Type Name="SqlSingle" Kind="Structure" />
+      <Type Name="SqlString" Kind="Structure" />
+      <Type Name="SqlTruncateException" Kind="Class" />
+      <Type Name="SqlTypeException" Kind="Class" />
+      <Type Name="SqlXml" Kind="Class" />
+      <Type Name="StorageState" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Xml">
+      <Type Name="XmlDataDocument" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>System.Data</Title>
+</Overview>
