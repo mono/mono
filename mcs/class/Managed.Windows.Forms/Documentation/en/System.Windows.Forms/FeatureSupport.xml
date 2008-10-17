@@ -1,0 +1,165 @@
+<Type Name="FeatureSupport" FullName="System.Windows.Forms.FeatureSupport">
+  <TypeSignature Language="C#" Value="public abstract class FeatureSupport : System.Windows.Forms.IFeatureSupport" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Windows.Forms.IFeatureSupport</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected FeatureSupport ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetVersionPresent">
+      <MemberSignature Language="C#" Value="public abstract Version GetVersionPresent (object feature);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="feature" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="feature">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetVersionPresent">
+      <MemberSignature Language="C#" Value="public static Version GetVersionPresent (string featureClassName, string featureConstName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="featureClassName" Type="System.String" />
+        <Parameter Name="featureConstName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="featureClassName">To be added.</param>
+        <param name="featureConstName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPresent">
+      <MemberSignature Language="C#" Value="public virtual bool IsPresent (object feature);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="feature" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="feature">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPresent">
+      <MemberSignature Language="C#" Value="public virtual bool IsPresent (object feature, Version minimumVersion);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="feature" Type="System.Object" />
+        <Parameter Name="minimumVersion" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="feature">To be added.</param>
+        <param name="minimumVersion">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPresent">
+      <MemberSignature Language="C#" Value="public static bool IsPresent (string featureClassName, string featureConstName);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="featureClassName" Type="System.String" />
+        <Parameter Name="featureConstName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="featureClassName">To be added.</param>
+        <param name="featureConstName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPresent">
+      <MemberSignature Language="C#" Value="public static bool IsPresent (string featureClassName, string featureConstName, Version minimumVersion);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="featureClassName" Type="System.String" />
+        <Parameter Name="featureConstName" Type="System.String" />
+        <Parameter Name="minimumVersion" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="featureClassName">To be added.</param>
+        <param name="featureConstName">To be added.</param>
+        <param name="minimumVersion">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

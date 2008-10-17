@@ -1,0 +1,390 @@
+<Type Name="TextRenderer" FullName="System.Windows.Forms.TextRenderer">
+  <TypeSignature Language="C#" Value="public sealed class TextRenderer" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public static void DrawText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font, System.Drawing.Point pt, System.Drawing.Color foreColor);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="pt" Type="System.Drawing.Point" />
+        <Parameter Name="foreColor" Type="System.Drawing.Color" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="pt">To be added.</param>
+        <param name="foreColor">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public static void DrawText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font, System.Drawing.Rectangle bounds, System.Drawing.Color foreColor);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="foreColor" Type="System.Drawing.Color" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="foreColor">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public static void DrawText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font, System.Drawing.Point pt, System.Drawing.Color foreColor, System.Drawing.Color backColor);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="pt" Type="System.Drawing.Point" />
+        <Parameter Name="foreColor" Type="System.Drawing.Color" />
+        <Parameter Name="backColor" Type="System.Drawing.Color" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="pt">To be added.</param>
+        <param name="foreColor">To be added.</param>
+        <param name="backColor">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public static void DrawText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font, System.Drawing.Point pt, System.Drawing.Color foreColor, System.Windows.Forms.TextFormatFlags flags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="pt" Type="System.Drawing.Point" />
+        <Parameter Name="foreColor" Type="System.Drawing.Color" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="pt">To be added.</param>
+        <param name="foreColor">To be added.</param>
+        <param name="flags">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public static void DrawText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font, System.Drawing.Rectangle bounds, System.Drawing.Color foreColor, System.Drawing.Color backColor);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="foreColor" Type="System.Drawing.Color" />
+        <Parameter Name="backColor" Type="System.Drawing.Color" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="foreColor">To be added.</param>
+        <param name="backColor">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public static void DrawText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font, System.Drawing.Rectangle bounds, System.Drawing.Color foreColor, System.Windows.Forms.TextFormatFlags flags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="foreColor" Type="System.Drawing.Color" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="foreColor">To be added.</param>
+        <param name="flags">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public static void DrawText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font, System.Drawing.Point pt, System.Drawing.Color foreColor, System.Drawing.Color backColor, System.Windows.Forms.TextFormatFlags flags);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="pt" Type="System.Drawing.Point" />
+        <Parameter Name="foreColor" Type="System.Drawing.Color" />
+        <Parameter Name="backColor" Type="System.Drawing.Color" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="pt">To be added.</param>
+        <param name="foreColor">To be added.</param>
+        <param name="backColor">To be added.</param>
+        <param name="flags">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public static void DrawText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font, System.Drawing.Rectangle bounds, System.Drawing.Color foreColor, System.Drawing.Color backColor, System.Windows.Forms.TextFormatFlags flags);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="foreColor" Type="System.Drawing.Color" />
+        <Parameter Name="backColor" Type="System.Drawing.Color" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="foreColor">To be added.</param>
+        <param name="backColor">To be added.</param>
+        <param name="flags">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MeasureText">
+      <MemberSignature Language="C#" Value="public static System.Drawing.Size MeasureText (string text, System.Drawing.Font font);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Size</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MeasureText">
+      <MemberSignature Language="C#" Value="public static System.Drawing.Size MeasureText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Size</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MeasureText">
+      <MemberSignature Language="C#" Value="public static System.Drawing.Size MeasureText (string text, System.Drawing.Font font, System.Drawing.Size proposedSize);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Size</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="proposedSize" Type="System.Drawing.Size" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="proposedSize">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MeasureText">
+      <MemberSignature Language="C#" Value="public static System.Drawing.Size MeasureText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font, System.Drawing.Size proposedSize);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Size</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="proposedSize" Type="System.Drawing.Size" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="proposedSize">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MeasureText">
+      <MemberSignature Language="C#" Value="public static System.Drawing.Size MeasureText (string text, System.Drawing.Font font, System.Drawing.Size proposedSize, System.Windows.Forms.TextFormatFlags flags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Size</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="proposedSize" Type="System.Drawing.Size" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="proposedSize">To be added.</param>
+        <param name="flags">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MeasureText">
+      <MemberSignature Language="C#" Value="public static System.Drawing.Size MeasureText (System.Drawing.IDeviceContext dc, string text, System.Drawing.Font font, System.Drawing.Size proposedSize, System.Windows.Forms.TextFormatFlags flags);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Size</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="proposedSize" Type="System.Drawing.Size" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="proposedSize">To be added.</param>
+        <param name="flags">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

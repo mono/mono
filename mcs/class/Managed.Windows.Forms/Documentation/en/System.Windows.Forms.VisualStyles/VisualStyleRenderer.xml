@@ -1,0 +1,900 @@
+<Type Name="VisualStyleRenderer" FullName="System.Windows.Forms.VisualStyles.VisualStyleRenderer">
+  <TypeSignature Language="C#" Value="public sealed class VisualStyleRenderer" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public VisualStyleRenderer (System.Windows.Forms.VisualStyles.VisualStyleElement element);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="element" Type="System.Windows.Forms.VisualStyles.VisualStyleElement" />
+      </Parameters>
+      <Docs>
+        <param name="element">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public VisualStyleRenderer (string className, int part, int state);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="className" Type="System.String" />
+        <Parameter Name="part" Type="System.Int32" />
+        <Parameter Name="state" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="className">To be added.</param>
+        <param name="part">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Class">
+      <MemberSignature Language="C#" Value="public string Class { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawBackground">
+      <MemberSignature Language="C#" Value="public void DrawBackground (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawBackground">
+      <MemberSignature Language="C#" Value="public void DrawBackground (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds, System.Drawing.Rectangle clipRectangle);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="clipRectangle" Type="System.Drawing.Rectangle" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="clipRectangle">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawEdge">
+      <MemberSignature Language="C#" Value="public System.Drawing.Rectangle DrawEdge (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds, System.Windows.Forms.VisualStyles.Edges edges, System.Windows.Forms.VisualStyles.EdgeStyle style, System.Windows.Forms.VisualStyles.EdgeEffects effects);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Rectangle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="edges" Type="System.Windows.Forms.VisualStyles.Edges" />
+        <Parameter Name="style" Type="System.Windows.Forms.VisualStyles.EdgeStyle" />
+        <Parameter Name="effects" Type="System.Windows.Forms.VisualStyles.EdgeEffects" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="edges">To be added.</param>
+        <param name="style">To be added.</param>
+        <param name="effects">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawImage">
+      <MemberSignature Language="C#" Value="public void DrawImage (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, System.Drawing.Image image);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="image" Type="System.Drawing.Image" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="image">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawImage">
+      <MemberSignature Language="C#" Value="public void DrawImage (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, System.Windows.Forms.ImageList imageList, int imageIndex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="imageList" Type="System.Windows.Forms.ImageList" />
+        <Parameter Name="imageIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="imageList">To be added.</param>
+        <param name="imageIndex">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawParentBackground">
+      <MemberSignature Language="C#" Value="public void DrawParentBackground (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds, System.Windows.Forms.Control childControl);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="childControl" Type="System.Windows.Forms.Control" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="childControl">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public void DrawText (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds, string textToDraw);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="textToDraw" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="textToDraw">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public void DrawText (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds, string textToDraw, bool drawDisabled);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="textToDraw" Type="System.String" />
+        <Parameter Name="drawDisabled" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="textToDraw">To be added.</param>
+        <param name="drawDisabled">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawText">
+      <MemberSignature Language="C#" Value="public void DrawText (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds, string textToDraw, bool drawDisabled, System.Windows.Forms.TextFormatFlags flags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="textToDraw" Type="System.String" />
+        <Parameter Name="drawDisabled" Type="System.Boolean" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="textToDraw">To be added.</param>
+        <param name="drawDisabled">To be added.</param>
+        <param name="flags">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBackgroundContentRectangle">
+      <MemberSignature Language="C#" Value="public System.Drawing.Rectangle GetBackgroundContentRectangle (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Rectangle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBackgroundExtent">
+      <MemberSignature Language="C#" Value="public System.Drawing.Rectangle GetBackgroundExtent (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle contentBounds);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Rectangle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="contentBounds" Type="System.Drawing.Rectangle" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="contentBounds">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBackgroundRegion">
+      <MemberSignature Language="C#" Value="public System.Drawing.Region GetBackgroundRegion (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Region</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Security.SuppressUnmanagedCodeSecurity</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="GetBoolean">
+      <MemberSignature Language="C#" Value="public bool GetBoolean (System.Windows.Forms.VisualStyles.BooleanProperty prop);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.BooleanProperty" />
+      </Parameters>
+      <Docs>
+        <param name="prop">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetColor">
+      <MemberSignature Language="C#" Value="public System.Drawing.Color GetColor (System.Windows.Forms.VisualStyles.ColorProperty prop);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Color</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.ColorProperty" />
+      </Parameters>
+      <Docs>
+        <param name="prop">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEnumValue">
+      <MemberSignature Language="C#" Value="public int GetEnumValue (System.Windows.Forms.VisualStyles.EnumProperty prop);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.EnumProperty" />
+      </Parameters>
+      <Docs>
+        <param name="prop">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetFilename">
+      <MemberSignature Language="C#" Value="public string GetFilename (System.Windows.Forms.VisualStyles.FilenameProperty prop);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.FilenameProperty" />
+      </Parameters>
+      <Docs>
+        <param name="prop">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetFont">
+      <MemberSignature Language="C#" Value="public System.Drawing.Font GetFont (System.Drawing.IDeviceContext dc, System.Windows.Forms.VisualStyles.FontProperty prop);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Font</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.FontProperty" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="prop">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetInteger">
+      <MemberSignature Language="C#" Value="public int GetInteger (System.Windows.Forms.VisualStyles.IntegerProperty prop);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.IntegerProperty" />
+      </Parameters>
+      <Docs>
+        <param name="prop">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetMargins">
+      <MemberSignature Language="C#" Value="public System.Windows.Forms.Padding GetMargins (System.Drawing.IDeviceContext dc, System.Windows.Forms.VisualStyles.MarginProperty prop);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.Padding</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.MarginProperty" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="prop">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetPartSize">
+      <MemberSignature Language="C#" Value="public System.Drawing.Size GetPartSize (System.Drawing.IDeviceContext dc, System.Windows.Forms.VisualStyles.ThemeSizeType type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Size</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="type" Type="System.Windows.Forms.VisualStyles.ThemeSizeType" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetPartSize">
+      <MemberSignature Language="C#" Value="public System.Drawing.Size GetPartSize (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds, System.Windows.Forms.VisualStyles.ThemeSizeType type);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Size</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="type" Type="System.Windows.Forms.VisualStyles.ThemeSizeType" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetPoint">
+      <MemberSignature Language="C#" Value="public System.Drawing.Point GetPoint (System.Windows.Forms.VisualStyles.PointProperty prop);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Point</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.PointProperty" />
+      </Parameters>
+      <Docs>
+        <param name="prop">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetString">
+      <MemberSignature Language="C#" Value="public string GetString (System.Windows.Forms.VisualStyles.StringProperty prop);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.StringProperty" />
+      </Parameters>
+      <Docs>
+        <param name="prop">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTextExtent">
+      <MemberSignature Language="C#" Value="public System.Drawing.Rectangle GetTextExtent (System.Drawing.IDeviceContext dc, string textToDraw, System.Windows.Forms.TextFormatFlags flags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Rectangle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="textToDraw" Type="System.String" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="textToDraw">To be added.</param>
+        <param name="flags">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTextExtent">
+      <MemberSignature Language="C#" Value="public System.Drawing.Rectangle GetTextExtent (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle bounds, string textToDraw, System.Windows.Forms.TextFormatFlags flags);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Rectangle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="textToDraw" Type="System.String" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="textToDraw">To be added.</param>
+        <param name="flags">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetTextMetrics">
+      <MemberSignature Language="C#" Value="public System.Windows.Forms.VisualStyles.TextMetrics GetTextMetrics (System.Drawing.IDeviceContext dc);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.VisualStyles.TextMetrics</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Handle">
+      <MemberSignature Language="C#" Value="public IntPtr Handle { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HitTestBackground">
+      <MemberSignature Language="C#" Value="public System.Windows.Forms.VisualStyles.HitTestCode HitTestBackground (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle backgroundRectangle, System.Drawing.Point pt, System.Windows.Forms.VisualStyles.HitTestOptions options);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.VisualStyles.HitTestCode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="backgroundRectangle" Type="System.Drawing.Rectangle" />
+        <Parameter Name="pt" Type="System.Drawing.Point" />
+        <Parameter Name="options" Type="System.Windows.Forms.VisualStyles.HitTestOptions" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="backgroundRectangle">To be added.</param>
+        <param name="pt">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HitTestBackground">
+      <MemberSignature Language="C#" Value="public System.Windows.Forms.VisualStyles.HitTestCode HitTestBackground (System.Drawing.Graphics g, System.Drawing.Rectangle backgroundRectangle, System.Drawing.Region region, System.Drawing.Point pt, System.Windows.Forms.VisualStyles.HitTestOptions options);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.VisualStyles.HitTestCode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="backgroundRectangle" Type="System.Drawing.Rectangle" />
+        <Parameter Name="region" Type="System.Drawing.Region" />
+        <Parameter Name="pt" Type="System.Drawing.Point" />
+        <Parameter Name="options" Type="System.Windows.Forms.VisualStyles.HitTestOptions" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="backgroundRectangle">To be added.</param>
+        <param name="region">To be added.</param>
+        <param name="pt">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HitTestBackground">
+      <MemberSignature Language="C#" Value="public System.Windows.Forms.VisualStyles.HitTestCode HitTestBackground (System.Drawing.IDeviceContext dc, System.Drawing.Rectangle backgroundRectangle, IntPtr hRgn, System.Drawing.Point pt, System.Windows.Forms.VisualStyles.HitTestOptions options);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.VisualStyles.HitTestCode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
+        <Parameter Name="backgroundRectangle" Type="System.Drawing.Rectangle" />
+        <Parameter Name="hRgn" Type="System.IntPtr" />
+        <Parameter Name="pt" Type="System.Drawing.Point" />
+        <Parameter Name="options" Type="System.Windows.Forms.VisualStyles.HitTestOptions" />
+      </Parameters>
+      <Docs>
+        <param name="dc">To be added.</param>
+        <param name="backgroundRectangle">To be added.</param>
+        <param name="hRgn">To be added.</param>
+        <param name="pt">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsBackgroundPartiallyTransparent">
+      <MemberSignature Language="C#" Value="public bool IsBackgroundPartiallyTransparent ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsElementDefined">
+      <MemberSignature Language="C#" Value="public static bool IsElementDefined (System.Windows.Forms.VisualStyles.VisualStyleElement element);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Windows.Forms.VisualStyles.VisualStyleElement" />
+      </Parameters>
+      <Docs>
+        <param name="element">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSupported">
+      <MemberSignature Language="C#" Value="public static bool IsSupported { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LastHResult">
+      <MemberSignature Language="C#" Value="public int LastHResult { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Part">
+      <MemberSignature Language="C#" Value="public int Part { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetParameters">
+      <MemberSignature Language="C#" Value="public void SetParameters (System.Windows.Forms.VisualStyles.VisualStyleElement element);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Windows.Forms.VisualStyles.VisualStyleElement" />
+      </Parameters>
+      <Docs>
+        <param name="element">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetParameters">
+      <MemberSignature Language="C#" Value="public void SetParameters (string className, int part, int state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="className" Type="System.String" />
+        <Parameter Name="part" Type="System.Int32" />
+        <Parameter Name="state" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="className">To be added.</param>
+        <param name="part">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="State">
+      <MemberSignature Language="C#" Value="public int State { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

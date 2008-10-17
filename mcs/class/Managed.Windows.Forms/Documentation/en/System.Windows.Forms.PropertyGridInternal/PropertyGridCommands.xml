@@ -1,0 +1,127 @@
+<Type Name="PropertyGridCommands" FullName="System.Windows.Forms.PropertyGridInternal.PropertyGridCommands">
+  <TypeSignature Language="C#" Value="public class PropertyGridCommands" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PropertyGridCommands ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Commands">
+      <MemberSignature Language="C#" Value="public static readonly System.ComponentModel.Design.CommandID Commands = null;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Design.CommandID</ReturnType>
+      </ReturnValue>
+      <MemberValue>null</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Description">
+      <MemberSignature Language="C#" Value="public static readonly System.ComponentModel.Design.CommandID Description = null;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Design.CommandID</ReturnType>
+      </ReturnValue>
+      <MemberValue>null</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Hide">
+      <MemberSignature Language="C#" Value="public static readonly System.ComponentModel.Design.CommandID Hide = null;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Design.CommandID</ReturnType>
+      </ReturnValue>
+      <MemberValue>null</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public static readonly System.ComponentModel.Design.CommandID Reset = null;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Design.CommandID</ReturnType>
+      </ReturnValue>
+      <MemberValue>null</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="wfcMenuCommand">
+      <MemberSignature Language="C#" Value="protected static readonly Guid wfcMenuCommand = 00000000-0000-0000-0000-000000000000;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="wfcMenuGroup">
+      <MemberSignature Language="C#" Value="protected static readonly Guid wfcMenuGroup = 00000000-0000-0000-0000-000000000000;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

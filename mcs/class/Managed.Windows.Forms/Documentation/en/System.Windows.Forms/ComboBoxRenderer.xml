@@ -1,0 +1,196 @@
+<Type Name="ComboBoxRenderer" FullName="System.Windows.Forms.ComboBoxRenderer">
+  <TypeSignature Language="C#" Value="public sealed class ComboBoxRenderer" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="DrawDropDownButton">
+      <MemberSignature Language="C#" Value="public static void DrawDropDownButton (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, System.Windows.Forms.VisualStyles.ComboBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.ComboBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawTextBox">
+      <MemberSignature Language="C#" Value="public static void DrawTextBox (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, System.Windows.Forms.VisualStyles.ComboBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.ComboBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawTextBox">
+      <MemberSignature Language="C#" Value="public static void DrawTextBox (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, string comboBoxText, System.Drawing.Font font, System.Windows.Forms.VisualStyles.ComboBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="comboBoxText" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.ComboBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="comboBoxText">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawTextBox">
+      <MemberSignature Language="C#" Value="public static void DrawTextBox (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, string comboBoxText, System.Drawing.Font font, System.Drawing.Rectangle textBounds, System.Windows.Forms.VisualStyles.ComboBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="comboBoxText" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="textBounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.ComboBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="comboBoxText">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="textBounds">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawTextBox">
+      <MemberSignature Language="C#" Value="public static void DrawTextBox (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, string comboBoxText, System.Drawing.Font font, System.Windows.Forms.TextFormatFlags flags, System.Windows.Forms.VisualStyles.ComboBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="comboBoxText" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.ComboBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="comboBoxText">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="flags">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawTextBox">
+      <MemberSignature Language="C#" Value="public static void DrawTextBox (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, string comboBoxText, System.Drawing.Font font, System.Drawing.Rectangle textBounds, System.Windows.Forms.TextFormatFlags flags, System.Windows.Forms.VisualStyles.ComboBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="comboBoxText" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="textBounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.ComboBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="comboBoxText">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="textBounds">To be added.</param>
+        <param name="flags">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsSupported">
+      <MemberSignature Language="C#" Value="public static bool IsSupported { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

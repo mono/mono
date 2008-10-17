@@ -1,0 +1,58 @@
+<Type Name="StatusBarPanelClickEventArgs" FullName="System.Windows.Forms.StatusBarPanelClickEventArgs">
+  <TypeSignature Language="C#" Value="public class StatusBarPanelClickEventArgs : System.Windows.Forms.MouseEventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Windows.Forms.MouseEventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StatusBarPanelClickEventArgs (System.Windows.Forms.StatusBarPanel statusBarPanel, System.Windows.Forms.MouseButtons button, int clicks, int x, int y);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="statusBarPanel" Type="System.Windows.Forms.StatusBarPanel" />
+        <Parameter Name="button" Type="System.Windows.Forms.MouseButtons" />
+        <Parameter Name="clicks" Type="System.Int32" />
+        <Parameter Name="x" Type="System.Int32" />
+        <Parameter Name="y" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="statusBarPanel">To be added.</param>
+        <param name="button">To be added.</param>
+        <param name="clicks">To be added.</param>
+        <param name="x">To be added.</param>
+        <param name="y">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StatusBarPanel">
+      <MemberSignature Language="C#" Value="public System.Windows.Forms.StatusBarPanel StatusBarPanel { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.StatusBarPanel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

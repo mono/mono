@@ -1,0 +1,633 @@
+<Type Name="MessageBox" FullName="System.Windows.Forms.MessageBox">
+  <TypeSignature Language="C#" Value="public class MessageBox" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text, string caption);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (System.Windows.Forms.IWin32Window owner, string text);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="owner">To be added.</param>
+        <param name="text">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text, string caption, System.Windows.Forms.MessageBoxButtons buttons);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (System.Windows.Forms.IWin32Window owner, string text, string caption);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="owner">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (System.Windows.Forms.IWin32Window owner, string text, string caption, System.Windows.Forms.MessageBoxButtons buttons);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+      </Parameters>
+      <Docs>
+        <param name="owner">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (System.Windows.Forms.IWin32Window owner, string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+      </Parameters>
+      <Docs>
+        <param name="owner">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (System.Windows.Forms.IWin32Window owner, string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+      </Parameters>
+      <Docs>
+        <param name="owner">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options, bool displayHelpButton);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+        <Parameter Name="displayHelpButton" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="displayHelpButton">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options, string helpFilePath);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+        <Parameter Name="helpFilePath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="helpFilePath">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (System.Windows.Forms.IWin32Window owner, string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+      </Parameters>
+      <Docs>
+        <param name="owner">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options, string helpFilePath, string keyword);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+        <Parameter Name="helpFilePath" Type="System.String" />
+        <Parameter Name="keyword" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="helpFilePath">To be added.</param>
+        <param name="keyword">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options, string helpFilePath, System.Windows.Forms.HelpNavigator navigator);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+        <Parameter Name="helpFilePath" Type="System.String" />
+        <Parameter Name="navigator" Type="System.Windows.Forms.HelpNavigator" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="helpFilePath">To be added.</param>
+        <param name="navigator">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (System.Windows.Forms.IWin32Window owner, string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options, string helpFilePath);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+        <Parameter Name="helpFilePath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="owner">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="helpFilePath">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options, string helpFilePath, System.Windows.Forms.HelpNavigator navigator, object param);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+        <Parameter Name="helpFilePath" Type="System.String" />
+        <Parameter Name="navigator" Type="System.Windows.Forms.HelpNavigator" />
+        <Parameter Name="param" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="helpFilePath">To be added.</param>
+        <param name="navigator">To be added.</param>
+        <param name="param">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (System.Windows.Forms.IWin32Window owner, string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options, string helpFilePath, string keyword);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+        <Parameter Name="helpFilePath" Type="System.String" />
+        <Parameter Name="keyword" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="owner">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="helpFilePath">To be added.</param>
+        <param name="keyword">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (System.Windows.Forms.IWin32Window owner, string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options, string helpFilePath, System.Windows.Forms.HelpNavigator navigator);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+        <Parameter Name="helpFilePath" Type="System.String" />
+        <Parameter Name="navigator" Type="System.Windows.Forms.HelpNavigator" />
+      </Parameters>
+      <Docs>
+        <param name="owner">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="helpFilePath">To be added.</param>
+        <param name="navigator">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Show">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DialogResult Show (System.Windows.Forms.IWin32Window owner, string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon, System.Windows.Forms.MessageBoxDefaultButton defaultButton, System.Windows.Forms.MessageBoxOptions options, string helpFilePath, System.Windows.Forms.HelpNavigator navigator, object param);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="caption" Type="System.String" />
+        <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
+        <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
+        <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
+        <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
+        <Parameter Name="helpFilePath" Type="System.String" />
+        <Parameter Name="navigator" Type="System.Windows.Forms.HelpNavigator" />
+        <Parameter Name="param" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="owner">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="caption">To be added.</param>
+        <param name="buttons">To be added.</param>
+        <param name="icon">To be added.</param>
+        <param name="defaultButton">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="helpFilePath">To be added.</param>
+        <param name="navigator">To be added.</param>
+        <param name="param">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

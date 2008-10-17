@@ -1,0 +1,42 @@
+<Type Name="ICom2PropertyPageDisplayService" FullName="System.Windows.Forms.ComponentModel.Com2Interop.ICom2PropertyPageDisplayService">
+  <TypeSignature Language="C#" Value="public interface ICom2PropertyPageDisplayService" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ShowPropertyPage">
+      <MemberSignature Language="C#" Value="public void ShowPropertyPage (string title, object component, int dispid, Guid pageGuid, IntPtr parentHandle);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="title" Type="System.String" />
+        <Parameter Name="component" Type="System.Object" />
+        <Parameter Name="dispid" Type="System.Int32" />
+        <Parameter Name="pageGuid" Type="System.Guid" />
+        <Parameter Name="parentHandle" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="title">To be added.</param>
+        <param name="component">To be added.</param>
+        <param name="dispid">To be added.</param>
+        <param name="pageGuid">To be added.</param>
+        <param name="parentHandle">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

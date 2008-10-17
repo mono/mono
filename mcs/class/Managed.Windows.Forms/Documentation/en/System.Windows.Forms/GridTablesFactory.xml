@@ -1,0 +1,44 @@
+<Type Name="GridTablesFactory" FullName="System.Windows.Forms.GridTablesFactory">
+  <TypeSignature Language="C#" Value="public sealed class GridTablesFactory" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateGridTables">
+      <MemberSignature Language="C#" Value="public static System.Windows.Forms.DataGridTableStyle[] CreateGridTables (System.Windows.Forms.DataGridTableStyle gridTable, object dataSource, string dataMember, System.Windows.Forms.BindingContext bindingManager);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.DataGridTableStyle[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gridTable" Type="System.Windows.Forms.DataGridTableStyle" />
+        <Parameter Name="dataSource" Type="System.Object" />
+        <Parameter Name="dataMember" Type="System.String" />
+        <Parameter Name="bindingManager" Type="System.Windows.Forms.BindingContext" />
+      </Parameters>
+      <Docs>
+        <param name="gridTable">To be added.</param>
+        <param name="dataSource">To be added.</param>
+        <param name="dataMember">To be added.</param>
+        <param name="bindingManager">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

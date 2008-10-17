@@ -1,0 +1,170 @@
+<Type Name="ToolStripItemTextRenderEventArgs" FullName="System.Windows.Forms.ToolStripItemTextRenderEventArgs">
+  <TypeSignature Language="C#" Value="public class ToolStripItemTextRenderEventArgs : System.Windows.Forms.ToolStripItemRenderEventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Windows.Forms.ToolStripItemRenderEventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ToolStripItemTextRenderEventArgs (System.Drawing.Graphics g, System.Windows.Forms.ToolStripItem item, string text, System.Drawing.Rectangle textRectangle, System.Drawing.Color textColor, System.Drawing.Font textFont, System.Drawing.ContentAlignment textAlign);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="item" Type="System.Windows.Forms.ToolStripItem" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="textRectangle" Type="System.Drawing.Rectangle" />
+        <Parameter Name="textColor" Type="System.Drawing.Color" />
+        <Parameter Name="textFont" Type="System.Drawing.Font" />
+        <Parameter Name="textAlign" Type="System.Drawing.ContentAlignment" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="textRectangle">To be added.</param>
+        <param name="textColor">To be added.</param>
+        <param name="textFont">To be added.</param>
+        <param name="textAlign">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ToolStripItemTextRenderEventArgs (System.Drawing.Graphics g, System.Windows.Forms.ToolStripItem item, string text, System.Drawing.Rectangle textRectangle, System.Drawing.Color textColor, System.Drawing.Font textFont, System.Windows.Forms.TextFormatFlags format);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="item" Type="System.Windows.Forms.ToolStripItem" />
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="textRectangle" Type="System.Drawing.Rectangle" />
+        <Parameter Name="textColor" Type="System.Drawing.Color" />
+        <Parameter Name="textFont" Type="System.Drawing.Font" />
+        <Parameter Name="format" Type="System.Windows.Forms.TextFormatFlags" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="text">To be added.</param>
+        <param name="textRectangle">To be added.</param>
+        <param name="textColor">To be added.</param>
+        <param name="textFont">To be added.</param>
+        <param name="format">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Text">
+      <MemberSignature Language="C#" Value="public string Text { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TextColor">
+      <MemberSignature Language="C#" Value="public System.Drawing.Color TextColor { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TextDirection">
+      <MemberSignature Language="C#" Value="public System.Windows.Forms.ToolStripTextDirection TextDirection { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.ToolStripTextDirection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TextFont">
+      <MemberSignature Language="C#" Value="public System.Drawing.Font TextFont { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Font</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TextFormat">
+      <MemberSignature Language="C#" Value="public System.Windows.Forms.TextFormatFlags TextFormat { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Windows.Forms.TextFormatFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TextRectangle">
+      <MemberSignature Language="C#" Value="public System.Drawing.Rectangle TextRectangle { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Rectangle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

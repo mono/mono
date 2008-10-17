@@ -1,0 +1,152 @@
+<Type Name="PrintControllerWithStatusDialog" FullName="System.Windows.Forms.PrintControllerWithStatusDialog">
+  <TypeSignature Language="C#" Value="public class PrintControllerWithStatusDialog : System.Drawing.Printing.PrintController" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Drawing.Printing.PrintController</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PrintControllerWithStatusDialog (System.Drawing.Printing.PrintController underlyingController);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="underlyingController" Type="System.Drawing.Printing.PrintController" />
+      </Parameters>
+      <Docs>
+        <param name="underlyingController">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PrintControllerWithStatusDialog (System.Drawing.Printing.PrintController underlyingController, string dialogTitle);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="underlyingController" Type="System.Drawing.Printing.PrintController" />
+        <Parameter Name="dialogTitle" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="underlyingController">To be added.</param>
+        <param name="dialogTitle">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsPreview">
+      <MemberSignature Language="C#" Value="public override bool IsPreview { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnEndPage">
+      <MemberSignature Language="C#" Value="public override void OnEndPage (System.Drawing.Printing.PrintDocument document, System.Drawing.Printing.PrintPageEventArgs e);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="document" Type="System.Drawing.Printing.PrintDocument" />
+        <Parameter Name="e" Type="System.Drawing.Printing.PrintPageEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="document">To be added.</param>
+        <param name="e">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnEndPrint">
+      <MemberSignature Language="C#" Value="public override void OnEndPrint (System.Drawing.Printing.PrintDocument document, System.Drawing.Printing.PrintEventArgs e);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="document" Type="System.Drawing.Printing.PrintDocument" />
+        <Parameter Name="e" Type="System.Drawing.Printing.PrintEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="document">To be added.</param>
+        <param name="e">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnStartPage">
+      <MemberSignature Language="C#" Value="public override System.Drawing.Graphics OnStartPage (System.Drawing.Printing.PrintDocument document, System.Drawing.Printing.PrintPageEventArgs e);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Graphics</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="document" Type="System.Drawing.Printing.PrintDocument" />
+        <Parameter Name="e" Type="System.Drawing.Printing.PrintPageEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="document">To be added.</param>
+        <param name="e">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnStartPrint">
+      <MemberSignature Language="C#" Value="public override void OnStartPrint (System.Drawing.Printing.PrintDocument document, System.Drawing.Printing.PrintEventArgs e);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="document" Type="System.Drawing.Printing.PrintDocument" />
+        <Parameter Name="e" Type="System.Drawing.Printing.PrintEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="document">To be added.</param>
+        <param name="e">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

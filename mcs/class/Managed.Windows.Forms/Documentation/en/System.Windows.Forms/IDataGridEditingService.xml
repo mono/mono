@@ -1,0 +1,61 @@
+<Type Name="IDataGridEditingService" FullName="System.Windows.Forms.IDataGridEditingService">
+  <TypeSignature Language="C#" Value="public interface IDataGridEditingService" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="BeginEdit">
+      <MemberSignature Language="C#" Value="public bool BeginEdit (System.Windows.Forms.DataGridColumnStyle gridColumn, int rowNumber);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gridColumn" Type="System.Windows.Forms.DataGridColumnStyle" />
+        <Parameter Name="rowNumber" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="gridColumn">To be added.</param>
+        <param name="rowNumber">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="EndEdit">
+      <MemberSignature Language="C#" Value="public bool EndEdit (System.Windows.Forms.DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gridColumn" Type="System.Windows.Forms.DataGridColumnStyle" />
+        <Parameter Name="rowNumber" Type="System.Int32" />
+        <Parameter Name="shouldAbort" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="gridColumn">To be added.</param>
+        <param name="rowNumber">To be added.</param>
+        <param name="shouldAbort">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

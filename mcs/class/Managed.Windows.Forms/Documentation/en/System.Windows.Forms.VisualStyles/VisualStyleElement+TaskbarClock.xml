@@ -1,0 +1,16 @@
+<Type Name="VisualStyleElement+TaskbarClock" FullName="System.Windows.Forms.VisualStyles.VisualStyleElement+TaskbarClock">
+  <TypeSignature Language="C#" Value="public static class VisualStyleElement.TaskbarClock" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>

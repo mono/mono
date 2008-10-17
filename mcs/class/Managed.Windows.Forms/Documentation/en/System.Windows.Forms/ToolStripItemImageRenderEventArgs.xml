@@ -1,0 +1,92 @@
+<Type Name="ToolStripItemImageRenderEventArgs" FullName="System.Windows.Forms.ToolStripItemImageRenderEventArgs">
+  <TypeSignature Language="C#" Value="public class ToolStripItemImageRenderEventArgs : System.Windows.Forms.ToolStripItemRenderEventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Windows.Forms.ToolStripItemRenderEventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ToolStripItemImageRenderEventArgs (System.Drawing.Graphics g, System.Windows.Forms.ToolStripItem item, System.Drawing.Rectangle imageRectangle);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="item" Type="System.Windows.Forms.ToolStripItem" />
+        <Parameter Name="imageRectangle" Type="System.Drawing.Rectangle" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="imageRectangle">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ToolStripItemImageRenderEventArgs (System.Drawing.Graphics g, System.Windows.Forms.ToolStripItem item, System.Drawing.Image image, System.Drawing.Rectangle imageRectangle);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="item" Type="System.Windows.Forms.ToolStripItem" />
+        <Parameter Name="image" Type="System.Drawing.Image" />
+        <Parameter Name="imageRectangle" Type="System.Drawing.Rectangle" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="image">To be added.</param>
+        <param name="imageRectangle">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Image">
+      <MemberSignature Language="C#" Value="public System.Drawing.Image Image { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Image</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ImageRectangle">
+      <MemberSignature Language="C#" Value="public System.Drawing.Rectangle ImageRectangle { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Drawing.Rectangle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

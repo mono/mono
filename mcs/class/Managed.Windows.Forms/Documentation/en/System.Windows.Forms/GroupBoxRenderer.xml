@@ -1,0 +1,216 @@
+<Type Name="GroupBoxRenderer" FullName="System.Windows.Forms.GroupBoxRenderer">
+  <TypeSignature Language="C#" Value="public sealed class GroupBoxRenderer" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="DrawGroupBox">
+      <MemberSignature Language="C#" Value="public static void DrawGroupBox (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, System.Windows.Forms.VisualStyles.GroupBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawGroupBox">
+      <MemberSignature Language="C#" Value="public static void DrawGroupBox (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, string groupBoxText, System.Drawing.Font font, System.Windows.Forms.VisualStyles.GroupBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="groupBoxText" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="groupBoxText">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawGroupBox">
+      <MemberSignature Language="C#" Value="public static void DrawGroupBox (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, string groupBoxText, System.Drawing.Font font, System.Drawing.Color textColor, System.Windows.Forms.VisualStyles.GroupBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="groupBoxText" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="textColor" Type="System.Drawing.Color" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="groupBoxText">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="textColor">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawGroupBox">
+      <MemberSignature Language="C#" Value="public static void DrawGroupBox (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, string groupBoxText, System.Drawing.Font font, System.Windows.Forms.TextFormatFlags flags, System.Windows.Forms.VisualStyles.GroupBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="groupBoxText" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="groupBoxText">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="flags">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawGroupBox">
+      <MemberSignature Language="C#" Value="public static void DrawGroupBox (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, string groupBoxText, System.Drawing.Font font, System.Drawing.Color textColor, System.Windows.Forms.TextFormatFlags flags, System.Windows.Forms.VisualStyles.GroupBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="groupBoxText" Type="System.String" />
+        <Parameter Name="font" Type="System.Drawing.Font" />
+        <Parameter Name="textColor" Type="System.Drawing.Color" />
+        <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="groupBoxText">To be added.</param>
+        <param name="font">To be added.</param>
+        <param name="textColor">To be added.</param>
+        <param name="flags">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DrawParentBackground">
+      <MemberSignature Language="C#" Value="public static void DrawParentBackground (System.Drawing.Graphics g, System.Drawing.Rectangle bounds, System.Windows.Forms.Control childControl);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
+        <Parameter Name="childControl" Type="System.Windows.Forms.Control" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="bounds">To be added.</param>
+        <param name="childControl">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsBackgroundPartiallyTransparent">
+      <MemberSignature Language="C#" Value="public static bool IsBackgroundPartiallyTransparent (System.Windows.Forms.VisualStyles.GroupBoxState state);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.GroupBoxState" />
+      </Parameters>
+      <Docs>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RenderMatchingApplicationState">
+      <MemberSignature Language="C#" Value="public static bool RenderMatchingApplicationState { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

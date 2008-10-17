@@ -1,0 +1,17 @@
+<Type Name="VisualStyleElement+TrackBar" FullName="System.Windows.Forms.VisualStyles.VisualStyleElement+TrackBar">
+  <TypeSignature Language="C#" Value="public static class VisualStyleElement.TrackBar" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members />
+</Type>

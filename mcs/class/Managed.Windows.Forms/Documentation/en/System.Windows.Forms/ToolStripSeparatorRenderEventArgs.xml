@@ -1,0 +1,54 @@
+<Type Name="ToolStripSeparatorRenderEventArgs" FullName="System.Windows.Forms.ToolStripSeparatorRenderEventArgs">
+  <TypeSignature Language="C#" Value="public class ToolStripSeparatorRenderEventArgs : System.Windows.Forms.ToolStripItemRenderEventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Windows.Forms.ToolStripItemRenderEventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ToolStripSeparatorRenderEventArgs (System.Drawing.Graphics g, System.Windows.Forms.ToolStripSeparator separator, bool vertical);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="g" Type="System.Drawing.Graphics" />
+        <Parameter Name="separator" Type="System.Windows.Forms.ToolStripSeparator" />
+        <Parameter Name="vertical" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="g">To be added.</param>
+        <param name="separator">To be added.</param>
+        <param name="vertical">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Vertical">
+      <MemberSignature Language="C#" Value="public bool Vertical { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>
