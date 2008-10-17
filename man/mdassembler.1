@@ -1,0 +1,259 @@
+.\" 
+.\" mdassembler manual page.
+.\" (C) 2006 Jonathan Pryor
+.\" Author:
+.\"   Jonathan Pryor (jonpryor@vt.edu)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH "mdassembler" 1
+.SH NAME
+mdassembler \- Compile documentation for use in monodoc browser
+.SH SYNOPSIS
+.B mdassembler
+OPTIONS*
+DIRS+
+.SH DESCRIPTION
+\fImdassembler\fR has been obsoleted by \fBmdoc\fR(1).  See the
+\fBmdoc-assemble\fR(1) man page.
+.PP
+.I mdassembler
+is a program that creates 
+.I .tree
+and 
+.I .zip
+files for use in the
+.B monodoc
+documentation browser.
+.PP
+The 
+.I .tree
+and
+.I .zip
+files are copied into monodoc's 
+.I sources
+directory, and reside with a 
+.I .source
+file which is used by 
+.B monodoc
+to specify where the documentation should be displayed.
+The 
+.I .source
+file's 
+.I /monodoc/source/@basefile
+attribute specifies the filename prefix for the documentation files.  This
+must be the same prefix as used with the 
+.B \-\-out
+parameter.
+.PP
+.SH OPTIONS
+.TP
+.I \-\-ecma
+The documentation found within 
+.I DIRS
+is in the Mono ECMA documentation format.
+See the 
+.B Mono ECMA Documentation Format
+section below.
+.TP
+.I \-\-ecmaspec
+The documentation found within 
+.I DIRS
+is in the ECMA Specification documentation format.
+See the 
+.B Mono ECMA Specification Documentation Format
+section below.
+.TP
+.I \-\-error
+The documentation found within
+.I DIRS
+is in "error" format.
+See the 
+.B Error Documentation Format
+section below.
+.TP
+.I \-\-help
+Show program argument information.
+.TP
+.I \-\-man
+The documentation found within
+.I DIRS
+is in man page format.
+See the 
+.B Man Page Documentation Format
+section below.
+.TP
+.I \-o, \-\-out PREFIX
+Specify the output file prefix.
+.B mdassembler
+creates the files
+.I PREFIX.zip
+and 
+.I PREFIX.tree
+\&.
+.TP
+.I \-\-simple
+The documentation found within
+.I DIRS
+is in "simple" format.
+See the 
+.B Simple Documentation Format
+section below.
+.TP
+.I \-\-xhtml, \-\-hb
+The documentation found within
+.I DIRS
+is in XHTML format.
+See the 
+.B XHTML Documentation Format
+section below.
+.PP
+.SH "FORMATS"
+The following documentation formats are supported:
+.SS Mono ECMA Documentation Format
+An XML documentation format with one file per type.
+.PP
+See the \fBmdoc\fR(5) man page for more information.
+.SS Mono ECMA Specification Documentation Format
+This is not the format you're looking for.
+.PP
+This is the format used to represent the ECMA-334 (C#) standard within 
+\fBmonodoc\fR.  It is not used to display class library documentation; 
+for class library
+documentation, use the
+.B \-\-ecma
+format.
+.SS Error Documentation Format
+Used to present detailed error messages, and is used in 
+\fBmonodoc\fR's "C# Compiler Error Reference"
+tree.  
+.I DIRS
+is not a directory, but is instead a configuration file, containing the XML:
+
+.nf
+    <ErrorProviderConfig>
+        <FilesPath>../../mcs/errors</FilesPath>
+        <Match>cs????*.cs</Match>
+        <ErrorNumSubstringStart>2</ErrorNumSubstringStart>
+        <ErrorNumSubstringLength>4</ErrorNumSubstringLength>
+        <FriendlyFormatString>CS{0:0###}</FriendlyFormatString>
+    </ErrorProviderConfig>
+.fi
+
+.I /ErrorProviderConfig/FilesPath
+specifies where to look for files,
+.I /ErrorProviderConfig/Match
+specifies the filename pattern to look for within 
+\fI/ErrorProviderConfig/FilesPath\fR,
+.I /ErrorProviderConfig/ErrorNumSubstringStart
+and
+.I /ErrorProviderConfig/ErrorNumSubstringLength
+control which portion of the filename is used as the error number, and
+.I /ErrorProviderConfig/FriendlyFormatString
+controls how the formatting/display of the node in the 
+.B monodoc
+tree.
+.PP
+For each file found, it is converted to HTML with C# syntax coloring applied.
+.SS Simple Documentation Format
+Converts text files into HTML by translating each newline into an HTML
+.I <br>
+element.
+.SS Man Page Documentation Format
+Converts man pages into HTML for display.
+.SS XHTML Documentation Format
+Copies the XHTML file as-is.
+.SH EXAMPLES
+To install your documenation for use with monodoc:
+.TP
+.I Create a PREFIX.source file
+with the contents:
+.nf
+
+<?xml version="1.0"?>
+<monodoc>
+  <source provider="FORMAT" basefile="PREFIX" path="PATH"/>
+</monodoc>
+
+.fi
+where FORMAT is the documentation format contained within the 
+.I PREFIX.tree
+file, e.g. 
+\fIecma\fR, or \fIsimple\fR.
+.I PREFIX is the basename of the 
+.I .tree
+and
+.I .zip
+files that 
+.B mdassembler
+creates.
+.I PATH
+is the "path" in the monodoc tree that should contain the documentation.
+See the 
+.I @prefix@/lib/monodoc/monodoc.xml
+file for a list of PATH values
+(the
+.I //node/@name
+values).
+.sp
+See also: http://www.mono-project.com/Generating_Documentation
+.TP
+.I Create your documentation
+See also the
+.BR monodocer (1)
+man page, e.g.
+.nf
+
+	monodocer -assembly:foo.dll -path:foo/en
+
+.fi
+.TP
+.I Assemble the documentation
+.nf
+
+	mdassembler --ecma foo/en PREFIX
+
+.fi
+Make sure that you use the same
+.I PREFIX
+here as you did above.
+.TP
+.I Install the documentation by using the command
+.nf
+
+	cp PREFIX.source PREFIX.tree PREFIX.zip \\
+	`pkg-config monodoc --variable=sourcesdir`
+
+.fi
+(Note the backticks used in the 
+.B pkg-config
+command!)
+This copies the
+.I .source
+,
+.I .tree
+, and 
+.I .zip
+files into the 
+.B monodoc
+.I sources
+directory, which will allow
+.B monodoc
+to display the documentation.
+.SH SEE ALSO
+\fBmdcs2ecma\fR(1), 
+\fBmdnormalizer\fR(1), 
+\fBmdoc\fR(1), 
+\fBmdoc-assemble\fR(1), 
+\fBmdvalidator\fR(1), 
+\fBmonodocer\fR(1), 
+\fBmonodocs2html\fR(1)
+.SH MAILING LISTS
+.TP
+Visit http://lists.ximian.com/mailman/listinfo/mono-docs-list for details.
+.SH WEB SITE
+See also: http://www.mono-project.com
+and
+http://www.mono-project.com/Assembler
