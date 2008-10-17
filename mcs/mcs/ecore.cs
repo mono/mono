@@ -3930,7 +3930,7 @@ namespace Mono.CSharp {
 				if (!params_expanded_form)
 					score = IsArgumentCompatible (ec, a_mod, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
 
-				if (score != 0 && (p_mod & Parameter.Modifier.PARAMS) != 0) {
+				if (score != 0 && (p_mod & Parameter.Modifier.PARAMS) != 0 && delegate_type == null) {
 					// It can be applicable in expanded form
 					score = IsArgumentCompatible (ec, a_mod, a, 0, pt.GetElementType ());
 					if (score == 0)
@@ -4354,8 +4354,7 @@ namespace Mono.CSharp {
 			//
 
 			best_candidate = (MethodBase) candidates [0];
-			if (delegate_type == null)
-				method_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
+			method_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
 
 			for (int ix = 1; ix < candidate_top; ix++) {
 				MethodBase candidate = (MethodBase) candidates [ix];
