@@ -1,0 +1,77 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Npgsql" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTrademark("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("The Npgsql Development Team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyConfiguration("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription(".Net Data Provider for PostgreSQL")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Npgsql - .Net Data Provider for PostgreSQL")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="">
+      <Type Name="NpgsqlRowUpdatedEventArgs" Kind="Class" />
+      <Type Name="NpgsqlRowUpdatingEventArgs" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Npgsql">
+      <Type Name="LogLevel" Kind="Enumeration" />
+      <Type Name="NoticeEventHandler" Kind="Delegate" />
+      <Type Name="NotificationEventHandler" Kind="Delegate" />
+      <Type Name="NpgsqlCommand" Kind="Class" />
+      <Type Name="NpgsqlCommandBuilder" Kind="Class" />
+      <Type Name="NpgsqlConnection" Kind="Class" />
+      <Type Name="NpgsqlDataAdapter" Kind="Class" />
+      <Type Name="NpgsqlDataReader" Kind="Class" />
+      <Type Name="NpgsqlError" Kind="Class" />
+      <Type Name="NpgsqlEventLog" Kind="Class" />
+      <Type Name="NpgsqlException" Kind="Class" />
+      <Type Name="NpgsqlNoticeEventArgs" Kind="Class" />
+      <Type Name="NpgsqlNotificationEventArgs" Kind="Class" />
+      <Type Name="NpgsqlParameter" Kind="Class" />
+      <Type Name="NpgsqlParameterCollection" Kind="Class" />
+      <Type Name="NpgsqlRowUpdatedEventHandler" Kind="Delegate" />
+      <Type Name="NpgsqlRowUpdatingEventHandler" Kind="Delegate" />
+      <Type Name="NpgsqlTransaction" Kind="Class" />
+      <Type Name="ProtocolVersion" Kind="Enumeration" />
+      <Type Name="ServerVersion" Kind="Class" />
+    </Namespace>
+    <Namespace Name="NpgsqlTypes">
+      <Type Name="Fastpath" Kind="Class" />
+      <Type Name="FastpathArg" Kind="Class" />
+      <Type Name="LargeObject" Kind="Class" />
+      <Type Name="LargeObjectManager" Kind="Class" />
+      <Type Name="NpgsqlBox" Kind="Structure" />
+      <Type Name="NpgsqlCircle" Kind="Structure" />
+      <Type Name="NpgsqlDbType" Kind="Enumeration" />
+      <Type Name="NpgsqlInet" Kind="Structure" />
+      <Type Name="NpgsqlLSeg" Kind="Structure" />
+      <Type Name="NpgsqlPath" Kind="Structure" />
+      <Type Name="NpgsqlPoint" Kind="Structure" />
+      <Type Name="NpgsqlPolygon" Kind="Structure" />
+    </Namespace>
+  </Types>
+  <Title>Npgsql</Title>
+</Overview>
