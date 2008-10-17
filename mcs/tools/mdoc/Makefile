@@ -42,7 +42,7 @@ include ../../build/executable.make
 $(PROGRAM) : monodocer1.exe Makefile
 
 MCS1 = \
-	MONO_PATH="$(topdir)/class/lib/1.0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
+	MONO_PATH="$(topdir)/class/lib/net_1_1$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
 	$(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_1_1/mcs.exe
 
 CSCOMPILE1 = $(Q_MCS) $(MCS1) $(USE_MCS_FLAGS)

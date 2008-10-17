@@ -1,3 +1,7 @@
+2008-10-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	* rules.make (MDOC): Pass a proper MONO_PATH.
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* build.rules: doc-update is now a standard target; provide a $(MDOC)

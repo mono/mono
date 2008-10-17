@@ -1,3 +1,7 @@
+2008-10-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (MCS1): Use 'class/lib/net_1_1', not 'class/lib/1.0'.
+
 2008-10-17  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: -overrides & -pretty should default 

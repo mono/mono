@@ -1,3 +1,8 @@
+2008-10-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (net_2_0_SUBDIRS): Add 'docs'.
+	* docs/Makefile: Build documentation only in the net_2_0 profile.
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* docs/Makefile: Add install/uninstall support.
