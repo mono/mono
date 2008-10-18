@@ -26,7 +26,7 @@ man_MANS = \
 	mdoc-export-msxdoc.1  \
 	mdoc-update.1         \
 	mdoc-validate.1       \
-	mdvalidator.1         \
+	mdvalidater.1         \
 	mkbundle.1            \
 	mono.1                \
 	mono-cil-strip.1      \

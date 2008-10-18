@@ -1,5 +1,10 @@
 2008-10-18  Jonathan Pryor  <jpryor@novell.com>
 
+	* mdvalidator.1: Rename to mdvalidater.1.
+	* Makefile.am (man_MANS): Rename to mdvalidator.1 to mdvalidater.1.
+
+2008-10-18  Jonathan Pryor  <jpryor@novell.com>
+
 	* Makefile.am (man_MANS): Add mdoc.5 and mono-config.5.
 
 2008-10-18  Mark Probst  <mark.probst@gmail.com>
