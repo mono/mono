@@ -20,6 +20,7 @@ man_MANS = \
 	mdcs2ecma.1           \
 	mdnormalizer.1        \
 	mdoc.1                \
+	mdoc.5                \
 	mdoc-assemble.1       \
 	mdoc-export-html.1    \
 	mdoc-export-msxdoc.1  \
@@ -28,7 +29,6 @@ man_MANS = \
 	mdvalidator.1         \
 	mkbundle.1            \
 	mono.1                \
-	mono.5                \
 	mono-cil-strip.1      \
 	mono-config.5         \
 	monodocer.1           \
