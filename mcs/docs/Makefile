@@ -49,7 +49,7 @@ clean-local:
 
 dist-local: dist-default
 
-MONODOC_INSTALL_DIR = $(mono_libdir)/monodoc
+MONODOC_INSTALL_DIR = $(DESTDIR)$(mono_libdir)/monodoc
 
 install-local:
 	$(MKINSTALLDIRS) $(MONODOC_INSTALL_DIR) $(MONODOC_INSTALL_DIR)/sources

@@ -1,3 +1,8 @@
+2008-10-18  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs/Makefile (MONODOC_INSTALL_DIR): Prefix path with $(DESTDIR) so 
+	  that it installs properly under the buildbot.
+
 2008-10-18  Raja R Harinath  <harinath@hurrynot.org>
 
 	* docs/Makefile (DISTFILES): Don't use 'find' to list files.
