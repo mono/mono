@@ -1,7 +1,7 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@prefix@/lib
-sourcesdir=@monodocdir@/sources
+sourcesdir=${libdir}/monodoc/sources
 
 Name: Monodoc
 Description: Monodoc - Mono Documentation Tools
