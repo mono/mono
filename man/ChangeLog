@@ -1,5 +1,9 @@
 2008-10-18  Jonathan Pryor  <jpryor@novell.com>
 
+	* Makefile.am (man_MANS): Remove unpackaged files.
+
+2008-10-18  Jonathan Pryor  <jpryor@novell.com>
+
 	* mdvalidator.1: Rename to mdvalidater.1.
 	* Makefile.am (man_MANS): Rename to mdvalidator.1 to mdvalidater.1.
 

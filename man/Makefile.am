@@ -1,6 +1,5 @@
 man_MANS = \
 	al.1                  \
-	caspol.1              \
 	cert2spc.1            \
 	certmgr.1             \
 	chktrust.1            \
@@ -17,8 +16,6 @@ man_MANS = \
 	mconfig.1             \
 	mcs.1                 \
 	mdassembler.1         \
-	mdcs2ecma.1           \
-	mdnormalizer.1        \
 	mdoc.1                \
 	mdoc.5                \
 	mdoc-assemble.1       \
@@ -53,7 +50,6 @@ man_MANS = \
 	sqlsharp.1            \
 	vbnc.1                \
 	wsdl.1                \
-	wsdl2.1               \
 	xsd.1
 
 EXTRA_DIST = $(man_MANS)
