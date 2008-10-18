@@ -6,12 +6,15 @@
 //
 // (c) 2004 Novell, Inc. (http://www.ximian.com)
 //
-using NUnit.Framework;
+
 using System;
 using System.Collections;
 using System.ComponentModel;
+using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 using System.ComponentModel.Design;
 using System.Globalization;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.ComponentModel
 {

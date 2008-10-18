@@ -1,3 +1,10 @@
+2008-10-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeDescriptorTests.cs:
+	* PropertyDescriptorTests.cs: Define alias for S.C.DescriptionAttribute
+	to avoid ambiguous reference error using more recent versions of
+	NUnit (which also contains a DescriptionAttribute).
+
 2008-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* PropertyDescriptorTest.cs: Tests for Get/Set Value of partial

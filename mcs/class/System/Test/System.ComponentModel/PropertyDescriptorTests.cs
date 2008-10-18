@@ -11,6 +11,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 using System.ComponentModel.Design;
 using System.Drawing.Design;
 using System.Globalization;
