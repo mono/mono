@@ -362,6 +362,13 @@ Finally, namespaces can be specified using the N: prefix:
 	mono --trace=N:System.Xml
 
 .fi
+.TP
+\fB--no-x86-stack-align\fR
+Don't align stack frames on the x86 architecture.  By default, Mono
+aligns stack frames to 16 bytes on x86, so that local floating point
+and SIMD variables can be properly aligned.  This option turns off the
+alignment, which usually saves one intruction per call, but might
+result in significantly lower floating point and SIMD performance.
 .SH JIT MAINTAINER OPTIONS
 The maintainer options are only used by those developing the runtime
 itself, and not typically of interest to runtime users or developers.
