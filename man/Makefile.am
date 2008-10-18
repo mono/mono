@@ -28,7 +28,9 @@ man_MANS = \
 	mdvalidator.1         \
 	mkbundle.1            \
 	mono.1                \
+	mono.5                \
 	mono-cil-strip.1      \
+	mono-config.5         \
 	monodocer.1           \
 	monodocs2html.1       \
 	monolinker.1          \
