@@ -172,6 +172,11 @@ dist-default:
 	    dest=`dirname $(distdir)/$$f` ; \
 	    $(MKINSTALLDIRS) $$dest && cp -p $$f $$dest || exit 1 ; \
 	done
+	if test -d Documentation ; then \
+		find . -name '*.xml' > .files ; \
+		tar cTf .files - | (cd $(distdir); tar xf -) ; \
+		rm .files ; \
+	fi
 
 %/.stamp:
 	$(MKINSTALLDIRS) $(@D)

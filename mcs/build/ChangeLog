@@ -1,5 +1,10 @@
 2008-10-18  Jonathan Pryor  <jpryor@novell.com>
 
+	* rules.make (dist-default): Distribute the Documentation directory, 
+	  if present.
+
+2008-10-18  Jonathan Pryor  <jpryor@novell.com>
+
 	* rules.make (MDOC): MONO_PATH needs to include net_1_1 so monodoc.dll
 	  can be found.
 
