@@ -80,7 +80,7 @@ namespace MonoTests.System.Diagnostics
 				Guid.NewGuid ().ToString ());
 
 			// save original eventlog implementation type (if set)
-			string _originalEventLogImpl = Environment.GetEnvironmentVariable (
+			_originalEventLogImpl = Environment.GetEnvironmentVariable (
 				EVENTLOG_TYPE_VAR);
 
 			// use local file implementation
