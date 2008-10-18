@@ -12,15 +12,15 @@ pkgconfigdir = $(libdir)/pkgconfig
 
 if JIT_SUPPORTED
 if INTERP_SUPPORTED
-pkgconfig_DATA= mono.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc smcs.pc
+pkgconfig_DATA= mono.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc smcs.pc monodoc.pc
 else
-pkgconfig_DATA= mono.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc smcs.pc
+pkgconfig_DATA= mono.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc smcs.pc monodoc.pc
 endif
 else
-pkgconfig_DATA= mint.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc smcs.pc
+pkgconfig_DATA= mint.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc smcs.pc monodoc.pc
 endif
 
-DISTCLEANFILES= mono.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc smcs.pc
+DISTCLEANFILES= mono.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc smcs.pc monodoc.pc
 
 mono_DATA =  config \
 	     browscap.ini
