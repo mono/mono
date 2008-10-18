@@ -1,3 +1,8 @@
+2008-10-18  Andreia Gaita  <avidigal@novell.com>
+
+	* tests2.sh: Some useful test options, see usage (default behaviour
+	remains the same)
+
 2008-10-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBoxTest.cs: Add test for bug #436328.
