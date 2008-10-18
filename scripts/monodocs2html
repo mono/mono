@@ -1,0 +1,37 @@
+#!/bin/sh
+cmd_line=
+
+for option do
+	case "$option" in
+		-dest:*)
+			dir=`echo "$option" | sed 's/^-dest://'`
+			cmd_line="$cmd_line -o \"$dir\""
+			;;
+		-dumptemplate)
+			cmd_line="$cmd_line --default-template"
+			;;
+		-ext:*)
+			ext=`echo "$option" | sed 's/^-ext://'`
+			cmd_line="$cmd_line --ext=$ext"
+			;;
+		-onlytype*)
+			# compat; ignore
+			;;
+		-source:*)
+			s=`echo "$option" | sed 's/^-source://'`
+			cmd_line="$cmd_line $s"
+			;;
+		-template:*)
+			template=`echo "$option" | sed 's/^-template://'`
+			cmd_line="$cmd_line --template=$template"
+			;;
+		-V | -version)
+			# compat; ignore
+			;;
+		*)
+			cmd_line="$cmd_line $option"
+			;;
+	esac
+done
+
+exec mdoc export-html $cmd_line

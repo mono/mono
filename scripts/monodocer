@@ -1,0 +1,64 @@
+#!/bin/sh
+cmd_line=
+
+for option do
+	case "$option" in
+		-assembly:*)
+			a=`echo "$option" | sed 's/^-assembly://'`
+			cmd_line="$cmd_line $a"
+			;;
+		-delete)
+			cmd_line="$cmd_line --delete"
+			;;
+		-ignoremembers)
+			# ignore
+			;;
+		-import:*)
+			a=`echo "$option" | sed 's/^-import://'`
+			cmd_line="$cmd_line -i $a"
+			;;
+		-importecmadoc:*)
+			a=`echo "$option" | sed 's/^-importecmadoc://'`
+			cmd_line="$cmd_line -i $a"
+			;;
+		-importslashdoc:*)
+			a=`echo "$option" | sed 's/^-importslashdoc://'`
+			cmd_line="$cmd_line -i $a"
+			;;
+		-name:*)
+			# ignore
+			;;
+		-namespace:*)
+			# ignore
+			;;
+		-overrides:*)
+			# ignore
+			;;
+		-path:*)
+			a=`echo "$option" | sed 's/^-path://'`
+			cmd_line="$cmd_line -o $a"
+			;;
+		-pretty)
+			# ignore
+			;;
+		-since:*)
+			a=`echo "$option" | sed 's/^-since://'`
+			cmd_line="$cmd_line --since $a"
+			;;
+		-type:*)
+			a=`echo "$option" | sed 's/^-type://'`
+			cmd_line="$cmd_line --since $a"
+			;;
+		-updateto:*)
+			# ignore
+			;;
+		-V | -version)
+			# ignore
+			;;
+		*)
+			cmd_line="$cmd_line $option"
+			;;
+	esac
+done
+
+exec mdoc update $cmd_line

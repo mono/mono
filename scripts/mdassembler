@@ -1,0 +1,16 @@
+#!/bin/sh
+cmd_line=
+
+for option do
+	case "$option" in
+		--ecma | --ecmaspec | --error | --man | --simple | --xhtml | --hb)
+			format=`echo $option | sed 's/^--//'`
+			cmd_line="$cmd_line --format=$format"
+			;;
+		*)
+			cmd_line="$cmd_line $option"
+			;;
+	esac
+done
+
+exec mdoc assemble $cmd_line

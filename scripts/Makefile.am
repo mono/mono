@@ -36,6 +36,7 @@ bin_SCRIPTS = \
 	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)	\
 	$(MDOC_SUBCOMMANDS)	\
+	$(MDOC_COMPAT)		\
 	mod			\
 	mono-test-install
 
@@ -109,6 +110,13 @@ MDOC_SUBCOMMANDS = \
 	mdoc-update \
 	mdoc-validate
 
+MDOC_COMPAT = \
+	mdassembler		\
+	mdvalidater		\
+	monodocer		\
+	monodocs2html		\
+	monodocs2slashdoc
+
 #
 # these are the new defaults, 2.0 profile-based commands
 #
@@ -146,6 +154,7 @@ EXTRA_DIST =			\
 	mono-find-provides.in	\
 	mono-find-requires.in	\
 	mono-test-install	\
+	$(MDOC_COMPAT)		\
 	patch-quiet.sh
 
 if USE_JIT
