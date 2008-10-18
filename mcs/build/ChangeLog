@@ -1,3 +1,8 @@
+2008-10-18  Jonathan Pryor  <jpryor@novell.com>
+
+	* rules.make (MDOC): MONO_PATH needs to include net_1_1 so monodoc.dll
+	  can be found.
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* README.makefiles: Add documentation about the new doc-update target.
