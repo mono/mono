@@ -1,0 +1,9 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@prefix@/lib
+sourcesdir=@monodocdir@/sources
+
+Name: Monodoc
+Description: Monodoc - Mono Documentation Tools
+Version: @VERSION@
+Libs: /r:${prefix}/lib/mono/monodoc/monodoc.dll 
