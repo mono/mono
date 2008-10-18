@@ -11,6 +11,7 @@ build system needs to let us do, specifically:
       * Make distributions easily
       * Provide a framework for testing
       * Build platform-independently whenever possible
+      * Generate, update, and build monodoc documentation.
 
 
 
@@ -47,20 +48,22 @@ DISTFILES = myfile.txt my_test_source.cs
 
 dist-local: dist-default
 
+doc-update-local:
+
 my_test_program.exe: my_test_source.cs
 	$(CSCOMPILE) /target:exe /out:$@ $<
 ========================================
 
 Each makefile follows the same pattern: it does some setup, includes
-the standard make rules, and provides rules for seven standard targets:
-all, install, test, run-test, clean, and dist.
+the standard make rules, and provides rules for eight standard targets:
+all, install, test, run-test, clean, dist, and doc-update.
 
 "Some setup" is defining two variables: $(thisdir) and
 $(SUBDIRS). $(thisdir) is the directory that the makefile lives in,
 relative to the top directory (ie, class/corlib) and $(SUBDIRS)
 defines the subdirectories that should be built in.
 
-The seven targets do the following:
+The eight targets do the following:
 
 	* all-local builds whatever someone would expect to be built
 when they just type 'make'. Most likely Foo.dll or Foo.exe
@@ -87,6 +90,11 @@ true that all files that go into a tarball need to be left after a make clean.)
 	* dist-local copies files into the distribution tree, which is
 given by the variable $(distdir). dist-local always depends on the
 target 'dist-default'. See ** 'make dist' below.
+
+	* doc-update-local should generate or update monodoc documentation,
+if appropriate.  This is usually only appropriate for libraries.  It's
+defined as a standard target so that it can easily be run recursively
+across all libraries within the module.
 
 
 
@@ -365,6 +373,14 @@ If you're building a library, library.make is highly recommended; the
 only DLL that doesn't use it is corlib, because building corlib is a
 fair bit more complicated than it should be. Oh well.
 
+library.make also automatically supports generating and updating 
+monodoc documentation.  Documentation is stored within the 
+Documentation directory (a sibling to the Test directory), and is 
+generated/updated whenever the doc-update target is executed.  
+Assembling of the documentation so that the monodoc browser can
+display the documentation is handled separately within the mcs/docs
+all-local target; see mcs/docs/Makefile for details.
+
 
 
 
@@ -403,6 +419,21 @@ $(BOOTSTRAP_MCS) if you know what you're doing.
 
 To give it flags, set $(LOCAL_CFLAGS). As with compiling C#, the
 variable $(CFLAGS) will automatically be included on the command line.
+
+
+
+
+
+* Documentation-related needs? Use $(MDOC)
+
+$(MDOC) is a front-end to the monodoc documentation system, supporting
+documentation generation, updating, importing from Microsoft XML
+Documentation and ECMA documentation formats, assembling documentation
+for use within the monodoc documentation browser, and exporting
+documentation to various other output formats such as static HTML.
+
+It is currently only used for library.make's doc-update-local target
+and for assembling documentation within $topdir/docs.
 
 
 
