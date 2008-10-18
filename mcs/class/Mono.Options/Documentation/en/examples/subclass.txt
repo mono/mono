@@ -1,0 +1,18 @@
+$ mono subclass.exe -n A -Name=B --NAME=C /nAMe D
+Hello A!
+Hello B!
+Hello C!
+Hello D!
+
+$ mono subclass.exe --Repeat -name A
+
+$ mono subclass.exe -Name --Repeat 3
+subclass: Found option `--Repeat' as value for option `-name'.
+
+$ mono subclass.exe --Map a b -mAp c=d /maP=e=f
+Key: a=b
+Key: c=d
+Key: e=f
+
+$ mono subclass.exe --map 'a\' 'b\' c 'd\' 'e\' f
+Key: a\b\c=d\e\f

@@ -1,0 +1,78 @@
+$ mono bundling.exe --help
+Usage: bundling [OPTIONS]+
+Demo program to show the effects of bundling options and their values
+
+Options:
+  -D[=VALUE1:VALUE2]         Predefine a macro with an (optional) value.
+  -d=VALUE1-->VALUE2         Alternate macro syntax.
+  -o=VALUE                   Specify the output file
+  -f=VALUE                   The input file
+  -x                         Extract the file
+  -c                         Create the file
+  -t                         List the file
+      --color[=VALUE]        control whether and when color is used
+  -h, --help                 show this message and exit
+
+$ mono bundling.exe -D
+bundling: Missing macro name for option -D.
+Try `greet --help' for more information.
+
+$ mono bundling.exe -DA -DB=C "-dD-->E" "-dF=>G" -d "H=>I" -cf input --color -ooutput
+Macros:
+	A=<null>
+	B=C
+	D=E
+	F=G
+	H=I
+Options:
+	 Input File: input
+	Ouptut File: output
+	     Create: True
+	    Extract: False
+	       List: False
+	      Color: <null>
+
+$ mono bundling.exe -cfv input
+def handler: color=; arg=input
+Macros:
+Options:
+	 Input File: v
+	Ouptut File: 
+	     Create: True
+	    Extract: False
+	       List: False
+	      Color: <null>
+
+$ mono bundling.exe -xctf input
+Macros:
+Options:
+	 Input File: input
+	Ouptut File: 
+	     Create: True
+	    Extract: True
+	       List: True
+	      Color: <null>
+
+$ mono bundling.exe --color=auto -o output -finput
+Macros:
+Options:
+	 Input File: input
+	Ouptut File: output
+	     Create: False
+	    Extract: False
+	       List: False
+	      Color: auto
+
+$ mono bundling.exe --color=on A B --color=off C D
+def handler: color=on; arg=A
+def handler: color=on; arg=B
+def handler: color=off; arg=C
+def handler: color=off; arg=D
+Macros:
+Options:
+	 Input File: 
+	Ouptut File: 
+	     Create: False
+	    Extract: False
+	       List: False
+	      Color: off

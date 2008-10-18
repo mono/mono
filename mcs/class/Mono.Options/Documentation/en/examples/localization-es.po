@@ -1,0 +1,86 @@
+# NDesk.Options localization example.
+# Copyright (C) 2008 Novell, Inc.
+# This file is distributed under the same license as the NDesk.Options package.
+# Jonathan Pryor  <jonpryor@vt.edu>, 2008
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: NDesk.Options localization demo 1.0\n"
+"Report-Msgid-Bugs-To: jonpryor@vt.edu\n"
+"POT-Creation-Date: 2008-01-19 13:59-0500\n"
+"PO-Revision-Date: 2008-01-19 02:43+EST\n"
+"Last-Translator: Google\n"
+"Language-Team: http://translate.google.com/translate_t?langpair=en|es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: localization.cs:16
+msgid "with-unix"
+msgstr ""
+
+#: localization.cs:19
+msgid "with-hello"
+msgstr ""
+
+#: localization.cs:20
+msgid "hello:"
+msgstr ""
+
+#: localization.cs:21
+msgid "with-default"
+msgstr ""
+
+#: localization.cs:26
+msgid "localization"
+msgstr ""
+
+#: localization.cs:28
+msgid "locale"
+msgstr ""
+
+#: localization.cs:34
+msgid "h|?|help"
+msgstr ""
+
+#: localization.cs:34
+msgid "show this message and exit."
+msgstr "A mostrar este mensaje y salir."
+
+#: localization.cs:36
+msgid "v|verbose"
+msgstr ""
+
+#: localization.cs:36
+msgid "increase message verbosity."
+msgstr "Aumento mensaje verbosidad."
+
+#: localization.cs:38
+msgid "n="
+msgstr ""
+
+#: localization.cs:38
+msgid "must be an int"
+msgstr "Debe ser un int"
+
+#: localization.cs:40
+msgid "V|version"
+msgstr ""
+
+#: localization.cs:40
+msgid "output version information and exit."
+msgstr "Salida de información de versión y sale."
+
+#: localization.cs:47
+msgid "localization: "
+msgstr ""
+
+#: localization.cs:54
+msgid "NDesk.Options Localizer Demo 1.0"
+msgstr ""
+
+#: localization.cs:56
+#, csharp-format
+msgid "Message level: {0}"
+msgstr ""

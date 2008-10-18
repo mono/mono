@@ -1,0 +1,6 @@
+<Namespace Name="Mono.Options">
+  <Docs>
+    <summary>Types to help parse command-line options.</summary>
+    <remarks>Types to help parse command-line options.</remarks>
+  </Docs>
+</Namespace>

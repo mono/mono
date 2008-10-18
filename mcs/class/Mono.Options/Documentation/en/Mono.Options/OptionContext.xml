@@ -1,0 +1,175 @@
+<Type Name="OptionContext" FullName="Mono.Options.OptionContext">
+  <TypeSignature Language="C#" Value="public class OptionContext" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Options</AssemblyName>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <AssemblyVersion>0.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Provides additional context information about the current 
+      <see cref="T:Mono.Options.Option" /> which is being parsed.</summary>
+    <remarks>
+      An instance of this class is provided via the registered callback when you
+      override the 
+      <see cref="M:Mono.Options.Option.OnParseComplete(Mono.Options.OptionContext)" />
+      method.
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OptionContext (Mono.Options.OptionSet set);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="set" Type="Mono.Options.OptionSet" />
+      </Parameters>
+      <Docs>
+        <param name="set">
+          The <see cref="T:Mono.Options.OptionSet" /> instance to use for
+          message localization purposes.
+        </param>
+        <summary>Constructs and initializes a new instance of the
+          <see cref="T:Mono.Options.OptionContext" /> class.</summary>
+        <remarks>
+          This constructor initializes the 
+          <see cref="P:Mono.Options.OptionContext.OptionSet" /> property of
+          the new instance using <paramref name="set" />.
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Option">
+      <MemberSignature Language="C#" Value="public Mono.Options.Option Option { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.Option</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The <see cref="T:Mono.Options.Option" /> being parsed.</summary>
+        <value>The <see cref="T:Mono.Options.Option" /> being parsed.</value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OptionIndex">
+      <MemberSignature Language="C#" Value="public int OptionIndex { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The index within the options list of the last value within 
+          <see cref="P:Mono.Options.OptionContext.OptionValues" />.
+        </summary>
+        <value>
+          A <see cref="T:System.Int32" /> containing the index within the
+          options list of the last value within 
+          <see cref="P:Mono.Options.OptionContext.OptionValues" />.
+        </value>
+        <remarks>
+        </remarks>
+        <altmember cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable&lt;System.String&gt;)" />
+      </Docs>
+    </Member>
+    <Member MemberName="OptionName">
+      <MemberSignature Language="C#" Value="public string OptionName { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The actual option name used.</summary>
+        <value>A <see cref="T:System.String" /> containing the actual option name used.</value>
+        <remarks>
+          A <see cref="P:Mono.Options.Option.Prototype" /> can contain multiple
+          <c>|</c>-delimited aliases, e.g. <c>h|help</c>.  This property
+          contains the actual option name specified, e.g. <c>-h</c> vs.
+          <c>--help</c>.
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OptionSet">
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet OptionSet { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The <see cref="T:Mono.Options.OptionSet" /> to use for message
+          localizations.
+        </summary>
+        <value>
+          The <see cref="T:Mono.Options.OptionSet" /> to use for message
+          localizations.
+        </value>
+        <remarks>
+          <para>
+            This property is initialized in the 
+            <see cref="C:Mono.Options.OptionContext(Mono.Options.OptionSet)" />
+            constructor.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OptionValues">
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionValueCollection OptionValues { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionValueCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          A collection of <see cref="T:System.String" /> values to provide to
+          <see cref="P:Mono.Options.OptionContext.Option" />.
+        </summary>
+        <value>
+          A <see cref="T:Mono.Options.OptionValueCollection" /> containing 
+          <see cref="T:System.String" /> values to provide to
+          <see cref="P:Mono.Options.OptionContext.Option" />.
+        </value>
+        <remarks>
+          <para>
+            The <see cref="T:Mono.Options.OptionValueCollection" /> indexer
+            makes use of the 
+            <see cref="P:Mono.Options.Option.OptionValueType" />
+            and <see cref="P:Mono.Options.Option.MaxValueCount" /> properties.
+            If the index does not have a value, the index is less than
+            <see cref="P:Mono.Options.Option.MaxValueCount" />, and the 
+            <see cref="P:Mono.Options.OptionContext.Option" /> has a value
+            type of <see cref="F:Mono.Options.OptionValueType.Optional" />,
+            <see langword="null" /> is returned; otherwise an
+            <see cref="T:Mono.Options.OptionException" /> is thrown.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,60 @@
+<Type Name="OptionAction&lt;TKey,TValue&gt;" FullName="Mono.Options.OptionAction&lt;TKey,TValue&gt;">
+  <TypeSignature Language="C#" Value="public delegate void OptionAction&lt;TKey,TValue&gt;(TKey key, TValue value);" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Options</AssemblyName>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <AssemblyVersion>0.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TKey" />
+    <TypeParameter Name="TValue" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="key" Type="TKey" />
+    <Parameter Name="value" Type="TValue" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <typeparam name="TKey">The first parameter type.</typeparam>
+    <typeparam name="TValue">The second parameter type.</typeparam>
+    <param name="key">A value of type <typeparamref name="TKey" />.</param>
+    <param name="value">A value of type <typeparamref name="TValue" />.</param>
+    <summary>
+      A delegate that can refer to any method taking two arguments and
+      returning <see cref="T:System.Void" />.
+    </summary>
+    <remarks>
+      <para>
+        Use this to support <see cref="T:Mono.Options.Option" />s 
+        accepting two values registered with:
+      </para>
+      <list type="bullet">
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add(System.String,Mono.Options.OptionAction{System.String,System.String})" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add(System.String,System.String,Mono.Options.OptionAction{System.String,System.String})" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add``2(System.String,Mono.Options.OptionAction{``0,``1})" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add``2(System.String,System.String,Mono.Options.OptionAction{``0,``1})" />
+          </term>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+</Type>

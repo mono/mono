@@ -1,0 +1,91 @@
+<Type Name="OptionValueType" FullName="Mono.Options.OptionValueType">
+  <TypeSignature Language="C#" Value="public enum OptionValueType" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Options</AssemblyName>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <AssemblyVersion>0.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+      Specifies whether or not a <see cref="T:Mono.Options.Option" />
+      takes a value, and if it does, whether it's optional or required.
+		</summary>
+    <remarks>
+    </remarks>
+    <altmember cref="P:Mono.Options.Option.OptionValueType" />
+  </Docs>
+  <Members>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionValueType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>No value is taken.</para>
+          <para>If an option takes no value, then the callback function will 
+          receive <see langword="null" /> if the value is 
+          <see langword="false" /> (e.g. <c>-optionName-</c> was used) and 
+          non-<see langword="null" /> if the value is <see langword="true" /> 
+          (e.g. <c>-optionName</c>, <c>-optionName+</c>).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Optional">
+      <MemberSignature Language="C#" Value="Optional" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionValueType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>A value is optional.</para>
+          <para>This is specified by providing <c>:</c> after the option name
+            within <see cref="P:Mono.Options.Option.Prototype" />.</para>
+          <para>If a value is optional, the callback function will receive
+            <see langword="null" /> value if no value is provided, and will 
+            otherwise receive a non-<see langword="null" /> value.</para>
+          <para>Options with optional values are not "greedy" -- the value 
+            must be part of the current argument, e.g. <c>-opt:foo</c> will 
+            pass <c>"foo"</c> as the value to <c>-opt</c>, but <c>-opt foo</c> 
+            will pass <see langword="null" /> as the value to <c>-opt</c>.
+            </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Required">
+      <MemberSignature Language="C#" Value="Required" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionValueType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <para>A value is required.</para>
+          <para>This is specified by providing <c>=</c> after the option name
+            within <see cref="P:Mono.Options.Option.Prototype" />.</para>
+          <para>Options with required values are "greedy" -- if the current
+            argument does not contain a value, the next argument will be used
+            as the value, e.g. both <c>-opt:foo</c> and <c>-opt foo</c> will
+            pass <c>"foo"</c> as the value to <c>-opt</c>.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

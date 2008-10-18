@@ -1,0 +1,875 @@
+<Type Name="Option" FullName="Mono.Options.Option">
+  <TypeSignature Language="C#" Value="public abstract class Option" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Options</AssemblyName>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <AssemblyVersion>0.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>
+    All members of this type are safe for multithreaded operations.
+    Subclasses must be thread-safe if multithreaded invocation of 
+    <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable&lt;System.String&gt;)" />
+    is required.
+  </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      Represents information about an option.
+    </summary>
+    <remarks>
+      <para>
+        Instances of <see cref="T:Mono.Options.Option" /> are created via
+        the various <see cref="M:Mono.Options.OptionSet.Add" /> overloads, 
+        such as:
+      </para>
+      <list type="bullet">
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add(System.String,System.Action{System.String})" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add(System.String,System.String,System.Action{System.String})" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add(System.String,Mono.Options.OptionAction{System.String,System.String})" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add(System.String,System.String,Mono.Options.OptionAction{System.String,System.String})" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add``1(System.String,System.Action{``0})" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add``1(System.String,System.String,System.Action{``0})" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add``2(System.String,Mono.Options.OptionAction{``0,``1})" />
+          </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.OptionSet.Add``2(System.String,System.String,Mono.Options.OptionAction{``0,``1})" />
+          </term>
+        </item>
+      </list>
+      <para>
+        You can also add custom <see cref="T:Mono.Options.Option" /> 
+        subclasses to an <see cref="T:Mono.Options.OptionSet" /> via the 
+        <see cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
+        method.
+      </para>
+      <block subset="none" type="overrides">
+        Inheritors of this type must override the <see langword="abstract" /> method
+        <see cref="M:Mono.Options.Option.OnParseComplete(Mono.Options.OptionContext)" />,
+        which is (indirectly) invoked from within 
+        <see cref="M:Mono.Options.OptionSet.Parse(System.String,Mono.Options.OptionContext)" />
+        when an option matching one of the <paramref name="prototype" />
+        aliases is encountered.
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Option (string prototype, string description);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing a <c>|</c>-separated
+          list of option names (aliases) and an optional value-type specifier.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> containing documentation for the
+          option.
+        </param>
+        <summary>
+          Creates and initializes a new instance of the 
+          <see cref="T:Mono.Options.Option" /> class.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Options.Option.Prototype" /> property of the
+            new instance using <paramref name="prototype" />, the 
+            <see cref="P:Mono.Options.Option.Description" /> property of the
+            new instance using <paramref name="description" />. and
+            initializes the <see cref="P:Mono.Options.Option.MaxValueCount" /> 
+            property of the new instance to <c>1</c>.
+          </para>
+          <para>
+            This is equivalent to calling the 
+            <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+            constructor as with <c>Option(<paramref name="prototype" />, 
+            <paramref name="description" />, 1)</c>.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="prototype" /> is the empty string <c>""</c>.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> contains an empty alias, such as
+            <c>a||b</c>.
+          </para>
+          <para>-or-</para>
+          <para>
+            Conflicting <see cref="T:Mono.Options.OptionValueType" /> values
+            were found within <paramref name="prototype" />.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> only includes the default handler
+            <c>&lt;&gt;</c> and <paramref name="prototype" /> did not specify an
+            <see cref="T:Mono.Options.OptionValueType" /> value of
+            <see cref="F:Mono.Options.OptionValueType.None" />.
+          </para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="prototype" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Option (string prototype, string description, int maxValueCount);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+        <Parameter Name="maxValueCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing a <c>|</c>-separated
+          list of option names (aliases) and an optional value-type specifier.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> containing documentation for the
+          option.
+        </param>
+        <param name="maxValueCount">
+          A <see cref="T:System.Int32" /> containing the number of values this
+          option accepts.
+        </param>
+        <summary>
+          Creates and initializes a new instance of the 
+          <see cref="T:Mono.Options.Option" /> class.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Options.Option.Prototype" /> property of the
+            new instance using <paramref name="prototype" />, the 
+            <see cref="P:Mono.Options.Option.Description" /> property of the
+            new instance using <paramref name="description" />. and
+            initializes the <see cref="P:Mono.Options.Option.MaxValueCount" /> 
+            property of the new instance using <paramref name="maxValueCount" />.
+          </para>
+          <para>
+            <paramref name="prototype" /> is a <c>|</c>-separated list of
+            option names.  It should be listed in shortest-to-longest order,
+            e.g. <c>h|help</c>.  <paramref name="prototype" /> may contain a
+            <see cref="T:Mono.Options.OptionValueType" /> specifier following
+            one of the <c>|</c>-separated entries, and a value separator list
+            following the <see cref="T:Mono.Options.OptionValueType" /> 
+            specifier.
+          </para>
+          <para>
+            The <see cref="P:Mono.Options.Option.OptionValueType" /> property
+            is initialized based on whether a <c>=</c> or <c>:</c> follows one
+            of the aliases within <paramref name="prototype" />.
+            <c>=</c> specifies a 
+            <see cref="F:Mono.Options.OptionValueType.Required" /> value,
+            while <c>:</c> specifies an 
+            <see cref="F:Mono.Options.OptionValueType.Optional" /> value.  
+            If neither <c>=</c> nor <c>:</c> is not specified, then 
+            <see cref="F:Mono.Options.OptionValueType.None" /> is used.
+            The value specifier may be used anywhere within 
+            <paramref name="prototype" />, so <c>n|name=</c>, <c>n=|name</c> 
+            and <c>n=|name=</c> are equivalent, but you cannot mix types; 
+            <c>n:|name=</c> is invalid.
+          </para>
+          <para>
+            A default handler may be specified by using <c>&lt;&gt;</c> as the
+            option name.  The default handler is invoked for any unhandled
+            argument within 
+        		<see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />;
+            consequently, if a default handler is provided then
+        		<see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+            will return an empty 
+            <see cref="T:System.Collections.Generic.List{System.String}" />.
+          </para>
+          <para>
+            The default handler may either be provided as a stand-alone 
+            <see cref="T:Mono.Options.Option" />, in which case it may not
+            specify a <see cref="T:Mono.Options.OptionValueType" /> other
+            than <see cref="F:Mono.Options.OptionValueType.None" />.
+            Alternatively, it may be an alias, in which case the 
+            <see cref="T:Mono.Options.Option" /> must accept an
+            <see cref="F:Mono.Options.OptionValueType.Optional" /> or
+            <see cref="F:Mono.Options.OptionValueType.Required" /> value, and
+            <paramref name="maxValueCount" /> must be <c>1</c>.
+          </para>
+          <para>
+            Multiple values may be bundled together, such as 
+            <c>-opt key=value</c>.  The value separator list specifies which
+            characters can be used to split the value argument to generate
+            separate values.  The value separator list is available when 
+            <paramref name="maxValueCount" /> is greater than <c>1</c>, and
+            and an <see cref="T:Mono.Options.OptionValueType" /> was
+            specified.  The value separator list follows the <c>=</c> or
+            <c>:</c> and is one of the following:
+          </para>
+          <list type="bullet">
+            <item>
+              <term>
+                <para>
+                A sequence of character enclosed by <c>{</c> and <c>}</c>.
+                Multiple such sequences may be specified by listing the 
+                <c>{...}</c> sequence multiple times.
+              </para>
+                <para>
+                The sequence <c>{}</c> requires that each value be a different 
+                argument, and no argument splitting will be performed.
+                This sequence has no effect if other separators are also
+                listed (as separate arguments are always permitted for
+                <see cref="F:Mono.Options.OptionValueType.Required" />
+                values).
+              </para>
+              </term>
+            </item>
+            <item>
+              <term>
+              Any literal character other than <c>{</c> and <c>}</c>.
+            </term>
+            </item>
+          </list>
+          <para>
+            If the separator list is not provided, then <c>=:</c> is the
+            default separator list.
+          </para>
+          <para>
+            For example, the prototype <c>"A:+-*/"</c> would permit any of
+            `<c>+</c>', `<c>-</c>', `<c>*</c>', or `<c>/</c>' to be used to
+            split an argument into values, so <c>-A:5/2</c> would generate the
+            sequence of values <c>5</c> and <c>2</c> for the option <c>-A</c>.
+            Furthermore, the prototype <c>"A={--&gt;}{=&gt;}"</c> would permit
+            either the string <c>--&gt;</c> or the string <c>=&gt;</c> to be used,
+            so <c>-A A-&gt;B C</c> woud parse <c>A-&gt;B</c> as one value and
+            <c>C</c> as the other value, while <c>-A A--&gt;B C</c> would parse
+            <c>A</c> as one value and <c>B</c> as the other value while
+            <c>C</c> would be unhandled (unless the option required 3 values,
+            in which case <c>C</c> would be the 3rd value).
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="prototype" /> is the empty string <c>""</c>.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> contains an empty alias, such as
+            <c>a||b</c>.
+          </para>
+          <para>-or-</para>
+          <para>
+            Conflicting <see cref="T:Mono.Options.OptionValueType" /> values
+            were found within <paramref name="prototype" />.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="maxValueCount" /> is <c>0</c> and 
+            <paramref name="prototype" /> specified an
+            <see cref="T:Mono.Options.OptionValueType" /> value of
+            <see cref="F:Mono.Options.OptionValueType.Optional" /> or
+            <see cref="F:Mono.Options.OptionValueType.Required" />.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="maxValueCount" /> is greater than <c>1</c> and
+            <paramref name="prototype" /> specified an
+            <see cref="T:Mono.Options.OptionValueType" /> value of
+            <see cref="F:Mono.Options.OptionValueType.None" />.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> contains a separator list and
+            <paramref name="maxValueCount" /> is <c>0</c> or <c>1</c>.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> contains a badly formatted 
+            separator list, such as <c>{{</c>, <c>}}</c>, <c>{{}</c>, etc.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> only includes the default handler
+            <c>&lt;&gt;</c> and <paramref name="prototype" /> did not specify an
+            <see cref="T:Mono.Options.OptionValueType" /> value of
+            <see cref="F:Mono.Options.OptionValueType.None" />.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> includes the default handler
+            <c>&lt;&gt;</c>, and <paramref name="MaxValueCount" /> is greater
+            than <c>1</c>.
+          </para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="prototype" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Description">
+      <MemberSignature Language="C#" Value="public string Description { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          A <see cref="T:System.String" /> containing documentation for this
+          option.
+        </summary>
+        <value>
+          A <see cref="T:System.String" /> containing documentation for this
+          option.
+        </value>
+        <remarks>
+          This property is used to generate documentation within 
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />.
+          The string returned is translated via the 
+          <paramref name="localizer" /> parameter provided to the
+          <see cref="C:Mono.Options.OptionSet(System.Converter{System.String,System.String})" />
+          constructor before being written to the 
+          <see cref="T:System.IO.TextWriter" /> instance.
+        </remarks>
+        <altmember cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetNames">
+      <MemberSignature Language="C#" Value="public string[] GetNames ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Retrieves all name aliases that make up 
+          <see cref="P:Mono.Options.Option.Prototype" />.</summary>
+        <returns>
+          A <see cref="T:System.String" /> array containing all name aliases
+          for this <see cref="T:Mono.Options.Option" /> instance.
+        </returns>
+        <remarks>
+          The returned option names will not contain any 
+          <see cref="T:Mono.Options.OptionValueType" /> specifier that may be
+          within <see cref="P:Mono.Options.Option.Prototype" />.  
+          If <see cref="P:Mono.Options.Option.Prototype" /> is
+          <c>a=|b=|c=</c>, the array returned will contain <c>a</c>, <c>b</c>,
+          and <c>c</c>.
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetValueSeparators">
+      <MemberSignature Language="C#" Value="public string[] GetValueSeparators ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Retreives all value separators, strings which are used to split an
+          argument into one or more values for the this 
+          <see cref="T:Mono.Options.Option" />.
+        </summary>
+        <returns>
+          A <see cref="T:System.String" /> array containing all strings that
+          should be used when splitting an argument into one or more values
+          for this <see cref="T:Mono.Options.Option" />.
+        </returns>
+        <remarks>
+          <para>
+            Value separators may be provided within 
+            <see cref="P:Mono.Options.Option.Prototype" /> only if:
+          </para>
+          <list type="bullet">
+            <item>
+              <term>
+                <see cref="P:Mono.Options.Option.MaxValueCount" /> is greater than 1.
+            </term>
+            </item>
+            <item>
+              <term>
+                <see cref="P:Mono.Options.Option.OptionValueType" /> is 
+              <see cref="F:Mono.Options.OptionValueType.Optional" /> or
+              <see cref="F:Mono.Options.OptionValueType.Required" />.
+            </term>
+            </item>
+          </list>
+          <para>
+            See the 
+            <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+            constructor for more information.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="C#" Value="public void Invoke (Mono.Options.OptionContext c);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="Mono.Options.OptionContext" />
+      </Parameters>
+      <Docs>
+        <param name="c">
+          An <see cref="T:Mono.Options.OptionContext" /> instance containing
+          information about the option that was parsed.
+        </param>
+        <summary>
+          Invokes 
+          <see cref="M:Mono.Options.Option.OnParseComplete(Mono.Options.OptionContext)" />
+          then clears out <paramref name="c" />.
+        </summary>
+        <remarks>
+          <para>
+            This method is invoked from within 
+            <see cref="M:Mono.Options.OptionSet.Parse(System.String,Mono.Options.OptionContext)" />
+            when an option with a name from
+            <see cref="M:Mono.Options.Option.GetNames" /> is encountered and
+            matches the required number of values governed by
+            <see cref="P:Mono.Options.Option.OptionValueType" /> and
+            <see cref="P:Mono.Options.Option.MaxValueCount" />.
+          </para>
+          <block subset="none" type="behaviors">
+            <para>
+              This method invokes 
+              <see cref="M:Mono.Options.Option.OnParseComplete(Mono.Options.OptionContext)" />,
+              passing along <paramref name="c" /> unchanged, and then sets the 
+              <see cref="P:Mono.Options.OptionContext.Option" /> and
+              <see cref="P:Mono.Options.OptionContext.OptionName" />
+              properties to <see langword="null" />, and 
+              <see cref="M:Mono.Options.OptionValueCollection.Clear" />s out
+              <see cref="P:Mono.Options.OptionContext.OptionValues" />.
+            </para>
+          </block>
+        </remarks>
+        <altmember cref="M:Mono.Options.Option.OnParseComplete(Mono.Options.OptionContext)" />
+        <altmember cref="M:Mono.Options.OptionSet.Parse(System.String,Mono.Options.OptionContext)" />
+        <altmember cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+      </Docs>
+    </Member>
+    <Member MemberName="MaxValueCount">
+      <MemberSignature Language="C#" Value="public int MaxValueCount { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          A <see cref="T:System.Int32" /> containing the maximum number of
+          values this <see cref="T:Mono.Options.Option" /> accepts.
+        </summary>
+        <value>
+          A <see cref="T:System.Int32" /> containing the maximum number of
+          values this <see cref="T:Mono.Options.Option" /> accepts.
+        </value>
+        <remarks>
+          <para>
+            This is a maximum, and may not be the number of values present
+            within <see cref="P:Mono.Options.OptionContext.OptionValues" />
+            when 
+            <see cref="M:Mono.Options.Option.OnParseComplete(Mono.Options.OptionContext)" />
+            is invoked.  There will be 
+            <see cref="P:Mono.Options.Option.MaxValueCount" /> values if
+            <see cref="P:Mono.Options.Option.OptionValueType" /> is
+            <see cref="F:Mono.Options.OptionValueType.Required" />, but if
+            <see cref="P:Mono.Options.Option.OptionValueType" /> is
+            <see cref="F:Mono.Options.OptionValueType.Optional" /> then
+            <see cref="P:Mono.Options.OptionContext.OptionValues" /> may
+            contain fewer items.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnParseComplete">
+      <MemberSignature Language="C#" Value="protected abstract void OnParseComplete (Mono.Options.OptionContext c);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c" Type="Mono.Options.OptionContext" />
+      </Parameters>
+      <Docs>
+        <param name="c">
+          An <see cref="T:Mono.Options.OptionContext" /> instance containing
+          information about the option that was parsed.
+        </param>
+        <summary>
+          Perform an action when an option is parsed.
+        </summary>
+        <remarks>
+          <para>
+            This method must be overridden by all subclasses, within which the
+            subclass can perform some custom per-option processing.
+          </para>
+          <para>
+            This method is invoked from within 
+            <see cref="M:Mono.Options.OptionSet.Parse(System.String,Mono.Options.OptionContext)" />
+            when an option with a name from
+            <see cref="M:Mono.Options.Option.GetNames" /> is encountered and
+            matches the required number of values governed by
+            <see cref="P:Mono.Options.Option.OptionValueType" /> and
+            <see cref="P:Mono.Options.Option.MaxValueCount" />.
+          </para>
+        </remarks>
+        <example>
+          <para>
+            The following example has a custom 
+            <see cref="T:Mono.Options.Option" /> subclass which overrides
+            <see cref="M:Mono.Options.Option.OnParseComplete(Mono.Options.OptionContext)" />:
+          </para>
+          <code lang="C#" src="examples/subclass.cs">// Case-Insensitive and Concatenating OptionSet
+using System;
+using System.Collections.Generic;
+using Mono.Options;
+
+class DemoOptionSet : OptionSet {
+	protected override void InsertItem (int index, Option item)
+	{
+		if (item.Prototype.ToLower () != item.Prototype)
+			throw new ArgumentException ("prototypes must be lower-case!");
+		base.InsertItem (index, item);
+	}
+
+	protected override OptionContext CreateOptionContext ()
+	{
+		return new OptionContext (this);
+	}
+
+	protected override bool Parse (string option, OptionContext c)
+	{
+		string f, n, s, v;
+		bool haveParts = GetOptionParts (option, out f, out n, out s, out v);
+		Option nextOption = null;
+		string newOption  = option;
+
+		if (haveParts) {
+			string nl = n.ToLower ();
+			nextOption = Contains (nl) ? this [nl] : null;
+			newOption = f + n.ToLower () + (v != null ? s + v : "");
+		}
+
+		if (c.Option != null) {
+			// Prevent --a --b
+			if (c.Option != null &amp;&amp; haveParts) {
+				if (nextOption == null) {
+					// ignore
+				}
+				else 
+					throw new OptionException (
+						string.Format ("Found option `{0}' as value for option `{1}'.",
+							option, c.OptionName), c.OptionName);
+			}
+
+			// have a option w/ required value; try to concat values.
+			if (AppendValue (option, c)) {
+				if (!option.EndsWith ("\\") &amp;&amp; 
+						c.Option.MaxValueCount == c.OptionValues.Count) {
+					c.Option.Invoke (c);
+				}
+				return true;
+			}
+			else
+				base.Parse (newOption, c);
+		}
+
+		if (!haveParts || v == null) {
+			// Not an option; let base handle as a non-option argument.
+			return base.Parse (newOption, c);
+		}
+
+		if (nextOption.OptionValueType != OptionValueType.None &amp;&amp; 
+				v.EndsWith ("\\")) {
+			c.Option = nextOption;
+			c.OptionValues.Add (v);
+			c.OptionName = f + n;
+			return true;
+		}
+
+		return base.Parse (newOption, c);
+	}
+
+	private bool AppendValue (string value, OptionContext c)
+	{
+		bool added = false;
+		string[] seps = c.Option.GetValueSeparators ();
+		foreach (var o in seps.Length != 0
+				? value.Split (seps, StringSplitOptions.None)
+				: new string[]{value}) {
+			int idx = c.OptionValues.Count-1;
+			if (idx == -1 || !c.OptionValues [idx].EndsWith ("\\")) {
+				c.OptionValues.Add (o);
+				added = true;
+			}
+			else {
+				c.OptionValues [idx] += value;
+				added = true;
+			}
+		}
+		return added;
+	}
+}
+
+class Demo {
+	public static void Main (string[] args)
+	{
+		List&lt;string&gt; names = new List&lt;string&gt; ();
+		Dictionary&lt;string,string&gt; map = new Dictionary&lt;string,string&gt; ();
+		int repeat = 1;
+
+		OptionSet p = new DemoOptionSet () {
+			{ "n|name=",    v =&gt; names.Add (v) },
+			{ "r|repeat:",  (int v) =&gt; repeat = v },
+			{ "m|map=",     (k,v) =&gt; map.Add (k, v) },
+		};
+
+		List&lt;string&gt; extra;
+		try {
+			extra = p.Parse (args);
+		}
+		catch (OptionException e) {
+			Console.Write ("subclass: ");
+			Console.WriteLine (e.Message);
+			return;
+		}
+
+		string message;
+		if (extra.Count &gt; 0) {
+			message = string.Join (" ", extra.ToArray ());
+		}
+		else {
+			message = "Hello {0}!";
+		}
+
+		foreach (string name in names) {
+			for (int i = 0; i &lt; repeat; ++i)
+				Console.WriteLine (message, name);
+		}
+		List&lt;string&gt; keys = new List&lt;string&gt;(map.Keys);
+		keys.Sort ();
+		foreach (string key in keys) {
+			Console.WriteLine ("Key: {0}={1}", key, map [key]);
+		}
+	}
+}
+
+</code>
+          <para>
+            See <see cref="T:Mono.Options.OptionSet" /> for more on this
+            example.
+          </para>
+        </example>
+        <altmember cref="M:Mono.Options.Option.Invoke(Mono.Options.OptionContext)" />
+      </Docs>
+    </Member>
+    <Member MemberName="OptionValueType">
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionValueType OptionValueType { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionValueType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          An <see cref="T:Mono.Options.OptionValueType" /> instance
+          specifying whether this <see cref="T:Mono.Options.Option" /> takes
+          a value, and if so, whether it's required or optional.
+        </summary>
+        <value>
+          An <see cref="T:Mono.Options.OptionValueType" /> specifying whether
+          a value is required for this value.
+        </value>
+        <remarks>
+          <para>
+            This is initialized based on the presence of <c>=</c> or
+            <c>:</c> within <see cref="P:Mono.Options.Option.Prototype" />.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse&lt;T&gt;">
+      <MemberSignature Language="C#" Value="protected static T Parse&lt;T&gt; (string value, Mono.Options.OptionContext c);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="c" Type="Mono.Options.OptionContext" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">
+          The type to convert the string <paramref name="value" /> to.
+        </typeparam>
+        <param name="value">
+          A <see cref="T:System.String" /> containing a representation of the
+          type <typeparamref name="T" /> that should be converted into an
+          instance of type <typeparamref name="T" />.
+        </param>
+        <param name="c">
+          A <see cref="T:Mono.Options.OptionContext" /> containing additional
+          contextual information needed error handling.
+        </param>
+        <summary>
+          Converts the <see cref="T:System.String" /><paramref name="value" />
+          into an object of type <typeparamref name="T" />.
+        </summary>
+        <returns>
+          If <paramref name="value" /> is <see langword="null" />, then 
+          <see langword="default(T)" /> is returned.  Otherwise, 
+          <paramref name="value" /> is converted to a value of type 
+          <typeparamref name="T" />.
+        </returns>
+        <remarks>
+          <para>
+            <see cref="M:System.ComponentModel.TypeDescriptor.GetConverter" />
+            is used to get the 
+            <see cref="T:System.ComponentModel.TypeConverter" /> associated
+            with type <typeparamref name="T" />, and 
+            <see cref="M:System.ComponentModel.TypeConverter.ConvertFromString" />
+            is used to convert <paramref name="value" /> into a
+            <typeparamref name="T" />.
+          </para>
+        </remarks>
+        <exception cref="T:Mono.Options.OptionException">
+          If <paramref name="value" /> is not <see langword="null" /> and
+          <see cref="M:System.ComponentModel.TypeConverter.ConvertFromString" />
+          generated an exception while trying to convert 
+          <paramref name="value" />.
+        </exception>
+      </Docs>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+    </Member>
+    <Member MemberName="Prototype">
+      <MemberSignature Language="C#" Value="public string Prototype { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The <see cref="T:Mono.Options.Option" /> prototype, containing
+          option name aliases and the option value requirements.
+        </summary>
+        <value>
+          A <see cref="T:System.String" /> containing the prototype of this
+          <see cref="T:Mono.Options.Option" /> instance.
+        </value>
+        <remarks>
+          <para>
+            The prototype contains a <c>|</c>-separated list of all option name
+            aliases and a value specifier of <c>=</c> for required values and
+            <c>:</c> for optional values; if neither <c>=</c> nor <c>:</c> is
+            present, no value is taken.
+          </para>
+          <para>
+            If a value specifier is present, then a value separator list may
+            also be present after the value specifier.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          Returns <see cref="P:Mono.Options.Option.Prototype" />.
+        </summary>
+        <returns>
+          A <see cref="T:System.String" /> containing
+          <see cref="P:Mono.Options.Option.Prototype" />.
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

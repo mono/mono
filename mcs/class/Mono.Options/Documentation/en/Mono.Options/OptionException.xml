@@ -1,0 +1,226 @@
+<Type Name="OptionException" FullName="Mono.Options.OptionException">
+  <TypeSignature Language="C#" Value="public class OptionException : Exception" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Options</AssemblyName>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <AssemblyVersion>0.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Exception</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Represents the error that occurs when there is an error parsing
+      an <see cref="T:Mono.Options.Option" />.</summary>
+    <remarks>
+      <para>Instances of this class are thrown when:</para>
+      <list type="bullet">
+        <item>
+          <term>There is an exception generated converting a string to an
+        object of type <typeparamref name="T" /> within the callback
+        registered by
+        <see cref="M:Mono.Options.OptionSet.Add``1(System.String,System.String,System.Action{``0})" />
+        (and related overloads).
+        </term>
+        </item>
+        <item>
+          <term>
+            <see cref="M:Mono.Options.Option.Parse``1(System.String,Mono.Options.OptionContext)" />
+          could not convert a <see cref="T:System.String" /> to an object
+          of type <typeparamref name="T" />.
+        </term>
+        </item>
+        <item>
+          <term>
+          An option with a <see cref="P:Mono.Options.Option.OptionValueType" /> 
+          value of <see cref="F:Mono.Options.OptionValueType.Required" /> 
+          does not have a value (usually because the start of the option was
+          the last argument).
+        </term>
+        </item>
+      </list>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OptionException ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected OptionException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">
+          The <see cref="T:System.Runtime.Serialization.SerializationInfo" />
+          that holds the serialized object data about the exception being
+          thrown.
+        </param>
+        <param name="context">
+          The <see cref="T:System.Runtime.Serialization.StreamingContext" />
+          that contains contextual information about the source or
+          destination.
+        </param>
+        <summary>
+          Initializes a new instance of the 
+          <see cref="T:Mono.Options.OptionException" /> class with serialized
+          data.
+        </summary>
+        <remarks>
+          This constructor is called during deserialization to reconstitute the
+          exception object transmitted over a stream, e.g. from Remoting.
+        </remarks>
+        <altmember cref="M:Mono.Options.OptionException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" />
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OptionException (string message, string optionName);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="optionName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">
+          A <see cref="T:System.String" /> that describes the error.
+        </param>
+        <param name="optionName">
+          A <see cref="T:System.String" /> that contains the name of the
+		      option that caused the exception.
+        </param>
+        <summary>
+          Creates and initializes a new instance of the 
+          <see cref="T:Mono.Options.OptionException" /> class.
+        </summary>
+        <remarks>
+          This constructor initializes the 
+          <see cref="P:System.Exception.Message" /> property of the new
+          instance using <paramref name="message" />, and the 
+          <see cref="P:Mono.Options.OptionException.OptionName" />
+          property of the new instance using <paramref name="optionName" />.
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OptionException (string message, string optionName, Exception innerException);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="optionName" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">
+          A <see cref="T:System.String" /> that describes the error.
+        </param>
+        <param name="optionName">
+          A <see cref="T:System.String" /> that contains the name of the
+          option that caused the exception.
+        </param>
+        <param name="innerException">
+          An instance of <see cref="T:System.Exception" /> that is the cause
+          of the current exception.  If <paramref name="innerException" /> is
+          non-<see langword="null" />, then the current Exception was raised
+          in a catch block handling <paramref name="innerException" />.
+        </param>
+        <summary>
+          Creates and initializes a new instance of the 
+          <see cref="T:Mono.Options.OptionException" /> class.
+        </summary>
+        <remarks>
+          This constructor initializes the 
+          <see cref="P:System.Exception.Message" /> property of the new
+          instance using <paramref name="message" />, the
+          <see cref="P:System.Exception.InnerException" /> property of the new
+          instance using <paramref name="innerException" />, and the 
+          <see cref="P:Mono.Options.OptionException.OptionName" />
+          property of the new instance using <paramref name="optionName" />.
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">
+          The <see cref="T:System.Runtime.Serialization.SerializationInfo" />
+          that holds the serialized object data about the exception being
+          thrown.
+        </param>
+        <param name="context">
+          The <see cref="T:System.Runtime.Serialization.StreamingContext" />
+          that contains contextual information about the source or
+          destination.
+        </param>
+        <summary>
+          Adds information about the exception to the provided 
+          <see cref="T:System.Runtime.Serialization.SerializationInfo" /> 
+          instance.
+        </summary>
+        <remarks>
+          Adds information about this exception instance to the provided 
+          <see cref="T:System.Runtime.Serialization.SerializationInfo" />,
+          so that a new cloned instance may be properly reconstituted later.
+        </remarks>
+        <altmember cref="C:Mono.Options.OptionException(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" />
+      </Docs>
+    </Member>
+    <Member MemberName="OptionName">
+      <MemberSignature Language="C#" Value="public string OptionName { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          A <see cref="T:System.String" /> containing the option name that 
+          caused the exception.
+        </summary>
+        <value>
+          A <see cref="T:System.String" /> containing the option name that 
+          caused the exception.
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

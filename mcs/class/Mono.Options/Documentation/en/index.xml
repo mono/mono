@@ -1,0 +1,37 @@
+<Overview>
+  <Title>Mono.Options</Title>
+  <Remarks>Program option parser.</Remarks>
+  <Copyright>2008 Novell, Inc.</Copyright>
+  <Assemblies>
+    <Assembly Name="Mono.Options" Version="0.2.1.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("Command Line Parsing Utilities")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Mono.Options.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Types>
+    <Namespace Name="Mono.Options">
+      <Type Name="Option" Kind="Class" />
+      <Type Name="OptionAction`2" DisplayName="OptionAction&lt;TKey,TValue&gt;" Kind="Delegate" />
+      <Type Name="OptionContext" Kind="Class" />
+      <Type Name="OptionException" Kind="Class" />
+      <Type Name="OptionSet" Kind="Class" />
+      <Type Name="OptionValueCollection" Kind="Class" />
+      <Type Name="OptionValueType" Kind="Enumeration" />
+    </Namespace>
+  </Types>
+</Overview>

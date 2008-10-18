@@ -1,0 +1,26 @@
+$ mono localization.exe --help --version
+  -h, -?, --help             show this message and exit.
+  -v, --verbose              increase message verbosity.
+  -n=VALUE                   must be an int
+  -V, --version              output version information and exit.
+NDesk.Options Localizer Demo 1.0
+
+$ LANGUAGE=es mono localization.exe --with-gettext --help --version
+  -h, -?, --help             A mostrar este mensaje y salir.
+  -v, --verbose              Aumento mensaje verbosidad.
+  -n=VALUE                   Debe ser un int
+  -V, --version              Salida de información de versión y sale.
+NDesk.Options Localizer Demo 1.0
+
+$ mono localization.exe --with-hello --help --version
+  -h, -?, --help             hello:show this message and exit.
+  -v, --verbose              hello:increase message verbosity.
+  -nhello:=VALUE             hello:must be an int
+  -V, --version              hello:output version information and exit.
+NDesk.Options Localizer Demo 1.0
+
+$ mono localization.exe -n not-an-int
+localization: Could not convert string `not-an-int' to type Int32 for option `-n'.
+
+$ mono localization.exe --with-hello -n not-an-int
+localization: hello:Could not convert string `not-an-int' to type Int32 for option `-n'.
