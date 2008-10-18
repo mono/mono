@@ -1,5 +1,17 @@
 2008-10-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Change a !compile_aot assert to
+	disable_aot.
+
+	* mini.c (mono_patch_info_equal): Compare the generic context as well.
+
+	* mini.h: Bump aot file format version.
+
+	* aot-compiler.c aot-runtime.c: Generalize the wrapper handling code so the
+	AOT file can contain native code for methods which are not in the METHOD
+	table. Generate code for non-sharable generic instances of generic methods
+	found in the METHODSPEC table.
+	
 	* method-to-ir.c (mono_method_to_ir2): Remove the aot restriction when
 	encoding generic type handles.
 
