@@ -256,6 +256,31 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test] // bug #429200
+		public void GetRequestStream ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+
+				Stream rs1 = req.GetRequestStream ();
+				Stream rs2 = req.GetRequestStream ();
+
+				Assert.IsNotNull (rs1, "#1");
+				Assert.AreSame (rs1, rs2, "#2");
+
+				rs1.Close ();
+				responder.Stop ();
+			}
+		}
+
 		[Test]
 		[Ignore ("This test asserts that our code violates RFC 2616")]
 		public void GetRequestStream_Body_NotAllowed ()
@@ -557,12 +582,11 @@ namespace MonoTests.System.Net
 		}
 #endif
 
-		[Test]
-		[Category ("NotWorking")] // #353495
-		public void LastModifiedKind () // bug #353495
+		[Test] // bug #353495
+		[Category ("NotWorking")]
+		public void LastModifiedKind ()
 		{
 			const string reqURL = "http://coffeefaq.com/site/node/25";
-			const string dtFmt = "ddd, dd MMM yyyy HH:mm:ss";
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create (reqURL);
 			HttpWebResponse resp = (HttpWebResponse) req.GetResponse ();
 			DateTime lastMod = resp.LastModified;

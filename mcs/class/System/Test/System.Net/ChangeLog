@@ -1,3 +1,7 @@
+2008-10-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestTest.cs: Added test for bug #429200.
+
 2008-10-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequestTest.cs: mini-test case for NTLM auth.
