@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = monodoc.dll
-LIBRARY_PACKAGE = none
+LIBRARY_PACKAGE = monodoc
 
 RESOURCE_FILES = \
 	Resources/base.css                \

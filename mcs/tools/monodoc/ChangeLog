@@ -1,3 +1,8 @@
+2008-10-18  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile $(LIBRARY_PACKAGE): Set to `monodoc`, as we historically
+	  have had a monodoc package (and thus should preserve it).
+
 2008-10-17  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile: Distribute monodoc.dll.config.in.
