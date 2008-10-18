@@ -1,5 +1,8 @@
 2008-10-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Fix the hash function used for the extra
+	methods.
+
 	* method-to-ir.c (mono_method_to_ir2): Change a !compile_aot assert to
 	disable_aot.
 
