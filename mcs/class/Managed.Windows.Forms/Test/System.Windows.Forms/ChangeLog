@@ -1,5 +1,9 @@
 2008-10-19  Andreia Gaita  <avidigal@novell.com>
 
+	* tests2.sh: Remove extra echos
+
+2008-10-19  Andreia Gaita  <avidigal@novell.com>
+
 	* FormTest.cs: Fix failing test on .NET/Win
 
 2008-10-19  Andreia Gaita  <avidigal@novell.com>

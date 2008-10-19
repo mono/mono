@@ -66,12 +66,6 @@ for i in $@; do
 	esac
 done
 
-
-echo $opts
-echo $test
-echo $NUNITCONSOLE
-echo $MONO_PATH
-
 if [ $# -eq 0 ]; then
 	usage
 	exit 1
