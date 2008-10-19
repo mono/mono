@@ -1,5 +1,8 @@
 2008-10-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* generic-sharing.c (mono_class_get_method_generic): Pass the declaring
+	method to get_inflated_method ().
+
 	* class.c (mono_class_get_inflated_method): New helper method to obtain
 	a method of an inflated class without calling setup_methods ().
 	(mono_class_get_cctor): Use get_inflated_method.
