@@ -1,5 +1,7 @@
 2008-10-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c image.c: Lazily create all the marshal caches.
+
 	* image.c (mono_image_init): Move initialization of runtime_invoke
 	caches to marshal.c.
 
