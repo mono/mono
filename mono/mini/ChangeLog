@@ -1,3 +1,18 @@
+2008-10-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_find_jit_info): Handle extra methods which are
+	called directly.
+
+	* aot-compiler.c (emit_and_reloc_code): Allow direct calling of generic
+	instances.
+	(emit_extra_methods): Add another table mapping method indexes to 
+	offsets in the extra_method_info table.
+
+	* mini.h: Bump AOT file format version.
+	
+	* aot-runtime.c: Merge most of the code from mono_aot_get_method
+	and mono_aot_get_method_from_token () into one function.
+
 2008-10-19  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c (emit_load_volatile_arguments): Inner loop needs a
