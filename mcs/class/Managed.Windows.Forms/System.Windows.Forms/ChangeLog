@@ -1,3 +1,9 @@
+2008-10-19  Andreia Gaita  <avidigal@novell.com>
+
+	* Form.cs: Forms that get closed without a handle being created are
+	disposed in 2.0. Fixes failing FormTest.FormClose and
+	FormTest.FormClose2 on windows.
+
 2008-10-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: If both scrollbars are visible, the vertical one

@@ -2013,19 +2013,22 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (myform.IsDisposed, "A2");
 
 			myform.Close ();
-
-			Assert.IsFalse (myform.Visible, "A3");
-			Assert.IsFalse (myform.IsDisposed, "A4");
+#if NET_2_0
+			Assert.IsTrue (myform.IsDisposed, "A3");
+#else
+			Assert.IsFalse (myform.Visible, "A4");
+			Assert.IsFalse (myform.IsDisposed, "A5");
 
 			myform.Show ();
 
-			Assert.IsTrue (myform.Visible, "A5");
-			Assert.IsFalse (myform.IsDisposed, "A6");
+			Assert.IsTrue (myform.Visible, "A6");
+			Assert.IsFalse (myform.IsDisposed, "A7");
 
 			myform.Close ();
 
-			Assert.IsFalse (myform.Visible, "A7");
-			Assert.IsTrue (myform.IsDisposed, "A8");
+			Assert.IsFalse (myform.Visible, "A8");
+			Assert.IsTrue (myform.IsDisposed, "A9");
+#endif
 		}
 
 		[Test]
@@ -2038,11 +2041,13 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (f.Visible, "A1");
 			f.Close ();
 			Assert.AreEqual (0, f.close_count, "A2");
-
-
+#if NET_2_0
+			Assert.IsTrue (f.IsDisposed, "A3");
+#else
 			f.Show ();
 			f.Close ();
-			Assert.AreEqual (1, f.close_count, "A3");
+			Assert.AreEqual (1, f.close_count, "A4");
+#endif
 		}
 
 		class WMCloseWatcher : Form {

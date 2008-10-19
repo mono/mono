@@ -1629,8 +1629,12 @@ namespace System.Windows.Forms {
 			if (IsDisposed)
 				return;
 
-			if (!IsHandleCreated)
+			if (!IsHandleCreated) {
+#if NET_2_0
+				base.Dispose ();
+#endif
 				return;
+			}
  
 			if (Menu != null)
 				XplatUI.SetMenu (window.Handle, null);
