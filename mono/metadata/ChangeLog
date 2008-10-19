@@ -1,3 +1,6 @@
+2008-10-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (mono_method_full_name): Include generic arguments.
 
 Fri Oct 17 10:51:32 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
