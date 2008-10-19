@@ -266,7 +266,7 @@ namespace MonoTests.System.Net
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
-				req.Method = "GET";
+				req.Method = "POST";
 				req.Timeout = 2000;
 				req.ReadWriteTimeout = 2000;
 

@@ -1,3 +1,7 @@
+2008-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestTest.cs: Fixed test for bug #429200.
+
 2008-10-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpWebRequestTest.cs: Added test for bug #429200.
