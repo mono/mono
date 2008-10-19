@@ -1,5 +1,11 @@
 2008-10-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_get_inflated_method): New helper method to obtain
+	a method of an inflated class without calling setup_methods ().
+	(mono_class_get_cctor): Use get_inflated_method.
+
+	* generic-sharing.c (mono_class_get_method_generic): Ditto.
+	
 	* marshal.c image.c: Lazily create all the marshal caches.
 
 	* image.c (mono_image_init): Move initialization of runtime_invoke
