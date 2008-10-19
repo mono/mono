@@ -1,5 +1,8 @@
 2008-10-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_method_get_vtable_index): Use
+	mono_method_get_vtable_slot () for accessing method->slot.
+
 	* object.c (build_imt_slots): Use mono_class_get_method_by_index () for
 	accessing klass->methods.
 
