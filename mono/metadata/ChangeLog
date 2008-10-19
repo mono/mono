@@ -1,5 +1,12 @@
 2008-10-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* image.c (mono_image_init): Move initialization of runtime_invoke
+	caches to marshal.c.
+
+	* marshal.c (get_cache): New helper function to lazily initialize a 
+	wrapper cache.
+	(mono_marshal_get_runtime_invoke): Share more runtime invoke wrappers.
+
 	* debug-helpers.c (mono_method_full_name): Include generic arguments.
 
 Fri Oct 17 10:51:32 CEST 2008 Paolo Molaro <lupus@ximian.com>
