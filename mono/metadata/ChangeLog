@@ -1,5 +1,13 @@
 2008-10-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (build_imt_slots): Use mono_class_get_method_by_index () for
+	accessing klass->methods.
+
+	* class.c (mono_method_get_vtable_slot): New helper function.
+	(mono_class_get_vtable_entry): Ditto.
+	(mono_class_setup_vtable_general): Use mono_method_get_vtable_slot () for
+	accessing method->slot.
+
 	* generic-sharing.c (mono_class_get_method_generic): Pass the declaring
 	method to get_inflated_method ().
 
