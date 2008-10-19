@@ -1,5 +1,16 @@
 2008-10-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_emit_method_call_full): Remove a needless call to
+	mono_class_setup_vtable ().
+
+	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): Use
+	mono_class_get_vtable_entry () for accessing klass->vtable.
+
+	* aot-runtime.c (load_method): Avoid a crash when using MONO_LOG_LEVEL.
+
+	* aot-compiler.c (add_generic_instances): Avoid a crash if a class is not
+	found.
+
 	* method-to-ir.c (mono_save_token_info): Don't save references made from
 	wrappers.
 
