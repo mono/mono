@@ -1,10 +1,17 @@
+2008-10-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_generic_instances): Add static rgctx wrappers for cctors
+	of generic instances.
+
+	* aot-runtime.c (find_extra_method): Search in all loaded AOT images.
+
 2008-10-19  Mark Probst  <mark.probst@gmail.com>
 
 	* cpu-ppc.md, mini-ppc.c: The length of the code generated for
 	OP_JMP depends on the method signature.  Calculate it properly.
 
 2008-10-19  Zoltan Varga  <vargaz@gmail.com>
-
+	
 	* aot-runtime.c (mono_aot_find_jit_info): Handle extra methods which are
 	called directly.
 
