@@ -1,5 +1,9 @@
 2008-10-19  Andreia Gaita  <avidigal@novell.com>
 
+	* FormTest.cs: Fix failing test on .NET/Win
+
+2008-10-19  Andreia Gaita  <avidigal@novell.com>
+
 	* FormTest.cs: Forms that get closed without a handle being created are
 	disposed in 2.0. Fixes failing FormTest.FormClose and
 	FormTest.FormClose2 on windows.

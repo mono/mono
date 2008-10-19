@@ -656,14 +656,14 @@ namespace MonoTests.System.Windows.Forms
 				f.ShowDialog ();
 
 				Assert.AreEqual ("VisibleChanged", f.Reason, "#B0");
-				Assert.AreEqual (1, log.CountEvents ("Closing"), "#B1");
 #if NET_2_0
+				Assert.AreEqual (1, log.CountEvents ("Closing"), "#B1");
 				Assert.AreEqual (1, log.CountEvents ("FormClosing"), "#B2");
 #endif
 				Assert.AreEqual (1, log.CountEvents ("HandleDestroyed"), "#B3");
 
-				Assert.AreEqual (1, log.CountEvents ("Closed"), "#B4");
 #if NET_2_0
+				Assert.AreEqual (1, log.CountEvents ("Closed"), "#B4");
 				Assert.AreEqual (1, log.CountEvents ("FormClosed"), "#B5");
 #endif
 				Assert.AreEqual (0, log.CountEvents ("Disposed"), "#B6");
