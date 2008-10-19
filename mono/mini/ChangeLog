@@ -1,5 +1,8 @@
 2008-10-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_save_token_info): Don't save references made from
+	wrappers.
+
 	* aot-compiler.c (add_generic_instances): Add static rgctx wrappers for cctors
 	of generic instances.
 
