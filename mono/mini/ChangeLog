@@ -1,3 +1,8 @@
+2008-10-19  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c (emit_load_volatile_arguments): Inner loop needs a
+	separate counter.
+
 2008-10-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c aot-runtime.c: Fix the hash function used for the extra
