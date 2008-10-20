@@ -1,3 +1,7 @@
+2008-10-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripPainter.cs: Don't paint over a set BackgroundImage.
+
 2008-10-09  Everaldo Canuto  <ecanuto@novell.com>
 
 	* LinkLabelPainter.cs: Take Padding into account when drawing the linklabel

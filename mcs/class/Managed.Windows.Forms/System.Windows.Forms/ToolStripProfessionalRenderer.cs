@@ -362,6 +362,14 @@ namespace System.Windows.Forms
 
 		protected override void OnRenderToolStripBackground (ToolStripRenderEventArgs e)
 		{
+			// Don't clear and fill the background if we already painted an image there
+			if (e.ToolStrip.BackgroundImage != null) {
+				if (e.ToolStrip is StatusStrip)
+					e.Graphics.DrawLine (Pens.White, e.AffectedBounds.Left, e.AffectedBounds.Top, e.AffectedBounds.Right, e.AffectedBounds.Top);
+			
+				return;
+			}
+				
 			if (e.ToolStrip is ToolStripDropDown) {
 				e.Graphics.Clear (this.ColorTable.ToolStripDropDownBackground);
 				return;

@@ -192,6 +192,9 @@ namespace System.Windows.Forms.Theming.VisualStyles
 		}
 		public override void OnRenderToolStripBackground (ToolStripRenderEventArgs e)
 		{
+			if (e.ToolStrip.BackgroundImage != null)
+				return;
+				
 			if (!ThemeVisualStyles.RenderClientAreas) {
 				base.OnRenderToolStripBackground (e);
 				return;

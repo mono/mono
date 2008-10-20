@@ -166,7 +166,8 @@ namespace System.Windows.Forms.Theming.Default
 
 		public virtual void OnRenderToolStripBackground (ToolStripRenderEventArgs e)
 		{
-			e.Graphics.Clear (e.BackColor);
+			if (e.ToolStrip.BackgroundImage == null)
+				e.Graphics.Clear (e.BackColor);
 
 			if (e.ToolStrip is StatusStrip)
 				e.Graphics.DrawLine (Pens.White, e.AffectedBounds.Left, e.AffectedBounds.Top, e.AffectedBounds.Right, e.AffectedBounds.Top);
