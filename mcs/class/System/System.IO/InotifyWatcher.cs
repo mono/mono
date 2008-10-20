@@ -234,12 +234,11 @@ namespace System.IO {
 				mask |= InotifyMask.Attrib;
 				mask |= InotifyMask.Access;
 				mask |= InotifyMask.Modify;
-				mask |= InotifyMask.CloseWrite;
 			}
 
 			if ((filters & NotifyFilters.LastWrite) != 0) {
 				mask |= InotifyMask.Attrib;
-				mask |= InotifyMask.CloseWrite;
+				mask |= InotifyMask.Modify;
 			}
 
 			if ((filters & NotifyFilters.FileName) != 0) {
@@ -491,7 +490,7 @@ namespace System.IO {
 
 					FileSystemWatcher fsw = data.FSW;
 					FileAction action = 0;
-					if ((mask & (InotifyMask.Modify | InotifyMask.CloseWrite | InotifyMask.Attrib)) != 0) {
+					if ((mask & (InotifyMask.Modify | InotifyMask.Attrib)) != 0) {
 						action = FileAction.Modified;
 					} else if ((mask & InotifyMask.Create) != 0) {
 						action = FileAction.Added;
