@@ -1,6 +1,11 @@
+2008-10-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_method_get_vtable_index): Use mono_method_get_vtable_slot ()
+	for accessing method->slot.
+
 2008-10-20  Cedric Vivier  <cedricv@neonux.com>
 
-	* icall-def.h, icall.c: Add icall for Debugger.IsAttached
+	* icall-def.h, icall.c: Add icall for Debugger.IsAttached.
 
 2008-10-19  Zoltan Varga  <vargaz@gmail.com>
 
