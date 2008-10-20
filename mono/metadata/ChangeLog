@@ -1,5 +1,12 @@
 2008-10-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_get_virtual_methods): New helper function to iterate
+	over the virtual methods of a class using metadata if possible, avoiding the
+	creation of MonoMethod's for non-virtual methods.
+	
+	* class.c (mono_class_setup_vtable_general): Rewrite this to use 
+	get_virtual_methods () to iterate over the virtual methods of classes.
+
 	* class.c (mono_method_get_vtable_index): Use mono_method_get_vtable_slot ()
 	for accessing method->slot.
 
