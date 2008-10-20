@@ -1,3 +1,8 @@
+2008-10-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* dominators.c (mono_compute_natural_loops): Allocate GList enties
+	from the cfg mempool.
+
 2008-10-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Tests for new methods in Vector8us.
