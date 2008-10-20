@@ -1,5 +1,8 @@
 2008-10-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (find_method_in_class): Search directly in metadata to avoid
+	calling mono_class_setup_methods ().
+
 	* class.c (mono_class_get_virtual_methods): New helper function to iterate
 	over the virtual methods of a class using metadata if possible, avoiding the
 	creation of MonoMethod's for non-virtual methods.
