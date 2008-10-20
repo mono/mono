@@ -5389,11 +5389,15 @@ namespace System.Windows.Forms
 
 				list.RemoveAt (index);
 
-				if (is_main_collection)
-					item.Owner = null;
 #if NET_2_0
-				else
+				if (is_main_collection) {
+					item.Owner = null;
+					if (item.Group != null)
+						item.Group.Items.Remove (item);
+				} else
 					item.SetGroup (null);
+#else
+				item.Owner = null;
 #endif
 
 				CollectionChanged (false);
