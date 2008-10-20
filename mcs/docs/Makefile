@@ -78,6 +78,7 @@ NETDOCS_DIRS = \
 MONO_DIRS = \
 	$(topdir)/class/Commons.Xml.Relaxng/Documentation/en          \
 	$(topdir)/class/Mono.Cairo/Documentation/en                   \
+	$(topdir)/class/Mono.Data.SqliteClient/Documentation/en       \
 	$(topdir)/class/Mono.GetOptions/Documentation/en              \
 	$(topdir)/class/Mono.Options/Documentation/en                 \
 	$(topdir)/class/Mono.Posix/Documentation/en                   \
