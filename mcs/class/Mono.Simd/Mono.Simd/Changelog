@@ -1,3 +1,7 @@
+2008-10-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector8us.cs: Added CompareEqual and MultiplyStoreHigh.
+
 2008-10-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector4ui.cs: Remove Average as there is no sse instruction for that.

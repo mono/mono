@@ -238,6 +238,26 @@ namespace Mono.Simd
 			return new Vector8us (*(ptr + ((idx >> 0) & 0x3)), *(ptr + ((idx >> 2) & 0x3)), *(ptr + ((idx >> 4) & 0x3)), *(ptr + ((idx >> 6) & 0x3)), va.v4, va.v5, va.v6, va.v7);
 		}
 
+		public static unsafe Vector8us CompareEqual (Vector8us va, Vector8us vb) {
+			Vector8us res = new Vector8us ();
+			ushort *a = &va.v0;
+			ushort *b = &vb.v0;
+			ushort *c = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (ushort) (*a++ == *b++ ? -1 : 0);
+			return res;
+		}
+
+		public static unsafe Vector8us MultiplyStoreHigh (Vector8us va, Vector8us vb) {
+			Vector8us res = new Vector8us ();
+			ushort *a = &va.v0;
+			ushort *b = &vb.v0;
+			ushort *c = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (ushort)((uint)*a++ * (uint)*b++ >> 16);
+			return res;
+		}
+
 		public static unsafe explicit operator Vector4f(Vector8us v)
 		{
 			Vector4f* p = (Vector4f*)&v;
