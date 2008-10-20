@@ -1,0 +1,18 @@
+using System.Reflection; // -*- java -*- in the absence of anything better
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+[assembly: AssemblyTitle("RabbitMQ Client Library for .Net")]
+[assembly: AssemblyDescription("Open Source Enterprise Messaging")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("LShift Ltd.")]
+[assembly: AssemblyProduct("RabbitMQ")]
+[assembly: AssemblyCopyright("Copyright © 2007, 2008 LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+
+[assembly: ComVisible(false)]
+
+[assembly: Guid("32a32ed8-c871-45ad-86b3-f50723a7434b")]
+
+[assembly: AssemblyVersion("@VERSION@")]

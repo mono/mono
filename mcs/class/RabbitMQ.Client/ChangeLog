@@ -1,0 +1,8 @@
+2008-10-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	(This ChangeLog is for Mono integration.)
+
+	Patch by Michael Barker (patches are on bug #432471). Imported
+	RabbitMQ.Client assembly from RabbitMQ project.
+	http://www.rabbitmq.com/
+

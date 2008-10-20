@@ -1,0 +1,6 @@
+<!-- NAnt build file. -*- nxml -*- -->
+<project>
+  <property name="config.name" value="mono-2.0" />
+  <property name="version.major.minor.release" value="1.2.0"/>
+</project>
+
