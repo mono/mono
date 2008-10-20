@@ -1,0 +1,4 @@
+2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
+
+	* BasicMessagingTest.cs: New
+	* RabbitMQMessagingProviderTest.cs: New

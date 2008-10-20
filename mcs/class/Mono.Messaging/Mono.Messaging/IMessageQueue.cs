@@ -1,10 +1,10 @@
 //
-// System.Messaging
+// Mono.Messaging
 //
 // Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
+//		Michael Barker (mike@middlesoft.co.uk)
 //
-//	(C) Ximian, Inc.  http://www.ximian.com
+// (C) 2008 Michael Barker
 //
 
 //
@@ -30,23 +30,88 @@
 
 using System;
 using System.ComponentModel;
-using System.Messaging.Design;
 
-namespace System.Messaging 
-{
-	[TypeConverter (typeof(MessageFormatterConverter))]
-	public interface IMessageFormatter: ICloneable 
-	{
-		bool CanRead(Message message);
-		
-		object Read(Message message);
-		
-		void Write(Message message, object obj);
-	}
+namespace Mono.Messaging {
+
+	public interface IMessageQueue {
 	
-	internal enum FormatterTypes
-	{
-		Xml = 0,
-		Binary = 768
+		bool Authenticate {
+			get; set;
+		}
+
+		short BasePriority {
+			get; set;
+		}
+
+		bool CanRead {
+			get;
+		}
+
+		bool CanWrite {
+			get;
+		}
+
+		Guid Category {
+			get; set;
+		}
+
+		DateTime CreateTime {
+			get;
+		}
+
+		bool DenySharedReceive {
+			get; set;
+		}
+
+		EncryptionRequired EncryptionRequired {
+			get; set;
+		}
+
+		Guid Id {
+			get;
+		}
+
+		DateTime LastModifyTime {
+			get;
+		}
+
+		long MaximumJournalSize {
+			get; set;
+		}
+
+		long MaximumQueueSize {
+			get; set;
+		}
+
+		IntPtr ReadHandle {
+			get;
+		}
+
+		ISynchronizeInvoke SynchronizingObject {
+			get; set;
+		}
+
+		bool Transactional {
+			get;
+		}
+
+		bool UseJournalQueue {
+			get; set;
+		}
+
+		IntPtr WriteHandle {
+			get;
+		}
+		
+		QueueReference QRef {
+			get; set;
+		}
+		
+		void Send (IMessage message);
+		
+		IMessage Receive ();
+		
+		IMessageEnumerator GetMessageEnumerator ();
 	}
+
 }

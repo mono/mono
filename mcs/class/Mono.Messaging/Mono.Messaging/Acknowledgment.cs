@@ -1,8 +1,8 @@
 //
-// System.Messaging
+// Mono.Messaging
 //
 // Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
+//	Peter Van Isacker (sclytrack@planetinternet.be)
 //
 //	(C) Ximian, Inc.  http://www.ximian.com
 //
@@ -27,26 +27,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
-using System.ComponentModel;
-using System.Messaging.Design;
 
-namespace System.Messaging 
+namespace Mono.Messaging 
 {
-	[TypeConverter (typeof(MessageFormatterConverter))]
-	public interface IMessageFormatter: ICloneable 
+	[Serializable]
+	public enum Acknowledgment 
 	{
-		bool CanRead(Message message);
-		
-		object Read(Message message);
-		
-		void Write(Message message, object obj);
-	}
-	
-	internal enum FormatterTypes
-	{
-		Xml = 0,
-		Binary = 768
+		AccessDenied = 32772,
+		BadDestinationQueue = 32768,
+		BadEncryption = 32775,
+		BadSignature = 32774,
+		CouldNotEncrypt = 32776,
+		HopCountExceeded = 32773,
+		None = 0,
+		NotTransactionalMessage = 32778,
+		NotTransactionalQueue = 32777,
+		Purged = 32769,
+		QueueDeleted = 49152,
+		QueueExceedMaximumSize = 32771,
+		QueuePurged = 49153,
+		ReachQueue = 2,
+		ReachQueueTimeout = 32770,
+		Receive = 16384,
+		ReceiveTimeout = 49154
 	}
 }

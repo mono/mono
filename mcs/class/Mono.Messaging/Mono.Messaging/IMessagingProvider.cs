@@ -1,10 +1,10 @@
 //
-// System.Messaging
+// Mono.Messaging
 //
 // Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
+//		Michael Barker (mike@middlesoft.co.uk)
 //
-//	(C) Ximian, Inc.  http://www.ximian.com
+// (C) 2008 Michael Barker
 //
 
 //
@@ -28,25 +28,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.ComponentModel;
-using System.Messaging.Design;
+namespace Mono.Messaging {
 
-namespace System.Messaging 
-{
-	[TypeConverter (typeof(MessageFormatterConverter))]
-	public interface IMessageFormatter: ICloneable 
-	{
-		bool CanRead(Message message);
+	public interface IMessagingProvider {
 		
-		object Read(Message message);
+		bool Exists (QueueReference qRef);
 		
-		void Write(Message message, object obj);
+		IMessageQueue CreateMessageQueue (QueueReference qRef);
+		
+		IMessageQueue GetMessageQueue ();
+
+		IMessage CreateMessage ();
 	}
-	
-	internal enum FormatterTypes
-	{
-		Xml = 0,
-		Binary = 768
-	}
+
 }

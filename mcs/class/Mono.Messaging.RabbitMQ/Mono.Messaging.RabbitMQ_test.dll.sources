@@ -1,0 +1,3 @@
+Mono.Messaging.RabbitMQ/BasicMessagingTest.cs
+Mono.Messaging.RabbitMQ/RabbitMQMessagingProviderTest.cs
+Mono.Messaging.RabbitMQ/MessageEnumeratorTest.cs

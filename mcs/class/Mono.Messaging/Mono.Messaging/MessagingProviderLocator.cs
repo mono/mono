@@ -1,8 +1,8 @@
 //
-// System.Messaging
+// Mono.Messaging
 //
 // Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
+//	  Michael Barker (mike@middlesoft.co.uk)
 //
 //	(C) Ximian, Inc.  http://www.ximian.com
 //
@@ -14,7 +14,7 @@
 // without limitation the rights to use, copy, modify, merge, publish,
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
+// the following conditions:(
 // 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
@@ -27,26 +27,31 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
-using System.ComponentModel;
-using System.Messaging.Design;
+using System.Reflection;
 
-namespace System.Messaging 
+namespace Mono.Messaging 
 {
-	[TypeConverter (typeof(MessageFormatterConverter))]
-	public interface IMessageFormatter: ICloneable 
+	public class MessagingProviderLocator 
 	{
-		bool CanRead(Message message);
-		
-		object Read(Message message);
-		
-		void Write(Message message, object obj);
-	}
-	
-	internal enum FormatterTypes
-	{
-		Xml = 0,
-		Binary = 768
+		public static IMessagingProvider GetProvider ()
+		{
+			//Assembly a = Assembly.Load("Mono.Messaging.RabbitMQ.dll");
+			//Type[] ts = a.GetTypes ();
+			
+			//foreach (type in ts)
+			//	Console.WriteLine (type.GetName ());
+			
+			Type t = Type.GetType ("Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider, Mono.Messaging.RabbitMQ");
+			if (t == null)
+				throw new Exception ("Can't find class");
+			ConstructorInfo ci = t.GetConstructor (
+				BindingFlags.Public | BindingFlags.Instance, 
+						Type.DefaultBinder, new Type[0],
+						new ParameterModifier[0]);
+			if (ci == null)
+				throw new Exception ("Can't find constructor");
+			return (IMessagingProvider) ci.Invoke (new object[0]);
+		}
 	}
 }

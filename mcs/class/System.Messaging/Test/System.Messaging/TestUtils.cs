@@ -1,12 +1,11 @@
 //
-// System.Messaging
+// MessageTest.cs -
+//    NUnit Test Cases for MessageQueuePermissionAttribute
 //
-// Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
+// Author:
+//    Michael Barker  <sebastien@ximian.com>
 //
-//	(C) Ximian, Inc.  http://www.ximian.com
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,24 +28,31 @@
 //
 
 using System;
-using System.ComponentModel;
-using System.Messaging.Design;
+using System.Messaging;
+using System.Reflection;
 
-namespace System.Messaging 
-{
-	[TypeConverter (typeof(MessageFormatterConverter))]
-	public interface IMessageFormatter: ICloneable 
-	{
-		bool CanRead(Message message);
-		
-		object Read(Message message);
-		
-		void Write(Message message, object obj);
-	}
-	
-	internal enum FormatterTypes
-	{
-		Xml = 0,
-		Binary = 768
-	}
+namespace MonoTests.System.Messaging {
+
+    public class TestUtils {
+    
+        public static Message CreateMessage (Mono.Messaging.IMessage iMessage)
+        {
+            if (iMessage == null)
+                throw new Exception ("Message is null");
+            
+            Type[] types = { 
+                typeof (Mono.Messaging.IMessage)
+            };
+                
+            ConstructorInfo ci = typeof (Message).GetConstructor (
+                BindingFlags.NonPublic | BindingFlags.Instance, 
+                Type.DefaultBinder, types, new ParameterModifier[0]);
+                
+            if (ci == null)
+                throw new Exception ("ConstructorInfo is null");
+            
+            return (Message) ci.Invoke (new object[] { iMessage });
+        }
+    
+    }
 }

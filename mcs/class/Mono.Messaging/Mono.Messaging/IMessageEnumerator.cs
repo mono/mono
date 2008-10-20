@@ -1,10 +1,10 @@
 //
-// System.Messaging
+// Mono.Messaging
 //
 // Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
+//		Michael Barker (mike@middlesoft.co.uk)
 //
-//	(C) Ximian, Inc.  http://www.ximian.com
+// (C) 2008 Michael Barker
 //
 
 //
@@ -29,24 +29,35 @@
 //
 
 using System;
+using System.Collections;
 using System.ComponentModel;
-using System.Messaging.Design;
 
-namespace System.Messaging 
-{
-	[TypeConverter (typeof(MessageFormatterConverter))]
-	public interface IMessageFormatter: ICloneable 
-	{
-		bool CanRead(Message message);
-		
-		object Read(Message message);
-		
-		void Write(Message message, object obj);
-	}
+namespace Mono.Messaging {
+
+	public interface IMessageEnumerator : IDisposable {
 	
-	internal enum FormatterTypes
-	{
-		Xml = 0,
-		Binary = 768
+		IMessage Current { get; }
+		
+		void Close();
+
+		void Dispose(bool disposing);
+
+		bool MoveNext();
+		
+		//bool MoveNext(TimeSpan timeout);
+
+		IMessage RemoveCurrent();
+
+		//IMessage RemoveCurrent(MessageQueueTransaction transaction);
+
+		//IMessage RemoveCurrent(MessageQueueTransactionType transactionType);
+
+		//IMessage RemoveCurrent(TimeSpan timeout);
+
+		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransaction transaction);
+
+		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransactionType transactionType);
+
 	}
+
 }

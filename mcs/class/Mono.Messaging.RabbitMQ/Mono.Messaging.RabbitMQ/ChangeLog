@@ -1,0 +1,12 @@
+2008-10-12  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageEnumerator.cs:  New
+	* MessageFactory.cs:  Utility class for creating MessageBase objects from
+	serialized data off the queue.
+	* RabbitMQMessageQueue.cs:  Using MessageFactory methods to handle message
+	serialization.
+
+2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageQueue.cs: New
+	* RabbitMQMessagingProvider.cs: New

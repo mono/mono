@@ -1,0 +1,4 @@
+2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageBaseTest.cs: New
+	* QueueReferenceTest.cs: New

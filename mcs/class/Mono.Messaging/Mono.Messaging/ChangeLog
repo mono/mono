@@ -1,0 +1,22 @@
+2008-10-12  Michael Barker  <mike@middlesoft.co.uk>
+
+	* IMessageEnumerator.cs: New
+
+2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
+
+	* AcknowledgeTypes.cs: New
+	* Acknowledgment.cs: New
+	* ConnectionException.cs: New
+	* CryptographicProviderType.cs: New
+	* EncryptionAlgorithm.cs: New
+	* EncryptionRequired.cs: New
+	* HashAlgorithm.cs: New
+	* IMessage.cs: New
+	* IMessageQueue.cs: New
+	* IMessagingProvider.cs: New
+	* MessageBase.cs: New
+	* MessagePriority.cs: New
+	* MessageType.cs: New
+	* MessagingProviderLocator.cs: New
+	* MonoMessagingException.cs: New
+	* QueueReference.cs: New

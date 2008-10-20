@@ -1,10 +1,10 @@
 //
-// System.Messaging
+// Test.Mono.Messaging.RabbitMQ
 //
 // Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
+//	  Michael Barker (mike@middlesoft.co.uk)
 //
-//	(C) Ximian, Inc.  http://www.ximian.com
+// (C) 2008 Michael Barker
 //
 
 //
@@ -29,24 +29,32 @@
 //
 
 using System;
-using System.ComponentModel;
-using System.Messaging.Design;
 
-namespace System.Messaging 
+using Mono.Messaging;
+using Mono.Messaging.RabbitMQ;
+
+using NUnit.Framework;
+
+namespace MonoTests.Mono.Messsaging.RabbitMQ
 {
-	[TypeConverter (typeof(MessageFormatterConverter))]
-	public interface IMessageFormatter: ICloneable 
-	{
-		bool CanRead(Message message);
+	[TestFixture]
+	public class RabbitMQMessagingProviderTest {
 		
-		object Read(Message message);
+		[Test]
+		public void CreateMessage ()
+		{
+			IMessagingProvider p = new RabbitMQMessagingProvider ();
+			IMessage m = p.CreateMessage ();
+			Assert.IsNotNull (m);   
+		}
 		
-		void Write(Message message, object obj);
-	}
-	
-	internal enum FormatterTypes
-	{
-		Xml = 0,
-		Binary = 768
+		[Test]
+		public void GetMessageQueue ()
+		{
+			IMessagingProvider p = new RabbitMQMessagingProvider ();
+			IMessageQueue q = p.GetMessageQueue ();
+			Assert.IsNotNull (q);   
+		}
+		
 	}
 }

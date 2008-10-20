@@ -2,8 +2,8 @@
 // System.Messaging
 //
 // Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
-//      Rafael Teixeira   (rafaelteixeirabr@hotmail.com)
+//	  Peter Van Isacker (sclytrack@planetinternet.be)
+//	  Rafael Teixeira   (rafaelteixeirabr@hotmail.com)
 //
 // (C) 2003 Peter Van Isacker
 //
@@ -35,6 +35,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Messaging.Design;
 
+using Mono.Messaging;
+
 namespace System.Messaging
 {
 	[TypeConverter (typeof(MessageQueueConverter))]
@@ -48,11 +50,9 @@ namespace System.Messaging
 
 		public static readonly long InfiniteQueueSize;
 		public static readonly TimeSpan InfiniteTimeout;
+		private IMessageFormatter formatter;
 
-		private bool isPrivate = false;
-		private string queueName;
-		private string machineName;
-
+		private readonly IMessageQueue delegateQueue;
 
 		#endregion //Fields
 
@@ -60,29 +60,25 @@ namespace System.Messaging
 		#region Constructor
 
 		[MonoTODO]
-		public MessageQueue ()
+		public MessageQueue () : this (GetMessageQueue ())
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public MessageQueue (string path) {
-			this.Path = path;
-			this.isPrivate = false;
+		public MessageQueue (string path) : this (path, false) 
+		{
 		}
 
 		[MonoTODO]
-		private MessageQueue (string queueName, string machineName, bool isPrivate) 
+		public MessageQueue (string path, bool sharedModeDenyReceive) : 
+			this (GetMessageQueue (path))
 		{
-			this.queueName = queueName;
-			this.machineName = machineName;
-			this.isPrivate = isPrivate;
 		}
-
-		[MonoTODO]
-		public MessageQueue (string path, bool sharedModeDenyReceive) 
+		
+		internal MessageQueue (IMessageQueue delegateQueue)
 		{
-			throw new NotImplementedException ();
+			this.delegateQueue = delegateQueue;
+			formatter = new XmlMessageFormatter ();
 		}
 
 		#endregion //Constructor
@@ -92,26 +88,22 @@ namespace System.Messaging
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_Authenticate")]
 		public bool Authenticate {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.Authenticate;
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				delegateQueue.Authenticate = value;
 			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_BasePriority")]
 		public short BasePriority {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.BasePriority;
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				delegateQueue.BasePriority = value;
 			}
 		}
 
@@ -119,9 +111,8 @@ namespace System.Messaging
 		[Browsable (false)]
 		[MessagingDescription ("MQ_CanRead")]
 		public bool CanRead {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.CanRead;
 			}
 		}
 
@@ -129,31 +120,27 @@ namespace System.Messaging
 		[Browsable (false)]
 		[MessagingDescription ("MQ_CanWrite")]
 		public bool CanWrite {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.CanWrite;
 			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_Category")]
 		public Guid Category {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.Category;
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				delegateQueue.Category = value;
 			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_CreateTime")]
 		public DateTime CreateTime {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.CreateTime;
 			}
 		}
 
@@ -161,11 +148,9 @@ namespace System.Messaging
 		[Browsable (false)]
 		[MessagingDescription ("MQ_DefaultPropertiesToSend")]
 		public DefaultPropertiesToSend DefaultPropertiesToSend {
-			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
-			[MonoTODO]
 			set {
 				throw new NotImplementedException ();
 			}
@@ -175,23 +160,19 @@ namespace System.Messaging
 		[DefaultValue (false)]
 		[MessagingDescription ("MQ_DenySharedReceive")]
 		public bool DenySharedReceive {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.DenySharedReceive;
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				delegateQueue.DenySharedReceive = value;
 			}
 		}
 
 		[Browsable (false)]
 		public static bool EnableConnectionCache {
-			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
-			[MonoTODO]
 			set {
 				throw new NotImplementedException ();
 			}
@@ -200,20 +181,17 @@ namespace System.Messaging
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_EncryptionRequired")]
 		public EncryptionRequired EncryptionRequired {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return (EncryptionRequired) delegateQueue.EncryptionRequired;
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				delegateQueue.EncryptionRequired = (Mono.Messaging.EncryptionRequired) value;
 			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_FormatName")]
 		public string FormatName {
-			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
@@ -224,22 +202,19 @@ namespace System.Messaging
 		[TypeConverter (typeof(MessageFormatterConverter))]
 		[MessagingDescription ("MQ_Formatter")]
 		public IMessageFormatter Formatter {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return formatter;
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				formatter = value;
 			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_GuidId")]
 		public Guid Id {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.Id;
 			}
 		}
 
@@ -248,10 +223,12 @@ namespace System.Messaging
 		public string Label {
 			[MonoTODO]
 			get {
+				//return delegateQueue.Label;
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
 			set {
+				//delegateQueue.Label = value;
 				throw new NotImplementedException ();
 			}
 		}
@@ -259,9 +236,8 @@ namespace System.Messaging
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_LastModifyTime")]
 		public DateTime LastModifyTime {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.LastModifyTime;
 			}
 		}
 
@@ -270,10 +246,10 @@ namespace System.Messaging
 		[MessagingDescription ("MQ_MachineName")]
 		public string MachineName {
 			get {
-				return machineName;
+				return delegateQueue.QRef.Host;
 			}
 			set {
-				machineName = value;
+				delegateQueue.QRef = delegateQueue.QRef.SetHost (value);
 			}
 		}
 
@@ -281,13 +257,11 @@ namespace System.Messaging
 		[TypeConverter (typeof(SizeConverter))]
 		[MessagingDescription ("MQ_MaximumJournalSize")]
 		public long MaximumJournalSize {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.MaximumJournalSize;
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				delegateQueue.MaximumJournalSize = value;
 			}
 		}
 
@@ -295,13 +269,11 @@ namespace System.Messaging
 		[TypeConverter (typeof(SizeConverter))]
 		[MessagingDescription ("MQ_MaximumQueueSize")]
 		public long MaximumQueueSize {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.MaximumQueueSize;
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				delegateQueue.MaximumQueueSize = value;
 			}
 		}
 
@@ -327,11 +299,10 @@ namespace System.Messaging
 		[MessagingDescription ("MQ_Path")]
 		public string Path {
 			get {
-				return machineName + ":" + queueName;
+				return delegateQueue.QRef.ToString ();
 			}
-			[MonoTODO ("split input")]
 			set {
-				throw new NotImplementedException ();
+				delegateQueue.QRef = QueueReference.Parse (value);
 			}
 		}
 
@@ -340,10 +311,10 @@ namespace System.Messaging
 		[MessagingDescription ("MQ_QueueName")]
 		public string QueueName {
 			get {
-				return queueName;
+				return delegateQueue.QRef.Queue;
 			}
 			set {
-				queueName = value;
+				delegateQueue.QRef = delegateQueue.QRef.SetQueue (value);
 			}
 		}
 
@@ -351,9 +322,8 @@ namespace System.Messaging
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_ReadHandle")]
 		public IntPtr ReadHandle {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.ReadHandle;
 			}
 		}
 
@@ -361,35 +331,30 @@ namespace System.Messaging
 		[DefaultValue (null)]
 		[MessagingDescription ("MQ_SynchronizingObject")]
 		public ISynchronizeInvoke SynchronizingObject {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.SynchronizingObject;
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				delegateQueue.SynchronizingObject = value;
 			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_Transactional")]
 		public bool Transactional {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.Transactional;
 			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_WriteHandle")]
 		public bool UseJournalQueue {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.UseJournalQueue;
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				delegateQueue.UseJournalQueue = value;
 			}
 		}
 
@@ -397,9 +362,14 @@ namespace System.Messaging
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MQ_WriteHandle")]
 		public IntPtr WriteHandle {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return delegateQueue.WriteHandle;
+			}
+		}
+		
+		internal IMessageQueue DelegateQueue {
+			get {
+				return delegateQueue;
 			}
 		}
 
@@ -459,10 +429,12 @@ namespace System.Messaging
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		public static MessageQueue Create (string path)
 		{
-			throw new NotImplementedException ();
+			QueueReference qRef = QueueReference.Parse (path);
+			IMessageQueue iMessageQueue = CreateMessageQueue (qRef);
+			return new MessageQueue (iMessageQueue);
 		}
 		[MonoTODO]
 		public static MessageQueue Create (string path, bool transactional)
@@ -484,10 +456,10 @@ namespace System.Messaging
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		public static bool Exists (string path)
 		{
-			throw new NotImplementedException ();
+			return Exists (QueueReference.Parse (path));
 		}
 		[MonoTODO]
 		public Message[] GetAllMessages ()
@@ -504,10 +476,10 @@ namespace System.Messaging
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		public MessageEnumerator GetMessageEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return new MessageEnumerator (delegateQueue.GetMessageEnumerator (), Formatter);
 		}
 
 		private static ArrayList currentQueueList;
@@ -516,8 +488,8 @@ namespace System.Messaging
 		{
 			currentQueueList = new ArrayList ();
 			// for testing purposes
-			currentQueueList.Add (new MessageQueue (@"localhost:\public\TestQueue"));
-			currentQueueList.Add (new MessageQueue (@"\private\AnotherTestQueue", "localhost", true));
+			//currentQueueList.Add (new MessageQueue (@"localhost:\public\TestQueue"));
+			//currentQueueList.Add (new MessageQueue (@"\private\AnotherTestQueue", "localhost", true));
 		}
 
 		public static MessageQueueEnumerator GetMessageQueueEnumerator ()
@@ -541,13 +513,7 @@ namespace System.Messaging
 
 		public static MessageQueue[] GetPrivateQueuesByMachine (string machineName)
 		{
-			if (machineName == null || machineName.Length == 0)
-				throw new ArgumentException ();
-			ArrayList list = new ArrayList ();
-			foreach (MessageQueue queue in currentQueueList)
-				if (queue.machineName == machineName && queue.isPrivate)
-					list.Add (queue);
-			return (MessageQueue[]) list.ToArray (typeof(MessageQueue));
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -610,10 +576,18 @@ namespace System.Messaging
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		public Message Receive ()
 		{
-			throw new NotImplementedException ();
+			try {
+				IMessage iMsg = delegateQueue.Receive ();
+				return new Message (iMsg, null, Formatter);
+				
+			} catch (ConnectionException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.QueueNotAvailable, e.Message);
+			} catch (MonoMessagingException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.Generic, e.Message);
+			}
 		}
 		[MonoTODO]
 		public Message Receive (MessageQueueTransaction transaction)
@@ -710,10 +684,28 @@ namespace System.Messaging
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		public void Send (object obj)
 		{
-			throw new NotImplementedException ();
+			if (typeof (Message) == obj.GetType ()) {
+				Message m = (Message) obj;
+				Console.WriteLine ("BodyStream {0}", m.BodyStream == null);
+				if (m.BodyStream == null) {
+					IMessageFormatter f = (m.Formatter == null) ? Formatter : m.Formatter;
+					f.Write (m, m.Body);
+				}
+
+				try {
+					delegateQueue.Send (m.DelegateMessage);
+				} catch (ConnectionException e) {
+					throw new MessageQueueException (MessageQueueErrorCode.QueueNotAvailable, e.Message);
+				} catch (MonoMessagingException e) {
+					throw new MessageQueueException (MessageQueueErrorCode.Generic, e.Message);
+				}
+			} else {
+				Message m = new Message (obj);
+				Send (m);
+			}
 		}
 		[MonoTODO]
 		public void Send (object obj, MessageQueueTransaction transaction)
@@ -760,10 +752,10 @@ namespace System.Messaging
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			//delegateQueue.Dispose ();
 		}
 
 		#endregion //Methods
@@ -775,5 +767,32 @@ namespace System.Messaging
 
 		[MessagingDescription ("MQ_ReceiveCompleted")]
 		public event ReceiveCompletedEventHandler ReceiveCompleted;
+		
+		private static IMessageQueue GetMessageQueue (string path)
+		{
+			IMessageQueue q = MessagingProviderLocator
+				.GetProvider ()
+				.GetMessageQueue ();
+			q.QRef = QueueReference.Parse (path);
+			return q;
+		}
+		
+		private static IMessageQueue GetMessageQueue ()
+		{
+			return MessagingProviderLocator.GetProvider ()
+				.GetMessageQueue ();
+		}
+		
+		private static IMessageQueue CreateMessageQueue (QueueReference qRef)
+		{
+			return MessagingProviderLocator.GetProvider ()
+				.CreateMessageQueue (qRef);
+		}
+		
+		private static bool Exists (QueueReference qRef)
+		{
+			return MessagingProviderLocator.GetProvider ().Exists (qRef);
+		}
+		
 	}
 }

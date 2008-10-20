@@ -1,8 +1,8 @@
 //
-// System.Messaging
+// Mono.Messaging
 //
 // Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
+//		Peter Van Isacker (sclytrack@planetinternet.be)
 //
 //	(C) Ximian, Inc.  http://www.ximian.com
 //
@@ -27,26 +27,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
-using System.ComponentModel;
-using System.Messaging.Design;
 
-namespace System.Messaging 
+namespace Mono.Messaging
 {
-	[TypeConverter (typeof(MessageFormatterConverter))]
-	public interface IMessageFormatter: ICloneable 
+	[Serializable]
+	public enum HashAlgorithm
 	{
-		bool CanRead(Message message);
-		
-		object Read(Message message);
-		
-		void Write(Message message, object obj);
-	}
-	
-	internal enum FormatterTypes
-	{
-		Xml = 0,
-		Binary = 768
+		Mac = 32773,
+		Md2 = 32769,
+		Md4 = 32770,
+		Md5 = 32771,
+		None = 0,
+		Sha = 32772
 	}
 }

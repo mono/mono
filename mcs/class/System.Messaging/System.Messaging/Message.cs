@@ -2,8 +2,8 @@
 // System.Messaging
 //
 // Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
-//      Rafael Teixeira   (rafaelteixeirabr@hotmail.com)
+//	  Peter Van Isacker (sclytrack@planetinternet.be)
+//	  Rafael Teixeira   (rafaelteixeirabr@hotmail.com)
 //
 // (C) 2003 Peter Van Isacker
 //
@@ -33,26 +33,39 @@ using System;
 using System.IO;
 using System.ComponentModel;
 
+using Mono.Messaging;
+
 namespace System.Messaging 
 {
 	[DesignerAttribute ("System.Messaging.Design.MessageDesigner, " + Consts.AssemblySystem_Design)]
 	public class Message: Component 
 	{
+		private readonly IMessage delegateMessage;
+		private IMessageFormatter formatter;
+		//private int bodyType = 0;
+		private object body;
+		
 		#region Constructor
 		
-		[MonoTODO]
-		public Message()
+		public Message() : this (CreateMessage (), null, null)
 		{
 		}
 
-		[MonoTODO]
-		public Message (object body)
+		public Message (object body) : this (CreateMessage (), body, null)
 		{
 		}
 
-		[MonoTODO]
-		public Message (object body, IMessageFormatter formatter)
+		public Message (object body, IMessageFormatter formatter) 
+			: this (CreateMessage (), body, formatter)
 		{
+		}
+		
+		internal Message (IMessage delegateMessage, object body, 
+			IMessageFormatter formatter)
+		{
+			this.delegateMessage = delegateMessage;
+			this.body = body;
+			this.formatter = formatter;
 		}
 		
 		#endregion //Constructor
@@ -66,91 +79,102 @@ namespace System.Messaging
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgAcknowledgeType")]
 		public AcknowledgeTypes AcknowledgeType {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { 
+				return (AcknowledgeTypes) delegateMessage.AcknowledgeType;
+			}
+			set { 
+				delegateMessage.AcknowledgeType = (Mono.Messaging.AcknowledgeTypes) value; 
+			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgAcknowledgement")]
 		public Acknowledgment Acknowledgment {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { 
+				return (Acknowledgment) (int) delegateMessage.Acknowledgment;
+			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgAdministrationQueue")]
 		public MessageQueue AdministrationQueue {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get {
+				if (delegateMessage.AdministrationQueue == null)
+					return null;
+					
+				return new MessageQueue 
+					(delegateMessage.AdministrationQueue);
+			}
+			set { 
+				delegateMessage.AdministrationQueue 
+					= value.DelegateQueue;
+			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgAppSpecific")]
 		public int AppSpecific {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.AppSpecific; }
+			set { delegateMessage.AppSpecific = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MsgArrivedTime")]
 		public DateTime ArrivedTime {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateMessage.ArrivedTime; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgAttachSenderId")]
 		public bool AttachSenderId {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.AttachSenderId; }
+			set { delegateMessage.AttachSenderId = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MsgAuthenticated")]
 		public bool Authenticated {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateMessage.Authenticated; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgAuthenticationProviderName")]
 		public string AuthenticationProviderName {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.AuthenticationProviderName; }
+			set { delegateMessage.AuthenticationProviderName = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgAuthenticationProviderType")]
 		public CryptographicProviderType AuthenticationProviderType {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { 
+				return (CryptographicProviderType)
+					delegateMessage.AuthenticationProviderType;
+			}
+			set { 
+				delegateMessage.AuthenticationProviderType = 
+					(Mono.Messaging.CryptographicProviderType) value; 
+			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public object Body {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get {
+				if (body == null && delegateMessage.BodyStream == null)
+					return null;
+				else if (body == null)
+					body = formatter.Read (this);
+					
+				return body;
+			}
+			set { body = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -158,215 +182,203 @@ namespace System.Messaging
 		[Editor ("System.ComponentModel.Design.BinaryEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[MessagingDescription ("MsgBodyStream")]
 		public Stream BodyStream {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.BodyStream; }
+			set { delegateMessage.BodyStream = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MsgBodyType")]
 		[ReadOnly (true)]
 		public int BodyType {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.BodyType; }
+			set { delegateMessage.BodyType = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgConnectorType")]
 		public Guid ConnectorType {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.ConnectorType; }
+			set { delegateMessage.ConnectorType = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgCorrelationId")]
 		public string CorrelationId {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.CorrelationId; }
+			set { delegateMessage.CorrelationId = value; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription("MsgDestinationQueue")]
 		public MessageQueue DestinationQueue {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { 
+				return new MessageQueue(delegateMessage.DestinationQueue);
+			}
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgDestinationSymmetricKey")]
 		public byte[] DestinationSymmetricKey {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.DestinationSymmetricKey; }
+			set { delegateMessage.DestinationSymmetricKey = value; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgDigitalSignature")]
 		public byte[] DigitalSignature {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.DigitalSignature; }
+			set { delegateMessage.DigitalSignature = value; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgEncryptionAlgorithm")]
 		public EncryptionAlgorithm EncryptionAlgorithm {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { 
+				return (EncryptionAlgorithm) delegateMessage.EncryptionAlgorithm;
+			}
+			set {
+				delegateMessage.EncryptionAlgorithm = 
+					(Mono.Messaging.EncryptionAlgorithm) value;
+			}
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgExtension")]
 		public byte[] Extension {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.Extension; }
+			set { delegateMessage.Extension = value; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Browsable(false)]
 		public IMessageFormatter Formatter {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return formatter; }
+			set { formatter = value; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgHashAlgorithm")]
 		public HashAlgorithm HashAlgorithm {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { 
+				return (HashAlgorithm) delegateMessage.HashAlgorithm;
+			}
+			set { 
+				delegateMessage.HashAlgorithm = 
+					(Mono.Messaging.HashAlgorithm) value;
+			}
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgId")]
 		public string Id {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateMessage.Id; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription("MsgIsFirstInTransaction")]
 		public bool IsFirstInTransaction {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateMessage.IsFirstInTransaction; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription("MsgIsLastInTransaction")]
 		public bool IsLastInTransaction {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateMessage.IsLastInTransaction; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgLabel")]
 		public string Label {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.Label; }
+			set { delegateMessage.Label = value; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription("MsgMessageType")]
 		public MessageType MessageType {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { 
+				return (MessageType) delegateMessage.MessageType;
+			}
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgPriority")]
 		public MessagePriority Priority {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get {
+				return (MessagePriority) delegateMessage.Priority;
+			}
+			set { 
+				delegateMessage.Priority = (Mono.Messaging.MessagePriority) value;
+			}
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgRecoverable")]
 		public bool Recoverable {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.Recoverable; }
+			set { delegateMessage.Recoverable = value; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgResponseQueue")]
 		public MessageQueue ResponseQueue {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { 
+				if (delegateMessage.ResponseQueue == null)
+					return null;
+					
+				return new MessageQueue 
+					(delegateMessage.ResponseQueue);
+			}
+			set { 
+				delegateMessage.ResponseQueue 
+					= value.DelegateQueue;
+			}
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[ReadOnly(true)]
 		[MessagingDescription("MsgSenderCertificate")]
 		public byte[] SenderCertificate {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.SenderCertificate; }
+			set { delegateMessage.SenderCertificate = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MsgSenderId")]
 		public byte[] SenderId {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateMessage.SenderId; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgSenderVersion")]
 		public long SenderVersion {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateMessage.SenderVersion; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgSentTime")]
 		public DateTime SentTime {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateMessage.SentTime; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MsgSourceMachine")]
 		public string SourceMachine {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateMessage.SourceMachine; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -374,10 +386,8 @@ namespace System.Messaging
 		[MessagingDescription ("MsgTimeToBeReceived")]
 		[TypeConverter (typeof(TimeoutConverter))]
 		public TimeSpan TimeToBeReceived {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.TimeToBeReceived; }
+			set { delegateMessage.TimeToBeReceived = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -385,79 +395,78 @@ namespace System.Messaging
 		[MessagingDescription ("MsgTimeToReachQueue")]
 		[TypeConverter (typeof(TimeoutConverter))]
 		public TimeSpan TimeToReachQueue {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.TimeToReachQueue; }
+			set { delegateMessage.TimeToReachQueue = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MessagingDescription ("MsgTransactionId")]
 		public string TransactionId {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateMessage.TransactionId; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgTransactionStatusQueue")]
 		public MessageQueue TransactionStatusQueue {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { 
+				return new MessageQueue(delegateMessage.TransactionStatusQueue);
+			}
+			set { 
+				delegateMessage.TransactionStatusQueue = value.DelegateQueue;
+			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgUseAuthentication")]
 		public bool UseAuthentication {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.UseAuthentication; }
+			set { delegateMessage.UseAuthentication = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgUseDeadLetterQueue")]
 		public bool UseDeadLetterQueue {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.UseDeadLetterQueue; }
+			set { delegateMessage.UseDeadLetterQueue = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgUseEncryption")]
 		public bool UseEncryption {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.UseEncryption; }
+			set { delegateMessage.UseEncryption = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgUseJournalQueue")]
 		public bool UseJournalQueue {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.UseJournalQueue; }
+			set { delegateMessage.UseJournalQueue = value;}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
 		[MessagingDescription ("MsgUseTracing")]
 		public bool UseTracing {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get { return delegateMessage.UseTracing; }
+			set { delegateMessage.UseTracing = value; }
+		}
+		
+		internal IMessage DelegateMessage {
+			get { return delegateMessage; }
 		}
 
 		#endregion //Properties
+		
+		internal static IMessage CreateMessage ()
+		{
+			return MessagingProviderLocator.GetProvider ()
+				.CreateMessage ();
+		}	
 	}
 }

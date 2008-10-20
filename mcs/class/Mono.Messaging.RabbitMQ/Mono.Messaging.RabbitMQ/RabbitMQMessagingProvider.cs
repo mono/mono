@@ -1,10 +1,10 @@
 //
-// System.Messaging
+// Mono.Messaging.RabbitMQ
 //
 // Authors:
-//      Peter Van Isacker (sclytrack@planetinternet.be)
+//	  Michael Barker (mike@middlesoft.co.uk)
 //
-//	(C) Ximian, Inc.  http://www.ximian.com
+// (C) 2008 Michael Barker
 //
 
 //
@@ -29,24 +29,33 @@
 //
 
 using System;
-using System.ComponentModel;
-using System.Messaging.Design;
 
-namespace System.Messaging 
-{
-	[TypeConverter (typeof(MessageFormatterConverter))]
-	public interface IMessageFormatter: ICloneable 
-	{
-		bool CanRead(Message message);
+using Mono.Messaging;
+
+namespace Mono.Messaging.RabbitMQ {
+
+	public class RabbitMQMessagingProvider : IMessagingProvider {
 		
-		object Read(Message message);
+		public bool Exists (QueueReference qRef)
+		{
+			// In AMQP all queues exist, because they are declared rather
+			// than created.
+			return true;
+		}
 		
-		void Write(Message message, object obj);
-	}
-	
-	internal enum FormatterTypes
-	{
-		Xml = 0,
-		Binary = 768
+		public IMessageQueue GetMessageQueue ()
+		{
+			return new RabbitMQMessageQueue ();
+		}
+		
+		public IMessageQueue CreateMessageQueue (QueueReference qRef)
+		{
+			return new RabbitMQMessageQueue (qRef);
+		}
+		
+		public IMessage CreateMessage ()
+		{
+			return new MessageBase ();
+		}
 	}
 }
