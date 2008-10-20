@@ -1,3 +1,11 @@
+2008-10-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_init): Remove unneccesary mono_class_setup_methods ()
+	call for generic instances.
+
+	* loader.c (find_method_in_class): If klass != from_class, then inflate
+	the method with the context of from_class, since the caller assumes this.
+
 2008-10-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_init): Remove unneccesary mono_class_setup_properties ()
