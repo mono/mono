@@ -37,6 +37,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -694,22 +695,33 @@ namespace System.Configuration
 				if (allowOverwrite)
 					values.Remove (element.Name);
 				values.Add (value);
-			} catch (ArgumentException) {
-				throw new ConfigurationErrorsException ();
+			} catch (ArgumentException ex) {
+				throw new ConfigurationErrorsException (string.Format (
+					CultureInfo.InvariantCulture,
+					"Failed to load value for '{0}'.",
+					element.Name), ex);
 			}
 		}
 
-		private void LoadProperies (ExeConfigurationFileMap exeMap, SettingsPropertyCollection collection, ConfigurationUserLevel level, string sectionGroupName, bool allowOverwrite)
+		private void LoadProperties (ExeConfigurationFileMap exeMap, SettingsPropertyCollection collection, ConfigurationUserLevel level, string sectionGroupName, bool allowOverwrite, string groupName)
 		{
 			Configuration config = ConfigurationManager.OpenMappedExeConfiguration (exeMap,level);
 			
 			ConfigurationSectionGroup sectionGroup = config.GetSectionGroup (sectionGroupName);
 			if (sectionGroup != null) {
 				foreach (ConfigurationSection configSection in sectionGroup.Sections) {
+					if (configSection.SectionInformation.Name != groupName)
+						continue;
+
 					ClientSettingsSection clientSection = configSection as ClientSettingsSection;
-					if (clientSection != null)
-						foreach (SettingElement element in clientSection.Settings)
-							LoadPropertyValue(collection, element, allowOverwrite);
+					if (clientSection == null)
+						continue;
+
+					foreach (SettingElement element in clientSection.Settings) {
+						LoadPropertyValue(collection, element, allowOverwrite);
+					}
+					// Only the first one seems to be processed by MS
+					break;
 				}
 			}
 
@@ -734,11 +746,12 @@ namespace System.Configuration
 
 			if (values == null) {
 				values = new SettingsPropertyValueCollection ();
-				LoadProperies (exeMapCurrent, collection, ConfigurationUserLevel.None, "applicationSettings", false);
-				LoadProperies (exeMapCurrent, collection, ConfigurationUserLevel.None, "userSettings", false);
+				string groupName = context ["GroupName"] as string;
+				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "applicationSettings", false, groupName);
+				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "userSettings", false, groupName);
 
-				LoadProperies (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, "userSettings", true);
-				LoadProperies (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoamingAndLocal, "userSettings", true);
+				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, "userSettings", true, groupName);
+				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoamingAndLocal, "userSettings", true, groupName);
 
 				// create default values if not exist
 				foreach (SettingsProperty p in collection)

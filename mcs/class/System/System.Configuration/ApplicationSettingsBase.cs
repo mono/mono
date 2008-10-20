@@ -32,23 +32,22 @@ using System.Xml.Serialization;
 
 using System.ComponentModel;
 using System.Reflection;
+using System.Threading;
 using System.Collections.Specialized;
 
 namespace System.Configuration {
 
-        public abstract class ApplicationSettingsBase : SettingsBase, INotifyPropertyChanged
+	public abstract class ApplicationSettingsBase : SettingsBase, INotifyPropertyChanged
 	{
-
-                protected ApplicationSettingsBase ()
-                {
+		protected ApplicationSettingsBase ()
+		{
 			Initialize (Context, Properties, Providers);
-                }
+		}
 
 		protected ApplicationSettingsBase (IComponent owner)
 			: this (owner, String.Empty)
 		{
 		}
-
  
 		protected ApplicationSettingsBase (string settingsKey)
 		{
@@ -63,8 +62,9 @@ namespace System.Configuration {
 			if (owner == null)
 				throw new ArgumentNullException ();
 
+#if (CONFIGURATION_DEP)
 			providerService = (ISettingsProviderService)owner.Site.GetService(typeof (ISettingsProviderService));
-
+#endif
 			this.settingsKey = settingsKey;
 
 			Initialize (Context, Properties, Providers);
@@ -159,10 +159,23 @@ namespace System.Configuration {
 		[Browsable (false)]
 		public override SettingsContext Context {
 			get {
-				if (context == null)
-					context = new SettingsContext ();
+				if (IsSynchronized)
+					Monitor.Enter (this);
 
-				return context;
+				try {
+					if (context == null) {
+						context = new SettingsContext ();
+						context ["SettingsKey"] = "";
+						Type type = GetType ();
+						context ["GroupName"] = type.FullName;
+						context ["SettingsClassType"] = type;
+					}
+
+					return context;
+				} finally {
+					if (IsSynchronized)
+						Monitor.Exit (this);
+				}
 			}
 		}
 
@@ -206,6 +219,12 @@ namespace System.Configuration {
 		[MonoTODO]
 		public override object this [ string propertyName ] {
 			get {
+				if (IsSynchronized) {
+					lock (this) {
+						return GetPropertyValue (propertyName);
+					}
+				}
+
 				return GetPropertyValue (propertyName);
 			}
 			set {
@@ -247,20 +266,28 @@ namespace System.Configuration {
 		[Browsable (false)]
 		public override SettingsPropertyCollection Properties {
 			get {
-				if (properties == null) {
-					LocalFileSettingsProvider local_provider = null;
+				if (IsSynchronized)
+					Monitor.Enter (this);
 
-					properties = new SettingsPropertyCollection ();
+				try {
+					if (properties == null) {
+						LocalFileSettingsProvider local_provider = null;
 
-					foreach (PropertyInfo prop in GetType ().GetProperties ()) { // only public properties
-						SettingAttribute[] setting_attrs = (SettingAttribute[])prop.GetCustomAttributes (typeof (SettingAttribute), false);
-						if (setting_attrs == null || setting_attrs.Length == 0)
-							continue;
-						CreateSettingsProperty (prop, properties, ref local_provider);
+						properties = new SettingsPropertyCollection ();
+
+						foreach (PropertyInfo prop in GetType ().GetProperties ()) { // only public properties
+							SettingAttribute[] setting_attrs = (SettingAttribute[])prop.GetCustomAttributes (typeof (SettingAttribute), false);
+							if (setting_attrs == null || setting_attrs.Length == 0)
+								continue;
+							CreateSettingsProperty (prop, properties, ref local_provider);
+						}
 					}
-				}
 
-				return properties;
+					return properties;
+				} finally {
+					if (IsSynchronized)
+						Monitor.Exit (this);
+				}
 			}
 		}
 
@@ -344,21 +371,37 @@ namespace System.Configuration {
 		[Browsable (false)]
 		public override SettingsPropertyValueCollection PropertyValues {
 			get {
-				if (propertyValues == null) {
-					propertyValues = new SettingsPropertyValueCollection ();
-				}
+				if (IsSynchronized)
+					Monitor.Enter (this);
 
-				return propertyValues;
+				try {
+					if (propertyValues == null) {
+						propertyValues = new SettingsPropertyValueCollection ();
+					}
+
+					return propertyValues;
+				} finally {
+					if (IsSynchronized)
+						Monitor.Exit (this);
+				}
 			}
 		}
 
 		[Browsable (false)]
 		public override SettingsProviderCollection Providers {
 			get {
-				if (providers == null)
-					providers = new SettingsProviderCollection ();
+				if (IsSynchronized)
+					Monitor.Enter (this);
 
-				return providers;
+				try {
+					if (providers == null)
+						providers = new SettingsProviderCollection ();
+
+					return providers;
+				} finally {
+					if (IsSynchronized)
+						Monitor.Exit (this);
+				}
 			}
 		}
 
@@ -374,10 +417,12 @@ namespace System.Configuration {
 
 		string settingsKey;
 		SettingsContext context;
+#if (CONFIGURATION_DEP)		
 		SettingsPropertyCollection properties;
+		ISettingsProviderService providerService;
+#endif
 		SettingsPropertyValueCollection propertyValues;
 		SettingsProviderCollection providers;
-		ISettingsProviderService providerService;
         }
 
 }
