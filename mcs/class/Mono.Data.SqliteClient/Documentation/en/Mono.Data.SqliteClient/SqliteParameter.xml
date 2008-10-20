@@ -1,17 +1,19 @@
 <Type Name="SqliteParameter" FullName="Mono.Data.SqliteClient.SqliteParameter">
-  <TypeSignature Language="C#" Value="public class SqliteParameter : System.Data.IDbDataParameter" />
+  <TypeSignature Language="C#" Value="public class SqliteParameter : System.Data.Common.DbParameter" />
   <AssemblyInfo>
     <AssemblyName>Mono.Data.SqliteClient</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>System.Object</BaseTypeName>
+    <BaseTypeName>System.Data.Common.DbParameter</BaseTypeName>
   </Base>
   <Interfaces>
-    <Interface>
-      <InterfaceName>System.Data.IDbDataParameter</InterfaceName>
-    </Interface>
   </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SqliteParameter ();" />
@@ -21,6 +23,9 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SqliteParameter (string name, System.Data.DbType type);" />
@@ -35,6 +40,9 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SqliteParameter (string name, object value);" />
@@ -49,6 +57,9 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SqliteParameter (string name, System.Data.DbType type, int size);" />
@@ -65,6 +76,9 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SqliteParameter (string name, System.Data.DbType type, int size, string src_column);" />
@@ -83,9 +97,12 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="DbType">
-      <MemberSignature Language="C#" Value="public System.Data.DbType DbType { set; get; };" />
+      <MemberSignature Language="C#" Value="public override System.Data.DbType DbType { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Data.DbType</ReturnType>
@@ -95,9 +112,12 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Direction">
-      <MemberSignature Language="C#" Value="public System.Data.ParameterDirection Direction { set; get; };" />
+      <MemberSignature Language="C#" Value="public override System.Data.ParameterDirection Direction { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Data.ParameterDirection</ReturnType>
@@ -107,9 +127,12 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="IsNullable">
-      <MemberSignature Language="C#" Value="public bool IsNullable { get; };" />
+      <MemberSignature Language="C#" Value="public override bool IsNullable { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -119,9 +142,12 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="ParameterName">
-      <MemberSignature Language="C#" Value="public string ParameterName { set; get; };" />
+      <MemberSignature Language="C#" Value="public override string ParameterName { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -131,9 +157,12 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Precision">
-      <MemberSignature Language="C#" Value="public byte Precision { set; get; };" />
+      <MemberSignature Language="C#" Value="public byte Precision { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
@@ -141,11 +170,29 @@
       <Docs>
         <summary>To be added.</summary>
         <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ResetDbType">
+      <MemberSignature Language="C#" Value="public override void ResetDbType ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Scale">
-      <MemberSignature Language="C#" Value="public byte Scale { set; get; };" />
+      <MemberSignature Language="C#" Value="public byte Scale { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
@@ -155,9 +202,12 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Size">
-      <MemberSignature Language="C#" Value="public int Size { set; get; };" />
+      <MemberSignature Language="C#" Value="public override int Size { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -167,9 +217,12 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SourceColumn">
-      <MemberSignature Language="C#" Value="public string SourceColumn { set; get; };" />
+      <MemberSignature Language="C#" Value="public override string SourceColumn { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -179,9 +232,27 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SourceColumnNullMapping">
+      <MemberSignature Language="C#" Value="public override bool SourceColumnNullMapping { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="SourceVersion">
-      <MemberSignature Language="C#" Value="public System.Data.DataRowVersion SourceVersion { set; get; };" />
+      <MemberSignature Language="C#" Value="public override System.Data.DataRowVersion SourceVersion { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Data.DataRowVersion</ReturnType>
@@ -191,9 +262,12 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public object Value { set; get; };" />
+      <MemberSignature Language="C#" Value="public override object Value { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -203,10 +277,9 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
   </Members>
-  <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
-  </Docs>
 </Type>

@@ -1,0 +1,36 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Mono.Data.SqliteClient" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Mono.Data.SqliteClient">
+      <Type Name="SqliteBusyException" Kind="Class" />
+      <Type Name="SqliteClientFactory" Kind="Class" />
+      <Type Name="SqliteCommand" Kind="Class" />
+      <Type Name="SqliteCommandBuilder" Kind="Class" />
+      <Type Name="SqliteConnection" Kind="Class" />
+      <Type Name="SqliteConnectionStringBuilder" Kind="Class" />
+      <Type Name="SqliteDataAdapter" Kind="Class" />
+      <Type Name="SqliteDataReader" Kind="Class" />
+      <Type Name="SqliteDataSourceEnumerator" Kind="Class" />
+      <Type Name="SqliteExecutionException" Kind="Class" />
+      <Type Name="SqliteParameter" Kind="Class" />
+      <Type Name="SqliteParameterCollection" Kind="Class" />
+      <Type Name="SqliteRowUpdatedEventArgs" Kind="Class" />
+      <Type Name="SqliteRowUpdatedEventHandler" Kind="Delegate" />
+      <Type Name="SqliteRowUpdatingEventArgs" Kind="Class" />
+      <Type Name="SqliteRowUpdatingEventHandler" Kind="Delegate" />
+      <Type Name="SqliteSyntaxException" Kind="Class" />
+      <Type Name="SqliteTransaction" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>Mono.Data.SqliteClient</Title>
+</Overview>

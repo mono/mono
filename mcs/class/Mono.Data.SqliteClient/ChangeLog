@@ -1,3 +1,11 @@
+2008-10-20  Jonathan Pryor  <jpryor@novell.com>
+
+	* Documentation/index.xml, Documentation/Mono.Data.SqliteClient: Move
+	  to Documentation/en.
+	* Documentation/Mono.Data.SqliteClient.xml: Move to 
+	  Documentation/en/ns-Mono.Data.SqliteClient.xml.
+	* Documentation/en/**/*: Flush (update).
+
 2007-01-16  Marek Habersack  <grendello@gmail.com>
 
 	* Mono.Data.SqliteClient.dll.sources: Added

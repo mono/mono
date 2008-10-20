@@ -1,28 +1,25 @@
 <Type Name="SqliteDataReader" FullName="Mono.Data.SqliteClient.SqliteDataReader">
-  <TypeSignature Language="C#" Value="public class SqliteDataReader : MarshalByRefObject, System.Collections.IEnumerable, System.Data.IDataReader" />
+  <TypeSignature Language="C#" Value="public class SqliteDataReader : System.Data.Common.DbDataReader" />
   <AssemblyInfo>
     <AssemblyName>Mono.Data.SqliteClient</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>System.MarshalByRefObject</BaseTypeName>
+    <BaseTypeName>System.Data.Common.DbDataReader</BaseTypeName>
   </Base>
   <Interfaces>
-    <Interface>
-      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
-    </Interface>
-    <Interface>
-      <InterfaceName>System.Data.IDataReader</InterfaceName>
-    </Interface>
   </Interfaces>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Reflection.DefaultMember("Item")</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <summary>The DataReader represents a table of results returned from a query.</summary>
+    <remarks>
+      <para>A DataReader is returned from <see cref="M:Mono.Data.SqliteClient.SqliteCommand.ExecuteReader()" />.  The DataReader currently implemented preloads the entire into memory.</para>
+      <para>The DataReader is initially positioned before the first row of data.  <see cref="M:Mono.Data.SqliteClient.SqliteDataReader.Read()" /> must be called before accessing the data in the first row.</para>
+    </remarks>
+  </Docs>
   <Members>
     <Member MemberName="Close">
-      <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="C#" Value="public override void Close ();" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -32,61 +29,60 @@
         <summary>Closes the DataReader.</summary>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Depth">
+      <MemberSignature Language="C#" Value="public override int Depth { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns zero.</summary>
+        <value>Zero.</value>
+        <remarks>This method is not currently used.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
-      <Parameters />
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
       <Docs>
-        <summary>Closes the DataReader.</summary>
-        <remarks>None.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetSchemaTable">
-      <MemberSignature Language="C#" Value="public System.Data.DataTable GetSchemaTable ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Data.DataTable</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
+        <param name="disposing">To be added.</param>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="NextResult">
-      <MemberSignature Language="C#" Value="public bool NextResult ();" />
-      <MemberType>Method</MemberType>
+    <Member MemberName="FieldCount">
+      <MemberSignature Language="C#" Value="public override int FieldCount { get; }" />
+      <MemberType>Property</MemberType>
       <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
+        <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
-      <Parameters />
       <Docs>
-        <summary>This method should not currently be used.</summary>
-        <returns>N/A.</returns>
-        <remarks>This method currently has the same behavior of Read(), but its behavior will be changed in a future release to match the behavior of other data adapters.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Read">
-      <MemberSignature Language="C#" Value="public bool Read ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Positions the reader on the next row in the table.</summary>
-        <returns>
-          <see langword="true" /> if the move to the next row was successful, i.e. if another row existed in the table; <see langword="false" /> otherwise.</returns>
+        <summary>Gets the number of columns in the table.</summary>
+        <value>The number of columns in the table.</value>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetBoolean">
-      <MemberSignature Language="C#" Value="public bool GetBoolean (int i);" />
+      <MemberSignature Language="C#" Value="public override bool GetBoolean (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -100,9 +96,12 @@
         <returns>The boolean value in the <paramref name="i" />th column.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetByte">
-      <MemberSignature Language="C#" Value="public byte GetByte (int i);" />
+      <MemberSignature Language="C#" Value="public override byte GetByte (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
@@ -116,9 +115,12 @@
         <returns>The byte value in the <paramref name="i" />th column.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public long GetBytes (int i, long fieldOffset, byte[] buffer, int bufferOffset, int length);" />
+      <MemberSignature Language="C#" Value="public override long GetBytes (int i, long fieldOffset, byte[] buffer, int bufferOffset, int length);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
@@ -140,9 +142,12 @@
         <returns>The number of bytes copied into the buffer.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetChar">
-      <MemberSignature Language="C#" Value="public char GetChar (int i);" />
+      <MemberSignature Language="C#" Value="public override char GetChar (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
@@ -156,9 +161,12 @@
         <returns>The char value in the <paramref name="i" />th column.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetChars">
-      <MemberSignature Language="C#" Value="public long GetChars (int i, long fieldOffset, char[] buffer, int bufferOffset, int length);" />
+      <MemberSignature Language="C#" Value="public override long GetChars (int i, long fieldOffset, char[] buffer, int bufferOffset, int length);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
@@ -180,25 +188,12 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-    </Member>
-    <Member MemberName="GetData">
-      <MemberSignature Language="C#" Value="public System.Data.IDataReader GetData (int i);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Data.IDataReader</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="i" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="i">The column index (zero-based).</param>
-        <summary>This method is not implemented.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDataTypeName">
-      <MemberSignature Language="C#" Value="public string GetDataTypeName (int i);" />
+      <MemberSignature Language="C#" Value="public override string GetDataTypeName (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -212,9 +207,12 @@
         <returns>The name of a SQL data type, such as "text."</returns>
         <remarks>For Sqlite2 databases, "text" is always the return value.  For Sqlite3, the return value may be the data type used to create the column.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDateTime">
-      <MemberSignature Language="C#" Value="public DateTime GetDateTime (int i);" />
+      <MemberSignature Language="C#" Value="public override DateTime GetDateTime (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
@@ -228,9 +226,12 @@
         <returns>The DateTime value in the <paramref name="i" />th column.</returns>
         <remarks>In Sqlite 3 databases, if the column is typed as DATE or DATETIME and an integer value was put into the field, then SqliteClient will convert the integer value to a DateTime struct using <see cref="M:System.DateTime.FromFileTime(int)" />.  For Sqlite 2 and 3, if a string value was put into the field, then the string will be converted to a DateTime using <see cref="M:System.DateTime.Parse(string)" />.  Any other data type in the column may throw an exception.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDecimal">
-      <MemberSignature Language="C#" Value="public decimal GetDecimal (int i);" />
+      <MemberSignature Language="C#" Value="public override decimal GetDecimal (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
@@ -244,9 +245,12 @@
         <returns>The decimal value in the <paramref name="i" />th column.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDouble">
-      <MemberSignature Language="C#" Value="public double GetDouble (int i);" />
+      <MemberSignature Language="C#" Value="public override double GetDouble (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
@@ -260,9 +264,28 @@
         <returns>The double value in the <paramref name="i" />th column.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public override System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="GetFieldType">
-      <MemberSignature Language="C#" Value="public Type GetFieldType (int i);" />
+      <MemberSignature Language="C#" Value="public override Type GetFieldType (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
@@ -279,9 +302,12 @@
           <para>If the <paramref name="i" />th column contains NULL, then GetFieldType returns <see cref="T:System.String" />.</para>
         </remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFloat">
-      <MemberSignature Language="C#" Value="public float GetFloat (int i);" />
+      <MemberSignature Language="C#" Value="public override float GetFloat (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
@@ -295,9 +321,12 @@
         <returns>The float value in the <paramref name="i" />th column.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetGuid">
-      <MemberSignature Language="C#" Value="public Guid GetGuid (int i);" />
+      <MemberSignature Language="C#" Value="public override Guid GetGuid (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -311,9 +340,12 @@
         <returns>The GUID value in the <paramref name="i" />th column.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetInt16">
-      <MemberSignature Language="C#" Value="public short GetInt16 (int i);" />
+      <MemberSignature Language="C#" Value="public override short GetInt16 (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
@@ -327,9 +359,12 @@
         <returns>The short value in the <paramref name="i" />th column.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetInt32">
-      <MemberSignature Language="C#" Value="public int GetInt32 (int i);" />
+      <MemberSignature Language="C#" Value="public override int GetInt32 (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -343,9 +378,12 @@
         <returns>The int value in the <paramref name="i" />th column.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetInt64">
-      <MemberSignature Language="C#" Value="public long GetInt64 (int i);" />
+      <MemberSignature Language="C#" Value="public override long GetInt64 (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
@@ -359,9 +397,12 @@
         <returns>The long value in the <paramref name="i" />th column.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetName">
-      <MemberSignature Language="C#" Value="public string GetName (int i);" />
+      <MemberSignature Language="C#" Value="public override string GetName (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -375,9 +416,12 @@
         <returns>The name of the column, as given in the SQL query or the source table.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetOrdinal">
-      <MemberSignature Language="C#" Value="public int GetOrdinal (string name);" />
+      <MemberSignature Language="C#" Value="public override int GetOrdinal (string name);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -391,9 +435,28 @@
         <returns>The index of the column.</returns>
         <remarks>This method throws an ArgumentException if the name is not the name of a column.  The name is treated case-insensitively.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSchemaTable">
+      <MemberSignature Language="C#" Value="public override System.Data.DataTable GetSchemaTable ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Data.DataTable</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetString">
-      <MemberSignature Language="C#" Value="public string GetString (int i);" />
+      <MemberSignature Language="C#" Value="public override string GetString (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -407,9 +470,12 @@
         <returns>The value in the <paramref name="i" />th column converted to a string.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public object GetValue (int i);" />
+      <MemberSignature Language="C#" Value="public override object GetValue (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -423,9 +489,12 @@
         <returns>The value in the table at the given column and in the row the DataReader is currently positioned on.</returns>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetValues">
-      <MemberSignature Language="C#" Value="public int GetValues (object[] values);" />
+      <MemberSignature Language="C#" Value="public override int GetValues (object[] values);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -443,9 +512,43 @@
           <para>Unusually, null values in the database are put into <paramref name="values" /> as <see cref="P:System.DBNull.Value" />.</para>
         </remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="HasRows">
+      <MemberSignature Language="C#" Value="public override bool HasRows { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsClosed">
+      <MemberSignature Language="C#" Value="public override bool IsClosed { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets whether the DataReader has been closed.</summary>
+        <value>
+          <see langword="true" /> if Close or Dispose has been called on the DataReader.</value>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="IsDBNull">
-      <MemberSignature Language="C#" Value="public bool IsDBNull (int i);" />
+      <MemberSignature Language="C#" Value="public override bool IsDBNull (int i);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -459,74 +562,12 @@
         <returns>Whether the value of the field in the database was null.</returns>
         <remarks>None.</remarks>
       </Docs>
-    </Member>
-    <Member MemberName="Depth">
-      <MemberSignature Language="C#" Value="public int Depth { get; };" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Returns zero.</summary>
-        <value>Zero.</value>
-        <remarks>This method is not currently used.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="FieldCount">
-      <MemberSignature Language="C#" Value="public int FieldCount { get; };" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Gets the number of columns in the table.</summary>
-        <value>The number of columns in the table.</value>
-        <remarks>None.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="IsClosed">
-      <MemberSignature Language="C#" Value="public bool IsClosed { get; };" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Gets whether the DataReader has been closed.</summary>
-        <value>
-          <see langword="true" /> if Close or Dispose has been called on the DataReader.</value>
-        <remarks>None.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="RecordsAffected">
-      <MemberSignature Language="C#" Value="public int RecordsAffected { get; };" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Gets the number of rows in the source table modified by the query.</summary>
-        <value>The number of rows in the source table modified by the query.</value>
-        <remarks>None.</remarks>
-      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public object this[string name] { get; };" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="name">The name of the column, as given in the SQL query.</param>
-        <summary>Gets the value in the table by column name.</summary>
-        <value>The value in the table at the given column and in the row the DataReader is currently positioned on.</value>
-        <remarks>None.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public object this[int i] { get; };" />
+      <MemberSignature Language="C#" Value="public override object this[int i] { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -540,13 +581,91 @@
         <value>The value in the table at the given column and in the row the DataReader is currently positioned on.</value>
         <remarks>None.</remarks>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public override object this[string name] { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">The name of the column, as given in the SQL query.</param>
+        <summary>Gets the value in the table by column name.</summary>
+        <value>The value in the table at the given column and in the row the DataReader is currently positioned on.</value>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="NextResult">
+      <MemberSignature Language="C#" Value="public override bool NextResult ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This method should not currently be used.</summary>
+        <returns>N/A.</returns>
+        <remarks>This method currently has the same behavior of Read(), but its behavior will be changed in a future release to match the behavior of other data adapters.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public override bool Read ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Positions the reader on the next row in the table.</summary>
+        <returns>
+          <see langword="true" /> if the move to the next row was successful, i.e. if another row existed in the table; <see langword="false" /> otherwise.</returns>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RecordsAffected">
+      <MemberSignature Language="C#" Value="public override int RecordsAffected { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Gets the number of rows in the source table modified by the query.</summary>
+        <value>The number of rows in the source table modified by the query.</value>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="VisibleFieldCount">
+      <MemberSignature Language="C#" Value="public override int VisibleFieldCount { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
   </Members>
-  <Docs>
-    <summary>The DataReader represents a table of results returned from a query.</summary>
-    <remarks>
-      <para>A DataReader is returned from <see cref="M:Mono.Data.SqliteClient.SqliteCommand.ExecuteReader()" />.  The DataReader currently implemented preloads the entire into memory.</para>
-      <para>The DataReader is initially positioned before the first row of data.  <see cref="M:Mono.Data.SqliteClient.SqliteDataReader.Read()" /> must be called before accessing the data in the first row.</para>
-    </remarks>
-  </Docs>
 </Type>
