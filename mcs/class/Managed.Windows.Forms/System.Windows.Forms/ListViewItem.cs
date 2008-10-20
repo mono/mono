@@ -773,41 +773,36 @@ namespace System.Windows.Forms
 		protected virtual void Deserialize (SerializationInfo info, StreamingContext context)
 		{
 			sub_items = new ListViewSubItemCollection (this, null);
-			Type lvsubitem_type = typeof (ListViewSubItem);
+			int sub_items_count = 0;
 
 			foreach (SerializationEntry entry in info) {
 				switch (entry.Name) {
-					case "subitems_count":
-						int count = (int)entry.Value;
-						if (count > 0) {
-							sub_items.Clear ();
-							ListViewSubItem [] si = new ListViewSubItem [count];
-							for (int i = 0; i < count; i++)
-								si [i] = (ListViewSubItem) info.GetValue ("subitem" + i, lvsubitem_type);
-
-							sub_items.AddRange (si);
-						}
+					case "Text":
+						sub_items.Add ((string)entry.Value);
 						break;
-					case "font":
+					case "Font":
 						font = (Font)entry.Value;
 						break;
-					case "is_checked":
+					case "Checked":
 						is_checked = (bool)entry.Value;
 						break;
-					case "image_index":
+					case "ImageIndex":
 						image_index = (int)entry.Value;
 						break;
-					case "state_image_index":
+					case "StateImageIndex":
 						state_image_index = (int)entry.Value;
 						break;
-					case "use_item_style":
+					case "UseItemStyleForSubItems":
 						use_item_style = (bool)entry.Value;
 						break;
+					case "SubItemCount":
+						sub_items_count = (int)entry.Value;
+						break;
 #if NET_2_0
-					case "group":
+					case "Group":
 						group = (ListViewGroup)entry.Value;
 						break;
-					case "image_key":
+					case "ImageKey":
 						if (image_index == -1)
 							image_key = (string)entry.Value;
 						break;
@@ -815,24 +810,39 @@ namespace System.Windows.Forms
 				}
 			}
 
+			Type subitem_type = typeof (ListViewSubItem);
+			if (sub_items_count > 0) {
+				sub_items.Clear (); // .net fixup
+				Text = info.GetString ("Text");
+				for (int i = 0; i < sub_items_count - 1; i++)
+					sub_items.Add ((ListViewSubItem)info.GetValue ("SubItem" + (i + 1), subitem_type));
+			}
+
+			// After any sub item has been added.
+			ForeColor = (Color)info.GetValue ("ForeColor", typeof (Color));
+			BackColor = (Color)info.GetValue ("BackColor", typeof (Color));
 		}
 
 		protected virtual void Serialize (SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue ("subitems_count", sub_items.Count);
-			for (int i = 0; i < sub_items.Count; i++)
-				info.AddValue ("subitem" + i, sub_items [i]);
-
-			info.AddValue ("font", Font);
-			info.AddValue ("image_index", image_index);
-			info.AddValue ("is_checked", is_checked);
-			info.AddValue ("state_image_index", state_image_index);
-			info.AddValue ("use_item_style", use_item_style);
+			info.AddValue ("Text", Text);
+			info.AddValue ("Font", Font);
+			info.AddValue ("ImageIndex", image_index);
+			info.AddValue ("Checked", is_checked);
+			info.AddValue ("StateImageIndex", state_image_index);
+			info.AddValue ("UseItemStyleForSubItems", use_item_style);
+			info.AddValue ("BackColor", BackColor);
+			info.AddValue ("ForeColor", ForeColor);
 #if NET_2_0
-			info.AddValue ("image_key", image_key);
-			info.AddValue ("group", group);
+			info.AddValue ("ImageKey", image_key);
+			info.AddValue ("Group", group);
 #endif
-
+			if (sub_items.Count > 1) {
+				info.AddValue ("SubItemCount", sub_items.Count);
+				for (int i = 1; i < sub_items.Count; i++) {
+					info.AddValue ("SubItem" + i, sub_items [i]);
+				}
+			}
 		}
 		#endregion	// Protected Methods
 
