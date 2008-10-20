@@ -264,6 +264,18 @@ namespace Mono.Simd
 			return *p;
 		}
 
+		public static unsafe explicit operator Vector4ui(Vector8us v)
+		{
+			Vector4ui* p = (Vector4ui*)&v;
+			return *p;
+		}
+
+		public static unsafe explicit operator Vector16b(Vector8us v)
+		{
+			Vector16b* p = (Vector16b*)&v;
+			return *p;
+		}
+
 		public static Vector8us LoadAligned (ref Vector8us v)
 		{
 			return v;

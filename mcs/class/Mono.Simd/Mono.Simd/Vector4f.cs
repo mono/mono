@@ -360,6 +360,20 @@ namespace Mono.Simd
 			return *p;
 		}
 
+		[CLSCompliant(false)]
+		public static unsafe explicit operator Vector8us(Vector4f v)
+		{
+			Vector8us* p = (Vector8us*)&v;
+			return *p;
+		}
+
+		[CLSCompliant(false)]
+		public static unsafe explicit operator Vector16b(Vector4f v)
+		{
+			Vector16b* p = (Vector16b*)&v;
+			return *p;
+		}
+
 		public static Vector4f LoadAligned (ref Vector4f v)
 		{
 			return v;

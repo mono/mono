@@ -1,5 +1,15 @@
 2008-10-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector16b.cs: Added casts to Vector4ui and Vector8us
+
+	* Vector4f.cs: Added casts to Vector8us and Vector16b
+
+	* Vector4ui.cs: Added casts to Vector8us and Vector16b
+
+	* Vector8us.cs: Added casts to Vector4ui and Vector16b
+
+2008-10-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector8us.cs: Added CompareEqual and MultiplyStoreHigh.
 
 2008-10-17  Rodrigo Kumpera  <rkumpera@novell.com>
