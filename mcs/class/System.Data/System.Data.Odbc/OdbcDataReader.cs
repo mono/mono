@@ -325,7 +325,7 @@ namespace System.Data.Odbc
 			if (copyBuffer) {
 				int j = 0;
 				while (tbuff [j] != libodbc.C_NULL) {
-					buffer [bufferIndex + i] = tbuff [j];
+					buffer [bufferIndex + j] = tbuff [j];
 					j++;
 				}
 				returnVal = j;
