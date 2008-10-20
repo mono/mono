@@ -1425,6 +1425,8 @@ namespace System.Web {
 				context = HttpContext.Current;
 			context.StopTimeoutTimer ();
 #endif
+			context.Request.ReleaseResources ();
+			context.Response.ReleaseResources ();
 			context = null;
 			session = null;
 			HttpContext.Current = null;

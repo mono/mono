@@ -15,6 +15,12 @@
 	removed all the traces of it. SetCacheability should not switch
 	output caching on.
 
+2008-10-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpApplication.cs: make sure we release the resources used by the
+	request and/or the response at the end of the request.
+	Fixes bug #430040.
+
 2008-08-29  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: do not cache handlers which aren't
