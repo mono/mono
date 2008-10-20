@@ -42,17 +42,15 @@ namespace System.Web.UI.WebControls {
 #else
 	public class DataListItem : WebControl, INamingContainer {
 #endif
-		private int index;
-		private ListItemType type;
-		private object item;
-
+		int index;
+		ListItemType type;
+		object item;
 
 		public DataListItem (int itemIndex, ListItemType itemType)
 		{
 			index = itemIndex;
 			type = itemType;
 		}
-
 
 		public virtual object DataItem {
 			get { return item; }
@@ -66,7 +64,6 @@ namespace System.Web.UI.WebControls {
 		public virtual ListItemType ItemType {
 			get { return type; }
 		}
-
 
 		protected override Style CreateControlStyle ()
 		{

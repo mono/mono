@@ -71,7 +71,7 @@ namespace System.Web.Profile
 		}
 
 		const string profileKey = "Profile.ProfileCommonType";
-		private static bool ProfileCommonTypeExists
+		static bool ProfileCommonTypeExists
 		{
 			get
 			{
@@ -84,7 +84,7 @@ namespace System.Web.Profile
 		}
 
 		const string groupKey = "Profile.ProfileGroupType";
-		private static bool ProfileGroupTypeExists
+		static bool ProfileGroupTypeExists
 		{
 			get
 			{

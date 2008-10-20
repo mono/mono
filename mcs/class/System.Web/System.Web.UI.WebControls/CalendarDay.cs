@@ -33,15 +33,15 @@ namespace System.Web.UI.WebControls {
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class CalendarDay {
-
-		private DateTime date;
-		private bool isWeekend;
-		private bool isToday;
-		private bool isSelected;
-		private bool isOtherMonth;
-		private string dayNumberText;
-		private bool isSelectable;
+	public class CalendarDay 
+	{
+		DateTime date;
+		bool isWeekend;
+		bool isToday;
+		bool isSelected;
+		bool isOtherMonth;
+		string dayNumberText;
+		bool isSelectable;
 
 		public CalendarDay (DateTime date, bool isWeekend, bool isToday, bool isSelected, bool isOtherMonth, string dayNumberText)
 		{

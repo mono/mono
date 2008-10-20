@@ -36,10 +36,10 @@ namespace System.Web {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpApplicationState : NameObjectCollectionBase 
 	{
-		private HttpStaticObjectsCollection _AppObjects;
-		private HttpStaticObjectsCollection _SessionObjects;
+		HttpStaticObjectsCollection _AppObjects;
+		HttpStaticObjectsCollection _SessionObjects;
 
-		private ReaderWriterLock _Lock; 
+		ReaderWriterLock _Lock; 
 
 		internal HttpApplicationState ()
 		{

@@ -222,7 +222,7 @@ namespace System.Web.UI.WebControls {
 
 		// LAME SPEC: the event is raised on setting only when the old value is different
 		// from the new one
-		private string providerName = "";
+		string providerName = String.Empty;
 		[DefaultValueAttribute ("")]
 		[TypeConverterAttribute ("System.Web.UI.Design.WebControls.DataProviderNameConverter, " + Consts.AssemblySystem_Design)]
 		public virtual string ProviderName {
@@ -238,7 +238,7 @@ namespace System.Web.UI.WebControls {
 
 		// LAME SPEC: the event is raised on setting only when the old value is different
 		// from the new one
-		private string connectionString = "";
+		string connectionString = String.Empty;
 		[EditorAttribute ("System.Web.UI.Design.WebControls.SqlDataSourceConnectionStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
 		public virtual string ConnectionString {
@@ -255,7 +255,7 @@ namespace System.Web.UI.WebControls {
 		// LAME SPEC: the event is raised on setting only when the old value is different
 		// from the new one
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private SqlDataSourceMode dataSourceMode = SqlDataSourceMode.DataSet;
+		SqlDataSourceMode dataSourceMode = SqlDataSourceMode.DataSet;
 		[DefaultValueAttribute (SqlDataSourceMode.DataSet)]
 		public SqlDataSourceMode DataSourceMode {
 			get { return dataSourceMode; }

@@ -45,7 +45,7 @@ namespace System.Web.Compilation
 
 	internal class AppResourcesLengthComparer<T>: IComparer<T>
 	{
-		private int CompareStrings (string a, string b)
+		int CompareStrings (string a, string b)
 		{
 			if (a == null || b == null)
 				return 0;

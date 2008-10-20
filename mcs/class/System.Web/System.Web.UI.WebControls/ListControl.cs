@@ -54,12 +54,12 @@ namespace System.Web.UI.WebControls {
 #endif
 	{
 
-		private static readonly object SelectedIndexChangedEvent = new object ();
+		static readonly object SelectedIndexChangedEvent = new object ();
 #if NET_2_0
-		private static readonly object TextChangedEvent = new object ();
+		static readonly object TextChangedEvent = new object ();
 #endif
 
-		private ListItemCollection items;
+		ListItemCollection items;
 #if NET_2_0
 		int _selectedIndex = -2;
 		string _selectedValue;
@@ -110,7 +110,7 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["DataMember"] = value; }
 		}
 
-		private object data_source;
+		object data_source;
 
 		[Bindable(true)]
 		[DefaultValue(null)]

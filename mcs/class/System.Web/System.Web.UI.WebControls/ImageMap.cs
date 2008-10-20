@@ -45,7 +45,7 @@ namespace System.Web.UI.WebControls
 	{
 		HotSpotCollection spots;
 		
-		private static readonly object ClickEvent = new object();
+		static readonly object ClickEvent = new object();
 		
 		[Category ("Action")]
 		public event ImageMapEventHandler Click
@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-	    [DefaultValueAttribute (HotSpotMode.NotSet)]
+		[DefaultValueAttribute (HotSpotMode.NotSet)]
 		public virtual HotSpotMode HotSpotMode {
 			get {
 				object o = ViewState ["HotSpotMode"];
@@ -73,7 +73,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute ("")]
+		[DefaultValueAttribute ("")]
 		public virtual string Target {
 			get {
 				object o = ViewState ["Target"];
@@ -84,9 +84,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-	    [NotifyParentPropertyAttribute (true)]
-	    [PersistenceModeAttribute (PersistenceMode.InnerDefaultProperty)]
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
+		[NotifyParentPropertyAttribute (true)]
+		[PersistenceModeAttribute (PersistenceMode.InnerDefaultProperty)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public HotSpotCollection HotSpots {
 			get {
 				if (spots == null) {

@@ -40,10 +40,10 @@ namespace System.Web.SessionState {
 
 	internal class SessionSQLServerHandler : ISessionHandler
 	{
-		private static Type cncType = null;
-		private IDbConnection cnc = null;
-		private SessionConfig config;
-		private string AppPath = String.Empty;
+		static Type cncType = null;
+		IDbConnection cnc = null;
+		SessionConfig config;
+		string AppPath = String.Empty;
                 
 		const string defaultParamPrefix = ":";
 		string paramPrefix;
@@ -160,7 +160,7 @@ namespace System.Web.SessionState {
 			UpdateSession (sessionId, timeout, session.SessionDictionary);
 		}
 		
-		private void GetConnectionData (out string providerAssembly,
+		void GetConnectionData (out string providerAssembly,
 				out string cncTypeName, out string cncString)
 		{
 			providerAssembly = null;
@@ -213,7 +213,7 @@ namespace System.Web.SessionState {
 			return GetReader (id);
 		}
 
-		private HttpSessionState SelectSession (string id, bool read_only)
+		HttpSessionState SelectSession (string id, bool read_only)
 		{
 			HttpSessionState session = null;
 			using (IDataReader reader = GetReaderWithRetry (id)) {
@@ -361,7 +361,7 @@ namespace System.Web.SessionState {
 			cnc.Close();
 		}
 		
-		private IDataParameter CreateParam (IDbCommand command, DbType type,
+		IDataParameter CreateParam (IDbCommand command, DbType type,
 				string name, object value)
 		{
 			IDataParameter result = command.CreateParameter ();
@@ -371,7 +371,7 @@ namespace System.Web.SessionState {
 			return result;
 		}
 
-		private byte [] ReadBytes (IDataReader reader, int index)
+		byte [] ReadBytes (IDataReader reader, int index)
 		{
 			int len = (int) reader.GetBytes (index, 0, null, 0, 0);
 			byte [] data = new byte [len];

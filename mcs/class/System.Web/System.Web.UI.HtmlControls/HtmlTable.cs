@@ -39,14 +39,12 @@ namespace System.Web.UI.HtmlControls {
 	[ParseChildren (true, "Rows")]	
 	public class HtmlTable : HtmlContainerControl {
 
-		private HtmlTableRowCollection _rows;
-
+		HtmlTableRowCollection _rows;
 
 		public HtmlTable ()
 			: base ("table")
 		{
 		}
-
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

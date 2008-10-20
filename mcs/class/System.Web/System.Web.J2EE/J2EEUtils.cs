@@ -244,7 +244,7 @@ namespace System.IO
 			RenameEvent
 		}
 
-		private void RaiseEvent (Delegate ev, EventArgs arg, EventType evtype) {
+		void RaiseEvent (Delegate ev, EventArgs arg, EventType evtype) {
 			if (ev == null)
 				return;
 

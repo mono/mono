@@ -43,7 +43,7 @@ namespace System.Web.Compilation
 {
 	internal class AspComponentFoundry
 	{
-		private Hashtable foundries;
+		Hashtable foundries;
 
 		public AspComponentFoundry ()
 		{

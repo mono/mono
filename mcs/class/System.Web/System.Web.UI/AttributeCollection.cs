@@ -38,8 +38,8 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class AttributeCollection
 	{
-		private StateBag bag;
-		private CssStyleCollection styleCollection;
+		StateBag bag;
+		CssStyleCollection styleCollection;
 		internal const string StyleAttribute = "style";
 		
 		public AttributeCollection (StateBag bag)

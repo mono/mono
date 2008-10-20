@@ -204,7 +204,7 @@ namespace System.Web.UI.WebControls {
 		}
 #endif		
 
-		private static readonly object EventCheckedChanged = new object ();
+		static readonly object EventCheckedChanged = new object ();
 		[WebSysDescription ("")]
 		[WebCategory ("Action")]
 		public event EventHandler CheckedChanged 
@@ -415,7 +415,7 @@ namespace System.Web.UI.WebControls {
 				w.RenderEndTag ();
 		}
 
-		private void RenderInput (HtmlTextWriter w) {
+		void RenderInput (HtmlTextWriter w) {
 
 			if (ClientID != null && ClientID.Length > 0)
 				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
@@ -457,7 +457,7 @@ namespace System.Web.UI.WebControls {
 			w.RenderEndTag ();
 		}
 
-		private void RenderLabel (HtmlTextWriter w) {
+		void RenderLabel (HtmlTextWriter w) {
 			string text = Text;
 			if (text.Length > 0) {
 #if NET_2_0

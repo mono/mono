@@ -36,8 +36,8 @@ namespace System.Web.UI.WebControls {
 	public sealed class FontInfo 
 	{
 		#region Fields
-		private static string[]	empty_names = new string[0];
-		private StateBag	bag;
+		static string[]	empty_names = new string[0];
+		StateBag bag;
 		Style _owner;
 		#endregion	// Fields
 

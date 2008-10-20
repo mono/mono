@@ -42,7 +42,7 @@ namespace System.Web.UI.HtmlControls {
 #endif
 	public class HtmlInputHidden : HtmlInputControl, IPostBackDataHandler {
 
-		private static readonly object ServerChangeEvent = new object ();
+		static readonly object ServerChangeEvent = new object ();
 
 		public HtmlInputHidden () : base ("hidden")
 		{

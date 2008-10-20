@@ -37,7 +37,7 @@ using System.Xml;
 
 namespace System.Web.UI {
 	public sealed class XPathBinder {
-		private XPathBinder ()
+		XPathBinder ()
 		{
 		}
 

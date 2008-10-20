@@ -366,7 +366,7 @@ namespace System.Web.Compilation
 #endif
 		}
 
-		private CodeExpression[] OutputCacheParams ()
+		CodeExpression[] OutputCacheParams ()
 		{
 			return new CodeExpression [] {
 				new CodePrimitiveExpression (pageParser.OutputCacheDuration),

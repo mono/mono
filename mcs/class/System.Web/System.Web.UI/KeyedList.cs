@@ -37,8 +37,8 @@ namespace System.Web.UI
 	internal class KeyedList : IOrderedDictionary, IStateManager
 	{
 
-		private Hashtable objectTable = new Hashtable ();
-		private ArrayList objectList = new ArrayList ();
+		Hashtable objectTable = new Hashtable ();
+		ArrayList objectList = new ArrayList ();
 
 		public void Add (object key, object value)
 		{
@@ -200,13 +200,13 @@ namespace System.Web.UI
 			get { return this; }
 		}
 
-		private bool trackViewState;
+		bool trackViewState;
 
 		bool IStateManager.IsTrackingViewState {
 			get { return trackViewState; }
 		}
 
-		private int IndexOf (object key)
+		int IndexOf (object key)
 		{
 			for (int i = 0; i < objectList.Count; i++)
 			{

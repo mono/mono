@@ -39,7 +39,7 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class RootBuilder : TemplateBuilder {
 
-		private Hashtable built_objects;
+		Hashtable built_objects;
 
 		public RootBuilder ()
 		{

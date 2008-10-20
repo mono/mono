@@ -38,11 +38,11 @@ namespace System.Web.UI.WebControls
 {
 	public sealed class TreeNodeStyle: Style
 	{
-		private const string CHILD_PADD = "ChildNodesPadding";
-		private const string HORZ_PADD = "HorizontalPadding";
-		private const string IMG_URL = "ImageUrl";
-		private const string SPACING = "NodeSpacing";
-		private const string VERT_PADD = "VerticalPadding";
+		const string CHILD_PADD = "ChildNodesPadding";
+		const string HORZ_PADD = "HorizontalPadding";
+		const string IMG_URL = "ImageUrl";
+		const string SPACING = "NodeSpacing";
+		const string VERT_PADD = "VerticalPadding";
 
 		[Flags]
 		enum TreeNodeStyles

@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls.WebParts
 {
 	public class WebPartDisplayModeEventArgs : EventArgs
 	{
-		private WebPartDisplayMode displayMode;
+		WebPartDisplayMode displayMode;
 		
 		public WebPartDisplayModeEventArgs (WebPartDisplayMode displayMode)
 		{

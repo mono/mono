@@ -37,7 +37,7 @@ namespace System.Web {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class TraceContextEventArgs : EventArgs {
 
-		private ICollection trace_records;
+		ICollection trace_records;
 
 		public TraceContextEventArgs (ICollection records)
 		{

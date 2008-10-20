@@ -40,7 +40,7 @@ namespace System.Web.Security {
 	public static class Roles {
 #if TARGET_J2EE
 		const string Roles_cookie_protection = "Roles.cookie_protection";
-		private static RoleManagerSection config {
+		static RoleManagerSection config {
 			get {
 				return (RoleManagerSection) WebConfigurationManager.GetSection ("system.web/roleManager");
 			}
@@ -57,7 +57,7 @@ namespace System.Web.Security {
 			}
 		}
 #else
-		private static RoleManagerSection config;
+		static RoleManagerSection config;
 		static RoleProviderCollection providersCollection;
 
 		static Roles ()
@@ -262,7 +262,7 @@ namespace System.Web.Security {
 		}
 
 		// private stuff
-		private static void CheckEnabled ()
+		static void CheckEnabled ()
 		{
 			if (!Enabled)
 				throw new ProviderException ("This feature is not enabled.  To enable it, add <roleManager enabled=\"true\"> to your configuration file.");

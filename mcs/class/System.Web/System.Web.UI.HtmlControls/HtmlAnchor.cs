@@ -39,9 +39,9 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 	[SupportsEventValidation]
 #endif
-	public class HtmlAnchor : HtmlContainerControl, IPostBackEventHandler {
-
-		private static readonly object serverClickEvent = new object ();
+	public class HtmlAnchor : HtmlContainerControl, IPostBackEventHandler 
+	{
+		static readonly object serverClickEvent = new object ();
 
 		public HtmlAnchor ()
 			: base ("a")

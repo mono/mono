@@ -113,7 +113,7 @@ namespace System.Web.Compilation
 			}
 		}
 
-		private CodeExpression CreateLinkedStyleSheets ()
+		CodeExpression CreateLinkedStyleSheets ()
 		{
 			string [] lss = parser.LinkedStyleSheets;
 			if (lss == null)

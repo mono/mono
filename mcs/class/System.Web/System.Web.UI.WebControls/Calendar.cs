@@ -52,24 +52,24 @@ namespace System.Web.UI.WebControls {
 #endif		
 	public class Calendar : WebControl, IPostBackEventHandler
 	{
-		private TableItemStyle dayHeaderStyle;
-		private TableItemStyle dayStyle;
-		private TableItemStyle nextPrevStyle;
-		private TableItemStyle otherMonthDayStyle;
-		private TableItemStyle selectedDayStyle;
-		private TableItemStyle titleStyle;
-		private TableItemStyle todayDayStyle;
-		private TableItemStyle selectorStyle;
-		private TableItemStyle weekendDayStyle;
-		private DateTimeFormatInfo dateInfo;
-		private SelectedDatesCollection selectedDatesCollection;
-		private ArrayList dateList;
-		private DateTime today = DateTime.Today;
-		private static DateTime dateZenith  = new DateTime (2000, 1,1);
-		private const int daysInAWeek = 7;
-		private static readonly object DayRenderEvent = new object ();
-		private static readonly object SelectionChangedEvent = new object ();
-		private static readonly object VisibleMonthChangedEvent = new object ();
+		TableItemStyle dayHeaderStyle;
+		TableItemStyle dayStyle;
+		TableItemStyle nextPrevStyle;
+		TableItemStyle otherMonthDayStyle;
+		TableItemStyle selectedDayStyle;
+		TableItemStyle titleStyle;
+		TableItemStyle todayDayStyle;
+		TableItemStyle selectorStyle;
+		TableItemStyle weekendDayStyle;
+		DateTimeFormatInfo dateInfo;
+		SelectedDatesCollection selectedDatesCollection;
+		ArrayList dateList;
+		DateTime today = DateTime.Today;
+		static DateTime dateZenith  = new DateTime (2000, 1,1);
+		const int daysInAWeek = 7;
+		static readonly object DayRenderEvent = new object ();
+		static readonly object SelectionChangedEvent = new object ();
+		static readonly object VisibleMonthChangedEvent = new object ();
 
 		public Calendar ()
 		{
@@ -644,7 +644,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		private DateTime DisplayDate {
+		DateTime DisplayDate {
 			get {
 				DateTime dateTime = VisibleDate;
 				if (dateTime == DateTime.MinValue) // If visibledate is still the default value
@@ -654,7 +654,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private DayOfWeek DisplayFirstDayOfWeek {
+		DayOfWeek DisplayFirstDayOfWeek {
 			get {
 				if (FirstDayOfWeek != FirstDayOfWeek.Default)
 					return (DayOfWeek)  FirstDayOfWeek;
@@ -913,7 +913,7 @@ namespace System.Web.UI.WebControls {
 		//
 		// Private methods
 		//
-		private void WriteDayHeader (HtmlTextWriter writer)
+		void WriteDayHeader (HtmlTextWriter writer)
 		{
 			int i, first;
 			string dayName;
@@ -1002,7 +1002,7 @@ namespace System.Web.UI.WebControls {
 			writer.RenderEndTag ();
 		}
 
-		private void WriteDay (DateTime date, HtmlTextWriter writer)
+		void WriteDay (DateTime date, HtmlTextWriter writer)
 		{			
 			TableItemStyle style = new TableItemStyle ();
 			TableCell cell = new TableCell ();
@@ -1054,7 +1054,7 @@ namespace System.Web.UI.WebControls {
 			cell.RenderControl (writer);
 		}
 
-		private void WriteDays (HtmlTextWriter writer)
+		void WriteDays (HtmlTextWriter writer)
 		{
 			DateTime date = new DateTime (DisplayDate.Year, DisplayDate.Month, 1); // first date
 			DateTime lastDate;
@@ -1101,7 +1101,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private string BuildLink (string arg, string text, Color foreColor, bool hasLink)
+		string BuildLink (string arg, string text, Color foreColor, bool hasLink)
 		{
 			StringBuilder str = new StringBuilder ();
 			Color clr;
@@ -1137,7 +1137,7 @@ namespace System.Web.UI.WebControls {
 			return str.ToString ();
 		}
 
-		private int GetDaysFromZenith (DateTime date)
+		int GetDaysFromZenith (DateTime date)
 		{
 			TimeSpan span =  date.Subtract (dateZenith);
 			return span.Days;
@@ -1155,7 +1155,7 @@ namespace System.Web.UI.WebControls {
 		}
 #endif
 
-		private void WriteTitle (HtmlTextWriter writer)
+		void WriteTitle (HtmlTextWriter writer)
 		{
 			TableCell cellNextPrev = null;
 			TableCell titleCell = new TableCell ();
@@ -1231,7 +1231,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 
-		private string GetNextPrevFormatText (DateTime date, bool next)
+		string GetNextPrevFormatText (DateTime date, bool next)
 		{
 			string text;
 			DateTimeFormatInfo dti = DateInfo;
@@ -1251,17 +1251,17 @@ namespace System.Web.UI.WebControls {
 			return text;
 		}
 
-		private bool IsWeekEnd (DayOfWeek day)
+		bool IsWeekEnd (DayOfWeek day)
 		{
 			return (day == DayOfWeek.Saturday || day == DayOfWeek.Sunday);
 		}
 
-		private double GetCellWidth ()
+		double GetCellWidth ()
 		{
 			return HasWeekSelectors (SelectionMode) ? 100/8 : 100/7;
 		}
 
-		private System.Globalization.Calendar GetGlobalCalendar ()
+		System.Globalization.Calendar GetGlobalCalendar ()
 		{
 			return DateTimeFormatInfo.CurrentInfo.Calendar;
 		}

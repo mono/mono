@@ -48,7 +48,7 @@ namespace System.Web.UI.HtmlControls
 	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler, IParserAccessor {
 
 		DataSourceView _boundDataSourceView;
-		private bool requiresDataBinding;
+		bool requiresDataBinding;
 		bool _initialized;
 #else
 	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler {
@@ -373,7 +373,7 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-		private static readonly object EventServerChange = new object ();
+		static readonly object EventServerChange = new object ();
 		
 		[WebSysDescription("")]
 		[WebCategory("Action")]

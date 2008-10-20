@@ -36,16 +36,14 @@ namespace System.Web.UI.WebControls {
 
 	// CAS (no InheritanceDemand for sealed class)
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class RoleGroup {
-
-		private ITemplate contentTemplate;
-		private string[] roles;
-
+	public sealed class RoleGroup 
+	{
+		ITemplate contentTemplate;
+		string[] roles;
 
 		public RoleGroup ()
 		{
 		}
-
 
 		[Browsable (false)]
 		[DefaultValue (null)]

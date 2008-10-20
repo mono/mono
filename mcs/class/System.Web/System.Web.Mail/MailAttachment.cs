@@ -42,8 +42,8 @@ namespace System.Web.Mail
 #endif
 	public class MailAttachment
 	{
-		private string filename;
-		private MailEncoding encoding;
+		string filename;
+		MailEncoding encoding;
 		
 		public MailAttachment (string filename) : 
 			this (filename, MailEncoding.Base64) 

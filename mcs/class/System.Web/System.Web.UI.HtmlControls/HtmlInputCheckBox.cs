@@ -73,7 +73,7 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 		
-		private static readonly object EventServerChange = new object ();
+		static readonly object EventServerChange = new object ();
 
 		[WebSysDescription("")]
 		[WebCategory("Action")]

@@ -112,7 +112,7 @@ namespace System.Web.Configuration
 
 	internal class HandlersUtil
 	{
-		private HandlersUtil ()
+		HandlersUtil ()
 		{
 		}
 

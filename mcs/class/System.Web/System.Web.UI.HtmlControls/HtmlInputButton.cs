@@ -41,9 +41,9 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 	[SupportsEventValidation]
 #endif
-	public class HtmlInputButton : HtmlInputControl, IPostBackEventHandler {
-
-		private static readonly object ServerClickEvent = new object();
+	public class HtmlInputButton : HtmlInputControl, IPostBackEventHandler 
+	{
+		static readonly object ServerClickEvent = new object();
 
 		public HtmlInputButton () : this ("button")
 		{

@@ -40,10 +40,10 @@ namespace System.Web
 {
 	public sealed partial class HttpRequest
 	{
-		private const string SessionLock = "vmw.session.lock";
-		private const string SessionCookies = "vmw.session.cookies";
+		const string SessionLock = "vmw.session.lock";
+		const string SessionCookies = "vmw.session.cookies";
 
-		private static object GetJavaSessionLock (HttpSession javaSession)
+		static object GetJavaSessionLock (HttpSession javaSession)
 		{
 			lock (SessionLock) {
 				object sessionLock = javaSession.getAttribute (SessionLock);

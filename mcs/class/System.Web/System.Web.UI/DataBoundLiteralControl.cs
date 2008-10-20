@@ -43,9 +43,9 @@ namespace System.Web.UI {
 	, ITextControl
 #endif
 	{
-		private int staticLiteralsCount;
-		private string [] staticLiterals;
-		private string [] dataBoundLiterals;
+		int staticLiteralsCount;
+		string [] staticLiterals;
+		string [] dataBoundLiterals;
 		
 		public DataBoundLiteralControl (int staticLiteralsCount,
 						int dataBoundLiteralCount)

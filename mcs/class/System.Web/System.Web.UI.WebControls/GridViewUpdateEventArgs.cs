@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls
 {
 	public class GridViewUpdateEventArgs : CancelEventArgs
 	{
-		private int rowIndex;
+		int rowIndex;
 		IOrderedDictionary keys;
 		IOrderedDictionary newValues;
 		IOrderedDictionary oldValues;

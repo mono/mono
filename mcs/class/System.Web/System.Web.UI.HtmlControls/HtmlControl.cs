@@ -45,7 +45,7 @@ namespace System.Web.UI.HtmlControls{
 	public abstract class HtmlControl : Control, IAttributeAccessor
 	{
 		internal string _tagName;
-		private AttributeCollection _attributes;
+		AttributeCollection _attributes;
 
 		
 #if NET_2_0

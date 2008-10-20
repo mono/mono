@@ -30,10 +30,9 @@
 
 namespace System.Web.UI.WebControls {
 
-	public class LoginCancelEventArgs : EventArgs {
-
-		private bool cancel;
-
+	public class LoginCancelEventArgs : EventArgs 
+	{
+		bool cancel;
 
 		public LoginCancelEventArgs ()
 		{
@@ -44,7 +43,6 @@ namespace System.Web.UI.WebControls {
 		{
 			this.cancel = cancel;
 		}
-
 
 		public bool Cancel {
 			get { return cancel; }

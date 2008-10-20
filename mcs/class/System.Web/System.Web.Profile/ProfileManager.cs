@@ -40,7 +40,7 @@ namespace System.Web.Profile
 #if TARGET_J2EE
 		const string Profiles_config = "Profiles.config";
 		const string Profiles_ProfileProviderCollection = "Profiles.ProfileProviderCollection";
-		private static ProfileSection config
+		static ProfileSection config
 		{
 			get
 			{
@@ -57,7 +57,7 @@ namespace System.Web.Profile
 				AppDomain.CurrentDomain.SetData (Profiles_config, value);
 			}
 		}
-		private static ProfileProviderCollection providersCollection
+		static ProfileProviderCollection providersCollection
 		{
 			get
 			{
@@ -70,8 +70,8 @@ namespace System.Web.Profile
 			}
 		}
 #else
-		private static ProfileSection config;
-		private static ProfileProviderCollection providersCollection;
+		static ProfileSection config;
+		static ProfileProviderCollection providersCollection;
 
 		static ProfileManager ()
 		{
@@ -203,7 +203,7 @@ namespace System.Web.Profile
 			}
 		}
 
-		private static void CheckEnabled ()
+		static void CheckEnabled ()
 		{
 			if (!Enabled)
 				throw new Exception ("This feature is not enabled.  To enable it, add <profile enabled=\"true\"> to your configuration file.");

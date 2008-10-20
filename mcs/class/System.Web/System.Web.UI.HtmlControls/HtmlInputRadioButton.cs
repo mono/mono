@@ -40,16 +40,14 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 	[SupportsEventValidation]
 #endif
-	public class HtmlInputRadioButton : HtmlInputControl, IPostBackDataHandler {
-
-		private static readonly object serverChangeEvent = new object ();
-
+	public class HtmlInputRadioButton : HtmlInputControl, IPostBackDataHandler 
+	{
+		static readonly object serverChangeEvent = new object ();
 
 		public HtmlInputRadioButton ()
 			: base ("radio")
 		{
 		}
-
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

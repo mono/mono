@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls
 {
 	public class ObjectDataSourceEventArgs : EventArgs
 	{
-		private object objectInstance; 
+		object objectInstance; 
 		
 		public ObjectDataSourceEventArgs (object objectInstance)
 		{

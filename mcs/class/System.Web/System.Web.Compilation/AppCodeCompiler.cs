@@ -88,13 +88,13 @@ namespace System.Web.Compilation
 	
 	internal class AppCodeAssembly
 	{
-		private List<string> files;
-		private List<CodeCompileUnit> units;
+		List<string> files;
+		List<CodeCompileUnit> units;
 		
-		private string name;
-		private string path;
-		private bool validAssembly;
-		private string outputAssemblyName;
+		string name;
+		string path;
+		bool validAssembly;
+		string outputAssemblyName;
 
 		public string OutputAssemblyName
 		{
@@ -271,12 +271,12 @@ namespace System.Web.Compilation
 			}
 		}
 		
-		private VirtualPath PhysicalToVirtual (string file)
+		VirtualPath PhysicalToVirtual (string file)
 		{
 			return new VirtualPath (file.Replace (HttpRuntime.AppDomainAppPath, "/").Replace (Path.DirectorySeparatorChar, '/'));
 		}
 		
-		private BuildProvider GetBuildProviderFor (string file, BuildProviderCollection buildProviders)
+		BuildProvider GetBuildProviderFor (string file, BuildProviderCollection buildProviders)
 		{
 			if (file == null || file.Length == 0 || buildProviders == null || buildProviders.Count == 0)
 				return null;
@@ -290,7 +290,7 @@ namespace System.Web.Compilation
 			return null;
 		}
 
-		private bool IsCorrectBuilderType (BuildProvider bp)
+		bool IsCorrectBuilderType (BuildProvider bp)
 		{
 			if (bp == null)
 				return false;
@@ -323,7 +323,7 @@ namespace System.Web.Compilation
 	
 	internal class AppCodeCompiler
 	{
-		static private bool _alreadyCompiled;
+		static bool _alreadyCompiled;
 		internal static string DefaultAppCodeAssemblyName;
 		
 		// A dictionary that contains an entry per an assembly that will
@@ -348,7 +348,7 @@ namespace System.Web.Compilation
 		// Files for which exist BuildProviders but which have no
 		// unambiguous language assigned to them (e.g. .wsdl files), are
 		// built using the default website compiler.
-		private List<AppCodeAssembly> assemblies;
+		List<AppCodeAssembly> assemblies;
 		string providerTypeName = null;
 		
 		public AppCodeCompiler ()
@@ -710,7 +710,7 @@ namespace System.Web.Compilation
 			mi.Invoke (null, null);
 		}
 		
-		private bool CollectFiles (string dir, AppCodeAssembly aca)
+		bool CollectFiles (string dir, AppCodeAssembly aca)
 		{
 			bool haveFiles = false;
 			

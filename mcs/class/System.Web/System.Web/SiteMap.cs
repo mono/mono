@@ -39,7 +39,7 @@ using System.Web.Configuration;
 namespace System.Web {
 	public static class SiteMap {
 	
-		private static void Init ()
+		static void Init ()
 		{
 			lock (locker) {
 				if (provider == null) {

@@ -64,7 +64,7 @@ namespace System.Web.SessionState
 		}
 
 #if TARGET_J2EE		
-		static private SessionConfig config {
+		static SessionConfig config {
 			get {
 				return (SessionConfig)AppDomain.CurrentDomain.GetData("SessionStateModule.config");
 			}
@@ -72,7 +72,7 @@ namespace System.Web.SessionState
 				AppDomain.CurrentDomain.SetData("SessionStateModule.config", value);
 			}
 		}
-		static private Type handlerType {
+		static Type handlerType {
 			get {
 				return (Type)AppDomain.CurrentDomain.GetData("SessionStateModule.handlerType");
 			}

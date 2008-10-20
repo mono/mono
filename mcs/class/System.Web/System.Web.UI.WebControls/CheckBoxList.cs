@@ -36,10 +36,9 @@ namespace System.Web.UI.WebControls {
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class CheckBoxList : ListControl, IRepeatInfoUser,
-				    INamingContainer, IPostBackDataHandler {
-
-		private CheckBox check_box;
+	public class CheckBoxList : ListControl, IRepeatInfoUser, INamingContainer, IPostBackDataHandler 
+	{
+		CheckBox check_box;
 
 		public CheckBoxList ()
 		{
@@ -140,7 +139,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private TableStyle TableStyle {
+		TableStyle TableStyle {
 			get { return (TableStyle) ControlStyle; }
 		}
 

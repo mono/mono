@@ -37,8 +37,8 @@ namespace System.Web.UI.WebControls
 {
 	public class DetailsViewInsertEventArgs : CancelEventArgs
 	{
-		private object argument;
-		private IOrderedDictionary values;
+		object argument;
+		IOrderedDictionary values;
 		
 		public DetailsViewInsertEventArgs (object argument)
 		{

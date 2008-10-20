@@ -36,8 +36,9 @@ using System.Collections;
 using System.ComponentModel;
 
 namespace System.Web.Util {
-	class DataSourceResolver {
-		private DataSourceResolver () {}
+	class DataSourceResolver 
+	{
+		DataSourceResolver () {}
 
 		public static IEnumerable ResolveDataSource (object o, string data_member) 
 		{

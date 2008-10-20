@@ -720,13 +720,13 @@ namespace System.Web.Security
 			Redirect (LoginUrl + "?" + extraQueryString);
 		}
 
-		private static void Redirect (string url)
+		static void Redirect (string url)
 		{
 			HttpContext.Current.Response.Redirect (url);
 		}
 #endif
 
-		private static void Redirect (string url, bool end)
+		static void Redirect (string url, bool end)
 		{
 			HttpContext.Current.Response.Redirect (url, end);
 		}

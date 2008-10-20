@@ -34,8 +34,8 @@ namespace System.Web.Mail
 {
 	public class RelatedBodyPart
 	{
-		private string id;
-		private string fileName;
+		string id;
+		string fileName;
 		
 		public RelatedBodyPart (string id, string fileName)
 		{
@@ -56,7 +56,7 @@ namespace System.Web.Mail
 			set { fileName = value; }
 		}
 		
-		private bool FileExists (string fileName)
+		bool FileExists (string fileName)
 		{
 			//I am handling local files only . Not sure how URL's
 			//need to be handled.

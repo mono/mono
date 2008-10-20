@@ -47,17 +47,16 @@ namespace System.Web.UI.WebControls {
 	[ParseChildren (true)]
 	[PersistChildren (false)]
 	[Themeable (true)]
-	public class LoginView : Control, INamingContainer {
+	public class LoginView : Control, INamingContainer 
+	{
+		static readonly object viewChangedEvent = new object ();
+		static readonly object viewChangingEvent = new object ();
 
-		private static readonly object viewChangedEvent = new object ();
-		private static readonly object viewChangingEvent = new object ();
-
-		private ITemplate anonymousTemplate;
-		private ITemplate loggedInTemplate;
-		private bool isAuthenticated;
-		private bool theming;
-		private RoleGroupCollection coll;
-
+		ITemplate anonymousTemplate;
+		ITemplate loggedInTemplate;
+		bool isAuthenticated;
+		bool theming;
+		RoleGroupCollection coll;
 
 		public LoginView ()
 		{
@@ -130,7 +129,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private ITemplate GetTemplateFromRoleGroup (RoleGroup rg, IPrincipal user)
+		ITemplate GetTemplateFromRoleGroup (RoleGroup rg, IPrincipal user)
 		{
 			if (user == null)
 				return null;

@@ -40,7 +40,7 @@ namespace System.Web.Hosting {
 		internal static readonly string MonoHostedDataKey = ".:!MonoAspNetHostedApp!:.";
 		internal static string [] WebConfigFileNames = { "Web.config", "Web.Config", "web.config" };
 
-		private ApplicationHost ()
+		ApplicationHost ()
 		{
 		}
 

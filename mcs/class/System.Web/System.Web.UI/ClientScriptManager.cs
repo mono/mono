@@ -438,7 +438,7 @@ namespace System.Web.UI
 			list.Add (attributeName, encode ? StrUtils.EscapeQuotesAndBackslashes (attributeValue) : attributeValue);
 		}
 
-		private void EnsureEventValidationArray ()
+		void EnsureEventValidationArray ()
 		{
 			if (eventValidationValues == null || eventValidationValues.Length == 0)
 				eventValidationValues = new int [64];
@@ -459,7 +459,7 @@ namespace System.Web.UI
 		}
 
 		// Implemented following the description in http://odetocode.com/Blogs/scott/archive/2006/03/20/3145.aspx
-		private int CalculateEventHash (string uniqueId, string argument)
+		int CalculateEventHash (string uniqueId, string argument)
 		{
 			int uniqueIdHash = uniqueId.GetHashCode ();
 			int argumentHash = String.IsNullOrEmpty (argument) ? 0 : argument.GetHashCode ();

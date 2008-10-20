@@ -37,10 +37,10 @@ namespace System.Web {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HttpClientCertificate : NameValueCollection {
 
-		private HttpWorkerRequest hwr;
-		private int flags;
-		private DateTime from;
-		private DateTime until;
+		HttpWorkerRequest hwr;
+		int flags;
+		DateTime from;
+		DateTime until;
 
 
 		internal HttpClientCertificate (HttpWorkerRequest hwr)
@@ -148,8 +148,8 @@ namespace System.Web {
 			}
 		}
 
-		// private stuff
-		private int GetInt (string variable)
+		// stuff
+		int GetInt (string variable)
 		{
 			if (!IsPresent)
 				return 0;
@@ -157,7 +157,7 @@ namespace System.Web {
 			return GetIntNoPresense (variable);
 		}
 
-		private int GetIntNoPresense (string variable)
+		int GetIntNoPresense (string variable)
 		{
 			string s = hwr.GetServerVariable (variable);
 			if (s == null)
@@ -171,7 +171,7 @@ namespace System.Web {
 			}
 		}
 
-		private string GetString (string variable)
+		string GetString (string variable)
 		{
 			if (!IsPresent)
 				return String.Empty;

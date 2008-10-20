@@ -39,7 +39,7 @@ namespace System.Web.UI
 	[DataBindingHandler ("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	public sealed class DesignerDataBoundLiteralControl : Control
 	{
-		private string text = "";
+		string text = String.Empty;
 
 		public DesignerDataBoundLiteralControl ()
 		{

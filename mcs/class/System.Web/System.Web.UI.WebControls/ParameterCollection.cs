@@ -40,7 +40,7 @@ namespace System.Web.UI.WebControls
 	public class ParameterCollection : StateManagedCollection
 	{
 
-		private static Type[] _knownTypes = new Type[] {
+		static Type[] _knownTypes = new Type[] {
 		                                    typeof (ControlParameter),
 						    typeof (CookieParameter),
 						    typeof (FormParameter),
@@ -48,7 +48,7 @@ namespace System.Web.UI.WebControls
 						    typeof (QueryStringParameter),
 						    typeof (SessionParameter) };
 						    
-		private EventHandler _parametersChanged;
+		EventHandler _parametersChanged;
 
 		public int Add (Parameter param)
 		{
@@ -166,7 +166,7 @@ namespace System.Web.UI.WebControls
 			OnParametersChanged (EventArgs.Empty);
 		}
 
-		private int IndexOfString (string name)
+		int IndexOfString (string name)
 		{
 			for (int i = 0; i < Count; i++)
 			{

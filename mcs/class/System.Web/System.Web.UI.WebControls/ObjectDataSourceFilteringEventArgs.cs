@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls
 {
 	public class ObjectDataSourceFilteringEventArgs : System.ComponentModel.CancelEventArgs
 	{
-		private IOrderedDictionary parameters; 
+		IOrderedDictionary parameters; 
 		
 		public ObjectDataSourceFilteringEventArgs (IOrderedDictionary parameterValues)
 		{

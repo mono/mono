@@ -32,7 +32,7 @@ namespace System.Web.UI
 	[ControlBuilder (typeof (ObjectTagBuilder))]
 	class ObjectTag
 	{
-		private ObjectTag()
+		ObjectTag()
 		{
 		}
 	}

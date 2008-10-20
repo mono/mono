@@ -195,7 +195,7 @@ namespace System.Web {
 			return res.ToString ();
 		}
 
-		private static string ToAbsoluteInternal (string virtualPath)
+		static string ToAbsoluteInternal (string virtualPath)
 		{
 			if (IsAppRelative (virtualPath))
 				return ToAbsolute (virtualPath, HttpRuntime.AppDomainAppVirtualPath);

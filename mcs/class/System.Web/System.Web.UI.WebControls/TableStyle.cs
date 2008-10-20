@@ -245,7 +245,7 @@ namespace System.Web.UI.WebControls {
 #endif
 		}
 
-		private void Copy (string name, TableStyles s, Style source)
+		void Copy (string name, TableStyles s, Style source)
 		{
 			if (source.CheckBit ((int) s)) {
 				object o = source.ViewState [name];
@@ -269,7 +269,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private void Merge (string name, TableStyles s, Style source)
+		void Merge (string name, TableStyles s, Style source)
 		{
 			if ((!CheckBit ((int) s)) && (source.CheckBit ((int) s))) {
 				object o = source.ViewState [name];

@@ -37,10 +37,10 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class TraceContextRecord
 	{
-		private string category = null;
-		private Exception errorInfo = null;
-		private bool isWarning = false;
-		private string message = null;
+		string category = null;
+		Exception errorInfo = null;
+		bool isWarning = false;
+		string message = null;
 
 		public TraceContextRecord (string category, string msg, bool isWarning, Exception errorInfo)
 		{

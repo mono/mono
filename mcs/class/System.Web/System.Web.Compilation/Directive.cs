@@ -80,7 +80,7 @@ namespace System.Web.Compilation
 			InitHash ();
 		}
 		
-		private static void InitHash ()
+		static void InitHash ()
 		{
 #if NET_2_0
 			StringComparer comparer = StringComparer.InvariantCultureIgnoreCase;
@@ -197,7 +197,7 @@ namespace System.Web.Compilation
 #endif
 		}
 		
-		private Directive () { }
+		Directive () { }
 
 		public static bool IsDirective (string id)
 		{

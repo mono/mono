@@ -84,7 +84,7 @@ namespace System.Web {
 			_internalCache.DependencyCache = _cache;
 		}
 
-		static private HttpRuntime _runtimeInstance {
+		static HttpRuntime _runtimeInstance {
 			get {
 				HttpRuntime runtime = (HttpRuntime) AppDomain.CurrentDomain.GetData ("HttpRuntime");
 				if (runtime == null)
@@ -98,7 +98,7 @@ namespace System.Web {
 				return runtime;
 			}
 		}
-		static private HttpRuntime _runtime
+		static HttpRuntime _runtime
 		{
 			get
 			{

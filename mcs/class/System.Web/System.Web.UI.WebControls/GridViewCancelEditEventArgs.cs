@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls
 {
 	public class GridViewCancelEditEventArgs : CancelEventArgs
 	{
-		private int rowIndex;
+		int rowIndex;
 		
 		public GridViewCancelEditEventArgs (int index)
 		{

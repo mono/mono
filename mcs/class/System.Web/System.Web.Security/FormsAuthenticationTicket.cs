@@ -106,7 +106,7 @@ namespace System.Web.Security
 			return ticket;
 		}
 
-		private FormsAuthenticationTicket ()
+		FormsAuthenticationTicket ()
 		{
 		}
 

@@ -43,17 +43,17 @@ namespace System.Web.UI
 	[ToolboxItem (false)]
 	public abstract class BasePartialCachingControl : Control
 	{
-		private CacheDependency dependency;
-		private string ctrl_id;
-		private string guid;
-		private int duration;
-		private string varyby_params;
-		private string varyby_controls;
-		private string varyby_custom;
+		CacheDependency dependency;
+		string ctrl_id;
+		string guid;
+		int duration;
+		string varyby_params;
+		string varyby_controls;
+		string varyby_custom;
 		DateTime expirationTime;
 		bool slidingExpiration;
 		
-		private Control control;
+		Control control;
 #if NET_2_0
 		ControlCachePolicy cachePolicy;
 #endif
@@ -175,7 +175,7 @@ namespace System.Web.UI
 			set {dependency = value;}
 		}
 
-		private string CreateKey ()
+		string CreateKey ()
 		{
 			StringBuilder builder = new StringBuilder ();
 			HttpContext context = HttpContext.Current;

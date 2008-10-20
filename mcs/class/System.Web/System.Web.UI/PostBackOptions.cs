@@ -35,15 +35,15 @@ namespace System.Web.UI
 {
 	public sealed class PostBackOptions
 	{
-		private Control control;
-		private string argument;
-		private string actionUrl;
-		private bool autoPostBack;
-		private bool requiresJavaScriptProtocol;
-		private bool trackFocus;
-		private bool clientSubmit;
-		private bool performValidation;
-		private string validationGroup;
+		Control control;
+		string argument;
+		string actionUrl;
+		bool autoPostBack;
+		bool requiresJavaScriptProtocol;
+		bool trackFocus;
+		bool clientSubmit;
+		bool performValidation;
+		string validationGroup;
 
 		public PostBackOptions (Control targetControl)
 			: this (targetControl, null, null, false, false, false, true, false, null)

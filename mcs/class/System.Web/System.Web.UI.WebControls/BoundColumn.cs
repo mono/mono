@@ -34,9 +34,9 @@ namespace System.Web.UI.WebControls {
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class BoundColumn : DataGridColumn {
-
-		private string data_format_string;
+	public class BoundColumn : DataGridColumn 
+	{
+		string data_format_string;
 
 		public BoundColumn ()
 		{

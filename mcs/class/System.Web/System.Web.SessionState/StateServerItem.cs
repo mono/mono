@@ -35,10 +35,10 @@ namespace System.Web.SessionState {
 	[Serializable]
 	class StateServerItem {
 
-		private byte [] dict_data;
-		private byte [] sobjs_data;
-		private DateTime last_access;
-		private int timeout;
+		byte [] dict_data;
+		byte [] sobjs_data;
+		DateTime last_access;
+		int timeout;
 
 		public StateServerItem (byte [] dict_data, byte [] sobjs_data, int timeout)
 		{

@@ -38,12 +38,12 @@ namespace System.Web.Caching {
 
 	internal class CachedVaryBy {
 
-		private string[] prms;
-		private string[] headers;
-		private string custom;
-		private string key;
-		private ArrayList item_list;
-		private bool wildCardParams;
+		string[] prms;
+		string[] headers;
+		string custom;
+		string key;
+		ArrayList item_list;
+		bool wildCardParams;
 		
 		internal CachedVaryBy (HttpCachePolicy policy, string key)
 		{

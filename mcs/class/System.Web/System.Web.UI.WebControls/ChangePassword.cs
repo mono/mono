@@ -785,7 +785,7 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException ();
 		}
 
-		private void InitMemberShipProvider ()
+		void InitMemberShipProvider ()
 		{
 			string mp = MembershipProvider;
 			_provider = (mp.Length == 0) ? Membership.Provider : Membership.Providers [mp];
@@ -793,7 +793,7 @@ namespace System.Web.UI.WebControls
 				throw new HttpException (Locale.GetText ("No provider named '{0}' could be found.", mp));
 		}
 
-		private void ProcessChangePasswordEvent (CommandEventArgs args)
+		void ProcessChangePasswordEvent (CommandEventArgs args)
 		{
 			if (!Page.IsValid)
 				return;
@@ -832,7 +832,7 @@ namespace System.Web.UI.WebControls
 			return;
 		}
 		
-		private void ProcessCancelEvent (CommandEventArgs args)
+		void ProcessCancelEvent (CommandEventArgs args)
 		{
 			OnCancelButtonClick (args);
 
@@ -842,7 +842,7 @@ namespace System.Web.UI.WebControls
 			return;
 		}
 
-		private void ProcessContinueEvent (CommandEventArgs args)
+		void ProcessContinueEvent (CommandEventArgs args)
 		{
 			OnContinueButtonClick (args);
 
@@ -852,7 +852,7 @@ namespace System.Web.UI.WebControls
 			return;
 		}
 
-		private void SendMail (string username, string password)
+		void SendMail (string username, string password)
 		{
 			MembershipUser user = MembershipProviderInternal.GetUser (UserName, false);
 			if (user == null)
@@ -1126,22 +1126,22 @@ namespace System.Web.UI.WebControls
 				eh (this, e);
 		}
 
-		private void UserName_TextChanged (object sender, EventArgs e)
+		void UserName_TextChanged (object sender, EventArgs e)
 		{
 			UserName = ((ITextControl) sender).Text;
 		}
 
-		private void CurrentPassword_TextChanged (object sender, EventArgs e)
+		void CurrentPassword_TextChanged (object sender, EventArgs e)
 		{
 			_currentPassword = ((ITextControl) sender).Text;
 		}
 
-		private void NewPassword_TextChanged (object sender, EventArgs e)
+		void NewPassword_TextChanged (object sender, EventArgs e)
 		{
 			_newPassword = ((ITextControl) sender).Text;
 		}
 
-		private void NewPasswordConfirm_TextChanged (object sender, EventArgs e)
+		void NewPasswordConfirm_TextChanged (object sender, EventArgs e)
 		{
 			_newPasswordConfirm = ((ITextControl) sender).Text;
 		}
@@ -1165,7 +1165,7 @@ namespace System.Web.UI.WebControls
 				template.InstantiateIn (_containerCell);
 			}
 
-			private void InitTable ()
+			void InitTable ()
 			{
 				Attributes.Add ("ID", _owner.ID);
 

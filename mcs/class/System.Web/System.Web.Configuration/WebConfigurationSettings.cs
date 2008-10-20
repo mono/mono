@@ -46,7 +46,7 @@ namespace System.Web.Configuration
 	class WebConfigurationSettings
 	{
 #if TARGET_J2EE
-		static private IConfigurationSystem oldConfig {
+		static IConfigurationSystem oldConfig {
 			get {
 				return (IConfigurationSystem)AppDomain.CurrentDomain.GetData("WebConfigurationSettings.oldConfig");
 			}
@@ -55,7 +55,7 @@ namespace System.Web.Configuration
 			}
 		}
 
-		static private WebDefaultConfig config {
+		static WebDefaultConfig config {
 			get {
 				return (WebDefaultConfig)AppDomain.CurrentDomain.GetData("WebConfigurationSettings.config");
 			}
@@ -71,7 +71,7 @@ namespace System.Web.Configuration
 		const BindingFlags privStatic = BindingFlags.NonPublic | BindingFlags.Static;
 		static readonly object lockobj = new object ();
 		
-		private WebConfigurationSettings ()
+		WebConfigurationSettings ()
 		{
 		}
 
@@ -143,7 +143,7 @@ namespace System.Web.Configuration
 		object this_lock = new object ();
 		
 #if TARGET_J2EE
-		static private WebDefaultConfig instance {
+		static WebDefaultConfig instance {
 			get {
 				WebDefaultConfig val = (WebDefaultConfig)AppDomain.CurrentDomain.GetData("WebDefaultConfig.instance");
 				if (val == null) {
@@ -168,7 +168,7 @@ namespace System.Web.Configuration
 			instance = new WebDefaultConfig ();
 		}
 
-		private WebDefaultConfig ()
+		WebDefaultConfig ()
 		{
 			fileToConfig = new Hashtable ();
 		}
@@ -670,7 +670,7 @@ namespace System.Web.Configuration
 			return config;
                 }
 
-		private object LookForFactory (string key)
+		object LookForFactory (string key)
 		{
 			object o = factories [key];
 			if (o != null)
@@ -682,7 +682,7 @@ namespace System.Web.Configuration
 			return null;
 		}
 		
-		private void InitRead (XmlTextReader reader)
+		void InitRead (XmlTextReader reader)
 		{
 			reader.MoveToContent ();
 			if (reader.NodeType != XmlNodeType.Element || reader.Name != "configuration")
@@ -709,7 +709,7 @@ namespace System.Web.Configuration
 			}
 		}
 
-		private void ReadSection (XmlTextReader reader, string sectionName)
+		void ReadSection (XmlTextReader reader, string sectionName)
 		{
 			string attName;
 			string nameValue = null;
@@ -787,7 +787,7 @@ namespace System.Web.Configuration
 			MoveToNextElement (reader);
 		}
 
-		private void ReadRemoveSection (XmlTextReader reader, string sectionName)
+		void ReadRemoveSection (XmlTextReader reader, string sectionName)
 		{
 			if (!reader.MoveToNextAttribute () || reader.Name != "name")
 				ThrowException ("Unrecognized attribute.", reader);
@@ -809,7 +809,7 @@ namespace System.Web.Configuration
 			MoveToNextElement (reader);
 		}
 
-		private void ReadSectionGroup (XmlTextReader reader, string configSection)
+		void ReadSectionGroup (XmlTextReader reader, string configSection)
 		{
 			if (!reader.MoveToNextAttribute ())
 				ThrowException ("sectionGroup must have a 'name' attribute.", reader);
@@ -852,7 +852,7 @@ namespace System.Web.Configuration
 			ReadSections (reader, value);
 		}
 
-		private void ReadSections (XmlTextReader reader, string configSection)
+		void ReadSections (XmlTextReader reader, string configSection)
 		{
 			int depth = reader.Depth;
 			while (reader.Depth == depth) {

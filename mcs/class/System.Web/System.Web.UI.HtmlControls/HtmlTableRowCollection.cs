@@ -33,16 +33,14 @@ namespace System.Web.UI.HtmlControls {
 
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HtmlTableRowCollection : ICollection, IEnumerable {
-
-		private ControlCollection cc;
-
+	public sealed class HtmlTableRowCollection : ICollection, IEnumerable 
+	{
+		ControlCollection cc;
 
 		internal HtmlTableRowCollection (HtmlTable table)
 		{
 			cc = table.Controls;
 		}
-
 
 		public int Count {
 			get { return cc.Count; }
@@ -63,7 +61,6 @@ namespace System.Web.UI.HtmlControls {
 		public object SyncRoot {
 			get { return this; }	// as documented
 		}
-
 
 		public void Add (HtmlTableRow row)
 		{

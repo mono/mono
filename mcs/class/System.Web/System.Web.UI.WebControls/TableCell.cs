@@ -189,10 +189,9 @@ namespace System.Web.UI.WebControls {
 			set { TableItemStyle.Wrap = value; }
 		}
 
-		private TableItemStyle TableItemStyle {
+		TableItemStyle TableItemStyle {
 			get { return (ControlStyle as TableItemStyle); }
 		}
-
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{

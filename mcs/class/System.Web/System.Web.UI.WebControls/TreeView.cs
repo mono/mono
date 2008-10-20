@@ -77,12 +77,12 @@ namespace System.Web.UI.WebControls
 		Style selectedNodeLinkStyle;
 		Style hoverNodeLinkStyle;
 		
-		private static readonly object TreeNodeCheckChangedEvent = new object();
-		private static readonly object SelectedNodeChangedEvent = new object();
-		private static readonly object TreeNodeCollapsedEvent = new object();
-		private static readonly object TreeNodeDataBoundEvent = new object();
-		private static readonly object TreeNodeExpandedEvent = new object();
-		private static readonly object TreeNodePopulateEvent = new object();
+		static readonly object TreeNodeCheckChangedEvent = new object();
+		static readonly object SelectedNodeChangedEvent = new object();
+		static readonly object TreeNodeCollapsedEvent = new object();
+		static readonly object TreeNodeDataBoundEvent = new object();
+		static readonly object TreeNodeExpandedEvent = new object();
+		static readonly object TreeNodePopulateEvent = new object();
 		
 		static Hashtable imageStyles = new Hashtable ();
 		
@@ -521,7 +521,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style ControlLinkStyle {
+		Style ControlLinkStyle {
 			get {
 				if (controlLinkStyle == null) {
 					controlLinkStyle = new Style ();
@@ -531,7 +531,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style NodeLinkStyle {
+		Style NodeLinkStyle {
 			get {
 				if (nodeLinkStyle == null) {
 					nodeLinkStyle = new Style ();
@@ -540,7 +540,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style RootNodeLinkStyle {
+		Style RootNodeLinkStyle {
 			get {
 				if (rootNodeLinkStyle == null) {
 					rootNodeLinkStyle = new Style ();
@@ -549,7 +549,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style ParentNodeLinkStyle {
+		Style ParentNodeLinkStyle {
 			get {
 				if (parentNodeLinkStyle == null) {
 					parentNodeLinkStyle = new Style ();
@@ -558,7 +558,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style SelectedNodeLinkStyle {
+		Style SelectedNodeLinkStyle {
 			get {
 				if (selectedNodeLinkStyle == null) {
 					selectedNodeLinkStyle = new Style ();
@@ -567,7 +567,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style LeafNodeLinkStyle {
+		Style LeafNodeLinkStyle {
 			get {
 				if (leafNodeLinkStyle == null) {
 					leafNodeLinkStyle = new Style ();
@@ -576,7 +576,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style HoverNodeLinkStyle {
+		Style HoverNodeLinkStyle {
 			get {
 				if (hoverNodeLinkStyle == null) {
 					hoverNodeLinkStyle = new Style ();
@@ -981,7 +981,7 @@ namespace System.Web.UI.WebControls
 			FillBoundChildrenRecursive (e, Nodes);
 		}
 		
-		private void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, TreeNodeCollection nodeCollection)
+		void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, TreeNodeCollection nodeCollection)
 		{
 			if (hEnumerable == null)
 				return;			
@@ -1117,7 +1117,7 @@ namespace System.Web.UI.WebControls
 			PrepareStyles ();
 		}
 
-		private void PrepareStyles () {
+		void PrepareStyles () {
 			// The order in which styles are defined matters when more than one class
 			// is assigned to an element
 			ControlLinkStyle.CopyTextStylesFrom (ControlStyle);
@@ -1510,7 +1510,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private void AddChildrenPadding (HtmlTextWriter writer, TreeNode node)
+		void AddChildrenPadding (HtmlTextWriter writer, TreeNode node)
 		{
 			int level = node.Depth;
 			Unit cnp = Unit.Empty;
@@ -1533,7 +1533,7 @@ namespace System.Web.UI.WebControls
 			writer.RenderEndTag (); // table
 		}
 		
-		private void RenderMenuItemSpacing (HtmlTextWriter writer, Unit itemSpacing) {
+		void RenderMenuItemSpacing (HtmlTextWriter writer, Unit itemSpacing) {
 			writer.AddStyleAttribute ("height", itemSpacing.ToString ());
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);
@@ -1541,7 +1541,7 @@ namespace System.Web.UI.WebControls
 			writer.RenderEndTag ();
 		}
 
-		private Unit GetNodeSpacing (TreeNode node) {
+		Unit GetNodeSpacing (TreeNode node) {
 			if (node.Selected && selectedNodeStyle != null && selectedNodeStyle.NodeSpacing != Unit.Empty) {
 				return selectedNodeStyle.NodeSpacing;
 			}

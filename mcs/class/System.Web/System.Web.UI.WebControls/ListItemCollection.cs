@@ -36,13 +36,13 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[Editor("System.Web.UI.Design.WebControls.ListItemsCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-	public sealed class ListItemCollection : IList, ICollection, IEnumerable, IStateManager {
+	public sealed class ListItemCollection : IList, ICollection, IEnumerable, IStateManager 
+	{
 #region Fields
-		private ArrayList	items;
-		private bool		tracking;
-		private bool		dirty;
-		bool                    itemsEnabled;
-		
+		ArrayList items;
+		bool tracking;
+		bool dirty;
+		bool itemsEnabled;
 		int lastDirty = 0;
 #endregion	// Fields
 
@@ -353,7 +353,7 @@ namespace System.Web.UI.WebControls {
 		}
 #endregion	// Interface methods
 
-		private void SetDirty ()
+		void SetDirty ()
 		{
 			dirty = true;
 			for (int i = lastDirty; i < items.Count; i++)

@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls {
 			set { TableItemStyle.VerticalAlign = value; }
 		}
 
-		private TableItemStyle TableItemStyle {
+		TableItemStyle TableItemStyle {
 			get { return (ControlStyle as TableItemStyle); }
 		}
 

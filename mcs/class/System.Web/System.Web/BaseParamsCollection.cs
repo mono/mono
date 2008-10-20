@@ -43,7 +43,7 @@ namespace System.Web
 			IsReadOnly = true;
 		}
 
-		private void LoadInfo ()
+		void LoadInfo ()
 		{
 			if (_loaded)
 				return;

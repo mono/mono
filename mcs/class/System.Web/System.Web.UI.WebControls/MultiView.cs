@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls
 		public static readonly string SwitchViewByIDCommandName = "SwitchViewByID";
 		public static readonly string SwitchViewByIndexCommandName = "SwitchViewByIndex";
 		
-		private static readonly object ActiveViewChangedEvent = new object();
+		static readonly object ActiveViewChangedEvent = new object();
 		
 		int viewIndex = -1;
 		int initialIndex = -1;

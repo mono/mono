@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls
 {
 	public class FormViewPageEventArgs : CancelEventArgs
 	{
-		private int pageIndex;
+		int pageIndex;
 		
 		public FormViewPageEventArgs (int pageIndex )
 		{

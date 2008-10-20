@@ -42,11 +42,11 @@ namespace System.Web.SessionState {
 	{
 		const string CookieName = "ASPSESSION";
 
-		private RemoteStateServer state_server;
+		RemoteStateServer state_server;
 #if NET_2_0
-		private SessionStateSection config;
+		SessionStateSection config;
 #else
-		private SessionConfig config;
+		SessionConfig config;
 #endif
 		
 		public void Dispose ()
@@ -151,7 +151,7 @@ namespace System.Web.SessionState {
 			state_server.Touch (sessionId, timeout);
 		}
 		
-		private string GetId (HttpContext context)
+		string GetId (HttpContext context)
 		{
 			if (!config.CookieLess &&
 					context.Request.Cookies [CookieName] != null)
@@ -160,7 +160,7 @@ namespace System.Web.SessionState {
 			return context.Request.Headers [SessionStateModule.HeaderName];
 		}
 
-		private void GetConData (string cons, out string proto, out string server, out string port)
+		void GetConData (string cons, out string proto, out string server, out string port)
 		{
 			int ei = cons.IndexOf ('=');
 			int ci = cons.IndexOf (':');

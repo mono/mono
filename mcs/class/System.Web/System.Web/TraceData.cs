@@ -104,34 +104,34 @@ namespace System.Web {
 	
 	internal class TraceData {
 
-		private bool is_first_time;
-		private DateTime first_time;
-		private double prev_time;
+		bool is_first_time;
+		DateTime first_time;
+		double prev_time;
 
 #if NET_2_0
-		private Queue <InfoTraceData> info;
-		private Queue <ControlTraceData> control_data;
-		private Queue <NameValueTraceData> cookie_data;
-		private Queue <NameValueTraceData> header_data;
-		private Queue <NameValueTraceData> servervar_data;
+		Queue <InfoTraceData> info;
+		Queue <ControlTraceData> control_data;
+		Queue <NameValueTraceData> cookie_data;
+		Queue <NameValueTraceData> header_data;
+		Queue <NameValueTraceData> servervar_data;
 		Hashtable ctrl_cs;
 #else
-		private Queue info;
-		private Queue control_data;
-		private Queue cookie_data;
-		private Queue header_data;
-		private Queue servervar_data;
-		//private DataTable viewstate_data;
+		Queue info;
+		Queue control_data;
+		Queue cookie_data;
+		Queue header_data;
+		Queue servervar_data;
+		//DataTable viewstate_data;
 #endif
 		
-		private string request_path;
-		private string session_id;
-		private DateTime request_time;
-		private Encoding request_encoding;
-		private Encoding response_encoding;
-		private string request_type;
-		private int status_code;
-		private Page page;
+		string request_path;
+		string session_id;
+		DateTime request_time;
+		Encoding request_encoding;
+		Encoding response_encoding;
+		string request_type;
+		int status_code;
+		Page page;
 		TraceMode _traceMode = HttpRuntime.TraceManager.TraceMode;
 
 		public TraceData ()
@@ -327,7 +327,7 @@ namespace System.Web {
 			output.RenderEndTag ();
 		}
 		
-		private void RenderRequestDetails (HtmlTextWriter output)
+		void RenderRequestDetails (HtmlTextWriter output)
 		{
 			Table table = CreateTable ();
 			
@@ -341,7 +341,7 @@ namespace System.Web {
 			table.RenderControl (output);
 		}
 		
-		private void RenderTraceInfo (HtmlTextWriter output)
+		void RenderTraceInfo (HtmlTextWriter output)
 		{
 			Table table = CreateTable ();
 			
@@ -367,7 +367,7 @@ namespace System.Web {
 			table.RenderControl (output);
 		}
 		
-		private void RenderControlTree (HtmlTextWriter output)
+		void RenderControlTree (HtmlTextWriter output)
 		{
 			Table table = CreateTable ();
 			
@@ -415,7 +415,7 @@ namespace System.Web {
 #endif
 		}
 		
-		private void RenderCookies (HtmlTextWriter output)
+		void RenderCookies (HtmlTextWriter output)
 		{
 			Table table = CreateTable ();
 			
@@ -443,7 +443,7 @@ namespace System.Web {
 			RenderAltRow (table, pos++, r.Name, r.Value, length.ToString ());
 		}
 		
-		private void RenderHeaders (HtmlTextWriter output)
+		void RenderHeaders (HtmlTextWriter output)
 		{
 			Table table = CreateTable ();
 			
@@ -467,7 +467,7 @@ namespace System.Web {
 			table.RenderControl (output);
 		}
 		
-		private void RenderServerVars (HtmlTextWriter output)
+		void RenderServerVars (HtmlTextWriter output)
 		{
 			Table table = CreateTable ();
 			
@@ -504,7 +504,7 @@ namespace System.Web {
 			return row;
 		}
 		
-		private void RenderTraceInfoRow (Table table, InfoTraceData i, int pos)
+		void RenderTraceInfoRow (Table table, InfoTraceData i, int pos)
 		{
 			if (i == null)
 				return;
@@ -562,7 +562,7 @@ namespace System.Web {
 			return row;
 		}
 	   
-		private TableRow InfoRow2 (string title1, string info1, string title2, string info2)
+		TableRow InfoRow2 (string title1, string info1, string title2, string info2)
 		{
 			TableRow row = new TableRow ();
 			TableHeaderCell header1 = new TableHeaderCell ();

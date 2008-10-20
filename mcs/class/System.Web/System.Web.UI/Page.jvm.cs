@@ -400,7 +400,7 @@ namespace System.Web.UI
 		#endregion
 
 		#region AspNetResponseWriter
-		private sealed class AspNetResponseWriter : java.io.Writer
+		sealed class AspNetResponseWriter : java.io.Writer
 		{
 			readonly TextWriter _writer;
 			public AspNetResponseWriter (TextWriter writer) {
@@ -479,7 +479,7 @@ namespace System.Web.UI
 					osf.Serialize (outputStream, _state);
 			}
 
-			private Page CurrentPage
+			Page CurrentPage
 			{
 				get
 				{

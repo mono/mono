@@ -69,8 +69,8 @@ namespace System.Web.SessionState
 	
 	internal class SessionInProcHandler : SessionStateStoreProviderBase
 	{
-		private const string CachePrefix = "@@@InProc@";
-		private const Int32 lockAcquireTimeout = 30000;
+		const string CachePrefix = "@@@InProc@";
+		const Int32 lockAcquireTimeout = 30000;
 		
 		CacheItemRemovedCallback removedCB;
 		//NameValueCollection privateConfig;

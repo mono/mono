@@ -35,9 +35,9 @@ namespace System.Web.UI {
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class ControlValuePropertyAttribute : Attribute
 	{
-		private string propertyName;
-		private object propertyValue;
-		private Type propertyType;
+		string propertyName;
+		object propertyValue;
+		Type propertyType;
 
 		public ControlValuePropertyAttribute (string propName) 
 		{

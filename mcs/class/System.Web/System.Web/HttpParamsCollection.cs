@@ -34,11 +34,11 @@ namespace System.Web
 {
 	internal class HttpParamsCollection : WebROCollection
 	{
-		private NameValueCollection _queryString;
-		private NameValueCollection _form;
-		private NameValueCollection _serverVariables;
-		private HttpCookieCollection _cookies;
-		private bool _merged;
+		NameValueCollection _queryString;
+		NameValueCollection _form;
+		NameValueCollection _serverVariables;
+		HttpCookieCollection _cookies;
+		bool _merged;
 
 		public HttpParamsCollection (NameValueCollection queryString,
 					     NameValueCollection form,
@@ -59,7 +59,7 @@ namespace System.Web
 			return base.Get (name);
 		}
 
-		private void MergeCollections ()
+		void MergeCollections ()
 		{
 			if (_merged)
 				return;			

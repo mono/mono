@@ -56,7 +56,7 @@ namespace System.Web.Configuration
 			return string.Join("", c);
 		}
 
-		private static string Hex(byte b)
+		static string Hex(byte b)
 		{
 			char[] list = new char[2];
 			BitArray myBA1 = new BitArray(new bool[4] { false, false, false, false });
@@ -79,7 +79,7 @@ namespace System.Web.Configuration
 			list[1] = CapabilitiesChecksum.MapToHex(myBA2);
 			return new string(list, 0, 2);
 		}
-		private static char MapToHex(BitArray a)
+		static char MapToHex(BitArray a)
 		{
 			//-----------------------------------------------------------------------------------
 			//I could of done bit wise comparisons much more efficiant, but that would of given

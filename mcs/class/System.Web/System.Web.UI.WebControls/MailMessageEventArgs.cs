@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls
 {
 	public class MailMessageEventArgs : LoginCancelEventArgs
 	{
-		private MailMessage message; 
+		MailMessage message; 
 		
 		public MailMessageEventArgs (MailMessage message)
 		{

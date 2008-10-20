@@ -39,8 +39,8 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
 	[DefaultPropertyAttribute ("DefaultValue")]
-	public class Parameter : ICloneable, IStateManager {
-
+	public class Parameter : ICloneable, IStateManager 
+	{
 		public Parameter () : base ()
 		{
 		}
@@ -284,9 +284,7 @@ namespace System.Web.UI.WebControls {
 			ViewState.SetDirty (true);
 		}
 
-
-		private ParameterCollection _owner;
-
+		ParameterCollection _owner;
 		internal void SetOwnerCollection (ParameterCollection own)
 		{
 			_owner = own;

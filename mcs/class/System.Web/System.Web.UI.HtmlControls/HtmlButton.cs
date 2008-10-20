@@ -42,7 +42,7 @@ namespace System.Web.UI.HtmlControls {
 #endif
 	public class HtmlButton : HtmlContainerControl, IPostBackEventHandler {
 
-		private static readonly object ServerClickEvent = new object();
+		static readonly object ServerClickEvent = new object();
 
 		public HtmlButton () : base ("button")
 		{

@@ -32,12 +32,12 @@ using System.Reflection;
 namespace System.Web.UI.WebControls.WebParts {
         public abstract class ConnectionPoint 
 	{
-		private bool allowMultiConn;
-		private string name = string.Empty;
-		private string id = "default";
-		private Type interfaceType;
-		private Type controlType;
-		private MethodInfo callBackMethod;
+		bool allowMultiConn;
+		string name = string.Empty;
+		string id = "default";
+		Type interfaceType;
+		Type controlType;
+		MethodInfo callBackMethod;
 		
 		public const string DefaultID = "default";
 

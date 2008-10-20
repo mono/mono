@@ -36,7 +36,7 @@ namespace System.Web.UI
 {
 	class WebHandlerParser : SimpleWebHandlerParser
 	{
-		private WebHandlerParser (HttpContext context, string virtualPath, string physicalPath)
+		WebHandlerParser (HttpContext context, string virtualPath, string physicalPath)
 			: base (context, virtualPath, physicalPath)
 		{
 		}

@@ -41,7 +41,7 @@ namespace System.Web.UI.HtmlControls {
 	[SupportsEventValidation]
 	public class HtmlInputReset : HtmlInputButton
 	{
-		private static readonly object ServerClickEvent = new object();
+		static readonly object ServerClickEvent = new object();
 
 		public HtmlInputReset ()
 			: base ("reset")

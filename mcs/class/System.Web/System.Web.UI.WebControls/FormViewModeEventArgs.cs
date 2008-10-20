@@ -36,8 +36,8 @@ namespace System.Web.UI.WebControls
 {
 	public class FormViewModeEventArgs : CancelEventArgs
 	{
-		private FormViewMode mode;
-		private bool cancelEdit;
+		FormViewMode mode;
+		bool cancelEdit;
 		
 		public FormViewModeEventArgs (FormViewMode mode, bool cancelingEdit)
 		{

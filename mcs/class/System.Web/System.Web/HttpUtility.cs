@@ -376,7 +376,7 @@ namespace System.Web {
 			return UrlDecode(str, Encoding.UTF8);
 		}
 	
-		private static char [] GetChars (MemoryStream b, Encoding e)
+		static char [] GetChars (MemoryStream b, Encoding e)
 		{
 			return e.GetChars (b.GetBuffer (), 0, (int) b.Length);
 		}
@@ -449,7 +449,7 @@ namespace System.Web {
 			return UrlDecode (bytes, 0, bytes.Length, e);
 		}
 
-		private static int GetInt (byte b)
+		static int GetInt (byte b)
 		{
 			char c = (char) b;
 			if (c >= '0' && c <= '9')
@@ -464,7 +464,7 @@ namespace System.Web {
 			return -1;
 		}
 
-		private static int GetChar (byte [] bytes, int offset, int length)
+		static int GetChar (byte [] bytes, int offset, int length)
 		{
 			int value = 0;
 			int end = length + offset;
@@ -478,7 +478,7 @@ namespace System.Web {
 			return value;
 		}
 
-		private static int GetChar (string str, int offset, int length)
+		static int GetChar (string str, int offset, int length)
 		{
 			int val = 0;
 			int end = length + offset;

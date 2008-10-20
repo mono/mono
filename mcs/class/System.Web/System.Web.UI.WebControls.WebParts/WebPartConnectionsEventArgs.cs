@@ -34,11 +34,11 @@ namespace System.Web.UI.WebControls.WebParts
 {
 	public class WebPartConnectionsEventArgs : EventArgs
 	{
-		private WebPart providerPart;
-		private WebPart consumerPart;
-		private ProviderConnectionPoint providerPoint;
-		private ConsumerConnectionPoint consumerPoint;
-		private WebPartConnection connection;
+		WebPart providerPart;
+		WebPart consumerPart;
+		ProviderConnectionPoint providerPoint;
+		ConsumerConnectionPoint consumerPoint;
+		WebPartConnection connection;
 		
 		public WebPartConnectionsEventArgs (WebPart providerPart, ProviderConnectionPoint providerPoint, 
 						WebPart consumerPart, ConsumerConnectionPoint consumerPoint) : this (providerPart, 

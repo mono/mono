@@ -57,11 +57,11 @@ namespace System.Web.UI.WebControls {
 		object dataSource;
 #if NET_2_0
 		IDataSource boundDataSource;
-		private bool initialized;
-		private bool preRendered = false;
-		private bool requiresDataBinding;
-		private DataSourceSelectArguments selectArguments;
-		private IEnumerable data;
+		bool initialized;
+		bool preRendered = false;
+		bool requiresDataBinding;
+		DataSourceSelectArguments selectArguments;
+		IEnumerable data;
 #endif
 
 		// See Kothari, listing 20-3
@@ -485,7 +485,7 @@ namespace System.Web.UI.WebControls {
 				DataBind ();
 		}
 
-		private void SelectCallback (IEnumerable data)
+		void SelectCallback (IEnumerable data)
 		{
 			this.data = data;
 		}
@@ -554,7 +554,7 @@ namespace System.Web.UI.WebControls {
 			base.OnLoad (e);
 		}
 
-		private void Initialize () 
+		void Initialize () 
 		{
 			if (Page != null) {
 				if (!Page.IsPostBack || (IsViewStateEnabled && (ViewState ["Items"] == null)))

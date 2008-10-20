@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls
 {
 	public class SiteMapNodeItemEventArgs : EventArgs
 	{
-		private SiteMapNodeItem item;
+		SiteMapNodeItem item;
 		
 		public SiteMapNodeItemEventArgs (SiteMapNodeItem item)
 		{

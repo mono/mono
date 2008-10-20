@@ -39,16 +39,16 @@ namespace System.Web.UI.WebControls.WebParts
 	[TypeConverterAttribute ("System.Web.UI.WebControls.WebParts.WebPartVerbConverter, System.Web")]
 	public class WebPartVerb : IStateManager
 	{
-		private string clientClickHandler;
-		private WebPartEventHandler serverClickHandler;
-		private StateBag stateBag;
-		private bool isChecked = false;
-		private string description = string.Empty;
-		private bool enabled = true;
-		private string imageUrl = string.Empty;
-		private string text = string.Empty;
-		private bool visible = true;
-		private string id;
+		string clientClickHandler;
+		WebPartEventHandler serverClickHandler;
+		StateBag stateBag;
+		bool isChecked = false;
+		string description = string.Empty;
+		bool enabled = true;
+		string imageUrl = string.Empty;
+		string text = string.Empty;
+		bool visible = true;
+		string id;
 		
 		public string ID {
 			get { return id;}

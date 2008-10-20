@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls
 {
 	public class FormViewCommandEventArgs : CommandEventArgs
 	{
-		private object source;
+		object source;
 		
 		public FormViewCommandEventArgs (object source, CommandEventArgs arguments) : base (arguments)
 		{

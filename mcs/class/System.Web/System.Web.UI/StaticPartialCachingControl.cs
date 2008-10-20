@@ -37,7 +37,7 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class StaticPartialCachingControl : BasePartialCachingControl {
 
-		private BuildMethod buildMethod;
+		BuildMethod buildMethod;
 
 		public StaticPartialCachingControl (string ctrlID, string guid, int duration,
 				string varyByParams, string varyByControls, string varyByCustom,

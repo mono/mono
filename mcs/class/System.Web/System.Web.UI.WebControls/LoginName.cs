@@ -40,12 +40,11 @@ namespace System.Web.UI.WebControls {
 	[Bindable (false)]
 	[DefaultProperty ("FormatString")]
 	[Designer ("System.Web.UI.Design.WebControls.LoginNameDesigner," + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public class LoginName : WebControl {
-
+	public class LoginName : WebControl 
+	{
 		public LoginName ()
 		{
 		}
-
 
 		[DefaultValue ("{0}")]
 		[Localizable (true)]
@@ -97,11 +96,11 @@ namespace System.Web.UI.WebControls {
 
 		// private stuff
 
-		private bool Anonymous {
+		bool Anonymous {
 			get { return (User.Length == 0); }
 		}
 
-		private string User {
+		string User {
 			get {
 				if ((Page == null) || (Page.User == null))
 					return String.Empty;

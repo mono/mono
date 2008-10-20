@@ -69,14 +69,14 @@ namespace System.Web.UI.WebControls {
 		}
 
 		#region Fields
-		private int styles;
-		private int stylesTraked;
+		int styles;
+		int stylesTraked;
 		internal StateBag	viewstate;
-		private FontInfo	fontinfo;
-		private bool		tracking;
+		FontInfo	fontinfo;
+		bool		tracking;
 		bool _isSharedViewState;
 #if NET_2_0
-		private string		registered_class;
+		string		registered_class;
 #endif
 		#endregion	// Fields
 

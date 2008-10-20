@@ -43,19 +43,19 @@ namespace System.Web.Mail
 #endif
 	public class MailMessage
 	{
-		private ArrayList attachments;
-		private string bcc;
-		private string body = String.Empty;
-		private Encoding bodyEncoding;
-		private MailFormat bodyFormat;
-		private string cc;		
-		private string from;
-		private ListDictionary headers;
-		private MailPriority priority;
-		private string subject = String.Empty;
-		private string to;
-		private string urlContentBase;
-		private string urlContentLocation;
+		ArrayList attachments;
+		string bcc;
+		string body = String.Empty;
+		Encoding bodyEncoding;
+		MailFormat bodyFormat;
+		string cc;		
+		string from;
+		ListDictionary headers;
+		MailPriority priority;
+		string subject = String.Empty;
+		string to;
+		string urlContentBase;
+		string urlContentLocation;
 		
 		// Constructor		
 		public MailMessage ()
@@ -133,7 +133,7 @@ namespace System.Web.Mail
 		}
 
 #if NET_1_1
-		private Hashtable fields;
+		Hashtable fields;
 		
 		public IDictionary Fields {
 			get {

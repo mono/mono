@@ -49,7 +49,7 @@ namespace System.Web.Configuration
 	{
 		ArrayList Modules;
 
-		private ModulesConfiguration ()
+		ModulesConfiguration ()
 		{
 		}
 

@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls.WebParts
 {
 	public class WebPartVerbsEventArgs : EventArgs
 	{
-		private WebPartVerbCollection verbs;
+		WebPartVerbCollection verbs;
 		
 		public WebPartVerbsEventArgs ()
 		{}

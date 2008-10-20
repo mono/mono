@@ -34,8 +34,8 @@ namespace System.Web.UI.WebControls
 {
 	public class GridViewCommandEventArgs : CommandEventArgs
 	{
-		private object source;
-		private GridViewRow row;
+		object source;
+		GridViewRow row;
 		
 		public GridViewCommandEventArgs (object source, CommandEventArgs arguments) : base (arguments)
 		{

@@ -39,7 +39,7 @@ namespace System.Web.UI {
 [AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 public sealed class CompiledTemplateBuilder : ITemplate
 {
-	private BuildTemplateMethod templateMethod;
+	BuildTemplateMethod templateMethod;
 
 	public CompiledTemplateBuilder (BuildTemplateMethod templateMethod)
 	{

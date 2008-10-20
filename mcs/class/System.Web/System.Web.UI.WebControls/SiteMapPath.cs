@@ -52,8 +52,8 @@ namespace System.Web.UI.WebControls
 		ITemplate pathSeparatorTemplate;
 		ITemplate rootNodeTemplate;
 
-		private static readonly object ItemCreatedEvent = new object();
-		private static readonly object ItemDataBoundEvent = new object();
+		static readonly object ItemCreatedEvent = new object();
+		static readonly object ItemDataBoundEvent = new object();
 		
 		public event SiteMapNodeItemEventHandler ItemCreated {
 			add { Events.AddHandler (ItemCreatedEvent, value); }

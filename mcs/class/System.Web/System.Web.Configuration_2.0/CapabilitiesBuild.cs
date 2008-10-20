@@ -33,7 +33,7 @@ namespace System.Web.Configuration
 		/// <summary>
 		/// A list of all headers, that the Browser Detective Code will possibly access.
 		/// </summary>
-		private System.Collections.ObjectModel.Collection<string> AllPossibleheaders;
+		System.Collections.ObjectModel.Collection<string> AllPossibleheaders;
 		/// <summary>
 		/// 
 		/// </summary>

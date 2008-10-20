@@ -55,37 +55,37 @@ namespace System.Web.UI.WebControls {
 		public const string NextPageCommandArgument = "Next";
 		public const string PrevPageCommandArgument = "Prev";
 
-		private static readonly object CancelCommandEvent = new object ();
-		private static readonly object DeleteCommandEvent = new object ();
-		private static readonly object EditCommandEvent = new object ();
-		private static readonly object ItemCommandEvent = new object ();
-		private static readonly object ItemCreatedEvent = new object ();
-		private static readonly object ItemDataBoundEvent = new object ();
-		private static readonly object PageIndexChangedEvent = new object ();
-		private static readonly object SortCommandEvent = new object ();
-		private static readonly object UpdateCommandEvent = new object ();
+		static readonly object CancelCommandEvent = new object ();
+		static readonly object DeleteCommandEvent = new object ();
+		static readonly object EditCommandEvent = new object ();
+		static readonly object ItemCommandEvent = new object ();
+		static readonly object ItemCreatedEvent = new object ();
+		static readonly object ItemDataBoundEvent = new object ();
+		static readonly object PageIndexChangedEvent = new object ();
+		static readonly object SortCommandEvent = new object ();
+		static readonly object UpdateCommandEvent = new object ();
 
-		private TableItemStyle alt_item_style;
-		private TableItemStyle edit_item_style;
-		private TableItemStyle footer_style;
-		private TableItemStyle header_style;
-		private TableItemStyle item_style;
-		private TableItemStyle selected_style;
-		private DataGridPagerStyle pager_style;
+		TableItemStyle alt_item_style;
+		TableItemStyle edit_item_style;
+		TableItemStyle footer_style;
+		TableItemStyle header_style;
+		TableItemStyle item_style;
+		TableItemStyle selected_style;
+		DataGridPagerStyle pager_style;
 		
-		private ArrayList items_list;
-		private DataGridItemCollection items;
+		ArrayList items_list;
+		DataGridItemCollection items;
 
-		private ArrayList columns_list;
-		private DataGridColumnCollection columns;
+		ArrayList columns_list;
+		DataGridColumnCollection columns;
 
-		private ArrayList data_source_columns_list;
-		private DataGridColumnCollection data_source_columns;
+		ArrayList data_source_columns_list;
+		DataGridColumnCollection data_source_columns;
 
-		private Table render_table;
-		private DataGridColumn [] render_columns;
-		private PagedDataSource paged_data_source;
-		private IEnumerator data_enumerator;
+		Table render_table;
+		DataGridColumn [] render_columns;
+		PagedDataSource paged_data_source;
+		IEnumerator data_enumerator;
 		
 		[DefaultValue(false)]
 		[WebSysDescription ("")]
@@ -383,7 +383,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private DataGridColumnCollection DataSourceColumns {
+		DataGridColumnCollection DataSourceColumns {
 			get {
 				if (data_source_columns == null) {
 					data_source_columns_list = new ArrayList ();
@@ -398,7 +398,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		private Table RenderTable {
+		Table RenderTable {
 			get {
 				if (render_table == null) {
 #if ONLY_1_1
@@ -465,7 +465,7 @@ namespace System.Web.UI.WebControls {
 		}
 #endif
 
-		private TableStyle TableStyle {
+		TableStyle TableStyle {
 			get { return (TableStyle) ControlStyle; }
 		}
 
@@ -537,7 +537,7 @@ namespace System.Web.UI.WebControls {
 			return res;
 		}
 
-		private void AddPropertyToColumns ()
+		void AddPropertyToColumns ()
 		{
 			BoundColumn b = new BoundColumn ();
 			if (IsTrackingViewState) {
@@ -551,7 +551,7 @@ namespace System.Web.UI.WebControls {
 			DataSourceColumns.Add (b);
 		}
 
-		private void AddPropertyToColumns (PropertyDescriptor prop, bool tothis)
+		void AddPropertyToColumns (PropertyDescriptor prop, bool tothis)
 		{
 			BoundColumn b = new BoundColumn ();
 			b.Set_Owner (this);
@@ -739,7 +739,7 @@ namespace System.Web.UI.WebControls {
 			item.Controls.Add (pager_cell);
 		}
 
-		private TableCell InitializeNumericPager (DataGridItem item, int columnSpan,
+		TableCell InitializeNumericPager (DataGridItem item, int columnSpan,
 				PagedDataSource paged)
 		{
 			TableCell res = new TableCell ();
@@ -797,7 +797,7 @@ namespace System.Web.UI.WebControls {
 			return res;
 		}
 
-		private TableCell InitializeNextPrevPager (DataGridItem item, int columnSpan, PagedDataSource paged)
+		TableCell InitializeNextPrevPager (DataGridItem item, int columnSpan, PagedDataSource paged)
 		{
 			TableCell res = new TableCell ();
 			res.ColumnSpan = columnSpan;
@@ -853,7 +853,7 @@ namespace System.Web.UI.WebControls {
 			return res;
 		}
 
-		private DataGridItem CreateItem (int item_index, int data_source_index,
+		DataGridItem CreateItem (int item_index, int data_source_index,
 				ListItemType type, bool data_bind, object data_item,
 				PagedDataSource paged)
 		{

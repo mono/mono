@@ -40,11 +40,11 @@ namespace System.Web.UI.WebControls {
 #else
 	public sealed class AdCreatedEventArgs : EventArgs {
 #endif
-		private IDictionary properties;
+		IDictionary properties;
 
-		private string alt_text;
-		private string img_url;
-		private string nav_url;
+		string alt_text;
+		string img_url;
+		string nav_url;
 
 		public AdCreatedEventArgs (IDictionary adProperties)
 		{

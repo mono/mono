@@ -36,11 +36,11 @@ namespace System.Web.UI.WebControls
 {
 	public class FormViewDeletedEventArgs : EventArgs
 	{
-		private int rowsAffected;
-		private Exception e;
-		private bool exceptionHandled;
-		private IOrderedDictionary keys;
-		private IOrderedDictionary values;
+		int rowsAffected;
+		Exception e;
+		bool exceptionHandled;
+		IOrderedDictionary keys;
+		IOrderedDictionary values;
 		
 		public FormViewDeletedEventArgs (int affectedRows, Exception e)
 		{

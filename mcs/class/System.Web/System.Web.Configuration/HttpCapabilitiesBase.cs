@@ -72,7 +72,7 @@ namespace System.Web.Configuration
 #endif
 			return ua;
 		}
-		private static HttpBrowserCapabilities GetHttpBrowserCapabilitiesFromBrowscapini(string ua)
+		static HttpBrowserCapabilities GetHttpBrowserCapabilitiesFromBrowscapini(string ua)
 		{
 			HttpBrowserCapabilities bcap = new HttpBrowserCapabilities();
 			bcap.capabilities = CapabilitiesLoader.GetCapabilities (ua);

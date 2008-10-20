@@ -173,7 +173,7 @@ namespace System.Web.UI.Adapters
 			return String.Format("document.forms['{0}']", formID);
 		}
 		
-		private ListDictionary radio_button_group;
+		ListDictionary radio_button_group;
 	}
 }
 #endif

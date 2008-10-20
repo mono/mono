@@ -38,10 +38,10 @@ namespace System.Web.UI.WebControls {
 	public class DataGridItem : TableRow, INamingContainer {
 #endif
 		#region Fields
-		private object		item;
-		private int		dataset_index;
-		private int		item_index;
-		private ListItemType	item_type;
+		object item;
+		int dataset_index;
+		int item_index;
+		ListItemType item_type;
 		#endregion	// Fields
 
 		#region Public Constructors

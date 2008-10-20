@@ -33,9 +33,9 @@ namespace System.Web.Mail {
     /// this class represents the response from the smtp server
     internal class SmtpResponse {
 	
-	private string rawResponse;
-	private int statusCode;
-	private string[] parts;
+	string rawResponse;
+	int statusCode;
+	string[] parts;
 
 	/// use the Parse method to create instances
 	protected SmtpResponse() {}

@@ -36,9 +36,9 @@ namespace System.Web.UI.WebControls
 {
 	public class GridViewDeletedEventArgs : EventArgs
 	{
-		private int rowsAffected;
-		private Exception e;
-		private bool exceptionHandled;
+		int rowsAffected;
+		Exception e;
+		bool exceptionHandled;
 		IOrderedDictionary keys;
 		IOrderedDictionary values;
 		

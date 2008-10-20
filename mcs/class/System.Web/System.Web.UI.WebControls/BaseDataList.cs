@@ -39,19 +39,19 @@ namespace System.Web.UI.WebControls {
 	[DefaultEvent ("SelectedIndexChanged")]
 	[DefaultProperty ("DataSource")]
 	[Designer ("System.Web.UI.Design.WebControls.BaseDataListDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public abstract class BaseDataList : WebControl {
+	public abstract class BaseDataList : WebControl 
+	{
+		static readonly object selectedIndexChangedEvent = new object ();
 
-		private static readonly object selectedIndexChangedEvent = new object ();
-
-		private DataKeyCollection keycoll;
-		private object source;
+		DataKeyCollection keycoll;
+		object source;
 #if NET_2_0
-		//private string dataSourceId;
+		//string dataSourceId;
 		IDataSource boundDataSource = null;
-		private bool initialized;
-		private bool requiresDataBinding;
-		private DataSourceSelectArguments selectArguments;
-		private IEnumerable data;
+		bool initialized;
+		bool requiresDataBinding;
+		DataSourceSelectArguments selectArguments;
+		IEnumerable data;
 #endif
 
 		protected BaseDataList ()
@@ -289,7 +289,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 #endif
-		private TableStyle TableStyle {
+		TableStyle TableStyle {
 			// this will throw an InvalidCasException just like we need
 			get { return (TableStyle) ControlStyle; }
 		}
@@ -364,7 +364,7 @@ namespace System.Web.UI.WebControls {
 				DataBind ();
 		}
 
-		private void SelectCallback (IEnumerable data)
+		void SelectCallback (IEnumerable data)
 		{
 			this.data = data;
 		}
@@ -433,7 +433,7 @@ namespace System.Web.UI.WebControls {
 			base.OnLoad (e);
 		}
 		
-		private void Initialize ()
+		void Initialize ()
 		{
 			if (Page != null) {
 				if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))

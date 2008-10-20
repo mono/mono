@@ -39,8 +39,8 @@ namespace System.Web.UI.WebControls {
 	public sealed class MonthChangedEventArgs {
 #endif
 
-		private DateTime new_date;
-		private DateTime prev_date;
+		DateTime new_date;
+		DateTime prev_date;
 
 		public MonthChangedEventArgs (DateTime newDate, DateTime previousDate)
 		{

@@ -33,15 +33,14 @@ namespace System.Web.UI.WebControls {
 
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class DataKeyCollection : ICollection, IEnumerable {
-
-		private ArrayList list;
+	public sealed class DataKeyCollection : ICollection, IEnumerable 
+	{
+		ArrayList list;
 
 		public DataKeyCollection (ArrayList keys)
 		{
 			list = keys;
 		}
-
 
 		public int Count {
 			get { return list.Count; }

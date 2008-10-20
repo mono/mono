@@ -32,9 +32,10 @@ namespace System.Web.UI.WebControls {
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class DataGridItemCollection : ICollection, IEnumerable {
+	public class DataGridItemCollection : ICollection, IEnumerable 
+	{
 		#region Fields
-		private ArrayList	array;
+		ArrayList	array;
 		#endregion	// Fields
 
 		#region Public Constructors

@@ -36,8 +36,8 @@ namespace System.Web.UI.WebControls
 {
 	public class DetailsViewModeEventArgs : CancelEventArgs
 	{
-		private DetailsViewMode mode;
-		private bool cancelEdit;
+		DetailsViewMode mode;
+		bool cancelEdit;
 		
 		public DetailsViewModeEventArgs (DetailsViewMode mode, bool cancelingEdit)
 		{

@@ -42,7 +42,7 @@ namespace System.Web.J2EE
 	public class PageMapper
 	{
 		//private static readonly string _fileListName = "/filelist.xml";
-		private static readonly object LOCK_GETASSEMBLIESCACHEDDOCUMENT = new object();
+		static readonly object LOCK_GETASSEMBLIESCACHEDDOCUMENT = new object();
 		//private static readonly object LOCK_GETFROMMAPPATHCACHE = new object();
 
 
@@ -131,7 +131,7 @@ namespace System.Web.J2EE
 
 		}
 #endif
-		private static ICachedXmlDoc GetAssembliesCachedDocument(HttpContext context)
+		static ICachedXmlDoc GetAssembliesCachedDocument(HttpContext context)
 		{
 			ICachedXmlDoc doc = (ICachedXmlDoc) AppDomain.CurrentDomain.GetData (J2EEConsts.ASSEMBLIES_FILE);
 
@@ -159,7 +159,7 @@ namespace System.Web.J2EE
 			return doc;
 		}
 
-		private static String NormalizeName(string url)
+		static String NormalizeName(string url)
 		{
 #if NET_2_0
 			url = System.Web.Util.UrlUtils.RemoveDoubleSlashes(url);
@@ -168,7 +168,7 @@ namespace System.Web.J2EE
 				url = url.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
 			return url;
 		}
-		private static ICachedXmlDoc CreateDocument()
+		static ICachedXmlDoc CreateDocument()
 		{
 			return new CachedDocumentTypeStorage();
 		}
@@ -190,20 +190,20 @@ namespace System.Web.J2EE
 		{
 			return GetCachedResource (context, NormalizeName (url));
 		}
-		private static string GetCachedResource (HttpContext context, string url)
+		static string GetCachedResource (HttpContext context, string url)
 		{
 			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument(context);
 			return doc.GetAssemblyResourceName (context, url);
 		}
-		private static Assembly GetCachedAssembly (HttpContext context, string url)
+		static Assembly GetCachedAssembly (HttpContext context, string url)
 		{
 			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument(context);
 			return doc.GetAssembly (context, url);
 		}
-		private static Type GetCachedType (HttpContext context, string url) {
+		static Type GetCachedType (HttpContext context, string url) {
 			return GetCachedType (context, url, true);
 		}
-		private static Type GetCachedType (HttpContext context, string url, bool throwException)
+		static Type GetCachedType (HttpContext context, string url, bool throwException)
 		{
 			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument(context);						
 			Type t = doc.GetType(context, url);
@@ -225,15 +225,15 @@ namespace System.Web.J2EE
 		#region CachedDocumentTypeStorage class
 		class CachedDocumentTypeStorage : ICachedXmlDoc
 		{
-			private static readonly object _fuse = new object();
+			static readonly object _fuse = new object();
 			public static readonly ICachedXmlDoc DEFAULT_DOC =
 				new CachedDocumentTypeStorage(0);
 
-			private static readonly int DEFAULT_PAGES_NUMBER = 25;
+			static readonly int DEFAULT_PAGES_NUMBER = 25;
 
-			private Hashtable _table;
+			Hashtable _table;
 
-			private CachedDocumentTypeStorage(int initTableSize)
+			CachedDocumentTypeStorage(int initTableSize)
 			{
 				_table = Hashtable.Synchronized(new Hashtable(initTableSize));
 			}
@@ -304,19 +304,19 @@ namespace System.Web.J2EE
 	}
 	public class PageCompiler : MetaProvider
 	{
-		private static readonly string PAGE_XPATH = "preserve";
-		private static readonly string ASSEM_ATTRIB_NAME = "assem";
-		private static readonly string TYPE_ATTRIB_NAME = "type";
-		private static string _parser = null;
+		static readonly string PAGE_XPATH = "preserve";
+		static readonly string ASSEM_ATTRIB_NAME = "assem";
+		static readonly string TYPE_ATTRIB_NAME = "type";
+		static string _parser = null;
 
-		private Type _type = null;
-		private string _typeName = null;
-		private Assembly _assembly = null;
-		private string _origAssemblyName = null;
-		private string _xmlDescriptor = null;
-		private string _url = null;
-		private string _session = null;
-		readonly private HttpContext _context;
+		Type _type = null;
+		string _typeName = null;
+		Assembly _assembly = null;
+		string _origAssemblyName = null;
+		string _xmlDescriptor = null;
+		string _url = null;
+		string _session = null;
+		readonly HttpContext _context;
 
 		PageCompiler(HttpContext context, string url)
 		{
@@ -351,7 +351,7 @@ namespace System.Web.J2EE
 				return _origAssemblyName != null ? _origAssemblyName + ".ghres" : "dll.ghres";
 			}
 		}
-		private void LoadTypeAndAssem()
+		void LoadTypeAndAssem()
 		{
 			if (_assembly == null)
 			{
@@ -372,7 +372,7 @@ namespace System.Web.J2EE
 				Debug.WriteLine ("Loaded assembly:" + _assembly);
 			}
 		}
-		private bool InternalCompile()
+		bool InternalCompile()
 		{
 			string fileName = VirtualPathUtility.GetFileName (_url);
 
@@ -394,11 +394,11 @@ namespace System.Web.J2EE
 				//throw new HttpException(404, message);
 			}
 		}
-		private string GetDescriptorPath()
+		string GetDescriptorPath()
 		{
 			return String.Join("/", new string[] { "assemblies", _xmlDescriptor });
 		}
-		private string GetTypeNameFromAppFolder()
+		string GetTypeNameFromAppFolder()
 		{
 			try
 			{
@@ -448,11 +448,11 @@ namespace System.Web.J2EE
 			}
 			return typeName;
 		}
-		private string GetTypeName()
+		string GetTypeName()
 		{
 			return String.Format("{0}, {1}", _typeName, _origAssemblyName); 
 		}
-		private bool LoadMetaFromXmlStream(Stream fs)
+		bool LoadMetaFromXmlStream(Stream fs)
 		{
 			if (fs != null)
 			{
@@ -472,14 +472,14 @@ namespace System.Web.J2EE
 			return false;
 		}
 
-		private string GetTypeFromDescStream(Stream fs)
+		string GetTypeFromDescStream(Stream fs)
 		{
 			if (LoadMetaFromXmlStream(fs))
 				return GetTypeName();
 			return null;
 		}
 
-		private string[] GetParserCmd(bool globalAsax)
+		string[] GetParserCmd(bool globalAsax)
 		{
             string[] cmd = null;			
             if (globalAsax)
@@ -499,7 +499,7 @@ namespace System.Web.J2EE
 			return cmd;
 		}
 
-		private string GetParser()
+		string GetParser()
 		{
 			if (_parser == null)
 			{
@@ -512,7 +512,7 @@ namespace System.Web.J2EE
 			return _parser;
 		}
 
-		private string GetDescFromUrl()
+		string GetDescFromUrl()
 		{
 			string fileName = VirtualPathUtility.GetFileName (_url);
 			
@@ -524,7 +524,7 @@ namespace System.Web.J2EE
 			return string.Concat(descName).ToLowerInvariant();
 		}
 
-		private string GetIdFromUrl(string path)
+		string GetIdFromUrl(string path)
 		{
 			string fileName = VirtualPathUtility.GetFileName(path);
 			string id = string.Empty;
@@ -537,7 +537,7 @@ namespace System.Web.J2EE
 			return id;	
 		}
 
-		private Exception GetCompilerError()
+		Exception GetCompilerError()
 		{
 			string _errFile = _context.Request.MapPath ("~/" + _session + ".vmwerr");
 			

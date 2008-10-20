@@ -70,19 +70,19 @@ namespace System.Web.UI.WebControls
 		ParameterCollection insertParameters;
 		ParameterCollection filterParameters;
 		
-		private static readonly object DeletedEvent = new object();
-		private static readonly object DeletingEvent = new object();
-		private static readonly object FilteringEvent = new object();
-		private static readonly object InsertedEvent = new object();
-		private static readonly object InsertingEvent = new object();
-		private static readonly object ObjectCreatedEvent = new object();
-		private static readonly object ObjectCreatingEvent = new object();
-		private static readonly object ObjectDisposingEvent = new object();
-		//		private static readonly object ResolvingMethodEvent = new object();
-		private static readonly object SelectedEvent = new object();
-		private static readonly object SelectingEvent = new object();
-		private static readonly object UpdatedEvent = new object();
-		private static readonly object UpdatingEvent = new object();
+		static readonly object DeletedEvent = new object();
+		static readonly object DeletingEvent = new object();
+		static readonly object FilteringEvent = new object();
+		static readonly object InsertedEvent = new object();
+		static readonly object InsertingEvent = new object();
+		static readonly object ObjectCreatedEvent = new object();
+		static readonly object ObjectCreatingEvent = new object();
+		static readonly object ObjectDisposingEvent = new object();
+		//		static readonly object ResolvingMethodEvent = new object();
+		static readonly object SelectedEvent = new object();
+		static readonly object SelectingEvent = new object();
+		static readonly object UpdatedEvent = new object();
+		static readonly object UpdatingEvent = new object();
 		
 		public ObjectDataSourceView (ObjectDataSource owner, string name, HttpContext context): base (owner, name)
 		{
@@ -290,7 +290,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		// LAME SPEC: MSDN says value should be stored in ViewState but tests show otherwise.
-		private ConflictOptions conflictDetection = ConflictOptions.OverwriteChanges;
+		ConflictOptions conflictDetection = ConflictOptions.OverwriteChanges;
 		public ConflictOptions ConflictDetection {
 			get { return conflictDetection; }
 			set {
@@ -672,7 +672,7 @@ namespace System.Web.UI.WebControls
 			return -1;
 		}
 
-		private IDictionary BuildOldValuesList (IDictionary keys, IDictionary oldValues, bool keysWin) 
+		IDictionary BuildOldValuesList (IDictionary keys, IDictionary oldValues, bool keysWin) 
 		{
 			IDictionary oldDataValues;
 			if (ConflictDetection == ConflictOptions.CompareAllValues) {

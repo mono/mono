@@ -37,10 +37,10 @@ namespace System.Web.UI.WebControls
 {
 	public class FormViewUpdateEventArgs : CancelEventArgs
 	{
-		private object argument;
-		private IOrderedDictionary keys;
-		private IOrderedDictionary oldValues;
-		private IOrderedDictionary newValues;
+		object argument;
+		IOrderedDictionary keys;
+		IOrderedDictionary oldValues;
+		IOrderedDictionary newValues;
 		
 		public FormViewUpdateEventArgs (object argument)
 		{

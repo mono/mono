@@ -585,7 +585,7 @@ namespace System.Web {
 			}
 		}
 
-		private string ReadString (string key) 
+		string ReadString (string key) 
 		{
 			string v = this [key];
 			if (v == null) {
@@ -611,7 +611,7 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		private ArrayList ReadArrayList (string key) 
+		ArrayList ReadArrayList (string key) 
 		{
 			ArrayList v = (ArrayList)this.capabilities [key];
 			if (v == null) {

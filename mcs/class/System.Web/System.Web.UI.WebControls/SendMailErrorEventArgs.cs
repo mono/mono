@@ -34,8 +34,8 @@ namespace System.Web.UI.WebControls
 {
 	public class SendMailErrorEventArgs : EventArgs
 	{
-		private Exception exception;
-		private bool exceptionHandled;
+		Exception exception;
+		bool exceptionHandled;
 		
 		public SendMailErrorEventArgs (Exception e)
 		{

@@ -34,8 +34,8 @@ namespace System.Web.UI.WebControls
 {
 	public sealed class MenuEventArgs : CommandEventArgs
 	{
-		private MenuItem item; 
-		private object source;
+		MenuItem item; 
+		object source;
 	
 		public MenuEventArgs (MenuItem item) : base ("", null)
 		{

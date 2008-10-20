@@ -40,14 +40,14 @@ namespace System.Web.SessionState {
 [AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 public sealed class HttpSessionState : ICollection, IEnumerable
 {
-	private string _id;
-	private SessionDictionary _dict;
-	private HttpStaticObjectsCollection _staticObjects;
-	private int _timeout;
-	private bool _newSession;
-	private bool _isCookieless;
-	private SessionStateMode _mode;
-	private bool _isReadonly;
+	string _id;
+	SessionDictionary _dict;
+	HttpStaticObjectsCollection _staticObjects;
+	int _timeout;
+	bool _newSession;
+	bool _isCookieless;
+	SessionStateMode _mode;
+	bool _isReadonly;
 	internal bool _abandoned;
 
 	internal HttpSessionState (string id,

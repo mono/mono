@@ -36,8 +36,9 @@ using System.Collections;
 using System.ComponentModel;
 
 namespace System.Web.Util {
-	class DataSourceHelper {
-		private DataSourceHelper () {}
+	class DataSourceHelper 
+	{
+		DataSourceHelper () {}
 
 		[Obsolete ("Use DataSourceResolver")]
 		public static IEnumerable GetResolvedDataSource (object o, string data_member) 

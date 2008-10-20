@@ -28,7 +28,7 @@ namespace System.Web.Util
 {
 	class ICalls
 	{
-		private ICalls () {}
+		ICalls () {}
 
 		static public string GetMachineConfigPath ()
 		{

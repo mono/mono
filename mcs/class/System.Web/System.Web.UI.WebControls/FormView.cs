@@ -88,18 +88,18 @@ namespace System.Web.UI.WebControls
 		DataKey key;
 		DataKey oldEditValues;
 		
-		private static readonly object PageIndexChangedEvent = new object();
-		private static readonly object PageIndexChangingEvent = new object();
-		private static readonly object ItemCommandEvent = new object();
-		private static readonly object ItemCreatedEvent = new object();
-		private static readonly object ItemDeletedEvent = new object();
-		private static readonly object ItemDeletingEvent = new object();
-		private static readonly object ItemInsertedEvent = new object();
-		private static readonly object ItemInsertingEvent = new object();
-		private static readonly object ModeChangingEvent = new object();
-		private static readonly object ModeChangedEvent = new object();
-		private static readonly object ItemUpdatedEvent = new object();
-		private static readonly object ItemUpdatingEvent = new object();
+		static readonly object PageIndexChangedEvent = new object();
+		static readonly object PageIndexChangingEvent = new object();
+		static readonly object ItemCommandEvent = new object();
+		static readonly object ItemCreatedEvent = new object();
+		static readonly object ItemDeletedEvent = new object();
+		static readonly object ItemDeletingEvent = new object();
+		static readonly object ItemInsertedEvent = new object();
+		static readonly object ItemInsertingEvent = new object();
+		static readonly object ModeChangingEvent = new object();
+		static readonly object ModeChangedEvent = new object();
+		static readonly object ItemUpdatedEvent = new object();
+		static readonly object ItemUpdatingEvent = new object();
 		
 		// Control state
 		int pageIndex;

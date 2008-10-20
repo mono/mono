@@ -125,7 +125,7 @@ namespace System.Web.Handlers
 			}
 		}
 
-		private void RenderMenu (TraceManager manager, HtmlTextWriter output, string dir)
+		void RenderMenu (TraceManager manager, HtmlTextWriter output, string dir)
 		{
 			
 			output.RenderBeginTag (HtmlTextWriterTag.Html);
@@ -164,7 +164,7 @@ namespace System.Web.Handlers
 			output.RenderEndTag ();
 		}
 
-		private void RenderHeader (HtmlTextWriter output, string dir)
+		void RenderHeader (HtmlTextWriter output, string dir)
 		{
 			Table table = TraceData.CreateTable ();
 			TableRow row1 = new TableRow ();
@@ -195,7 +195,7 @@ namespace System.Web.Handlers
 			table.RenderControl (output);
 		}
 		
-		private void RenderItem (TraceManager manager, HtmlTextWriter output, int item)
+		void RenderItem (TraceManager manager, HtmlTextWriter output, int item)
 		{
 			manager.TraceData [item - 1].Render (output);
 		}

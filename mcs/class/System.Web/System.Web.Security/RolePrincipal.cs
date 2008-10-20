@@ -44,16 +44,16 @@ namespace System.Web.Security {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class RolePrincipal : IPrincipal {
 
-		private IIdentity _identity;
-		private bool _listChanged;
-		private string[] _cachedArray;
-		private HybridDictionary _cachedRoles;
+		IIdentity _identity;
+		bool _listChanged;
+		string[] _cachedArray;
+		HybridDictionary _cachedRoles;
 		readonly string _providerName;
 
-		private int _version = 1;
-		private string _cookiePath;
-		private DateTime _issueDate;
-		private DateTime _expireDate;
+		int _version = 1;
+		string _cookiePath;
+		DateTime _issueDate;
+		DateTime _expireDate;
 
 
 		public RolePrincipal (IIdentity identity)
@@ -181,7 +181,7 @@ namespace System.Web.Security {
 				return GetBase64FromBytes (ticketBytes, 0, ticketBytes.Length);
 		}
 
-		private void DecryptTicket (string encryptedTicket)
+		void DecryptTicket (string encryptedTicket)
 		{
 			if (encryptedTicket == null || encryptedTicket == String.Empty)
 				throw new ArgumentException ("Invalid encrypted ticket", "encryptedTicket");
@@ -264,7 +264,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		private void InitializeRoles (string decryptedRoles)
+		void InitializeRoles (string decryptedRoles)
 		{
 			_cachedArray = decryptedRoles.Split (',');
 			_cachedRoles = new HybridDictionary (true);
@@ -273,7 +273,7 @@ namespace System.Web.Security {
 				_cachedRoles.Add (r, r);
 		}
 
-		private byte [] InitVector
+		byte [] InitVector
 		{
 			get { return new byte [] { 1, 2, 3, 4, 5, 6, 7, 8 }; }
 		}

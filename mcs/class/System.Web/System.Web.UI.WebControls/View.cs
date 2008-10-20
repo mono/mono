@@ -43,8 +43,8 @@ namespace System.Web.UI.WebControls
 	[ToolboxDataAttribute ("<{0}:View runat=\"server\"></{0}:View>")]
 	public class View: Control
 	{
-		private static readonly object ActivateEvent = new object();
-		private static readonly object DeactivateEvent = new object();
+		static readonly object ActivateEvent = new object();
+		static readonly object DeactivateEvent = new object();
 
 		public View ()
 		{

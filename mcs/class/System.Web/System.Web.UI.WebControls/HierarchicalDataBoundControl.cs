@@ -119,7 +119,7 @@ namespace System.Web.UI.WebControls
 			base.OnLoad(e);
 		}
 
-		private void Initialize ()
+		void Initialize ()
 		{
 			if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
 				RequiresDataBinding = true;

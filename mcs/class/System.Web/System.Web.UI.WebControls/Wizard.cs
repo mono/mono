@@ -101,12 +101,12 @@ namespace System.Web.UI.WebControls
 		ArrayList styles = new ArrayList ();
 		Hashtable customNavigation;
 		
-		private static readonly object ActiveStepChangedEvent = new object();
-		private static readonly object CancelButtonClickEvent = new object();
-		private static readonly object FinishButtonClickEvent = new object();
-		private static readonly object NextButtonClickEvent = new object();
-		private static readonly object PreviousButtonClickEvent = new object();
-		private static readonly object SideBarButtonClickEvent = new object();
+		static readonly object ActiveStepChangedEvent = new object();
+		static readonly object CancelButtonClickEvent = new object();
+		static readonly object FinishButtonClickEvent = new object();
+		static readonly object NextButtonClickEvent = new object();
+		static readonly object PreviousButtonClickEvent = new object();
+		static readonly object SideBarButtonClickEvent = new object();
 		
 		public event EventHandler ActiveStepChanged {
 			add { Events.AddHandler (ActiveStepChangedEvent, value); }
@@ -1005,7 +1005,7 @@ namespace System.Web.UI.WebControls
 			buttonBarCell.Controls.Add (_finishNavContainer);
 		}
 
-		private static void AddNavButtonsTable (BaseWizardNavigationContainer container, out TableRow row)
+		static void AddNavButtonsTable (BaseWizardNavigationContainer container, out TableRow row)
 		{
 			Table t = new Table ();
 			t.CellPadding = 5;
@@ -1456,7 +1456,7 @@ namespace System.Web.UI.WebControls
 				((WebControl) styleDef [0]).ApplyStyle ((Style) styleDef [1]);
 		}
 
-		private BaseWizardNavigationContainer GetCurrentNavContainer ()
+		BaseWizardNavigationContainer GetCurrentNavContainer ()
 		{
 			if (customNavigation != null && customNavigation [ActiveStep] != null) {
 				return (BaseWizardNavigationContainer) customNavigation [ActiveStep];
@@ -1693,7 +1693,7 @@ namespace System.Web.UI.WebControls
 				InitTable ();
 			}
 
-			private void InitTable () {
+			void InitTable () {
 				TableRow row = new TableRow ();
 				TableCell cell = new TableCell ();
 

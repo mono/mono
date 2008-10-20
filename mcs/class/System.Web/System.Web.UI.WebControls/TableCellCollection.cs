@@ -36,10 +36,9 @@ namespace System.Web.UI.WebControls {
 #else
 	[Editor ("System.Web.UI.Design.WebControls.TableCellsCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #endif
-	public sealed class TableCellCollection : IList, ICollection, IEnumerable {
-
-		private ControlCollection cc;
-
+	public sealed class TableCellCollection : IList, ICollection, IEnumerable 
+	{
+		ControlCollection cc;
 
 		internal TableCellCollection (TableRow tr)
 		{

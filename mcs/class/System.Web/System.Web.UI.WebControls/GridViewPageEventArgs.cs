@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls
 {
 	public class GridViewPageEventArgs : CancelEventArgs
 	{
-		private int pageIndex;
+		int pageIndex;
 		
 		public GridViewPageEventArgs (int pageIndex )
 		{

@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls
 {
 	public class DetailsViewCommandEventArgs : CommandEventArgs
 	{
-		private object source;
+		object source;
 		
 		public DetailsViewCommandEventArgs (object source, CommandEventArgs arguments) : base (arguments)
 		{

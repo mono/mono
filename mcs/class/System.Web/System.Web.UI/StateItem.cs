@@ -35,8 +35,8 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
         public sealed class StateItem
         {
-                private bool _isDirty = false;
-                private object _value = null;
+                bool _isDirty = false;
+                object _value = null;
                 public bool IsDirty
                 {
                         get
@@ -59,7 +59,7 @@ namespace System.Web.UI {
                                 _value = value;
                         }
                 }
-                private StateItem() {}
+                StateItem() {}
                 internal StateItem(Object value)
                 {
                         _value = value;

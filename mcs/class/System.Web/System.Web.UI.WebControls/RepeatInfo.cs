@@ -479,9 +479,9 @@ namespace System.Web.UI.WebControls {
 				HttpContext.Current.Trace.Write (s);
 		}
 
-		private string caption = "";
-		private TableCaptionAlign captionAlign = TableCaptionAlign.NotSet; 
-		private  bool useAccessibleHeader = false; 
+		string caption = String.Empty;
+		TableCaptionAlign captionAlign = TableCaptionAlign.NotSet; 
+		bool useAccessibleHeader = false; 
 
 		[WebSysDescription ("")]
 		[WebCategory ("Accessibility")]
@@ -503,8 +503,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Accessibility")]
 		public bool UseAccessibleHeader {
 			get {return useAccessibleHeader;}
-			set { useAccessibleHeader = value; }		
+			set { useAccessibleHeader = value; }
 		}
-
 	}
 }

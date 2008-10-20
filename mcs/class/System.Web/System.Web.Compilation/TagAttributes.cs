@@ -110,7 +110,7 @@ namespace System.Web.Compilation
 			get { return (got_hashed ? atts_hash.Values : values); }
 		}
 
-		private int CaseInsensitiveSearch (string key)
+		int CaseInsensitiveSearch (string key)
 		{
 			// Hope not to have many attributes when the tag is not a server tag...
 			for (int i = 0; i < keys.Count; i++){

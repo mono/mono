@@ -38,7 +38,7 @@ namespace System.Web.UI {
 
 		public static readonly ToolboxDataAttribute Default = new ToolboxDataAttribute (String.Empty);
 
-		private string data;
+		string data;
 
 		public ToolboxDataAttribute (string data)
 		{

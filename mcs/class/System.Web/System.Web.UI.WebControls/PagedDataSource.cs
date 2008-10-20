@@ -245,7 +245,7 @@ namespace System.Web.UI.WebControls {
 			return String.Empty; // as documented
 		}
 
-		private IEnumerator GetListEnum (IList list, int start, int end)
+		IEnumerator GetListEnum (IList list, int start, int end)
 		{
 			if (!AllowPaging)
 				end = list.Count;
@@ -256,7 +256,7 @@ namespace System.Web.UI.WebControls {
 				yield return list [i];
 		}
 
-		private IEnumerator GetEnumeratorEnum (IEnumerator e, int start, int end)
+		IEnumerator GetEnumeratorEnum (IEnumerator e, int start, int end)
 		{
 			for (int i = 0; i < start; i++)
 				e.MoveNext ();

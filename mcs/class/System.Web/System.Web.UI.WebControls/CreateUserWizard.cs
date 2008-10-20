@@ -42,34 +42,34 @@ namespace System.Web.UI.WebControls
 	public class CreateUserWizard : Wizard
 	{
 		public static readonly string ContinueButtonCommandName = "Continue";
-		private string _password = "";
-		private string _confirmPassword = "";
-		private MembershipProvider _provider = null;
-		private ITextControl _errorMessageLabel = null;
-		private MailDefinition _mailDefinition = null;
+		string _password = String.Empty;
+		string _confirmPassword = String.Empty;
+		MembershipProvider _provider = null;
+		ITextControl _errorMessageLabel = null;
+		MailDefinition _mailDefinition = null;
 
-		private Style _textBoxStyle = null;
-		private Style _validatorTextStyle = null;
+		Style _textBoxStyle = null;
+		Style _validatorTextStyle = null;
 
-		private TableItemStyle _completeSuccessTextStyle = null;
-		private TableItemStyle _errorMessageStyle = null;
-		private TableItemStyle _hyperLinkStyle = null;
-		private TableItemStyle _instructionTextStyle = null;
-		private TableItemStyle _labelStyle = null;
-		private TableItemStyle _passwordHintStyle = null;
-		private TableItemStyle _titleTextStyle = null;
+		TableItemStyle _completeSuccessTextStyle = null;
+		TableItemStyle _errorMessageStyle = null;
+		TableItemStyle _hyperLinkStyle = null;
+		TableItemStyle _instructionTextStyle = null;
+		TableItemStyle _labelStyle = null;
+		TableItemStyle _passwordHintStyle = null;
+		TableItemStyle _titleTextStyle = null;
 		Style _createUserButtonStyle;
 		Style _continueButtonStyle;
 
-		private static readonly object CreatedUserEvent = new object ();
-		private static readonly object CreateUserErrorEvent = new object ();
-		private static readonly object CreatingUserEvent = new object ();
-		private static readonly object ContinueButtonClickEvent = new object ();
-		private static readonly object SendingMailEvent = new object ();
-		private static readonly object SendMailErrorEvent = new object ();
+		static readonly object CreatedUserEvent = new object ();
+		static readonly object CreateUserErrorEvent = new object ();
+		static readonly object CreatingUserEvent = new object ();
+		static readonly object ContinueButtonClickEvent = new object ();
+		static readonly object SendingMailEvent = new object ();
+		static readonly object SendMailErrorEvent = new object ();
 
-		private CompleteWizardStep _completeWizardStep = null;
-		private CreateUserWizardStep _createUserWizardStep = null;
+		CompleteWizardStep _completeWizardStep = null;
+		CreateUserWizardStep _createUserWizardStep = null;
 
 		public CreateUserWizard ()
 		{
@@ -1150,7 +1150,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private void InstantiateCompleteWizardStep (CompleteWizardStep step)
+		void InstantiateCompleteWizardStep (CompleteWizardStep step)
 		{
 			CompleteStepContainer contentTemplateContainer = new CompleteStepContainer (this);
 			if (step.ContentTemplate != null) {
@@ -1286,7 +1286,7 @@ namespace System.Web.UI.WebControls
 			return base.OnBubbleEvent (source, e);
 		}
 
-		private void ProcessContinueEvent () {
+		void ProcessContinueEvent () {
 			OnContinueButtonClick (EventArgs.Empty);
 
 			if (ContinueDestinationPageUrl.Length > 0) {
@@ -1474,32 +1474,32 @@ namespace System.Web.UI.WebControls
 
 		#region Private event handlers
 
-		private void UserName_TextChanged (object sender, EventArgs e)
+		void UserName_TextChanged (object sender, EventArgs e)
 		{
 			UserName = ((ITextControl) sender).Text;
 		}
 
-		private void Password_TextChanged (object sender, EventArgs e)
+		void Password_TextChanged (object sender, EventArgs e)
 		{
 			_password = ((ITextControl) sender).Text;
 		}
 
-		private void ConfirmPassword_TextChanged (object sender, EventArgs e)
+		void ConfirmPassword_TextChanged (object sender, EventArgs e)
 		{
 			_confirmPassword = ((ITextControl) sender).Text;
 		}
 
-		private void Email_TextChanged (object sender, EventArgs e)
+		void Email_TextChanged (object sender, EventArgs e)
 		{
 			Email = ((ITextControl) sender).Text;
 		}
 
-		private void Question_TextChanged (object sender, EventArgs e)
+		void Question_TextChanged (object sender, EventArgs e)
 		{
 			Question = ((ITextControl) sender).Text;
 		}
 
-		private void Answer_TextChanged (object sender, EventArgs e)
+		void Answer_TextChanged (object sender, EventArgs e)
 		{
 			Answer = ((ITextControl) sender).Text;
 		}
@@ -1508,7 +1508,7 @@ namespace System.Web.UI.WebControls
 
 		#region Private Methods
 
-		private void InitMemberShipProvider ()
+		void InitMemberShipProvider ()
 		{
 			string mp = MembershipProvider;
 			_provider = (mp.Length == 0) ? _provider = Membership.Provider : Membership.Providers [mp];
@@ -1516,7 +1516,7 @@ namespace System.Web.UI.WebControls
 				throw new HttpException (Locale.GetText ("No provider named '{0}' could be found.", mp));
 		}
 
-		private bool CreateUser ()
+		bool CreateUser ()
 		{
 			if (!Page.IsValid)
 				return false;
@@ -1576,7 +1576,7 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
-		private void SendPasswordByMail (MembershipUser user, string password)
+		void SendPasswordByMail (MembershipUser user, string password)
 		{
 			if (user == null)
 				return;
@@ -1614,20 +1614,20 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private void Login ()
+		void Login ()
 		{
 			bool userValidated = MembershipProviderInternal.ValidateUser (UserName, Password);
 			if (userValidated)
 				FormsAuthentication.SetAuthCookie (UserName, false);
 		}
 
-		private void ShowErrorMessage (string errorMessage)
+		void ShowErrorMessage (string errorMessage)
 		{
 			if (_errorMessageLabel != null)
 				_errorMessageLabel.Text = errorMessage;
 		}
 
-		private string GeneratePassword ()
+		string GeneratePassword ()
 		{
 			return Membership.GeneratePassword (8, 3);
 		}

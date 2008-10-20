@@ -171,7 +171,7 @@ namespace System.Web.UI {
 			}
 		}
 
-		private ArrayList CollectAutomaticEventInfo () {
+		ArrayList CollectAutomaticEventInfo () {
 			ArrayList events = new ArrayList ();
 
 			foreach (string methodName in methodNames) {

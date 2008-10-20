@@ -51,7 +51,7 @@ namespace System.Web.UI.WebControls {
 		public const string SortCommandName = "Sort";
 		public const string UpdateCommandName = "Update";
 
-		private DataControlCommands ()
+		DataControlCommands ()
 		{
 		}
 	}

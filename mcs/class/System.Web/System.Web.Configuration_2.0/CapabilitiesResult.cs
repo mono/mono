@@ -32,7 +32,7 @@ namespace System.Web.Configuration
 
 	internal class CapabilitiesResult : System.Web.HttpBrowserCapabilities
 	{
-		private static string[] RandomRoboBotKeywords;
+		static string[] RandomRoboBotKeywords;
 
 		/// <summary>
 		/// Initializes a new instance of the Result class.

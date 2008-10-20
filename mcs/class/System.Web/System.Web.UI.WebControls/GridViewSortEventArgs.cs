@@ -36,8 +36,8 @@ namespace System.Web.UI.WebControls
 {
 	public class GridViewSortEventArgs : CancelEventArgs
 	{
-		private string sortExpression;
-		private SortDirection sortDirection;
+		string sortExpression;
+		SortDirection sortDirection;
 		
 		public GridViewSortEventArgs (string expression, SortDirection sortDirection)
 		{

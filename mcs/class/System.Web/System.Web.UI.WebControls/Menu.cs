@@ -86,8 +86,8 @@ namespace System.Web.UI.WebControls
 		Style dynamicHoverLinkStyle;
 		Style staticHoverLinkStyle;
 
-		private static readonly object MenuItemClickEvent = new object();
-		private static readonly object MenuItemDataBoundEvent = new object();
+		static readonly object MenuItemClickEvent = new object();
+		static readonly object MenuItemDataBoundEvent = new object();
 		
 		public static readonly string MenuItemClickCommandName = "Click";
 		
@@ -369,7 +369,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style PopOutBoxStyle {
+		Style PopOutBoxStyle {
 			get {
 				if (popOutBoxStyle == null) {
 					popOutBoxStyle = new Style ();
@@ -379,7 +379,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style ControlLinkStyle {
+		Style ControlLinkStyle {
 			get {
 				if (controlLinkStyle == null) {
 					controlLinkStyle = new Style ();
@@ -389,7 +389,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style DynamicMenuItemLinkStyle {
+		Style DynamicMenuItemLinkStyle {
 			get {
 				if (dynamicMenuItemLinkStyle == null) {
 					dynamicMenuItemLinkStyle = new Style ();
@@ -398,7 +398,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style StaticMenuItemLinkStyle {
+		Style StaticMenuItemLinkStyle {
 			get {
 				if (staticMenuItemLinkStyle == null) {
 					staticMenuItemLinkStyle = new Style ();
@@ -407,7 +407,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style DynamicSelectedLinkStyle {
+		Style DynamicSelectedLinkStyle {
 			get {
 				if (dynamicSelectedLinkStyle == null) {
 					dynamicSelectedLinkStyle = new Style ();
@@ -416,7 +416,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style StaticSelectedLinkStyle {
+		Style StaticSelectedLinkStyle {
 			get {
 				if (staticSelectedLinkStyle == null) {
 					staticSelectedLinkStyle = new Style ();
@@ -425,7 +425,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style DynamicHoverLinkStyle {
+		Style DynamicHoverLinkStyle {
 			get {
 				if (dynamicHoverLinkStyle == null) {
 					dynamicHoverLinkStyle = new Style ();
@@ -434,7 +434,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private Style StaticHoverLinkStyle {
+		Style StaticHoverLinkStyle {
 			get {
 				if (staticHoverLinkStyle == null) {
 					staticHoverLinkStyle = new Style ();
@@ -857,7 +857,7 @@ namespace System.Web.UI.WebControls
 			EnsureChildControlsDataBound ();
 		}
 
-		private void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, MenuItemCollection itemCollection)
+		void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, MenuItemCollection itemCollection)
 		{
 			if (hEnumerable == null)
 				return;
@@ -1072,7 +1072,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private void CreateChildControlsForItems () {
+		void CreateChildControlsForItems () {
 			Controls.Clear ();
 			// Check for HasChildViewState to avoid unnecessary calls to ClearChildViewState.
 			if (HasChildViewState)
@@ -1082,7 +1082,7 @@ namespace System.Web.UI.WebControls
 			_requiresChildControlsDataBinding = true;
 		}
 
-		private void CreateChildControlsForItems (MenuItemCollection items ) {
+		void CreateChildControlsForItems (MenuItemCollection items ) {
 			foreach (MenuItem item in items) {
 				bool isDynamicItem = IsDynamicItem (item);
 				if (isDynamicItem && dynamicItemTemplate != null) {
@@ -1109,7 +1109,7 @@ namespace System.Web.UI.WebControls
 			EnsureChildControlsDataBound ();
 		}
 
-		private void EnsureChildControlsDataBound () {
+		void EnsureChildControlsDataBound () {
 			if (!_requiresChildControlsDataBinding)
 				return;
 			DataBindChildren ();
@@ -1518,7 +1518,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private void FillMenuStyle (bool dynamic, int menuLevel, SubMenuStyle style) {
+		void FillMenuStyle (bool dynamic, int menuLevel, SubMenuStyle style) {
 			if (Page.Header != null) {
 				// styles are registered
 				if (!dynamic && staticMenuStyle != null) {
@@ -1599,11 +1599,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		private bool IsDynamicItem (MenuItem item) {
+		bool IsDynamicItem (MenuItem item) {
 			return item.Depth + 1 > StaticDisplayLevels;
 		}
 
-		private bool DisplayChildren (MenuItem item) {
+		bool DisplayChildren (MenuItem item) {
 			return (item.Depth + 1 < StaticDisplayLevels + MaximumDynamicDisplayLevels) && item.ChildItems.Count > 0;
 		}
 		
@@ -2033,7 +2033,7 @@ namespace System.Web.UI.WebControls
 					_buffer [_ptr++] = value [i];
 			}
 
-			private void EnsureCapacity ()
+			void EnsureCapacity ()
 			{
 				char [] tmpBuffer = new char [_buffer.Length * 2];
 				Array.Copy (_buffer, tmpBuffer, _buffer.Length);

@@ -42,10 +42,9 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 	[SupportsEventValidation]
 #endif
-	public class HtmlTextArea : HtmlContainerControl, IPostBackDataHandler {
-
-		private static readonly object serverChangeEvent = new object ();
-
+	public class HtmlTextArea : HtmlContainerControl, IPostBackDataHandler 
+	{
+		static readonly object serverChangeEvent = new object ();
 
 		public HtmlTextArea ()
 			: base ("textarea")

@@ -455,12 +455,12 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private DbParameter CreateDbParameter (string name, object value)
+		DbParameter CreateDbParameter (string name, object value)
 		{
 			return CreateDbParameter (name, value, ParameterDirection.Input, -1);
 		}
 		
-		private DbParameter CreateDbParameter (string name, object value, ParameterDirection dir, int size)
+		DbParameter CreateDbParameter (string name, object value, ParameterDirection dir, int size)
 		{
 			DbParameter dbp = factory.CreateParameter ();
 			dbp.ParameterName = ParameterPrefix + name;
@@ -528,7 +528,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private bool cancelSelectOnNullParameter = true;
+		bool cancelSelectOnNullParameter = true;
 		public bool CancelSelectOnNullParameter {
 			get { return cancelSelectOnNullParameter; }
 			set {
@@ -572,7 +572,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private ConflictOptions conflictDetection = ConflictOptions.OverwriteChanges;
+		ConflictOptions conflictDetection = ConflictOptions.OverwriteChanges;
 		public ConflictOptions ConflictDetection {
 			get { return conflictDetection; }
 			set {
@@ -584,14 +584,14 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private string deleteCommand = "";
+		string deleteCommand = String.Empty;
 		public string DeleteCommand {
 			get { return deleteCommand; }
 			set { deleteCommand = value; }
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private SqlDataSourceCommandType deleteCommandType = SqlDataSourceCommandType.Text;
+		SqlDataSourceCommandType deleteCommandType = SqlDataSourceCommandType.Text;
 		public SqlDataSourceCommandType DeleteCommandType {
 			get { return deleteCommandType; }
 			set { deleteCommandType = value; }
@@ -605,7 +605,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private string filterExpression;
+		string filterExpression;
 		public string FilterExpression {
 			get { return filterExpression ?? string.Empty; }
 			set {
@@ -624,14 +624,14 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private string insertCommand = "";
+		string insertCommand = String.Empty;
 		public string InsertCommand {
 			get { return insertCommand; }
 			set { insertCommand = value; }
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private SqlDataSourceCommandType insertCommandType = SqlDataSourceCommandType.Text;
+		SqlDataSourceCommandType insertCommandType = SqlDataSourceCommandType.Text;
 		public SqlDataSourceCommandType InsertCommandType {
 			get { return insertCommandType; }
 			set { insertCommandType = value; }
@@ -649,7 +649,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private string oldValuesParameterFormatString = "{0}";
+		string oldValuesParameterFormatString = "{0}";
 		[DefaultValue ("{0}")]
 		public string OldValuesParameterFormatString {
 			get { return oldValuesParameterFormatString; }
@@ -662,7 +662,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private string selectCommand;
+		string selectCommand;
 		public string SelectCommand {
 			get { return selectCommand != null ? selectCommand : string.Empty; }
 			set {
@@ -674,7 +674,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private SqlDataSourceCommandType selectCommandType = SqlDataSourceCommandType.Text;
+		SqlDataSourceCommandType selectCommandType = SqlDataSourceCommandType.Text;
 		public SqlDataSourceCommandType SelectCommandType {
 			get { return selectCommandType; }
 			set { selectCommandType = value; }
@@ -685,7 +685,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private string sortParameterName = "";
+		string sortParameterName = String.Empty;
 		public string SortParameterName {
 			get { return sortParameterName; }
 			set {
@@ -697,14 +697,14 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private string updateCommand = "";
+		string updateCommand = String.Empty;
 		public string UpdateCommand {
 			get { return updateCommand; }
 			set { updateCommand = value; }
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private SqlDataSourceCommandType updateCommandType = SqlDataSourceCommandType.Text;
+		SqlDataSourceCommandType updateCommandType = SqlDataSourceCommandType.Text;
 		public SqlDataSourceCommandType UpdateCommandType {
 			get { return updateCommandType; }
 			set { updateCommandType = value; }

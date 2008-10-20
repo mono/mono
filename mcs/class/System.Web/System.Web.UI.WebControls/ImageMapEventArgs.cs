@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls
 {
 	public class ImageMapEventArgs : EventArgs
 	{
-		private string value;
+		string value;
 		
 		public ImageMapEventArgs (string value)
 		{

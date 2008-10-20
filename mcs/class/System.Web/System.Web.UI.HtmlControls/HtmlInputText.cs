@@ -42,10 +42,9 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 	[SupportsEventValidation]
 #endif
-	public class HtmlInputText : HtmlInputControl, IPostBackDataHandler {
-
-		private static readonly object serverChangeEvent = new object ();
-
+	public class HtmlInputText : HtmlInputControl, IPostBackDataHandler 
+	{
+		static readonly object serverChangeEvent = new object ();
 
 		public HtmlInputText ()
 			: base ("text")
@@ -56,7 +55,6 @@ namespace System.Web.UI.HtmlControls {
 			: base (type)
 		{
 		}
-
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

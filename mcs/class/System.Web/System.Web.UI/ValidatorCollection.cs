@@ -37,7 +37,7 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class ValidatorCollection : ICollection, IEnumerable
 	{
-		private ArrayList _validators;
+		ArrayList _validators;
 
 		public ValidatorCollection ()
 		{

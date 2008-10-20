@@ -342,7 +342,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		private bool CheckPassword (string password)
+		bool CheckPassword (string password)
 		{
 			if (password.Length < MinRequiredPasswordLength)
 				return false;
@@ -996,7 +996,7 @@ namespace System.Web.Security {
 			return pi;
 		}
 
-		private PasswordInfo GetPasswordInfo (string username)
+		PasswordInfo GetPasswordInfo (string username)
 		{
 			using (DbConnection connection = CreateConnection ()) {
 				DbCommand command = factory.CreateCommand ();
@@ -1029,7 +1029,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		private string EncodePassword (string password, MembershipPasswordFormat passwordFormat, string salt)
+		string EncodePassword (string password, MembershipPasswordFormat passwordFormat, string salt)
 		{
 			byte [] password_bytes;
 			byte [] salt_bytes;
@@ -1072,7 +1072,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		private string DecodePassword (string password, MembershipPasswordFormat passwordFormat)
+		string DecodePassword (string password, MembershipPasswordFormat passwordFormat)
 		{
 			switch (passwordFormat) {
 				case MembershipPasswordFormat.Clear:
@@ -1144,7 +1144,7 @@ namespace System.Web.Security {
 		}
 
 		[Flags]
-		private enum DeleteUserTableMask
+		enum DeleteUserTableMask
 		{
 			MembershipUsers = 1,
 			UsersInRoles = 2,
@@ -1152,16 +1152,16 @@ namespace System.Web.Security {
 			WebPartStateUser = 8
 		}
 
-		private sealed class PasswordInfo
+		sealed class PasswordInfo
 		{
-			private string _password;
-			private MembershipPasswordFormat _passwordFormat;
-			private string _passwordSalt;
-			private int _failedPasswordAttemptCount;
-			private int _failedPasswordAnswerAttemptCount;
-			private bool _isApproved;
-			private DateTime _lastLoginDate;
-			private DateTime _lastActivityDate;
+			string _password;
+			MembershipPasswordFormat _passwordFormat;
+			string _passwordSalt;
+			int _failedPasswordAttemptCount;
+			int _failedPasswordAnswerAttemptCount;
+			bool _isApproved;
+			DateTime _lastLoginDate;
+			DateTime _lastActivityDate;
 
 			internal PasswordInfo (
 				string password,

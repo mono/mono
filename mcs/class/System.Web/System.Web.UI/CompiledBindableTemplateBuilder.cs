@@ -34,8 +34,8 @@ namespace System.Web.UI
 {
 	public sealed class CompiledBindableTemplateBuilder : IBindableTemplate
 	{
-		private BuildTemplateMethod templateMethod;
-		private ExtractTemplateValuesMethod extractMethod;
+		BuildTemplateMethod templateMethod;
+		ExtractTemplateValuesMethod extractMethod;
 
 		public CompiledBindableTemplateBuilder (BuildTemplateMethod buildTemplateMethod, ExtractTemplateValuesMethod extractTemplateValuesMethod)
 		{

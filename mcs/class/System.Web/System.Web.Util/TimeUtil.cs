@@ -33,9 +33,9 @@ using System.Globalization;
 
 namespace System.Web.Util {
 
-	internal sealed class TimeUtil {
-		
-		private TimeUtil () { }
+	internal sealed class TimeUtil 
+	{
+		TimeUtil () { }
 		
 		internal static string ToUtcTimeString (DateTime dt)
 		{

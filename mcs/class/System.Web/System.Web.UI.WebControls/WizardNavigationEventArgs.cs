@@ -34,9 +34,9 @@ namespace System.Web.UI.WebControls
 {
 	public class WizardNavigationEventArgs : EventArgs
 	{
-		private int curStepIndex;
-		private int nxtStepIndex;
-		private bool cancel;
+		int curStepIndex;
+		int nxtStepIndex;
+		bool cancel;
 		
 		public WizardNavigationEventArgs (int currentIndex, int nextIndex)
 		{

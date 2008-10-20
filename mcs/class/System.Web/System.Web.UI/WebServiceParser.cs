@@ -38,7 +38,7 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class WebServiceParser : SimpleWebHandlerParser
 	{
-		private WebServiceParser (HttpContext context, string virtualPath, string physicalPath)
+		WebServiceParser (HttpContext context, string virtualPath, string physicalPath)
 			: base (context, virtualPath, physicalPath)
 		{
 		}

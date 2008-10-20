@@ -33,9 +33,9 @@ namespace System.Web.UI.WebControls {
 
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class DataListItemCollection : ICollection, IEnumerable {
-
-		private ArrayList list;
+	public sealed class DataListItemCollection : ICollection, IEnumerable 
+	{
+		ArrayList list;
 
 		public DataListItemCollection (ArrayList items)
 		{

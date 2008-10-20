@@ -36,13 +36,13 @@ namespace System.Web.UI.WebControls
 {
 	public class FormViewUpdatedEventArgs : EventArgs
 	{
-		private int rowsAffected;
-		private Exception e;
-		private bool exceptionHandled;
-		private bool keepEditMode;
-		private IOrderedDictionary keys;
-		private IOrderedDictionary oldValues;
-		private IOrderedDictionary newValues;
+		int rowsAffected;
+		Exception e;
+		bool exceptionHandled;
+		bool keepEditMode;
+		IOrderedDictionary keys;
+		IOrderedDictionary oldValues;
+		IOrderedDictionary newValues;
 		
 		public FormViewUpdatedEventArgs (int affectedRows, Exception e)
 		{

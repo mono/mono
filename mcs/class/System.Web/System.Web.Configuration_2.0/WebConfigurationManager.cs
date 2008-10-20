@@ -384,7 +384,7 @@ namespace System.Web.Configuration {
 			}
 		}
 
-		static private Web20DefaultConfig config {
+		static Web20DefaultConfig config {
 			get {
 				return (Web20DefaultConfig) AppDomain.CurrentDomain.GetData ("Web20DefaultConfig.config");
 			}
@@ -393,7 +393,7 @@ namespace System.Web.Configuration {
 			}
 		}
 
-		static private IInternalConfigSystem configSystem {
+		static IInternalConfigSystem configSystem {
 			get {
 				return (IInternalConfigSystem) AppDomain.CurrentDomain.GetData ("IInternalConfigSystem.configSystem");
 			}
@@ -453,7 +453,7 @@ namespace System.Web.Configuration {
 	class Web20DefaultConfig : IConfigurationSystem
 	{
 #if TARGET_J2EE
-		static private Web20DefaultConfig instance {
+		static Web20DefaultConfig instance {
 			get {
 				Web20DefaultConfig val = (Web20DefaultConfig)AppDomain.CurrentDomain.GetData("Web20DefaultConfig.instance");
 				if (val == null) {

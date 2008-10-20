@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls
 {
 	public class DetailsViewUpdateEventArgs : CancelEventArgs
 	{
-		private object argument;
+		object argument;
 		IOrderedDictionary keys;
 		IOrderedDictionary newValues;
 		IOrderedDictionary oldValues;

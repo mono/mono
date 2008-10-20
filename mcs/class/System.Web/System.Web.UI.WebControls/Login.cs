@@ -44,13 +44,12 @@ namespace System.Web.UI.WebControls {
 	[Bindable (false)]
 	[DefaultEvent ("Authenticate")]
 	[Designer ("System.Web.UI.Design.WebControls.LoginDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public class Login : CompositeControl {
-
+	public class Login : CompositeControl 
+	{
 		#region LoginContainer
-
 		sealed class LoginContainer : Table
 		{
-			private readonly Login _owner = null;
+			readonly Login _owner = null;
 			TableCell _containerCell = null;
 
 			public LoginContainer (Login owner)
@@ -79,7 +78,7 @@ namespace System.Web.UI.WebControls {
 				template.InstantiateIn (_containerCell);
 			}
 
-			private void InitTable ()
+			void InitTable ()
 			{
 				_containerCell = new TableCell ();
 
@@ -302,7 +301,7 @@ namespace System.Web.UI.WebControls {
 				container.Controls.Add (table);
 			}
 
-			private TableRow CreateRow (TableCell cell)
+			TableRow CreateRow (TableCell cell)
 			{
 				TableRow row = new TableRow ();
 				row.Cells.Add (cell);
@@ -332,14 +331,14 @@ namespace System.Web.UI.WebControls {
 				return row;
 			}
 			
-			private TableCell CreateCell (Control c0, Control c1, Style s, HorizontalAlign align)
+			TableCell CreateCell (Control c0, Control c1, Style s, HorizontalAlign align)
 			{
 				TableCell cell = CreateCell (c0, c1, s);
 				cell.HorizontalAlign = align;
 				return cell;
 			}
 
-			private TableCell CreateCell (Control c0, Control c1, Style s)
+			TableCell CreateCell (Control c0, Control c1, Style s)
 			{
 				TableCell cell = new TableCell ();
 				if (s != null)
@@ -390,26 +389,26 @@ namespace System.Web.UI.WebControls {
 
 		public static readonly string LoginButtonCommandName = "Login";
 
-		private static readonly object authenticateEvent = new object ();
-		private static readonly object loggedInEvent = new object ();
-		private static readonly object loggingInEvent = new object ();
-		private static readonly object loginErrorEvent = new object ();
+		static readonly object authenticateEvent = new object ();
+		static readonly object loggedInEvent = new object ();
+		static readonly object loggingInEvent = new object ();
+		static readonly object loginErrorEvent = new object ();
 
-		private TableItemStyle checkBoxStyle;
-		private TableItemStyle failureTextStyle;
-		private TableItemStyle hyperLinkStyle;
-		private TableItemStyle instructionTextStyle;
-		private TableItemStyle labelStyle;
-		private Style logonButtonStyle;
-		private Style textBoxStyle;
-		private TableItemStyle titleTextStyle;
-		private Style validatorTextStyle;
-		private ArrayList styles = new ArrayList ();
+		TableItemStyle checkBoxStyle;
+		TableItemStyle failureTextStyle;
+		TableItemStyle hyperLinkStyle;
+		TableItemStyle instructionTextStyle;
+		TableItemStyle labelStyle;
+		Style logonButtonStyle;
+		Style textBoxStyle;
+		TableItemStyle titleTextStyle;
+		Style validatorTextStyle;
+		ArrayList styles = new ArrayList ();
 
-		private ITemplate layoutTemplate;
-		private LoginContainer container;
+		ITemplate layoutTemplate;
+		LoginContainer container;
 
-		private string _password;
+		string _password;
 
 
 
@@ -1091,7 +1090,7 @@ namespace System.Web.UI.WebControls {
 				(ValidatorTextStyle as IStateManager).LoadViewState (state [9]);
 		}
 
-		private bool HasOnAuthenticateHandler ()
+		bool HasOnAuthenticateHandler ()
 		{
 			return Events [authenticateEvent] != null;
 		}
@@ -1260,7 +1259,7 @@ namespace System.Web.UI.WebControls {
 			styles.Add (new object [] { control, style });
 		}
 		
-		private bool AuthenticateUser ()
+		bool AuthenticateUser ()
 		{
 			if (!Page.IsValid)
 				return true;
@@ -1320,12 +1319,12 @@ namespace System.Web.UI.WebControls {
 		// TODO: its called from default template only, not usefully, OnBubbleEvent 
 		// do handle command, need be removed
 		[MonoTODO()]
-		private void LoginClick (object sender, CommandEventArgs e)
+		void LoginClick (object sender, CommandEventArgs e)
 		{
 			RaiseBubbleEvent (sender, (EventArgs)e);
 		}
 
-		private bool IsDefaultLoginPage ()
+		bool IsDefaultLoginPage ()
 		{
 			if ((Page == null) || (Page.Request == null))
 				return false;
@@ -1337,35 +1336,35 @@ namespace System.Web.UI.WebControls {
 				true, CultureInfo.InvariantCulture) == 0);
 		}
 
-		private bool IsLoggedIn ()
+		bool IsLoggedIn ()
 		{
 			if ((Page == null) || (Page.Request == null))
 				return false;
 			return Page.Request.IsAuthenticated;
 		}
 
-		private void Redirect (string url)
+		void Redirect (string url)
 		{
 			if ((Page != null) && (Page.Response != null))
 				Page.Response.Redirect (url);
 		}
 		
-		private void Refresh () {
+		void Refresh () {
 			if ((Page != null) && (Page.Response != null))
 				Page.Response.Redirect (Page.Request.RawUrl);
 		}
 
-		private void UserName_TextChanged (object sender, EventArgs e)
+		void UserName_TextChanged (object sender, EventArgs e)
 		{
 			UserName = ((ITextControl)sender).Text;
 		}
 
-		private void Password_TextChanged (object sender, EventArgs e)
+		void Password_TextChanged (object sender, EventArgs e)
 		{
 			_password = ((ITextControl)sender).Text;
 		}
 
-		private void RememberMe_CheckedChanged (object sender, EventArgs e)
+		void RememberMe_CheckedChanged (object sender, EventArgs e)
 		{
 			RememberMeSet = ((ICheckBoxControl)sender).Checked;
 		}

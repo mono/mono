@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HotSpotCollection: StateManagedCollection
 	{
-		private static Type[] _knownTypes = new Type[] { 
+		static Type[] _knownTypes = new Type[] { 
 			typeof (CircleHotSpot),
 			typeof (PolygonHotSpot),
 			typeof (RectangleHotSpot)
@@ -62,9 +62,9 @@ namespace System.Web.UI.WebControls
 			case 0:
 				return new CircleHotSpot ();
 			case 1:
-				return new PolygonHotSpot ();			
+				return new PolygonHotSpot ();
 			case 2:
-				return new RectangleHotSpot ();			
+				return new RectangleHotSpot ();
 			}
 
 			throw new ArgumentOutOfRangeException ("index");

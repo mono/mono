@@ -44,13 +44,13 @@ namespace System.Web.Mail
 #endif
     	public class SmtpMail
 	{
-		private static string smtpServer = "localhost";
+		static string smtpServer = "localhost";
 		
-		// Constructor		
-		private SmtpMail ()
+		// Constructor
+		SmtpMail ()
 		{
 			/* empty */
-		}		
+		}
 
 		// Properties
 		public static string SmtpServer {

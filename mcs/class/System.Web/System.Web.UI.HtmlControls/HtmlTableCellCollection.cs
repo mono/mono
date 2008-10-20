@@ -35,7 +35,7 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HtmlTableCellCollection : ICollection, IEnumerable {
 
-		private ControlCollection cc;
+		ControlCollection cc;
 
 
 		internal HtmlTableCellCollection (HtmlTableRow tr)

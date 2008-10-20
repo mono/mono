@@ -55,7 +55,7 @@ namespace System.Web.Security
 			remove { events.RemoveHandler (authenticateEvent, value); }
 		}
 		
-		private void InitConfig (HttpContext context)
+		void InitConfig (HttpContext context)
 		{
 			if(isConfigInitialized)
 				return;

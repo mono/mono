@@ -35,11 +35,11 @@ namespace System.Web.Configuration {
 
 	internal class TraceConfig {
 
-		private bool enabled;
-		private bool local_only;
-		private bool page_output;
-		private int request_limit;
-		private TraceMode trace_mode;
+		bool enabled;
+		bool local_only;
+		bool page_output;
+		int request_limit;
+		TraceMode trace_mode;
 
 		public TraceConfig ()
 		{

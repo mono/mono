@@ -40,7 +40,7 @@ namespace System.Web.UI {
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]		
 	public sealed class ThemeableAttribute : Attribute {
 
-		private bool themeable;
+		bool themeable;
 		public ThemeableAttribute (bool themeable) 
 		{
 			this.themeable = themeable;

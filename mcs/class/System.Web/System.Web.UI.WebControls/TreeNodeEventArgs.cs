@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls
 {
 	public sealed class TreeNodeEventArgs : EventArgs
 	{
-		private TreeNode node;
+		TreeNode node;
 		
 		public TreeNodeEventArgs (TreeNode node)
 		{

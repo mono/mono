@@ -39,7 +39,7 @@ namespace System.Web.SessionState
 {
 	internal class SessionStateServerHandler : SessionStateStoreProviderBase
 	{
-		private const Int32 lockAcquireTimeout = 30000;
+		const Int32 lockAcquireTimeout = 30000;
 		
 		SessionStateSection config;
 		RemoteStateServer stateServer;

@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls.WebParts
 {
 	public class WebPartDisplayModeCancelEventArgs : CancelEventArgs
 	{
-		private WebPartDisplayMode displayMode;
+		WebPartDisplayMode displayMode;
 		
 		public WebPartDisplayModeCancelEventArgs (WebPartDisplayMode displayMode)
 		{

@@ -63,7 +63,7 @@ namespace System.Web.Compilation
 		}
 #endif
 		
-		private void AddOutputCacheAttribute ()
+		void AddOutputCacheAttribute ()
 		{
 			CodeAttributeDeclaration cad;
 			cad = new CodeAttributeDeclaration ("System.Web.UI.PartialCachingAttribute");
@@ -75,7 +75,7 @@ namespace System.Web.Compilation
 			mainClass.CustomAttributes.Add (cad);
 		}
 
-		private void AddPrimitiveAttribute (CodeAttributeDeclaration cad, object obj)
+		void AddPrimitiveAttribute (CodeAttributeDeclaration cad, object obj)
 		{
 			cad.Arguments.Add (new CodeAttributeArgument (new CodePrimitiveExpression (obj)));
 		}

@@ -54,33 +54,33 @@ namespace System.Web.UI.WebControls {
 		public const string UpdateCommandName = "Update";
 
 
-		private static readonly object cancelCommandEvent = new object ();
-		private static readonly object deleteCommandEvent = new object ();
-		private static readonly object editCommandEvent = new object ();
-		private static readonly object itemCommandEvent = new object ();
-		private static readonly object itemCreatedEvent = new object ();
-		private static readonly object itemDataBoundEvent = new object ();
-		private static readonly object updateCommandEvent = new object ();
+		static readonly object cancelCommandEvent = new object ();
+		static readonly object deleteCommandEvent = new object ();
+		static readonly object editCommandEvent = new object ();
+		static readonly object itemCommandEvent = new object ();
+		static readonly object itemCreatedEvent = new object ();
+		static readonly object itemDataBoundEvent = new object ();
+		static readonly object updateCommandEvent = new object ();
 
-		private TableItemStyle alternatingItemStyle;
-		private TableItemStyle editItemStyle;
-		private TableItemStyle footerStyle;
-		private TableItemStyle headerStyle;
-		private TableItemStyle itemStyle;
-		private TableItemStyle selectedItemStyle;
-		private TableItemStyle separatorStyle;
+		TableItemStyle alternatingItemStyle;
+		TableItemStyle editItemStyle;
+		TableItemStyle footerStyle;
+		TableItemStyle headerStyle;
+		TableItemStyle itemStyle;
+		TableItemStyle selectedItemStyle;
+		TableItemStyle separatorStyle;
 
-		private ITemplate alternatingItemTemplate;
-		private ITemplate editItemTemplate;
-		private ITemplate footerTemplate;
-		private ITemplate headerTemplate;
-		private ITemplate itemTemplate;
-		private ITemplate selectedItemTemplate;
-		private ITemplate separatorTemplate;
+		ITemplate alternatingItemTemplate;
+		ITemplate editItemTemplate;
+		ITemplate footerTemplate;
+		ITemplate headerTemplate;
+		ITemplate itemTemplate;
+		ITemplate selectedItemTemplate;
+		ITemplate separatorTemplate;
 
-		private DataListItemCollection items;
-		private ArrayList list;
-		private int idx;
+		DataListItemCollection items;
+		ArrayList list;
+		int idx;
 
 #if NET_2_0
 		public DataList ()
@@ -479,12 +479,12 @@ namespace System.Web.UI.WebControls {
 		}
 #endif
 
-		private TableStyle TableStyle {
+		TableStyle TableStyle {
 			// this will throw an InvalidCasException just like we need
 			get { return (TableStyle) ControlStyle; }
 		}
 		
-		private ArrayList ItemList {
+		ArrayList ItemList {
 			get {
 				if (list == null)
 					list = new ArrayList ();
@@ -517,7 +517,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private void DoItemInLoop (int i, object d, bool databind, ListItemType type)
+		void DoItemInLoop (int i, object d, bool databind, ListItemType type)
 		{
 			DoItem (i, type, d, databind);
 			if (SeparatorTemplate != null)
@@ -1029,7 +1029,7 @@ for (int i=0; i < Items.Count; i++) {
 		}
 
 		// Header and Footer don't have a "real" index (-1)
-		private DataListItem FindFirstItem (ListItemType itemType)
+		DataListItem FindFirstItem (ListItemType itemType)
 		{
 			for (int i = 0; i < Controls.Count; i++) {
 				DataListItem item = (Controls [i] as DataListItem);
@@ -1040,7 +1040,7 @@ for (int i=0; i < Items.Count; i++) {
 		}
 
 		// Both Type and Index must match (e.g. Separator)
-		private DataListItem FindSpecificItem (ListItemType itemType, int repeatIndex)
+		DataListItem FindSpecificItem (ListItemType itemType, int repeatIndex)
 		{
 			for (int i = 0; i < Controls.Count; i++) {
 				DataListItem item = (Controls [i] as DataListItem);
@@ -1051,7 +1051,7 @@ for (int i=0; i < Items.Count; i++) {
 		}
 
 		// we get call for Item even for AlternatingItem :(
-		private DataListItem FindBestItem (int repeatIndex)
+		DataListItem FindBestItem (int repeatIndex)
 		{
 			for (int i = 0; i < Controls.Count; i++) {
 				DataListItem item = (Controls [i] as DataListItem);

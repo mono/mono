@@ -35,8 +35,8 @@ namespace System.Web.Profile
 {
 	public class ProfileGroupBase
 	{
-		private ProfileBase _parent = null;
-		private string _name = null;
+		ProfileBase _parent = null;
+		string _name = null;
 
 		public ProfileGroupBase ()
 		{

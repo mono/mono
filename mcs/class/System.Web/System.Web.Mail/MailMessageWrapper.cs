@@ -38,13 +38,13 @@ namespace System.Web.Mail {
     // addresses instead of a single string
     internal class MailMessageWrapper {
 		
-	private MailAddressCollection bcc = new MailAddressCollection();
-	private MailAddressCollection cc = new MailAddressCollection();		
-	private MailAddress from;
-	private MailAddressCollection to = new MailAddressCollection();
-	private MailHeader header = new MailHeader();
-	private MailMessage message;
-	private string body;
+	MailAddressCollection bcc = new MailAddressCollection();
+	MailAddressCollection cc = new MailAddressCollection();
+	MailAddress from;
+	MailAddressCollection to = new MailAddressCollection();
+	MailHeader header = new MailHeader();
+	MailMessage message;
+	string body;
 		
 	// Constructor		
 	public MailMessageWrapper( MailMessage message )

@@ -41,7 +41,7 @@ namespace System.Web.Hosting {
 		int users;
 		Dictionary <string, BareApplicationHost> id_to_host;
 
-		private ApplicationManager ()
+		ApplicationManager ()
 		{
 			id_to_host = new Dictionary<string, BareApplicationHost> ();
 		}

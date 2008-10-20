@@ -36,11 +36,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Web.Util {
 
-	internal sealed class AltSerialization {
+	internal sealed class AltSerialization 
+	{
+		AltSerialization () { }
 
-                
-		private AltSerialization () { }
-  
 		internal static void Serialize (BinaryWriter w, object value)
 		{
 			TypeCode typeCode = value != null ? Type.GetTypeCode (value.GetType ()) : TypeCode.Empty;

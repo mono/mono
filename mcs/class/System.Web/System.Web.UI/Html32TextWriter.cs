@@ -40,9 +40,9 @@ namespace System.Web.UI
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class Html32TextWriter : HtmlTextWriter {
 #if NET_2_0
-		private bool div_table_substitution;
-		private bool bold;
-		private bool italic;
+		bool div_table_substitution;
+		bool bold;
+		bool italic;
 #endif
 
 		public Html32TextWriter (TextWriter writer) : base (writer)

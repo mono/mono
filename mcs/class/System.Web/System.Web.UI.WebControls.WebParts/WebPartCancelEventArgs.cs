@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls.WebParts
 {
 	public class WebPartCancelEventArgs : CancelEventArgs
 	{
-		private WebPart part;
+		WebPart part;
 		
 		public WebPartCancelEventArgs (WebPart part)
 		{

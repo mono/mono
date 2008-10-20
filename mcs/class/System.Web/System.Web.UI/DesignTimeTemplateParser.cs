@@ -40,7 +40,7 @@ namespace System.Web.UI {
 #else
 	public sealed class DesignTimeTemplateParser {
 
-		private DesignTimeTemplateParser ()
+		DesignTimeTemplateParser ()
 		{
 		}
 #endif
@@ -65,7 +65,7 @@ namespace System.Web.UI {
 		}
 
 		[MonoTODO]
-		private static TemplateParser InitParser (DesignTimeParseData data)
+		static TemplateParser InitParser (DesignTimeParseData data)
 		{
 			// TODO create the parser and set data
 			TemplateParser NewParser = new PageParser(); // see FIXME in PageParser

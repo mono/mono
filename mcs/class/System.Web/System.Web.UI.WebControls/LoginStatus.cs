@@ -42,15 +42,15 @@ namespace System.Web.UI.WebControls {
 	[Bindable (false)]
 	[DefaultEvent ("LoggingOut")]
 	[Designer ("System.Web.UI.Design.WebControls.LoginStatusDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public class LoginStatus : CompositeControl {
+	public class LoginStatus : CompositeControl 
+	{
+		static readonly object loggedOutEvent = new object ();
+		static readonly object loggingOutEvent = new object ();
 
-		private static readonly object loggedOutEvent = new object ();
-		private static readonly object loggingOutEvent = new object ();
-
-		private LinkButton logoutLinkButton;
-		private ImageButton logoutImageButton;
-		private LinkButton loginLinkButton;
-		private ImageButton loginImageButton;
+		LinkButton logoutLinkButton;
+		ImageButton logoutImageButton;
+		LinkButton loginLinkButton;
+		ImageButton loginImageButton;
 
 		public LoginStatus ()
 		{
@@ -272,7 +272,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// private stuff
-		private void LogoutClick (object sender, CommandEventArgs e)
+		void LogoutClick (object sender, CommandEventArgs e)
 		{
 			LoginCancelEventArgs lcea = new LoginCancelEventArgs (false);
 			OnLoggingOut (lcea);
@@ -298,7 +298,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private void LoginClick (object sender, CommandEventArgs e)
+		void LoginClick (object sender, CommandEventArgs e)
 		{
 			FormsAuthentication.RedirectToLoginPage ();
 		}

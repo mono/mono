@@ -39,10 +39,10 @@ namespace System.Web.UI.WebControls
 	[ParseChildren (true)]
 	public class TemplatedWizardStep : WizardStepBase
 	{
-		private ITemplate _contentTemplate = null;
-		private Control _contentTemplateContainer = null;
-		private ITemplate _customNavigationTemplate = null;
-		private Control _customNavigationTemplateContainer = null;
+		ITemplate _contentTemplate = null;
+		Control _contentTemplateContainer = null;
+		ITemplate _customNavigationTemplate = null;
+		Control _customNavigationTemplateContainer = null;
 
 		[TemplateContainerAttribute (typeof (System.Web.UI.WebControls.Wizard))]
 		public virtual ITemplate ContentTemplate

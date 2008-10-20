@@ -38,7 +38,7 @@ namespace System.Web.UI.HtmlControls {
 	[ParseChildren (true, "Cells")]	
 	public class HtmlTableRow : HtmlContainerControl {
 
-		private HtmlTableCellCollection _cells;
+		HtmlTableCellCollection _cells;
 
 
 		public HtmlTableRow ()
@@ -152,7 +152,7 @@ namespace System.Web.UI.HtmlControls {
 			}
 		}
 
-		private int Count {
+		int Count {
 			get { return (_cells == null) ? 0 : _cells.Count; }
 		}
 

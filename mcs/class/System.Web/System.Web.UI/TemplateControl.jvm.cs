@@ -105,7 +105,7 @@ namespace System.Web.UI {
 						BindingFlags.NonPublic |
 						BindingFlags.Instance;
 
-		private byte [] GetResourceBytes (Type type)
+		byte [] GetResourceBytes (Type type)
 		{
 			Hashtable table = (Hashtable) AppDomain.CurrentDomain.GetData ("TemplateControl.RES_BYTES");
 			if (table == null) {
@@ -113,7 +113,7 @@ namespace System.Web.UI {
 			}
 			return (byte []) table [type];
 		}
-		private void SetResourceBytes (Type type, byte [] bytes)
+		void SetResourceBytes (Type type, byte [] bytes)
 		{
 			Hashtable table = (Hashtable) AppDomain.CurrentDomain.GetData ("TemplateControl.RES_BYTES");
 			if (table == null) {
@@ -124,7 +124,7 @@ namespace System.Web.UI {
 			return;
 		}
 
-		private Hashtable ResourceHash
+		Hashtable ResourceHash
 		{
 			get
 			{
@@ -141,7 +141,7 @@ namespace System.Web.UI {
 			}
 		}
 
-		private string CachedString (Type type, int offset, int size)
+		string CachedString (Type type, int offset, int size)
 		{
 			CacheKey key = new CacheKey (type, offset, size);
 
@@ -564,7 +564,7 @@ namespace System.Web.UI {
 			}
 		}
 
-		sealed private class CacheKey
+		sealed class CacheKey
 		{
 			readonly Type _type;
 			readonly int _offset;

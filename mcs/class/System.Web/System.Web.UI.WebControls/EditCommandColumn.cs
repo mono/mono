@@ -150,7 +150,7 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Instance Methods
 
 		#region Private Methods
-		private Control CreateButton(ButtonColumnType type, string text, string command, bool valid) {
+		Control CreateButton(ButtonColumnType type, string text, string command, bool valid) {
 			Button b;
 			LinkButton d;
 

@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls
 {
 	public sealed class DataKeyArray : ICollection, IEnumerable, IStateManager
 	{
-		private ArrayList keys;
+		ArrayList keys;
 		bool trackViewState;
 
 		public DataKeyArray (ArrayList keys)

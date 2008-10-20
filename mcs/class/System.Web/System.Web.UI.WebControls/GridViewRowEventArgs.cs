@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls
 {
 	public class GridViewRowEventArgs : EventArgs
 	{
-		private GridViewRow row; 
+		GridViewRow row; 
 		
 		public GridViewRowEventArgs (GridViewRow row )
 		{

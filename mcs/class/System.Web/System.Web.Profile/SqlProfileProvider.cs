@@ -115,7 +115,7 @@ namespace System.Web.Profile
 			return DeleteProfilesInternal (usernames);
 		}
 
-		private int DeleteProfilesInternal (string [] usernames)
+		int DeleteProfilesInternal (string [] usernames)
 		{
 			using (DbConnection connection = CreateConnection ()) {
 				DbCommand command = factory.CreateCommand ();
@@ -430,7 +430,7 @@ namespace System.Web.Profile
 			return value is int ? (int) value : -1;
 		}
 
-		private ProfileInfo ReadProfileInfo (DbDataReader reader)
+		ProfileInfo ReadProfileInfo (DbDataReader reader)
 		{
 			ProfileInfo pi = null;
 			try {
@@ -448,7 +448,7 @@ namespace System.Web.Profile
 			return pi;
 		}
 
-		private ProfileInfoCollection BuildProfileInfoCollection (DbDataReader reader, out int totalRecords)
+		ProfileInfoCollection BuildProfileInfoCollection (DbDataReader reader, out int totalRecords)
 		{
 			ProfileInfoCollection pic = new ProfileInfoCollection ();
 			while (reader.Read ()) {
@@ -474,7 +474,7 @@ namespace System.Web.Profile
 		}
 
 		// Helper methods
-		private void DecodeProfileData (string allnames, string values, byte [] buf, SettingsPropertyValueCollection properties)
+		void DecodeProfileData (string allnames, string values, byte [] buf, SettingsPropertyValueCollection properties)
 		{
 			if (allnames == null || values == null || buf == null || properties == null)
 				return;
@@ -506,7 +506,7 @@ namespace System.Web.Profile
 			}
 		}
 
-		private void EncodeProfileData (ref string allNames, ref string allValues, ref byte [] buf, SettingsPropertyValueCollection properties, bool userIsAuthenticated)
+		void EncodeProfileData (ref string allNames, ref string allValues, ref byte [] buf, SettingsPropertyValueCollection properties, bool userIsAuthenticated)
 		{
 			StringBuilder names = new StringBuilder ();
 			StringBuilder values = new StringBuilder ();

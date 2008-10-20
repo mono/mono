@@ -41,14 +41,14 @@ namespace System.Web.Mail {
 	/// represents a conntection to a smtp server
 	internal class SmtpClient
 	{
-		private string server;
-		private TcpClient tcpConnection;
-		private SmtpStream smtp;
-		private string username;
-		private string password;
-		private int port = 25;
-		private bool usessl = false;
-		private short authenticate = 1;  	
+		string server;
+		TcpClient tcpConnection;
+		SmtpStream smtp;
+		string username;
+		string password;
+		int port = 25;
+		bool usessl = false;
+		short authenticate = 1;  	
         
 		//Initialise the variables and connect
 		public SmtpClient (string server)
@@ -58,7 +58,7 @@ namespace System.Web.Mail {
 	
 		// make the actual connection
 		// and HELO handshaking
-		private void Connect ()
+		void Connect ()
 		{
 			tcpConnection = new TcpClient (server, port);
 	    
@@ -66,7 +66,7 @@ namespace System.Web.Mail {
 			smtp = new SmtpStream (stream);
 		}
 	    	    
-		private void ChangeToSSLSocket ()
+		void ChangeToSSLSocket ()
 		{
 #if TARGET_JVM
 			java.lang.Class c = vmw.common.TypeUtils.ToClass (smtp.Stream);
@@ -97,7 +97,7 @@ namespace System.Web.Mail {
 #endif
 		}
 		
-		private void ReadFields (MailMessageWrapper msg)
+		void ReadFields (MailMessageWrapper msg)
 		{
 			string tmp;
 			username = msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/sendusername"];
@@ -113,7 +113,7 @@ namespace System.Web.Mail {
 				port = int.Parse (tmp);
 		}
 
-		private void StartSend (MailMessageWrapper msg)
+		void StartSend (MailMessageWrapper msg)
 		{
 			ReadFields (msg);
 			Connect ();
@@ -191,7 +191,7 @@ namespace System.Web.Mail {
 		}
 	
 		// sends a single part mail to the server
-		private void SendSinglepartMail (MailMessageWrapper msg)
+		void SendSinglepartMail (MailMessageWrapper msg)
 		{	    	    	    
 			// write the header
 			smtp.WriteHeader (msg.Header);
@@ -203,7 +203,7 @@ namespace System.Web.Mail {
 		// SECURITY-FIXME: lower assertion with imperative asserts	
 		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 		// sends a multipart mail to the server
-		private void SendMultipartMail (MailMessageWrapper msg)
+		void SendMultipartMail (MailMessageWrapper msg)
 		{    
 			// generate the boundary between attachments
 			string boundary = MailUtil.GenerateBoundary ();

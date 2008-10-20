@@ -47,11 +47,11 @@ namespace System.Web.Profile
 {
 	internal class SqliteProfileProvider : ProfileProvider
 	{
-		private const string m_ProfilesTableName = "Profiles";
-		private const string m_ProfileDataTableName = "ProfileData";
-		private string m_ConnectionString = string.Empty;
+		const string m_ProfilesTableName = "Profiles";
+		const string m_ProfileDataTableName = "ProfileData";
+		string m_ConnectionString = string.Empty;
 
-		private SerializationHelper m_serializationHelper = new SerializationHelper();
+		SerializationHelper m_serializationHelper = new SerializationHelper();
 
 		DbParameter AddParameter (DbCommand command, string parameterName)
                 {
@@ -120,7 +120,7 @@ namespace System.Web.Profile
 		/// System.Web.Profile.ProfileProvider properties.
 		/// </summary>
 		#region System.Web.Security.ProfileProvider properties
-		private string m_ApplicationName = string.Empty;
+		string m_ApplicationName = string.Empty;
 
 		public override string ApplicationName
 		{
@@ -387,7 +387,7 @@ namespace System.Web.Profile
 		/// </summary>
 		/// <param name="username"></param>
 		/// <param name="isAuthenticated"></param>
-		private void CreateProfileForUser(string username, bool isAuthenticated)
+		void CreateProfileForUser(string username, bool isAuthenticated)
 		{
 			if (ProfileExists(username))
 			{
@@ -429,7 +429,7 @@ namespace System.Web.Profile
 		}
 
 
-		private bool ProfileExists(string username)
+		bool ProfileExists(string username)
 		{
 			using (SqliteConnection dbConn = new SqliteConnection(m_ConnectionString))
 			{
@@ -475,7 +475,7 @@ namespace System.Web.Profile
 		/// <param name="username"></param>
 		/// <param name="isAuthenticated"></param>
 		/// <param name="activityOnly"></param>
-		private void UpdateActivityDates(string username, bool isAuthenticated, bool activityOnly)
+		void UpdateActivityDates(string username, bool isAuthenticated, bool activityOnly)
 		{
 			using (SqliteConnection dbConn = new SqliteConnection(m_ConnectionString))
 			{
@@ -526,7 +526,7 @@ namespace System.Web.Profile
 		/// <param name="configValue"></param>
 		/// <param name="defaultValue"></param>
 		/// <returns></returns>
-		private string GetConfigValue(string configValue, string defaultValue)
+		string GetConfigValue(string configValue, string defaultValue)
 		{
 			if (string.IsNullOrEmpty(configValue))
 				return defaultValue;

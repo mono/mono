@@ -35,7 +35,7 @@ namespace System.Web.Security {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class DefaultAuthenticationEventArgs : EventArgs {
 
-		private HttpContext _context;
+		HttpContext _context;
 
 		public DefaultAuthenticationEventArgs (HttpContext context)
 		{

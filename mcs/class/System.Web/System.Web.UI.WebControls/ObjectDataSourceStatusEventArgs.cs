@@ -36,11 +36,11 @@ namespace System.Web.UI.WebControls
 {
 	public class ObjectDataSourceStatusEventArgs : EventArgs
 	{
-		private readonly object returnVal;
-		private readonly IDictionary outPutParam;
-		private readonly Exception exception;
-		private bool exceptionHandled;
-		private int affectedRows;
+		readonly object returnVal;
+		readonly IDictionary outPutParam;
+		readonly Exception exception;
+		bool exceptionHandled;
+		int affectedRows;
 
 		public ObjectDataSourceStatusEventArgs (object returnVal, IDictionary outPutParam)
 			:

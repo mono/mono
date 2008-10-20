@@ -36,8 +36,8 @@ namespace System.Web.Caching
 {
 	public sealed class AggregateCacheDependency : CacheDependency
 	{
-		private object dependenciesLock = new object();
-		private List <CacheDependency> dependencies;
+		object dependenciesLock = new object();
+		List <CacheDependency> dependencies;
 		
 		public AggregateCacheDependency ()
 		{

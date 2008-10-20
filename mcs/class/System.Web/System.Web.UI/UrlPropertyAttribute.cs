@@ -36,7 +36,7 @@ namespace System.Web.UI {
 	[AttributeUsage (AttributeTargets.Property, AllowMultiple = false, Inherited = true)]		
 	public sealed class UrlPropertyAttribute : Attribute 
 	{
-		private string filter;
+		string filter;
 
 		public UrlPropertyAttribute () 
 			: this ("*.*")

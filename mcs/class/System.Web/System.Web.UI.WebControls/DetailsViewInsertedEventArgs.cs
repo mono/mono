@@ -36,11 +36,11 @@ namespace System.Web.UI.WebControls
 {
 	public class DetailsViewInsertedEventArgs : EventArgs
 	{
-		private int rowsAffected;
-		private Exception e;
-		private bool exceptionHandled;
-		private bool keepInsertedMode;
-		private IOrderedDictionary values;
+		int rowsAffected;
+		Exception e;
+		bool exceptionHandled;
+		bool keepInsertedMode;
+		IOrderedDictionary values;
 		
 		public DetailsViewInsertedEventArgs (int affectedRows, Exception e)
 		{

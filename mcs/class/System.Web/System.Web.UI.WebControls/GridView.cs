@@ -82,21 +82,21 @@ namespace System.Web.UI.WebControls
 		readonly string[] emptyKeys = new string[0];
 		IEnumerator _dataEnumerator;
 		
-		private static readonly object PageIndexChangedEvent = new object();
-		private static readonly object PageIndexChangingEvent = new object();
-		private static readonly object RowCancelingEditEvent = new object();
-		private static readonly object RowCommandEvent = new object();
-		private static readonly object RowCreatedEvent = new object();
-		private static readonly object RowDataBoundEvent = new object();
-		private static readonly object RowDeletedEvent = new object();
-		private static readonly object RowDeletingEvent = new object();
-		private static readonly object RowEditingEvent = new object();
-		private static readonly object RowUpdatedEvent = new object();
-		private static readonly object RowUpdatingEvent = new object();
-		private static readonly object SelectedIndexChangedEvent = new object();
-		private static readonly object SelectedIndexChangingEvent = new object();
-		private static readonly object SortedEvent = new object();
-		private static readonly object SortingEvent = new object();
+		static readonly object PageIndexChangedEvent = new object();
+		static readonly object PageIndexChangingEvent = new object();
+		static readonly object RowCancelingEditEvent = new object();
+		static readonly object RowCommandEvent = new object();
+		static readonly object RowCreatedEvent = new object();
+		static readonly object RowDataBoundEvent = new object();
+		static readonly object RowDeletedEvent = new object();
+		static readonly object RowDeletingEvent = new object();
+		static readonly object RowEditingEvent = new object();
+		static readonly object RowUpdatedEvent = new object();
+		static readonly object RowUpdatingEvent = new object();
+		static readonly object SelectedIndexChangedEvent = new object();
+		static readonly object SelectedIndexChangingEvent = new object();
+		static readonly object SortedEvent = new object();
+		static readonly object SortingEvent = new object();
 		
 		// Control state
 		int pageIndex;

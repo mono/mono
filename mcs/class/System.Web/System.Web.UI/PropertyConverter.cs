@@ -39,7 +39,7 @@ namespace System.Web.UI {
 #else
 	public sealed class PropertyConverter {
 
-		private PropertyConverter ()
+		PropertyConverter ()
 		{
 			// no instantiation for you
 		}

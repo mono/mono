@@ -40,7 +40,7 @@ using System.Resources;
 namespace System.Web {
 	public class SiteMapNode : IHierarchyData, INavigateUIData, ICloneable {
 	
-		private SiteMapNode () {}
+		SiteMapNode () {}
 		
 		public SiteMapNode (SiteMapProvider provider, string key)
 			: this (provider, key, null, null, null, null, null, null, null) {}

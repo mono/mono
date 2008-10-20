@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls
 {
 	public class ObjectDataSourceDisposingEventArgs : CancelEventArgs
 	{
-		private object objectInstance; 
+		object objectInstance; 
 		
 		public ObjectDataSourceDisposingEventArgs (object objectInstance)
 		{

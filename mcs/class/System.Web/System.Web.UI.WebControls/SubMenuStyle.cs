@@ -38,8 +38,8 @@ namespace System.Web.UI.WebControls
 {
 	public class SubMenuStyle: Style, ICustomTypeDescriptor
 	{
-		private const string HORZ_PADD = "HorizontalPadding";
-		private const string VERT_PADD = "VerticalPadding";
+		const string HORZ_PADD = "HorizontalPadding";
+		const string VERT_PADD = "VerticalPadding";
 		
 		public SubMenuStyle ()
 		{

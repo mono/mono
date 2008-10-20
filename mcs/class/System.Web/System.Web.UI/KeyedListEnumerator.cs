@@ -34,8 +34,8 @@ namespace System.Web.UI
 {
 	internal class KeyedListEnumerator : IDictionaryEnumerator
 	{
-		private int index = -1;
-		private ArrayList objs;
+		int index = -1;
+		ArrayList objs;
 
 		internal KeyedListEnumerator (ArrayList list)
 		{

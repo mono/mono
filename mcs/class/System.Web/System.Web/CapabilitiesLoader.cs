@@ -213,7 +213,7 @@ namespace System.Web
 		static Hashtable userAgentsCache = Hashtable.Synchronized(new Hashtable(userAgentsCacheSize+10));
 #endif
 
-		private CapabilitiesLoader () {}
+		CapabilitiesLoader () {}
 
 		static CapabilitiesLoader ()
 		{
@@ -403,7 +403,7 @@ namespace System.Web
 		}
 
 #if TARGET_J2EE
-		private static TextReader GetJavaTextReader(string filename)
+		static TextReader GetJavaTextReader(string filename)
 		{
 			try
 			{

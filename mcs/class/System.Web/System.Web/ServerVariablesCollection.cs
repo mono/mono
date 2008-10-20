@@ -120,7 +120,7 @@ namespace System.Web
 			}
 		}
 
-		private void loadServerVariablesCollection()
+		void loadServerVariablesCollection()
 		{
 			HttpWorkerRequest wr = request.WorkerRequest;
 			if (loaded || (wr == null))

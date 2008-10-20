@@ -37,13 +37,13 @@ namespace System.Web.Caching {
 
 	internal class CachedRawResponse {
 		static readonly byte[] emptyBuffer = new byte[0];
-		private HttpCachePolicy policy;
-		private CachedVaryBy varyby;
-		private int status_code;
-		private string status_desc;
-		private int content_length;
-		private ArrayList headers;
-		private byte[] buffer;
+		HttpCachePolicy policy;
+		CachedVaryBy varyby;
+		int status_code;
+		string status_desc;
+		int content_length;
+		ArrayList headers;
+		byte[] buffer;
 		
 		internal CachedRawResponse (HttpCachePolicy policy)
 		{

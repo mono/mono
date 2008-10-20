@@ -35,7 +35,7 @@ namespace System.Web.UI {
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class FilterableAttribute : Attribute
 	{
-		private bool filterable;
+		bool filterable;
 
 		public FilterableAttribute (bool filterable) 
 		{

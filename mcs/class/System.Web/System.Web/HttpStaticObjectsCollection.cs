@@ -30,7 +30,7 @@ namespace System.Web {
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpStaticObjectsCollection : ICollection, IEnumerable {
-		private Hashtable _Objects;
+		Hashtable _Objects;
 
 		class StaticItem {
 			object this_lock = new object();
@@ -145,7 +145,7 @@ namespace System.Web {
 			_Objects.Add (tag.ObjectID, new StaticItem (tag.Type));
 		}
 		
-		private void Set (string name, object obj)
+		void Set (string name, object obj)
 		{
 			_Objects [name] = obj;
 		}

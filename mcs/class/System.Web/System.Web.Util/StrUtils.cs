@@ -33,9 +33,10 @@ using System.Globalization;
 using System.Text;
 
 namespace System.Web.Util {
-	internal sealed class StrUtils {
+	internal sealed class StrUtils 
+	{
 		static CultureInfo invariant = CultureInfo.InvariantCulture;
-		private StrUtils () { }
+		StrUtils () { }
 		
 		public static bool StartsWith (string str1, string str2)
 		{

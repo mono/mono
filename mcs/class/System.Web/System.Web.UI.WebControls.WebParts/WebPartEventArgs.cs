@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls.WebParts
 {
 	public class WebPartEventArgs : EventArgs
 	{
-		private WebPart part;
+		WebPart part;
 		
 		public WebPartEventArgs (WebPart part) 
 		{

@@ -36,13 +36,13 @@ namespace System.Web.UI.WebControls
 {
 	public class DetailsViewUpdatedEventArgs : EventArgs
 	{
-		private int rowsAffected;
-		private Exception e;
-		private bool exceptionHandled;
-		private bool keepEditMode;
-		private IOrderedDictionary keys;
-		private IOrderedDictionary newValues;
-		private IOrderedDictionary oldValues;
+		int rowsAffected;
+		Exception e;
+		bool exceptionHandled;
+		bool keepEditMode;
+		IOrderedDictionary keys;
+		IOrderedDictionary newValues;
+		IOrderedDictionary oldValues;
 		
 		public DetailsViewUpdatedEventArgs (int affectedRows, Exception e)
 		{

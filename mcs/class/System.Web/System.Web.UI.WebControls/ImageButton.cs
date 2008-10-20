@@ -46,9 +46,9 @@ namespace System.Web.UI.WebControls {
 #else
 	public class ImageButton : Image, IPostBackDataHandler, IPostBackEventHandler {
 #endif
-		private static readonly object ClickEvent = new object ();
-		private static readonly object CommandEvent = new object ();
-		private int pos_x, pos_y;
+		static readonly object ClickEvent = new object ();
+		static readonly object CommandEvent = new object ();
+		int pos_x, pos_y;
 
 		public ImageButton ()
 		{

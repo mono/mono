@@ -547,7 +547,7 @@ namespace System.Web {
 			return WebConfigurationManager.GetSection (name);
 		}
 
-		private sealed class ResourceManagerCacheKey
+		sealed class ResourceManagerCacheKey
 		{
 			readonly string _name;
 			readonly Assembly _asm;

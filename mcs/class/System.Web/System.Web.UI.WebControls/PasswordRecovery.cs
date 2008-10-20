@@ -736,7 +736,7 @@ namespace System.Web.UI.WebControls
 			return;
 		}
 
-		private void ProcessUserAnswer ()
+		void ProcessUserAnswer ()
 		{
 			LoginCancelEventArgs args = new LoginCancelEventArgs ();
 			OnVerifyingAnswer (args);
@@ -755,7 +755,7 @@ namespace System.Web.UI.WebControls
 			return;
 		}
 
-		private void GenerateAndSendEmail ()
+		void GenerateAndSendEmail ()
 		{
 			string newPassword = "";
 			try {
@@ -777,7 +777,7 @@ namespace System.Web.UI.WebControls
 			SendPasswordByMail (UserName, newPassword);
 		}
 
-		private void InitMemberShipProvider ()
+		void InitMemberShipProvider ()
 		{
 			string mp = MembershipProvider;
 			_provider = (mp.Length == 0) ? _provider = Membership.Provider : Membership.Providers [mp];
@@ -785,7 +785,7 @@ namespace System.Web.UI.WebControls
 				throw new HttpException (Locale.GetText ("No provider named '{0}' could be found.", mp));
 		}
 
-		private void SendPasswordByMail (string username, string password)
+		void SendPasswordByMail (string username, string password)
 		{
 			MembershipUser user = MembershipProviderInternal.GetUser (UserName, false);
 			if (user == null)
@@ -905,12 +905,12 @@ namespace System.Web.UI.WebControls
 
 		#region Private Event Handlers
 
-		private void UserName_TextChanged (object sender, EventArgs e)
+		void UserName_TextChanged (object sender, EventArgs e)
 		{
 			UserName = ((ITextControl) sender).Text;
 		}
 
-		private void Answer_TextChanged (object sender, EventArgs e)
+		void Answer_TextChanged (object sender, EventArgs e)
 		{
 			_answer = ((ITextControl) sender).Text;
 		}
@@ -940,7 +940,7 @@ namespace System.Web.UI.WebControls
 				template.InstantiateIn (_containerCell);
 			}
 
-			private void InitTable ()
+			void InitTable ()
 			{
 				Attributes.Add ("ID", _owner.ID);
 
@@ -1337,7 +1337,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private enum PasswordReciveryStep
+		enum PasswordReciveryStep
 		{
 			StepUserName,
 			StepAnswer,

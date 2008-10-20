@@ -47,9 +47,9 @@ namespace System.Web.Security
 {
 	internal class SqliteRoleProvider : RoleProvider
 	{
-		private const string m_RolesTableName = "Roles";
-		private const string m_UserInRolesTableName = "UsersInRoles";
-		private string m_ConnectionString = string.Empty;
+		const string m_RolesTableName = "Roles";
+		const string m_UserInRolesTableName = "UsersInRoles";
+		string m_ConnectionString = string.Empty;
 
 		DbParameter AddParameter (DbCommand command, string parameterName)
 		{
@@ -118,7 +118,7 @@ namespace System.Web.Security
 		/// System.Web.Security.RoleProvider properties.
 		/// </summary>
 		#region System.Web.Security.RoleProvider properties
-		private string m_ApplicationName = string.Empty;
+		string m_ApplicationName = string.Empty;
 
 		public override string ApplicationName
 		{
@@ -689,7 +689,7 @@ namespace System.Web.Security
 		/// <param name="configValue"></param>
 		/// <param name="defaultValue"></param>
 		/// <returns></returns>
-		private string GetConfigValue(string configValue, string defaultValue)
+		string GetConfigValue(string configValue, string defaultValue)
 		{
 			if (string.IsNullOrEmpty(configValue))
 				return defaultValue;
