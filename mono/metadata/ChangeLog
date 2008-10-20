@@ -1,5 +1,10 @@
 2008-10-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_init): Remove unneccesary mono_class_setup_properties ()
+	call for generic instances.
+	(mono_class_setup_properties): Call setup_properties () before accessing
+	gklass->properties.
+
 	* loader.c (find_method_in_class): Search directly in metadata to avoid
 	calling mono_class_setup_methods ().
 
