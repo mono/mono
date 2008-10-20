@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Runtime.CompilerServices;
 
 #if NET_2_0
 using System.Runtime.InteropServices;
@@ -46,13 +47,12 @@ namespace System.Diagnostics
 	[MonoTODO ("The Debugger class is not functional")]
 	public sealed class Debugger
 	{
-		private static bool isAttached;
-		
+
 		/// <summary>
 		/// Represents the default category of a message with a constant.
 		/// </summary>
 		public static readonly string DefaultCategory = "";
-		
+
 		/// <summary>
 		/// Returns a Boolean indicating whether a debugger is attached to a process.
 		/// </summary>
@@ -63,10 +63,13 @@ namespace System.Diagnostics
 		{
 			get
 			{
-				return isAttached;
+				return IsAttached_internal ();
 			}
 		}
-		
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static bool IsAttached_internal ();
+
 		/// <summary>
 		/// Causes a breakpoint to be signaled to an attached debugger.
 		/// </summary>
@@ -74,7 +77,7 @@ namespace System.Diagnostics
 		{
 			// The JIT inserts a breakpoint on the caller.
 		}
-		
+
 		/// <summary>
 		/// Checks to see if logging is enabled by an attached debugger.
 		/// </summary>
@@ -83,9 +86,8 @@ namespace System.Diagnostics
 			// Return false. DefaultTraceListener invokes this method, so throwing
 			// a NotImplementedException wouldn't be appropriate.
 			return false;
-
 		}
-		
+
 		/// <summary>
 		/// Launches and attaches a debugger to the process.
 		/// </summary>
@@ -94,7 +96,7 @@ namespace System.Diagnostics
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		/// <summary>
 		/// Posts a message for the attached debugger.
 		/// </summary>
@@ -112,10 +114,10 @@ namespace System.Diagnostics
 			// Do nothing. DefaultTraceListener invokes this method, so throwing
 			// a NotImplementedException wouldn't be appropriate.
 		}
-		
+
 		public Debugger()
 		{
-			isAttached = false;
 		}
+
 	}
 }
