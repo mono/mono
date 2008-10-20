@@ -613,6 +613,10 @@ namespace System.Windows.Forms {
 			set { uia_control = value; }
 		}
 
+		internal Rectangle UIAToolTipRectangle {
+			get { return tooltip.Bounds; }
+		}
+
 		internal static event ControlEventHandler UIAControlHookUp;
 		internal static event ControlEventHandler UIAControlUnhookUp;
 		internal static event ControlEventHandler UIAErrorProviderHookUp;

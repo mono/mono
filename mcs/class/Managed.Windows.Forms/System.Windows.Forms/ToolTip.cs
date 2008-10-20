@@ -360,6 +360,10 @@ namespace System.Windows.Forms {
 		internal static event ControlEventHandler UIAToolTipHookUp;
 		internal static event ControlEventHandler UIAToolTipUnhookUp;
 
+		internal Rectangle UIAToolTipRectangle {
+			get { return tooltip_window.Bounds; }
+		}
+
 		internal static void OnUIAUnPopup (object sender, PopupEventArgs args)
 		{
 			if (UIAUnPopup != null)

@@ -319,6 +319,10 @@ namespace System.Windows.Forms {
 		internal static event ControlEventHandler UIAHelpRequested;
 		internal static event ControlEventHandler UIAHelpUnRequested;
 
+		internal Rectangle UIAToolTipRectangle {
+			get { return tooltip.Bounds; }
+		}
+
 		internal static void OnUIAHelpRequested (HelpProvider provider, ControlEventArgs args)
 		{
 			if (UIAHelpRequested != null)
