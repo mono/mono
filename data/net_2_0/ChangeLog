@@ -1,3 +1,8 @@
+2008-10-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* web.config: default values for httpRuntime are different in 2.0
+
+
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* machine.config: Fix syntax error.
