@@ -1,3 +1,10 @@
+2008-10-19  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ListViewItem.cs: When deserializing enumerate over the data, instead
+	of accessing the data directly. This way we handle much better the
+	cases were we lack information.
+	Fixes #417520.
+
 2008-10-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When removing an item from a main ListView.Items

@@ -773,30 +773,47 @@ namespace System.Windows.Forms
 		protected virtual void Deserialize (SerializationInfo info, StreamingContext context)
 		{
 			sub_items = new ListViewSubItemCollection (this, null);
-
 			Type lvsubitem_type = typeof (ListViewSubItem);
 
-			int count = info.GetInt32 ("subitems_count");
-			if (count > 0) {
-				sub_items.Clear ();
+			foreach (SerializationEntry entry in info) {
+				switch (entry.Name) {
+					case "subitems_count":
+						int count = (int)entry.Value;
+						if (count > 0) {
+							sub_items.Clear ();
+							ListViewSubItem [] si = new ListViewSubItem [count];
+							for (int i = 0; i < count; i++)
+								si [i] = (ListViewSubItem) info.GetValue ("subitem" + i, lvsubitem_type);
 
-				ListViewSubItem [] si = new ListViewSubItem [count];
-				for (int i = 0; i < count; i++)
-					si [i] = (ListViewSubItem) info.GetValue ("subitem" + i, lvsubitem_type);
-
-				sub_items.AddRange (si);
-			}
-
-			font = (Font) info.GetValue ("font", typeof (Font));
-			is_checked = info.GetBoolean ("is_checked");
-			image_index = info.GetInt32 ("image_index");
-			state_image_index = info.GetInt32 ("state_image_index");
-			use_item_style = info.GetBoolean ("use_item_style");
+							sub_items.AddRange (si);
+						}
+						break;
+					case "font":
+						font = (Font)entry.Value;
+						break;
+					case "is_checked":
+						is_checked = (bool)entry.Value;
+						break;
+					case "image_index":
+						image_index = (int)entry.Value;
+						break;
+					case "state_image_index":
+						state_image_index = (int)entry.Value;
+						break;
+					case "use_item_style":
+						use_item_style = (bool)entry.Value;
+						break;
 #if NET_2_0
-			group = (ListViewGroup) info.GetValue ("group", typeof (ListViewGroup));
-			if (image_index == -1)
-				image_key = info.GetString ("image_key");
+					case "group":
+						group = (ListViewGroup)entry.Value;
+						break;
+					case "image_key":
+						if (image_index == -1)
+							image_key = (string)entry.Value;
+						break;
 #endif
+				}
+			}
 
 		}
 
