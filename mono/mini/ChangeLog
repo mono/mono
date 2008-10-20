@@ -1,5 +1,9 @@
 2008-10-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Tests for new methods in Vector8us.
+
+2008-10-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Add multiply and store high.
 	
 	* cpu-x86.md: Same.
