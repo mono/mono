@@ -1,3 +1,16 @@
+2008-10-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h (struct _MonoDynamicGenericClass): Add fields
+	'field_generic_types' and 'field_objects' which contain the information
+	previously stored in MonoInflatedField.
+	(MonoInflatedField): Delete.
+	(struct _MonoClassField): Delete 'generic_info' field.
+
+	* reflection.c: Store the information which was previously in 
+	field->generic_info in MonoDynamicGenericClass instead.
+
+	* metadata.c (free_generic_class): Update after MonoDynamicGenericClass/
+	MonoClassField changes.
 
 Tue Oct 21 17:07:55 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
