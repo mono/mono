@@ -1,3 +1,7 @@
+2008-10-21  Marek Habersack  <mhabersack@novell.com>
+
+	* CapabilitiesChecksum.cs: implement Hex and MapToHex more efficiently.
+
 2008-10-09  Marek Habersack  <mhabersack@novell.com>
 
 	* MonoSettingsSection.cs: added - a section for mono-specific

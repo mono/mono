@@ -41,8 +41,8 @@ using System.Collections.Generic;
 
 namespace System.Web.Caching {
 	
-	internal sealed class OutputCacheModule : IHttpModule {
-
+	internal sealed class OutputCacheModule : IHttpModule
+	{
 		CacheItemRemovedCallback response_removed;
 		
 #if NET_2_0
@@ -59,10 +59,10 @@ namespace System.Web.Caching {
 		{
 		}
 
-		public void Init (HttpApplication app)
+		public void Init (HttpApplication context)
 		{
-			app.ResolveRequestCache += new EventHandler(OnResolveRequestCache);
-			app.UpdateRequestCache += new EventHandler(OnUpdateRequestCache);
+			context.ResolveRequestCache += new EventHandler(OnResolveRequestCache);
+			context.UpdateRequestCache += new EventHandler(OnUpdateRequestCache);
 #if NET_2_0
 			keysCache = new Dictionary <string, string> ();
 			entriesToInvalidate = new Dictionary <string, string> ();
@@ -246,7 +246,7 @@ namespace System.Web.Caching {
 #endif
 		}
 
-		void OnRawResponseRemoved (string key, object value, CacheItemRemovedReason reason)
+		static void OnRawResponseRemoved (string key, object value, CacheItemRemovedReason reason)
 		{
 			CachedRawResponse c = (CachedRawResponse) value;
 

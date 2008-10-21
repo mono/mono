@@ -36,7 +36,7 @@ using System.Collections;
 
 namespace System.Web.Caching {
 
-	internal class CachedVaryBy {
+	internal sealed class CachedVaryBy {
 
 		string[] prms;
 		string[] headers;
@@ -68,12 +68,13 @@ namespace System.Web.Caching {
 			StringBuilder builder = new StringBuilder ();
 			HttpApplication app = context.ApplicationInstance;
 			HttpRequest request = context.Request;
-
-			builder.Append ("CachedRawResponse\n");
+			string newLine = Environment.NewLine;
+			
+			builder.Append ("CachedRawResponse" + newLine);
 			builder.Append (file_path);
-			builder.Append ('\n');
+			builder.Append (newLine);
 			builder.Append ("METHOD:" + request.HttpMethod);
-			builder.Append ('\n');
+			builder.Append (newLine);
 
 			if (wildCardParams) {
 				foreach (string p in request.QueryString) {
@@ -83,7 +84,7 @@ namespace System.Web.Caching {
 					builder.Append (p.ToLower (CultureInfo.InvariantCulture));
 					builder.Append ('=');
 					builder.Append (request.QueryString [p]);
-					builder.Append ('\n');
+					builder.Append (newLine);
 				}
 				foreach (string p in request.Form) {
 					// FIXME: can this be null, too?
@@ -92,7 +93,7 @@ namespace System.Web.Caching {
 					builder.Append (p.ToLower (CultureInfo.InvariantCulture));
 					builder.Append ('=');
 					builder.Append (request.Form [p]);
-					builder.Append ('\n');
+					builder.Append (newLine);
 				}
 			} else if (prms != null) {
 				for (int i=0; i<prms.Length; i++) {
@@ -101,14 +102,14 @@ namespace System.Web.Caching {
 						builder.Append (prms [i].ToLower (CultureInfo.InvariantCulture));
 						builder.Append ('=');
 						builder.Append (request.QueryString [prms [i]]);
-						builder.Append ('\n');
+						builder.Append (newLine);
 					}
 					if (request.Form [prms [i]] != null) {
 						builder.Append ("VPF:");
 						builder.Append (prms [i].ToLower (CultureInfo.InvariantCulture));
 						builder.Append ('=');
 						builder.Append (request.Form [prms [i]]);
-						builder.Append ('\n');
+						builder.Append (newLine);
 					}
 				}
 			}
@@ -119,7 +120,7 @@ namespace System.Web.Caching {
 					builder.Append (headers [i].ToLower (CultureInfo.InvariantCulture));
 					builder.Append ('=');
 					builder.Append (request.Headers [headers [i]]);
-					builder.Append ('\n');
+					builder.Append (newLine);
 				}
 			}
 
@@ -129,7 +130,7 @@ namespace System.Web.Caching {
 				builder.Append (custom);
 				builder.Append ('=');
 				builder.Append (s != null ? s : "__null__");
-				builder.Append ('\n');
+				builder.Append (newLine);
 			}
 
 			return builder.ToString ();

@@ -27,11 +27,12 @@ using System.Text;
 
 namespace System.Web.Configuration
 {
-	internal class CapabilitiesChecksum
+	internal sealed class CapabilitiesChecksum
 	{
 		public CapabilitiesChecksum()
 		{
 		}
+		
 		public static string BuildChecksum(string raw)
 		{
 			byte[] array = System.Text.Encoding.Default.GetBytes(raw.ToCharArray());
@@ -44,6 +45,7 @@ namespace System.Web.Configuration
 			array = null;
 			return string.Join("", c);
 		}
+		
 		public static string BuildChecksum(byte[] array)
 		{
 			array = System.Security.Cryptography.MD5.Create().ComputeHash(array);
@@ -56,102 +58,26 @@ namespace System.Web.Configuration
 			return string.Join("", c);
 		}
 
-		static string Hex(byte b)
+		//
+		// The original version of the code returned the hex half-octets reversed (e.g. if
+		// b == 0xF2, 0x2F would be returned) for some reason. This version keeps this
+		// convention.
+		//
+		static string Hex (byte b)
 		{
-			char[] list = new char[2];
-			BitArray myBA1 = new BitArray(new bool[4] { false, false, false, false });
-			BitArray myBA2 = new BitArray(new bool[4] { false, false, false, false });
-			BitArray myBA3 = new BitArray(new byte[] { b });
-
-			//1 byte = 8 bits
-			//4 bits = 1 Hex Value.
-			myBA1.Set(0, myBA3.Get(0));
-			myBA1.Set(1, myBA3.Get(1));
-			myBA1.Set(2, myBA3.Get(2));
-			myBA1.Set(3, myBA3.Get(3));
-
-			myBA2.Set(0, myBA3.Get(4));
-			myBA2.Set(1, myBA3.Get(5));
-			myBA2.Set(2, myBA3.Get(6));
-			myBA2.Set(3, myBA3.Get(7));
-
-			list[0] = CapabilitiesChecksum.MapToHex(myBA1);
-			list[1] = CapabilitiesChecksum.MapToHex(myBA2);
-			return new string(list, 0, 2);
+			char[] list = new char[] {MapToHex ((byte)(b & 0x0F)), MapToHex ((byte)((b & 0xF0) >> 4))};
+			return new String (list, 0, 2);
 		}
-		static char MapToHex(BitArray a)
+  
+		static char MapToHex (byte b)
 		{
-			//-----------------------------------------------------------------------------------
-			//I could of done bit wise comparisons much more efficiant, but that would of given
-			//me a bigger headach then this. Which I can reason though even half asleep.
-			//-----------------------------------------------------------------------------------
-			if (a.Get(0) == false && a.Get(1) == false && a.Get(2) == false && a.Get(3) == false)
-			{
-				return '0';
-			}
-			else if (a.Get(0) == true && a.Get(1) == false && a.Get(2) == false && a.Get(3) == false)
-			{
-				return '1';
-			}
-			else if (a.Get(0) == false && a.Get(1) == true && a.Get(2) == false && a.Get(3) == false)
-			{
-				return '2';
-			}
-			else if (a.Get(0) == true && a.Get(1) == true && a.Get(2) == false && a.Get(3) == false)
-			{
-				return '3';
-			}
-			else if (a.Get(0) == false && a.Get(1) == false && a.Get(2) == true && a.Get(3) == false)
-			{
-				return '4';
-			}
-			else if (a.Get(0) == true && a.Get(1) == false && a.Get(2) == true && a.Get(3) == false)
-			{
-				return '5';
-			}
-			else if (a.Get(0) == false && a.Get(1) == true && a.Get(2) == true && a.Get(3) == false)
-			{
-				return '6';
-			}
-			else if (a.Get(0) == true && a.Get(1) == true && a.Get(2) == true && a.Get(3) == false)
-			{
-				return '7';
-			}
-			else if (a.Get(0) == false && a.Get(1) == false && a.Get(2) == false && a.Get(3) == true)
-			{
-				return '8';
-			}
-			else if (a.Get(0) == true && a.Get(1) == false && a.Get(2) == false && a.Get(3) == true)
-			{
-				return '9';
-			}
-			else if (a.Get(0) == false && a.Get(1) == true && a.Get(2) == false && a.Get(3) == true)
-			{
-				return 'A';
-			}
-			else if (a.Get(0) == true && a.Get(1) == true && a.Get(2) == false && a.Get(3) == true)
-			{
-				return 'B';
-			}
-			else if (a.Get(0) == false && a.Get(1) == false && a.Get(2) == true && a.Get(3) == true)
-			{
-				return 'C';
-			}
-			else if (a.Get(0) == true && a.Get(1) == false && a.Get(2) == true && a.Get(3) == true)
-			{
-				return 'D';
-			}
-			else if (a.Get(0) == false && a.Get(1) == true && a.Get(2) == true && a.Get(3) == true)
-			{
-				return 'E';
-			}
-			else if (a.Get(0) == true && a.Get(1) == true && a.Get(2) == true && a.Get(3) == true)
-			{
-				return 'F';
-			}
-			//this should never ever happen, unless a bit
-			//gets switched mid way though the checks.
-			throw new System.Exception("shit fell threw");
+			if (b >= 0 && b <= 9)
+				return (char)(b + 0x30);
+			
+			if (b >= 10 && b <= 16)
+				return (char)(b + 0x37);
+			
+			throw new System.ArgumentException ("Unexpected error.");
 		}
 	}
 }

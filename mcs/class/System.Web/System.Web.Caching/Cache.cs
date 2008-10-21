@@ -370,7 +370,7 @@ namespace System.Web.Caching
 		}
 	}
 
-	class CacheItem
+	sealed class CacheItem
 	{
 		public object Value;
 		public string Key;
@@ -383,7 +383,7 @@ namespace System.Web.Caching
 		public Timer Timer;
 	}
 		
-	class CacheItemEnumerator: IDictionaryEnumerator
+	sealed class CacheItemEnumerator: IDictionaryEnumerator
 	{
 		ArrayList list;
 		int pos = -1;

@@ -1,3 +1,18 @@
+2008-10-21  Marek Habersack  <mhabersack@novell.com>
+
+	* OutputCacheModule.cs: seal the class.
+	Made OnRawResponseRemoved a static method.
+
+	* CachedVaryBy.cs: seal the class.
+	Use portable line terminators instead of literal '\n'.
+
+	* Cache.cs: seal the CacheItem and CacheItemEnumerator classes.
+
+	* CacheDependency.cs: dispose the associated dependency in the
+	DependencyDispose method.
+
+	* CachedRawResponse.cs: seal the class
+
 2008-10-15  Marek Habersack  <mhabersack@novell.com>
 
 	* OutputCacheModule.cs: do not take any action if Response returns

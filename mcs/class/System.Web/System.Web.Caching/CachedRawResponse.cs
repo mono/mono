@@ -35,7 +35,7 @@ using System.Collections;
 
 namespace System.Web.Caching {
 
-	internal class CachedRawResponse {
+	internal sealed class CachedRawResponse {
 		static readonly byte[] emptyBuffer = new byte[0];
 		HttpCachePolicy policy;
 		CachedVaryBy varyby;

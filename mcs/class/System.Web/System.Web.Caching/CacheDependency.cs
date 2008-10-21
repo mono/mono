@@ -207,8 +207,11 @@ namespace System.Web.Caching
 			DependencyDisposeInternal ();
 #endif
 			DisposeWatchers ();
-			if (dependency != null)
+			if (dependency != null) {
 				dependency.DependencyChanged -= new EventHandler (OnChildDependencyChanged);
+				dependency.Dispose ();
+			}
+			
 			cache = null;
 		}
 		
