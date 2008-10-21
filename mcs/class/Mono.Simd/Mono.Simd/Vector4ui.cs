@@ -144,6 +144,21 @@ namespace Mono.Simd
 		{
 			return new Vector4ui ((uint)(v1.x ==  v2.x ? -1 : 0), (uint)(v1.y ==  v2.y ? -1 : 0), (uint)(v1.z ==  v2.z ? -1 : 0), (uint)(v1.w ==  v2.w ? -1 : 0));
 		}
+		/* This function performs a packusdw, which treats the source as a signed value
+		 *
+		 * Requires SSE 4.1
+		 */
+		public static unsafe Vector8us SignedPackWithUnsignedSaturation (Vector4ui va, Vector4ui vb) {
+			Vector8us res = new Vector8us ();
+			int *a = (int*)&va;
+			int *b = (int*)&vb;
+			ushort *c = (ushort*)&res;
+			for (int i = 0; i < 4; ++i)
+				*c++ = (ushort)System.Math.Max (0, System.Math.Min (*a++, ushort.MaxValue));
+			for (int i = 0; i < 4; ++i)
+				*c++ = (ushort)System.Math.Max (0, System.Math.Min (*b++, ushort.MaxValue));
+			return res;
+		}
 
   		public static unsafe explicit operator Vector4f (Vector4ui v1)
 		{
