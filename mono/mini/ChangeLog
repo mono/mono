@@ -1,3 +1,8 @@
+2008-10-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (initialize_array_data): Use mono_field_get_data ()
+	for accessing field->data.
+
 2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-methods.h: Add SignedPackWithUnsignedSaturation.
