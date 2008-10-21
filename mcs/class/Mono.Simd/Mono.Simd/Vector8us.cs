@@ -258,6 +258,20 @@ namespace Mono.Simd
 			return res;
 		}
 
+		/*This function performs a packuswb, which treats the source as a signed value */
+		public static unsafe Vector16b SignedPackWithUnsignedSaturation (Vector8us va, Vector8us vb) {
+			Vector16b res = new Vector16b ();
+			short *a = (short*)&va;
+			short *b = (short*)&vb;
+			byte *c = (byte*)&res;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (byte)System.Math.Max (0, System.Math.Min ((int)*a++, byte.MaxValue));
+			for (int i = 0; i < 8; ++i)
+				*c++ = (byte)System.Math.Max (0, System.Math.Min ((int)*b++, byte.MaxValue));
+			return res;
+		}
+
+
 		public static unsafe explicit operator Vector4f(Vector8us v)
 		{
 			Vector4f* p = (Vector4f*)&v;

@@ -1,3 +1,7 @@
+2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector8us.cs: Added SignedPackWithUnsignedSaturation.
+
 2008-10-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector16b.cs: Added casts to Vector4ui and Vector8us
