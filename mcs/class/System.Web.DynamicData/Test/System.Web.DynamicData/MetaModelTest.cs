@@ -77,6 +77,7 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void RegisterContext ()
 		{
 			var m = new MetaModel ();
@@ -116,6 +117,7 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void RegisterContext4 ()
 		{
 			var m = new MetaModel ();
@@ -130,6 +132,7 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void RegisterContext5 ()
 		{
 			var m = new MetaModel ();

@@ -1,3 +1,7 @@
+2008-10-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DynamicDataRouteTest.cs, MetaModelTest.cs : added NotWorking mark.
+
 2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DynamicDataRouteTest.cs, TestStubTypes.cs: new tests.
