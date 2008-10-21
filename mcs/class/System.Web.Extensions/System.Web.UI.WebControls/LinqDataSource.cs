@@ -160,6 +160,7 @@ namespace System.Web.UI.WebControls
 				if (value == null)
 					throw new ArgumentNullException ("value");
 				context_type = value;
+				ContextTypeName = context_type.FullName;
 			}
 		}
 
