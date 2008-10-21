@@ -109,6 +109,7 @@ net_2_0_dirs := \
 	System.Web.Extensions.Design_1.0	\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
+	System.ComponentModel.DataAnnotations	\
 	System.Web.DynamicData		\
 	System.Runtime.Serialization	\
 	System.IdentityModel		\

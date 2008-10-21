@@ -1,5 +1,9 @@
 2008-10-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Malefile: ... and Sys.ComponentModel.DataAnnotations.dll.
+
+2008-10-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Malefile: added Sys.Web.DynamicData to the build.
 
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
