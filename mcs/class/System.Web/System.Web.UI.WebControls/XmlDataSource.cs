@@ -103,8 +103,7 @@ namespace System.Web.UI.WebControls {
 		XmlDocument LoadXmlDocument ()
 		{
 			XmlDocument document = LoadFileOrData (DataFile, Data);
-
-			if (TransformFile == "" && Transform == "")
+			if (String.IsNullOrEmpty (TransformFile) && String.IsNullOrEmpty (Transform))
 				return document;
 
 			XslTransform xslTransform = new XslTransform ();
@@ -122,9 +121,13 @@ namespace System.Web.UI.WebControls {
 		XmlDocument LoadFileOrData (string filename, string data)
 		{
 			XmlDocument document = new XmlDocument ();
-			if (filename != "")
-				document.Load (MapPathSecure (filename));
-			else
+			if (!String.IsNullOrEmpty (filename)) {
+				Uri uri;
+				if (Uri.TryCreate (filename, UriKind.Absolute, out uri))
+					document.Load (filename);
+				else
+					document.Load (MapPathSecure (filename));
+			} else
 				document.LoadXml (data);
 
 			return document;
