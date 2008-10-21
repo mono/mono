@@ -127,11 +127,10 @@ namespace System.Web.DynamicData
 			return Activator.CreateInstance (EntityType);
 		}
 
-		[MonoTODO]
 		public string GetActionPath (string action)
 		{
-			return String.Concat (DisplayName, "/", action, ".aspx");
-			//throw new NotImplementedException ();
+			// returns /{appbase}/{table}/{action}.aspx
+			return String.Concat (HttpContext.Current.Request.ApplicationPath, DisplayName, "/", action, ".aspx");
 		}
 
 		[MonoTODO]

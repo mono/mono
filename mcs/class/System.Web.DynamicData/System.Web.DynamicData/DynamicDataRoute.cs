@@ -73,7 +73,6 @@ namespace System.Web.DynamicData
 		public override RouteData GetRouteData (HttpContextBase httpContext)
 		{
 			var rd = base.GetRouteData (httpContext);
-foreach (var p in rd.Values) Console.Error.WriteLine ("{0} -> {1}", p.Key, p.Value);
 			// FIXME: something to do here?
 			return rd;
 		}
@@ -89,10 +88,13 @@ foreach (var p in rd.Values) Console.Error.WriteLine ("{0} -> {1}", p.Key, p.Val
 			return Model.GetTable (t);
 		}
 
-		[MonoTODO]
 		public override VirtualPathData GetVirtualPath (RequestContext requestContext, RouteValueDictionary values)
 		{
-			throw new NotImplementedException ();
+			var rd = requestContext.RouteData;
+			var t = GetTableFromRouteData (rd);
+			var a = GetActionFromRouteData (rd);
+			var vp = String.Concat (t.GetActionPath (a));
+			return new VirtualPathData (this, vp);
 		}
 	}
 }

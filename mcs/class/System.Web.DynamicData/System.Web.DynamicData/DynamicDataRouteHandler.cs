@@ -36,7 +36,9 @@ using System.Globalization;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Web.Caching;
+using System.Web.Compilation;
 using System.Web.Routing;
+using System.Web.UI;
 
 namespace System.Web.DynamicData
 {
@@ -47,6 +49,7 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public static RequestContext GetRequestContext (HttpContext httpContext)
 		{
+			// HttpRequestBase.QueryString
 			throw new NotImplementedException ();
 		}
 
@@ -71,7 +74,8 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public virtual IHttpHandler CreateHandler (DynamicDataRoute route, MetaTable table, string action)
 		{
-			throw new NotImplementedException ();
+			var vp = String.Concat (String.Concat (HttpContext.Current.Request.ApplicationPath, "DynamicData/PageTemplates/", action, ".aspx"));
+			return (IHttpHandler) BuildManager.CreateInstanceFromVirtualPath (vp, typeof (Page));
 		}
 
 		[MonoTODO]
@@ -86,7 +90,6 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("cache handler")]
 		IHttpHandler IRouteHandler.GetHttpHandler (RequestContext requestContext)
 		{
 			if (requestContext == null)
@@ -98,7 +101,33 @@ namespace System.Web.DynamicData
 			var action = dr.GetActionFromRouteData (rd);
 			var mt = dr.GetTableFromRouteData (rd);
 
-			return CreateHandler (dr, mt, action);
+			var rc = new RouteContext () { Route = dr, Action = action, Table = mt };
+			IHttpHandler h;
+			if (handlers.TryGetValue (rc, out h))
+				return h;
+			h = CreateHandler (dr, mt, action);
+			handlers [rc] = h;
+			return h;
 		}
+
+		class RouteContext
+		{
+			public DynamicDataRoute Route;
+			public string Action;
+			public MetaTable Table;
+
+			public override bool Equals (object obj)
+			{
+				RouteContext other = obj as RouteContext;
+				return other.Route == Route & other.Action == Action && other.Table == Table;
+			}
+
+			public override int GetHashCode ()
+			{
+				return (Route.GetHashCode () << 19) + (Action.GetHashCode () << 9) + Table.GetHashCode ();
+			}
+		}
+
+		Dictionary<RouteContext,IHttpHandler> handlers = new Dictionary<RouteContext,IHttpHandler> ();
 	}
 }

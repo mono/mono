@@ -1,3 +1,8 @@
+2008-10-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DynamicDataRouteHandler.cs, DynamicDataRoute.cs, MetaTable.cs:
+	  ongoing implementation; resolve to page templates.
+
 2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DynamicDataRouteHandler.cs, DynamicDataRoute.cs, MetaTable.cs,
