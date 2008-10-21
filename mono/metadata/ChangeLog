@@ -1,3 +1,8 @@
+2008-10-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* process.c (ves_icall_System_Diagnostics_Process_GetProcessData): Fix a
+	warning.
+
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (runtime_invoke_signature_equal): Don't shared wrappers
