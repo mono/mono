@@ -1,3 +1,9 @@
+2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* basic-simd.cs: Test for SignedPackWithUnsignedSaturation.
+
+	* simd-intrinsics.c (vector4ui_intrinsics): Add SignedPackWithUnsignedSaturation.
+
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (initialize_array_data): Use mono_field_get_data ()
