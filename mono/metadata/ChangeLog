@@ -1,5 +1,11 @@
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* class-internals.h (MONO_CLASS_HAS_STATIC_METADATA): Move this here from
+	class.c
+
+	* class.c (mono_field_get_rva): Fix crash if this is called on a dynamic
+	field.
+
 	* loader.c (find_method_in_class): Reenable the metadata optimization by
 	not using it for generic instances.
 
