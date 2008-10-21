@@ -1,5 +1,8 @@
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (find_method_in_class): Reenable the metadata optimization by
+	not using it for generic instances.
+
 	* class-internals.h (MonoFieldDefaultValue): Extract the rarely used 
 	data/def_type fields from MonoClassField into a separate structure.
 	(struct MonoClassField): Remove data/def_type fields.
