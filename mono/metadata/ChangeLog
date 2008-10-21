@@ -1,5 +1,13 @@
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* class-internals.h (MonoFieldDefaultValue): Extract the rarely used 
+	data/def_type fields from MonoClassField into a separate structure.
+	(struct MonoClassField): Remove data/def_type fields.
+	(struct _MonoClass): Add a 'field_def_values' array to store the default
+	values/RVA for fields.
+
+	* class.c reflection.c: Update after the changes.
+	
 	* object.c (mono_class_create_runtime_vtable): Use mono_field_get_data ()
 	for accessing field->data.
 
