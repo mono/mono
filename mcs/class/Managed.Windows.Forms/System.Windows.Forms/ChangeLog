@@ -1,3 +1,9 @@
+2008-10-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: Fire SelectedIndexChanged when the user selects the
+	same item with the mouse as was already selected.
+	[Fixes bug #436789]
+
 2008-10-21  Brad Taylor  <brad@getcoded.net>
 	
 	* TextControl.cs: Break out code to get the visible range into

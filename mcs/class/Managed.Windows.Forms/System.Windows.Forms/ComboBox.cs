@@ -2676,8 +2676,18 @@ namespace System.Windows.Forms
 					return;
 				}
 
+				bool is_change = owner.SelectedIndex != index;
+				
 				owner.SelectedIndex = index;
 				owner.OnSelectionChangeCommitted (new EventArgs ());
+				
+				// If the user selected the already selected item, SelectedIndex
+				// won't fire these events, but .Net does, so we do it here
+				if (!is_change) {
+					owner.OnSelectedValueChanged (EventArgs.Empty);
+					owner.OnSelectedIndexChanged (EventArgs.Empty);
+				}
+				
 				HideWindow ();
 			}
 
