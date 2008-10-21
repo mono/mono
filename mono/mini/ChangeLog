@@ -1,3 +1,9 @@
+2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* simd-methods.h: Add SignedPackWithUnsignedSaturation.
+
+	* simd-intrinsics.c (vector8us_intrinsics): Add SignedPackWithUnsignedSaturation.
+
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* dominators.c (mono_compute_natural_loops): Allocate GList enties
