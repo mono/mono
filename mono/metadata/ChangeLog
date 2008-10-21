@@ -1,5 +1,17 @@
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_class_create_runtime_vtable): Don't initalize
+	field->data/field->def_type here, it is done lazily by 
+	mono_class_get_field_default_value ().
+
+	* icall.c (ves_icall_get_enum_info): Call 
+	mono_class_get_field_default_value () instead of directly accessing
+	field->data and field->def_type.
+
+	* object.c (get_default_field_value): Ditto.
+
+	* class.c (mono_field_get_data): Ditto.
+	
 	* class.c (mono_class_init): Remove unneccesary mono_class_setup_methods ()
 	call for generic instances.
 
