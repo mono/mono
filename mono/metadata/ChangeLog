@@ -1,3 +1,11 @@
+
+Tue Oct 21 17:07:55 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c, method-builder.c: get rid of wrapper_hash and instead
+	store the value inside the data array of the MonoMethodWrapper.
+	This saves memory, is faster and fixes the lifetime issues (methods
+	were never removed from the hash previously). May also fix bug#436996.
+
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_init): Revert the last change as it seems to cause
