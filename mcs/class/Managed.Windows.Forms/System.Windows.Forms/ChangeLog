@@ -1,5 +1,11 @@
 2008-10-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* XplatUIWin32.cs: Apply patch from John Mortlock that ensures
+	mouse_state gets set during WM_MOUSEMOVE and WM_NCMOUSEMOVE.
+	[Fixes bug #436772]
+
+2008-10-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBox.cs: Fire SelectedIndexChanged when the user selects the
 	same item with the mouse as was already selected.
 	[Fixes bug #436789]

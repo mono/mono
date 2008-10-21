@@ -2059,6 +2059,8 @@ namespace System.Windows.Forms {
 					if (msg.hwnd != prev_mouse_hwnd) {
 						TRACKMOUSEEVENT	tme;
 
+						mouse_state = Control.FromParamToMouseButtons ((int)msg.lParam.ToInt32());
+
 						// The current message will be sent out next time around
 						StoreMessage(ref msg);
 
@@ -2080,7 +2082,9 @@ namespace System.Windows.Forms {
 				case Msg.WM_NCMOUSEMOVE: {
 					if (wm_nc_registered == null || !wm_nc_registered.Contains (msg.hwnd))
 						break;
-						
+
+					mouse_state = Control.FromParamToMouseButtons ((int)msg.lParam.ToInt32 ());
+
 					TRACKMOUSEEVENT tme;
 
 					tme = new TRACKMOUSEEVENT ();
