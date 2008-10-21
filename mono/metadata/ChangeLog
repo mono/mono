@@ -1,5 +1,10 @@
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_class_create_runtime_vtable): Use mono_field_get_data ()
+	for accessing field->data.
+
+	* icall.c (ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_InitializeArray): Ditto.
+
 	* loader.c (find_method_in_class): Revert the last change for now as
 	it breaks Mono.C5 unit tests.
 
