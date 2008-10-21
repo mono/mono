@@ -1,3 +1,8 @@
+2008-10-21  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateModule.cs: OnAcquireState should set up a session
+	only if the handler requires it. Fixes bug #437289
+
 2008-07-29  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateModule.cs: use Request.FilePath instead of

@@ -200,6 +200,9 @@ namespace System.Web.SessionState
 				required = true;
 			// hack end
 
+			if (!required)
+				return;
+			
 			bool read_only = (context.Handler is IReadOnlySessionState);
 			
 			bool isNew = false;

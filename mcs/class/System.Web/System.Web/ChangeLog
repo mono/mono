@@ -1,5 +1,8 @@
 2008-10-21  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpApplication.cs: if context.Session is null in get_Session,
+	throw an exception. Fixes bug #437289
+
 	* CapabilitiesLoader.cs: seal BrowserData.
 	Seal CapabilitiesLoader.
 	Do not lock on typeof (CapabilitiesLoader) in GetCapabilities ().

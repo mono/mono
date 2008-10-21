@@ -328,7 +328,12 @@ namespace System.Web {
 
 				if (context == null)
 					throw new HttpException (Locale.GetText ("No context is available."));
-				return context.Session;
+
+				HttpSessionState ret = context.Session;
+				if (ret == null)
+					throw new HttpException (Locale.GetText ("Session state is not available in the context."));
+				
+				return ret;
 			}
 		}
 
