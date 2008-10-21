@@ -1,5 +1,8 @@
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_init): Revert the last change as it seems to cause
+	crashes.
+
 	* class-internals.h (struct _MonoClassField): Reorder fields to save 4
 	bytes on 64 bit platforms.
 
