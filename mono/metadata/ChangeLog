@@ -1,5 +1,11 @@
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (runtime_invoke_signature_equal): Don't shared wrappers
+	returning a vtype.
+
+	* class.c debug-helpers.c object.c class-internals.h marshal.c icall.c
+	reflection.c: Use mono_field_get_name () for accessing a field's name.
+
 	* class-internals.h (MONO_CLASS_HAS_STATIC_METADATA): Move this here from
 	class.c
 
