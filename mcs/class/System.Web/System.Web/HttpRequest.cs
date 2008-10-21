@@ -1410,7 +1410,7 @@ namespace System.Web {
 		
 			foreach (string key in coll.Keys) {
 				string val = coll [key];
-				if (val != null && val != "" && CheckString (val))
+				if (val != null && val.Length > 0 && CheckString (val))
 					ThrowValidationException (name, key, val);
 			}
 		}
