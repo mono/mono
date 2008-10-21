@@ -1,3 +1,13 @@
+2008-10-21  Brad Taylor  <brad@getcoded.net>
+	
+	* TextControl.cs: Break out code to get the visible range into
+	  GetVisibleLineIndexes to be used in UIA code.
+	
+	* Line.cs:
+	* TextControl.cs:
+	* TextBoxBase.cs: Add comments indicating that the method or property
+	  is used via reflection from UIA code.
+
 2008-10-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Match .net serialization.

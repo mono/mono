@@ -1770,6 +1770,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+		#region UIA Framework Properties
+
+		internal ScrollBar UIAHScrollBar {
+			get { return hscroll; }
+		}
+
+		internal ScrollBar UIAVScrollBar {
+			get { return vscroll; }
+		}
+
+		#endregion UIA Framework Properties
+
 		internal Graphics CreateGraphicsInternal ()
 		{
 			if (IsHandleCreated)

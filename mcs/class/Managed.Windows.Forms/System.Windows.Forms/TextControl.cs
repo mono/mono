@@ -312,6 +312,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// UIA: Method used via reflection in TextRangeProvider
 		internal int Lines {
 			get {
 				return lines;
@@ -1679,6 +1680,18 @@ namespace System.Windows.Forms {
 			Console.WriteLine ("</doc>");
 		}
 
+		// UIA: Used via reflection by TextProviderBehavior
+		internal void GetVisibleLineIndexes (Rectangle clip, out int start, out int end)
+		{
+			if (multiline) {
+				start = GetLineByPixel(clip.Top + viewport_y - offset_y, false).line_no;
+				end = GetLineByPixel(clip.Bottom + viewport_y - offset_y, false).line_no;
+			} else {
+				start = GetLineByPixel(clip.Left + viewport_x - offset_x, false).line_no;
+				end = GetLineByPixel(clip.Right + viewport_x - offset_x, false).line_no;
+			}
+		}
+
 		internal void Draw (Graphics g, Rectangle clip)
 		{
 			Line line;		// Current line being drawn
@@ -1691,14 +1704,7 @@ namespace System.Windows.Forms {
 			Color current_color;
 
 			// First, figure out from what line to what line we need to draw
-
-			if (multiline) {
-				start = GetLineByPixel(clip.Top + viewport_y - offset_y, false).line_no;
-				end = GetLineByPixel(clip.Bottom + viewport_y - offset_y, false).line_no;
-			} else {
-				start = GetLineByPixel(clip.Left + viewport_x - offset_x, false).line_no;
-				end = GetLineByPixel(clip.Right + viewport_x - offset_x, false).line_no;
-			}
+			GetVisibleLineIndexes (clip, out start, out end);
 
 			// remove links in the list (used for mouse down events) that are within the clip area.
 			InvalidateLinks (clip);
@@ -3359,6 +3365,8 @@ namespace System.Windows.Forms {
 		}
 
 
+		// UIA: Method used via reflection in TextRangeProvider
+
 		/// <summary>Give it a Line number and it returns the Line object at with that line number</summary>
 		internal Line GetLine(int LineNo) {
 			Line	line = document;
@@ -3482,6 +3490,8 @@ namespace System.Windows.Forms {
 			}
 			return last;
 		}
+
+		// UIA: Method used via reflection in TextProviderBehavior
 
 		// Give it x/y pixel coordinates and it returns the Tag at that position
 		internal LineTag FindCursor (int x, int y, out int index)

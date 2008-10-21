@@ -143,6 +143,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		// UIA: Method used via reflection in TextRangeProvider
 		internal int Height {
 			get { return height; }
 			set { height = value; }
@@ -169,6 +170,7 @@ namespace System.Windows.Forms
 			}
 		}
 			
+		// UIA: Method used via reflection in TextRangeProvider
 		internal int Width {
 			get {
 				int res = (int) widths [text.Length];
@@ -183,6 +185,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		// UIA: Method used via reflection in TextRangeProvider
 		internal int X {
 			get {
 				if (document.multiline)
@@ -191,6 +194,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		// UIA: Method used via reflection in TextRangeProvider
 		internal int Y {
 			get {
 				if (!document.multiline)
