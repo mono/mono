@@ -1,3 +1,7 @@
+2008-10-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c method-to-ir.c: Use mono_field_get_name () for accessing field->name.
+
 2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Test for SignedPackWithUnsignedSaturation.
