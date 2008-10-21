@@ -1,5 +1,8 @@
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* class-internals.h (struct _MonoClassField): Reorder fields to save 4
+	bytes on 64 bit platforms.
+
 	* object.c (mono_class_create_runtime_vtable): Fix a warning.
 	
 	* object.c (mono_class_create_runtime_vtable): Don't initalize
