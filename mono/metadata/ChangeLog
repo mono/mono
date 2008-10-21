@@ -8,6 +8,14 @@ Tue Oct 21 17:07:55 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_image_get_fieldref_token): For fields of non-dynamic 
+	generic instances, compute the type from the generic definition instead of
+	looking in field->generic_info.
+
+	* class.c (mono_class_setup_fields): Don't create a MonoInflatedField
+	for inflated fields, the only user was get_fieldref_token () which no
+	longer needs it.
+
 	* class.c (mono_class_init): Revert the last change as it seems to cause
 	crashes.
 
