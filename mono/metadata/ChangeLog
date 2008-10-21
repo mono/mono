@@ -1,5 +1,7 @@
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_class_create_runtime_vtable): Fix a warning.
+	
 	* object.c (mono_class_create_runtime_vtable): Don't initalize
 	field->data/field->def_type here, it is done lazily by 
 	mono_class_get_field_default_value ().
