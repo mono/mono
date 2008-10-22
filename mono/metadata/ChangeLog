@@ -1,3 +1,8 @@
+2008-10-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c: fixed the logic that determines whether assemblies in a
+	directory are "shadow-copied" or not. Bug #433483 fixed.
+
 2008-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* process.c (ves_icall_System_Diagnostics_Process_GetProcessData): Fix a
