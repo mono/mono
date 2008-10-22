@@ -47,6 +47,7 @@ scripts_1_0_compat = \
 	mcs1$(SCRIPT_SUFFIX)			\
 	mkbundle1$(SCRIPT_SUFFIX)		\
 	mono-api-info1$(SCRIPT_SUFFIX)		\
+	gacutil1$(SCRIPT_SUFFIX)			\
 	monop1$(SCRIPT_SUFFIX)			\
 	resgen1$(SCRIPT_SUFFIX)			\
 	wsdl1$(SCRIPT_SUFFIX)
@@ -60,7 +61,6 @@ scripts_1_0 = \
 	disco$(SCRIPT_SUFFIX)			\
 	dtd2xsd$(SCRIPT_SUFFIX)			\
 	dtd2rng$(SCRIPT_SUFFIX)			\
-	gacutil$(SCRIPT_SUFFIX)			\
 	installvst$(SCRIPT_SUFFIX)		\
 	macpack$(SCRIPT_SUFFIX)			\
 	mcs$(SCRIPT_SUFFIX)			\
@@ -128,6 +128,7 @@ scripts_defaults = 		\
 	al$(SCRIPT_SUFFIX)			\
 	genxs$(SCRIPT_SUFFIX)			\
 	ilasm$(SCRIPT_SUFFIX)			\
+	gacutil$(SCRIPT_SUFFIX)			\
 	mkbundle$(SCRIPT_SUFFIX)		\
 	mono-api-info$(SCRIPT_SUFFIX)		\
 	monop$(SCRIPT_SUFFIX)			\
