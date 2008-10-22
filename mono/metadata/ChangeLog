@@ -1,3 +1,9 @@
+
+Wed Oct 22 17:45:48 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-perfcounters.c, icall-def.h, environment.c, environment.h:
+	use the code in mono-proclib.h to get processor information.
+
 2008-10-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* appdomain.c: fixed the logic that determines whether assemblies in a
