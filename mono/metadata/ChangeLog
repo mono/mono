@@ -1,3 +1,12 @@
+
+2008-10-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: asynchronously create a set of idle threads upon first
+	use of the threadpool. SetMinThreads will now start the appropriate
+	number of idle threads if they are not already running. The default is
+	1 threadpool thread per CPU. Increased the maximum number of threads
+	per CPU to 10.
+
 2008-10-22  Martin Baulig  <martin@ximian.com>
 
 	Revert r116521 from Zoltan, it breaks the debugger:
