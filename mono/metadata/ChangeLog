@@ -1,3 +1,14 @@
+2008-10-22  Martin Baulig  <martin@ximian.com>
+
+	Revert r116521 from Zoltan, it breaks the debugger:
+
+	* class.c (mono_class_get_virtual_methods): New helper function to iterate
+	over the virtual methods of a class using metadata if possible, avoiding the
+	creation of MonoMethod's for non-virtual methods.
+	
+	* class.c (mono_class_setup_vtable_general): Rewrite this to use 
+	get_virtual_methods () to iterate over the virtual methods of classes.
+
 2008-10-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threads.c: when creating a threadpool thread, set its state to
@@ -132,21 +143,6 @@ Tue Oct 21 17:07:55 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	the method with the context of from_class, since the caller assumes this.
 
 2008-10-20  Zoltan Varga  <vargaz@gmail.com>
-
-	* class.c (mono_class_init): Remove unneccesary mono_class_setup_properties ()
-	call for generic instances.
-	(mono_class_setup_properties): Call setup_properties () before accessing
-	gklass->properties.
-
-	* loader.c (find_method_in_class): Search directly in metadata to avoid
-	calling mono_class_setup_methods ().
-
-	* class.c (mono_class_get_virtual_methods): New helper function to iterate
-	over the virtual methods of a class using metadata if possible, avoiding the
-	creation of MonoMethod's for non-virtual methods.
-	
-	* class.c (mono_class_setup_vtable_general): Rewrite this to use 
-	get_virtual_methods () to iterate over the virtual methods of classes.
 
 	* class.c (mono_method_get_vtable_index): Use mono_method_get_vtable_slot ()
 	for accessing method->slot.
