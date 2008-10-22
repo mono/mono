@@ -1,7 +1,3 @@
-2008-10-22  Zoltan Varga  <vargaz@gmail.com>
-
-	* Makefile (net_2_0_dirs): Add linker.
-
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Add mod to the build.
