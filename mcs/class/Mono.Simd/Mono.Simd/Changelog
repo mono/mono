@@ -1,5 +1,9 @@
 2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector4f.cs: Renamed CompareEquals to CompareEqual.
+
+2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector4ui.cs: Added SignedPackWithUnsignedSaturation.
 
 2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>

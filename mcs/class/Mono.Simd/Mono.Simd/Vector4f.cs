@@ -242,7 +242,7 @@ namespace Mono.Simd
 		}
 
 		/*Same as a == b. */
-		public unsafe static Vector4f CompareEquals (Vector4f v1, Vector4f v2)
+		public unsafe static Vector4f CompareEqual (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
 			int *c = (int*)&res;
