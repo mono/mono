@@ -1,3 +1,14 @@
+2008-10-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_inflate_generic_type_with_mempool_no_copy): New
+	variant which doesn't make a copy if no inflation was done.
+	(mono_class_setup_fields): Use it.
+
+	* metadata.c (mono_metadata_get_shared_type): New helper function to
+	return a shared instance of a given MonoType.
+
+	* class.c (mono_class_inflate_generic_type_with_mempool): Avoid making
+	a copy of most non-generic types.
 
 Wed Oct 22 18:00:46 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
