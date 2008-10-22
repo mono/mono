@@ -367,11 +367,10 @@ namespace System.Web.Script.Serialization
 				throw new InvalidOperationException ("JSON syntax error.");
 
 			object ret = PopObject ();
-// 			Console.WriteLine ("Returning: {0}", ret);
-// 			DumpObject (String.Empty, ret);
 			return ret;
 		}
 
+#if DEBUG
 		void DumpObject (string indent, object obj)
 		{
 			if (obj is Dictionary <string, object>) {
@@ -391,6 +390,7 @@ namespace System.Web.Script.Serialization
 			else
 				Console.WriteLine ("null");
 		}
+#endif
 		
 		void DecodeUnicodeChar ()
 		{
@@ -405,7 +405,6 @@ namespace System.Web.Script.Serialization
 
 		string GetModeMessage (JsonMode expectedMode)
 		{
-//			Console.WriteLine ("{0}.GetModeMessage ({1})", this, expectedMode);
 			switch (expectedMode) {
 				case JsonMode.ARRAY:
 					return "Invalid array passed in, ',' or ']' expected (" + currentPosition + ")";
@@ -483,8 +482,6 @@ namespace System.Web.Script.Serialization
 
 		bool ParseBuffer (out object result)
 		{
-// 			Console.WriteLine ("{0}.ParseBuffer ()", this);
-// 			Console.WriteLine ("\ttype: {0}", jsonType);
 			result = null;
 			
 			if (jsonType == JsonType.NONE) {
@@ -565,7 +562,6 @@ namespace System.Web.Script.Serialization
 		
 		bool ProcessCharacter (char ch)
 		{
-//			Console.WriteLine ("{0}.ProcessCharacter ('{1}')", this, ch);
 			int next_class, next_state;
 
 			if (ch >= 128)
@@ -576,7 +572,6 @@ namespace System.Web.Script.Serialization
 					return false;
 			}
 
-//			Console.WriteLine ("\tnext_class == {0:x} ({0})", next_class);
 			if (escaped) {
 				escaped = false;
 				RemoveLastCharFromBuffer ();
@@ -611,9 +606,7 @@ namespace System.Web.Script.Serialization
 			} else if (jsonType != JsonType.NONE || !(next_class == C_SPACE || next_class == C_WHITE))
 				buffer.Append (ch);
 
-//			Console.WriteLine ("\tstate == {0:x} ({0})", state);
 			next_state = state_transition_table [state, next_class];
-//			Console.WriteLine ("\tnext_state == {0:x} ({0})", next_state);
 			if (next_state >= 0) {
 				state = next_state;
 				return true;
@@ -731,10 +724,8 @@ namespace System.Web.Script.Serialization
 						StoreValue (result);
 					PopMode (JsonMode.ARRAY);
 					result = PopObject (true);
-					if (result != null) {
-//						Console.WriteLine ("result: {0}", result);
+					if (result != null)
 						StoreValue (result);
-					}
 					
 					jsonType = JsonType.NONE;
 					state = OK;
@@ -881,7 +872,6 @@ namespace System.Web.Script.Serialization
 
 		void StoreKey (object o)
 		{
-//			Console.WriteLine ("{0}.StoreKey ({1})", this, o);
 			string key = o as string;
 			if (key != null)
 				key = key.Trim ();
@@ -900,7 +890,6 @@ namespace System.Web.Script.Serialization
 
 		void StoreValue (object o)
 		{
-//			Console.WriteLine ("{0}.StoreValue ({1})", this, o);
 			Dictionary <string, object> dict = PeekObject () as Dictionary <string, object>;
 			if (dict == null) {
 				ArrayList arr = PeekObject () as ArrayList;
@@ -916,7 +905,6 @@ namespace System.Web.Script.Serialization
 			else
 				key = currentKey.Pop ();
 
-//			Console.WriteLine ("\tkey == {0}", key);
 			if (String.IsNullOrEmpty (key))
 				throw new InvalidOperationException ("Internal error: object is a dictionary, but no key present.");
 			
