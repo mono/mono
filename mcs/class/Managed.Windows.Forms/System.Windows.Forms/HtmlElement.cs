@@ -299,7 +299,7 @@ namespace System.Windows.Forms
 				return true;
 			if ((object)left == null || (object)right == null)
 				return false;
-			return left.Equals (right); 
+			return left.element.Equals (right.element); 
 		}
 
 		public static bool operator != (HtmlElement left, HtmlElement right)

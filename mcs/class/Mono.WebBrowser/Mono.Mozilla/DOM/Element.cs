@@ -287,11 +287,6 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
-		public bool Equals (IElement obj) {
-			Element doc = (Element) obj;
-			return doc.node == this.node;
-		}
-
 		public void Focus () {
 			nsIDOMNSHTMLElement elm = node as nsIDOMNSHTMLElement;
 			if (elm != null) {

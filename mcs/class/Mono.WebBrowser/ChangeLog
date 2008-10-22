@@ -1,3 +1,14 @@
+2008-10-22  Andreia Gaita  <shana@jitted.com>
+
+	* Mono.Mozilla/DOM/Document.cs,
+	  Mono.Mozilla/DOM/Element.cs,
+	  Mono.Mozilla/DOM/Node.cs,
+	  Mono.Mozilla/DOM/Window.cs,
+	  Mono.WebBrowser/DOM/IDocument.cs,
+	  Mono.WebBrowser/DOM/IElement.cs,
+	  Mono.WebBrowser/DOM/INode.cs,
+	  Mono.WebBrowser/DOM/IWindow.cs: Fix equality operators (fixes #428173)
+
 2008-10-14  Andreia Gaita  <avidigal@novell.com>
 
 	* Mono.WebBrowser2K5.csproj:

@@ -373,7 +373,9 @@ namespace Mono.Mozilla.DOM
 		
 		#endregion
 
-		
+		public bool Equals (object obj) {
+			return obj.GetHashCode () == this.GetHashCode ();
+		}		
 		
 		public override int GetHashCode () 
 		{

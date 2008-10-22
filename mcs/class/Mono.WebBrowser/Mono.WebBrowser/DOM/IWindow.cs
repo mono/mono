@@ -41,7 +41,7 @@ namespace Mono.WebBrowser.DOM
 		void AttachEventHandler (string eventName, EventHandler handler);
 		void DetachEventHandler (string eventName, EventHandler handler);
 		void Focus ();
-		bool Equals (IWindow obj);		
+		bool Equals (object obj);		
 		int GetHashCode ();
 		void Open (string url);
 		void ScrollTo (int x, int y);

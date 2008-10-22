@@ -72,7 +72,7 @@ namespace Mono.Mozilla.DOM
 		#endregion
 
 		#region Internal
-		internal nsIDOMDocument XPComObject
+		internal new nsIDOMDocument XPComObject
 		{
 			get { return this.node; }
 		}
@@ -470,11 +470,6 @@ namespace Mono.Mozilla.DOM
 				}
 			}
 			return ret;
-		}
-
-		public bool Equals (IDocument obj) {
-			Document doc = (Document) obj;
-			return doc.node == this.node;
 		}
 		
 		public void Write (string text) {

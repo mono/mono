@@ -1,3 +1,9 @@
+2008-10-22  Andreia Gaita  <shana@jitted.com>
+
+	* HtmlDocument.cs,
+	  HtmlElement.cs,
+	  HtmlWindow.cs: Fix equality operators (fixes #428173)
+
 2008-10-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* XplatUIWin32.cs: Apply patch from John Mortlock that ensures

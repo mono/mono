@@ -55,7 +55,6 @@ namespace Mono.WebBrowser.DOM
 
 		IElement			AppendChild (IElement child);
 		void				Blur ();
-		bool 				Equals (IElement obj);
 		void				Focus ();
 		bool 				HasAttribute (string name);
 		string 				GetAttribute (string name);

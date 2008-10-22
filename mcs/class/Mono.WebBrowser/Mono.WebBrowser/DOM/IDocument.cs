@@ -61,8 +61,6 @@ namespace Mono.WebBrowser.DOM
 		IElementCollection 	GetElementsByTagName (string id);
 		void 				Write (string text);
 		
-		bool 				Equals (IDocument obj);
-
 		string InvokeScript (string script);
 
 		int GetHashCode ();

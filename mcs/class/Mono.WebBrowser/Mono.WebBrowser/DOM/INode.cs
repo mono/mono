@@ -48,6 +48,7 @@ namespace Mono.WebBrowser.DOM
 		
 		void FireEvent	(string eventName);
 		int 		GetHashCode ();
+		bool 				Equals (object obj);
 		
 		void AttachEventHandler (string eventName, EventHandler handler);
 		void DetachEventHandler (string eventName, EventHandler handler);

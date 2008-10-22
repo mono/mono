@@ -147,7 +147,7 @@ namespace System.Windows.Forms
 				return false;
 			}
 
-			return left.Equals (right); 
+			return left.document.Equals (right.document); 
 		}
 
 		public static bool operator !=(HtmlDocument left, HtmlDocument right) {

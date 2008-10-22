@@ -157,9 +157,8 @@ namespace Mono.Mozilla.DOM
 			EventListener.RemoveHandler (handler, eventName);
 		}
 		
-		public bool Equals (IWindow obj) {
-			Window doc = (Window) obj;
-			return doc.window == this.window;
+		public bool Equals (object obj) {
+			return obj.GetHashCode () == this.GetHashCode ();
 		}
 
 		public void Focus () {

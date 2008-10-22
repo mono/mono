@@ -404,7 +404,7 @@ namespace System.Windows.Forms
 		{
 			return window.GetHashCode ();
 		}
-	
+
 		public override bool Equals (object obj)
 		{
 			return this == (HtmlWindow) obj;
@@ -418,7 +418,7 @@ namespace System.Windows.Forms
 			if ((object)left == null || (object)right == null)
 				return false;
 
-			return left.Equals (right);
+			return left.window.Equals (right.window);
 		}
 
 		public static bool operator != (HtmlWindow left, HtmlWindow right)
