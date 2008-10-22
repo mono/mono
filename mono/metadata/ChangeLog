@@ -1,4 +1,8 @@
 
+Wed Oct 22 18:00:46 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* threadpool.c: remove one more GetSystemInfo () call.
+
 Wed Oct 22 17:45:48 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mono-perfcounters.c, icall-def.h, environment.c, environment.h:
