@@ -363,6 +363,20 @@ namespace Tests.System.Web.Script.Serialization
 		}
 
 		[Test]
+		public void TestDeserializeUnquotedKeys ()
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			IDictionary dict = ser.Deserialize <Dictionary <string, object>> ("{itemOne:\"1\",itemTwo:\"2\"}");
+
+			Assert.AreEqual ("1", dict ["itemOne"], "#A1");
+			Assert.AreEqual ("2", dict ["itemTwo"], "#A2");
+
+			dict = ser.Deserialize <Dictionary <string, object>> ("{itemOne:1,itemTwo:2}");
+			Assert.AreEqual (1, dict ["itemOne"], "#B1");
+			Assert.AreEqual (2, dict ["itemTwo"], "#B2");
+		}
+		
+		[Test]
 		public void TestDeserialize () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
 			Assert.IsNull (ser.Deserialize<X> (""));
@@ -478,8 +492,7 @@ namespace Tests.System.Web.Script.Serialization
 		public void TestDeserializeConverter1 () {
 			JavaScriptSerializer serializer = new JavaScriptSerializer ();
 
-			serializer.RegisterConverters (new JavaScriptConverter [] { 
-            new ListItemCollectionConverter() });
+			serializer.RegisterConverters (new JavaScriptConverter [] {new ListItemCollectionConverter()});
 
 			ListBox ListBox1 = new ListBox ();
 			ListBox1.Items.Add ("a1");

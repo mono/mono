@@ -248,7 +248,7 @@ namespace System.Web.Script.Serialization
 			/*start    GO*/ {GO,GO,OS,__,AB,__,__,__,SB,__,__,PX,MX,__,ZX,IX,__,__,__,__,__,FA,__,__,__,__,TR,__,__,__,__,__,I1,__,__,V1},
 			/*ok       OK*/ {OK,OK,__,OE,__,AE,__,CM,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__},
 			/*object   OB*/ {OB,OB,__,EO,__,__,__,__,SB,__,__,__,KB,__,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,__,KB,KB,KB,KB},
-			/*key      KE*/ {KE,KE,__,__,__,__,__,__,SB,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__},
+			/*key      KE*/ {KE,KE,__,__,__,__,__,__,SB,__,__,__,KB,__,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,KB,__,KB,KB,KB,KB},
 			/*colon    CO*/ {CO,CO,__,__,__,__,CA,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__},
 			/*value    VA*/ {VA,VA,OS,__,AB,__,__,__,SB,__,__,PX,MX,__,ZX,IX,__,__,__,__,__,FA,__,NU,__,__,TR,__,__,__,__,__,I1,__,__,V1},
 			/*array    AR*/ {AR,AR,OS,__,AB,AE,__,__,SB,__,__,PX,MX,__,ZX,IX,__,__,__,__,__,FA,__,NU,__,__,TR,__,__,__,__,__,I1,__,__,V1},
@@ -326,7 +326,7 @@ namespace System.Web.Script.Serialization
 		{
 			if (input == null)
 				throw new ArgumentNullException ("input");
-			
+
 			return Deserialize (new StringReader (input));
 		}
 		
@@ -797,7 +797,7 @@ namespace System.Web.Script.Serialization
 
 					// With MS.AJAX, a comma resets the recursion depth
 					recursionDepth = 0;
-					
+
 					bool doStore = ParseBuffer (out result);
 					switch (PeekMode ()) {
 						case JsonMode.OBJECT:

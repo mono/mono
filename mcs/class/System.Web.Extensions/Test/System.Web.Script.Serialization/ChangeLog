@@ -1,3 +1,8 @@
+2008-10-22  Marek Habersack  <mhabersack@novell.com>
+
+	* JavaScriptSerializerTest.cs: added tests for deserialization of
+	objects with more than one unquoted key names.
+
 2008-09-20  Juraj Skripsky  <js@hotfeet.ch>
 
 	* JavaScriptSerializerTest.cs: added test for bug #424704.
