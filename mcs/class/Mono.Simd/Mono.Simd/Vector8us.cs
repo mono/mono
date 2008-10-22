@@ -299,5 +299,15 @@ namespace Mono.Simd
 		{
 			res = val;
 		}
+
+		public static unsafe Vector8us LoadAligned (Vector8us *v)
+		{
+			return *v;
+		}
+
+		public static unsafe void StoreAligned (Vector8us *res, Vector8us val)
+		{
+			*res = val;
+		}
 	}
 }

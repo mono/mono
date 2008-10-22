@@ -1,5 +1,15 @@
 2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector16b.cs: Added Load/StoreAligned with pointer args.
+
+	* Vector4f.cs: Added Load/StoreAligned with pointer args.
+
+	* Vector4ui.cs: Added Load/StoreAligned with pointer args.
+
+	* Vector8us.cs: Added Load/StoreAligned with pointer args.
+
+2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector4f.cs: Renamed CompareEquals to CompareEqual.
 
 2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>

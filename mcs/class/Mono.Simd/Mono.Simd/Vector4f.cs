@@ -384,5 +384,15 @@ namespace Mono.Simd
 			res = val;
 		}
 
+		public static unsafe Vector4f LoadAligned (Vector4f *v)
+		{
+			return *v;
+		}
+
+		public static unsafe void StoreAligned (Vector4f *res, Vector4f val)
+		{
+			*res = val;
+		}
+
 	}
 }

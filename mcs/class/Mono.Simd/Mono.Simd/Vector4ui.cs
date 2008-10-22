@@ -189,5 +189,14 @@ namespace Mono.Simd
 			res = val;
 		}
 
+		public static unsafe Vector4ui LoadAligned (Vector4ui *v)
+		{
+			return *v;
+		}
+
+		public static unsafe void StoreAligned (Vector4ui *res, Vector4ui val)
+		{
+			*res = val;
+		}
 	}
 }

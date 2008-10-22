@@ -300,5 +300,15 @@ namespace Mono.Simd
 		{
 			res = val;
 		}
+
+		public static unsafe Vector16b LoadAligned (Vector16b *v)
+		{
+			return *v;
+		}
+
+		public static unsafe void StoreAligned (Vector16b *res, Vector16b val)
+		{
+			*res = val;
+		}
 	}
 }
