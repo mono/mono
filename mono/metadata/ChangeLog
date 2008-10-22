@@ -1,3 +1,11 @@
+2008-10-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threads.c: when creating a threadpool thread, set its state to
+	'background'.
+	* threadpool.c: reset the background state of a threadpool thread
+	after finishing each work item
+	Bug #437888 fixed.
+
 2008-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_get_vtable_entry): Add an optimization for szarrays.
