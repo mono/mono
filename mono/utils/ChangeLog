@@ -1,3 +1,9 @@
+
+Wed Oct 22 16:45:20 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-proclib.c, mono-mmap.c: basic support for OSX and
+	(untested) BSD systems.
+
 2008-10-13  Bill Holmes  <billholmes54@gmail.com>
 
 	* mono-proclib.c : Adding a compilation check for HAVE_UNISTD_H.
