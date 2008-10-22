@@ -2,7 +2,7 @@
 
 	* HttpApplicationFactory.cs: use only the first matching method in
 	GetApplicationTypeEvents, since it will be the one coming from the
-	topmost type.
+	topmost type. Partial fix for bug #437691
 
 2008-10-21  Marek Habersack  <mhabersack@novell.com>
 
