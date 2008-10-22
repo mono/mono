@@ -4,6 +4,13 @@
 
 2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Fix name change in Vector4f::CompareEqual.
+
+	* simd-intrinsics.c (simd_intrinsic_emit_store_aligned): Don't use
+	inst_offset as this has invalid values for LDADDR.
+
+2008-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Test for SignedPackWithUnsignedSaturation.
 
 	* simd-intrinsics.c (vector4ui_intrinsics): Add SignedPackWithUnsignedSaturation.
