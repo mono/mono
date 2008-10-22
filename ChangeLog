@@ -1,3 +1,9 @@
+2008-10-22  Zoltan Varga  <vargaz@gmail.com>
+
+	Merge r116796 from HEAD.
+
+	* scripts/Makefile.am: Add gacutil1 script.
+
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
 	Merge r115522 from HEAD.

@@ -29,6 +29,7 @@ scripts_1_0_compat = \
 	mcs1			\
 	mkbundle1		\
 	mono-api-info1		\
+	gacutil1		\
 	monop1			\
 	resgen1			\
 	wsdl1
@@ -42,7 +43,6 @@ scripts_1_0 = \
 	disco			\
 	dtd2xsd			\
 	dtd2rng			\
-	gacutil			\
 	installvst		\
 	macpack			\
 	mcs			\
@@ -93,6 +93,7 @@ scripts_defaults = 		\
 	al			\
 	genxs			\
 	ilasm			\
+	gacutil			\
 	mkbundle		\
 	mono-api-info		\
 	monop			\
