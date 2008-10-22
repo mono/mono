@@ -1,5 +1,9 @@
 2008-10-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_setup_vtable_general): Add an optimized version for
+	generic instances which works by inflating the methods in the container
+	class's vtable.
+	
 	* class.c (mono_class_inflate_generic_type_with_mempool_no_copy): New
 	variant which doesn't make a copy if no inflation was done.
 	(mono_class_setup_fields): Use it.
