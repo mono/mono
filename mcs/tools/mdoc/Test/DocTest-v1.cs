@@ -123,6 +123,15 @@ namespace Mono.DocTest {
 			/// <param name="i">Some <see cref="T:System.Int32" />.</param>
 			/// <remarks><c>M:Mono.DocTest.Widget.NestedClass.M(System.Int32)</c>.</remarks>
 			public void M (int i) {}
+
+			/// <remarks><c>T:Mono.DocTest.Widget.NestedClass.Double</c>.</remarks>
+			public class Double {
+				/// <remarks><c>T:Mono.DocTest.Widget.NestedClass.Double.Triple</c>.</remarks>
+				public class Triple {
+					/// <remarks><c>T:Mono.DocTest.Widget.NestedClass.Double.Triple.Quadruple</c>.</remarks>
+					public class Quadruple {} // for good measure
+				}
+			}
 		}
 
 		/// <remarks><c>T:Mono.DocTest.Widget.NestedClass`1</c>.</remarks>
@@ -243,6 +252,9 @@ namespace Mono.DocTest {
 		/// <param name="args">An <see cref="T:System.Object" /> array.</param>
 		/// <remarks><c>M:Mono.DocTest.Widget.M6(System.Int32,System.Object[])</c>.</remarks>
 		protected void M6 (int i, params object[] args) {}
+
+		/// <remarks><c>M:Mono.DocTest.Widget.M7(Mono.DocTest.Widget.NestedClass.Double.Triple.Quadruple)</c>.</remarks>
+		public void M7(Widget.NestedClass.Double.Triple.Quadruple a) {}
 
 		/// <value>A <see cref="T:System.Int32" /> value...</value>
 		/// <remarks><c>P:Mono.DocTest.Widget.Width</c>.</remarks>

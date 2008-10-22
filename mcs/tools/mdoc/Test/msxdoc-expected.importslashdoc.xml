@@ -265,6 +265,12 @@ class Example {
             <remarks>
                 <c>M:Mono.DocTest.Widget.M6(System.Int32,System.Object[])</c>.</remarks>
         </member>
+        <member name="M:Mono.DocTest.Widget.M7(Mono.DocTest.Widget+NestedClass+Double+Triple+Quadruple)">
+            <param name="a">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.M7(Mono.DocTest.Widget.NestedClass.Double.Triple.Quadruple)</c>.</remarks>
+        </member>
         <member name="F:Mono.DocTest.Widget.message">
             <summary>To be added.</summary>
             <remarks>
@@ -415,6 +421,33 @@ class Example {
             <summary>To be added.</summary>
             <remarks>
                 <c>F:Mono.DocTest.Widget.NestedClass`1.value</c>.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Widget+NestedClass+Double">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.NestedClass.Double</c>.</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Widget+NestedClass+Double">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Widget+NestedClass+Double+Triple">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.NestedClass.Double.Triple</c>.</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Widget+NestedClass+Double+Triple">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Widget+NestedClass+Double+Triple+Quadruple">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>T:Mono.DocTest.Widget.NestedClass.Double.Triple.Quadruple</c>.</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Widget+NestedClass+Double+Triple+Quadruple">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
         </member>
         <member name="T:Mono.DocTest.Generic.Extensions">
             <summary>extension methods!</summary>

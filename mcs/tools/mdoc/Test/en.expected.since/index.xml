@@ -27,6 +27,9 @@
       <Type Name="Widget+IMenuItem" Kind="Interface" />
       <Type Name="Widget+NestedClass" Kind="Class" />
       <Type Name="Widget+NestedClass`1" DisplayName="Widget+NestedClass&lt;T&gt;" Kind="Class" />
+      <Type Name="Widget+NestedClass+Double" Kind="Class" />
+      <Type Name="Widget+NestedClass+Double+Triple" Kind="Class" />
+      <Type Name="Widget+NestedClass+Double+Triple+Quadruple" Kind="Class" />
     </Namespace>
     <Namespace Name="Mono.DocTest.Generic">
       <Type Name="Extensions" Kind="Class" />

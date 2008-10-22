@@ -409,6 +409,25 @@
           <c>M:Mono.DocTest.Widget.M6(System.Int32,System.Object[])</c>.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="M7">
+      <MemberSignature Language="C#" Value="public void M7 (Mono.DocTest.Widget.NestedClass.Double.Triple.Quadruple a);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="Mono.DocTest.Widget+NestedClass+Double+Triple+Quadruple" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>M:Mono.DocTest.Widget.M7(Mono.DocTest.Widget.NestedClass.Double.Triple.Quadruple)</c>.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="message">
       <MemberSignature Language="C#" Value="public string message;" />
       <MemberType>Field</MemberType>

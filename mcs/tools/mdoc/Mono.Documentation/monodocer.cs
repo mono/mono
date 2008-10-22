@@ -3053,9 +3053,7 @@ public abstract class MemberFormatter {
 			return AppendTypeName (buf, type);
 		}
 		if (!DocUtils.IsGenericType (type)) {
-			if (type.DeclaringType != null)
-				AppendTypeName (buf, type.DeclaringType).Append (NestedTypeSeparator);
-			return AppendTypeName (buf, type);
+			return AppendFullTypeName (buf, type);
 		}
 		return AppendGenericType (buf, type);
 	}
@@ -3065,6 +3063,13 @@ public abstract class MemberFormatter {
 		if (type.Namespace != null && type.Namespace.Length > 0)
 			buf.Append (type.Namespace).Append ('.');
 		return buf;
+	}
+
+	private StringBuilder AppendFullTypeName (StringBuilder buf, Type type)
+	{
+		if (type.DeclaringType != null)
+			AppendFullTypeName (buf, type.DeclaringType).Append (NestedTypeSeparator);
+		return AppendTypeName (buf, type);
 	}
 
 	protected virtual StringBuilder AppendTypeName (StringBuilder buf, Type type)

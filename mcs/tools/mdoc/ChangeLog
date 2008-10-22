@@ -1,3 +1,31 @@
+2008-10-22  Jonathan Pryor <jpryor@novell.com>
+
+	* Makefile: Correct path names.
+	* Mono.Documentation/monodocer.cs: Better support nested types.
+	* Test/DocTest-v1.cs: Add 4 levels of nested types.
+	* Test/en.expected.importslashdoc/index.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/Widget.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/Widget+NestedClass+Double+Triple+Quadruple.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/Widget+NestedClass+Double+Triple.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/Widget+NestedClass+Double.xml,
+	  Test/en.expected.since/index.xml,
+	  Test/en.expected.since/Mono.DocTest/Widget.xml,
+	  Test/en.expected.since/Mono.DocTest/Widget+NestedClass+Double+Triple+Quadruple.xml,
+	  Test/en.expected.since/Mono.DocTest/Widget+NestedClass+Double+Triple.xml,
+	  Test/en.expected.since/Mono.DocTest/Widget+NestedClass+Double.xml,
+	  Test/en.expected/index.xml,
+	  Test/en.expected/Mono.DocTest/Widget.xml,
+	  Test/en.expected/Mono.DocTest/Widget+NestedClass+Double+Triple+Quadruple.xml,
+	  Test/en.expected/Mono.DocTest/Widget+NestedClass+Double+Triple.xml,
+	  Test/en.expected/Mono.DocTest/Widget+NestedClass+Double.xml,
+	  Test/html.expected/index.html,
+	  Test/html.expected/Mono.DocTest/index.html,
+	  Test/html.expected/Mono.DocTest/Widget.html,
+	  Test/html.expected/Mono.DocTest/Widget+NestedClass+Double+Triple+Quadruple.html,
+	  Test/html.expected/Mono.DocTest/Widget+NestedClass+Double+Triple.html,
+	  Test/html.expected/Mono.DocTest/Widget+NestedClass+Double.html,
+	  Test/msxdoc-expected.importslashdoc.xml: Flush.
+
 2008-10-17  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile: Reference the monodoc.dll from the net_1_1 profile, as 

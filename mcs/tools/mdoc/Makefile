@@ -26,8 +26,8 @@ MDOC_TEST_FILES = \
 	Test/validate.check.monodocer                             \
 	Test/validate.check.monodocer.importslashdoc              \
 	Test/validate.check.monodocer.since                       \
-	$(shell find Test/Test/en.expected* -name \*.xml)      \
-	$(shell find Test/Test/html.expected* -name \*.html)
+	$(shell find Test/en.expected* -name \*.xml)      \
+	$(shell find Test/html.expected* -name \*.html)
 
 EXTRA_DISTFILES = \
 	$(MDOC_RESOURCES) \
@@ -77,7 +77,7 @@ Test/DocTest.dll-v2:
 	$(MAKE) TEST_CSCFLAGS=$(TEST_CSCFLAGS) Test/DocTest.dll
 
 check-monodocer-update: mdoc.exe
-	find Test/Test/en.expected -name \*.xml -exec rm "{}" \;
+	find Test/en.expected -name \*.xml -exec rm "{}" \;
 	$(MAKE) Test/DocTest.dll-v1
 	$(MONO) mdoc.exe update -o Test/en.expected Test/DocTest.dll
 
