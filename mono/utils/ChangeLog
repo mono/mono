@@ -1,4 +1,9 @@
 
+Wed Oct 22 17:43:03 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-proclib.c, mono-proclib.h: added functions to get info
+	about the processors in the system.
+
 Wed Oct 22 16:45:20 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mono-proclib.c, mono-mmap.c: basic support for OSX and
