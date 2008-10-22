@@ -153,12 +153,23 @@ namespace System.Web {
 
 				app_event_handlers = new Hashtable ();
 				ArrayList methods = GetMethodsDeep (type);
+				Hashtable used = null;
 				MethodInfo m;
+				string mname;
+				
 				foreach (object o in methods) {
 					m = o as MethodInfo;
-					if (m.DeclaringType != typeof (HttpApplication) && IsEventHandler (m))
+					if (m.DeclaringType != typeof (HttpApplication) && IsEventHandler (m)) {
+						mname = m.ToString ();
+						if (used == null)
+							used = new Hashtable ();
+						else if (used.ContainsKey (mname))
+							continue;
+						used.Add (mname, m);
 						AddEvent (m, app_event_handlers);
+					}
 				}
+				used = null;
 			}
 
 			return app_event_handlers;

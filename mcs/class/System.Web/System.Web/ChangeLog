@@ -1,3 +1,9 @@
+2008-10-22  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: use only the first matching method in
+	GetApplicationTypeEvents, since it will be the one coming from the
+	topmost type.
+
 2008-10-21  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: if context.Session is null in get_Session,
