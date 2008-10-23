@@ -1,4 +1,9 @@
 
+
+2008-10-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* icall.c: get rid of annoying warning.
+
 2008-10-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: in 1.x, if you change the background status of the
