@@ -375,8 +375,21 @@ namespace Mono.Mozilla.DOM
 		
 		#endregion
 
-		public override bool Equals (object obj) {
-			return obj.GetHashCode () == this.GetHashCode ();
+		public override bool Equals (object obj)
+		{
+			return this == obj as Node;
+		}
+		
+		public static bool operator == (Node left, Node right)
+		{
+			if (left == null || right == null)
+				return false;
+			return left.hashcode == right.hashcode; 
+		}
+
+		public static bool operator != (Node left, Node right)
+		{
+			return !(left == right);
 		}		
 		
 		public override int GetHashCode () 

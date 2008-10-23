@@ -1,5 +1,10 @@
 2008-10-23  Andreia Gaita  <shana@jitted.com>
 
+	* Mono.Mozilla/DOM/Node.cs,
+	* Mono.Mozilla/DOM/Window.cs: Fix yet more equality operators
+
+2008-10-23  Andreia Gaita  <shana@jitted.com>
+
 	* Mono.Mozilla/DOM/Document.cs,
 	* Mono.Mozilla/DOM/Node.cs,
 	* Mono.Mozilla/DOM/NodeList.cs,

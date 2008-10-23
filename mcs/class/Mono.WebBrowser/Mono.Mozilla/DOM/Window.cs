@@ -36,9 +36,11 @@ namespace Mono.Mozilla.DOM
 	{
 		internal nsIDOMWindow window;
 		private EventListener eventListener;
+		int hashcode;
 		
 		public Window(WebBrowser control, nsIDOMWindow domWindow) : base (control)
 		{
+			this.hashcode = domWindow.GetHashCode ();
 			this.window = domWindow;
 		}
 
@@ -157,17 +159,9 @@ namespace Mono.Mozilla.DOM
 			EventListener.RemoveHandler (handler, eventName);
 		}
 		
-		public override bool Equals (object obj) {
-			return obj.GetHashCode () == this.GetHashCode ();
-		}
-
 		public void Focus () {
 			nsIWebBrowserFocus focus = (nsIWebBrowserFocus) this.window;
 			focus.setFocusedWindow (this.window);
-		}
-		
-		public override int GetHashCode () {
-			return this.window.GetHashCode ();
 		}
 		
 		public void Open (string url)
@@ -180,6 +174,28 @@ namespace Mono.Mozilla.DOM
 		{
 			this.window.scrollTo (x, y);
 		}
+		
+		public override bool Equals (object obj)
+		{
+			return this == obj as Window;
+		}
+		
+		public static bool operator == (Window left, Window right)
+		{
+			if (left == null || right == null)
+				return false;
+			return left.hashcode == right.hashcode; 
+		}
+
+		public static bool operator != (Window left, Window right)
+		{
+			return !(left == right);
+		}
+
+		public override int GetHashCode () {
+			return hashcode;
+		}		
+		
 #endregion
 
 #region Events
