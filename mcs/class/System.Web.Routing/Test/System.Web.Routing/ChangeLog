@@ -1,3 +1,8 @@
+2008-10-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RouteTest.cs :
+	  add one more case that used to cause out-of-range error.
+
 2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RouteValueDictionaryTest.cs : test for case-insensitive comparison.

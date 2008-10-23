@@ -1,3 +1,8 @@
+2008-10-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UrlPattern.cs : fixed possible out-of-range case ("tableName/" in
+	  DynamicData).
+
 2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RouteValueDictionary.cs : its string comparison is case

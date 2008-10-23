@@ -115,6 +115,8 @@ namespace System.Web.Routing
 				if (segment_flags [i]) {
 					string t = segments [i];
 					string v = argSegs [i];
+					if (v.Length == 0)
+						return null; // ends with '/' while more tokens are expected.
 					int tfrom = 0, vfrom = 0;
 					while (tfrom < t.Length) {
 						int start = t.IndexOf ('{', tfrom);

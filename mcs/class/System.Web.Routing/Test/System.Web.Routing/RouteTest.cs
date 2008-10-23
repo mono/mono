@@ -258,6 +258,14 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
+		public void GetRouteData7 ()
+		{
+			var r = new Route ("{table}/{action}.aspx", null);
+			var rd = r.GetRouteData (new HttpContextStub ("~/FooTable/", String.Empty));
+			Assert.IsNull (rd, "#1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetVirtualPathNullContext ()
 		{
