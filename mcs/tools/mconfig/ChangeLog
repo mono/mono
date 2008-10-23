@@ -1,3 +1,7 @@
+2008-10-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* data/config.xml : add sections for DynamicData feature.
+
 2007-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* data/config.xml: added a feature to protect the 'settings.map'
