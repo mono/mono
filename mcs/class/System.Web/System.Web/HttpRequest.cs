@@ -1452,6 +1452,7 @@ namespace System.Web {
 			char current = val [0];
 			for (int idx = 1; idx < len; idx++) {
 				char next = val [idx];
+				// See http://secunia.com/advisories/14325
 				if (current == '<' || current == '\xff1c') {
 					if (next == '!' || next < ' '
 					    || (next >= 'a' && next <= 'z')
