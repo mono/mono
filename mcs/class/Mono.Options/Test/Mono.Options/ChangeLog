@@ -1,3 +1,11 @@
+2008-10-22  Jonathan Pryor  <jpryor@novell.com>
+
+	* OptionContextTest.cs, OptionSetTest.cs, OptionTest.cs, Utils.cs: 
+	  Namespace "harmonization" with Mono.Options, so that we can use 
+	  identical source in each place, thus minimizing the maintenance 
+	  burden.
+	* OptionSetTest.cs: Add tests for nullable type support.
+
 2008-10-13  Jonathan Pryor  <jpryor@novell.com>
 
 	* ChangeLog: Started.

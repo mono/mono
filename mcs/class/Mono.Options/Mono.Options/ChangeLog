@@ -1,3 +1,9 @@
+2008-10-22  Jonathan Pryor  <jpryor@novell.com>
+
+	* Option.cs: Add support for nullable types to Options.Parse<T>().
+	  Namespace "harmonization" with NDesk.Options so that the same source 
+	  file can be used in each project.
+
 2008-10-13  Jonathan Pryor  <jpryor@novell.com>
 
 	* ChangeLog: Started.

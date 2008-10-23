@@ -27,8 +27,8 @@
 //
 
 // Compile With:
-//   gmcs -debug+ -r:System.Core Options.cs -o:Mono.Options.dll
-//   gmcs -debug+ -d:LINQ -r:System.Core Options.cs -o:Mono.Options.dll
+//   gmcs -debug+ -r:System.Core Options.cs -o:NDesk.Options.dll
+//   gmcs -debug+ -d:LINQ -r:System.Core Options.cs -o:NDesk.Options.dll
 //
 // The LINQ version just changes the implementation of
 // OptionSet.Parse(IEnumerable<string>), and confers no semantic changes.
@@ -36,7 +36,7 @@
 //
 // A Getopt::Long-inspired option parsing library for C#.
 //
-// Mono.Options.OptionSet is built upon a key/value table, where the
+// NDesk.Options.OptionSet is built upon a key/value table, where the
 // key is a option format string and the value is a delegate that is 
 // invoked when the format string is matched.
 //
@@ -140,11 +140,15 @@ using System.Linq;
 #endif
 
 #if TEST
-using Mono.Options;
+using NDesk.Options;
 #endif
 
-namespace Mono.Options {
-
+#if NDESK_OPTIONS
+namespace NDesk.Options
+#else
+namespace Mono.Options
+#endif
+{
 	public class OptionValueCollection : IList, IList<string> {
 
 		List<string> values = new List<string> ();
@@ -341,7 +345,12 @@ namespace Mono.Options {
 
 		protected static T Parse<T> (string value, OptionContext c)
 		{
-			TypeConverter conv = TypeDescriptor.GetConverter (typeof (T));
+			Type tt = typeof (T);
+			bool nullable = tt.IsValueType && tt.IsGenericType && 
+				!tt.IsGenericTypeDefinition && 
+				tt.GetGenericTypeDefinition () == typeof (Nullable<>);
+			Type targetType = nullable ? tt.GetGenericArguments () [0] : typeof (T);
+			TypeConverter conv = TypeDescriptor.GetConverter (targetType);
 			T t = default (T);
 			try {
 				if (value != null)

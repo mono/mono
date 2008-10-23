@@ -32,11 +32,20 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 
-using Mono.Options;
+#if NDESK_OPTIONS
+using NDesk.Options;
+#else
+using Mono.Options
+#endif
+
 using NUnit.Framework;
 
-namespace Tests.Mono.Options {
-
+#if NDESK_OPTIONS
+namespace Tests.NDesk.Options
+#else
+namespace Tests.Mono.Options
+#endif
+{
 	class FooConverter : TypeConverter {
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
@@ -128,11 +137,11 @@ namespace Tests.Mono.Options {
 		public void OptionalValues ()
 		{
 			string a = null;
-			int n = -1;
+			int? n = -1;
 			Foo f = null;
 			OptionSet p = new OptionSet () {
 				{ "a:", v => a = v },
-				{ "n:", (int v) => n = v },
+				{ "n:", (int? v) => n = v },
 				{ "f:", (Foo v) => f = v },
 			};
 			p.Parse (_("-a=s"));
@@ -153,13 +162,13 @@ namespace Tests.Mono.Options {
 			Assert.AreEqual (f, Foo.A);
 
 			p.Parse (_("-n42"));
-			Assert.AreEqual (n, 42);
+			Assert.AreEqual (n.Value, 42);
 			p.Parse (_("-n", "42"));
-			Assert.AreEqual (n, 0);
+			Assert.AreEqual (n.HasValue, false);
 			p.Parse (_("-n=42"));
-			Assert.AreEqual (n, 42);
+			Assert.AreEqual (n.Value, 42);
 			p.Parse (_("-n"));
-			Assert.AreEqual (n, 0);
+			Assert.AreEqual (n.HasValue, false);
 		}
 
 		[Test]

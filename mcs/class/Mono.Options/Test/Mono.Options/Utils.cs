@@ -28,7 +28,12 @@
 
 using System;
 
-namespace Tests.Mono.Options {
+#if NDESK_OPTIONS
+namespace Tests.NDesk.Options
+#else
+namespace Tests.Mono.Options
+#endif
+{
 	static class Utils {
 		public static void AssertException<T> (Type exception, string message, T a, Action<T> action)
 		{

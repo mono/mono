@@ -1,3 +1,8 @@
+2008-10-22  Jonathan Pryor  <jpryor@novell.com>
+
+	* Documentation/en/Mono.Options/OptionSet.xml: Document the support for
+	  nullable types.
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Use NO_INSTALL to prevent installation instead of using
