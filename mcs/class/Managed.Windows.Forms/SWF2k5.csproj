@@ -541,6 +541,7 @@
     <Compile Include="System.Windows.Forms\IDropTarget.cs" />
     <Compile Include="System.Windows.Forms\IFeatureSupport.cs" />
     <Compile Include="System.Windows.Forms\IFileReaderService.cs" />
+    <Compile Include="System.Windows.Forms\IKeyFilter.cs" />
     <Compile Include="System.Windows.Forms\IMessageFilter.cs" />
     <Compile Include="System.Windows.Forms\IRootGridEntry.cs" />
     <Compile Include="System.Windows.Forms\IWin32Window.cs" />
@@ -814,10 +815,7 @@
     <Compile Include="System.Windows.Forms\TextImageRelation.cs" />
     <Compile Include="System.Windows.Forms\TextRenderer.cs" />
     <Compile Include="System.Windows.Forms\Theme.cs" />
-    <Compile Include="System.Windows.Forms\ThemeClearlooks.cs" />
     <Compile Include="System.Windows.Forms\ThemeEngine.cs" />
-    <Compile Include="System.Windows.Forms\ThemeGtk.cs" />
-    <Compile Include="System.Windows.Forms\ThemeNice.cs" />
     <Compile Include="System.Windows.Forms\ThemeVisualStyles.cs" />
     <Compile Include="System.Windows.Forms\ThemeWin32Classic.cs" />
     <Compile Include="System.Windows.Forms\ThreadExceptionDialog.cs" />
@@ -986,17 +984,13 @@
     <Compile Include="System.Windows.Forms.CarbonInternal\Structs.cs" />
     <Compile Include="System.Windows.Forms.CarbonInternal\WindowHandler.cs" />
     <Compile Include="System.Windows.Forms.Theming\ThemeElements.cs" />
-    <Compile Include="System.Windows.Forms.Theming\ThemeElementsClearlooks.cs" />
     <Compile Include="System.Windows.Forms.Theming\ThemeElementsDefault.cs" />
-    <Compile Include="System.Windows.Forms.Theming\ThemeElementsGtk.cs" />
-    <Compile Include="System.Windows.Forms.Theming\ThemeElementsNice.cs" />
     <Compile Include="System.Windows.Forms.Theming\ThemeElementsVisualStyles.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\ButtonPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\CheckBoxPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\RadioButtonPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\TabControlPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\ToolStripPainter.cs" />
-    <Compile Include="System.Windows.Forms.Theming\Nice\TabControlPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\VisualStyles\CheckBoxPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\VisualStyles\RadioButtonPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\VisualStyles\TabControlPainter.cs" />
@@ -1164,23 +1158,11 @@
     <EmbeddedResource Include="resources\user-home.png">
       <LogicalName>user-home.png</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\dialog-error.png">
-      <LogicalName>dialog-error.png</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources\16_dialog-error.png">
       <LogicalName>16_dialog-error.png</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\dialog-information.png">
-      <LogicalName>dialog-information.png</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources\16_dialog-information.png">
       <LogicalName>16_dialog-information.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources\dialog-question.png">
-      <LogicalName>dialog-question.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources\dialog-warning.png">
-      <LogicalName>dialog-warning.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\16_dialog-warning.png">
       <LogicalName>16_dialog-warning.png</LogicalName>

@@ -2069,6 +2069,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\IKeyFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\IMessageFilter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3434,22 +3439,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\ThemeClearlooks.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\ThemeEngine.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\ThemeGtk.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\ThemeNice.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4294,22 +4284,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.Theming\ThemeElementsClearlooks.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms.Theming\ThemeElementsDefault.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Theming\ThemeElementsGtk.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Theming\ThemeElementsNice.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4340,11 +4315,6 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.Theming\Default\ToolStripPainter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Theming\Nice\TabControlPainter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4664,46 +4634,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.X11Internal\X11Atoms.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.X11Internal\X11Display.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.X11Internal\X11Exception.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.X11Internal\X11Hwnd.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.X11Internal\X11RootHwnd.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.X11Internal\X11ThreadQueue.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.X11Internal\Xlib.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.X11Internal\XplatUIX11-new.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "resources\SplitterNS.cur"
                     CustomToolNameSpace = "System.Windows.Forms.SplitterNS.cur"
                     BuildAction = "EmbeddedResource"
@@ -4848,27 +4778,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "resources\dialog-error.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "resources\16_dialog-error.png"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "resources\dialog-information.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "resources\16_dialog-information.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\dialog-question.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\dialog-warning.png"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
