@@ -169,6 +169,9 @@ namespace Tests.Mono.Options
 			Assert.AreEqual (n.Value, 42);
 			p.Parse (_("-n"));
 			Assert.AreEqual (n.HasValue, false);
+			Utils.AssertException (typeof(OptionException),
+					"Could not convert string `' to type Int32 for option `-n'.",
+					p, v => { v.Parse (_("-n=")); });
 		}
 
 		[Test]

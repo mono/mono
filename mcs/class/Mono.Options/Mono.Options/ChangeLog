@@ -1,3 +1,10 @@
+2008-10-23  Jonathan Pryor  <jpryor@novell.com>
+
+	* Options.cs: Options.cs: Use the underlying target type in the error 
+	  message, because "Could not convert string `' to type Nullable`1..." 
+	  is not nearly as helpful as "Could not convert string `' to type 
+	  Int32...".
+
 2008-10-22  Jonathan Pryor  <jpryor@novell.com>
 
 	* Option.cs: Add support for nullable types to Options.Parse<T>().

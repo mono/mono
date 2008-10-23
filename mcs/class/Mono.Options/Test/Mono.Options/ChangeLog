@@ -1,3 +1,8 @@
+2008-10-23  Jonathan Pryor  <jpryor@novell.com>
+
+	* OptionSetTest.cs:  Add a test for the underlying target type within 
+	  the exception message.
+
 2008-10-22  Jonathan Pryor  <jpryor@novell.com>
 
 	* OptionContextTest.cs, OptionSetTest.cs, OptionTest.cs, Utils.cs: 
