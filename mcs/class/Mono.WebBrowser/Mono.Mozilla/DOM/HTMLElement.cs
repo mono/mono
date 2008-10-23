@@ -26,6 +26,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using io=System.IO;
 using Mono.WebBrowser;
 using Mono.WebBrowser.DOM;
 
@@ -60,11 +61,15 @@ namespace Mono.Mozilla.DOM
 		{
 			get {
 				nsIDOMNSHTMLElement nsElem = this.node as nsIDOMNSHTMLElement;
+				if (nsElem == null)
+					return null;
 				nsElem.getInnerHTML (storage);
 				return Base.StringGet (storage);
 			}
 			set {
 				nsIDOMNSHTMLElement nsElem = this.node as nsIDOMNSHTMLElement;
+				if (nsElem == null)
+					return;
 				Base.StringSet (storage, value);
 				nsElem.setInnerHTML (storage);
 			}
@@ -74,59 +79,13 @@ namespace Mono.Mozilla.DOM
 		{
 			// bad emulation of outerHTML since gecko doesn't support it :P
 			get {
-
-				nsIDocumentEncoder docEncoder;
-				IntPtr ptrDocEncoder;
-				ptrDocEncoder = this.control.ServiceManager.getServiceByContractID (
-										"@mozilla.org/layout/documentEncoder;1?type=text/html",
-				                        typeof (nsIDocumentEncoder).GUID);
-				if (ptrDocEncoder == IntPtr.Zero)
-						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.DocumentEncoderService);
-
-				
-				try {
-					docEncoder = (nsIDocumentEncoder)Marshal.GetObjectForIUnknown (ptrDocEncoder);
-					docEncoder = nsDocumentEncoder.GetProxy (this.control, docEncoder);
-				} catch (System.Exception ex) {
-					throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.DocumentEncoderService, ex);
-				}
-				
-				if (docEncoder == null)
-					return String.Empty;
-				UniString type = new UniString ("text/html");
-				
-				try {
-					docEncoder.init ((nsIDOMDocument)((Node)Owner).nodeNoProxy, 
-				    	             type.Handle, 
-				        	         (uint)DocumentEncoderFlags.OutputRaw);
-				} catch (System.Exception ex) {
-					throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.DocumentEncoderService, ex);
-				}
-
-				string content;
-				
-				if (this.Equals (Owner.DocumentElement)) {
-					docEncoder.encodeToString(storage);
-					content = Base.StringGet (storage);
-				} else {
-
-					docEncoder.setNode (this.nodeNoProxy);
-					docEncoder.encodeToString(storage);
-					content = Base.StringGet (storage);
-					
-					string tag = this.TagName;
-					string str = "<" + tag;
-					foreach (IAttribute att in this.Attributes) {
-						str += " " + att.Name + "=\"" + att.Value + "\"";
-					}
-					
-					str += ">" + content + "</" + tag + ">";
-					content = str;
-					
-				}
-				return content;
+				control.DocEncoder.Flags = DocumentEncoderFlags.OutputRaw;
+				if (this.Equals (Owner.DocumentElement))
+					return control.DocEncoder.EncodeToString ((Document)Owner);
+				return control.DocEncoder.EncodeToString (this);					
 			}
 			set {
+				/*
 				nsIDOMDocumentRange docRange = ((Document) control.Document).XPComObject as nsIDOMDocumentRange;
 				nsIDOMRange range;
 				docRange.createRange (out range);
@@ -141,8 +100,19 @@ namespace Mono.Mozilla.DOM
 				nsIDOMNode newNode;
 				parent.replaceChild (fragment as nsIDOMNode, this.node as nsIDOMNode, out newNode);
 				this.node = newNode as Mono.Mozilla.nsIDOMHTMLElement;
+				*/
 			}
 		}
+
+		public override io.Stream ContentStream {
+			get { 
+				control.DocEncoder.Flags = DocumentEncoderFlags.OutputRaw;
+				if (this.Equals (Owner.DocumentElement))
+					return control.DocEncoder.EncodeToStream ((Document)Owner);
+				return control.DocEncoder.EncodeToStream (this);
+			}
+		}
+
 		
 		public override bool Disabled
 		{			

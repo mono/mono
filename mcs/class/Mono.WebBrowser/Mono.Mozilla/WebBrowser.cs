@@ -155,7 +155,6 @@ namespace Mono.Mozilla
 			get {
 				if (servMan == null) {
 					servMan = Base.GetServiceManager (this);
-					//servMan = nsServiceManager.GetProxy (this, servMan);
 				}
 				return servMan;
 			}
@@ -218,6 +217,16 @@ namespace Mono.Mozilla
 					}
 				}
 				return errorService;
+			}
+		}
+		
+		DocumentEncoder docEncoder;
+		internal DocumentEncoder DocEncoder {
+			get {
+				if (docEncoder == null) {
+					docEncoder = new DocumentEncoder (this);
+				}
+				return docEncoder;
 			}
 		}		
 		

@@ -49,7 +49,7 @@ namespace Mono.Mozilla {
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		int read (
-				   StringBuilder aBuf,
+				   HandleRef aBuf,
 				   uint aCount, out uint ret);
 
 		[PreserveSigAttribute]

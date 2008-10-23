@@ -1,3 +1,23 @@
+2008-10-23  Andreia Gaita  <shana@jitted.com>
+
+	* Mono.Mozilla/DOM/Element.cs,
+	  Mono.Mozilla/DOM/DocumentEncoder.cs,
+	  Mono.Mozilla/DOM/HTMLElement.cs,
+	  Mono.Mozilla/DOM/Stream.cs,
+	  Mono.Mozilla/WebBrowser.cs,
+	  Mono.Mozilla/interfaces/nsIInputStream.cs,
+	  Mono.WebBrowser.dll.sources,
+	  Mono.WebBrowser/DOM/IElement.cs,
+	  Mono.WebBrowser2K5.csproj:
+
+	  Separated the DocumentEncoder service in a separate class so
+	  it's easier to invoke, and added stream encoding (partial fix
+	  for bug #377863)
+	  
+	* Mono.Mozilla/DOM/DOMObject.cs: Element wrapper creation now goes
+	  through a common method that properly creates a wrapper according
+	  to the node type (partial fix for #428712)
+
 2008-10-22  Andreia Gaita  <shana@jitted.com>
 
 	* Mono.Mozilla/DOM/Node.cs,

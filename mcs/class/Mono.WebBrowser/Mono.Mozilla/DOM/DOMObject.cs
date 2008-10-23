@@ -88,6 +88,67 @@ namespace Mono.Mozilla.DOM
 				return event_handlers;
 			}
 		}
+		
+#region Private
+		internal Mono.WebBrowser.DOM.INode GetTypedNode (nsIDOMNode obj) 
+		{
+			if (obj == null)
+				return null;
+			obj.getLocalName (storage);
+			ushort type;
+			obj.getNodeType (out type);
+			switch (type) {
+				case (ushort)NodeType.Element:
+#if DEBUG					
+					Console.Write (Base.StringGet (storage) + ":Getting typed object from NodeType.Element:");
+#endif
+					if (obj is Mono.Mozilla.nsIDOMHTMLBodyElement) {
+#if DEBUG					
+						Console.WriteLine ("HTMLElement-nsIDOMHTMLBodyElement");
+#endif
+						return new HTMLElement (control, obj as nsIDOMHTMLBodyElement);
+					}
+					else if (obj is Mono.Mozilla.nsIDOMHTMLStyleElement) {
+#if DEBUG					
+						Console.WriteLine ("HTMLElement-nsIDOMHTMLStyleElement");
+#endif
+						return new HTMLElement (control, obj as nsIDOMHTMLStyleElement);
+					}
+					else if (obj is nsIDOMHTMLElement) {
+#if DEBUG					
+						Console.WriteLine ("HTMLElement-nsIDOMHTMLElement");
+#endif
+						return new HTMLElement (control, obj as nsIDOMHTMLElement);
+					}
+#if DEBUG					
+					Console.WriteLine ("HTMLElement-nsIDOMHTMLElement");
+#endif
+					return new Element (control, obj as nsIDOMElement);
+					break;
+				case (ushort)NodeType.Attribute:
+					return new Attribute (control, obj as nsIDOMAttr);
+					break;
+				case (ushort)NodeType.Document:
+					if (obj is nsIDOMHTMLDocument)
+						return new Document (control, obj as nsIDOMHTMLDocument);
+					return new Document (control, obj as nsIDOMDocument);
+					break;
+				case (ushort)NodeType.Text:
+				case (ushort)NodeType.CDataSection:
+				case (ushort)NodeType.EntityReference:
+				case (ushort)NodeType.Entity:
+				case (ushort)NodeType.ProcessingInstruction:
+				case (ushort)NodeType.Comment:
+				case (ushort)NodeType.DocumentType:
+				case (ushort)NodeType.DocumentFragment:
+				case (ushort)NodeType.Notation:				
+				default:
+					return new Node (control, obj);
+					break;
+			}
+		}
+#endregion
+		
 
 	}
 }

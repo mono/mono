@@ -1,5 +1,10 @@
 2008-10-23  Andreia Gaita  <shana@jitted.com>
 
+	* WebBrowser.cs: Use the new ContentStream property to retrieve
+	  a stream encoded from the document content
+
+2008-10-23  Andreia Gaita  <shana@jitted.com>
+
 	* HtmlDocument.cs,
 	  HtmlElement.cs,
 	  HtmlWindow.cs: Fix GetHashcode for null objects

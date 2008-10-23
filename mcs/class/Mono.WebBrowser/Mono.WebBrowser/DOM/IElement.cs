@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.IO;
 
 namespace Mono.WebBrowser.DOM
 {
@@ -52,6 +53,7 @@ namespace Mono.WebBrowser.DOM
 		int 				TabIndex { get; set; }
 		string 				TagName { get; }
 		bool				Disabled { get; set; }
+		Stream				ContentStream { get; }
 
 		IElement			AppendChild (IElement child);
 		void				Blur ();

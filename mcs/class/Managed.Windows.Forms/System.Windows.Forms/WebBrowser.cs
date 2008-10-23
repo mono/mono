@@ -97,9 +97,10 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public Stream DocumentStream {
 			get {
-				string text = this.DocumentText;
-				StreamReader s = new StreamReader (text);
-				return s.BaseStream;
+				return WebHost.Document.DocumentElement.ContentStream;
+//				string text = this.DocumentText;
+//				StreamReader s = new StreamReader (text);
+//				return s.BaseStream;
 			}
 			set { 
 				if (this.allowNavigation && this.navigated)

@@ -25,6 +25,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using io=System.IO;
 using Mono.WebBrowser;
 using Mono.WebBrowser.DOM;
 
@@ -55,7 +56,7 @@ namespace Mono.Mozilla.DOM
 		#endregion
 
 		#region Properties
-		public virtual IElement AppendChild (IElement child) {
+		public virtual IElement AppendChild (IElement child) {			
 			nsIDOMNode newChild;
 			Element elem = (Element) child;
 			this.node.appendChild (elem.node, out newChild);
@@ -112,6 +113,9 @@ namespace Mono.Mozilla.DOM
 			set {}
 		}		
 
+		public virtual io.Stream ContentStream {
+			get { return null; }
+		}		
 		public IElementCollection All {
 			get
 			{
@@ -178,6 +182,8 @@ namespace Mono.Mozilla.DOM
 		public virtual int ClientWidth { 
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return 0;
 				int ret = 0;
 				e.getClientWidth (out ret);
 				return ret;
@@ -186,6 +192,8 @@ namespace Mono.Mozilla.DOM
 		public virtual int ClientHeight	{
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return 0;
 				int ret = 0;
 				e.getClientHeight (out ret);
 				return ret;
@@ -194,6 +202,8 @@ namespace Mono.Mozilla.DOM
 		public virtual int ScrollHeight	{
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return 0;
 				int ret = 0;
 				e.getScrollHeight(out ret);
 				return ret;
@@ -202,6 +212,8 @@ namespace Mono.Mozilla.DOM
 		public virtual int ScrollWidth	{
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return 0;
 				int ret = 0;
 				e.getScrollWidth (out ret);
 				return ret;
@@ -210,30 +222,40 @@ namespace Mono.Mozilla.DOM
 		public virtual int ScrollLeft {
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return 0;
 				int ret = 0;
 				e.getScrollLeft (out ret);
 				return ret;
 			}
 			set {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return;
 				e.setScrollLeft (value);
 			}
 		}
 		public virtual int ScrollTop {
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return 0;
 				int ret = 0;
 				e.getScrollTop (out ret);
 				return ret;
 			}
 			set {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return;
 				e.setScrollTop (value);
 			}
 		}
 		public virtual int OffsetHeight {
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return 0;
 				int ret = 0;
 				e.getOffsetHeight (out ret);
 				return ret;
@@ -242,6 +264,8 @@ namespace Mono.Mozilla.DOM
 		public virtual int OffsetWidth {
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return 0;
 				int ret = 0;
 				e.getOffsetWidth (out ret);
 				return ret;
@@ -250,6 +274,8 @@ namespace Mono.Mozilla.DOM
 		public virtual int OffsetLeft {
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return 0;
 				int ret = 0;
 				e.getOffsetLeft (out ret);
 				return ret;
@@ -258,6 +284,8 @@ namespace Mono.Mozilla.DOM
 		public virtual int OffsetTop {
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return 0;
 				int ret = 0;
 				e.getOffsetTop (out ret);
 				return ret;
@@ -267,6 +295,8 @@ namespace Mono.Mozilla.DOM
 		public virtual IElement OffsetParent {
 			get {
 				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
+				if (e == null)
+					return null;
 				nsIDOMElement ret;
 				e.getOffsetParent (out ret);
 				if ((ret as nsIDOMHTMLElement) != null)
@@ -275,7 +305,7 @@ namespace Mono.Mozilla.DOM
 
 			}
 		}
-
+		
 		#endregion
 		
 		#region Methods
