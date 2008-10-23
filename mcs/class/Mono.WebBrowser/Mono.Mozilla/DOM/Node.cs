@@ -110,10 +110,10 @@ namespace Mono.Mozilla.DOM
 
 		public virtual INode FirstChild {
 			get {
-				if (!resources.Contains ("FirstChild")) {
+				if (!resources.Contains ("FirstChild")) {					
 					nsIDOMNode child;
-					this.node.getFirstChild (out child);
-					resources.Add ("FirstChild", new Node (control, child));
+					node.getFirstChild (out child);
+					resources.Add ("FirstChild", GetTypedNode (child));
 				}
 				return resources["FirstChild"] as INode;
 			}
@@ -124,7 +124,7 @@ namespace Mono.Mozilla.DOM
 				if (!resources.Contains ("LastChild")) {
 					nsIDOMNode child;
 					this.node.getLastChild (out child);
-					resources.Add ("LastChild", new Node (control, child));
+					resources.Add ("LastChild", GetTypedNode (child));
 				}
 				return resources["LastChild"] as INode;
 			}
@@ -135,7 +135,7 @@ namespace Mono.Mozilla.DOM
 				if (!resources.Contains ("Parent")) {
 					nsIDOMNode parent;
 					this.node.getParentNode (out parent);
-					resources.Add ("Parent", new Node (control, parent));
+					resources.Add ("Parent", GetTypedNode (parent));
 				}
 				return resources["Parent"] as INode;
 			}
@@ -146,7 +146,7 @@ namespace Mono.Mozilla.DOM
 				if (!resources.Contains ("Previous")) {
 					nsIDOMNode child;
 					this.node.getPreviousSibling (out child);
-					resources.Add ("Previous", new Node (control, child));
+					resources.Add ("Previous", GetTypedNode (child));
 				}
 				return resources["Previous"] as INode;
 			}
@@ -157,7 +157,7 @@ namespace Mono.Mozilla.DOM
 				if (!resources.Contains ("Next")) {
 					nsIDOMNode child;
 					this.node.getNextSibling (out child);
-					resources.Add ("Next", new Node (control, child));
+					resources.Add ("Next", GetTypedNode (child));
 				}
 				return resources["Next"] as INode;
 			}
@@ -193,6 +193,8 @@ namespace Mono.Mozilla.DOM
 				nsIDOMCSSStyleDeclaration styleDecl;
 				AsciiString s = new Mono.Mozilla.AsciiString(String.Empty);
 				viewCss.getComputedStyle (this.node as Mono.Mozilla.nsIDOMElement, s.Handle, out styleDecl);
+				if (styleDecl == null)
+					return "";
 				styleDecl.getCssText (storage);
 				return Base.StringGet (storage);
 			}
@@ -491,5 +493,6 @@ namespace Mono.Mozilla.DOM
 		}		
 
 		#endregion
+		
 	}
 }

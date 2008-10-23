@@ -91,14 +91,15 @@ namespace Mono.Mozilla.DOM
 				unmanagedNodes.item ((uint)i, out node);
 				ushort type;
 				node.getNodeType (out type);
-				switch (type) {
-					case (ushort)NodeType.Element:
-						nodes[i] = new HTMLElement (control, node as nsIDOMHTMLElement);
-						break;
-					default:
-						nodes[i] = new Node (control, node);
-						break;
-				}				
+				nodes[i] = GetTypedNode (node);
+//				switch (type) {
+//					case (ushort)NodeType.Element:
+//						nodes[i] = new HTMLElement (control, node as nsIDOMHTMLElement);
+//						break;
+//					default:
+//						nodes[i] = new Node (control, node);
+//						break;
+//				}				
 			}
 		}
 		#endregion

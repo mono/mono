@@ -87,9 +87,10 @@ namespace Mono.Mozilla.DOM
 				if (webBrowserFocus == null)
 					return null;
 				webBrowserFocus.getFocusedElement (out element);
-				if ((element as nsIDOMHTMLElement) != null)
-					return new HTMLElement (control, element as nsIDOMHTMLElement) as IElement;
-				return new Element (control, element) as IElement;
+				return (IElement)GetTypedNode (element);
+//				if ((element as nsIDOMHTMLElement) != null)
+//					return new HTMLElement (control, element as nsIDOMHTMLElement) as IElement;
+//				return new Element (control, element) as IElement;
 			}
 		}
 
@@ -180,8 +181,7 @@ namespace Mono.Mozilla.DOM
 				if (!resources.Contains ("Body")) {
 					nsIDOMHTMLElement element;
 					((nsIDOMHTMLDocument)node).getBody (out element);
-					nsIDOMHTMLBodyElement b = element as nsIDOMHTMLBodyElement;
-					resources.Add ("Body", new HTMLElement (control, b));
+					resources.Add ("Body", GetTypedNode (element));
 				}
 				return resources["Body"] as IElement;
 			}
@@ -250,7 +250,7 @@ namespace Mono.Mozilla.DOM
 				if (!resources.Contains ("DocumentElement")) {
 					nsIDOMElement element;
 					this.node.getDocumentElement (out element);
-					resources.Add ("DocumentElement", new Element (control, element));
+					resources.Add ("DocumentElement", GetTypedNode (element));
 				}
 				return resources["DocumentElement"] as IElement;
 			}
@@ -439,7 +439,7 @@ namespace Mono.Mozilla.DOM
 				this.node.getElementById (storage, out nsElement);
 				if (nsElement == null)
 					return null;
-				resources.Add ("GetElementById" + id, new HTMLElement (control, nsElement as nsIDOMHTMLElement));
+				resources.Add ("GetElementById" + id, GetTypedNode (nsElement));
 			}
 			return resources["GetElementById" + id] as IElement;
 		}

@@ -1,5 +1,13 @@
 2008-10-23  Andreia Gaita  <shana@jitted.com>
 
+	* Mono.Mozilla/DOM/Document.cs,
+	* Mono.Mozilla/DOM/Node.cs,
+	* Mono.Mozilla/DOM/NodeList.cs,
+	* Mono.Mozilla/DOM/Stylesheet.cs:
+	  Use GetTypedNode to properly the right wrappers for nodes (fixes #428712)
+	
+2008-10-23  Andreia Gaita  <shana@jitted.com>
+
 	* Mono.Mozilla/DOM/Element.cs,
 	  Mono.Mozilla/DOM/DocumentEncoder.cs,
 	  Mono.Mozilla/DOM/HTMLElement.cs,

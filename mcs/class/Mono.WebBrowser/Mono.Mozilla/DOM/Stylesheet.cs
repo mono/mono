@@ -99,9 +99,10 @@ namespace Mono.Mozilla.DOM
 				}
 				if (isStyleElement) 
 */
-				if ((owner as nsIDOMHTMLElement) != null)
-					return new HTMLElement (this.control, owner as Mono.Mozilla.nsIDOMHTMLElement);
-				return new Node (this.control, owner);
+				
+//				if ((owner as nsIDOMHTMLElement) != null)
+//					return new HTMLElement (this.control, owner as Mono.Mozilla.nsIDOMHTMLElement);
+				return GetTypedNode (owner);
 			}
 		}
 		
