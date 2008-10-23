@@ -1,5 +1,10 @@
 2008-10-22  Andreia Gaita  <shana@jitted.com>
 
+	* Mono.Mozilla/DOM/Node.cs,
+	  Mono.Mozilla/DOM/Window.cs: Fix overrides
+
+2008-10-22  Andreia Gaita  <shana@jitted.com>
+
 	* Mono.Mozilla/DOM/Document.cs,
 	  Mono.Mozilla/DOM/Element.cs,
 	  Mono.Mozilla/DOM/Node.cs,
