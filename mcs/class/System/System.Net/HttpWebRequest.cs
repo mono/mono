@@ -985,10 +985,11 @@ namespace System.Net
 				expectContinue = false;
 			}
 
-			string connectionHeader = (ProxyQuery) ? "Proxy-Connection" : "Connection";
-			webHeaders.RemoveInternal ((!ProxyQuery) ? "Proxy-Connection" : "Connection");
-			bool spoint10 = (servicePoint.ProtocolVersion == null ||
-					 servicePoint.ProtocolVersion == HttpVersion.Version10);
+			bool proxy_query = ProxyQuery;
+			string connectionHeader = (proxy_query) ? "Proxy-Connection" : "Connection";
+			webHeaders.RemoveInternal ((!proxy_query) ? "Proxy-Connection" : "Connection");
+			Version proto_version = servicePoint.ProtocolVersion;
+			bool spoint10 = (proto_version == null || proto_version == HttpVersion.Version10);
 
 			if (keepAlive && (version == HttpVersion.Version10 || spoint10)) {
 				webHeaders.RemoveAndAdd (connectionHeader, "keep-alive");

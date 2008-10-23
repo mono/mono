@@ -410,6 +410,7 @@ namespace System.Net
 				stream.ReadBuffer = cnc.buffer;
 				stream.ReadBufferOffset = pos;
 				stream.ReadBufferSize = nread;
+				stream.CheckResponseInBuffer ();
 			} else if (cnc.chunkStream == null) {
 				try {
 					cnc.chunkStream = new ChunkStream (cnc.buffer, pos, nread, data.Headers);

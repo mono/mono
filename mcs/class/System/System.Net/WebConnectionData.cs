@@ -41,9 +41,6 @@ namespace System.Net
 		public Version Version;
 		public Stream stream;
 		public string Challenge;
-		public byte [] initialData;
-		public int initialOffset;
-		public int length;
 
 		public void Init ()
 		{
@@ -52,9 +49,6 @@ namespace System.Net
 			StatusDescription = null;
 			Headers = null;
 			stream = null;
-			initialData = null;
-			initialOffset = 0;
-			length = 0;
 		}
 	}
 }

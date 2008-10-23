@@ -105,6 +105,13 @@ namespace System.Net
 				pending = new ManualResetEvent (true);
 		}
 
+		internal void CheckResponseInBuffer ()
+		{
+			if (contentLength > 0 && (readBufferSize - readBufferOffset) >= contentLength) {
+				ReadAll ();
+			}
+		}
+
 		internal WebConnection Connection {
 			get { return cnc; }
 		}

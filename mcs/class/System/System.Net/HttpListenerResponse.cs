@@ -392,10 +392,9 @@ namespace System.Net {
 			return false;
 		}
 
-		internal void SendHeaders (bool closing)
+		internal void SendHeaders (bool closing, MemoryStream ms)
 		{
 			//TODO: When do we send KeepAlive?
-			MemoryStream ms = new MemoryStream ();
 			Encoding encoding = content_encoding;
 			if (encoding == null)
 				encoding = Encoding.Default;
@@ -485,7 +484,8 @@ namespace System.Net {
 			if (output_stream == null)
 				output_stream = context.Connection.GetResponseStream ();
 
-			output_stream.InternalWrite (ms.GetBuffer (), 0 + preamble, (int) ms.Length - preamble);
+			/* Assumes that the ms was at position 0 */
+			ms.Position = preamble;
 			HeadersSent = true;
 		}
 

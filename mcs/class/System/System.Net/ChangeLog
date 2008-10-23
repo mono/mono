@@ -1,3 +1,19 @@
+
+2008-10-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: don't call ProxyRequest twice.
+	* WebConnectionData.cs: remove unused fields.
+
+	* WebConnection.cs:
+	* WebConnectionStream.cs: when setting the input buffer, check to see
+	if the entire response is already there and free up the request slot.
+	Fixes bug #423156.
+
+	* ResponseStream.cs:
+	* HttpListenerResponse.cs: buffer the headers so that they are sent
+	together with the data on the first Write (if any). The fix above
+	didn't work with our HttpListener without this.
+
 2008-10-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnection.cs:
