@@ -1,5 +1,15 @@
 2008-10-23  Marek Habersack  <mhabersack@novell.com>
 
+	* TemplateControlParser.cs: added internal method
+	AddControlImports which adds namespaces named in the
+	pages/controls section of web.config
+
+	* MasterPageParser.cs: unconditionally add namespaces named in the
+	pages/controls section of web.config.
+
+	* PageParser.cs: add namespaces named in the pages/controls
+	section of web.config to the page whenever it uses a master page.
+
 	* StateManagedCollection.cs: modified {Load,Save}ViewState to
 	properly store/recreate the collection of controls and to use a
 	more consistent structure for the state.

@@ -137,7 +137,8 @@ namespace System.Web.UI
 			masterPage = ps.MasterPageFile;
 			if (masterPage.Length == 0)
 				masterPage = null;
-			
+			else
+				AddControlImports ();
 			enable_event_validation = ps.EnableEventValidation;
 			maxPageStateFieldLength = ps.MaxPageStateFieldLength;
 			pageParserFilter = ps.PageParserFilterType;
@@ -372,6 +373,7 @@ namespace System.Web.UI
 			if (!String.IsNullOrEmpty (masterPage)) {
 				BuildManager.GetCompiledType (masterPage);
 				AddDependency (masterPage);
+				AddControlImports ();
 			}
 			
 			title = GetString(atts, "Title", null);
