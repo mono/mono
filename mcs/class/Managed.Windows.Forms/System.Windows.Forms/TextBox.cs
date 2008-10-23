@@ -229,8 +229,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		void NavigateAutoCompleteList (Keys key)
+		bool NavigateAutoCompleteList (Keys key)
 		{
+			if (auto_complete_matches == null || auto_complete_matches.Count == 0)
+				return false;
+
+			bool suggest_window_visible = auto_complete_listbox != null && auto_complete_listbox.Visible;
+			if (!suggest_window_visible && auto_complete_mode == AutoCompleteMode.Suggest)
+				return false;
+
 			int index = auto_complete_selected_index;
 
 			switch (key) {
@@ -245,6 +252,9 @@ namespace System.Windows.Forms {
 						index = -1;
 					break;
 				case Keys.PageUp:
+					if (auto_complete_mode == AutoCompleteMode.Append || !suggest_window_visible)
+						goto case Keys.Up;
+
 					if (index == -1)
 						index = auto_complete_matches.Count - 1;
 					else if (index == 0)
@@ -256,6 +266,9 @@ namespace System.Windows.Forms {
 					}
 					break;
 				case Keys.PageDown:
+					if (auto_complete_mode == AutoCompleteMode.Append || !suggest_window_visible)
+						goto case Keys.Down;
+
 					if (index == -1)
 						index = 0;
 					else if (index == auto_complete_matches.Count - 1)
@@ -270,16 +283,19 @@ namespace System.Windows.Forms {
 					break;
 			}
 
+			// In SuggestAppend mode the navigation mode depends on the visibility of the suggest lb.
 			bool suggest = auto_complete_mode == AutoCompleteMode.Suggest || auto_complete_mode == AutoCompleteMode.SuggestAppend;
-			if (suggest) {
+			if (suggest && suggest_window_visible) {
 				Text = index == -1 ? auto_complete_original_text : auto_complete_matches [index];
 				auto_complete_listbox.HighlightedIndex = index;
 			} else
-				// Append mode-only, not suggest at all
+				// Append only, not suggest at all
 				AppendAutoCompleteMatch (index < 0 ? 0 : index);
 				
 			auto_complete_selected_index = index;
 			document.MoveCaret (CaretDirection.End);
+
+			return true;
 		}
 
 		void AppendAutoCompleteMatch (int index)
@@ -630,10 +646,16 @@ namespace System.Windows.Forms {
 						case Keys.Up:
 						case Keys.PageDown:
 						case Keys.PageUp:
-							NavigateAutoCompleteList (key_data);
-							m.Result = IntPtr.Zero;
-							return;
+							if (NavigateAutoCompleteList (key_data)) {
+								m.Result = IntPtr.Zero;
+								return;
+							}
+							break;
 						case Keys.Enter:
+							if (auto_complete_listbox != null && auto_complete_listbox.Visible)
+								auto_complete_listbox.HideListBox (false);
+							SelectAll ();
+							break;
 						case Keys.Escape:
 							if (auto_complete_listbox != null && auto_complete_listbox.Visible)
 								auto_complete_listbox.HideListBox (false);
@@ -936,10 +958,8 @@ namespace System.Windows.Forms {
 
 			public void HideListBox (bool set_text)
 			{
-				if (set_text) {
+				if (set_text)
 					owner.Text = owner.auto_complete_matches [HighlightedIndex];
-					owner.SelectAll ();
-				}
 
 				Capture = false;
 				Hide ();

@@ -1,3 +1,9 @@
+2008-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TextBox.cs: Check that we actually have items no navigate, select
+	text when pressing enter, as well as handle direction keys only if
+	mode is different to Suggest or the suggest listbox is visible.
+
 2008-10-23  Andreia Gaita  <shana@jitted.com>
 
 	* WebBrowser.cs: Use the new ContentStream property to retrieve
