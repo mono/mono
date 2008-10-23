@@ -4,9 +4,10 @@
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//      Marek Habersack (mhabersack@novell.com)
 //
 // (C) 2003 Ben Maurer
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,8 +36,8 @@ using System.Collections.Generic;
 
 namespace System.Web.UI {
 
-	public abstract class StateManagedCollection : IList, IStateManager {
-
+	public abstract class StateManagedCollection : IList, IStateManager
+	{		
 		ArrayList items = new ArrayList ();
 		bool saveEverything = false;
 
@@ -99,51 +100,85 @@ namespace System.Web.UI {
 					i.LoadViewState (null);
 				return;
 			}
+
+			Triplet state = savedState as Triplet;
+			if (state == null)
+				throw new InvalidOperationException ("Internal error.");
+
+			List <int> indices = state.First as List <int>;
+			List <object> states = state.Second as List <object>;
+			List <object> types = state.Third as List <object>;
+			IList list = this as IList;
+			IStateManager item;
+			object t;
 			
-			Triplet[] state = savedState as Triplet[];
-			saveEverything = (bool)(state [0].First);
-			if (saveEverything)
+			saveEverything = indices == null;
+
+			if (saveEverything) {
 				items.Clear ();
 
-			object itemState;
-			object type;
-			Triplet triplet;
-			IStateManager item;
-			
-			for (int i = 1; i < state.Length; i++) {
-				triplet = state [i];
-				if (triplet == null)
-					continue;
+				for (int i = 0; i < states.Count; i++) {
+					t = types [i];
+					if (t is Type)
+						item = (IStateManager) Activator.CreateInstance ((Type) t);
+					else if (t is int)
+						item = (IStateManager) CreateKnownType ((int) t);
+					else
+						continue;
 
-				itemState = triplet.Second;
-				type = triplet.Third;
-				if (type is Type)
-					item = (IStateManager) Activator.CreateInstance ((Type) type);
-				else if (type is int)
-					item = (IStateManager) CreateKnownType ((int) type);
-				else
-					continue;
-
-				if (saveEverything)
-					((IList)this).Add (item);
-				else
 					item.TrackViewState ();
-				
-				item.LoadViewState (itemState);
+					item.LoadViewState (states [i]);
+					list.Add (item);
+				}
+				return;
+			}
+
+			int idx;
+			for (int i = 0; i < indices.Count; i++) {
+				idx = indices [i];
+
+				if (idx < Count) {
+					item = list [idx] as IStateManager;
+					item.TrackViewState ();
+					item.LoadViewState (states [i]);
+					continue;
+				}
+
+				t = types [i];
+
+				if (t is Type)
+					item = (IStateManager) Activator.CreateInstance ((Type) t);
+				else if (t is int)
+					item = (IStateManager) CreateKnownType ((int) t);
+				else
+					continue;
+
+				item.TrackViewState ();
+				item.LoadViewState (states [i]);
+				list.Add (item);
 			}
 		}
 		
+		void AddListItem <T> (ref List <T> list, T item)
+		{
+			if (list == null)
+				list = new List <T> ();
+
+			list.Add (item);
+		}
+			
 		object IStateManager.SaveViewState ()
 		{
-			bool hasData = false;
 			Type[] knownTypes = GetKnownTypes ();
-			bool haveKnownTypes = knownTypes != null;
-			List <Triplet> state = new List <Triplet> ();
+			bool haveData = false, haveKnownTypes = knownTypes != null && knownTypes.Length > 0;
 			int count = items.Count;
 			IStateManager item;
 			object itemState;
 			Type type;
 			int idx;
+			List <int> indices = null;
+			List <object> states = null;
+			List <object> types = null;
 
 			for (int i = 0; i < count; i++) {
 				item = items [i] as IStateManager;
@@ -152,22 +187,25 @@ namespace System.Web.UI {
 				item.TrackViewState ();
 				itemState = item.SaveViewState ();
 				if (saveEverything || itemState != null) {
-					hasData = true;
+					haveData = true;
 					type = item.GetType ();
 					idx = haveKnownTypes ? Array.IndexOf (knownTypes, type) : -1;
+
+					if (!saveEverything)
+						AddListItem <int> (ref indices, i);
+					AddListItem <object> (ref states, itemState);
 					if (idx == -1)
-						state.Add (new Triplet (i, itemState, type));
+						AddListItem <object> (ref types, type);
 					else
-						state.Add (new Triplet (i, itemState, idx));
+						AddListItem <object> (ref types, idx);
 				}
 			}
 
-			if (hasData) {
-				state.Insert (0, new Triplet (saveEverything, null, null));
-				return state.ToArray ();
-			} else
+			if (!haveData)
 				return null;
-		}
+
+			return new Triplet (indices, states, types);
+		}		
 		
 		void IStateManager.TrackViewState ()
 		{
