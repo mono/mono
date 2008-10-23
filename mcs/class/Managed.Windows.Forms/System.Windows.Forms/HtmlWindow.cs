@@ -402,6 +402,8 @@ namespace System.Windows.Forms
 #region Standard stuff
 		public override int GetHashCode ()
 		{
+			if (window == null)
+				return 0;						
 			return window.GetHashCode ();
 		}
 

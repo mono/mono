@@ -120,7 +120,9 @@ namespace System.Windows.Forms
 		}
 
 		public override int GetHashCode () 
-		{ 
+		{
+			if (document == null)
+				return 0;			
 			return document.GetHashCode (); 
 		}
 

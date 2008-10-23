@@ -40,6 +40,9 @@ namespace System.Windows.Forms
 		
 		internal HtmlElement (WebBrowser owner, Mono.WebBrowser.IWebBrowser webHost, IElement element)
 		{
+#if DEBUG
+			Console.WriteLine ("---Creating new HtmlElement " + (element == null ? "" : element.LocalName));
+#endif
 			this.webHost = webHost;
 			this.element = element;
 			this.owner = owner;
@@ -150,7 +153,12 @@ namespace System.Windows.Forms
 		}
 
 		public HtmlElement FirstChild {
-			get { return new HtmlElement (owner, webHost, (IElement)element.FirstChild); }
+			get {
+#if DEBUG
+				Console.WriteLine (this.TagName + ": Fetching first child");
+#endif
+				return new HtmlElement (owner, webHost, (IElement)element.FirstChild); 
+			}
 		}
 
 		public HtmlElement NextSibling {
@@ -229,6 +237,8 @@ namespace System.Windows.Forms
 		
 		public override int GetHashCode ()
 		{
+			if (element == null)
+				return 0;
 			return element.GetHashCode ();
 		}
 

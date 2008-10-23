@@ -1,3 +1,9 @@
+2008-10-23  Andreia Gaita  <shana@jitted.com>
+
+	* HtmlDocument.cs,
+	  HtmlElement.cs,
+	  HtmlWindow.cs: Fix GetHashcode for null objects
+
 2008-10-22  Andreia Gaita  <shana@jitted.com>
 
 	* HtmlDocument.cs,
