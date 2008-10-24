@@ -92,42 +92,6 @@ namespace Mono.Simd
 			return res;
 		}
 
-		/*
-		 * NOTE: Thou pmullw states it does signed multiplication, it works for unsigned numbers
-		 * if only the lower part is considered and the flags disregarded.
-		 */
-		public static unsafe Vector16b operator * (Vector16b va, Vector16b vb)
-		{
-			Vector16b res = new Vector16b ();
-			byte *a = &va.v0;
-			byte *b = &vb.v0;
-			byte *c = &res.v0;
-			for (int i = 0; i < 16; ++i)
-				*c++ = (byte)(*a++ * (*b++));
-			return res;
-		}
-
-		public static unsafe Vector16b operator >> (Vector16b va, int amount)
-		{
-			Vector16b res = new Vector16b ();
-			byte *a = &va.v0;
-			byte *b = &res.v0;
-			for (int i = 0; i < 16; ++i)
-				*b++ = (byte)(*a++ >> amount);
-			return res;
-		}
-
-
-		public static unsafe Vector16b operator << (Vector16b va, int amount)
-		{
-			Vector16b res = new Vector16b ();
-			byte *a = &va.v0;
-			byte *b = &res.v0;
-			for (int i = 0; i < 16; ++i)
-				*b++ = (byte)(*a++ << amount);
-			return res;
-		}
-
 		public static unsafe Vector16b operator & (Vector16b va, Vector16b vb)
 		{
 			Vector16b res = new Vector16b ();
@@ -169,20 +133,6 @@ namespace Mono.Simd
 		public static unsafe Vector16b UnpackHigh (Vector16b va, Vector16b vb)
 		{
 			return new Vector16b (va.v8, vb.v8, va.v9, vb.v9, va.v10, vb.v10, va.v11, vb.v11, va.v12, vb.v12, va.v13, vb.v13, va.v14, vb.v14, va.v15, vb.v15);
-		}
-
-		/*
-		 * XXX Maybe this method doesn't make sense.
-		 * C# doesn't support explicit shifting mode, it is defined by the signed of the type.
-		 */
-		public static unsafe Vector16b ShiftRightArithmetic (Vector16b va, int amount)
-		{
-			Vector16b res = new Vector16b ();
-			byte *a = &va.v0;
-			byte *b = &res.v0;
-			for (int i = 0; i < 16; ++i)
-				*b++ = (byte)(((sbyte)(*a++)) >> amount);
-			return res;
 		}
 
 		public static unsafe Vector16b AddWithSaturation (Vector16b va, Vector16b vb) {
@@ -245,10 +195,10 @@ namespace Mono.Simd
 		}
 
 
-		public static unsafe Vector8us SumOfAbsoluteDifferences (Vector16b va, Vector16b vb) {
+		public static unsafe Vector8us SumOfAbsoluteDifferences (Vector16b va, Vector16sb vb) {
 			Vector8us res = new Vector8us ();
 			byte *a = &va.v0;
-			byte *b = &vb.v0;
+			sbyte *b = (sbyte*)&vb;
 
 			int tmp = 0;
 			for (int i = 0; i < 8; ++i)
