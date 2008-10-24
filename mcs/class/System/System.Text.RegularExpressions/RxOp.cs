@@ -99,13 +99,13 @@ namespace System.Text.RegularExpressions {
 
 		// followed by lowchar and length of the bitmap and by the bitmap
 		UnicodeBitmap,
-		UnicodeNoBitmap,
+		NoUnicodeBitmap,
 		UnicodeBitmapIgnoreCase,
-		UnicodeNoBitmapIgnoreCase,
+		NoUnicodeBitmapIgnoreCase,
 		UnicodeBitmapReverse,
-		UnicodeNoBitmapReverse,
+		NoUnicodeBitmapReverse,
 		UnicodeBitmapIgnoreCaseReverse,
-		UnicodeNoBitmapIgnoreCaseReverse,
+		NoUnicodeBitmapIgnoreCaseReverse,
 
 		// add reverse and negate versions of the categories
 		CategoryAny,
@@ -235,9 +235,10 @@ namespace System.Text.RegularExpressions {
 		RepeatInfiniteLazy,
 
 	    // Generic opcodes used internally by CILCompiler
-			GenericChar,
-			GenericRange,
-			GenericUnicodeRange,
+		GenericChar,
+		GenericUnicodeChar,
+		GenericRange,
+		GenericUnicodeRange,
 	}
 }
 

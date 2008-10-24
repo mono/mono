@@ -1,3 +1,14 @@
+2008-10-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* RxOp.cs: Add some missing unicode opcodes.
+
+	* gen-interp.cs RxInterpreter.cs: Generate Bitmap/UnicodeBitmap opcodes too.
+
+	* CILCompiler.cs (EmitEvalMethodBody): Add an 'end_pc' argument to mark the
+	end of the bytecode range which needs to be compiled. Use it to avoid
+	compiling the same bytecode multiple times in various opcodes. Fix
+	RxOp.Jump implementation. Add implementation for unicode opcodes.
+
 2008-10-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* CILCompiler.cs: Implement NoBitmap/NoBitmapIgnoreCase. Fixes #432172.
