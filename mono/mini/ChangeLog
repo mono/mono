@@ -1,5 +1,25 @@
 2008-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-ops.h: Add packed signed min, max and compare greater.
+	
+	* cpu-x86.md: Same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Same. Add packed add/sub with
+	saturation.
+
+	* simd-methods.h: Add CompareGreaterThan.
+
+	* simd-methods.h: Remove CompareEquals.
+
+	* simd-intrinsics.c: Add new TODO entry and some cosmetic changes.
+
+	* simd-intrinsics.c (vector16sb_intrinsics): New table of intrinsic type.
+
+	* simd-intrinsics.c (vector4f_intrinsics): Rename CompareEquals to
+	CompareEqual.
+
+2008-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Fix tests due to change in the API.
 
 2008-10-21  Zoltan Varga  <vargaz@gmail.com>
