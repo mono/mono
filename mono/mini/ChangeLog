@@ -1,3 +1,14 @@
+2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-ops.h: Remove dword packed add/sub with saturation ops.
+
+	* cpu-x86.md: Remove dword packed add/sub with saturation ops.
+
+	* simd-intrinsics.c (vector4ui_intrinsics): Remove methods without
+	sse instructions.
+
+	* simd-intrinsics.c (vector8s_intrinsics): Fix ordering.
+
 2008-10-24  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c, mini.c: Special casing for the synchronized
