@@ -196,6 +196,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		/*Requires SSE 4.1*/
 		public static unsafe Vector8us Max (Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -206,6 +207,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		/*Requires SSE 4.1*/
 		public static unsafe Vector8us Min (Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
