@@ -1,4 +1,10 @@
+2008-10-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_replace_ins): Propagate has_array_access flag to the newly
+	created/split bblocks.
+
 2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Add packed signed mul high.
 	
 	* cpu-x86.md: Same.
