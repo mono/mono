@@ -30,7 +30,6 @@ using System.Runtime.InteropServices;
 namespace Mono.Simd
 {
 	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
-	[CLSCompliant(false)]
 	public struct Vector16b
 	{
 		private byte v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15;
@@ -194,7 +193,7 @@ namespace Mono.Simd
 			return res;
 		}
 
-
+		[CLSCompliant(false)]
 		public static unsafe Vector8us SumOfAbsoluteDifferences (Vector16b va, Vector16sb vb) {
 			Vector8us res = new Vector8us ();
 			byte *a = &va.v0;
@@ -229,12 +228,14 @@ namespace Mono.Simd
 			return *p;
 		}
 
+		[CLSCompliant(false)]
 		public static unsafe explicit operator Vector4ui(Vector16b v)
 		{
 			Vector4ui* p = (Vector4ui*)&v;
 			return *p;
 		}
 
+		[CLSCompliant(false)]
 		public static unsafe explicit operator Vector8us(Vector16b v)
 		{
 			Vector8us* p = (Vector8us*)&v;
@@ -251,11 +252,13 @@ namespace Mono.Simd
 			res = val;
 		}
 
+		[CLSCompliant(false)]
 		public static unsafe Vector16b LoadAligned (Vector16b *v)
 		{
 			return *v;
 		}
 
+		[CLSCompliant(false)]
 		public static unsafe void StoreAligned (Vector16b *res, Vector16b val)
 		{
 			*res = val;

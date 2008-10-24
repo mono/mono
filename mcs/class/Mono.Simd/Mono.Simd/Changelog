@@ -1,5 +1,10 @@
 2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector16b: Mark type as CLS compliant (remove attribute) and
+	mark the methods which are not.
+
+2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector4i.cs: New vector type.
 
 2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
