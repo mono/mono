@@ -62,6 +62,52 @@ namespace System.Windows.Forms {
 #endif
 		#endregion	// Local Variables
 
+		#region UIA FrameWork Events
+#if NET_2_0
+		static object UIAMinimumChangedEvent = new object ();
+
+		internal event EventHandler UIAMinimumChanged {
+			add { Events.AddHandler (UIAMinimumChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAMinimumChangedEvent, value); }
+		}
+
+		internal void OnUIAMinimumChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIAMinimumChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+
+		static object UIAMaximumChangedEvent = new object ();
+
+		internal event EventHandler UIAMaximumChanged {
+			add { Events.AddHandler (UIAMaximumChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAMaximumChangedEvent, value); }
+		}
+
+		internal void OnUIAMaximumChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIAMaximumChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+
+		static object UIASmallChangeChangedEvent = new object ();
+
+		internal event EventHandler UIASmallChangeChanged {
+			add { Events.AddHandler (UIASmallChangeChangedEvent, value); }
+			remove { Events.RemoveHandler (UIASmallChangeChangedEvent, value); }
+		}
+
+		internal void OnUIASmallChangeChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIASmallChangeChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+		#endregion
+
 		#region Public Constructors
 		public NumericUpDown() {
 			suppress_validation = false;
@@ -204,6 +250,11 @@ namespace System.Windows.Forms {
 				}
 
 				increment = value;
+
+#if NET_2_0
+				// UIA Framework Event: SmallChange Changed
+				OnUIASmallChangeChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
@@ -221,6 +272,11 @@ namespace System.Windows.Forms {
 
 				if (dvalue > maximum)
 					Value = maximum;
+
+#if NET_2_0
+				// UIA Framework Event: Maximum Changed
+				OnUIAMaximumChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
@@ -238,6 +294,11 @@ namespace System.Windows.Forms {
 
 				if (dvalue < minimum)
 					Value = minimum;
+
+#if NET_2_0
+				// UIA Framework Event: Minimum Changed
+				OnUIAMinimumChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
