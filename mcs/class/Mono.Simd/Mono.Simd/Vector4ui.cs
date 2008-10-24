@@ -115,11 +115,13 @@ namespace Mono.Simd
 			return res;
 		}
 
+		/*Requires SSE 4.1*/
 		public static unsafe Vector4ui Max (Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (System.Math.Max (v1.x, v2.x), System.Math.Max (v1.y, v2.y), System.Math.Max (v1.z, v2.z), System.Math.Max (v1.w, v2.w));
 		}
 
+		/*Requires SSE 4.1*/
 		public static unsafe Vector4ui Min (Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (System.Math.Min (v1.x, v2.x), System.Math.Min (v1.y, v2.y), System.Math.Min (v1.z, v2.z), System.Math.Min (v1.w, v2.w));

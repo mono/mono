@@ -1,5 +1,9 @@
 2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector4ui.cs: Add missing SSE 4.1 comments.
+
+2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector16sb.cs: Fix a warning.
 
 	* Vector4f.cs: Add some missing CLSCompliant attributes.
