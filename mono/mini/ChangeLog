@@ -1,5 +1,7 @@
 2008-10-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_replace_ins): Move this to branch-opts.c.
+
 	* mini.c (mono_replace_ins): Propagate has_array_access flag to the newly
 	created/split bblocks.
 
