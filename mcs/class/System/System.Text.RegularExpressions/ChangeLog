@@ -1,5 +1,8 @@
 2008-10-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* RxInterpreter.cs CILCompiler.cs gen-interp.cs: Fix the reading of short 
+	values from the instruction stream.
+
 	* RxOp.cs: Add some missing unicode opcodes.
 
 	* gen-interp.cs RxInterpreter.cs: Generate Bitmap/UnicodeBitmap opcodes too.

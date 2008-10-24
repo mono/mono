@@ -122,9 +122,9 @@ namespace System.Text.RegularExpressions {
 		static int ReadInt (byte[] code, int pc)
 		{
 			int val = code [pc];
-			val |= code [pc + 1] << 8;
-			val |= code [pc + 2] << 16;
-			val |= code [pc + 3] << 24;
+			val |= (int)code [pc + 1] << 8;
+			val |= (int)code [pc + 2] << 16;
+			val |= (int)code [pc + 3] << 24;
 			return val;
 		}
 
@@ -132,7 +132,7 @@ namespace System.Text.RegularExpressions {
 		{
 			this.program = program;
 			this.eval_del = eval_del;
-			group_count = 1 + (program [1] | (program [2] << 8));
+			group_count = 1 + (program [1] | ((int)program [2] << 8));
 			groups = new int [group_count];
 			stack = new IntStack ();
 
@@ -414,8 +414,8 @@ namespace System.Text.RegularExpressions {
 					}
 					return false;
 				case RxOp.Anchor:
-					length = program [pc + 3] | (program [pc + 4] << 8);
-					pc += program [pc + 1] | (program [pc + 2] << 8);
+					length = program [pc + 3] | ((int)program [pc + 4] << 8);
+					pc += program [pc + 1] | ((int)program [pc + 2] << 8);
 
 					RxOp anch_op = (RxOp)(program[pc] & 0x00ff);
 
@@ -462,8 +462,8 @@ namespace System.Text.RegularExpressions {
 					}
 					return false;
 				case RxOp.AnchorReverse:
-					length = program [pc + 3] | (program [pc + 4] << 8);
-					pc += program [pc + 1] | (program [pc + 2] << 8);
+					length = program [pc + 3] | ((int)program [pc + 4] << 8);
+					pc += program [pc + 1] | ((int)program [pc + 2] << 8);
 					// it's important to test also the end of the string
 					// position for things like: "" =~ /$/
 					end = 0;
@@ -485,7 +485,7 @@ namespace System.Text.RegularExpressions {
 					}
 					return false;
 				case RxOp.Reference:
-					length = GetLastDefined (program [pc + 1] | (program [pc + 2] << 8));
+					length = GetLastDefined (program [pc + 1] | ((int)program [pc + 2] << 8));
 					if (length < 0)
 						return false;
 					start = marks [length].Index;
@@ -500,7 +500,7 @@ namespace System.Text.RegularExpressions {
 					pc += 3;
 					continue;
 				case RxOp.ReferenceIgnoreCase:
-					length = GetLastDefined (program [pc + 1] | (program [pc + 2] << 8));
+					length = GetLastDefined (program [pc + 1] | ((int)program [pc + 2] << 8));
 					if (length < 0)
 						return false;
 					start = marks [length].Index;
@@ -515,7 +515,7 @@ namespace System.Text.RegularExpressions {
 					pc += 3;
 					continue;
 				case RxOp.ReferenceReverse: {
-					length = GetLastDefined (program [pc + 1] | (program [pc + 2] << 8));
+					length = GetLastDefined (program [pc + 1] | ((int)program [pc + 2] << 8));
 					if (length < 0)
 						return false;
 					start = marks [length].Index;
@@ -532,15 +532,15 @@ namespace System.Text.RegularExpressions {
 					continue;
 				}
 				case RxOp.IfDefined:
-					if (GetLastDefined (program [pc + 3] | (program [pc + 4] << 8)) >= 0)
+					if (GetLastDefined (program [pc + 3] | ((int)program [pc + 4] << 8)) >= 0)
 						pc += 5;
 					else
-						pc += program [pc + 1] | (program [pc + 2] << 8);
+						pc += program [pc + 1] | ((int)program [pc + 2] << 8);
 					continue;
 				case RxOp.SubExpression: {
 					int res = 0;
 					if (EvalByteCode (pc + 3, strpos, ref res)) {
-						pc += program [pc + 1] | (program [pc + 2] << 8);
+						pc += program [pc + 1] | ((int)program [pc + 2] << 8);
 						strpos = res;
 						continue;
 					}
@@ -550,18 +550,18 @@ namespace System.Text.RegularExpressions {
 					int res = 0;
 					// FIXME: checkpoint
 					if (EvalByteCode (pc + 5, strpos, ref res)) {
-						pc += program [pc + 1] | (program [pc + 2] << 8);
+						pc += program [pc + 1] | ((int)program [pc + 2] << 8);
 					} else {
-						pc += program [pc + 3] | (program [pc + 4] << 8);
+						pc += program [pc + 3] | ((int)program [pc + 4] << 8);
 					}
 					continue;
 				}
 				case RxOp.OpenGroup:
-					Open (program [pc + 1] | (program [pc + 2] << 8), strpos);
+					Open (program [pc + 1] | ((int)program [pc + 2] << 8), strpos);
 					pc += 3;
 					continue;
 				case RxOp.CloseGroup:
-					Close (program [pc + 1] | (program [pc + 2] << 8), strpos);
+					Close (program [pc + 1] | ((int)program [pc + 2] << 8), strpos);
 					pc += 3;
 					continue;
 				case RxOp.BalanceStart: {
@@ -570,14 +570,14 @@ namespace System.Text.RegularExpressions {
 					if (!EvalByteCode (pc + 8, strpos, ref res))
 						goto Fail;
 
-					int gid = program [pc + 1] | (program [pc + 2] << 8);
-					int balance_gid = program [pc + 3] | (program [pc + 4] << 8);
+					int gid = program [pc + 1] | ((int)program [pc + 2] << 8);
+					int balance_gid = program [pc + 3] | ((int)program [pc + 4] << 8);
 					bool capture = program [pc + 5] > 0;
 					if (!Balance (gid, balance_gid, capture, strpos))
 						goto Fail;
 
 					strpos = res;					
-					pc += program[pc + 6] | (program [pc + 7] << 8);
+					pc += program[pc + 6] | ((int)program [pc + 7] << 8);
 					break;
 				}
 				case RxOp.Balance: {
@@ -585,10 +585,10 @@ namespace System.Text.RegularExpressions {
 				}
 
 				case RxOp.Jump:
-					pc += program [pc + 1] | (program [pc + 2] << 8);
+					pc += program [pc + 1] | ((int)program [pc + 2] << 8);
 					continue;
 				case RxOp.TestCharGroup:
-					char_group_end = pc + program [pc + 1] | (program [pc + 2] << 8);
+					char_group_end = pc + program [pc + 1] | ((int)program [pc + 2] << 8);
 					pc += 3;
 					continue;
 				case RxOp.String:
@@ -619,12 +619,12 @@ namespace System.Text.RegularExpressions {
 					continue;
 				case RxOp.UnicodeString:
 					start = pc + 3;
-					length = program [pc + 1] | (program [pc + 2] << 8);
+					length = program [pc + 1] | ((int)program [pc + 2] << 8);
 					if (strpos + length > string_end)
 						return false;
 					end = start + length * 2;
 					for (; start < end; start += 2) {
-						int c = program [start] | (program [start + 1] << 8);
+						int c = program [start] | ((int)program [start + 1] << 8);
 						if (str [strpos] != c)
 							return false;
 						strpos++;
@@ -633,12 +633,12 @@ namespace System.Text.RegularExpressions {
 					continue;
 				case RxOp.UnicodeStringIgnoreCase:
 					start = pc + 3;
-					length = program [pc + 1] | (program [pc + 2] << 8);
+					length = program [pc + 1] | ((int)program [pc + 2] << 8);
 					if (strpos + length > string_end)
 						return false;
 					end = start + length * 2;
 					for (; start < end; start += 2) {
-						int c = program [start] | (program [start + 1] << 8);
+						int c = program [start] | ((int)program [start + 1] << 8);
 						if (str [strpos] != c && Char.ToLower (str [strpos]) != c)
 							return false;
 						strpos++;
@@ -758,7 +758,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeRange:
 					if (strpos < string_end) {
 						char c = str [strpos];
-						if (((c >= (program [pc + 1] | (program [pc + 2] << 8))) && (c <= (program [pc + 3] | (program [pc + 4] << 8))))) {
+						if (((c >= (program [pc + 1] | ((int)program [pc + 2] << 8))) && (c <= (program [pc + 3] | ((int)program [pc + 4] << 8))))) {
 							strpos ++;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
@@ -776,7 +776,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeChar:
 					if (strpos < string_end) {
 						char c = str [strpos];
-						if (((c == (program [pc + 1] | (program [pc + 2] << 8))))) {
+						if (((c == (program [pc + 1] | ((int)program [pc + 2] << 8))))) {
 							strpos ++;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
@@ -993,18 +993,18 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeBitmap:
 					if (strpos < string_end) {
 						char c = str [strpos];
-						int c2 = (int)c; c2 -= (program [pc + 1] | (program [pc + 2] << 8)); length = (program [pc + 3] | (program [pc + 4] << 8));
+						int c2 = (int)c; c2 -= (program [pc + 1] | ((int)program [pc + 2] << 8)); length = (program [pc + 3] | ((int)program [pc + 4] << 8));
 						if (((c2 >= 0 && c2 < (length << 3) && (program [pc + 5 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0))) {
 							strpos ++;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
-							pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+							pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 							continue;
 						}
 					}
 					if (char_group_end == 0)
 						return false;
-					pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+					pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 					continue;
 				case RxOp.CharIgnoreCase:
 					if (strpos < string_end) {
@@ -1039,7 +1039,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeRangeIgnoreCase:
 					if (strpos < string_end) {
 						char c = Char.ToLower (str [strpos]);
-						if (((c >= (program [pc + 1] | (program [pc + 2] << 8))) && (c <= (program [pc + 3] | (program [pc + 4] << 8))))) {
+						if (((c >= (program [pc + 1] | ((int)program [pc + 2] << 8))) && (c <= (program [pc + 3] | ((int)program [pc + 4] << 8))))) {
 							strpos ++;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
@@ -1054,7 +1054,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeCharIgnoreCase:
 					if (strpos < string_end) {
 						char c = Char.ToLower (str [strpos]);
-						if (((c == (program [pc + 1] | (program [pc + 2] << 8))))) {
+						if (((c == (program [pc + 1] | ((int)program [pc + 2] << 8))))) {
 							strpos ++;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
@@ -1085,18 +1085,18 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeBitmapIgnoreCase:
 					if (strpos < string_end) {
 						char c = Char.ToLower (str [strpos]);
-						int c2 = (int)c; c2 -= (program [pc + 1] | (program [pc + 2] << 8)); length = (program [pc + 3] | (program [pc + 4] << 8));
+						int c2 = (int)c; c2 -= (program [pc + 1] | ((int)program [pc + 2] << 8)); length = (program [pc + 3] | ((int)program [pc + 4] << 8));
 						if (((c2 >= 0 && c2 < (length << 3) && (program [pc + 5 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0))) {
 							strpos ++;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
-							pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+							pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 							continue;
 						}
 					}
 					if (char_group_end == 0)
 						return false;
-					pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+					pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 					continue;
 				case RxOp.NoChar:
 					if (strpos < string_end) {
@@ -1129,7 +1129,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeRange:
 					if (strpos < string_end) {
 						char c = str [strpos];
-						if (!((c >= (program [pc + 1] | (program [pc + 2] << 8))) && (c <= (program [pc + 3] | (program [pc + 4] << 8))))) {
+						if (!((c >= (program [pc + 1] | ((int)program [pc + 2] << 8))) && (c <= (program [pc + 3] | ((int)program [pc + 4] << 8))))) {
 							pc += 5;
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos ++;
@@ -1143,7 +1143,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeChar:
 					if (strpos < string_end) {
 						char c = str [strpos];
-						if (!((c == (program [pc + 1] | (program [pc + 2] << 8))))) {
+						if (!((c == (program [pc + 1] | ((int)program [pc + 2] << 8))))) {
 							pc += 3;
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos ++;
@@ -1312,9 +1312,9 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeBitmap:
 					if (strpos < string_end) {
 						char c = str [strpos];
-						int c2 = (int)c; c2 -= (program [pc + 1] | (program [pc + 2] << 8)); length = (program [pc + 3] | (program [pc + 4] << 8));
+						int c2 = (int)c; c2 -= (program [pc + 1] | ((int)program [pc + 2] << 8)); length = (program [pc + 3] | ((int)program [pc + 4] << 8));
 						if (!((c2 >= 0 && c2 < (length << 3) && (program [pc + 5 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0))) {
-							pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+							pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos ++;
 							if (pc + 1 == char_group_end)
@@ -1355,7 +1355,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeRangeIgnoreCase:
 					if (strpos < string_end) {
 						char c = Char.ToLower (str [strpos]);
-						if (!((c >= (program [pc + 1] | (program [pc + 2] << 8))) && (c <= (program [pc + 3] | (program [pc + 4] << 8))))) {
+						if (!((c >= (program [pc + 1] | ((int)program [pc + 2] << 8))) && (c <= (program [pc + 3] | ((int)program [pc + 4] << 8))))) {
 							pc += 5;
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos ++;
@@ -1369,7 +1369,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeCharIgnoreCase:
 					if (strpos < string_end) {
 						char c = Char.ToLower (str [strpos]);
-						if (!((c == (program [pc + 1] | (program [pc + 2] << 8))))) {
+						if (!((c == (program [pc + 1] | ((int)program [pc + 2] << 8))))) {
 							pc += 3;
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos ++;
@@ -1398,9 +1398,9 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeBitmapIgnoreCase:
 					if (strpos < string_end) {
 						char c = Char.ToLower (str [strpos]);
-						int c2 = (int)c; c2 -= (program [pc + 1] | (program [pc + 2] << 8)); length = (program [pc + 3] | (program [pc + 4] << 8));
+						int c2 = (int)c; c2 -= (program [pc + 1] | ((int)program [pc + 2] << 8)); length = (program [pc + 3] | ((int)program [pc + 4] << 8));
 						if (!((c2 >= 0 && c2 < (length << 3) && (program [pc + 5 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0))) {
-							pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+							pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos ++;
 							if (pc + 1 == char_group_end)
@@ -1443,7 +1443,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeRangeReverse:
 					if (strpos > 0) {
 						char c = str [strpos - 1];
-						if (((c >= (program [pc + 1] | (program [pc + 2] << 8))) && (c <= (program [pc + 3] | (program [pc + 4] << 8))))) {
+						if (((c >= (program [pc + 1] | ((int)program [pc + 2] << 8))) && (c <= (program [pc + 3] | ((int)program [pc + 4] << 8))))) {
 							strpos --;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
@@ -1458,7 +1458,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeCharReverse:
 					if (strpos > 0) {
 						char c = str [strpos - 1];
-						if (((c == (program [pc + 1] | (program [pc + 2] << 8))))) {
+						if (((c == (program [pc + 1] | ((int)program [pc + 2] << 8))))) {
 							strpos --;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
@@ -1639,18 +1639,18 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeBitmapReverse:
 					if (strpos > 0) {
 						char c = str [strpos - 1];
-						int c2 = (int)c; c2 -= (program [pc + 1] | (program [pc + 2] << 8)); length = (program [pc + 3] | (program [pc + 4] << 8));
+						int c2 = (int)c; c2 -= (program [pc + 1] | ((int)program [pc + 2] << 8)); length = (program [pc + 3] | ((int)program [pc + 4] << 8));
 						if (((c2 >= 0 && c2 < (length << 3) && (program [pc + 5 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0))) {
 							strpos --;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
-							pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+							pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 							continue;
 						}
 					}
 					if (char_group_end == 0)
 						return false;
-					pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+					pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 					continue;
 				case RxOp.CharIgnoreCaseReverse:
 					if (strpos > 0) {
@@ -1685,7 +1685,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeRangeIgnoreCaseReverse:
 					if (strpos > 0) {
 						char c = Char.ToLower (str [strpos - 1]);
-						if (((c >= (program [pc + 1] | (program [pc + 2] << 8))) && (c <= (program [pc + 3] | (program [pc + 4] << 8))))) {
+						if (((c >= (program [pc + 1] | ((int)program [pc + 2] << 8))) && (c <= (program [pc + 3] | ((int)program [pc + 4] << 8))))) {
 							strpos --;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
@@ -1700,7 +1700,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeCharIgnoreCaseReverse:
 					if (strpos > 0) {
 						char c = Char.ToLower (str [strpos - 1]);
-						if (((c == (program [pc + 1] | (program [pc + 2] << 8))))) {
+						if (((c == (program [pc + 1] | ((int)program [pc + 2] << 8))))) {
 							strpos --;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
@@ -1731,18 +1731,18 @@ namespace System.Text.RegularExpressions {
 				case RxOp.UnicodeBitmapIgnoreCaseReverse:
 					if (strpos > 0) {
 						char c = Char.ToLower (str [strpos - 1]);
-						int c2 = (int)c; c2 -= (program [pc + 1] | (program [pc + 2] << 8)); length = (program [pc + 3] | (program [pc + 4] << 8));
+						int c2 = (int)c; c2 -= (program [pc + 1] | ((int)program [pc + 2] << 8)); length = (program [pc + 3] | ((int)program [pc + 4] << 8));
 						if (((c2 >= 0 && c2 < (length << 3) && (program [pc + 5 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0))) {
 							strpos --;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
-							pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+							pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 							continue;
 						}
 					}
 					if (char_group_end == 0)
 						return false;
-					pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+					pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 					continue;
 				case RxOp.NoCharReverse:
 					if (strpos > 0) {
@@ -1775,7 +1775,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeRangeReverse:
 					if (strpos > 0) {
 						char c = str [strpos - 1];
-						if (!((c >= (program [pc + 1] | (program [pc + 2] << 8))) && (c <= (program [pc + 3] | (program [pc + 4] << 8))))) {
+						if (!((c >= (program [pc + 1] | ((int)program [pc + 2] << 8))) && (c <= (program [pc + 3] | ((int)program [pc + 4] << 8))))) {
 							pc += 5;
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos --;
@@ -1789,7 +1789,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeCharReverse:
 					if (strpos > 0) {
 						char c = str [strpos - 1];
-						if (!((c == (program [pc + 1] | (program [pc + 2] << 8))))) {
+						if (!((c == (program [pc + 1] | ((int)program [pc + 2] << 8))))) {
 							pc += 3;
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos --;
@@ -1958,9 +1958,9 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeBitmapReverse:
 					if (strpos > 0) {
 						char c = str [strpos - 1];
-						int c2 = (int)c; c2 -= (program [pc + 1] | (program [pc + 2] << 8)); length = (program [pc + 3] | (program [pc + 4] << 8));
+						int c2 = (int)c; c2 -= (program [pc + 1] | ((int)program [pc + 2] << 8)); length = (program [pc + 3] | ((int)program [pc + 4] << 8));
 						if (!((c2 >= 0 && c2 < (length << 3) && (program [pc + 5 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0))) {
-							pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+							pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos --;
 							if (pc + 1 == char_group_end)
@@ -2001,7 +2001,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeRangeIgnoreCaseReverse:
 					if (strpos > 0) {
 						char c = Char.ToLower (str [strpos - 1]);
-						if (!((c >= (program [pc + 1] | (program [pc + 2] << 8))) && (c <= (program [pc + 3] | (program [pc + 4] << 8))))) {
+						if (!((c >= (program [pc + 1] | ((int)program [pc + 2] << 8))) && (c <= (program [pc + 3] | ((int)program [pc + 4] << 8))))) {
 							pc += 5;
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos --;
@@ -2015,7 +2015,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeCharIgnoreCaseReverse:
 					if (strpos > 0) {
 						char c = Char.ToLower (str [strpos - 1]);
-						if (!((c == (program [pc + 1] | (program [pc + 2] << 8))))) {
+						if (!((c == (program [pc + 1] | ((int)program [pc + 2] << 8))))) {
 							pc += 3;
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos --;
@@ -2044,9 +2044,9 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoUnicodeBitmapIgnoreCaseReverse:
 					if (strpos > 0) {
 						char c = Char.ToLower (str [strpos - 1]);
-						int c2 = (int)c; c2 -= (program [pc + 1] | (program [pc + 2] << 8)); length = (program [pc + 3] | (program [pc + 4] << 8));
+						int c2 = (int)c; c2 -= (program [pc + 1] | ((int)program [pc + 2] << 8)); length = (program [pc + 3] | ((int)program [pc + 4] << 8));
 						if (!((c2 >= 0 && c2 < (length << 3) && (program [pc + 5 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0))) {
-							pc += 5 + (program [pc + 3] | (program [pc + 4] << 8));
+							pc += 5 + (program [pc + 3] | ((int)program [pc + 4] << 8));
 							if (char_group_end == 0 || (pc + 1 == char_group_end)) {
 								strpos --;
 							if (pc + 1 == char_group_end)
@@ -2065,8 +2065,8 @@ namespace System.Text.RegularExpressions {
 						strpos_result = res;
 						return true;
 					}
-					//Console.WriteLine ("branch offset: {0}", program [pc + 1] | (program [pc + 2] << 8));
-					pc += program [pc + 1] | (program [pc + 2] << 8);
+					//Console.WriteLine ("branch offset: {0}", program [pc + 1] | ((int)program [pc + 2] << 8));
+					pc += program [pc + 1] | ((int)program [pc + 2] << 8);
 					continue;
 				}
 				case RxOp.Repeat:
@@ -2096,7 +2096,7 @@ namespace System.Text.RegularExpressions {
 						pc + 11				// subexpression
 					);
 
-					int until = pc + program [pc + 1] | (program [pc + 2] << 8);
+					int until = pc + program [pc + 1] | ((int)program [pc + 2] << 8);
 					if (!EvalByteCode (until, strpos, ref res)) {
 						this.repeat = this.repeat.Previous;
 						return false;
@@ -2254,7 +2254,7 @@ namespace System.Text.RegularExpressions {
 					 */
 					bool lazy = program [pc] == (byte)RxOp.FastRepeatLazy;
 					int res = 0;
-					int tail = pc + program [pc + 1] | (program [pc + 2] << 8);
+					int tail = pc + program [pc + 1] | ((int)program [pc + 2] << 8);
  					start = ReadInt (program, pc + 3);
  					end = ReadInt (program, pc + 7);
 					//Console.WriteLine ("min: {0}, max: {1} tail: {2}", start, end, tail);

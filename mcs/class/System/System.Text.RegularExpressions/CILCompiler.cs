@@ -232,7 +232,7 @@ namespace System.Text.RegularExpressions {
 
 			out_pc = 0;
 
-			int group_count = 1 + (program [1] | (program [2] << 8));
+			int group_count = 1 + ReadShort (program, 1);
 
 			while (pc < end_pc) {
 				RxOp op = (RxOp)program [pc];
@@ -460,7 +460,7 @@ namespace System.Text.RegularExpressions {
 				case RxOp.Branch: {
 					//if (EvalByteCode (pc + 3, strpos, ref res)) {
 
-					int target_pc = pc + program [pc + 1] | (program [pc + 2] << 8);
+					int target_pc = pc + ReadShort (program, pc + 1);
 
 					// Emit the rest of the code inline instead of making a recursive call
 					Frame new_frame = new Frame (ilgen);
@@ -837,10 +837,10 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
 					//  c -= program [pc + 1];
 					if (unicode) {
-						ilgen.Emit (OpCodes.Ldc_I4, (int)(program [pc + 1] | (program [pc + 2] << 8)));
+						ilgen.Emit (OpCodes.Ldc_I4, ReadShort (program, pc + 1));
 						ilgen.Emit (OpCodes.Sub);
 						ilgen.Emit (OpCodes.Stloc, local_c);
-						length = program [pc + 3] | (program [pc + 4] << 8);
+						length = ReadShort (program, pc + 3);
 						pc += 5;
 					} else {
 						ilgen.Emit (OpCodes.Ldc_I4, (int)program [pc + 1]);
@@ -1028,7 +1028,7 @@ namespace System.Text.RegularExpressions {
 				}
 				case RxOp.OpenGroup: {
 					//Open (program [pc + 1] | (program [pc + 2] << 8), strpos);
-					int group_id = program [pc + 1] | (program [pc + 2] << 8);
+					int group_id = ReadShort (program, pc + 1);
 					ilgen.Emit (OpCodes.Ldarg_0);
 					ilgen.Emit (OpCodes.Ldc_I4, group_id);
 					ilgen.Emit (OpCodes.Ldarg_1);
@@ -1039,7 +1039,7 @@ namespace System.Text.RegularExpressions {
 				}
 				case RxOp.CloseGroup: {
 					//Close (program [pc + 1] | (program [pc + 2] << 8), strpos);
-					int group_id = program [pc + 1] | (program [pc + 2] << 8);
+					int group_id = ReadShort (program, pc + 1);
 					ilgen.Emit (OpCodes.Ldarg_0);
 					ilgen.Emit (OpCodes.Ldc_I4, group_id);
 					ilgen.Emit (OpCodes.Ldarg_1);
@@ -1049,7 +1049,9 @@ namespace System.Text.RegularExpressions {
 					break;
 				}
 				case RxOp.Jump: {
-					int target_pc = pc + program [pc + 1] | (program [pc + 2] << 8);
+					int target_pc = pc + ReadShort (program, pc + 1);
+					if (trace_compile)
+						Console.WriteLine ("\tjump target: {0}", target_pc);
 					if (labels == null)
 						labels = new Dictionary <int, Label> ();
 					Label l;
@@ -1062,7 +1064,7 @@ namespace System.Text.RegularExpressions {
  					break;
 				}
 				case RxOp.TestCharGroup: {
-					int char_group_end = pc + program [pc + 1] | (program [pc + 2] << 8);
+					int char_group_end = pc + ReadShort (program, pc + 1);
 					pc += 3;
 
 					Label label_match = ilgen.DefineLabel ();
@@ -1140,7 +1142,7 @@ namespace System.Text.RegularExpressions {
 					 * simple inner exceptions like chars/strings.
 					 */
 					bool lazy = program [pc] == (byte)RxOp.FastRepeatLazy;
-					int tail = pc + program [pc + 1] | (program [pc + 2] << 8);
+					int tail = pc + ReadShort (program, pc + 1);
  					start = ReadInt (program, pc + 3);
  					end = ReadInt (program, pc + 7);
 					//Console.WriteLine ("min: {0}, max: {1} tail: {2}", start, end, tail);

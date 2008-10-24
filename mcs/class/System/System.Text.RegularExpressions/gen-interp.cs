@@ -35,8 +35,8 @@ public class GenInterp
 
 			new Op ("Char", "", "(c == program [pc + 1])", "2"),
 			new Op ("Range", "", "(c >= program [pc + 1] && c <= program [pc + 2])", "3"),
-			new Op ("UnicodeRange", "", "(c >= (program [pc + 1] | (program [pc + 2] << 8))) && (c <= (program [pc + 3] | (program [pc + 4] << 8)))", "5"),
-			new Op ("UnicodeChar", "", "(c == (program [pc + 1] | (program [pc + 2] << 8)))", "3"),
+			new Op ("UnicodeRange", "", "(c >= (program [pc + 1] | ((int)program [pc + 2] << 8))) && (c <= (program [pc + 3] | ((int)program [pc + 4] << 8)))", "5"),
+			new Op ("UnicodeChar", "", "(c == (program [pc + 1] | ((int)program [pc + 2] << 8)))", "3"),
 			new Op ("CategoryAny", "", @"(c != '\n')", "1"),
 			new Op ("CategoryAnySingleline", "", "true", "1"),
 			new Op ("CategoryWord", "", "(Char.IsLetterOrDigit (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation)", "1"),
@@ -48,7 +48,7 @@ public class GenInterp
 			new Op ("CategoryUnicode", "", "(Char.GetUnicodeCategory (c) == (UnicodeCategory)program [pc + 1])", "2"),
 			new Op ("CategoryGeneral", "", "(CategoryUtils.IsCategory ((Category)program [pc + 1], c))", "2"),
 			new Op ("Bitmap", "int c2 = (int)c; c2 -= program [pc + 1]; length = program [pc + 2];", "(c2 >= 0 && c2 < (length << 3) && (program [pc + 3 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0)", "3 + program [pc + 2]"),
-			new Op ("UnicodeBitmap", "int c2 = (int)c; c2 -= (program [pc + 1] | (program [pc + 2] << 8)); length = (program [pc + 3] | (program [pc + 4] << 8));", "(c2 >= 0 && c2 < (length << 3) && (program [pc + 5 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0)", "5 + (program [pc + 3] | (program [pc + 4] << 8))")
+			new Op ("UnicodeBitmap", "int c2 = (int)c; c2 -= (program [pc + 1] | ((int)program [pc + 2] << 8)); length = (program [pc + 3] | ((int)program [pc + 4] << 8));", "(c2 >= 0 && c2 < (length << 3) && (program [pc + 5 + (c2 >> 3)] & (1 << (c2 & 0x7))) != 0)", "5 + (program [pc + 3] | ((int)program [pc + 4] << 8))")
 		};
 
 		for (int i1 = 0; i1 < 2; ++i1) {
