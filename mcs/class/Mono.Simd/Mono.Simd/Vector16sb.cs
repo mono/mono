@@ -110,7 +110,7 @@ namespace Mono.Simd
 			sbyte *b = &vb.v0;
 			sbyte *c = &res.v0;
 			for (int i = 0; i < 16; ++i)
-				*c++ = (sbyte)(*a++ | *b++);
+				*c++ = (sbyte)((uint)*a++ | (uint)*b++);
 			return res;
 		}
 

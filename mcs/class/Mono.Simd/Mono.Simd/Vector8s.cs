@@ -233,6 +233,16 @@ namespace Mono.Simd
 			return res;
 		}
 
+		public static unsafe Vector8s CompareGreaterThan (Vector8s va, Vector8s vb) {
+			Vector8s res = new Vector8s ();
+			short *a = &va.v0;
+			short *b = &vb.v0;
+			short *c = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (short) (*a++ > *b++ ? -1 : 0);
+			return res;
+		}
+
 		public static unsafe Vector8s MultiplyStoreHigh (Vector8s va, Vector8s vb) {
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;
@@ -243,6 +253,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[CLSCompliant(false)]
 		public static unsafe Vector16b PackWithUnsignedSaturation (Vector8s va, Vector8s vb) {
 			Vector16b res = new Vector16b ();
 			short *a = (short*)&va;

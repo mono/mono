@@ -384,11 +384,13 @@ namespace Mono.Simd
 			res = val;
 		}
 
+		[CLSCompliant(false)]
 		public static unsafe Vector4f LoadAligned (Vector4f *v)
 		{
 			return *v;
 		}
 
+		[CLSCompliant(false)]
 		public static unsafe void StoreAligned (Vector4f *res, Vector4f val)
 		{
 			*res = val;
