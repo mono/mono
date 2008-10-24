@@ -1,3 +1,8 @@
+2008-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* x86/x86-codegen.h: Add signed packed max, min, add/sub with saturation
+	and compare greater.
+
 2008-10-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* x86/x86-codegen.h: Add multiply and store high.
