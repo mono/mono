@@ -1,4 +1,15 @@
 2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+	* mini-ops.h: Add packed signed mul high.
+	
+	* cpu-x86.md: Same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Same.
+
+	* simd-methods.h: Add PackWithUnsignedSaturation and ShiftRightLogic.
+
+	* simd-intrinsics.c (vector8s_intrinsics): New table of intrinsic type.
+
+2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Tests for Vector16sb.
 
