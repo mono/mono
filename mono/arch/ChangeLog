@@ -1,3 +1,7 @@
+2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* x86/x86-codegen.h: Add signed packed mul high.
+
 2008-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* x86/x86-codegen.h: Add signed packed max, min, add/sub with saturation
