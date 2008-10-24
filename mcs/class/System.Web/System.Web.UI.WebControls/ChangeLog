@@ -1,3 +1,7 @@
+2008-10-24  Marek Habersack  <mhabersack@novell.com>
+
+	* CheckBox.cs: register for event validation in Render ().
+
 2008-10-21  Marek Habersack  <mhabersack@novell.com>
 
 	* XmlDataSource.cs: DataFile may be an URL.

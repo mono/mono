@@ -297,13 +297,15 @@ namespace System.Web.UI.WebControls {
 		override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-
-			if (Page != null && Enabled) {
-				Page.RegisterRequiresPostBack (this);
+			Page page = Page;
+			bool enabled = Enabled;
+			
+			if (page != null && enabled) {
+				page.RegisterRequiresPostBack (this);
 			}
 #if NET_2_0
-			if (Page != null && Enabled)
-				Page.RegisterEnabledControl (this);
+			if (Page != null && enabled)
+				page.RegisterEnabledControl (this);
 #endif
 		}
 
@@ -369,8 +371,13 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter w)
 		{
-			if (Page != null)
-				Page.VerifyRenderingInServerForm (this);
+			Page page = Page;
+			if (page != null) {
+				page.VerifyRenderingInServerForm (this);
+#if NET_2_0
+				page.ClientScript.RegisterForEventValidation (UniqueID);
+#endif
+			}
 			
 			bool need_span = ControlStyleCreated && !ControlStyle.IsEmpty;
 			if (need_span) {
@@ -386,7 +393,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			string tt = ToolTip;
-			if (tt != ""){
+			if (tt != null && tt.Length > 0){
 				w.AddAttribute ("title", tt);
 				need_span = true;
 			}
