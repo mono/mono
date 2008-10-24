@@ -218,14 +218,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal int AutoCompleteMatchesCount {
+		internal bool CanNavigateAutoCompleteList {
 			get {
 				if (auto_complete_mode == AutoCompleteMode.None)
-					return -1;
-				if (auto_complete_matches == null)
-					return -1;
+					return false;
+				if (auto_complete_matches == null || auto_complete_matches.Count == 0)
+					return false;
 
-				return auto_complete_matches.Count;
+				bool suggest_window_visible = auto_complete_listbox != null && auto_complete_listbox.Visible;
+				if (auto_complete_mode == AutoCompleteMode.Suggest && !suggest_window_visible)
+					return false;
+
+				return true;
 			}
 		}
 

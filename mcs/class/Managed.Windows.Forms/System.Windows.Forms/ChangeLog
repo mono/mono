@@ -1,3 +1,13 @@
+2008-10-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: Use the new CanNavigateAutoCompleteList property of the
+	textbox to know whether any navigation key will be handled or not. If
+	not, don't pass the message to the textbox, and use it here instead. 
+	* TextBox.cs: Define a new CanNavigateAutoCompleteList property -which
+	is more precise- than the previous AutoCompleteMatches one.
+	This should the keyboard navigation in ComboBox when using auto
+	complete modes.
+
 2008-10-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: Fix item height calculation based off Font to match .Net.
