@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
 <monodoc>
+  <node label="Novell Libraries" name="classlib-novell" parent="libraries" />
   <source provider="ecma" basefile="Novell" path="classlib-novell"/>
 </monodoc>

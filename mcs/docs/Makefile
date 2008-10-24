@@ -15,9 +15,9 @@ DISTFILES = \
 	$(wildcard ecma334/*.xml)
 
 DOC_SOURCE_FILES = \
-	cs-errors.source            \
-	ecma334.source              \
+	lang-csharp.source          \
 	mono-tools.source           \
+	mono-file-formats.source    \
 	Mono.source                 \
 	netdocs.source              \
 	Novell.source               \
@@ -27,6 +27,7 @@ ASSEMBLED_DOCS = \
 	cs-errors.tree cs-errors.zip      \
 	ecma334.tree ecma334.zip          \
 	mono-tools.tree mono-tools.zip    \
+	mono-file-formats.tree mono-file-formats.zip    \
 	Mono.tree Mono.zip                \
 	netdocs.tree netdocs.zip          \
 	Novell.tree Novell.zip            \
@@ -96,24 +97,27 @@ NUNIT_DIRS = \
 
 build-documentation: $(ASSEMBLED_DOCS)
 
-netdocs.tree netdocs.zip:
+netdocs.tree netdocs.zip: Makefile
 	$(MDOC) assemble -o netdocs $(NETDOCS_DIRS)
 
-Mono.tree Mono.zip:
+Mono.tree Mono.zip: Makefile
 	$(MDOC) assemble -o Mono $(MONO_DIRS)
 
-Novell.tree Novell.zip:
+Novell.tree Novell.zip: Makefile
 	$(MDOC) assemble -o Novell $(NOVELL_DIRS)
 
-nunit-docs.tree nunit-docs.zip:
+nunit-docs.tree nunit-docs.zip: Makefile
 	$(MDOC) assemble -o nunit-docs $(NUNIT_DIRS)
 
-cs-errors.tree cs-errors.zip:
-	$(MDOC) assemble -o cs-errors -f error cs-errors.config
+cs-errors.tree cs-errors.zip: cs-errors.config Makefile
+	$(MDOC) assemble -o cs-errors -f error $<
 
-ecma334.tree ecma334.zip:
+ecma334.tree ecma334.zip: Makefile
 	$(MDOC) assemble -o ecma334 -f ecmaspec ecma334
 
-mono-tools.tree mono-tools.zip: mono-tools.config
-	$(MDOC) assemble -o mono-tools -f man mono-tools.config
+mono-tools.tree mono-tools.zip: mono-tools.config Makefile
+	$(MDOC) assemble -o mono-tools -f man $<
+
+mono-file-formats.tree mono-file-formats.zip: mono-file-formats.config Makefile
+	$(MDOC) assemble -o mono-file-formats -f man $<
 

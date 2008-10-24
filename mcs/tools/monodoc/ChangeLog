@@ -1,3 +1,26 @@
+2008-10-21  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Monodoc/provider.cs: 
+	  - Fix Node.Sort() so that it doesn't NRE if nodes == null.
+	  - Fix Node.CompareTo() so that it can sort Nodes that haven't been
+	    loaded yet.
+	  - Add "libraries" as an alias for "root", so that .source files can
+	    refer to the parent "libraries" (which would allow us to change
+	    the location of "libraries" in the future, should we want to).
+	  - If a /monodoc/source/@path refers to a nonexistant node, then
+	    insert the contents under Various instead of ignoring it.
+	  - Sort the top-level nodes.
+	  - Sort the `parent` node after inserting children under it.  This
+	    allows multiple different .source files to insert nodes under the
+	    same parent node and still have the child nodes sorted as most
+	    mortals would expect.
+	  - Support a //node/@parent attribute, which allows for creating
+	    nodes underneath the specified parent node.  This allows multiple
+	    different .source files to contribute to the tree and depend upon
+	    each other.  Thus, instead of having a single monodoc.xml file
+	    that needs to know the entire tree in advance, the entire tree can
+	    be spread across multiple .source files and filled at runtime.
+
 2008-10-18  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile $(LIBRARY_PACKAGE): Set to `monodoc`, as we historically

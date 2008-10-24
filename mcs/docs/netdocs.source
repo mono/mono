@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
 <monodoc>
+  <node label="Base Class Library" name="classlib" parent="libraries" />
   <source provider="ecma" basefile="netdocs" path="classlib"/>
 </monodoc>

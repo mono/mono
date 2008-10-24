@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
 <monodoc>
+  <node label="Mono Libraries" name="classlib-mono" parent="libraries" />
   <source provider="ecma" basefile="Mono" path="classlib-mono"/>
 </monodoc>

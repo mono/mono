@@ -339,7 +339,8 @@ public class Node : IComparable {
 
 	public void Sort ()
 	{
-		nodes.Sort ();
+		if (nodes != null)
+			nodes.Sort ();
 	}
 
 	public string URL {
@@ -364,7 +365,15 @@ public class Node : IComparable {
 
 	int IComparable.CompareTo (object obj)
 	{
-		Node other = (Node) obj;
+		Node other = obj as Node;
+		if (other == null)
+			return -1;
+
+		if (position < 0)
+			LoadNode ();
+		if (other.position < 0)
+			other.LoadNode ();
+
 		return String.CompareOrdinal(caption, other.caption);
 	}
 }
@@ -779,6 +788,7 @@ public class RootTree : Tree {
 		XmlNodeList nodes = doc.SelectNodes ("/node/node");
 
 		root.name_to_node ["root"] = root;
+		root.name_to_node ["libraries"] = root;
 		root.Populate (root, nodes);
 
 		Node third_party = root.LookupEntryPoint ("various");
@@ -845,12 +855,13 @@ public class RootTree : Tree {
 				Node parent = root.LookupEntryPoint (path);
 				if (parent == null){
 					Console.Error.WriteLine ("node `{0}' is not defined on the documentation map", path);
-					continue;
+					parent = third_party;
 				}
 
 				foreach (Node n in hs.Tree.Nodes){
 					parent.AddNode (n);
 				}
+				parent.Sort ();
 			}
 		}
 		
@@ -868,6 +879,8 @@ public class RootTree : Tree {
 		
 		// Clean the tree
 		PurgeNode(root);
+
+		root.Sort ();
 
 		return root;
 	}
@@ -949,7 +962,14 @@ public class RootTree : Tree {
 	void Populate (Node parent, XmlNodeList xml_node_list)
 	{
 		foreach (XmlNode xml_node in xml_node_list){
-			XmlAttribute e = xml_node.Attributes ["label"];
+			XmlAttribute e = xml_node.Attributes ["parent"];
+			if (e != null && name_to_node.ContainsKey (e.InnerText)) {
+				Node p = (Node) name_to_node [e.InnerText];
+				xml_node.Attributes.Remove (e);
+				Populate (p, xml_node.SelectNodes ("."));
+				continue;
+			}
+			e = xml_node.Attributes ["label"];
 			if (e == null){
 				Console.Error.WriteLine ("`label' attribute missing in <node>");
 				continue;

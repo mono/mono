@@ -1,3 +1,26 @@
+2008-10-22  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs (svn:ignore): Ignore generated files.
+	* docs/lang-csharp.source: Added; combined .source file for the C#
+	  language specification and error reference.
+	* docs/Makefile: Support lang-csharp.source, mono-file-formats.*, etc.
+	* *.tree/*.zip should be rebuilt when Makefile is changed.
+	* docs/mono-file-formats.config, docs/mono-file-formats.source: Added;
+	  moving file format documentation out from mono-tools.* so that it's
+	  easier to find.
+	* docs/mono-tools.config: Move mdoc(5), mono-config(5) to
+	  mono-file-formats.config.
+	* docs/mono-tools.source, docs/Mono.source, docs/netdocs.source,
+	  docs/Novell.source, docs/nunit-docs.source: Add /monodoc/node
+	  information so that the documentation is inserted into the correct
+	  location.
+	* docs/monodoc.xml: Vastly simplify the default monodoc.xml as
+	  structure can be/has been pushed out into the .source files.  This
+	  should help simplify the life of downstream packagers who wish to
+	  add additional documentation to monodoc.
+	* docs/ecma334.source, docs/cs-errors.source: Remove (replaced with
+	  lang-csharp.source).
+
 2008-10-20  Jonathan Pryor  <jpryor@novell.com>
 
 	* docs/Makefile (MONO_DIRS): Add Mono.Data.SqliteClient docs.
