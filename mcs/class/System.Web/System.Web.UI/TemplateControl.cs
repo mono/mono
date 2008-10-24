@@ -325,7 +325,7 @@ namespace System.Web.UI {
 			// UserControlParser.GetCompiledType, but instead resort to some other way
 			// of creating the content (template instantiation? BuildManager? TBD)
 			TextReader reader = new StringReader (content);
-			Type control = UserControlParser.GetCompiledType (reader, HttpContext.Current);
+			Type control = UserControlParser.GetCompiledType (reader, content.GetHashCode (), HttpContext.Current);
 			if (control == null)
 				return null;
 

@@ -1,3 +1,14 @@
+2008-10-24  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControl.cs: pass content hash to
+	UserControlParser.GetCompiledType when compiling a control in
+	ParseControl.
+
+	* UserControlParser.cs: when compiling a control using a text
+	reader, append a unique suffix to the "file path" - that way
+	controls compiled from different input streams won't conflict with
+	each other in the compilation cache.
+
 2008-10-23  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlParser.cs: added internal method

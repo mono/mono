@@ -85,7 +85,7 @@ namespace System.Web.UI
 			AddApplicationAssembly ();
 		}
 
-		internal UserControlParser (TextReader reader, HttpContext context)
+		internal UserControlParser (TextReader reader, int? uniqueSuffix, HttpContext context)
 		{
 			Context = context;
 
@@ -93,19 +93,17 @@ namespace System.Web.UI
 			BaseVirtualDir = UrlUtils.GetDirectory (fpath);
 
 			// We're probably being called by ParseControl - let's use the requested
-			// control's path as our input file, since that's the context we're being
-			// invoked from.
-			InputFile = VirtualPathUtility.GetFileName (fpath);
+			// control's path plus unique suffix as our input file, since that's the
+			// context we're being invoked from.
+			InputFile = VirtualPathUtility.GetFileName (fpath) + "#" + (uniqueSuffix != null ? ((int)uniqueSuffix).ToString ("x") : "0");
 			Reader = reader;
 			SetBaseType (null);
 			AddApplicationAssembly ();
-		}
-#endif
+		}		
 
-#if NET_2_0
-		internal static Type GetCompiledType (TextReader reader, HttpContext context)
+		internal static Type GetCompiledType (TextReader reader, int? inputHashCode, HttpContext context)
 		{
-			UserControlParser ucp = new UserControlParser (reader, context);
+			UserControlParser ucp = new UserControlParser (reader, inputHashCode, context);
 			return ucp.CompileIntoType ();
 		}
 #endif
