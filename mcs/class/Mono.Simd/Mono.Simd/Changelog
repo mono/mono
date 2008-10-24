@@ -1,5 +1,14 @@
 2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector4i.cs:
+	* Vector4ui.cs:
+	* Vector8s.cs:
+	* Vector8us.cs: Add (Signed)PackWithSignedSaturation.
+
+	* Vector8s.cs: Remove the CLSCompliant(false) from a compliant method.
+
+2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector16b: Mark type as CLS compliant (remove attribute) and
 	mark the methods which are not.
 

@@ -164,6 +164,18 @@ namespace Mono.Simd
 			return res;
 		}
 
+		public static unsafe Vector8s PackWithSignedSaturation (Vector4i va, Vector4i vb) {
+			Vector8s res = new Vector8s ();
+			int *a = (int*)&va;
+			int *b = (int*)&vb;
+			short *c = (short*)&res;
+			for (int i = 0; i < 4; ++i)
+				*c++ = (short)System.Math.Max (System.Math.Min ((int)*a++, short.MaxValue), short.MinValue);
+			for (int i = 0; i < 4; ++i)
+				*c++ = (short)System.Math.Max (System.Math.Min ((int)*b++, short.MaxValue), short.MinValue);
+			return res;
+		}
+
   		public static unsafe explicit operator Vector4f (Vector4i v1)
 		{
 			Vector4f* p = (Vector4f*)&v1;

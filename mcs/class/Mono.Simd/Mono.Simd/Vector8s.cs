@@ -253,7 +253,6 @@ namespace Mono.Simd
 			return res;
 		}
 
-		[CLSCompliant(false)]
 		public static unsafe Vector16b PackWithUnsignedSaturation (Vector8s va, Vector8s vb) {
 			Vector16b res = new Vector16b ();
 			short *a = (short*)&va;
@@ -263,6 +262,19 @@ namespace Mono.Simd
 				*c++ = (byte)System.Math.Max (0, System.Math.Min ((int)*a++, byte.MaxValue));
 			for (int i = 0; i < 8; ++i)
 				*c++ = (byte)System.Math.Max (0, System.Math.Min ((int)*b++, byte.MaxValue));
+			return res;
+		}
+
+		[CLSCompliant(false)]
+		public static unsafe Vector16sb PackWithSignedSaturation (Vector8s va, Vector8s vb) {
+			Vector16sb res = new Vector16sb ();
+			short *a = (short*)&va;
+			short *b = (short*)&vb;
+			sbyte *c = (sbyte*)&res;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (sbyte)System.Math.Max (System.Math.Min ((int)*a++, sbyte.MaxValue), sbyte.MinValue);
+			for (int i = 0; i < 8; ++i)
+				*c++ = (sbyte)System.Math.Max (System.Math.Min ((int)*b++, sbyte.MaxValue), sbyte.MinValue);
 			return res;
 		}
 
