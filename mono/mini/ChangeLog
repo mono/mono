@@ -1,3 +1,7 @@
+2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* basic-simd.cs: Tests for Vector16sb.
+
 2008-10-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg (stmt): Fix OP_HARD_NOP rule.
