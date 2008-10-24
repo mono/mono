@@ -1,3 +1,7 @@
+2008-10-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (stmt): Fix OP_HARD_NOP rule.
+
 2008-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-ops.h: Add packed signed min, max and compare greater.
