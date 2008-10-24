@@ -1,3 +1,8 @@
+2008-10-24  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c, mini.c: Special casing for the synchronized
+	wrapper for the ldtoken+GetTypeFromHandle case.
+
 2008-10-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_replace_ins): Move this to branch-opts.c.
