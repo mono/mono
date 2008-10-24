@@ -1,3 +1,7 @@
+2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_create_from_typedef): Added Vector4i.
+
 2008-10-24  Mark Probst  <mark.probst@gmail.com>
 
 	* marshal.c (mono_marshal_get_synchronized_wrapper): Emit
