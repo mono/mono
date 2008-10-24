@@ -3,6 +3,7 @@
 Assembly/AssemblyInfo.cs
 Mono.Simd/Vector4f.cs
 Mono.Simd/Vector4ui.cs
+Mono.Simd/Vector4i.cs
 Mono.Simd/Vector8us.cs
 Mono.Simd/Vector8s.cs
 Mono.Simd/Vector16b.cs
