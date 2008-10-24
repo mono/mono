@@ -35,12 +35,7 @@ namespace DbLinq.Util
     /// <summary>
     /// maintainer: Anton Andreev
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
-    public
-#endif 
-    static class QuotesHelper
+    internal static class QuotesHelper
     {
         public static string AddQuotesToSequence(string idColName, string sequenceName)
         {

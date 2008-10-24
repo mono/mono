@@ -92,21 +92,6 @@ namespace DbLinq.Data.Linq.Sugar
         IList<MemberInfo> GetColumns(MetaTable tableDescription);
 
         /// <summary>
-        /// Returns associations
-        /// </summary>
-        /// <param name="thisTableExpression"></param>
-        /// <param name="memberInfo"></param>
-        /// <param name="thisKey"></param>
-        /// <param name="otherKey"></param>
-        /// <param name="joinType"></param>
-        /// <param name="joinID"></param>
-        /// <param name="dataContext"></param>
-        /// <returns></returns>
-        Type GetAssociation(TableExpression thisTableExpression, MemberInfo memberInfo,
-                            out IList<MemberInfo> thisKey, out IList<MemberInfo> otherKey, out TableJoinType joinType,
-                            out string joinID, DataContext dataContext);
-
-        /// <summary>
         /// Returns child associations (EntitySets)
         /// </summary>
         /// <param name="type"></param>
@@ -119,5 +104,18 @@ namespace DbLinq.Data.Linq.Sugar
         /// <param name="type"></param>
         /// <returns></returns>
         IList<MemberInfo> GetEntityRefAssociations(Type type);
+
+        /// <summary>
+        /// Returns association definition, if any
+        /// </summary>
+        /// <param name="thisTableExpression">The table referenced by the assocation (the type holding the member)</param>
+        /// <param name="memberInfo">The memberInfo related to association</param>
+        /// <param name="otherType"></param>
+        /// <param name="otherKey">The keys in the associated table</param>
+        /// <param name="joinType"></param>
+        /// <param name="joinID"></param>
+        /// <param name="dataContext"></param>
+        /// <returns>ThisKey</returns>
+        IList<MemberInfo> GetAssociation(TableExpression thisTableExpression, MemberInfo memberInfo, Type otherType, out IList<MemberInfo> otherKey, out TableJoinType joinType, out string joinID, DataContext dataContext);
     }
 }

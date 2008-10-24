@@ -26,7 +26,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using DbLinq.Logging;
 
 #if MONO_STRICT
 namespace System.Data.Linq
@@ -40,8 +39,6 @@ namespace DbLinq.Data.Linq
     /// <typeparam name="TEntity"></typeparam>
     partial class Table<TEntity>
     {
-        public ILogger Logger { get { return _Logger; } set { _Logger = value; } }
-
         public void CancelDeleteOnSubmit(TEntity entity)
         {
             Context.UnregisterDelete(entity);

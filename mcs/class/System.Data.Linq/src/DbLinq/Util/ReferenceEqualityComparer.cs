@@ -23,10 +23,9 @@
 // THE SOFTWARE.
 // 
 #endregion
-using System;
+
 using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace DbLinq.Util
 {

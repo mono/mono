@@ -50,7 +50,7 @@ namespace DbLinq.Oracle
 #else
     public
 #endif
-    class OracleVendor : Vendor.Implementation.Vendor
+ class OracleVendor : Vendor.Implementation.Vendor
     {
         public override string VendorName { get { return "Oracle"; } }
 
@@ -86,5 +86,14 @@ namespace DbLinq.Oracle
 
         protected override string ConnectionStringDatabase { get { return null; } }
         protected override string ConnectionStringServer { get { return "data source"; } }
+
+        override protected TypeToLoadData GetProviderTypeName()
+        {
+            return new TypeToLoadData
+            {
+                assemblyName = "Oracle.DataAccess.DLL",
+                className = "OracleConnection",
+            };
+        }
     }
 }

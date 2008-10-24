@@ -98,5 +98,16 @@ namespace DbLinq.Firebird
                 : string.Format("SELECT FIRST {0}", limit[0].Sql);
             return select.Replace("SELECT", stmt, true);
         }
+
+        public override SqlStatement GetInsertIds(IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
+        {
+            // no parameters? no need to get them back
+            if (outputParameters.Count == 0)
+                return "";
+            // otherwise we keep track of the new values
+            return SqlStatement.Format("SELECT {0} INTO {1} FROM DUAL",
+                SqlStatement.Join(", ", (from outputExpression in outputExpressions select outputExpression.Replace(".NextVal", ".CurrVal", true)).ToArray()),
+                SqlStatement.Join(", ", outputParameters.ToArray()));
+        }
     }
 }

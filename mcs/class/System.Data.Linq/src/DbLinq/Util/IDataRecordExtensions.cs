@@ -28,7 +28,7 @@ using System.Data;
 
 namespace DbLinq.Util
 {
-#if MONO_STRICT
+#if MONO_STRICT || !DEBUG
     internal
 #else
     public

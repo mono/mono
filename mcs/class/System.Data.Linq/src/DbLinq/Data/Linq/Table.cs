@@ -45,7 +45,6 @@ using DbLinq.Data.Linq.Sugar;
 using ITable = DbLinq.Data.Linq.ITable;
 #endif
 
-using DbLinq.Logging;
 using DbLinq;
 
 
@@ -77,9 +76,6 @@ namespace DbLinq.Data.Linq
 
         // QueryProvider is the running entity, running through nested Expressions
         private readonly QueryProvider<TEntity> _queryProvider;
-
-        [DBLinqExtended]
-        internal ILogger _Logger { get; set; }
 
         internal Table(DataContext parentContext)
         {

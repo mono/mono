@@ -42,8 +42,13 @@ namespace DbLinq.Vendor
 #else
     public
 #endif
- interface ISqlProvider
+    interface ISqlProvider
     {
+        /// <summary>
+        /// String values and function parameter first character index is 1
+        /// </summary>
+        bool StringIndexStartsAtOne { get; }
+
         string NewLine { get; }
 
         /// <summary>

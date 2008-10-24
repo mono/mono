@@ -29,12 +29,7 @@ using System.Text;
 
 namespace DbLinq.Util
 {
-#if MONO_STRICT
-    internal
-#else
-    public
-#endif
- static class StringExtensions
+    internal static class StringExtensions
     {
         public static string Enquote(this string text, char startQuote, char endQuote)
         {

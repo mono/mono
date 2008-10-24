@@ -23,11 +23,10 @@
 // THE SOFTWARE.
 // 
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 
 namespace DbLinq.Util
 {
@@ -37,7 +36,8 @@ namespace DbLinq.Util
 #if MONO_STRICT
     internal
 #else
-    public
+    // TODO: once R# is fixed with internal extension methods problems, switch to full internal
+    public // DataCommand is used by vendors
 #endif
     static class DataCommand
     {
@@ -58,18 +58,19 @@ namespace DbLinq.Util
                 command.CommandText = sql;
                 if (dbParameterName != null)
                 {
-                    IDbDataParameter parameter = command.CreateParameter();
+                    var parameter = command.CreateParameter();
                     parameter.ParameterName = dbParameterName;
                     parameter.Value = db;
                     command.Parameters.Add(parameter);
                 }
-                using (IDataReader rdr = command.ExecuteReader())
+                using (var rdr = command.ExecuteReader())
                 {
-                    List<T> list = new List<T>();
+                    var list = new List<T>();
                     while (rdr.Read())
                     {
                         var t = readDelegate(rdr);
-                        if (t != null)
+                        // we may have a value type, here
+                        if (!Equals(t, default(T)))
                             list.Add(t);
                     }
                     return list;

@@ -37,7 +37,7 @@ namespace DbLinq.Util
 #else
     public
 #endif
- static class MemberInfoExtensions
+    static class MemberInfoExtensions
     {
         /// <summary>
         /// Returns the type of the specified member

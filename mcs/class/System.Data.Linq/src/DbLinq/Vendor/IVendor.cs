@@ -98,5 +98,10 @@ namespace DbLinq.Vendor
         /// <param name="pageSize"></param>
         /// <param name="transaction"></param>
         void BulkInsert<T>(Table<T> table, List<T> rows, int pageSize, IDbTransaction transaction) where T : class;
+
+        /// <summary>
+        /// required by DataContext ctor, which needs to create an IDbConnection, given an IVendor
+        /// </summary>
+        IDbConnection CreateDbConnection(string connectionString);
     }
 }

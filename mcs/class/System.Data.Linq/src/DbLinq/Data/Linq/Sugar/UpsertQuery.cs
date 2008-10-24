@@ -39,13 +39,8 @@ namespace System.Data.Linq.Sugar
 namespace DbLinq.Data.Linq.Sugar
 #endif
 {
-    internal class UpsertQuery : AbstractQuery
+    internal class UpsertQuery : ParameterizedQuery
     {
-        /// <summary>
-        /// Input parameters, instance based (the instance being the entity)
-        /// </summary>
-        public IList<ObjectInputParameterExpression> InputParameters { get; private set; }
-
         /// <summary>
         /// Output parameters, intstance based (the instance being the entity)
         /// </summary>
@@ -58,9 +53,8 @@ namespace DbLinq.Data.Linq.Sugar
 
         public UpsertQuery(DataContext dataContext, SqlStatement sql, SqlStatement idQuerySql, IList<ObjectInputParameterExpression> inputParameters,
             IList<ObjectOutputParameterExpression> outputParameters)
-            : base(dataContext, sql)
+            : base(dataContext, sql,inputParameters)
         {
-            InputParameters = inputParameters;
             OutputParameters = outputParameters;
             IdQuerySql = idQuerySql;
         }

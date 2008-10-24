@@ -35,7 +35,6 @@ using System.Data.Linq.SqlClient;
 #else
 using DbLinq.Data.Linq.SqlClient;
 #endif
-using DbLinq.Logging;
 using DbLinq.PostgreSql;
 using DbLinq.Util;
 using DbLinq.Vendor;
@@ -221,13 +220,22 @@ namespace DbLinq.PostgreSql
                     object val2 = TypeConvert.To(val, desired_type);
                     outParamValues.Add(val2);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //fails with 'System.Decimal cannot be converted to Int32'
-                    Logger.Write(Level.Error, "CopyOutParams ERROR L245: failed on CastValue(): " + ex.Message);
+                    //Logger.Write(Level.Error, "CopyOutParams ERROR L245: failed on CastValue(): " + ex.Message);
                 }
             }
             return outParamValues;
+        }
+
+        override protected TypeToLoadData GetProviderTypeName()
+        {
+            return new TypeToLoadData
+            {
+                assemblyName = "Npgsql.DLL",
+                className = "NpgsqlConnection",
+            };
         }
     }
 }

@@ -24,34 +24,50 @@
 // 
 #endregion
 
+using DbLinq.Util;
+using DbLinq.Data.Linq.Database;
 using System.Collections.Generic;
 
-namespace DbLinq.Util
-{
 #if MONO_STRICT
-    internal
+using System.Data.Linq.Sql;
+using System.Data.Linq.Sugar.Expressions;
 #else
-    public
+using DbLinq.Data.Linq.Sql;
+using DbLinq.Data.Linq.Sugar.Expressions;
 #endif
-    class Page
+
+#if MONO_STRICT
+namespace System.Data.Linq.Sugar
+#else
+namespace DbLinq.Data.Linq.Sugar
+#endif
+{
+    internal abstract class ParameterizedQuery : AbstractQuery
     {
-        /// <summary>
-        /// break a bigList into pages of size N.
-        /// </summary>
-        public static IEnumerable<List<T>> Paginate<T>(List<T> bigList, int pageSize)
+        protected ParameterizedQuery(DataContext dataContext, SqlStatement sql, IList<ObjectInputParameterExpression> inputParameters)
+            : base(dataContext, sql)
         {
-            List<T> smallList = new List<T>();
-            foreach (T t in bigList)
-            {
-                smallList.Add(t);
-                if (smallList.Count >= pageSize)
-                {
-                    yield return smallList;
-                    smallList.Clear();
-                }
-            }
-            if (smallList.Count > 0)
-                yield return smallList;
+            this.InputParameters = inputParameters;
         }
+
+        /// <summary>
+        /// Parameters to be sent as SQL parameters
+        /// </summary>
+        public IList<ObjectInputParameterExpression> InputParameters { get; protected set; }
+
+        public override IDbLinqCommand GetCommand()
+        {
+            IDbLinqCommand dbCommand = base.GetCommand(true);
+            foreach (var inputParameter in InputParameters)
+            {
+                var dbParameter = dbCommand.Command.CreateParameter();
+                dbParameter.ParameterName = DataContext.Vendor.SqlProvider.GetParameterName(inputParameter.Alias);
+                dbParameter.SetValue(inputParameter.GetValue(Target), inputParameter.ValueType);
+                dbCommand.Command.Parameters.Add(dbParameter);
+            }
+            return dbCommand;
+        }
+
+        public object Target { get; set; }
     }
 }

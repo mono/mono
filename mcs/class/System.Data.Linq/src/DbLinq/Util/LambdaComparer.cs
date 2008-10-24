@@ -33,12 +33,7 @@ namespace DbLinq.Util
     /// The name sucks, but it is to avoid confusion with System.Collections.Generic.Comparer
     /// </summary>
     /// <typeparam name="T"></typeparam>
-#if MONO_STRICT
-    internal
-#else
-    public
-#endif
-    class LambdaComparer<T> : IComparer<T>
+    internal class LambdaComparer<T> : IComparer<T>
     {
         private readonly Func<T, T, int> comparer;
 

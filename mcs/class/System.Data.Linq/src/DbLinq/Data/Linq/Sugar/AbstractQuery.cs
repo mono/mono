@@ -24,9 +24,14 @@
 // 
 #endregion
 
+using DbLinq.Util;
+using DbLinq.Data.Linq.Database;
+using System.Collections.Generic;
+
 #if MONO_STRICT
 using System.Data.Linq.Sql;
 #else
+using DbLinq.Data.Linq.Sugar.Expressions;
 using DbLinq.Data.Linq.Sql;
 #endif
 
@@ -41,6 +46,13 @@ namespace DbLinq.Data.Linq.Sugar
     /// </summary>
     internal abstract class AbstractQuery
     {
+        public abstract IDbLinqCommand GetCommand();
+
+        protected IDbLinqCommand GetCommand(bool createTransaction)
+        {
+            return new DbLinq.Data.Linq.Database.Implementation.DbLinqCommand(Sql.ToString(), createTransaction, DataContext);
+        }
+
         /// <summary>
         /// The DataContext from which the request originates
         /// </summary>

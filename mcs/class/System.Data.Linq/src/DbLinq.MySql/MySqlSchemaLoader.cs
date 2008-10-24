@@ -33,7 +33,6 @@ using DbLinq.Schema.Dbml;
 using DbLinq.Util;
 using DbLinq.Vendor;
 using DbLinq.Vendor.Implementation;
-using DbLinq.Logging;
 
 namespace DbLinq.MySql
 {
@@ -87,7 +86,7 @@ namespace DbLinq.MySql
                     table = schema.Tables.FirstOrDefault(t => 0 == string.Compare(fullKeyDbName, t.Name, ignoreCase));
                     if (table == null)
                     {
-                        Logger.Write(Level.Error, "ERROR L46: Table '" + keyColRow.TableName + "' not found for column " + keyColRow.ColumnName);
+                        WriteErrorLine("ERROR L46: Table '" + keyColRow.TableName + "' not found for column " + keyColRow.ColumnName);
                         continue;
                     }
                 }

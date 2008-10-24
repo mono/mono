@@ -31,6 +31,7 @@ using System.Data.Common;
 using System.Data.Linq.Mapping;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -53,7 +54,6 @@ using System.Data.Linq;
 #endif
 
 using DbLinq.Factory;
-using DbLinq.Logging;
 using DbLinq.Vendor;
 using DbLinq.Data.Linq.Database;
 using DbLinq.Data.Linq.Database.Implementation;
@@ -80,23 +80,12 @@ namespace DbLinq.Data.Linq
         internal IQueryRunner QueryRunner { get; set; }
         internal IMemberModificationHandler MemberModificationHandler { get; set; }
         internal IDatabaseContext DatabaseContext { get; private set; }
-        internal ILogger Logger { get; set; }
         // /all properties...
 
-        // entities may be registered in 3 sets: InsertList, EntityMap and DeleteList
-        // InsertList is for new entities
-        // DeleteList is for entities to be deleted
-        // EntityMap is the cache: entities are alive in the DataContext, identified by their PK (IdentityKey)
-        // an entity can only live in one of the three caches, so the DataContext will provide 6 methods:
-        // 3 to register in each list, 3 to unregister
-        //internal IEntityMap EntityMap { get; set; }
-        //internal readonly EntityList InsertList = new EntityList();
-        //internal readonly EntityList DeleteList = new EntityList();
         private readonly EntityTracker entityTracker = new EntityTracker();
 
         private IIdentityReaderFactory identityReaderFactory;
         private readonly IDictionary<Type, IIdentityReader> identityReaders = new Dictionary<Type, IIdentityReader>();
-
 
         /// <summary>
         /// The default behavior creates one MappingContext.
@@ -107,13 +96,11 @@ namespace DbLinq.Data.Linq
         [DBLinqExtended]
         internal IVendorProvider _VendorProvider { get; set; }
 
-        [DbLinqToDo]
         public DataContext(IDbConnection connection, MappingSource mapping)
         {
             Init(new DatabaseContext(connection), mapping, null);
         }
 
-        [DbLinqToDo]
         public DataContext(IDbConnection connection)
         {
             Init(new DatabaseContext(connection), null, null);
@@ -125,19 +112,117 @@ namespace DbLinq.Data.Linq
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Construct DataContext, given a connectionString.
+        /// To determine which DB type to go against, we look for 'DbLinqProvider=xxx' substring.
+        /// If not found, we assume that we are dealing with MS Sql Server.
+        /// 
+        /// Valid values are names of provider DLLs (or any other DLL containing an IVendor implementation)
+        /// DbLinqProvider=Mysql
+        /// DbLinqProvider=Oracle etc.
+        /// </summary>
+        /// <param name="connectionString">specifies file or server connection</param>
         [DbLinqToDo]
-        public DataContext(string fileOrServerOrConnection)
+        public DataContext(string connectionString)
         {
-            throw new NotImplementedException();
+            #region DataContext connectionString ctor
+            if (connectionString == null)
+                throw new ArgumentNullException("connectionString");
+
+            System.Text.RegularExpressions.Regex reProvider
+                = new System.Text.RegularExpressions.Regex(@"DbLinqProvider=([\w\.]+)");
+
+            int startPos = connectionString.IndexOf("DbLinqProvider=");
+            string assemblyToLoad;
+            string vendorClassToLoad;
+            if (!reProvider.IsMatch(connectionString))
+            {
+                assemblyToLoad = "DbLinq.SqlServer.dll";
+                vendorClassToLoad = "SqlServerVendor";
+            }
+            else
+            {
+                System.Text.RegularExpressions.Match match = reProvider.Match(connectionString);
+#if MONO_STRICT
+                //Pascal says on the forum: 
+                //[in MONO] "all vendors are (will be) embedded in the System.Data.Linq assembly"
+                assemblyToLoad = "System.Data.Linq.dll";
+                vendorClassToLoad = match.Groups[1].Value; //eg. "MySql"
+#else
+                //plain DbLinq - non MONO: 
+                //IVendor classes are in DLLs such as "DbLinq.MySql.dll"
+                assemblyToLoad = match.Groups[1].Value; //eg. assemblyToLoad="DbLinq.MySql.dll"
+                if (assemblyToLoad.Contains("."))
+                {
+                    //already fully qualified DLL name?
+                    throw new ArgumentException("Please provide a short name, such as 'MySql', not '" + assemblyToLoad + "'");
+                }
+                else
+                {
+                    //we were given short name, such as MySql
+                    vendorClassToLoad = assemblyToLoad + "Vendor"; //eg. MySqlVendor
+                    assemblyToLoad = "DbLinq." + assemblyToLoad + ".dll"; //eg. DbLinq.MySql.dll
+                }
+#endif
+                //shorten: "DbLinqProvider=X;Server=Y" -> ";Server=Y"
+                string shortenedConnStr = reProvider.Replace(connectionString, "");
+                connectionString = shortenedConnStr;
+            }
+
+            Assembly assy;
+            try
+            {
+                //TODO: check if DLL is already loaded?
+                assy = Assembly.LoadFrom(assemblyToLoad);
+            }
+            catch (Exception ex)
+            {
+                //TODO: add proper logging here
+                Console.WriteLine("DataContext ctor: Assembly load failed for " + assemblyToLoad + ": " + ex);
+                throw ex;
+            }
+
+            //find IDbProvider class in this assembly:
+            var ctors = (from mod in assy.GetModules()
+                         from cls in mod.GetTypes()
+                         where cls.GetInterfaces().Contains(typeof(IVendor))
+                            && cls.Name.ToLower() == vendorClassToLoad.ToLower()
+                         let ctorInfo = cls.GetConstructor(Type.EmptyTypes)
+                         where ctorInfo != null
+                         select ctorInfo).ToList();
+            if (ctors.Count == 0)
+            {
+                string msg = "Found no IVendor class in assembly " + assemblyToLoad + " having a string ctor";
+                throw new ArgumentException(msg);
+            }
+            else if (ctors.Count > 1)
+            {
+                string msg = "Found more than one IVendor class in assembly " + assemblyToLoad + " having a string ctor";
+                throw new ArgumentException(msg);
+            }
+            ConstructorInfo ctorInfo2 = ctors[0];
+
+            object ivendorObject;
+            try
+            {
+                ivendorObject = ctorInfo2.Invoke(new object[]{});
+            }
+            catch (Exception ex)
+            {
+                //TODO: add proper logging here
+                Console.WriteLine("DataContext ctor: Failed to invoke IVendor ctor " + ctorInfo2.Name + ": " + ex);
+                throw ex;
+            }
+            IVendor ivendor = (IVendor)ivendorObject;
+            IDbConnection dbConnection = ivendor.CreateDbConnection(connectionString);
+            Init(new DatabaseContext(dbConnection), null, ivendor);
+            #endregion
         }
 
         private void Init(IDatabaseContext databaseContext, MappingSource mappingSource, IVendor vendor)
         {
-
             if (databaseContext == null)
                 throw new ArgumentNullException("databaseContext");
-
-            Logger = ObjectFactory.Get<ILogger>();
 
             _VendorProvider = ObjectFactory.Get<IVendorProvider>();
             if (vendor == null)
@@ -225,29 +310,29 @@ namespace DbLinq.Data.Linq
                 {
                     switch (entityTrack.EntityState)
                     {
-                    case EntityState.ToInsert:
-                        var insertQuery = QueryBuilder.GetInsertQuery(entityTrack.Entity, queryContext);
-                        QueryRunner.Insert(entityTrack.Entity, insertQuery);
-                        Register(entityTrack.Entity);
-                        break;
-                    case EntityState.ToWatch:
-                        if (MemberModificationHandler.IsModified(entityTrack.Entity, Mapping))
-                        {
-                            var modifiedMembers = MemberModificationHandler.GetModifiedProperties(entityTrack.Entity, Mapping);
-                            var updateQuery = QueryBuilder.GetUpdateQuery(entityTrack.Entity, modifiedMembers, queryContext);
-                            QueryRunner.Update(entityTrack.Entity, updateQuery, modifiedMembers);
+                        case EntityState.ToInsert:
+                            var insertQuery = QueryBuilder.GetInsertQuery(entityTrack.Entity, queryContext);
+                            QueryRunner.Insert(entityTrack.Entity, insertQuery);
+                            Register(entityTrack.Entity);
+                            break;
+                        case EntityState.ToWatch:
+                            if (MemberModificationHandler.IsModified(entityTrack.Entity, Mapping))
+                            {
+                                var modifiedMembers = MemberModificationHandler.GetModifiedProperties(entityTrack.Entity, Mapping);
+                                var updateQuery = QueryBuilder.GetUpdateQuery(entityTrack.Entity, modifiedMembers, queryContext);
+                                QueryRunner.Update(entityTrack.Entity, updateQuery, modifiedMembers);
 
-                            RegisterUpdateAgain(entityTrack.Entity);
-                        }
-                        break;
-                    case EntityState.ToDelete:
-                        var deleteQuery = QueryBuilder.GetDeleteQuery(entityTrack.Entity, queryContext);
-                        QueryRunner.Delete(entityTrack.Entity, deleteQuery);
+                                RegisterUpdateAgain(entityTrack.Entity);
+                            }
+                            break;
+                        case EntityState.ToDelete:
+                            var deleteQuery = QueryBuilder.GetDeleteQuery(entityTrack.Entity, queryContext);
+                            QueryRunner.Delete(entityTrack.Entity, deleteQuery);
 
-                        UnregisterDelete(entityTrack.Entity);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                            UnregisterDelete(entityTrack.Entity);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 }
                 // TODO: handle conflicts (which can only occur when concurrency mode is implemented)
@@ -567,18 +652,18 @@ namespace DbLinq.Data.Linq
             {
                 switch (entityTrack.EntityState)
                 {
-                case EntityState.ToInsert:
-                    inserts.Add(entityTrack.Entity);
-                    break;
-                case EntityState.ToWatch:
-                    if (MemberModificationHandler.IsModified(entityTrack.Entity, Mapping))
-                        updates.Add(entityTrack.Entity);
-                    break;
-                case EntityState.ToDelete:
-                    deletes.Add(entityTrack.Entity);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                    case EntityState.ToInsert:
+                        inserts.Add(entityTrack.Entity);
+                        break;
+                    case EntityState.ToWatch:
+                        if (MemberModificationHandler.IsModified(entityTrack.Entity, Mapping))
+                            updates.Add(entityTrack.Entity);
+                        break;
+                    case EntityState.ToDelete:
+                        deletes.Add(entityTrack.Entity);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
             return new ChangeSet(inserts, updates, deletes);
@@ -662,7 +747,7 @@ namespace DbLinq.Data.Linq
         /// <summary>
         /// Sets a TextWriter where generated SQL commands are written
         /// </summary>
-        public System.IO.TextWriter Log { get; set; }
+        public TextWriter Log { get; set; }
 
         /// <summary>
         /// Writes text on Log (if not null)
@@ -741,7 +826,15 @@ namespace DbLinq.Data.Linq
         [DbLinqToDo]
         public DbCommand GetCommand(IQueryable query)
         {
-            throw new NotImplementedException();
+            QueryProvider qp = query.Provider as QueryProvider;
+            if (qp == null)
+                throw new InvalidOperationException();
+
+            IDbCommand dbCommand = qp.GetQuery(null).GetCommand().Command;
+            if (!(dbCommand is DbCommand))
+                throw new InvalidOperationException();
+
+            return (DbCommand)dbCommand;
         }
 
         [DbLinqToDo]

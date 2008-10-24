@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using DbLinq.Logging;
 using DbLinq.Schema;
 using DbLinq.Schema.Dbml;
 using DbLinq.Util;
@@ -54,7 +53,7 @@ namespace DbLinq.Oracle
                 DbLinq.Schema.Dbml.Table table = schema.Tables.FirstOrDefault(t => constraintFullDbName == t.Name);
                 if (table == null)
                 {
-                    Logger.Write(Level.Error, "ERROR L100: Table '" + constraint.TableName + "' not found for column " + constraint.ColumnName);
+                    WriteErrorLine("ERROR L100: Table '" + constraint.TableName + "' not found for column " + constraint.ColumnName);
                     continue;
                 }
 
@@ -74,7 +73,7 @@ namespace DbLinq.Oracle
                     DataConstraint referencedConstraint = constraints.FirstOrDefault(c => c.ConstraintName == constraint.ReverseConstraintName);
                     if (constraint.ReverseConstraintName == null || referencedConstraint == null)
                     {
-                        Logger.Write(Level.Error, "ERROR L127: given R_contraint_name='" + constraint.ReverseConstraintName + "', unable to find parent constraint");
+                        WriteErrorLine("ERROR L127: given R_contraint_name='" + constraint.ReverseConstraintName + "', unable to find parent constraint");
                         continue;
                     }
 

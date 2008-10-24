@@ -189,6 +189,13 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     return GetOutputTableReader((TableExpression)expression, dataRecordParameter,
                                                 mappingContextParameter, builderContext);
                 }
+                // for EntitySets, we have a special EntitySet builder
+                if (expression is EntitySetExpression)
+                {
+                    return GetEntitySetBuilder((EntitySetExpression) expression, dataRecordParameter,
+                                               mappingContextParameter, builderContext);
+                    // TODO record EntitySet information, so we can initalize it with owner
+                }
                 // then, the result is registered
                 return GetOutputValueReader(expression, dataRecordParameter, mappingContextParameter, builderContext);
             }

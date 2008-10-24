@@ -104,6 +104,8 @@ namespace DbLinq.Ingres
 
         protected virtual List<DataConstraint> ReadConstraints(IDbConnection conn, string db)
         {
+            // picrap -> Thomas: I switched the FK orders without really understanding why
+            //                   because relations were inversed
             string sql = @"
                 SELECT DISTINCT 
 		                c.constraint_type as constraint_type,
@@ -124,12 +126,12 @@ namespace DbLinq.Ingres
                 SELECT DISTINCT
 		                c.constraint_type as constraint_type,
                         p.constraint_name as constraint_name,
-                        p.schema_name as schema_name,
-                        p.table_name as table_name,
-                        p.column_name as column_name,
                         f.schema_name as referenced_schema_name,
                         f.table_name as referenced_table_name,
-                        f.column_name as referenced_column_name
+                        f.column_name as referenced_column_name,
+                        p.schema_name as schema_name,
+                        p.table_name as table_name,
+                        p.column_name as column_name
                 FROM
                         iikeys p,
                         iiconstraints c,

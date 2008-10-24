@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using DbLinq.Logging;
 using DbLinq.Schema;
 using DbLinq.Schema.Dbml;
 using DbLinq.Util;
@@ -56,7 +55,7 @@ namespace DbLinq.Ingres
                 DbLinq.Schema.Dbml.Table table = schema.Tables.FirstOrDefault(t => constraintFullDbName == t.Name);
                 if (table == null)
                 {
-                    Logger.Write(Level.Error, "ERROR L138: Table '"
+                    WriteErrorLine("ERROR L138: Table '"
                                               + keyColRow.TableName
                                               + "' not found for column "
                                               + keyColRow.ColumnName);
@@ -67,8 +66,8 @@ namespace DbLinq.Ingres
                 {
                     //foreach (string pk_name in keyColRow.column_name_primaries)
                     //{
-                        DbLinq.Schema.Dbml.Column primaryKeyCol = table.Type.Columns.First(c => c.Name == keyColRow.ColumnName);
-                        primaryKeyCol.IsPrimaryKey = true;
+                    DbLinq.Schema.Dbml.Column primaryKeyCol = table.Type.Columns.First(c => c.Name == keyColRow.ColumnName);
+                    primaryKeyCol.IsPrimaryKey = true;
                     //}
                     continue;
                 }

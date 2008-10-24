@@ -41,10 +41,11 @@ namespace System.Data.Linq.Implementation
 namespace DbLinq.Data.Linq.Implementation
 #endif
 {
-    internal class QueryProvider
+    internal abstract class QueryProvider
     {
         public ExpressionChain ExpressionChain { get; set; }
         public Type TableType { get; set; }
+        public abstract SelectQuery GetQuery(Expression expression);
     }
 
     internal class QueryProvider<T> : QueryProvider, IQueryProvider, IQueryable<T>, IOrderedQueryable<T>
@@ -92,7 +93,7 @@ namespace DbLinq.Data.Linq.Implementation
             return new QueryProvider<TElement>(TableType, _dataContext, ExpressionChain, expression);
         }
 
-        protected SelectQuery GetQuery(Expression expression)
+        public override SelectQuery GetQuery(Expression expression)
         {
             var expressionChain = ExpressionChain;
             if (expression != null)

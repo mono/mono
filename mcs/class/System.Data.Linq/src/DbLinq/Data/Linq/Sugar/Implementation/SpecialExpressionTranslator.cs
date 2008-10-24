@@ -61,6 +61,8 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         {
             if (expression is SpecialExpression)
                 return Translate((SpecialExpression)expression);
+            else if (expression is StartIndexOffsetExpression)
+                return Translate(((StartIndexOffsetExpression)expression).InnerExpression);
             return expression;
         }
 
@@ -97,10 +99,10 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 case SpecialExpressionType.ToUpper:
                     return GetStandardCallInvoke("ToUpper", operands);
                 case SpecialExpressionType.ToLower:
-                    return GetStandardCallInvoke("ToLower",operands);
+                    return GetStandardCallInvoke("ToLower", operands);
                 //case SpecialExpressionType.In:
                 //    break;
-                
+
                 case SpecialExpressionType.StringInsert:
                     return GetStandardCallInvoke("Insert", operands);
                 case SpecialExpressionType.Substring:
@@ -116,9 +118,9 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 case SpecialExpressionType.Hour:
                 case SpecialExpressionType.Minute:
                 case SpecialExpressionType.Millisecond:
-                    return GetStandardCallInvoke(specialExpression.SpecialNodeType.ToString(),operands);
+                    return GetStandardCallInvoke(specialExpression.SpecialNodeType.ToString(), operands);
                 case SpecialExpressionType.Now:
-                    return GetDateTimeNowCall(operands);  
+                    return GetDateTimeNowCall(operands);
                 case SpecialExpressionType.DateDiffInMilliseconds:
                     return GetCallDateDiffInMilliseconds(operands);
                 default:
@@ -146,7 +148,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         protected virtual Expression GetStandardCallInvoke(string methodName, List<Expression> operands)
         {
             var parametersExpressions = operands.Skip(1);
-            return Expression.Call(operands[0], 
+            return Expression.Call(operands[0],
                                    operands[0].Type.GetMethod(methodName, parametersExpressions.Select(op => op.Type).ToArray()),
                                    parametersExpressions);
         }

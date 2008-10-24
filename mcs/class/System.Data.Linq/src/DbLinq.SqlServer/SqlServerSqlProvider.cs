@@ -124,12 +124,12 @@ namespace DbLinq.SqlServer
         protected override SqlStatement GetLiteralSubString(SqlStatement baseString, SqlStatement startIndex, SqlStatement count)
         {
             //in standard sql base string index is 1 instead 0
-            return SqlStatement.Format("SUBSTRING({0}, {1}, {2})", baseString, GetLiteralAdd(startIndex, "1"), count);
+            return SqlStatement.Format("SUBSTRING({0}, {1}, {2})", baseString, startIndex, count);
         }
 
         protected override SqlStatement GetLiteralSubString(SqlStatement baseString, SqlStatement startIndex)
         {
-            return GetLiteralSubString(baseString, GetLiteralAdd(startIndex, "1"), GetLiteralStringLength(baseString));
+            return GetLiteralSubString(baseString, startIndex, GetLiteralStringLength(baseString));
         }
 
         protected override SqlStatement GetLiteralTrim(SqlStatement a)

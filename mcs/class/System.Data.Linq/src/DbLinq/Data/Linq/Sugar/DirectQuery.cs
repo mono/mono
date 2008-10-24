@@ -26,10 +26,14 @@
 
 using System;
 using System.Collections.Generic;
+using DbLinq.Data.Linq.Database;
+using System.Data;
+
 #if MONO_STRICT
 using System.Data.Linq.Sql;
 #else
 using DbLinq.Data.Linq.Sql;
+using DbLinq.Util;
 #endif
 
 #if MONO_STRICT
@@ -40,6 +44,7 @@ namespace DbLinq.Data.Linq.Sugar
 {
     internal class DirectQuery : AbstractQuery
     {
+        public IList<object> parameterValues { get; set; }
         public IList<string> Parameters { get; private set; }
 
         public DirectQuery(DataContext dataContext, SqlStatement sql, IList<string> parameters)
@@ -47,5 +52,38 @@ namespace DbLinq.Data.Linq.Sugar
         {
             Parameters = parameters;
         }
+
+        public override IDbLinqCommand GetCommand()
+        {
+            IDbLinqCommand command = base.GetCommand(false);
+            FeedParameters(command);
+            return command;
+        }
+
+        /// <summary>
+        /// Fills dbCommand parameters, given names and values
+        /// </summary>
+        /// <param name="dbCommand"></param>
+        /// <param name="parameterNames"></param>
+        /// <param name="parameterValues"></param>
+        private void FeedParameters(IDbLinqCommand command)
+        {
+            IDbCommand dbCommand = command.Command;
+            for (int parameterIndex = 0; parameterIndex < Parameters.Count; parameterIndex++)
+            {
+                var dbParameter = dbCommand.CreateParameter();
+                dbParameter.ParameterName = Parameters[parameterIndex];
+
+                var value = parameterValues[parameterIndex];
+                if (value == null)
+                    dbParameter.Value = DBNull.Value;
+                else
+                    dbParameter.Value = value;
+
+                dbCommand.Parameters.Add(dbParameter);
+            }
+
+        }
     }
+
 }

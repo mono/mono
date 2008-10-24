@@ -26,7 +26,6 @@
 
 using System.Data;
 using System.Linq;
-using DbLinq.Logging;
 using DbLinq.Schema;
 using DbLinq.Schema.Dbml;
 
@@ -102,7 +101,7 @@ namespace DbLinq.Vendor.Implementation
                 //bugs in DbLinq etc
                 msg += " - however, schema lists a table spelled as " + matchedTable.Name;
             }
-            Logger.Write(Level.Error, msg);
+            WriteErrorLine(msg);
         }
     }
 }

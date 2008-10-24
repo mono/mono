@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{97305421-3071-4175-AA3C-9A432CC28121}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -52,14 +52,56 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\DbLinq.Firebird\FirebirdSqlProvider.cs">
+      <Link>Vendors\DbLinq.FirebirdSql\FirebirdSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Firebird\FirebirdVendor.cs">
+      <Link>Vendors\DbLinq.FirebirdSql\FirebirdVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Ingres\IngresSqlProvider.cs">
+      <Link>Vendors\DbLinq.Ingres\IngresSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Ingres\IngresVendor.cs">
+      <Link>Vendors\DbLinq.Ingres\IngresVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.MySql\MySqlSqlProvider.cs">
+      <Link>Vendors\DbLinq.MySql\MySqlSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.MySql\MySqlVendor.cs">
+      <Link>Vendors\DbLinq.MySql\MySqlVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Oracle\OracleSqlProvider.cs">
+      <Link>Vendors\DbLinq.Oracle\OracleSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Oracle\OracleVendor.cs">
+      <Link>Vendors\DbLinq.Oracle\OracleVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.PostgreSql\PgsqlSqlProvider.cs">
+      <Link>Vendors\DbLinq.PostgreSql\PgsqlSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.PostgreSql\PgsqlVendor.cs">
+      <Link>Vendors\DbLinq.PostgreSql\PgsqlVendor.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\Schema\DataCommand.cs">
+      <Link>Vendors\DbLinq.Sqlite\DataCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\SqliteSqlProvider.cs">
+      <Link>Vendors\DbLinq.Sqlite\SqliteSqlProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\DbLinq.Sqlite\SqliteVendor.cs">
+      <Link>Vendors\DbLinq.Sqlite\SqliteVendor.cs</Link>
+    </Compile>
     <Compile Include="Data\Linq\ChangeAction.cs" />
     <Compile Include="Data\Linq\ChangeSet.cs" />
     <Compile Include="Data\Linq\Database\IDatabaseContext.cs" />
     <Compile Include="Data\Linq\Database\IDatabaseTransaction.cs" />
+    <Compile Include="Data\Linq\Database\IDbLinqCommand.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseConnection.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseContext.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseTransaction.cs" />
+    <Compile Include="Data\Linq\Database\Implementation\DbLinqCommand.cs" />
     <Compile Include="Data\Linq\DataContext.cs" />
+    <Compile Include="Data\Linq\DataLoadOptions.cs" />
     <Compile Include="Data\Linq\DBLinqExtendedAttributte.cs" />
     <Compile Include="Data\Linq\EntityList.cs" />
     <Compile Include="Data\Linq\EntitySet.cs" />
@@ -93,6 +135,7 @@
     <Compile Include="Data\Linq\Mapping\AttributeMappingSource.cs" />
     <Compile Include="Data\Linq\Mapping\MappingContext.cs" />
     <Compile Include="Data\Linq\RefreshMode.cs" />
+    <Compile Include="Data\Linq\SqlClient\FirebirdProvider.cs" />
     <Compile Include="Data\Linq\SqlClient\IngresProvider.cs" />
     <Compile Include="Data\Linq\SqlClient\MySqlProvider.cs" />
     <Compile Include="Data\Linq\SqlClient\OracleProvider.cs" />
@@ -133,6 +176,7 @@
     <Compile Include="Data\Linq\Sugar\ExpressionPrecedence.cs" />
     <Compile Include="Data\Linq\Sugar\ExpressionQuery.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ColumnExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\EntitySetExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ObjectInputParameterExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ObjectOutputParameterExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\CustomExpressionType.cs" />
@@ -148,6 +192,7 @@
     <Compile Include="Data\Linq\Sugar\Expressions\SelectOperatorType.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\SpecialExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\SpecialExpressionType.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\StartIndexOffsetExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\TableExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\TableJoinType.cs" />
     <Compile Include="Data\Linq\Sugar\ExpressionTier.cs" />
@@ -180,6 +225,7 @@
     <Compile Include="Data\Linq\Sugar\ISpecialExpressionTranslator.cs" />
     <Compile Include="Data\Linq\Sugar\ISqlBuilder.cs" />
     <Compile Include="Data\Linq\Sugar\AbstractQuery.cs" />
+    <Compile Include="Data\Linq\Sugar\ParameterizedQuery.cs" />
     <Compile Include="Data\Linq\Sugar\SelectQuery.cs" />
     <Compile Include="Data\Linq\Sugar\QueryContext.cs" />
     <Compile Include="Data\Linq\Sugar\UpsertQuery.cs" />
@@ -200,10 +246,6 @@
     <Compile Include="Schema\Dbml\Adapter\SpecifiedPropertyUpdater.cs" />
     <Compile Include="Schema\WordsExtraction.cs" />
     <Compile Include="Schema\NameFormat.cs" />
-    <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Logging\Implementation\ConsoleDebugLogger.cs" />
-    <Compile Include="Logging\Implementation\Logger.cs" />
-    <Compile Include="Logging\Level.cs" />
     <Compile Include="Schema\AssociationName.cs" />
     <Compile Include="Schema\ColumnName.cs" />
     <Compile Include="Schema\ParameterName.cs" />
@@ -222,7 +264,6 @@
     <Compile Include="System.Data.Linq\ChangeConflictException.cs" />
     <Compile Include="System.Data.Linq\CompiledQuery.cs" />
     <Compile Include="System.Data.Linq\ConflictMode.cs" />
-    <Compile Include="System.Data.Linq\DataLoadOptions.cs" />
     <Compile Include="System.Data.Linq\DBConvert.cs" />
     <Compile Include="System.Data.Linq\DuplicateKeyException.cs" />
     <Compile Include="Data\Linq\EntityRef.cs" />
@@ -268,7 +309,6 @@
     <Compile Include="Language\ILanguages.cs" />
     <Compile Include="Language\ILanguageWords.cs" />
     <Compile Include="Util\IDbDataParameterExtensions.cs" />
-    <Compile Include="Util\ILoggerExtension.cs" />
     <Compile Include="Util\LambdaComparer.cs" />
     <Compile Include="Util\DataCommand.cs" />
     <Compile Include="Schema\INameFormatter.cs" />
@@ -279,7 +319,9 @@
     <Compile Include="Schema\Implementation\NameFormatter.cs" />
     <Compile Include="Util\MemberInfoExtensions.cs" />
     <Compile Include="Util\ReflectionExtensions.cs" />
+    <Compile Include="Util\ReflectionUtility.cs" />
     <Compile Include="Util\StringExtensions.cs" />
+    <Compile Include="Util\TextWriterExtension.cs" />
     <Compile Include="Util\TypeConvert.cs" />
     <Compile Include="Util\QuotesHelper.cs" />
     <Compile Include="Util\ReferenceEqualityComparer.cs" />
@@ -298,6 +340,7 @@
     <Compile Include="Vendor\Implementation\SchemaLoader.StoredProcedures.cs" />
     <Compile Include="Vendor\Implementation\SchemaLoader.Tables.cs" />
     <Compile Include="Vendor\Implementation\SchemaLoader.TypeMapping.cs" />
+    <Compile Include="Vendor\Implementation\Vendor.ProcedureResult.cs" />
     <Compile Include="Vendor\INameAliases.cs" />
     <Compile Include="Vendor\ISchemaLoader.cs" />
     <Compile Include="Vendor\ISqlProvider.cs" />

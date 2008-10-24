@@ -98,5 +98,18 @@ namespace DbLinq.Util
         {
             return TypeConvert.GetDefault(t);
         }
+
+        /// <summary>
+        /// Returns type name without generic specification
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static string GetShortName(this Type t)
+        {
+            var name = t.Name;
+            if (t.IsGenericTypeDefinition)
+                return name.Split('`')[0];
+            return name;
+        }
     }
 }

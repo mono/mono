@@ -29,13 +29,7 @@ using System.Reflection;
 
 namespace DbLinq.Util
 {
-    // This class is untested by now
-#if MONO_STRICT
-    internal
-#else
-    public
-#endif
-    static class TypeLoader
+    internal static class TypeLoader
     {
         public static Type Load(string name)
         {

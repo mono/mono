@@ -24,35 +24,16 @@
 // 
 #endregion
 
-using System;
-using System.Data;
-
 namespace DbLinq.Util
 {
-#if MONO_STRICT
-    internal
-#else
-    public
-#endif
-    static class IDbDataParameterExtensions
+    /// <summary>
+    /// Log output level
+    /// </summary>
+    internal enum OutputLevel
     {
-        public static void SetValue(this IDbDataParameter dbParameter, object value, Type type)
-        {
-            if (value == null)
-            {
-                if (type.IsNullable())
-                    dbParameter.Value = TypeConvert.GetDefault(type.GetNullableType());
-                else if (type.IsValueType)
-                    dbParameter.Value = TypeConvert.GetDefault(type);
-                dbParameter.Value = DBNull.Value;
-            }
-            else
-                dbParameter.Value = value;
-        }
-
-        public static void SetValue<T>(this IDbDataParameter dbParameter, T value)
-        {
-            SetValue(dbParameter, value, typeof(T));
-        }
+        Debug,
+        Information,
+        Warning,
+        Error,
     }
 }

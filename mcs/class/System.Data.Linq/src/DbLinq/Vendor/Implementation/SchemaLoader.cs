@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 
 #if MONO_STRICT
@@ -35,7 +36,6 @@ using DbLinq.Data.Linq;
 #endif
 
 using DbLinq.Factory;
-using DbLinq.Logging;
 using DbLinq.Schema;
 using DbLinq.Schema.Dbml;
 
@@ -48,12 +48,20 @@ namespace DbLinq.Vendor.Implementation
 #endif
  abstract partial class SchemaLoader : ISchemaLoader
     {
-        public virtual string VendorName { get { return Vendor.VendorName; } }
         public abstract IVendor Vendor { get; }
         public abstract System.Type DataContextType { get; }
         public IDbConnection Connection { get; set; }
         public INameFormatter NameFormatter { get; set; }
-        public ILogger Logger { get; set; }
+
+        private TextWriter log;
+        /// <summary>
+        /// Log output
+        /// </summary>
+        public TextWriter Log
+        {
+            get { return log ?? Console.Out; }
+            set { log = value; }
+        }
 
         public virtual Database Load(string databaseName, INameAliases nameAliases, NameFormat nameFormat,
             bool loadStoredProcedures, string contextNamespace, string entityNamespace)
@@ -102,9 +110,16 @@ namespace DbLinq.Vendor.Implementation
             return schema;
         }
 
+        protected void WriteErrorLine(string format, params object[] arg)
+        {
+            var o = Log;
+            if (o == Console.Out)
+                o = Console.Error;
+            o.WriteLine(format, arg);
+        }
+
         protected SchemaLoader()
         {
-            Logger = ObjectFactory.Get<ILogger>();
             NameFormatter = ObjectFactory.Create<INameFormatter>(); // the Pluralize property is set dynamically, so no singleton
         }
 
@@ -251,7 +266,7 @@ namespace DbLinq.Vendor.Implementation
                 DbLinq.Schema.Dbml.Table tableSchema = schema.Tables.FirstOrDefault(tblSchema => fullColumnDbName == tblSchema.Name);
                 if (tableSchema == null)
                 {
-                    Logger.Write(Level.Error, "ERROR L46: Table '" + columnRow.TableName + "' not found for column " + columnRow.ColumnName);
+                    WriteErrorLine("ERROR L46: Table '" + columnRow.TableName + "' not found for column " + columnRow.ColumnName);
                     continue;
                 }
                 var column = new Column();

@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using DbLinq.Data.Linq.Database;
 
 #if MONO_STRICT
 using System.Data.Linq.Sql;
@@ -48,7 +49,7 @@ namespace DbLinq.Data.Linq.Sugar
     /// Represents a linq query, parsed and compiled, to be sent to database
     /// This instance is immutable, since it can be stored in a cache
     /// </summary>
-    internal class SelectQuery: AbstractQuery
+    internal class SelectQuery : AbstractQuery
     {
         /// <summary>
         /// Parameters to be sent as SQL parameters
@@ -78,11 +79,24 @@ namespace DbLinq.Data.Linq.Sugar
 
         public SelectQuery(DataContext dataContext, SqlStatement sql, IList<InputParameterExpression> parameters,
                      Delegate rowObjectCreator, string executeMethodName)
-            : base(dataContext,sql)
+            : base(dataContext, sql)
         {
             InputParameters = parameters;
             RowObjectCreator = rowObjectCreator;
             ExecuteMethodName = executeMethodName;
+        }
+
+        public override IDbLinqCommand GetCommand()
+        {
+            var dbCommand = base.GetCommand(false);
+            foreach (var parameter in InputParameters)
+            {
+                var dbParameter = dbCommand.Command.CreateParameter();
+                dbParameter.ParameterName = DataContext.Vendor.SqlProvider.GetParameterName(parameter.Alias);
+                dbParameter.Value = parameter.GetValue();
+                dbCommand.Command.Parameters.Add(dbParameter);
+            }
+            return dbCommand;
         }
     }
 }

@@ -28,8 +28,7 @@ using System;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Data;
-using DbLinq.Factory;
-using DbLinq.Logging;
+using System.Linq;
 
 #if MONO_STRICT
 using DataContext = System.Data.Linq.DataContext;
@@ -55,13 +54,6 @@ namespace DbLinq.Vendor.Implementation
 #endif
  abstract partial class Vendor : IVendor
     {
-        public ILogger Logger { get; set; }
-
-        protected Vendor()
-        {
-            Logger = ObjectFactory.Get<ILogger>();
-        }
-
         public virtual bool Ping(DataContext dataContext)
         {
             return dataContext.ExecuteCommand("SELECT 11") == 11;
@@ -103,5 +95,75 @@ namespace DbLinq.Vendor.Implementation
             AddConnectionStringPart(connectionStringParts, ConnectionStringPassword, password);
             return string.Join(";", connectionStringParts.ToArray());
         }
+
+        /// <summary>
+        /// used during DataContext ctor -
+        /// - to ask specific DLL and class to load an IDbConnection object from
+        /// </summary>
+        /// <returns></returns>
+        protected abstract TypeToLoadData GetProviderTypeName();
+
+        /// <summary>
+        /// called from DataContext ctor, which needs to create an IDbConnection, given an IVendor
+        /// </summary>
+        public IDbConnection CreateDbConnection(string connectionString)
+        {
+            TypeToLoadData typeToLoad = GetProviderTypeName();
+            string assemblyToLoad = typeToLoad.assemblyName; //e.g. "System.Data.SQLite.DLL",
+            Assembly assy;
+            try
+            {
+                //TODO: check if DLL is already loaded?
+                assy = Assembly.LoadFrom(assemblyToLoad);
+            }
+            catch (Exception ex)
+            {
+                //TODO: add proper logging here
+                Console.WriteLine("DataContext ctor: Assembly load failed for " + assemblyToLoad + ": " + ex);
+                throw ex;
+            }
+            Type[] STRING_PARAM = new Type[] { typeof(string) };
+
+            //find IDbProvider class in this assembly:
+            var ctors = (from mod in assy.GetModules()
+                         from cls in mod.GetTypes()
+                         where cls.GetInterfaces().Contains(typeof(IDbConnection))
+                         let ctorInfo = cls.GetConstructor(STRING_PARAM)
+                         where ctorInfo != null
+                         select ctorInfo).ToList();
+            if (ctors.Count == 0)
+            {
+                string msg = "Found no IVendor class in assembly " + assemblyToLoad + " having a string ctor";
+                throw new ArgumentException(msg);
+            }
+            else if (ctors.Count > 1)
+            {
+                string msg = "Found more than one IVendor class in assembly " + assemblyToLoad + " having a string ctor";
+                throw new ArgumentException(msg);
+            }
+            ConstructorInfo ctorInfo2 = ctors[0];
+
+            object iDbConnObject;
+            try
+            {
+                iDbConnObject = ctorInfo2.Invoke(new object[] { connectionString });
+            }
+            catch (Exception ex)
+            {
+                //TODO: add proper logging here
+                Console.WriteLine("DataContext/Vendor: Failed to invoke IDbConnection ctor " + ctorInfo2.Name + ": " + ex);
+                throw ex;
+            }
+            IDbConnection iDbConn = (IDbConnection)iDbConnObject;
+            return iDbConn;
+        }
+
+        public class TypeToLoadData
+        {
+            public string assemblyName;
+            public string className;
+        }
+
+
     }
 }

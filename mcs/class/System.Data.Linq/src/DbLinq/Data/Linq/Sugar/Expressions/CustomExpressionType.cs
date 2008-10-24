@@ -30,17 +30,22 @@ namespace System.Data.Linq.Sugar.Expressions
 namespace DbLinq.Data.Linq.Sugar.Expressions
 #endif
 {
+    /// <summary>
+    /// Those types are required by DbLinq internal expressions
+    /// </summary>
     internal enum CustomExpressionType
     {
         Scope = 1000,
         MetaTable = 1010,
         Table,
         Column,
+        EntitySet,
         InputParameter = 1020,
         ObjectInputParameter,
         ObjectOutputParameter,
         OrderBy = 1030,
         GroupBy,
         Group = 1040,
+        StartIndexOffset
     }
 }

@@ -31,7 +31,6 @@ using DbLinq.Schema;
 using DbLinq.Schema.Dbml;
 using DbLinq.Util;
 using DbLinq.Vendor.Implementation;
-using DbLinq.Logging;
 
 namespace DbLinq.PostgreSql
 {
@@ -101,7 +100,7 @@ namespace DbLinq.PostgreSql
                 DbLinq.Schema.Dbml.Table table = schema.Tables.FirstOrDefault(t => constraintFullDbName == t.Name);
                 if (table == null)
                 {
-                    Logger.Write(Level.Error, "ERROR L138: Table '" + keyColRow.TableName + "' not found for column " + keyColRow.ColumnName);
+                    WriteErrorLine("ERROR L138: Table '" + keyColRow.TableName + "' not found for column " + keyColRow.ColumnName);
                     continue;
                 }
 
@@ -124,7 +123,7 @@ namespace DbLinq.PostgreSql
                     if (dataForeignConstraint == null)
                     {
                         string msg = "Missing data from 'constraint_column_usage' for foreign key " + keyColRow.ConstraintName;
-                        Logger.Write(Level.Error, msg);
+                        WriteErrorLine(msg);
                         //throw new ApplicationException(msg);
                         continue; //as per Andrus, do not throw. //putting together an Adnrus_DB test case.
                     }
@@ -189,7 +188,7 @@ namespace DbLinq.PostgreSql
                     || (argModes != null && argModes.Length != argNames.Length));
                 if (doLengthsMatch)
                 {
-                    Logger.Write(Level.Error, "L238 Mistmatch between modesArr, typeArr and nameArr for func " + pg_proc.proname);
+                    WriteErrorLine("L238 Mistmatch between modesArr, typeArr and nameArr for func " + pg_proc.proname);
                     return null;
                 }
 
@@ -214,10 +213,10 @@ namespace DbLinq.PostgreSql
         {
             switch (inOut)
             {
-                case "i": return DbLinq.Schema.Dbml.ParameterDirection.In;
-                case "o": return DbLinq.Schema.Dbml.ParameterDirection.Out;
-                case "b": return DbLinq.Schema.Dbml.ParameterDirection.InOut;
-                default: return DbLinq.Schema.Dbml.ParameterDirection.InOut;
+            case "i": return DbLinq.Schema.Dbml.ParameterDirection.In;
+            case "o": return DbLinq.Schema.Dbml.ParameterDirection.Out;
+            case "b": return DbLinq.Schema.Dbml.ParameterDirection.InOut;
+            default: return DbLinq.Schema.Dbml.ParameterDirection.InOut;
             }
         }
 

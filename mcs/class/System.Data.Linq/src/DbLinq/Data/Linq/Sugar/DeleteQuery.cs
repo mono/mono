@@ -39,14 +39,11 @@ namespace System.Data.Linq.Sugar
 namespace DbLinq.Data.Linq.Sugar
 #endif
 {
-    internal class DeleteQuery : AbstractQuery
+    internal class DeleteQuery : ParameterizedQuery
     {
-        public IList<ObjectInputParameterExpression> InputParameters { get; private set; }
-
         public DeleteQuery(DataContext dataContext, SqlStatement sql, IList<ObjectInputParameterExpression> inputParameters)
-            : base(dataContext, sql)
+            : base(dataContext, sql, inputParameters)
         {
-            InputParameters = inputParameters;
         }
     }
 }

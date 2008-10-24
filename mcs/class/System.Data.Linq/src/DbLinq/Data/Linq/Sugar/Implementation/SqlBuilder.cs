@@ -189,7 +189,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             }
             if (expression is InputParameterExpression)
             {
-                var inputParameterExpression = (InputParameterExpression) expression;
+                var inputParameterExpression = (InputParameterExpression)expression;
                 return
                     new SqlStatement(new SqlParameterPart(sqlProvider.GetParameterName(inputParameterExpression.Alias),
                                                           inputParameterExpression.Alias));
@@ -200,6 +200,18 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 return sqlProvider.GetLiteral(((ConstantExpression)expression).Value);
             if (expression is GroupExpression)
                 return BuildExpression(((GroupExpression)expression).GroupedExpression, queryContext);
+
+            StartIndexOffsetExpression indexExpression = expression as StartIndexOffsetExpression;
+            if (indexExpression!=null)
+            {
+                if (indexExpression.StartsAtOne)
+                {
+                    literalOperands.Add(BuildExpression(Expression.Constant(1), queryContext));
+                    return sqlProvider.GetLiteral(ExpressionType.Add, literalOperands);
+                }
+                else
+                    return literalOperands.First();
+            }
             if (expression.NodeType == ExpressionType.Convert || expression.NodeType == ExpressionType.ConvertChecked)
             {
                 var unaryExpression = (UnaryExpression)expression;
@@ -296,20 +308,19 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     SqlStatement joinClause;
                     switch (tableExpression.JoinType)
                     {
-                    case TableJoinType.Inner:
-                        joinClause = sqlProvider.GetInnerJoinClause(tableAlias, joinExpression);
-                        break;
-                    case TableJoinType.LeftOuter:
-                        joinClause = sqlProvider.GetLeftOuterJoinClause(tableAlias, joinExpression);
-                        break;
-                    case TableJoinType.RightOuter:
-                        joinClause = sqlProvider.GetRightOuterJoinClause(tableAlias, joinExpression);
-                        break;
-                    case TableJoinType.FullOuter:
-                        throw new NotImplementedException();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                        case TableJoinType.Inner:
+                            joinClause = sqlProvider.GetInnerJoinClause(tableAlias, joinExpression);
+                            break;
+                        case TableJoinType.LeftOuter:
+                            joinClause = sqlProvider.GetLeftOuterJoinClause(tableAlias, joinExpression);
+                            break;
+                        case TableJoinType.RightOuter:
+                            joinClause = sqlProvider.GetRightOuterJoinClause(tableAlias, joinExpression);
+                            break;
+                        case TableJoinType.FullOuter:
+                            throw new NotImplementedException();
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                     joinClauses.Add(joinClause);
                 }

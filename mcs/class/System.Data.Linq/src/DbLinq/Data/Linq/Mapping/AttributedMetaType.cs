@@ -49,6 +49,7 @@ namespace DbLinq.Data.Linq.Mapping
             // associations and members
             var associationsList = new List<MetaAssociation>();
             var dataMembersList = new List<MetaDataMember>();
+            var persistentMembersList = new List<MetaDataMember>();
             var identityMembersList = new List<MetaDataMember>();
             foreach (var memberInfo in classType.GetMembers())
             {
@@ -65,12 +66,15 @@ namespace DbLinq.Data.Linq.Mapping
                 {
                     var dataMember = new AttributedColumnMetaDataMember(memberInfo, column, this);
                     dataMembersList.Add(dataMember);
+                    if (dataMember.IsPersistent)
+                        persistentMembersList.Add(dataMember);
                     if (dataMember.IsPrimaryKey)
                         identityMembersList.Add(dataMember);
                 }
             }
             associations = new ReadOnlyCollection<MetaAssociation>(associationsList);
-            persistentDataMembers = new ReadOnlyCollection<MetaDataMember>(dataMembersList);
+            dataMembers = new ReadOnlyCollection<MetaDataMember>(dataMembersList);
+            persistentDataMembers = new ReadOnlyCollection<MetaDataMember>(persistentMembersList);
             identityMembers = new ReadOnlyCollection<MetaDataMember>(identityMembersList);
         }
 
@@ -91,9 +95,10 @@ namespace DbLinq.Data.Linq.Mapping
             get { return true; }
         }
 
+        private readonly ReadOnlyCollection<MetaDataMember> dataMembers;
         public override ReadOnlyCollection<MetaDataMember> DataMembers
         {
-            get { throw new NotImplementedException(); }
+            get { return dataMembers; }
         }
 
         public override MetaDataMember DBGeneratedIdentityMember

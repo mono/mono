@@ -101,15 +101,13 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// </summary>
         /// <param name="thisTableExpression">The table referenced by the assocation (the type holding the member)</param>
         /// <param name="memberInfo">The memberInfo related to association</param>
-        /// <param name="thisKey">The keys in the joined table</param>
+        /// <param name="otherType"></param>
         /// <param name="otherKey">The keys in the associated table</param>
         /// <param name="joinType"></param>
         /// <param name="joinID"></param>
         /// <param name="dataContext"></param>
-        /// <returns></returns>
-        public virtual Type GetAssociation(TableExpression thisTableExpression, MemberInfo memberInfo,
-                                           out IList<MemberInfo> thisKey, out IList<MemberInfo> otherKey,
-                                           out TableJoinType joinType, out string joinID, DataContext dataContext)
+        /// <returns>ThisKey</returns>
+        public virtual IList<MemberInfo> GetAssociation(TableExpression thisTableExpression, MemberInfo memberInfo, Type otherType, out IList<MemberInfo> otherKey, out TableJoinType joinType, out string joinID, DataContext dataContext)
         {
             var thisTableDescription = dataContext.Mapping.GetTable(thisTableExpression.Type);
             var thisAssociation =
@@ -124,14 +122,12 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 if (string.IsNullOrEmpty(joinID))
                     throw Error.BadArgument("S0108: Association name is required to ensure join uniqueness");
 
-                var otherType = thisAssociation.ThisMember.Type;
-                if (otherType.IsGenericType) // TODO: something serious here
-                    otherType = otherType.GetGenericArguments()[0];
-
                 var otherTableDescription = dataContext.Mapping.GetTable(otherType);
                 bool thisKeyHasNullables, otherKeyHasNullables;
-                thisKey = GetAssociationKeys(thisTableDescription, thisAssociation.ThisKey, dataContext, out thisKeyHasNullables);
-                otherKey = GetAssociationKeys(otherTableDescription, thisAssociation.OtherKey, dataContext, out otherKeyHasNullables);
+                var thisKey = GetAssociationKeys(thisTableDescription, thisAssociation.ThisKey, dataContext,
+                                                 out thisKeyHasNullables);
+                otherKey = GetAssociationKeys(otherTableDescription, thisAssociation.OtherKey, dataContext,
+                                              out otherKeyHasNullables);
 
                 // we just test here the left join (since associations are symmetric,
                 //        we can only find left joins here, and the otherKeyHasNullables is
@@ -139,9 +135,8 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 if (thisKeyHasNullables)
                     joinType |= TableJoinType.LeftOuter;
 
-                return otherType;
+                return thisKey;
             }
-            thisKey = null;
             otherKey = null;
             joinType = TableJoinType.Default;
             joinID = null;
@@ -178,9 +173,13 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         public IList<MemberInfo> GetEntitySetAssociations(Type type)
         {
             return type.GetProperties()
-                .Where(p => p.PropertyType.IsGenericType &&
-                    p.PropertyType.GetGenericTypeDefinition() == typeof(System.Data.Linq.EntitySet<>) &&
-                    p.IsDefined(typeof(AssociationAttribute), true))
+                .Where(p => p.PropertyType.IsGenericType 
+                    && (p.PropertyType.GetGenericTypeDefinition() == typeof(System.Data.Linq.EntitySet<>) 
+#if !MONO_STRICT
+                    || p.PropertyType.GetGenericTypeDefinition() == typeof(DbLinq.Data.Linq.EntitySet<>)
+#endif
+                    )
+                    && p.IsDefined(typeof(AssociationAttribute), true))
                 .Cast<MemberInfo>().ToList();
         }
 

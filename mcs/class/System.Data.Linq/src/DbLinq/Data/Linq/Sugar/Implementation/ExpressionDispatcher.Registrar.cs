@@ -213,18 +213,19 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// </summary>
         /// <param name="tableExpression">The table holding the member, to become the joinedTable</param>
         /// <param name="tableMemberInfo"></param>
+        /// <param name="otherType"></param>
         /// <param name="builderContext"></param>
         /// <returns></returns>
         public virtual TableExpression RegisterAssociation(TableExpression tableExpression, MemberInfo tableMemberInfo,
-                                                           BuilderContext builderContext)
+                                                           Type otherType, BuilderContext builderContext)
         {
-            IList<MemberInfo> theseKeys, otherKeys;
+            IList<MemberInfo> otherKeys;
             TableJoinType joinType;
             string joinID;
-            var otherTableType = DataMapper.GetAssociation(tableExpression, tableMemberInfo, out theseKeys, out otherKeys,
+            var theseKeys = DataMapper.GetAssociation(tableExpression, tableMemberInfo, otherType, out otherKeys,
                                                       out joinType, out joinID, builderContext.QueryContext.DataContext);
             // if the memberInfo has no corresponding association, we get a null, that we propagate
-            if (otherTableType == null)
+            if (theseKeys == null)
                 return null;
 
             // the current table has the foreign key, the other table the referenced (usually primary) key
@@ -232,7 +233,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 throw Error.BadArgument("S0128: Association arguments (FK and ref'd PK) don't match");
 
             // we first create the table, with the JoinID, and we MUST complete the table later, with the Join() method
-            var otherTableExpression = new TableExpression(otherTableType, DataMapper.GetTableName(otherTableType, builderContext.QueryContext.DataContext), joinID);
+            var otherTableExpression = new TableExpression(otherType, DataMapper.GetTableName(otherType, builderContext.QueryContext.DataContext), joinID);
 
             Expression joinExpression = null;
 
@@ -433,27 +434,6 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             return Expression.Lambda(initExpression, dataRecordParameter, mappingContextParameter);
         }
 
-        public virtual LambdaExpression BuildTableReader1(Type tableType, IList<string> parameters, BuilderContext builderContext)
-        {
-            var dataRecordParameter = Expression.Parameter(typeof(IDataRecord), "dataRecord");
-            var mappingContextParameter = Expression.Parameter(typeof(MappingContext), "mappingContext");
-            var table = builderContext.QueryContext.DataContext.Mapping.GetTable(tableType);
-            var bindings = new List<MemberBinding>();
-            foreach (var column in DataMapper.GetColumns(table))
-            {
-                var columnName = DataMapper.GetColumnName(tableType, column, builderContext.QueryContext.DataContext);
-                var invoke = GetOutputValueReader(column.GetMemberType(), GetTableIndex(parameters, columnName),
-                                                  dataRecordParameter, mappingContextParameter);
-                var parameterColumn = GetOutputValueReader(invoke, dataRecordParameter, mappingContextParameter,
-                                                           builderContext);
-                var binding = Expression.Bind(column, parameterColumn);
-                bindings.Add(binding);
-            }
-            var newExpression = Expression.New(tableType);
-            var initExpression = Expression.MemberInit(newExpression, bindings);
-            return Expression.Lambda(initExpression, dataRecordParameter, mappingContextParameter);
-        }
-
         protected virtual int GetTableIndex(IList<string> parameters, string columnName)
         {
             int index = parameters.IndexOf(columnName);
@@ -467,6 +447,22 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 }
             }
             return -1;
+        }
+
+        /// <summary>
+        /// Creates an entity set creator, to be used at run-time
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="dataRecordParameter"></param>
+        /// <param name="mappingContextParameter"></param>
+        /// <param name="builderContext"></param>
+        /// <returns></returns>
+        protected virtual Expression GetEntitySetBuilder(EntitySetExpression expression,
+                                                          ParameterExpression dataRecordParameter, ParameterExpression mappingContextParameter,
+                                                          BuilderContext builderContext)
+        {
+            // from here, creating an EntitySet consists in just creating the instance
+            return Expression.New(expression.Type);
         }
 
         /// <summary>

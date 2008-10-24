@@ -38,9 +38,7 @@ using DbLinq.Data.Linq.Sugar.Expressions;
 #endif
 using System.Text.RegularExpressions;
 using DbLinq.Factory;
-using DbLinq.Logging;
 using DbLinq.Util;
-using DbLinq;
 using System.Diagnostics;
 
 #if MONO_STRICT
@@ -217,7 +215,12 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 if (expression == last)
                     builderContext.IsExternalInExpressionChain = true;
 
-                builderContext.QueryContext.DataContext.Logger.WriteExpression(Level.Debug, expression);
+                // write full debug
+#if DEBUG && !MONO_STRICT
+                var log = builderContext.QueryContext.DataContext.Log;
+                if (log != null)
+                    log.WriteExpression(expression);
+#endif
                 // Convert linq Expressions to QueryOperationExpressions and QueryConstantExpressions 
                 // Query expressions language identification
                 var currentExpression = ExpressionLanguageParser.Parse(expression, builderContext);
@@ -398,9 +401,15 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 timer.Stop();
                 long sqlBuildTime = timer.ElapsedMilliseconds;
 
-                queryContext.DataContext.Logger.Write(Level.Debug, "Select Expression build: {0}ms", expressionBuildTime);
-                queryContext.DataContext.Logger.Write(Level.Debug, "Select SQL build:        {0}ms", sqlBuildTime);
-                queryContext.DataContext.Logger.Write(Level.Debug, "Select SQL: {0}", query.Sql);
+#if DEBUG && !MONO_STRICT
+                // generation time statistics
+                var log = queryContext.DataContext.Log;
+                if (log != null)
+                {
+                    log.WriteLine("Select Expression build: {0}ms", expressionBuildTime);
+                    log.WriteLine("Select SQL build:        {0}ms", sqlBuildTime);
+                }
+#endif
                 SetInSelectCache(expressions, query);
             }
             return query;

@@ -79,9 +79,22 @@ namespace DbLinq.Data.Linq.Implementation
             {
                 object propertyValue = memberInfo.GetMemberValue(entity);
                 // if it is a value, it can be stored directly
-                if (IsPrimitiveType(memberInfo.GetMemberType()))
+                var memberType = memberInfo.GetMemberType();
+                if (IsPrimitiveType(memberType))
                 {
                     rawData[prefix + memberInfo.Name] = propertyValue;
+                }
+                else if (memberType.IsArray)
+                {
+                    if (propertyValue != null)
+                    {
+                        var arrayValue = (Array) propertyValue;
+                        for (int arrayIndex = 0; arrayIndex < arrayValue.Length; arrayIndex++)
+                        {
+                            rawData[string.Format("{0}[{1}]", memberInfo.Name, arrayIndex)] =
+                                arrayValue.GetValue(arrayIndex);
+                        }
+                    }
                 }
                 else // otherwise, we recurse, and prefix the current property name to sub properties to avoid conflicts
                 {
@@ -249,8 +262,8 @@ namespace DbLinq.Data.Linq.Implementation
         {
             lock (modifiedProperties)
             {
-                PropertyInfo pi=GetProperty(entity, propertyName);
-                if(pi==null)
+                PropertyInfo pi = GetProperty(entity, propertyName);
+                if (pi == null)
                     throw new ArgumentException("Incorrect property changed");
 
                 modifiedProperties[entity][propertyName] = pi;

@@ -33,7 +33,6 @@ using DbLinq.Schema.Dbml;
 using DbLinq.Util;
 using DbLinq.Vendor;
 using DbLinq.Vendor.Implementation;
-using DbLinq.Logging;
 
 namespace DbLinq.Firebird
 {
@@ -87,7 +86,7 @@ namespace DbLinq.Firebird
                     table = schema.Tables.FirstOrDefault(t => 0 == string.Compare(fullKeyDbName, t.Name, ignoreCase));
                     if (table == null)
                     {
-                        Logger.Write(Level.Error, "ERROR L46: Table '" + keyColRow.TableName + "' not found for column " + keyColRow.ColumnName);
+                        WriteErrorLine("ERROR L46: Table '" + keyColRow.TableName + "' not found for column " + keyColRow.ColumnName);
                         continue;
                     }
                 }
@@ -198,57 +197,57 @@ namespace DbLinq.Firebird
         {
             switch (dataType.Type)
             {
-                // string
-                case "CSTRING":
-                case "TEXT":
-                case "VARYING":
-                    return typeof(String);
+            // string
+            case "CSTRING":
+            case "TEXT":
+            case "VARYING":
+                return typeof(String);
 
-                // int16
-                case "SHORT":
-                    if (dataType.Unsigned ?? false)
-                        return typeof(UInt16);
-                    return typeof(Int16);
+            // int16
+            case "SHORT":
+                if (dataType.Unsigned ?? false)
+                    return typeof(UInt16);
+                return typeof(Int16);
 
-                // int32
-                case "LONG":
-                    if (dataType.Unsigned ?? false)
-                        return typeof(UInt32);
-                    return typeof(Int32);
+            // int32
+            case "LONG":
+                if (dataType.Unsigned ?? false)
+                    return typeof(UInt32);
+                return typeof(Int32);
 
-                // int64
-                case "INT64":
-                    return typeof(Int64);
+            // int64
+            case "INT64":
+                return typeof(Int64);
 
-                // single
-                case "FLOAT":
-                    return typeof(Single);
+            // single
+            case "FLOAT":
+                return typeof(Single);
 
-                // double
-                case "DOUBLE":
-                    return typeof(Double);
+            // double
+            case "DOUBLE":
+                return typeof(Double);
 
-                // decimal
-                case "QUAD":
-                    return typeof(Decimal);
+            // decimal
+            case "QUAD":
+                return typeof(Decimal);
 
-                // time interval
-                case "TIME":
-                    return typeof(TimeSpan);
+            // time interval
+            case "TIME":
+                return typeof(TimeSpan);
 
-                // date
-                case "TIMESTAMP":
-                case "DATE":
-                    return typeof(DateTime);
+            // date
+            case "TIMESTAMP":
+            case "DATE":
+                return typeof(DateTime);
 
-                // byte[]
-                case "BLOB":
-                case "BLOB_ID":
-                    return typeof(Byte[]);
+            // byte[]
+            case "BLOB":
+            case "BLOB_ID":
+                return typeof(Byte[]);
 
-                // if we fall to this case, we must handle the type
-                default:
-                    return null;
+            // if we fall to this case, we must handle the type
+            default:
+                return null;
             }
 
         }

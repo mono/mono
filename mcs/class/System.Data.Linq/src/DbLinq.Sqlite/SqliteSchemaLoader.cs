@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using DbLinq.Logging;
 using DbLinq.Schema;
 using DbLinq.Schema.Dbml;
 using DbLinq.Sqlite;
@@ -63,7 +62,7 @@ namespace DbLinq.Sqlite
                     DbLinq.Schema.Dbml.Table table = schema.Tables.FirstOrDefault(t => tableFullDbName == t.Name);
                     if (table == null)
                     {
-                        Logger.Write(Level.Error, "ERROR L46: Table '" + keyColRow.TableName + "' not found for column " + keyColRow.ColumnName);
+                        WriteErrorLine("ERROR L46: Table '" + keyColRow.TableName + "' not found for column " + keyColRow.ColumnName);
                         continue;
                     }
 
@@ -86,7 +85,7 @@ namespace DbLinq.Sqlite
         /// <summary>
         /// parse strings such as 'INOUT param2 INT' or 'param4 varchar ( 32 )'
         /// </summary>
-        /// <param name="paramStr"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
         protected DbLinq.Schema.Dbml.Parameter ParseParameterString(string param)
         {

@@ -1,3 +1,7 @@
+2008-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* updated to DbLinq r931.
+
 2008-10-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* src/DbLinq.Firebird, System.Data.Linq.dll.sources :

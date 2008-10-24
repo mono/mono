@@ -76,58 +76,58 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         {
             switch (expression.NodeType)
             {
-            case ExpressionType.Call:
-                return AnalyzeCall((MethodCallExpression)expression, parameters, builderContext);
-            case ExpressionType.Lambda:
-                return AnalyzeLambda(expression, parameters, builderContext);
-            case ExpressionType.Parameter:
-                return AnalyzeParameter(expression, builderContext);
-            case ExpressionType.Quote:
-                return AnalyzeQuote(expression, parameters, builderContext);
-            case ExpressionType.MemberAccess:
-                return AnalyzeMember(expression, builderContext);
-            #region case ExpressionType.<Common operators>:
-            case ExpressionType.Add:
-            case ExpressionType.AddChecked:
-            case ExpressionType.Divide:
-            case ExpressionType.Modulo:
-            case ExpressionType.Multiply:
-            case ExpressionType.MultiplyChecked:
-            case ExpressionType.Power:
-            case ExpressionType.Subtract:
-            case ExpressionType.SubtractChecked:
-            case ExpressionType.And:
-            case ExpressionType.Or:
-            case ExpressionType.ExclusiveOr:
-            case ExpressionType.LeftShift:
-            case ExpressionType.RightShift:
-            case ExpressionType.AndAlso:
-            case ExpressionType.OrElse:
-            case ExpressionType.Equal:
-            case ExpressionType.NotEqual:
-            case ExpressionType.GreaterThanOrEqual:
-            case ExpressionType.GreaterThan:
-            case ExpressionType.LessThan:
-            case ExpressionType.LessThanOrEqual:
-            case ExpressionType.Coalesce:
-            //case ExpressionType.ArrayIndex
-            //case ExpressionType.ArrayLength
-            case ExpressionType.Convert:
-            case ExpressionType.ConvertChecked:
-            case ExpressionType.Negate:
-            case ExpressionType.NegateChecked:
-            case ExpressionType.Not:
-            //case ExpressionType.TypeAs
-            case ExpressionType.UnaryPlus:
-            case ExpressionType.MemberInit:
-            #endregion
-                return AnalyzeOperator(expression, builderContext);
-            case ExpressionType.New:
-                return AnalyzeNewOperator(expression, builderContext);
-            case ExpressionType.Constant:
-                return AnalyzeConstant(expression, builderContext);
-            case ExpressionType.Invoke:
-                return AnalyzeInvoke(expression, parameters, builderContext);
+                case ExpressionType.Call:
+                    return AnalyzeCall((MethodCallExpression)expression, parameters, builderContext);
+                case ExpressionType.Lambda:
+                    return AnalyzeLambda(expression, parameters, builderContext);
+                case ExpressionType.Parameter:
+                    return AnalyzeParameter(expression, builderContext);
+                case ExpressionType.Quote:
+                    return AnalyzeQuote(expression, parameters, builderContext);
+                case ExpressionType.MemberAccess:
+                    return AnalyzeMember(expression, builderContext);
+                #region case ExpressionType.<Common operators>:
+                case ExpressionType.Add:
+                case ExpressionType.AddChecked:
+                case ExpressionType.Divide:
+                case ExpressionType.Modulo:
+                case ExpressionType.Multiply:
+                case ExpressionType.MultiplyChecked:
+                case ExpressionType.Power:
+                case ExpressionType.Subtract:
+                case ExpressionType.SubtractChecked:
+                case ExpressionType.And:
+                case ExpressionType.Or:
+                case ExpressionType.ExclusiveOr:
+                case ExpressionType.LeftShift:
+                case ExpressionType.RightShift:
+                case ExpressionType.AndAlso:
+                case ExpressionType.OrElse:
+                case ExpressionType.Equal:
+                case ExpressionType.NotEqual:
+                case ExpressionType.GreaterThanOrEqual:
+                case ExpressionType.GreaterThan:
+                case ExpressionType.LessThan:
+                case ExpressionType.LessThanOrEqual:
+                case ExpressionType.Coalesce:
+                //case ExpressionType.ArrayIndex
+                //case ExpressionType.ArrayLength
+                case ExpressionType.Convert:
+                case ExpressionType.ConvertChecked:
+                case ExpressionType.Negate:
+                case ExpressionType.NegateChecked:
+                case ExpressionType.Not:
+                //case ExpressionType.TypeAs
+                case ExpressionType.UnaryPlus:
+                case ExpressionType.MemberInit:
+                #endregion
+                    return AnalyzeOperator(expression, builderContext);
+                case ExpressionType.New:
+                    return AnalyzeNewOperator(expression, builderContext);
+                case ExpressionType.Constant:
+                    return AnalyzeConstant(expression, builderContext);
+                case ExpressionType.Invoke:
+                    return AnalyzeInvoke(expression, parameters, builderContext);
             }
             return expression;
         }
@@ -163,109 +163,116 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             string methodName = method.Name;
             switch (methodName)
             {
-            case "Select":
-                return AnalyzeSelect(parameters, builderContext);
-            case "Where":
-                return AnalyzeWhere(parameters, builderContext);
-            case "SelectMany":
-                return AnalyzeSelectMany(parameters, builderContext);
-            case "Join":
-                return AnalyzeJoin(parameters, builderContext);
-            case "GroupJoin":
-                return AnalyzeGroupJoin(parameters, builderContext);
-            case "DefaultIfEmpty":
-                return AnalyzeOuterJoin(parameters, builderContext);
-            case "Distinct":
-                return AnalyzeDistinct(parameters, builderContext);
-            case "GroupBy":
-                return AnalyzeGroupBy(parameters, builderContext);
-            case "All":
-                return AnalyzeAll(parameters, builderContext);
-            case "Any":
-                return AnalyzeAny(parameters, builderContext);
-            case "Average":
-                return AnalyzeProjectionQuery(SpecialExpressionType.Average, parameters, builderContext);
-            case "Count":
-                return AnalyzeProjectionQuery(SpecialExpressionType.Count, parameters, builderContext);
-            case "Max":
-                return AnalyzeProjectionQuery(SpecialExpressionType.Max, parameters, builderContext);
-            case "Min":
-                return AnalyzeProjectionQuery(SpecialExpressionType.Min, parameters, builderContext);
-            case "Sum":
-                return AnalyzeProjectionQuery(SpecialExpressionType.Sum, parameters, builderContext);
-            case "StartsWith":
-                return AnalyzeLikeStart(parameters, builderContext);
-            case "EndsWith":
-                return AnalyzeLikeEnd(parameters, builderContext);
-            case "Contains":
-                if (typeof(string).IsAssignableFrom(parameters[0].Type))
-                    return AnalyzeLike(parameters, builderContext);
-                return AnalyzeContains(parameters, builderContext);
-            case "Substring":
-                return AnalyzeSubString(parameters, builderContext);
-            case "First":
-            case "FirstOrDefault":
-                return AnalyzeScalar(methodName, 1, parameters, builderContext);
-            case "Single":
-            case "SingleOrDefault":
-                return AnalyzeScalar(methodName, 2, parameters, builderContext);
-            case "Last":
-                return AnalyzeScalar(methodName, null, parameters, builderContext);
-            case "Take":
-                return AnalyzeTake(parameters, builderContext);
-            case "Skip":
-                return AnalyzeSkip(parameters, builderContext);
-            case "ToUpper":
-                return AnalyzeToUpper(parameters, builderContext);
-            case "ToLower":
-                return AnalyzeToLower(parameters, builderContext);
-            case "OrderBy":
-            case "ThenBy":
-                return AnalyzeOrderBy(parameters, false, builderContext);
-            case "OrderByDescending":
-            case "ThenByDescending":
-                return AnalyzeOrderBy(parameters, true, builderContext);
-            case "Union":
-                return AnalyzeSelectOperation(SelectOperatorType.Union, parameters, builderContext);
-            case "Concat":
-                return AnalyzeSelectOperation(SelectOperatorType.UnionAll, parameters, builderContext);
-            case "Intersect":
-                return AnalyzeSelectOperation(SelectOperatorType.Intersection, parameters, builderContext);
-            case "Except":
-                return AnalyzeSelectOperation(SelectOperatorType.Exception, parameters, builderContext);
-            case "Trim":
-                return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Trim, parameters, builderContext);
-            case "TrimStart":
-                return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.LTrim, parameters, builderContext);
-            case "TrimEnd":
-                return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.RTrim, parameters, builderContext);
-            case "Insert":
-                return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.StringInsert, parameters, builderContext);
-            case "Replace":
-                return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Replace, parameters, builderContext);
-            case "Remove":
-                return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Remove, parameters, builderContext);
-            case "IndexOf":
-                return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.IndexOf, parameters, builderContext);
-            case "ToString":
-                return AnalyzeToString(method, parameters, builderContext);
-            case "Parse":
-                return AnalyzeParse(method, parameters, builderContext);
-            case "Abs":
-            case "Exp":
-            case "Floor":
-            case "Pow":
-            case "Round":
-            case "Sign":
-            case "Sqrt":
-                return AnalyzeGenericSpecialExpressionType((SpecialExpressionType)Enum.Parse(typeof(SpecialExpressionType), methodName), parameters, builderContext);
-            case "Log10":
-                return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Log, parameters, builderContext);
-            case "Log":
-                return AnalyzeLog(parameters, builderContext);
-            default:
-                throw Error.BadArgument("S0133: Implement QueryMethod '{0}'", methodName);
+                case "Select":
+                    return AnalyzeSelect(parameters, builderContext);
+                case "Where":
+                    return AnalyzeWhere(parameters, builderContext);
+                case "SelectMany":
+                    return AnalyzeSelectMany(parameters, builderContext);
+                case "Join":
+                    return AnalyzeJoin(parameters, builderContext);
+                case "GroupJoin":
+                    return AnalyzeGroupJoin(parameters, builderContext);
+                case "DefaultIfEmpty":
+                    return AnalyzeOuterJoin(parameters, builderContext);
+                case "Distinct":
+                    return AnalyzeDistinct(parameters, builderContext);
+                case "GroupBy":
+                    return AnalyzeGroupBy(parameters, builderContext);
+                case "All":
+                    return AnalyzeAll(parameters, builderContext);
+                case "Any":
+                    return AnalyzeAny(parameters, builderContext);
+                case "Average":
+                    return AnalyzeProjectionQuery(SpecialExpressionType.Average, parameters, builderContext);
+                case "Count":
+                    return AnalyzeProjectionQuery(SpecialExpressionType.Count, parameters, builderContext);
+                case "Max":
+                    return AnalyzeProjectionQuery(SpecialExpressionType.Max, parameters, builderContext);
+                case "Min":
+                    return AnalyzeProjectionQuery(SpecialExpressionType.Min, parameters, builderContext);
+                case "Sum":
+                    return AnalyzeProjectionQuery(SpecialExpressionType.Sum, parameters, builderContext);
+                case "StartsWith":
+                    return AnalyzeLikeStart(parameters, builderContext);
+                case "EndsWith":
+                    return AnalyzeLikeEnd(parameters, builderContext);
+                case "Contains":
+                    if (typeof(string).IsAssignableFrom(parameters[0].Type))
+                        return AnalyzeLike(parameters, builderContext);
+                    return AnalyzeContains(parameters, builderContext);
+                case "Substring":
+                    return AnalyzeSubString(parameters, builderContext);
+                case "First":
+                case "FirstOrDefault":
+                    return AnalyzeScalar(methodName, 1, parameters, builderContext);
+                case "Single":
+                case "SingleOrDefault":
+                    return AnalyzeScalar(methodName, 2, parameters, builderContext);
+                case "Last":
+                    return AnalyzeScalar(methodName, null, parameters, builderContext);
+                case "Take":
+                    return AnalyzeTake(parameters, builderContext);
+                case "Skip":
+                    return AnalyzeSkip(parameters, builderContext);
+                case "ToUpper":
+                    return AnalyzeToUpper(parameters, builderContext);
+                case "ToLower":
+                    return AnalyzeToLower(parameters, builderContext);
+                case "OrderBy":
+                case "ThenBy":
+                    return AnalyzeOrderBy(parameters, false, builderContext);
+                case "OrderByDescending":
+                case "ThenByDescending":
+                    return AnalyzeOrderBy(parameters, true, builderContext);
+                case "Union":
+                    return AnalyzeSelectOperation(SelectOperatorType.Union, parameters, builderContext);
+                case "Concat":
+                    return AnalyzeSelectOperation(SelectOperatorType.UnionAll, parameters, builderContext);
+                case "Intersect":
+                    return AnalyzeSelectOperation(SelectOperatorType.Intersection, parameters, builderContext);
+                case "Except":
+                    return AnalyzeSelectOperation(SelectOperatorType.Exception, parameters, builderContext);
+                case "Trim":
+                    return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Trim, parameters, builderContext);
+                case "TrimStart":
+                    return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.LTrim, parameters, builderContext);
+                case "TrimEnd":
+                    return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.RTrim, parameters, builderContext);
+                case "Insert":
+                    return AnalyzeStringInsert(parameters, builderContext);
+                case "Replace":
+                    return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Replace, parameters, builderContext);
+                case "Remove":
+                    return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Remove, parameters, builderContext);
+                case "IndexOf":
+                    return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.IndexOf, parameters, builderContext);
+                case "ToString":
+                    return AnalyzeToString(method, parameters, builderContext);
+                case "Parse":
+                    return AnalyzeParse(method, parameters, builderContext);
+                case "Abs":
+                case "Exp":
+                case "Floor":
+                case "Pow":
+                case "Round":
+                case "Sign":
+                case "Sqrt":
+                    return AnalyzeGenericSpecialExpressionType((SpecialExpressionType)Enum.Parse(typeof(SpecialExpressionType), methodName), parameters, builderContext);
+                case "Log10":
+                    return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Log, parameters, builderContext);
+                case "Log":
+                    return AnalyzeLog(parameters, builderContext);
+                default:
+                    throw Error.BadArgument("S0133: Implement QueryMethod '{0}'", methodName);
             }
+        }
+
+        private Expression AnalyzeStringInsert(IList<Expression> parameters, BuilderContext builderContext)
+        {
+            var startIndexExpression = new StartIndexOffsetExpression(builderContext.QueryContext.DataContext.Vendor.SqlProvider.StringIndexStartsAtOne, parameters.ElementAt(1));
+            var stringToInsertExpression = parameters.ElementAt(2);
+            return AnalyzeGenericSpecialExpressionType(SpecialExpressionType.StringInsert, new Expression[] { parameters.First(), startIndexExpression, stringToInsertExpression }, builderContext);
         }
 
         protected virtual Expression AnalyzeLog(IList<Expression> parameters, BuilderContext builderContext)
@@ -567,6 +574,33 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         }
 
         /// <summary>
+        /// Returns if the given member can be considered as an EntitySet<>
+        /// </summary>
+        /// <param name="memberType"></param>
+        /// <param name="entityType"></param>
+        /// <returns></returns>
+        protected virtual bool IsEntitySet(Type memberType, out Type entityType)
+        {
+            entityType = memberType;
+            // one check, a generic EntityRef<> or inherited
+            if (memberType.IsGenericType && typeof(EntitySet<>).IsAssignableFrom(memberType.GetGenericTypeDefinition()))
+            {
+                entityType = memberType.GetGenericArguments()[0];
+                return true;
+            }
+#if !MONO_STRICT
+            // this is for compatibility with previously generated .cs files
+            // TODO: remove in 2009
+            if (memberType.IsGenericType && typeof(System.Data.Linq.EntitySet<>).IsAssignableFrom(memberType.GetGenericTypeDefinition()))
+            {
+                entityType = memberType.GetGenericArguments()[0];
+                return true;
+            }
+#endif
+            return false;
+        }
+
+        /// <summary>
         /// Analyzes a member access.
         /// This analyzis is down to top: the highest identifier is at bottom
         /// </summary>
@@ -610,18 +644,30 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             if (objectExpression is TableExpression)
             {
                 var tableExpression = (TableExpression)objectExpression;
+
+                // before finding an association, we check for an EntitySet<>
+                // this will be used in RegisterAssociation
+                Type entityType;
+                bool isEntitySet = IsEntitySet(memberInfo.GetMemberType(), out entityType);
                 // first of all, then, try to find the association
-                var queryAssociationExpression = RegisterAssociation(tableExpression, memberInfo,
+                var queryAssociationExpression = RegisterAssociation(tableExpression, memberInfo, entityType,
                                                                      builderContext);
                 if (queryAssociationExpression != null)
+                {
+                    // no entitySet? we have right association
+                    //if (!isEntitySet)
                     return queryAssociationExpression;
+
+                    // from here, we may require to cast the table to an entitySet
+                    return new EntitySetExpression(queryAssociationExpression, memberInfo.GetMemberType());
+                }
                 // then, try the column
                 var queryColumnExpression = RegisterColumn(tableExpression, memberInfo, builderContext);
                 if (queryColumnExpression != null)
                     return queryColumnExpression;
 
                 if (memberInfo.Name == "Count")
-                    return AnalyzeProjectionQuery(SpecialExpressionType.Count, new Expression[] { memberExpression.Expression }, builderContext);
+                    return AnalyzeProjectionQuery(SpecialExpressionType.Count, new[] { memberExpression.Expression }, builderContext);
                 // then, cry
                 throw Error.BadArgument("S0293: Column must be mapped. Non-mapped columns are not handled by now.");
             }
@@ -651,8 +697,9 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             if (memberInfo.DeclaringType == typeof(DateTime))
                 return AnalyzeDateTimeMemberAccess(objectExpression, memberInfo, isStaticMemberAccess);
 
+            // TODO: make this expresion safe (objectExpression can be null here)
             if (objectExpression.Type == typeof(TimeSpan))
-                return AnalyzeTimeSpamMemberAccess(objectExpression, memberInfo);
+                return AnalyzeTimeSpanMemberAccess(objectExpression, memberInfo);
 
 
             if (objectExpression is InputParameterExpression)
@@ -668,6 +715,11 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             }
 
             return AnalyzeCommonMember(objectExpression, memberInfo, builderContext);
+        }
+
+        private Expression AnalyzeTimeSpanMemberAccess(Expression objectExpression, MemberInfo memberInfo)
+        {
+            throw new NotImplementedException();
         }
 
         protected Expression AnalyzeTimeSpamMemberAccess(Expression objectExpression, MemberInfo memberInfo)
@@ -686,56 +738,56 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             Expression currentExpression;
             switch (operationKey)
             {
-            case "Milliseconds":
-                currentExpression = Expression.Convert(new SpecialExpression(SpecialExpressionType.DateDiffInMilliseconds, operands.First(), operands.ElementAt(1)), typeof(double));
-                break;
-            case "Seconds":
-                currentExpression = Expression.Divide(
-                    Expression.Convert(new SpecialExpression(SpecialExpressionType.DateDiffInMilliseconds, operands.First(), operands.ElementAt(1)), typeof(double)),
-                    Expression.Constant(1000.0));
-                break;
-            case "Minutes":
-                currentExpression = Expression.Divide(
+                case "Milliseconds":
+                    currentExpression = Expression.Convert(new SpecialExpression(SpecialExpressionType.DateDiffInMilliseconds, operands.First(), operands.ElementAt(1)), typeof(double));
+                    break;
+                case "Seconds":
+                    currentExpression = Expression.Divide(
                         Expression.Convert(new SpecialExpression(SpecialExpressionType.DateDiffInMilliseconds, operands.First(), operands.ElementAt(1)), typeof(double)),
-                        Expression.Constant(60000.0));
-                break;
-            case "Hours":
-                currentExpression = Expression.Divide(
-                        Expression.Convert(new SpecialExpression(SpecialExpressionType.DateDiffInMilliseconds, operands.First(), operands.ElementAt(1)), typeof(double)),
-                        Expression.Constant(3600000.0));
-                break;
-            case "Days":
-                currentExpression = Expression.Divide(
-                        Expression.Convert(new SpecialExpression(SpecialExpressionType.DateDiffInMilliseconds, operands.First(), operands.ElementAt(1)), typeof(double)),
-                        Expression.Constant(86400000.0));
-                break;
-            default:
-                throw new NotSupportedException(string.Format("The operation {0} over the TimeSpan isn't currently supported", memberInfo.Name));
+                        Expression.Constant(1000.0));
+                    break;
+                case "Minutes":
+                    currentExpression = Expression.Divide(
+                            Expression.Convert(new SpecialExpression(SpecialExpressionType.DateDiffInMilliseconds, operands.First(), operands.ElementAt(1)), typeof(double)),
+                            Expression.Constant(60000.0));
+                    break;
+                case "Hours":
+                    currentExpression = Expression.Divide(
+                            Expression.Convert(new SpecialExpression(SpecialExpressionType.DateDiffInMilliseconds, operands.First(), operands.ElementAt(1)), typeof(double)),
+                            Expression.Constant(3600000.0));
+                    break;
+                case "Days":
+                    currentExpression = Expression.Divide(
+                            Expression.Convert(new SpecialExpression(SpecialExpressionType.DateDiffInMilliseconds, operands.First(), operands.ElementAt(1)), typeof(double)),
+                            Expression.Constant(86400000.0));
+                    break;
+                default:
+                    throw new NotSupportedException(string.Format("The operation {0} over the TimeSpan isn't currently supported", memberInfo.Name));
             }
 
             if (!absoluteSpam)
             {
                 switch (memberInfo.Name)
                 {
-                case "Milliseconds":
-                    currentExpression = Expression.Convert(Expression.Modulo(Expression.Convert(currentExpression, typeof(long)), Expression.Constant(1000L)), typeof(int));
-                    break;
-                case "Seconds":
-                    currentExpression = Expression.Convert(Expression.Modulo(Expression.Convert(currentExpression, typeof(long)),
-                                                          Expression.Constant(60L)), typeof(int));
-                    break;
-                case "Minutes":
-                    currentExpression = Expression.Convert(Expression.Modulo(Expression.Convert(currentExpression, typeof(long)),
-                                                            Expression.Constant(60L)), typeof(int));
-                    break;
-                case "Hours":
-                    currentExpression = Expression.Convert(Expression.Modulo(Expression.Convert(
-                                                                                    currentExpression, typeof(long)),
-                                                            Expression.Constant(24L)), typeof(int));
-                    break;
-                case "Days":
-                    currentExpression = Expression.Convert(currentExpression, typeof(int));
-                    break;
+                    case "Milliseconds":
+                        currentExpression = Expression.Convert(Expression.Modulo(Expression.Convert(currentExpression, typeof(long)), Expression.Constant(1000L)), typeof(int));
+                        break;
+                    case "Seconds":
+                        currentExpression = Expression.Convert(Expression.Modulo(Expression.Convert(currentExpression, typeof(long)),
+                                                              Expression.Constant(60L)), typeof(int));
+                        break;
+                    case "Minutes":
+                        currentExpression = Expression.Convert(Expression.Modulo(Expression.Convert(currentExpression, typeof(long)),
+                                                                Expression.Constant(60L)), typeof(int));
+                        break;
+                    case "Hours":
+                        currentExpression = Expression.Convert(Expression.Modulo(Expression.Convert(
+                                                                                        currentExpression, typeof(long)),
+                                                                Expression.Constant(24L)), typeof(int));
+                        break;
+                    case "Days":
+                        currentExpression = Expression.Convert(currentExpression, typeof(int));
+                        break;
                 }
 
             }
@@ -755,22 +807,22 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             {
                 switch (memberInfo.Name)
                 {
-                case "Year":
-                    return new SpecialExpression(SpecialExpressionType.Year, objectExpression);
-                case "Month":
-                    return new SpecialExpression(SpecialExpressionType.Month, objectExpression);
-                case "Day":
-                    return new SpecialExpression(SpecialExpressionType.Day, objectExpression);
-                case "Hour":
-                    return new SpecialExpression(SpecialExpressionType.Hour, objectExpression);
-                case "Minute":
-                    return new SpecialExpression(SpecialExpressionType.Minute, objectExpression);
-                case "Second":
-                    return new SpecialExpression(SpecialExpressionType.Second, objectExpression);
-                case "Millisecond":
-                    return new SpecialExpression(SpecialExpressionType.Millisecond, objectExpression);
-                default:
-                    throw new NotSupportedException(string.Format("DateTime Member access {0} not supported", memberInfo.Name));
+                    case "Year":
+                        return new SpecialExpression(SpecialExpressionType.Year, objectExpression);
+                    case "Month":
+                        return new SpecialExpression(SpecialExpressionType.Month, objectExpression);
+                    case "Day":
+                        return new SpecialExpression(SpecialExpressionType.Day, objectExpression);
+                    case "Hour":
+                        return new SpecialExpression(SpecialExpressionType.Hour, objectExpression);
+                    case "Minute":
+                        return new SpecialExpression(SpecialExpressionType.Minute, objectExpression);
+                    case "Second":
+                        return new SpecialExpression(SpecialExpressionType.Second, objectExpression);
+                    case "Millisecond":
+                        return new SpecialExpression(SpecialExpressionType.Millisecond, objectExpression);
+                    default:
+                        throw new NotSupportedException(string.Format("DateTime Member access {0} not supported", memberInfo.Name));
                 }
             }
         }
@@ -812,8 +864,8 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             {
                 switch (memberInfo.Name)
                 {
-                case "Length":
-                    return new SpecialExpression(SpecialExpressionType.StringLength, objectExpression);
+                    case "Length":
+                        return new SpecialExpression(SpecialExpressionType.StringLength, objectExpression);
                 }
             }
             //throw Error.BadArgument("S0324: Don't know how to handle Piece");
@@ -1179,11 +1231,12 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         protected virtual Expression AnalyzeSubString(IList<Expression> parameters, BuilderContext builderContext)
         {
             var stringExpression = Analyze(parameters[0], builderContext);
-            var startExpression = Analyze(parameters[1], builderContext);
+            var startExpression = new StartIndexOffsetExpression(builderContext.QueryContext.DataContext.Vendor.SqlProvider.StringIndexStartsAtOne,
+                                                        Analyze(parameters[1], builderContext));
             if (parameters.Count > 2)
             {
-                var endExpression = parameters[2];
-                return new SpecialExpression(SpecialExpressionType.Substring, stringExpression, startExpression, endExpression);
+                var lengthExpression = parameters[2];
+                return new SpecialExpression(SpecialExpressionType.Substring, stringExpression, startExpression, lengthExpression);
             }
             return new SpecialExpression(SpecialExpressionType.Substring, stringExpression, startExpression);
         }

@@ -1,4 +1,4 @@
-﻿#region MIT license
+#region MIT license
 // 
 // MIT license
 //
@@ -25,34 +25,44 @@
 #endregion
 
 using System;
-using System.Data;
-
-namespace DbLinq.Util
-{
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq.Expressions;
 #if MONO_STRICT
-    internal
+using System.Data.Linq.Sugar.ExpressionMutator;
 #else
-    public
+using DbLinq.Data.Linq.Sugar.ExpressionMutator;
 #endif
-    static class IDbDataParameterExtensions
+
+#if MONO_STRICT
+namespace System.Data.Linq.Sugar.Expressions
+#else
+namespace DbLinq.Data.Linq.Sugar.Expressions
+#endif
+{
+    /// <summary>
+    /// A GroupExpression holds a grouped result
+    /// It is usually transparent, except for return value, where it mutates the type to IGrouping
+    /// </summary>
+    [DebuggerDisplay("EntityExpression: {TableExpression.Type}")]
+    internal class EntitySetExpression : MutableExpression
     {
-        public static void SetValue(this IDbDataParameter dbParameter, object value, Type type)
+        public const ExpressionType ExpressionType = (ExpressionType)CustomExpressionType.EntitySet;
+
+        public TableExpression TableExpression { get; set; }
+
+        public EntitySetExpression(TableExpression tableExpression, Type entitySetType)
+            : base(ExpressionType, entitySetType)
         {
-            if (value == null)
-            {
-                if (type.IsNullable())
-                    dbParameter.Value = TypeConvert.GetDefault(type.GetNullableType());
-                else if (type.IsValueType)
-                    dbParameter.Value = TypeConvert.GetDefault(type);
-                dbParameter.Value = DBNull.Value;
-            }
-            else
-                dbParameter.Value = value;
+            TableExpression = tableExpression;
         }
 
-        public static void SetValue<T>(this IDbDataParameter dbParameter, T value)
+        public override Expression Mutate(IList<Expression> newOperands)
         {
-            SetValue(dbParameter, value, typeof(T));
+            if (newOperands.Count != 1)
+                throw Error.BadArgument("S0063: Bad argument count");
+            TableExpression = (TableExpression)newOperands[0];
+            return this;
         }
     }
 }

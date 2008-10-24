@@ -49,51 +49,6 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
 {
     internal class QueryRunner : IQueryRunner
     {
-        protected class DbCommand : IDisposable
-        {
-            private IDisposable _connection;
-            private IDatabaseTransaction _transaction;
-            public readonly IDbCommand Command;
-
-            public virtual void Dispose()
-            {
-                Command.Dispose();
-                if (_transaction != null)
-                    _transaction.Dispose();
-                _connection.Dispose();
-            }
-
-            /// <summary>
-            /// Commits the current transaction.
-            /// throws NRE if _transaction is null. Behavior is intentional.
-            /// </summary>
-            public void Commit()
-            {
-                // TODO: do not commit if participating in a higher transaction
-                _transaction.Commit();
-            }
-
-            public DbCommand(string commandText, bool createTransaction, DataContext dataContext)
-            {
-                // TODO: check if all this stuff is necessary
-                // the OpenConnection() checks that the connection is already open
-                // TODO: see if we can move this here (in theory the final DataContext shouldn't use)
-                _connection = dataContext.DatabaseContext.OpenConnection();
-                // the transaction is optional
-                if (createTransaction)
-                    _transaction = dataContext.DatabaseContext.Transaction();
-                Command = dataContext.DatabaseContext.CreateCommand();
-                Command.CommandText = commandText;
-                if (createTransaction)
-                    Command.Transaction = _transaction.Transaction;
-            }
-        }
-
-        protected virtual DbCommand UseDbCommand(SqlStatement commandText, bool createTransaction, DataContext dataContext)
-        {
-            return new DbCommand(commandText.ToString(), createTransaction, dataContext);
-        }
-
         /// <summary>
         /// Enumerates all records return by SQL request
         /// </summary>
@@ -111,15 +66,8 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 yield break;
             }
 
-            using (var dbCommand = UseDbCommand(selectQuery.Sql, false, selectQuery.DataContext))
+            using (var dbCommand = selectQuery.GetCommand())
             {
-                foreach (var parameter in selectQuery.InputParameters)
-                {
-                    var dbParameter = dbCommand.Command.CreateParameter();
-                    dbParameter.ParameterName = selectQuery.DataContext.Vendor.SqlProvider.GetParameterName(parameter.Alias);
-                    dbParameter.Value = parameter.GetValue();
-                    dbCommand.Command.Parameters.Add(dbParameter);
-                }
 
                 // write query to log
                 selectQuery.DataContext.WriteLog(dbCommand.Command);
@@ -176,18 +124,18 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         {
             switch (selectQuery.ExecuteMethodName)
             {
-            case null: // some calls, like Count() generate SQL and the resulting projection method name is null (never initialized)
-                return SelectSingle<S>(selectQuery, false); // Single() for safety, but First() should work
-            case "First":
-                return SelectFirst<S>(selectQuery, false);
-            case "FirstOrDefault":
-                return SelectFirst<S>(selectQuery, true);
-            case "Single":
-                return SelectSingle<S>(selectQuery, false);
-            case "SingleOrDefault":
-                return SelectSingle<S>(selectQuery, true);
-            case "Last":
-                return SelectLast<S>(selectQuery, false);
+                case null: // some calls, like Count() generate SQL and the resulting projection method name is null (never initialized)
+                    return SelectSingle<S>(selectQuery, false); // Single() for safety, but First() should work
+                case "First":
+                    return SelectFirst<S>(selectQuery, false);
+                case "FirstOrDefault":
+                    return SelectFirst<S>(selectQuery, true);
+                case "Single":
+                    return SelectSingle<S>(selectQuery, false);
+                case "SingleOrDefault":
+                    return SelectSingle<S>(selectQuery, true);
+                case "Last":
+                    return SelectLast<S>(selectQuery, false);
             }
             throw Error.BadArgument("S0077: Unhandled method '{0}'", selectQuery.ExecuteMethodName);
         }
@@ -267,17 +215,10 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
 
         private void Upsert(object target, UpsertQuery insertQuery)
         {
+            insertQuery.Target = target;
             var dataContext = insertQuery.DataContext;
-            var sqlProvider = dataContext.Vendor.SqlProvider;
-            using (var dbCommand = UseDbCommand(insertQuery.Sql, true, dataContext))
+            using (var dbCommand = insertQuery.GetCommand())
             {
-                foreach (var inputParameter in insertQuery.InputParameters)
-                {
-                    var dbParameter = dbCommand.Command.CreateParameter();
-                    dbParameter.ParameterName = sqlProvider.GetParameterName(inputParameter.Alias);
-                    dbParameter.SetValue(inputParameter.GetValue(target), inputParameter.ValueType);
-                    dbCommand.Command.Parameters.Add(dbParameter);
-                }
 
                 // log first command
                 dataContext.WriteLog(dbCommand.Command);
@@ -343,16 +284,9 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <param name="deleteQuery">SQL delete query</param>
         public void Delete(object target, DeleteQuery deleteQuery)
         {
-            var sqlProvider = deleteQuery.DataContext.Vendor.SqlProvider;
-            using (var dbCommand = UseDbCommand(deleteQuery.Sql, true, deleteQuery.DataContext))
+            deleteQuery.Target = target;
+            using (var dbCommand = deleteQuery.GetCommand())
             {
-                foreach (var inputParameter in deleteQuery.InputParameters)
-                {
-                    var dbParameter = dbCommand.Command.CreateParameter();
-                    dbParameter.ParameterName = sqlProvider.GetParameterName(inputParameter.Alias);
-                    dbParameter.SetValue(inputParameter.GetValue(target), inputParameter.ValueType);
-                    dbCommand.Command.Parameters.Add(dbParameter);
-                }
 
                 // log command
                 deleteQuery.DataContext.WriteLog(dbCommand.Command);
@@ -387,9 +321,9 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <returns></returns>
         public int Execute(DirectQuery directQuery, params object[] parameters)
         {
-            using (var dbCommand = UseDbCommand(directQuery.Sql, false, directQuery.DataContext))
+            directQuery.parameterValues = parameters;
+            using (var dbCommand = directQuery.GetCommand())
             {
-                FeedParameters(dbCommand.Command, directQuery.Parameters, parameters);
 
                 // log command
                 directQuery.DataContext.WriteLog(dbCommand.Command);
@@ -420,10 +354,9 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <returns></returns>
         public IEnumerable ExecuteSelect(Type tableType, DirectQuery directQuery, params object[] parameters)
         {
-            var dataContext = directQuery.DataContext;
-            using (var dbCommand = UseDbCommand(directQuery.Sql, false, directQuery.DataContext))
+            directQuery.parameterValues = parameters;
+            using (var dbCommand = directQuery.GetCommand())
             {
-                FeedParameters(dbCommand.Command, directQuery.Parameters, parameters);
 
                 // log query
                 directQuery.DataContext.WriteLog(dbCommand.Command);
@@ -432,7 +365,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 {
                     // Did you know? "return EnumerateResult(tableType, dataReader, dataContext);" disposes resources first
                     // before the enumerator is used
-                    foreach (var result in EnumerateResult(tableType, dataReader, dataContext))
+                    foreach (var result in EnumerateResult(tableType, dataReader, directQuery.DataContext))
                         yield return result;
                 }
             }

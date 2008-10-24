@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7950197D-4122-49CB-9FD7-45E666BAFEC2}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -62,9 +62,11 @@
     <Compile Include="Data\Linq\ChangeSet.cs" />
     <Compile Include="Data\Linq\Database\IDatabaseContext.cs" />
     <Compile Include="Data\Linq\Database\IDatabaseTransaction.cs" />
+    <Compile Include="Data\Linq\Database\IDbLinqCommand.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseConnection.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseContext.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseTransaction.cs" />
+    <Compile Include="Data\Linq\DataLoadOptions.cs" />
     <Compile Include="Data\Linq\DBLinqExtendedAttributte.cs" />
     <Compile Include="Data\Linq\EntityRef.cs" />
     <Compile Include="Data\Linq\EntitySet.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="Data\Linq\Sql\SqlPart.cs" />
     <Compile Include="Data\Linq\Sql\SqlStatement.cs" />
     <Compile Include="Data\Linq\Sugar\BuilderContext.cs" />
+    <Compile Include="Data\Linq\Database\Implementation\DbLinqCommand.cs" />
     <Compile Include="Data\Linq\Sugar\DeleteQuery.cs" />
     <Compile Include="Data\Linq\Sugar\DirectQuery.cs" />
     <Compile Include="Data\Linq\Sugar\Error.cs" />
@@ -141,6 +144,7 @@
     <Compile Include="Data\Linq\Sugar\ExpressionPrecedence.cs" />
     <Compile Include="Data\Linq\Sugar\ExpressionQuery.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ColumnExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\EntitySetExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ObjectInputParameterExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ObjectOutputParameterExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\CustomExpressionType.cs" />
@@ -156,6 +160,7 @@
     <Compile Include="Data\Linq\Sugar\Expressions\SelectOperatorType.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\SpecialExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\SpecialExpressionType.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\StartIndexOffsetExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\TableExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\TableJoinType.cs" />
     <Compile Include="Data\Linq\Sugar\ExpressionTier.cs" />
@@ -174,6 +179,9 @@
     <Compile Include="Data\Linq\Sugar\Implementation\ExpressionOptimizer.cs" />
     <Compile Include="Data\Linq\Sugar\Implementation\ExpressionQualifier.cs" />
     <Compile Include="Data\Linq\Sugar\Implementation\QueryBuilder.Upsert.cs" />
+    <Compile Include="Data\Linq\Sugar\ParameterizedQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Data\Linq\Sugar\UpsertQuery.cs" />
     <Compile Include="Data\Linq\Sugar\IQueryCache.cs" />
     <Compile Include="Data\Linq\Sugar\Implementation\LineGrouping.cs" />
@@ -210,10 +218,6 @@
     <Compile Include="Schema\Dbml\Adapter\SpecifiedPropertyUpdater.cs" />
     <Compile Include="Schema\WordsExtraction.cs" />
     <Compile Include="Schema\NameFormat.cs" />
-    <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Logging\Implementation\ConsoleDebugLogger.cs" />
-    <Compile Include="Logging\Implementation\Logger.cs" />
-    <Compile Include="Logging\Level.cs" />
     <Compile Include="Schema\AssociationName.cs" />
     <Compile Include="Schema\ColumnName.cs" />
     <Compile Include="Schema\ParameterName.cs" />
@@ -226,12 +230,15 @@
     <Compile Include="Schema\Name.cs" />
     <Compile Include="Schema\SchemaName.cs" />
     <Compile Include="Schema\TableName.cs" />
+    <Compile Include="Util\Output.cs" />
     <Compile Include="Util\IDataRecordExtensions.cs" />
     <Compile Include="Util\IDataTypeExtensions.cs" />
     <Compile Include="Language\ILanguages.cs" />
     <Compile Include="Language\ILanguageWords.cs" />
     <Compile Include="Util\IDbDataParameterExtensions.cs" />
-    <Compile Include="Util\ILoggerExtension.cs" />
+    <Compile Include="Util\OutputLevel.cs" />
+    <Compile Include="Util\ReflectionUtility.cs" />
+    <Compile Include="Util\TextWriterExtension.cs" />
     <Compile Include="Util\LambdaComparer.cs" />
     <Compile Include="Util\DataCommand.cs" />
     <Compile Include="Schema\INameFormatter.cs" />

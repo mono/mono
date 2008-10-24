@@ -117,5 +117,14 @@ namespace DbLinq.SqlServer
         {
             throw new NotImplementedException();
         }
+
+        override protected TypeToLoadData GetProviderTypeName()
+        {
+            return new TypeToLoadData
+            {
+                assemblyName = "System.Data.SQLite.DLL",
+                className = "SqlConnection",
+            };
+        }
     }
 }

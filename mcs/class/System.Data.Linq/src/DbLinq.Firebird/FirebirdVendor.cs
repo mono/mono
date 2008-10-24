@@ -38,7 +38,6 @@ using System.Data.Linq.SqlClient;
 using DbLinq.Data.Linq;
 using DbLinq.Data.Linq.SqlClient;
 #endif
-using DbLinq.Logging;
 using DbLinq.Util;
 using DbLinq.Vendor;
 
@@ -194,13 +193,22 @@ namespace DbLinq.Firebird
                     object val2 = TypeConvert.To(val, desired_type);
                     outParamValues.Add(val2);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //fails with 'System.Decimal cannot be converted to Int32'
-                    Logger.Write(Level.Error, "CopyOutParams ERROR L245: failed on CastValue(): " + ex.Message);
+                    //Logger.Write(Level.Error, "CopyOutParams ERROR L245: failed on CastValue(): " + ex.Message);
                 }
             }
             return outParamValues;
+        }
+
+        override protected TypeToLoadData GetProviderTypeName()
+        {
+            return new TypeToLoadData
+            {
+                assemblyName = "FirebirdSql.Data.FirebirdClient.DLL",
+                className = "FbConnection",
+            };
         }
     }
 }
