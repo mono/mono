@@ -1,4 +1,6 @@
+2008-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_create_from_typedef): Added Vector16sb.
 
 2008-10-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
