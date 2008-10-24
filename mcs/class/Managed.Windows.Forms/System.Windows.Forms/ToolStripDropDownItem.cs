@@ -317,7 +317,7 @@ namespace System.Windows.Forms
 
 		internal override void HandleClick (EventArgs e)
 		{
-			base.OnClick (e);
+			OnClick (e);
 		}
 		
 		internal void HideDropDown (ToolStripDropDownCloseReason reason)

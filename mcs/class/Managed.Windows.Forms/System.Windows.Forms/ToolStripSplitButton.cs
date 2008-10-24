@@ -91,7 +91,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		public Rectangle ButtonBounds {
-			get { return new Rectangle (0, 0, this.Bounds.Width - this.drop_down_button_width - 1, this.Height); }
+			get { return new Rectangle (Bounds.Left, Bounds.Top, this.Bounds.Width - this.drop_down_button_width - 1, this.Height); }
 		}
 
 		[Browsable (false)]
@@ -118,7 +118,7 @@ namespace System.Windows.Forms
 		
 		[Browsable (false)]
 		public Rectangle DropDownButtonBounds {
-			get { return new Rectangle (this.Bounds.Width - this.drop_down_button_width, 0, this.drop_down_button_width, this.Bounds.Height); }
+			get { return new Rectangle (this.Bounds.Right - this.drop_down_button_width, 0, this.drop_down_button_width, this.Bounds.Height); }
 		}
 
 		[Browsable (false)]

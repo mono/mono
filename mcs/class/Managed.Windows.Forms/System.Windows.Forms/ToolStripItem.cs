@@ -1755,8 +1755,8 @@ namespace System.Windows.Forms
 				
 			switch (met) {
 				case ToolStripItemEventType.MouseUp:
-					this.OnMouseUp ((MouseEventArgs)e);
 					this.HandleClick (e);
+					this.OnMouseUp ((MouseEventArgs)e);
 					break;
 				case ToolStripItemEventType.MouseDown:
 					this.OnMouseDown ((MouseEventArgs)e);
