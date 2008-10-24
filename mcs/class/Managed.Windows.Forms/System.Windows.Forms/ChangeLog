@@ -1,5 +1,10 @@
 2008-10-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs: Fix item height calculation based off Font to match .Net.
+	[Fixes bug #436730]
+
+2008-10-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripDropDownItem.cs: Call OnClick instead of base.OnClick so
 	overridden methods will get called.
 	* ToolStripItem.cs: Raise Click before MouseUp.

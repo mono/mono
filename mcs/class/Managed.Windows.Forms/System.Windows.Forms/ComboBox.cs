@@ -1094,10 +1094,8 @@ namespace System.Windows.Forms
 			if (textbox_ctrl != null)
 				textbox_ctrl.Font = Font;
 			
-			if (!item_height_specified) {
-				SizeF sz = TextRenderer.MeasureString ("The quick brown Fox", Font);
-				item_height = (int) sz.Height;
-			}
+			if (!item_height_specified)
+				item_height = Font.Height + 2;
 
 			if (IntegralHeight)
 				UpdateComboBoxBounds ();
