@@ -192,6 +192,7 @@
               <field name="Error" attrib="22" fieldtype="System.IO.TextWriter" />
               <field name="Output" attrib="22" fieldtype="System.IO.TextWriter" />
               <field name="Prompt" attrib="22" fieldtype="System.String" />
+	      <field name="QuitRequested" attrib="22" fieldtype="System.Boolean" />
             </fields>
             <constructors>
               <constructor name=".ctor()" attrib="2182">
@@ -223,6 +224,11 @@
               <method name="LoadPackage(System.String)" attrib="150" static="true" returntype="System.Void">
                 <parameters>
                   <parameter name="pkg" position="0" attrib="0" type="System.String" />
+                </parameters>
+              </method>
+              <method name="Describe(System.Object)" attrib="150" static="true" returntype="System.String">
+                <parameters>
+                  <parameter name="x" position="0" attrib="0" type="System.Object" />
                 </parameters>
               </method>
               <method name="ShowUsing()" attrib="150" static="true" returntype="System.Void">
