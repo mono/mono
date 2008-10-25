@@ -1390,7 +1390,7 @@ namespace System.Windows.Forms
 				Keys keys = (Keys) m.WParam.ToInt32 ();
 #if NET_2_0
 				// Don't pass the message to base if auto complete is being used and available.
-				if (textbox_ctrl != null && textbox_ctrl.CanNavigateAutoComplete) {
+				if (textbox_ctrl != null && textbox_ctrl.CanNavigateAutoCompleteList) {
 					XplatUI.SendMessage (textbox_ctrl.Handle, (Msg) m.Msg, m.WParam, m.LParam);
 					return;
 				}
