@@ -1,3 +1,9 @@
+
+2008-10-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* RxInterpreter.cs: implement missing Unicode* opcodes and
+	StringReverseIgnoreCase.
+
 2008-10-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* RxOp.cs: Remove unused Generic opcodes.

@@ -617,7 +617,37 @@ namespace System.Text.RegularExpressions {
 					}
 					pc = end;
 					continue;
-				case RxOp.UnicodeString:
+				case RxOp.StringReverse: {
+					start = pc + 2;
+					length = program [pc + 1];
+					if (strpos < length)
+						return false;
+					int p = strpos - length;
+					end = start + length;
+					for (; start < end; ++start, ++p) {
+						if (str [p] != program [start])
+							return false;
+					}
+					strpos -= length;
+					pc = end;
+					continue;
+				}
+				case RxOp.StringIgnoreCaseReverse: {
+					start = pc + 2;
+					length = program [pc + 1];
+					if (strpos < length)
+						return false;
+					int p = strpos - length;
+					end = start + length;
+					for (; start < end; ++start, ++p) {
+						if (str [p] != program [start] && Char.ToLower (str [p]) != program [start])
+							return false;
+					}
+					strpos -= length;
+					pc = end;
+					continue;
+				}
+				case RxOp.UnicodeString: {
 					start = pc + 3;
 					length = program [pc + 1] | ((int)program [pc + 2] << 8);
 					if (strpos + length > string_end)
@@ -631,7 +661,8 @@ namespace System.Text.RegularExpressions {
 					}
 					pc = end;
 					continue;
-				case RxOp.UnicodeStringIgnoreCase:
+				}
+				case RxOp.UnicodeStringIgnoreCase: {
 					start = pc + 3;
 					length = program [pc + 1] | ((int)program [pc + 2] << 8);
 					if (strpos + length > string_end)
@@ -645,15 +676,33 @@ namespace System.Text.RegularExpressions {
 					}
 					pc = end;
 					continue;
-				case RxOp.StringReverse: {
-					start = pc + 2;
-					length = program [pc + 1];
+				}
+				case RxOp.UnicodeStringReverse: {
+					start = pc + 3;
+					length = program [pc + 1] | ((int)program [pc + 2] << 8);
 					if (strpos < length)
 						return false;
 					int p = strpos - length;
-					end = start + length;
-					for (; start < end; ++start, ++p) {
-						if (str [p] != program [start])
+					end = start + length * 2;
+					for (; start < end; start += 2, p += 2) {
+						int c = program [start] | ((int)program [start + 1] << 8);
+						if (str [p] != c)
+							return false;
+					}
+					strpos -= length;
+					pc = end;
+					continue;
+				}
+				case RxOp.UnicodeStringIgnoreCaseReverse: {
+					start = pc + 3;
+					length = program [pc + 1] | ((int)program [pc + 2] << 8);
+					if (strpos < length)
+						return false;
+					int p = strpos - length;
+					end = start + length * 2;
+					for (; start < end; start += 2, p += 2) {
+						int c = program [start] | ((int)program [start + 1] << 8);
+						if (str [p] != c && Char.ToLower (str [p]) != c)
 							return false;
 					}
 					strpos -= length;
