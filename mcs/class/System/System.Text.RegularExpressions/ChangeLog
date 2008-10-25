@@ -1,3 +1,6 @@
+2008-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* CILCompiler.cs: Implement Test opcode.
 
 2008-10-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

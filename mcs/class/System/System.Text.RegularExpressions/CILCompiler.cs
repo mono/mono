@@ -191,6 +191,18 @@ namespace System.Text.RegularExpressions {
 			return (int)program [pc] | ((int)program [pc + 1] << 8);
 		}
 
+		private Label CreateLabelForPC (ILGenerator ilgen, int pc) {
+			if (labels == null)
+				labels = new Dictionary <int, Label> ();
+			Label l;
+			if (!labels.TryGetValue (pc, out l)) {
+				l = ilgen.DefineLabel ();
+				labels [pc] = l;
+			}
+
+			return l;
+		}
+
 		/*
 		 * Emit IL code for a sequence of opcodes between pc and end_pc. If there is a
 		 * match, set strpos (Arg 1) to the position after the match, then 
@@ -1037,14 +1049,42 @@ namespace System.Text.RegularExpressions {
 						Console.WriteLine ("\tjump target: {0}", target_pc);
 					if (labels == null)
 						labels = new Dictionary <int, Label> ();
-					Label l;
-					if (!labels.TryGetValue (target_pc, out l)) {
-						l = ilgen.DefineLabel ();
-						labels [target_pc] = l;
-					}
+					Label l = CreateLabelForPC (ilgen, target_pc);
 					ilgen.Emit (OpCodes.Br, l);
 					pc += 3;
  					break;
+				}
+				case RxOp.Test: {
+					int target1 = pc + ReadShort (program, pc + 1);
+					int target2 = pc + ReadShort (program, pc + 3);
+
+					if (trace_compile)
+						Console.WriteLine ("\temitting <test_expr>");
+
+					Frame new_frame = new Frame (ilgen);
+					m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc + 5, target1 < target2 ? target1 : target2, false, false, out pc);
+					if (m == null)
+						return null;						
+
+					if (trace_compile) {
+						Console.WriteLine ("\temitted <test_expr>");
+						Console.WriteLine ("\ttarget1 = {0}", target1);
+						Console.WriteLine ("\ttarget2 = {0}", target2);
+					}
+
+					Label l1 = CreateLabelForPC (ilgen, target1);
+					Label l2 = CreateLabelForPC (ilgen, target2);
+
+					// Pass
+					ilgen.MarkLabel (new_frame.label_pass);
+					ilgen.Emit (OpCodes.Br, l1);
+						
+					// Fail
+					ilgen.MarkLabel (new_frame.label_fail);
+					ilgen.Emit (OpCodes.Br, l2);
+
+					// Continue at pc, which should equal to target1
+					break;
 				}
 				case RxOp.TestCharGroup: {
 					int char_group_end = pc + ReadShort (program, pc + 1);
@@ -1577,7 +1617,6 @@ namespace System.Text.RegularExpressions {
 					if (RxInterpreter.trace_rx || trace_compile)
 						Console.WriteLine ("Opcode " + op + " not supported.");
 					return null;
-					break;
 				default:
 					throw new NotImplementedException ("Opcode '" + op + "' not supported by the regex->IL compiler.");
 			    }
