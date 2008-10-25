@@ -35,18 +35,24 @@ using System.Collections;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Text;
-	
+
+namespace Mono.CSharp {
 public class Outline {
+
+	bool declared_only;
+	bool show_private;
+	bool filter_obsolete;
 	
-	Options options;
 	IndentedTextWriter o;
 	Type t;
 	
-	public Outline (Type t, TextWriter output, Options options)
+	public Outline (Type t, TextWriter output, bool declared_only, bool show_private, bool filter_obsolete)
 	{
 		this.t = t;
 		this.o = new IndentedTextWriter (output, "\t");
-		this.options = options;
+		this.declared_only = declared_only;
+		this.show_private = show_private;
+		this.filter_obsolete = filter_obsolete;
 	}
 
 	public void OutlineType ()
@@ -67,7 +73,7 @@ public class Outline {
 		o.Write (GetTypeKind (t));
 		o.Write (" ");
 		
-		Type [] interfaces = (Type []) Comparer.Sort (TypeGetInterfaces (t, options.DeclaredOnly));
+		Type [] interfaces = (Type []) Comparer.Sort (TypeGetInterfaces (t, declared_only));
 		Type parent = t.BaseType;
 
 		if (t.IsSubclassOf (typeof (System.MulticastDelegate))) {
@@ -109,7 +115,7 @@ public class Outline {
 		}
 
 		if (t.IsEnum) {
-			Type underlyingType = Enum.GetUnderlyingType (t);
+			Type underlyingType = System.Enum.GetUnderlyingType (t);
 			if (underlyingType != typeof (int))
 				o.Write (" : {0}", FormatType (underlyingType));
 		}
@@ -250,7 +256,7 @@ public class Outline {
 				o.WriteLine ();
 			first = false;
 			
-			new Outline (ntype, o, options).OutlineType ();
+			new Outline (ntype, o, declared_only, show_private, filter_obsolete).OutlineType ();
 		}
 		
 		o.Indent--; o.WriteLine ("}");
@@ -260,7 +266,7 @@ public class Outline {
 		get {
 			BindingFlags f = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 			
-			if (options.DeclaredOnly)
+			if (declared_only)
 				f |= BindingFlags.DeclaredOnly;
 			
 			return f;
@@ -543,6 +549,7 @@ public class Outline {
                 }
 	}
 
+#if NET_2_0
 	string FormatGenericParams (Type [] args)
 	{
 		StringBuilder sb = new StringBuilder ();
@@ -558,7 +565,8 @@ public class Outline {
 		sb.Append (">");
 		return sb.ToString ();
 	}
-	
+#endif
+
 	// TODO: fine tune this so that our output is less verbose. We need to figure
 	// out a way to do this while not making things confusing.
 	string FormatType (Type t)
@@ -803,10 +811,10 @@ public class Outline {
 		if (mi.MemberType == MemberTypes.Constructor && ((MethodBase) mi).IsStatic)
 			return false;
 		
-		if (options.ShowPrivate)
+		if (show_private)
 			return true;
 
-		if (options.FilterObsolete && mi.IsDefined (typeof (ObsoleteAttribute), false))
+		if (filter_obsolete && mi.IsDefined (typeof (ObsoleteAttribute), false))
 			return false;
 		
 		switch (mi.MemberType) {
@@ -897,13 +905,13 @@ public class Comparer : IComparer  {
 			
 	}
 
-	static Comparer TypeComparer = new Comparer (new ComparerFunc (CompareType));
+//	static Comparer TypeComparer = new Comparer (new ComparerFunc (CompareType));
 
-	static Type [] Sort (Type [] types)
-	{
-		Array.Sort (types, TypeComparer);
-		return types;
-	}
+//	static Type [] Sort (Type [] types)
+//	{
+//		Array.Sort (types, TypeComparer);
+//		return types;
+//	}
 	
 	static int CompareMemberInfo (object a, object b)
 	{
@@ -935,7 +943,7 @@ public class Comparer : IComparer  {
 			
 			ap = aa.GetParameters ();
 			bp = bb.GetParameters ();
-			int n = Math.Min (ap.Length, bp.Length);
+			int n = System.Math.Min (ap.Length, bp.Length);
 
 			for (int i = 0; i < n; i ++)
 				if ((c = CompareType (ap [i].ParameterType, bp [i].ParameterType)) != 0)
@@ -1004,4 +1012,5 @@ public class Comparer : IComparer  {
 		Array.Sort (inf, EventInfoComparer);
 		return inf;
 	}
+}
 }

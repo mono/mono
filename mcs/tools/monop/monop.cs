@@ -38,6 +38,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Mono.CSharp;
 
 class MonoP {
 	static string assembly;
@@ -361,7 +362,7 @@ class MonoP {
 		// This gets us nice buffering
 		//
 		StreamWriter sw = new StreamWriter (Console.OpenStandardOutput (), Console.Out.Encoding);				
-		new Outline (t, sw, options).OutlineType ();
+		new Outline (t, sw, options.DeclaredOnly, options.ShowPrivate, options.FilterObsolete).OutlineType ();
 		sw.Flush ();
 
 		if (message != null)

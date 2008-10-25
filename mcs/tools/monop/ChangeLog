@@ -1,3 +1,7 @@
+2008-10-24  Miguel de Icaza  <miguel@novell.com>
+
+	* outline.cs: Small changes to allow the outline code to be embedded.
+
 2005-10-10  John Luke  <john.luke@gmail.com>
 
 	* options.cs: add --help output for the two new
