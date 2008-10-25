@@ -47,7 +47,7 @@ namespace Mono.Documentation {
 		void WriteWiseEndElement (bool full)
 		{
 			string localName = localNames.Pop ();
-			string ns = namespaces.Pop ();
+			/* string ns = */ namespaces.Pop ();
 			if (true /* ns == "http://www.w3.org/1999/xhtml" */) {
 				switch (localName.ToLower (CultureInfo.InvariantCulture)) {
 				case "area":

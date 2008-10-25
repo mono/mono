@@ -5,14 +5,41 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 
+using Mono.Options;
+
 namespace Mono.Documentation
 {
-	public class MDocValidator
+	public class MDocValidator : MDocCommand
 	{
 		static XmlValidatingReader reader;
 		static XmlSchema schema;
 		static long errors = 0;
 		static bool IsValid = true;
+
+		public override void Run (IEnumerable<string> args)
+		{
+			string[] validFormats = {
+				"ecma",
+			};
+			string format = "ecma";
+			bool showHelp = false;
+			var p = new OptionSet () {
+				{ "f|format=",
+					"The documentation {0:FORMAT} used within PATHS.  " + 
+						"Valid formats include:\n  " +
+						string.Join ("\n  ", validFormats) + "\n" +
+						"If no format provided, `ecma' is used.",
+					v => format = v },
+			};
+			List<string> files = Parse (p, args, "validate", 
+					"[OPTIONS]+ PATHS",
+					"Validate PATHS against the specified format schema.");
+			if (files == null)
+				return;
+			if (Array.IndexOf (validFormats, format) < 0)
+				Error ("Invalid documentation format: {0}.", format);
+			Run (format, files);
+		}
 	
 		public static void Run (string format, IEnumerable<string> files)
 		{

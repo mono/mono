@@ -1,3 +1,31 @@
+2008-10-24  Jonathan Pryor <jpryor@novell.com>
+
+	* Makefile: Fixup mdoc.exe dependencies so that it's rebuilt if the
+	  resources or monodoc.dll change.  Add tests for mdoc-validate.
+	* Mono.Documentation/assembler.cs, Mono.Documentation/mdoc.cs,
+	  Mono.Documentation/monodocer.cs, Mono.Documentation/monodocs2html.cs,
+	  Mono.Documentation/monodocs2slashdoc.cs,
+	  Mono.Documentation/validate.cs: 
+	  - Major rearchitecture; instead of having the option parsing 
+	    centralized within mdoc.cs, keep option parsing within the relevant 
+	    files/types.
+	  - Introduce the MDocCommand abstract class to serve as the base class 
+	    -- primarily done to introduce the new Message() and Error() 
+	    methods, in which Message() will only show the message if the 
+	    current message level is >= the message's level (thus minimizing 
+	    console spew); see ../monodoc for more details.
+	  - Add `-v' ("verbose") top-level argument to allow setting/adding 
+	    levels, so that `mdoc -v -v assemble ...` will show *all*
+	    assemble-associated messages (which can be quite voluminous).
+	  - Remove compiler warnings, when able.
+	* Mono.Documentation/XhtmlWriter.cs: Remove warning about unused
+	  variable.
+	* Resources/monodoc-ecma.xsd: Extend the XSD to support more
+	  elements/attributes on various elements -- e.g. mdoc-update looks
+	  for a //code/@src attribute, which wasn't defined in the XSD.  Oops.
+	* Test/validate.check.monodocer.importslashdoc: Flush (due to above
+	  XSD changes).
+
 2008-10-22  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile: Correct path names.

@@ -9,7 +9,27 @@ using System.Xml;
 using Mono.Options;
 
 namespace Mono.Documentation {
-public class MDocToMSXDocConverter {
+public class MDocToMSXDocConverter : MDocCommand {
+
+	public override void Run (IEnumerable<string> args)
+	{
+		string file = null;
+		var p = new OptionSet () {
+			{ "o|out=", 
+				"The XML {FILE} to generate.\n" + 
+				"If not specified, will create a set of files in the curent directory " +
+				"based on the //AssemblyInfo/AssemblyName values within the documentation.\n" +
+				"Use '-' to write to standard output.",
+				v => file = v },
+		};
+		List<string> directories = Parse (p, args, "export-slashdoc", 
+				"[OPTIONS]+ DIRECTORIES",
+				"Export mdoc(5) documentation within DIRECTORIES into \n" +
+					"Microsoft XML Documentation format files.");
+		if (directories == null)
+			return;
+		Run (file, directories);
+	}
 	
 	public static void Run (string file, IEnumerable<string> dirs)
 	{

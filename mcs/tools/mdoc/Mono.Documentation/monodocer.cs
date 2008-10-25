@@ -23,6 +23,8 @@ using StringList           = System.Collections.ArrayList;
 using StringToStringMap    = System.Collections.Hashtable;
 using StringToXmlNodeMap   = System.Collections.Hashtable;
 #else
+using Mono.Options;
+
 using MemberInfoEnumerable = System.Collections.Generic.IEnumerable<System.Reflection.MemberInfo>;
 using MyXmlNodeList        = System.Collections.Generic.List<System.Xml.XmlNode>;
 using StringList           = System.Collections.Generic.List<string>;
@@ -32,6 +34,7 @@ using StringToXmlNodeMap   = System.Collections.Generic.Dictionary<string, Syste
 
 namespace Mono.Documentation {
 
+#pragma warning disable 0618
 class MDocUpdaterOptions 
 #if NET_1_0
 	: Options
@@ -89,13 +92,11 @@ class MDocUpdaterOptions
 
 #if NET_1_0
 	[Option("An XML documentation {file} made by the /doc option of mcs/csc the contents of which will be imported.")]
-#endif
 	public string importslashdoc;
 	
-#if NET_1_0
 	[Option("An ECMA or monodoc-generated XML documemntation {file} to import.")]
-#endif
 	public string importecmadoc;
+#endif
 
 #if NET_1_0
 	[Option("Import either a /doc or ECMA documentation file.")]
@@ -117,8 +118,13 @@ class MDocUpdaterOptions
 #endif
 	public bool show_exceptions;
 }
+#pragma warning restore
 
-class MDocUpdater {
+class MDocUpdater 
+#if !NET_1_0
+	: MDocCommand
+#endif
+{
 	
 	static string srcPath;
 	static Assembly[] assemblies;
@@ -158,6 +164,47 @@ class MDocUpdater {
 		}
 		Run (opts);
 	}
+#else
+	public override void Run (IEnumerable<string> args)
+	{
+		var opts = new MDocUpdaterOptions {
+			overrides        = true,
+			pretty           = true,
+			show_exceptions  = DebugOutput,
+		};
+
+		var  types = new List<string> ();
+		var p = new OptionSet () {
+			{ "o|out=",
+				"Root {DIRECTORY} to generate/update documentation.",
+				v => opts.path = v },
+			{ "i|import=", 
+				"Import documentation from {FILE}.",
+				v => opts.import = v },
+			{ "delete",
+				"Delete removed members from the XML files.",
+				v => opts.delete = v != null },
+			{ "since=",
+				"Manually specify the assembly version that new members were added in.",
+				v => opts.since = v },
+			{ "type=",
+			  "Only update documentation for {TYPE}.",
+				v => types.Add (v) },
+		};
+		List<string> extra = Parse (p, args, "update", 
+				"[OPTIONS]+ ASSEMBLIES",
+				"Create or update documentation from ASSEMBLIES.");
+		if (extra == null)
+			return;
+		if (extra.Count == 0)
+			Error ("No assemblies specified.");
+		opts.assembly = extra.ToArray ();
+		if (types.Count > 0)
+			opts.type = types.ToArray ();
+
+		Run (opts);
+		opts.name = ""; // remove warning about unused member
+	}
 #endif
 		
 	public static void Run (MDocUpdaterOptions opts)
@@ -190,6 +237,7 @@ class MDocUpdater {
 				
 			// IMPORT FROM /DOC?
 			
+#if NET_1_0
 			if (opts.importslashdoc != null) {
 				try {
 					slashdocs = new XmlDocument();
@@ -210,6 +258,7 @@ class MDocUpdater {
 					return;
 				}
 			}
+#endif
 
 			if (opts.import != null && ecmadocs == null && slashdocs == null) {
 				try {
@@ -267,13 +316,11 @@ class MDocUpdater {
 		Console.WriteLine("Members Added: {0}, Members Deleted: {1}", additions, deletions);
 	}
 
-	private static void Error (object message)
-	{
-		Console.Error.Write ("monodocer: ");
-		Console.Error.WriteLine (message);
-	}
-	
-	private static void Error (string format, params object[] args)
+	private static 
+#if !NET_1_0
+		new 
+#endif
+		void Error (string format, params object[] args)
 	{
 		Console.Error.Write ("monodocer: ");
 		Console.Error.WriteLine (format, args);
@@ -288,7 +335,9 @@ class MDocUpdater {
 
 		if (assembly == null) {
 			try {
+#pragma warning disable 0612
 				assembly = Assembly.LoadWithPartialName (name);
+#pragma warning restore
 			} catch (Exception) { }
 		}
 			
@@ -1646,14 +1695,14 @@ class MDocUpdater {
 #endif
 	}
 
+#if NET_1_0
 	static IEnumerable Sort (IEnumerable list)
 	{
 		ArrayList l = new ArrayList (list as ICollection);
 		l.Sort ();
 		return l;
 	}
-
-#if !NET_1_0
+#else
 	static IEnumerable<T> Sort<T> (IEnumerable<T> list)
 	{
 		List<T> l = new List<T> (list);
@@ -1816,6 +1865,7 @@ class MDocUpdater {
 		node.InnerText = value;
 	}
 
+#if !NET_1_0
 	static XmlElement AppendElementText (XmlNode parent, string element, string value)
 	{
 		XmlElement n = parent.OwnerDocument.CreateElement (element);
@@ -1823,6 +1873,7 @@ class MDocUpdater {
 		n.InnerText = value;
 		return n;
 	}
+#endif
 
 	static XmlElement AppendElementAttributeText (XmlNode parent, string element, string attribute, string value)
 	{
@@ -1855,9 +1906,6 @@ class MDocUpdater {
 		XmlElement node = (XmlElement)parent.SelectSingleNode(name);
 		if (node != null)
 			parent.RemoveChild(node);
-	}
-	private static void ClearElementChildren(XmlElement parent) {
-		parent.RemoveAll();
 	}
 	
 	// DOCUMENTATION HELPER FUNCTIONS

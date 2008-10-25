@@ -11,18 +11,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using Monodoc;
+using Mono.Options;
 
 namespace Mono.Documentation {
 	
-public class MDocAssembler {
-	public static void Run (string output, Dictionary<string, List<string>> formatToFileMap)
+public class MDocAssembler : MDocCommand {
+	public override void Run (IEnumerable<string> args)
 	{
-		HelpSource hs;
+		string[] validFormats = {
+			"ecma", 
+			"ecmaspec", 
+			"error", 
+			"hb", 
+			"man", 
+			"simple", 
+			"xhtml"
+		};
+		var formats = new Dictionary<string, List<string>> ();
+		string prefix = "tree";
+		string cur_format = "ecma";
+		var options = new OptionSet () {
+			{ "f|format=",
+				"The documentation {FORMAT} used in DIRECTORIES.  " + 
+					"Valid formats include:\n  " +
+					string.Join ("\n  ", validFormats) + "\n" +
+					"If not specified, the default format is `ecma'.",
+				v => {
+					if (Array.IndexOf (validFormats, v) < 0)
+						Error ("Invalid documentation format: {0}.", v);
+					cur_format = v;
+				} },
+			{ "o|out=",
+				"Provides the output file prefix; the files {PREFIX}.zip and " + 
+					"{PREFIX}.tree will be created.\n" +
+					"If not specified, `tree' is the default PREFIX.",
+				v => prefix = v },
+			{ "<>", v => AddFormat (formats, cur_format, v) },
+		};
+		List<string> extra = Parse (options, args, "assemble", 
+				"[OPTIONS]+ DIRECTORIES",
+				"Assemble documentation within DIRECTORIES for use within the monodoc browser.");
+		if (extra == null)
+			return;
+
 		List<Provider> list = new List<Provider> ();
 		EcmaProvider ecma = null;
 		bool sort = false;
 		
-		foreach (string format in formatToFileMap.Keys) {
+		foreach (string format in formats.Keys) {
 			switch (format) {
 			case "ecma":
 				if (ecma == null) {
@@ -30,38 +66,39 @@ public class MDocAssembler {
 					list.Add (ecma);
 					sort = true;
 				}
-				foreach (string dir in formatToFileMap [format])
+				foreach (string dir in formats [format])
 					ecma.AddDirectory (dir);
 				break;
 
 			case "xhtml":
 			case "hb":
-				list.AddRange (formatToFileMap [format].Select (d => (Provider) new XhtmlProvider (d)));
+				list.AddRange (formats [format].Select (d => (Provider) new XhtmlProvider (d)));
 				break;
 
 			case "man":
-				list.Add (new ManProvider (formatToFileMap [format].ToArray ()));
+				list.Add (new ManProvider (formats [format].ToArray ()));
 				break;
 
 			case "simple":
-				list.AddRange (formatToFileMap [format].Select (d => (Provider) new SimpleProvider (d)));
+				list.AddRange (formats [format].Select (d => (Provider) new SimpleProvider (d)));
 				break;
 
 			case "error":
-				list.AddRange (formatToFileMap [format].Select (d => (Provider) new ErrorProvider (d)));
+				list.AddRange (formats [format].Select (d => (Provider) new ErrorProvider (d)));
 				break;
 
 			case "ecmaspec":
-				list.AddRange (formatToFileMap [format].Select (d => (Provider) new EcmaSpecProvider (d)));
+				list.AddRange (formats [format].Select (d => (Provider) new EcmaSpecProvider (d)));
 				break;
 
 			case "addins":
-				list.AddRange (formatToFileMap [format].Select (d => (Provider) new AddinsProvider (d)));
+				list.AddRange (formats [format].Select (d => (Provider) new AddinsProvider (d)));
 				break;
 			}
 		}
 
-		hs = new HelpSource (output, true);
+		HelpSource hs = new HelpSource (prefix, true);
+		hs.TraceLevel = TraceLevel;
 
 		foreach (Provider p in list) {
 			p.PopulateTree (hs.Tree);
@@ -77,6 +114,18 @@ public class MDocAssembler {
 			p.CloseTree (hs, hs.Tree);
 
 		hs.Save ();
+	}
+
+	private void AddFormat (Dictionary<string, List<string>> d, string format, string file)
+	{
+		if (format == null)
+			Error ("No format specified.");
+		List<string> l;
+		if (!d.TryGetValue (format, out l)) {
+			l = new List<string> ();
+			d.Add (format, l);
+		}
+		l.Add (file);
 	}
 }
 

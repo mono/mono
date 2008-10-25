@@ -26,7 +26,7 @@ MDOC_TEST_FILES = \
 	Test/validate.check.monodocer                             \
 	Test/validate.check.monodocer.importslashdoc              \
 	Test/validate.check.monodocer.since                       \
-	$(shell find Test/en.expected* -name \*.xml)      \
+	$(shell find Test/en.expected* -name \*.xml)              \
 	$(shell find Test/html.expected* -name \*.html)
 
 EXTRA_DISTFILES = \
@@ -34,6 +34,8 @@ EXTRA_DISTFILES = \
 	$(MDOC_TEST_FILES)
 
 PROGRAM = mdoc.exe
+
+$(PROGRAM) : $(MDOC_RESOURCES) $(topdir)/class/lib/net_1_1/monodoc.dll
 
 include ../../build/executable.make
 
@@ -160,6 +162,30 @@ check-mdoc-export-msxdoc:
 	$(MONO) mdoc.exe export-msxdoc -o - Test/en.expected.importslashdoc \
 		| diff --brief - Test/msxdoc-expected.importslashdoc.xml
 
+my_abs_top_srcdir = $(shell cd . && pwd)
+
+check-mdoc-validate-update: mdoc.exe
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected | \
+		sed 's#file://$(my_abs_top_srcdir)/##g' > \
+		Test/validate.check.monodocer
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected.importslashdoc | \
+		sed 's#file://$(my_abs_top_srcdir)/##g' > \
+		Test/validate.check.monodocer.importslashdoc
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected.since | \
+		sed 's#file://$(my_abs_top_srcdir)/##g' > \
+		Test/validate.check.monodocer.since
+
+check-mdoc-validate: mdoc.exe
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected | \
+		sed 's#file://$(my_abs_top_srcdir)/##g' | \
+		diff - Test/validate.check.monodocer
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected.importslashdoc | \
+		sed 's#file://$(my_abs_top_srcdir)/##g' | \
+		diff --brief - Test/validate.check.monodocer.importslashdoc
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected.since | \
+		sed 's#file://$(my_abs_top_srcdir)/##g' | \
+		diff --brief - Test/validate.check.monodocer.since
+
 run-test-local: check-doc-tools
 
 run-test-update : check-doc-tools-update
@@ -169,12 +195,14 @@ check-doc-tools: check-monodocer-since \
 	check-monodocer-importslashdoc \
 	check-monodocer \
 	check-mdoc-export-html \
-	check-mdoc-export-msxdoc
+	check-mdoc-export-msxdoc \
+	check-mdoc-validate
 
 check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-importecmadoc-update \
 	check-monodocer-importslashdoc-update \
 	check-monodocer-update \
 	check-mdoc-export-html-update \
-	check-mdoc-export-msxdoc-update
+	check-mdoc-export-msxdoc-update \
+	check-mdoc-validate-update
 

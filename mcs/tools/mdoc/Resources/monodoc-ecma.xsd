@@ -34,6 +34,7 @@ add masterdoc support?
   <xs:attribute name="RefType" type="xs:string" />
   <xs:attribute name="returntype" type="xs:string" />
   <xs:attribute name="source" type="xs:string" />
+  <xs:attribute name="src" type="xs:string" />
   <xs:attribute name="subset" type="xs:string" />
   <xs:attribute name="Value" type="xs:string" />
   <xs:attribute name="version" type="xs:string" />
@@ -194,6 +195,7 @@ add masterdoc support?
           <xs:attribute ref="lang" />
           <xs:attribute ref="language" />
           <xs:attribute ref="source" />
+          <xs:attribute ref="src" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
@@ -649,6 +651,7 @@ add masterdoc support?
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="block" />
+        <xs:element ref="c" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
         <xs:element ref="see" />
