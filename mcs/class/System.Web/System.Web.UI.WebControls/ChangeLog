@@ -1,3 +1,9 @@
+
+2008-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ImageButton.cs: clicking an image causes a postback.
+	Bug #439004 fixed.
+
 2008-10-24  Marek Habersack  <mhabersack@novell.com>
 
 	* CheckBox.cs: register for event validation in Render ().

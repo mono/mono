@@ -248,7 +248,7 @@ namespace System.Web.UI.WebControls {
 				: null);
 			options.ValidationGroup = null;
 			options.Argument = String.Empty;
-			options.ClientSubmit = false;
+			options.ClientSubmit = true;
 			options.RequiresJavaScriptProtocol = false;
 			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
 			if (options.PerformValidation)
