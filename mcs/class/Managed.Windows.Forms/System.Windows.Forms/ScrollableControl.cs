@@ -1069,6 +1069,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		private void HandleScrollEvent (object sender, ScrollEventArgs args)
+		{
+			OnScroll (args);
+		}
+#endif
+
 		private void AddScrollbars (object o, EventArgs e)
 		{
 			Controls.AddRangeImplicit (new Control[] {hscrollbar, vscrollbar, sizegrip});
@@ -1081,11 +1088,17 @@ namespace System.Windows.Forms {
 			hscrollbar.Visible = false;
 			hscrollbar.ValueChanged += new EventHandler (HandleScrollBar);
 			hscrollbar.Height = SystemInformation.HorizontalScrollBarHeight;
+#if NET_2_0
+			hscrollbar.Scroll += new ScrollEventHandler (HandleScrollEvent);
+#endif
 
 			vscrollbar = new ImplicitVScrollBar ();
 			vscrollbar.Visible = false;
 			vscrollbar.ValueChanged += new EventHandler (HandleScrollBar);
 			vscrollbar.Width = SystemInformation.VerticalScrollBarWidth;
+#if NET_2_0
+			vscrollbar.Scroll += new ScrollEventHandler (HandleScrollEvent);
+#endif
 
 			sizegrip = new SizeGrip (this);
 			sizegrip.Visible = false;
@@ -1124,7 +1137,7 @@ namespace System.Windows.Forms {
 		
 		protected virtual void OnScroll (ScrollEventArgs se)
 		{
-			EventHandler eh = (EventHandler) (Events [OnScrollEvent]);
+			ScrollEventHandler eh = (ScrollEventHandler) (Events [OnScrollEvent]);
 			if (eh != null)
 				eh (this, se);
 		}
