@@ -45,7 +45,6 @@ public class EcmaSpecProvider : Provider {
 			XPathNavigator n = nodes.Current;
 			string secNumber = n.GetAttribute ("number", ""),
 				secName = n.GetAttribute ("name", "");
-			Console.WriteLine ("# secNumber={0}; secName={1}", secNumber, secName);
 			
 			treeNode.tree.HelpSource.Message (TraceLevel.Info, "\tSection: " + secNumber);
 			treeNode.tree.HelpSource.PackFile (Path.Combine (basedir, secNumber + ".xml"), secNumber);
