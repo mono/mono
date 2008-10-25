@@ -104,6 +104,10 @@
       <Link>MonoSymbolWriter.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\tools\monop\outline.cs">
+      <Link>outline.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="anonymous.cs">
       <SubType>Code</SubType>
     </Compile>

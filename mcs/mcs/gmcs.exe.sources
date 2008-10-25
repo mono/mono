@@ -41,3 +41,4 @@ symbolwriter.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolWriter.cs
 ../class/corlib/Mono.Security.Cryptography/CryptoConvert.cs
 ../build/common/Consts.cs
+../tools/monop/outline.cs

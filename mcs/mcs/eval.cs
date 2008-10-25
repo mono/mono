@@ -830,6 +830,7 @@ namespace Mono.CSharp {
 		static public string help {
 			get {
 				return  "Static methods:\n"+
+					"  Describe(obj)      - Describes the object's type\n" + 
 					"  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)\n" +
 					"  LoadAssembly (ass) - Loads the given assembly (like -r:ASS)\n" + 
 					"  ShowVars ();       - Shows defined local variables.\n" +
@@ -848,6 +849,22 @@ namespace Mono.CSharp {
 				return null;
 			}
 		}
+
+#if !NET_2_1
+		static public string Describe (object x)
+		{
+			if (x == null)
+				return "";
+			
+			Type t = x as Type;
+			if (t == null)
+				t = x.GetType ();
+
+			StringWriter sw = new StringWriter ();
+			new Outline (t, sw, true, false, false).OutlineType ();
+			return sw.ToString ();
+		}
+#endif
 	}
 
 	//
