@@ -1,3 +1,7 @@
+2008-10-25  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUG_VAR_ADDRESS_MODE_DEAD): New #define.
+
 2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_create_from_typedef): Added Vector4i.

@@ -1,3 +1,8 @@
+2008-10-25  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c (write_variable): Use
+	`MONO_DEBUG_VAR_ADDRESS_MODE_DEAD' for dead variables.
+
 2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* cpu-x86.md: Add unsigned variants of packd and packw.
