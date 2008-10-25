@@ -10,6 +10,7 @@
 namespace Monodoc { 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -103,7 +104,7 @@ public class ManHelpSource : HelpSource {
 
 		if (url == null || url.Length == 0)
 		{
-			Console.WriteLine("Warning, NULL url!");
+			Message (TraceLevel.Warning, "Warning, NULL url!");
 			return "<html>url was null</html>";
 		}
 

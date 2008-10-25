@@ -7,6 +7,7 @@
 //   Miguel de Icaza <miguel@ximian.com>
 //
 namespace Monodoc {
+using System.Diagnostics;
 using System.Xml;
 using System;
 
@@ -23,19 +24,19 @@ public class MonoHBHelpSource: XhtmlHelpSource
 	public override XmlDocument ProcessContent(XmlDocument docToProcess)
 	{
 
-		Console.WriteLine ("x1");
+		Message (TraceLevel.Info, "x1");
 		XmlNamespaceManager nsmgr = new XmlNamespaceManager(docToProcess.NameTable);
 		nsmgr.AddNamespace("default", "http://www.w3.org/1999/xhtml");
 		nsmgr.AddNamespace("monodoc", "http://www.go-mono.org/xml/monodoc");
 		nsmgr.PushScope();
 
-		Console.WriteLine ("x2");
+		Message (TraceLevel.Info, "x2");
 		XmlElement root = docToProcess.DocumentElement;
 		XmlNode body = root.SelectSingleNode("/default:html/default:body", nsmgr);
 
 		// Use the DC.Description meta tag as sign, that the file is in the new format
 
-		Console.WriteLine ("x3");
+		Message (TraceLevel.Info, "x3");
 		if (root.SelectNodes("/default:html/default:head/default:meta[@name='DC.Description']", nsmgr).Count != 0)
 
 		{
@@ -74,9 +75,8 @@ public class MonoHBHelpSource: XhtmlHelpSource
 			catch {
 			}
 
-		Console.WriteLine ("x5");
-			
-	
+			Message (TraceLevel.Info, "x5");
+
 			//////////////////////////////////////////////////////////////////////
 			// End of temporary code, until the tutorial is converted completely
 			//////////////////////////////////////////////////////////////////////
@@ -169,7 +169,7 @@ public class MonoHBHelpSource: XhtmlHelpSource
 	
 		}
 		else {
-		Console.WriteLine ("x4");
+			Message (TraceLevel.Info, "x4");
 
 		XmlNodeList nodeList = docToProcess.GetElementsByTagName("div");
 
@@ -184,7 +184,7 @@ public class MonoHBHelpSource: XhtmlHelpSource
 		}
 		}
                                                                                 
-		Console.WriteLine ("x6");
+		Message (TraceLevel.Info, "x6");
 
 		string headinginner = "Mono Handbook";
 		XmlNode firstheading = null;
@@ -205,7 +205,7 @@ public class MonoHBHelpSource: XhtmlHelpSource
 			catch {}
 		}
 		
-		Console.WriteLine ("x8");
+		Message (TraceLevel.Info, "x8");
 		
 		try {
 			
@@ -220,7 +220,7 @@ public class MonoHBHelpSource: XhtmlHelpSource
 		catch {
 		}
 		
-		Console.WriteLine ("x9");
+		Message (TraceLevel.Info, "x9");
 		XmlNodeList nodeList2 = docToProcess.GetElementsByTagName("pre");
 		foreach(XmlNode node in nodeList2){
 			string cssClass = ((XmlElement)node).GetAttribute("class");

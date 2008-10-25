@@ -17,7 +17,9 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections;
+using System.Diagnostics;
 using System.Configuration;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.XPath;
 using ICSharpCode.SharpZipLib.Zip;
@@ -374,7 +376,13 @@ public class Node : IComparable {
 		if (other.position < 0)
 			other.LoadNode ();
 
-		return String.CompareOrdinal(caption, other.caption);
+		Regex digits = new Regex (@"([\d]+)|([^\d]+)");
+		MatchEvaluator eval = delegate (Match m) {
+			return (m.Value.Length > 0 && char.IsDigit (m.Value [0])) 
+				? m.Value.PadLeft (System.Math.Max (caption.Length, other.caption.Length)) 
+				: m.Value;
+		};
+		return digits.Replace (caption, eval).CompareTo (digits.Replace (other.caption, eval));
 	}
 }
 
@@ -410,6 +418,7 @@ public class HelpSource {
 	int source_id;
 	DateTime zipFileWriteTime;
 	string name;
+	TraceLevel trace_level = TraceLevel.Warning;
 
 	public HelpSource (string base_filename, bool create)
 	{
@@ -452,6 +461,11 @@ public class HelpSource {
 		get {
 			return name;
 		}
+	}
+
+	public TraceLevel TraceLevel {
+		get { return trace_level; }
+		set { trace_level = value; }
 	}
 	
 	ZipFile zip_file;
@@ -722,6 +736,16 @@ public class HelpSource {
 		return;
 	}
 
+	public void Message (TraceLevel level, string format, params object[] args)
+	{
+		if ((int) level <= (int) trace_level)
+			Console.WriteLine (format, args);
+	}
+
+	public void Error (string format, params object[] args)
+	{
+		Console.Error.WriteLine (format, args);
+	}
 }
 
 public abstract class Provider {

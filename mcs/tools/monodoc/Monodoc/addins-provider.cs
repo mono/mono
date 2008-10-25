@@ -28,6 +28,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.IO;
 using System.Xml;
@@ -114,7 +115,7 @@ namespace Monodoc
 			int i = url.IndexOf ('#');
 
 			if (i == -1) {
-				Console.WriteLine("Warning, NULL url!");
+				Message (TraceLevel.Warning, "Warning, NULL url!");
 				return "<html>Invalid url</html>";
 			}
 			
@@ -155,7 +156,7 @@ namespace Monodoc
 			int i = url.IndexOf ('#');
 
 			if (i == -1) {
-				Console.WriteLine("Warning, NULL url!");
+				Message (TraceLevel.Warning, "Warning, NULL url!");
 				return "<html>Invalid url</html>";
 			}
 			
@@ -208,7 +209,7 @@ namespace Monodoc
 			int i = url.IndexOf ('#');
 
 			if (i == -1) {
-				Console.WriteLine("Warning, NULL url!");
+				Message (TraceLevel.Warning, "Warning, NULL url!");
 				return "<html>Invalid url</html>";
 			}
 			

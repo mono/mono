@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -121,7 +122,7 @@ namespace Monodoc {
 		public int ErrorNumSubstringStart;
 		public int ErrorNumSubstringLength;
 		public string FriendlyFormatString;
-		
+
 		public override string ToString ()
 		{
 			StringWriter w = new StringWriter ();
@@ -134,7 +135,7 @@ namespace Monodoc {
 			return w.ToString ();
 		}
 		
-		public Hashtable Compile ()
+		public Hashtable Compile (HelpSource hs)
 		{
 			string [] files = Directory.GetFiles (FilesPath, Match);
 			Hashtable ret = new Hashtable ();
@@ -142,14 +143,14 @@ namespace Monodoc {
 			foreach (string s in files) {
 				ErrorDocumentation d;
 				
-				Console.WriteLine (s);
+				hs.Message (TraceLevel.Info, s);
 
 				int errorNum = 0;
 
 				try {
 					errorNum = int.Parse (Path.GetFileName (s).Substring (ErrorNumSubstringStart, ErrorNumSubstringLength));
 				} catch {
-					Console.WriteLine ("Ignoring file {0}", s);
+					hs.Message (TraceLevel.Info, "Ignoring file {0}", s);
 				}
 				
 				string errorName = String.Format (FriendlyFormatString, errorNum);
@@ -160,7 +161,7 @@ namespace Monodoc {
 				
 				if (d.Details == null) {
 					string xmlFile = Path.ChangeExtension (s, "xml");
-					Console.WriteLine (xmlFile);
+					hs.Message (TraceLevel.Verbose, xmlFile);
 					if (File.Exists (xmlFile)) {
 						XmlSerializer cfgRdr = new XmlSerializer (typeof (ErrorDetails));
 						d.Details = (ErrorDetails)cfgRdr.Deserialize (new XmlTextReader (xmlFile));
@@ -203,7 +204,7 @@ namespace Monodoc {
 	
 		public override void CloseTree (HelpSource hs, Tree tree)
 		{
-			Hashtable entries = config.Compile ();
+			Hashtable entries = config.Compile (hs);
 			MemoryStream ms = new MemoryStream ();
 			XmlSerializer writer = new XmlSerializer (typeof (ErrorDocumentation));
 			

@@ -11,6 +11,7 @@
 
 namespace Monodoc {
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml.XPath;
@@ -36,7 +37,6 @@ public class EcmaSpecProvider : Provider {
 		n.MoveToRoot ();
 		n.MoveToFirstChild ();
 		PopulateNode (n.SelectChildren ("node", ""), tree);
-		
 	}
 	
 	void PopulateNode (XPathNodeIterator nodes, Node treeNode)
@@ -45,8 +45,9 @@ public class EcmaSpecProvider : Provider {
 			XPathNavigator n = nodes.Current;
 			string secNumber = n.GetAttribute ("number", ""),
 				secName = n.GetAttribute ("name", "");
+			Console.WriteLine ("# secNumber={0}; secName={1}", secNumber, secName);
 			
-			Console.WriteLine ("\tSection: " + secNumber);
+			treeNode.tree.HelpSource.Message (TraceLevel.Info, "\tSection: " + secNumber);
 			treeNode.tree.HelpSource.PackFile (Path.Combine (basedir, secNumber + ".xml"), secNumber);
 			Node thisNode = treeNode.LookupNode (secNumber + ": " + secName, "ecmaspec:" + secNumber);
 			
@@ -154,14 +155,14 @@ public class EcmaSpecHelpSource : HelpSource {
 				stream = assembly.GetManifestResourceStream ("ecmaspec-html.xsl");
 
 			XmlReader xml_reader = new XmlTextReader (stream);
-			ecma_transform.Load (xml_reader);
+			ecma_transform.Load (xml_reader, null, null);
 			args.AddExtensionObject ("monodoc:///extensions", new ExtObj()); 
 		}
 		
 		if (ecma_xml == null) return "";
 
 		StringWriter output = new StringWriter ();
-		ecma_transform.Transform (ecma_xml, args, output);
+		ecma_transform.Transform (ecma_xml, args, output, null);
 		
 		return output.ToString ();
 	}

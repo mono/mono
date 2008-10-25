@@ -17,6 +17,7 @@
 //
 namespace Monodoc {
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.IO;
 using System.Xml;
@@ -187,7 +188,7 @@ public class EcmaProvider : Provider {
 
 				if (ns_node == null) {
 					tn = Path.GetFileName (ns);
-					Console.Error.WriteLine ("Processing namespace {0}", tn);
+					tree.HelpSource.Message (TraceLevel.Info, "Processing namespace {0}", tn);
 					ns_node = tree.LookupNode (tn, "N:" + tn);
 					string ns_summary_file = EcmaDoc.GetNamespaceFile (basedir, tn);
 					
@@ -209,9 +210,9 @@ public class EcmaProvider : Provider {
 						namespace_remarks [tn] = null;
 					}
 				}
-				Console.Error.WriteLine ("    Processing input file {0}", Path.GetFileName (file));
+				tree.HelpSource.Message (TraceLevel.Verbose, "    Processing input file {0}", Path.GetFileName (file));
 
-				PopulateClass (tn, ns_node, file);
+				PopulateClass (tree, tn, ns_node, file);
 			}
 			
 			// Sort the list of types in each namespace
@@ -271,7 +272,7 @@ public class EcmaProvider : Provider {
 			else
 				elements.AppendChild (doc.CreateElement("remarks"));
 			
-			Console.Error.WriteLine ("Have {0} elements in the {1}", list.Count, ns);
+			hs.Message (TraceLevel.Info, "Have {0} elements in the {1}", list.Count, ns);
 			foreach (TypeInfo p in list){
 				XmlElement e = null;
 				
@@ -351,7 +352,7 @@ public class EcmaProvider : Provider {
 			}
 		}
 		if (extensions != null) {
-			Console.Error.WriteLine ("Have {0} extension methods", numMethods);
+			tree.HelpSource.Message (TraceLevel.Info, "Have {0} extension methods", numMethods);
 			tree.HelpSource.PackXml ("ExtensionMethods.xml", extensions, "ExtensionMethods.xml");
 		}
 	}
@@ -362,7 +363,7 @@ public class EcmaProvider : Provider {
 	Hashtable namespace_realpath = new Hashtable ();
 	XmlDocument doc;
 	
-	void PopulateClass (string ns, Node ns_node, string file)
+	void PopulateClass (Tree tree, string ns, Node ns_node, string file)
 	{
 		doc = new XmlDocument ();
 		doc.Load (file);
@@ -387,7 +388,7 @@ public class EcmaProvider : Provider {
 		
 		if (kind == "Delegate") {
 			if (doc.SelectSingleNode("/Type/ReturnValue") == null)
-				Console.Error.WriteLine("Delegate " + name + " does not have a ReturnValue node.  See the ECMA-style updates.");
+				tree.HelpSource.Message (TraceLevel.Error, "Delegate " + name + " does not have a ReturnValue node.  See the ECMA-style updates.");
 		}
 
 		if (kind == "Enumeration")
@@ -976,7 +977,7 @@ public class EcmaHelpSource : HelpSource {
 			}
 		}
 		
-		Console.WriteLine ("WARNING: Was not able to get clean XPath expression for node {0}", EditingUtils.GetXPath (n));
+		Message (TraceLevel.Warning, "WARNING: Was not able to get clean XPath expression for node {0}", EditingUtils.GetXPath (n));
 		return base.GetNodeXPath (n);
 	}
 
@@ -1534,7 +1535,7 @@ public class EcmaHelpSource : HelpSource {
 	{
 		Stream s = hs.GetHelpStream (fname);
 		if (s == null){
-			Console.Error.WriteLine ("Could not fetch document {0}", fname);
+			Error ("Could not fetch document {0}", fname);
 			return null;
 		}
 		
@@ -1741,7 +1742,7 @@ public class EcmaHelpSource : HelpSource {
 	{
 		StringBuilder text;
 		foreach (Node ns_node in Tree.Nodes) {
-			Console.WriteLine ("\tNamespace: {0} ({1})", ns_node.Caption, ns_node.Nodes.Count);
+			Message (TraceLevel.Info, "\tNamespace: {0} ({1})", ns_node.Caption, ns_node.Nodes.Count);
 			foreach (Node type_node in ns_node.Nodes) {
 				string typename = type_node.Caption.Substring (0, type_node.Caption.IndexOf (' '));
 				string full = ns_node.Caption + "." + typename;
@@ -1811,7 +1812,7 @@ public class EcmaHelpSource : HelpSource {
 
 							XmlNode xmln = xdoc.SelectSingleNode (xpath);
 							if (xmln == null) {
-								Console.WriteLine ("Problem: {0}, with xpath: {1}", urlnc, xpath);
+								Error ("Problem: {0}, with xpath: {1}", urlnc, xpath);
 								continue;
 							}
 
@@ -1939,11 +1940,12 @@ public class EcmaUncompiledHelpSource : EcmaHelpSource {
 	readonly DirectoryInfo basedir;
 	readonly XmlDocument basedoc;
 	
-	public new readonly string Name, BasePath;
+	public new readonly string Name;
+	public     readonly string BasePath;
 	
 	public EcmaUncompiledHelpSource (string base_file) : base ()
 	{
-		Console.Error.WriteLine("Loading uncompiled help from " + base_file);
+		Message (TraceLevel.Info, "Loading uncompiled help from " + base_file);
 		
 		basedir = new DirectoryInfo(base_file);
 		BasePath = basedir.FullName;
@@ -2043,8 +2045,7 @@ public class EcmaUncompiledHelpSource : EcmaHelpSource {
 		
 		string ns, type;
 		if (!RootTree.GetNamespaceAndType (url, out ns, out type)) {
-			Console.Error.WriteLine ("Could not determine namespace/type for {0}",
-					url);
+			Message (TraceLevel.Error, "Could not determine namespace/type for {0}", url);
 			return null;
 		}
 		

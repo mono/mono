@@ -1,3 +1,19 @@
+2008-10-24  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Monodoc/addins-provider.cs, Monodoc/ecma-provider.cs,
+	  Monodoc/ecmaspec-provider.cs, Monodoc/error-provider.cs,
+	  Monodoc/man-provider.cs, Monodoc/monohb-provider.cs,
+	  Monodoc/provider.cs: Remove Console.WriteLine() spew; helps cleanup
+	  `make` output in mcs/docs (from `mdoc assemble`, which indirectly
+	  invokes most of the *-provider files).  We solve this problem by
+	  providing a TraceLevel-based message system, so that messages are
+	  only generated if they are less than or equal to the requested
+	  output level (thus skipping the more verbose "every file" messages
+	  from ecma-provider.cs & error-provider.cs).
+	* provider.cs: Change Node.CompareTo() to use a "natural sorting"
+	  algorithm -- this allows the C# Language Specification nodes to
+	  continue being displayed in the correct order.
+
 2008-10-21  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Monodoc/provider.cs: 
