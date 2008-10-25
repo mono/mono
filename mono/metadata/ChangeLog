@@ -1,3 +1,19 @@
+2008-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* Reapply r116521 with (!mono_debug_using_mono_debugger ()) checks.
+
+	* class.c (mono_class_init): Remove unneccesary mono_class_setup_properties ()
+	call for generic instances.
+	(mono_class_setup_properties): Call setup_properties () before accessing
+	gklass->properties.
+
+	* class.c (mono_class_get_virtual_methods): New helper function to iterate
+	over the virtual methods of a class using metadata if possible, avoiding the
+	creation of MonoMethod's for non-virtual methods.
+	
+	* class.c (mono_class_setup_vtable_general): Rewrite this to use 
+	get_virtual_methods () to iterate over the virtual methods of classes.
+
 2008-10-25  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUG_VAR_ADDRESS_MODE_DEAD): New #define.
