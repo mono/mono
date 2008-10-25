@@ -233,12 +233,6 @@ namespace System.Text.RegularExpressions {
 		// followed by min byte
 		RepeatInfinite,
 		RepeatInfiniteLazy,
-
-	    // Generic opcodes used internally by CILCompiler
-		GenericChar,
-		GenericUnicodeChar,
-		GenericRange,
-		GenericUnicodeRange,
 	}
 }
 

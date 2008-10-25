@@ -121,37 +121,20 @@ namespace System.Text.RegularExpressions {
 			op_flags [curpos] = (int)MakeFlags (negate, ignore, reverse, false);
 	    }
 
-		void ICompiler.EmitCharacter (char c, bool negate, bool ignore, bool reverse) {
-			if (ignore)
-				c = Char.ToLower (c);
-			EmitGenericOp (c < 256 ? RxOp.GenericChar : RxOp.GenericUnicodeChar, negate, ignore, reverse, false);
-			base.EmitCharacter (c, negate, ignore, reverse);
-	   }
-
-		void ICompiler.EmitRange (char lo, char hi, bool negate, bool ignore, bool reverse) {
-			if (lo < 256 && hi < 256)
-				EmitGenericOp (RxOp.GenericRange, negate, ignore, reverse, false);
-			else
-				EmitGenericOp (RxOp.GenericUnicodeRange, negate, ignore, reverse, false);
-			base.EmitRange (lo, hi, negate, ignore, reverse);
-	    }
-
-		void ICompiler.EmitCategory (Category cat, bool negate, bool reverse) {
-			// This is decomposed into different opcodes by RxCompiler, so
-			// only save the flags
-			op_flags [curpos] = (int)MakeFlags (negate, false, reverse, false);
-			base.EmitCategory (cat, negate, reverse);
-	    }
-
-		void ICompiler.EmitNotCategory (Category cat, bool negate, bool reverse)
-		{
-			((ICompiler)this).EmitCategory (cat, !negate, reverse);
+		public override void EmitOp (RxOp op, bool negate, bool ignore, bool reverse) {
+			EmitGenericOp (op, negate, ignore, reverse, false);
+			base.EmitOp (op, negate, ignore, reverse);
 		}
 
-		void ICompiler.EmitSet (char lo, BitArray set, bool negate, bool ignore, bool reverse) {
-			op_flags [curpos] = (int)MakeFlags (negate, ignore, reverse, false);
-			base.EmitSet (lo, set, negate, ignore, reverse);
-	    }
+		public override void EmitOpIgnoreReverse (RxOp op, bool ignore, bool reverse) {
+			EmitGenericOp (op, false, ignore, reverse, false);
+			base.EmitOpIgnoreReverse (op, ignore, reverse);
+		}
+
+		public override void EmitOpNegateReverse (RxOp op, bool negate, bool reverse) {
+			EmitGenericOp (op, negate, false, reverse, false);
+			base.EmitOpNegateReverse (op, negate, reverse);
+		}
 
 		class Frame {
 			public Label label_pass, label_fail;
@@ -488,10 +471,10 @@ namespace System.Text.RegularExpressions {
 					pc = target_pc;
 					break;
 				}
-				case RxOp.GenericChar:
-				case RxOp.GenericUnicodeChar:
-				case RxOp.GenericRange:
-				case RxOp.GenericUnicodeRange: {
+				case RxOp.Char:
+				case RxOp.UnicodeChar:
+				case RxOp.Range:
+				case RxOp.UnicodeRange: {
 					OpFlags flags = (OpFlags)op_flags [pc];
 					bool negate = (flags & OpFlags.Negate) > 0;
 					bool ignore = (flags & OpFlags.IgnoreCase) > 0;
@@ -523,19 +506,19 @@ namespace System.Text.RegularExpressions {
 					if (ignore)
 						ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
 
-					if (op == RxOp.GenericChar) {
+					if (op == RxOp.Char) {
 						ilgen.Emit (OpCodes.Conv_I4);
 						ilgen.Emit (OpCodes.Ldc_I4, (int)program [pc + 1]);
 						ilgen.Emit (negate ? OpCodes.Beq : OpCodes.Bne_Un, l1);
 
 						pc += 2;
-					} else if (op == RxOp.GenericUnicodeChar) {
+					} else if (op == RxOp.UnicodeChar) {
 						ilgen.Emit (OpCodes.Conv_I4);
 						ilgen.Emit (OpCodes.Ldc_I4, ReadShort (program, pc + 1));
 						ilgen.Emit (negate ? OpCodes.Beq : OpCodes.Bne_Un, l1);
 
 						pc += 3;
-					} else if (op == RxOp.GenericRange) {
+					} else if (op == RxOp.Range) {
 						ilgen.Emit (OpCodes.Stloc, local_c);
 
 						//  if (c >= program [pc + 1] && c <= program [pc + 2]) {
@@ -560,7 +543,7 @@ namespace System.Text.RegularExpressions {
 						}
 
 						pc += 3;
-					} else if (op == RxOp.GenericUnicodeRange) {
+					} else if (op == RxOp.UnicodeRange) {
 						ilgen.Emit (OpCodes.Stloc, local_c);
 
 						//  if (c >= program [pc + 1] && c <= program [pc + 2]) {
@@ -801,22 +784,12 @@ namespace System.Text.RegularExpressions {
 					break;
 				}
 				case RxOp.Bitmap:
-				case RxOp.BitmapIgnoreCase:
-				case RxOp.NoBitmap:
-				case RxOp.NoBitmapIgnoreCase:
-				case RxOp.UnicodeBitmap:
-				case RxOp.NoUnicodeBitmap:
-				case RxOp.UnicodeBitmapIgnoreCase:
-				case RxOp.NoUnicodeBitmapIgnoreCase:
-				case RxOp.UnicodeBitmapReverse:
-				case RxOp.NoUnicodeBitmapReverse:
-				case RxOp.UnicodeBitmapIgnoreCaseReverse:
-				case RxOp.NoUnicodeBitmapIgnoreCaseReverse: {
+				case RxOp.UnicodeBitmap: {
 					OpFlags flags = (OpFlags)op_flags [pc];
 					bool negate = (flags & OpFlags.Negate) > 0;
 					bool ignore = (flags & OpFlags.IgnoreCase) > 0;
 					bool reverse = (flags & OpFlags.RightToLeft) > 0;
-					bool unicode = (op >= RxOp.UnicodeBitmap) && (op <= RxOp.NoUnicodeBitmapIgnoreCaseReverse);
+					bool unicode = (op == RxOp.UnicodeBitmap);
 
 					//if (strpos < string_end) {
 					Label l1 = ilgen.DefineLabel ();
@@ -920,14 +893,19 @@ namespace System.Text.RegularExpressions {
 					break;
 				}
 				case RxOp.String:
-				case RxOp.StringIgnoreCase:
-				case RxOp.StringReverse:
-				case RxOp.StringIgnoreCaseReverse: {
-					bool ignore = (op == RxOp.StringIgnoreCase || op == RxOp.StringIgnoreCaseReverse);
-					bool reverse = (op == RxOp.StringReverse || op == RxOp.StringIgnoreCaseReverse);
+				case RxOp.UnicodeString: {
+					OpFlags flags = (OpFlags)op_flags [pc];
+					bool ignore = (flags & OpFlags.IgnoreCase) > 0;
+					bool reverse = (flags & OpFlags.RightToLeft) > 0;
+					bool unicode = (op == RxOp.UnicodeString);
 
-					start = pc + 2;
-					length = program [pc + 1];
+					if (unicode) {
+						start = pc + 3;
+						length = ReadShort (program, pc + 1);
+					} else {
+						start = pc + 2;
+						length = program [pc + 1];
+					}
 					//if (strpos + length > string_end)
 					//	return false;
 					if (reverse) {
@@ -946,7 +924,7 @@ namespace System.Text.RegularExpressions {
 					/* Avoid unsafe code in Moonlight build */
 #if false && !NET_2_1
 					// FIXME:
-					if (reverse)
+					if (reverse || unicode)
 						throw new NotImplementedException ();
 					int i;
 					LocalBuilder local_strptr = ilgen.DeclareLocal (typeof (char).MakePointerType ());
@@ -996,8 +974,8 @@ namespace System.Text.RegularExpressions {
 					}
 
 					// FIXME: Emit a loop for long strings
-					end = start + length;
-					for (; start < end; ++start) {
+					end = start + (unicode ? length * 2 : length);
+					while (start < end) {
 						//if (str [strpos] != program [start])
 						//	return false;
 						ilgen.Emit (OpCodes.Ldloc, local_str);
@@ -1005,13 +983,18 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
 						if (ignore)
 							ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
-						ilgen.Emit (OpCodes.Ldc_I4, (int)program [start]);
+						ilgen.Emit (OpCodes.Ldc_I4, unicode ? ReadShort (program, start) : (int)program [start]);
 						ilgen.Emit (OpCodes.Bne_Un, frame.label_fail);
 						//strpos++;
 						ilgen.Emit (OpCodes.Ldarg_1);
 						ilgen.Emit (OpCodes.Ldc_I4_1);
 						ilgen.Emit (OpCodes.Add);
 						ilgen.Emit (OpCodes.Starg, 1);
+
+						if (unicode)
+							start += 2;
+						else
+							start ++;
 					}
 
 					if (reverse) {
@@ -1131,7 +1114,6 @@ namespace System.Text.RegularExpressions {
 
 					break;
 				}
-
 				case RxOp.FastRepeat:
 				case RxOp.FastRepeatLazy: {
 					/*
@@ -1407,43 +1389,10 @@ namespace System.Text.RegularExpressions {
 				case RxOp.CategoryEcmaWord:
 				case RxOp.CategoryEcmaWhiteSpace:
 				case RxOp.CategoryUnicodeSpecials:
-				case RxOp.CategoryUnicode:
-				case RxOp.NoCategoryAny:
-				case RxOp.NoCategoryAnySingleline:
-				case RxOp.NoCategoryWord:
-				case RxOp.NoCategoryDigit:
-				case RxOp.NoCategoryWhiteSpace:
-				case RxOp.NoCategoryEcmaWord:
-				case RxOp.NoCategoryEcmaWhiteSpace:
-				case RxOp.NoCategoryUnicodeSpecials:
-				case RxOp.NoCategoryUnicode:
-				case RxOp.CategoryAnyReverse:
-				case RxOp.CategoryAnySinglelineReverse:
-				case RxOp.CategoryWordReverse:
-				case RxOp.CategoryDigitReverse:
-				case RxOp.CategoryWhiteSpaceReverse:
-				case RxOp.CategoryEcmaWordReverse:
-				case RxOp.CategoryEcmaWhiteSpaceReverse:
-				case RxOp.CategoryUnicodeSpecialsReverse:
-				case RxOp.CategoryUnicodeReverse:
-				case RxOp.NoCategoryAnyReverse:
-				case RxOp.NoCategoryAnySinglelineReverse:
-				case RxOp.NoCategoryWordReverse:
-				case RxOp.NoCategoryDigitReverse:
-				case RxOp.NoCategoryWhiteSpaceReverse:
-				case RxOp.NoCategoryEcmaWordReverse:
-				case RxOp.NoCategoryEcmaWhiteSpaceReverse:
-				case RxOp.NoCategoryUnicodeSpecialsReverse:
-				case RxOp.NoCategoryUnicodeReverse: {
+				case RxOp.CategoryUnicode: {
 					OpFlags flags = (OpFlags)op_flags [pc];
 					bool negate = (flags & OpFlags.Negate) > 0;
 					bool reverse = (flags & OpFlags.RightToLeft) > 0;
-
-					/* Get back the normal opcodes */
-					if (reverse)
-						op = (RxOp)((int)op - 2);
-					if (negate)
-						op = (RxOp)((int)op - 1);
 
 					//if (strpos < string_end) {
 					Label l_nomatch = ilgen.DefineLabel ();
@@ -1622,10 +1571,15 @@ namespace System.Text.RegularExpressions {
 						pc++;
 					break;
 				}
-				default:
-					if (RxInterpreter.trace_rx)
+				case RxOp.Repeat:
+				case RxOp.RepeatLazy:
+					// FIXME:
+					if (RxInterpreter.trace_rx || trace_compile)
 						Console.WriteLine ("Opcode " + op + " not supported.");
 					return null;
+					break;
+				default:
+					throw new NotImplementedException ("Opcode '" + op + "' not supported by the regex->IL compiler.");
 			    }
 
 				if (one_op)

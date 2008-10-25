@@ -1,3 +1,15 @@
+2008-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* RxOp.cs: Remove unused Generic opcodes.
+
+	* RxCompiler.cs: Emit opcodes with flags using methods which can be 
+	overriden by CILCompiler.cs, so we only have to override a few methods.
+
+	* CILCompiler.cs: Simplify based on the RxCompiler changes. Implement
+	UnicodeString opcode. Throw a NotImplementedException when an unsupported
+	opcode is encountered, since the IL compiler is now believed to be feature 
+	complete.
+
 2008-10-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* RxInterpreter.cs CILCompiler.cs gen-interp.cs: Fix the reading of short 

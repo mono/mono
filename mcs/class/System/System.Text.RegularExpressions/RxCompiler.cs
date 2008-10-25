@@ -124,113 +124,134 @@ namespace System.Text.RegularExpressions {
 			Emit (RxOp.True);
 		}
 
-		public void EmitCharacter (char c, bool negate, bool ignore, bool reverse)
-		{
+		/* Overriden by CILCompiler */
+		public virtual void EmitOp (RxOp op, bool negate, bool ignore, bool reverse) {
 			int offset = 0;
 			if (negate)
 				offset += 1;
-			if (ignore) {
+			if (ignore)
 				offset += 2;
-				c = Char.ToLower (c);
-			}
 			if (reverse)
 				offset += 4;
+
+			Emit ((RxOp)((int)op + offset));
+		}
+
+		public virtual void EmitOpIgnoreReverse (RxOp op, bool ignore, bool reverse) {
+			int offset = 0;
+			if (ignore)
+				offset += 1;
+			if (reverse)
+				offset += 2;
+
+			Emit ((RxOp)((int)op + offset));
+		}
+
+		public virtual void EmitOpNegateReverse (RxOp op, bool negate, bool reverse) {
+			int offset = 0;
+			if (negate)
+				offset += 1;
+			if (reverse)
+				offset += 2;
+
+			Emit ((RxOp)((int)op + offset));
+		}
+
+		public void EmitCharacter (char c, bool negate, bool ignore, bool reverse)
+		{
+			if (ignore)
+				c = Char.ToLower (c);
 			if (c < 256) {
-				Emit ((RxOp)((int)RxOp.Char + offset));
+				EmitOp (RxOp.Char, negate, ignore, reverse);
 				Emit ((byte)c);
 			} else {
-				Emit ((RxOp)((int)RxOp.UnicodeChar + offset));
+				EmitOp (RxOp.UnicodeChar, negate, ignore, reverse);
 				Emit ((ushort)c);
 			}
 		}
 
-		void EmitUniCat (UnicodeCategory cat, int offset)
+		void EmitUniCat (UnicodeCategory cat, bool negate, bool reverse)
 		{
-			Emit ((RxOp)((int)RxOp.CategoryUnicode + offset));
+			EmitOpNegateReverse (RxOp.CategoryUnicode, negate, reverse);
 			Emit ((byte)cat);
 		}
 
-		void EmitCatGeneral (Category cat, int offset)
+		void EmitCatGeneral (Category cat, bool negate, bool reverse)
 		{
-			Emit ((RxOp)((int)RxOp.CategoryGeneral + offset));
+			EmitOpNegateReverse (RxOp.CategoryGeneral, negate, reverse);
 			Emit ((byte)cat);
 		}
 
 		public void EmitCategory (Category cat, bool negate, bool reverse)
 		{
-			int offset = 0;
-			if (negate)
-				offset += 1;
-			if (reverse)
-				offset += 2;
 			switch (cat) {
 			case Category.Any:
 			case Category.EcmaAny:
-				Emit ((RxOp)((int)RxOp.CategoryAny + offset));
+				EmitOpNegateReverse (RxOp.CategoryAny, negate, reverse);
 				break;
 			case Category.AnySingleline:
-				Emit ((RxOp)((int)RxOp.CategoryAnySingleline + offset));
+				EmitOpNegateReverse (RxOp.CategoryAnySingleline, negate, reverse);
 				break;
 			case Category.Word:
-				Emit ((RxOp)((int)RxOp.CategoryWord + offset));
+				EmitOpNegateReverse (RxOp.CategoryWord, negate, reverse);
 				break;
 			case Category.Digit:
-				Emit ((RxOp)((int)RxOp.CategoryDigit + offset));
+				EmitOpNegateReverse (RxOp.CategoryDigit, negate, reverse);
 				break;
 			case Category.WhiteSpace:
-				Emit ((RxOp)((int)RxOp.CategoryWhiteSpace + offset));
+				EmitOpNegateReverse (RxOp.CategoryWhiteSpace, negate, reverse);
 				break;
 			/* FIXME: translate EcmaWord, EcmaWhiteSpace into Bitmaps? EcmaWhiteSpace will fit very well with the IL engine */
 			case Category.EcmaWord:
-				Emit ((RxOp)((int)RxOp.CategoryEcmaWord + offset));
+				EmitOpNegateReverse (RxOp.CategoryEcmaWord, negate, reverse);
 				break;
 			case Category.EcmaDigit:
 				EmitRange ('0', '9', negate, false, reverse);
 				break;
 			case Category.EcmaWhiteSpace:
-				Emit ((RxOp)((int)RxOp.CategoryEcmaWhiteSpace + offset));
+				EmitOpNegateReverse (RxOp.CategoryEcmaWhiteSpace, negate, reverse);
 				break;
 			case Category.UnicodeSpecials:
-				Emit ((RxOp)((int)RxOp.CategoryUnicodeSpecials + offset));
+				EmitOpNegateReverse (RxOp.CategoryUnicodeSpecials, negate, reverse);
 				break;
 			// Unicode categories...
 			// letter
-			case Category.UnicodeLu: EmitUniCat (UnicodeCategory.UppercaseLetter, offset); break;
-			case Category.UnicodeLl: EmitUniCat (UnicodeCategory.LowercaseLetter, offset); break;
-			case Category.UnicodeLt: EmitUniCat (UnicodeCategory.TitlecaseLetter, offset); break;
-			case Category.UnicodeLm: EmitUniCat (UnicodeCategory.ModifierLetter, offset); break;
-			case Category.UnicodeLo: EmitUniCat (UnicodeCategory.OtherLetter, offset); break;
+			case Category.UnicodeLu: EmitUniCat (UnicodeCategory.UppercaseLetter, negate, reverse); break;
+			case Category.UnicodeLl: EmitUniCat (UnicodeCategory.LowercaseLetter, negate, reverse); break;
+			case Category.UnicodeLt: EmitUniCat (UnicodeCategory.TitlecaseLetter, negate, reverse); break;
+			case Category.UnicodeLm: EmitUniCat (UnicodeCategory.ModifierLetter, negate, reverse); break;
+			case Category.UnicodeLo: EmitUniCat (UnicodeCategory.OtherLetter, negate, reverse); break;
 			// mark
-			case Category.UnicodeMn: EmitUniCat (UnicodeCategory.NonSpacingMark, offset); break;
-			case Category.UnicodeMe: EmitUniCat (UnicodeCategory.EnclosingMark, offset); break;
-			case Category.UnicodeMc: EmitUniCat (UnicodeCategory.SpacingCombiningMark, offset); break;
-			case Category.UnicodeNd: EmitUniCat (UnicodeCategory.DecimalDigitNumber, offset); break;
+			case Category.UnicodeMn: EmitUniCat (UnicodeCategory.NonSpacingMark, negate, reverse); break;
+			case Category.UnicodeMe: EmitUniCat (UnicodeCategory.EnclosingMark, negate, reverse); break;
+			case Category.UnicodeMc: EmitUniCat (UnicodeCategory.SpacingCombiningMark, negate, reverse); break;
+			case Category.UnicodeNd: EmitUniCat (UnicodeCategory.DecimalDigitNumber, negate, reverse); break;
 			// number
-			case Category.UnicodeNl: EmitUniCat (UnicodeCategory.LetterNumber, offset); break;
-			case Category.UnicodeNo: EmitUniCat (UnicodeCategory.OtherNumber, offset); break;
+			case Category.UnicodeNl: EmitUniCat (UnicodeCategory.LetterNumber, negate, reverse); break;
+			case Category.UnicodeNo: EmitUniCat (UnicodeCategory.OtherNumber, negate, reverse); break;
 			// separator
-			case Category.UnicodeZs: EmitUniCat (UnicodeCategory.SpaceSeparator, offset); break;
-			case Category.UnicodeZl: EmitUniCat (UnicodeCategory.LineSeparator, offset); break;
-			case Category.UnicodeZp: EmitUniCat (UnicodeCategory.ParagraphSeparator, offset); break;
+			case Category.UnicodeZs: EmitUniCat (UnicodeCategory.SpaceSeparator, negate, reverse); break;
+			case Category.UnicodeZl: EmitUniCat (UnicodeCategory.LineSeparator, negate, reverse); break;
+			case Category.UnicodeZp: EmitUniCat (UnicodeCategory.ParagraphSeparator, negate, reverse); break;
 			// punctuation
-			case Category.UnicodePd: EmitUniCat (UnicodeCategory.DashPunctuation, offset); break;
-			case Category.UnicodePs: EmitUniCat (UnicodeCategory.OpenPunctuation, offset); break;
-			case Category.UnicodePi: EmitUniCat (UnicodeCategory.InitialQuotePunctuation, offset); break;
-			case Category.UnicodePe: EmitUniCat (UnicodeCategory.ClosePunctuation, offset); break;
-			case Category.UnicodePf: EmitUniCat (UnicodeCategory.FinalQuotePunctuation, offset); break;
-			case Category.UnicodePc: EmitUniCat (UnicodeCategory.ConnectorPunctuation, offset); break;
-			case Category.UnicodePo: EmitUniCat (UnicodeCategory.OtherPunctuation, offset); break;
+			case Category.UnicodePd: EmitUniCat (UnicodeCategory.DashPunctuation, negate, reverse); break;
+			case Category.UnicodePs: EmitUniCat (UnicodeCategory.OpenPunctuation, negate, reverse); break;
+			case Category.UnicodePi: EmitUniCat (UnicodeCategory.InitialQuotePunctuation, negate, reverse); break;
+			case Category.UnicodePe: EmitUniCat (UnicodeCategory.ClosePunctuation, negate, reverse); break;
+			case Category.UnicodePf: EmitUniCat (UnicodeCategory.FinalQuotePunctuation, negate, reverse); break;
+			case Category.UnicodePc: EmitUniCat (UnicodeCategory.ConnectorPunctuation, negate, reverse); break;
+			case Category.UnicodePo: EmitUniCat (UnicodeCategory.OtherPunctuation, negate, reverse); break;
 			// symbol
-			case Category.UnicodeSm: EmitUniCat (UnicodeCategory.MathSymbol, offset); break;
-			case Category.UnicodeSc: EmitUniCat (UnicodeCategory.CurrencySymbol, offset); break;
-			case Category.UnicodeSk: EmitUniCat (UnicodeCategory.ModifierSymbol, offset); break;
-			case Category.UnicodeSo: EmitUniCat (UnicodeCategory.OtherSymbol, offset); break;
+			case Category.UnicodeSm: EmitUniCat (UnicodeCategory.MathSymbol, negate, reverse); break;
+			case Category.UnicodeSc: EmitUniCat (UnicodeCategory.CurrencySymbol, negate, reverse); break;
+			case Category.UnicodeSk: EmitUniCat (UnicodeCategory.ModifierSymbol, negate, reverse); break;
+			case Category.UnicodeSo: EmitUniCat (UnicodeCategory.OtherSymbol, negate, reverse); break;
 			// other
-			case Category.UnicodeCc: EmitUniCat (UnicodeCategory.Control, offset); break;
-			case Category.UnicodeCf: EmitUniCat (UnicodeCategory.Format, offset); break;
-			case Category.UnicodeCo: EmitUniCat (UnicodeCategory.PrivateUse, offset); break;
-			case Category.UnicodeCs: EmitUniCat (UnicodeCategory.Surrogate, offset); break;
-			case Category.UnicodeCn: EmitUniCat (UnicodeCategory.OtherNotAssigned, offset); break; 
+			case Category.UnicodeCc: EmitUniCat (UnicodeCategory.Control, negate, reverse); break;
+			case Category.UnicodeCf: EmitUniCat (UnicodeCategory.Format, negate, reverse); break;
+			case Category.UnicodeCo: EmitUniCat (UnicodeCategory.PrivateUse, negate, reverse); break;
+			case Category.UnicodeCs: EmitUniCat (UnicodeCategory.Surrogate, negate, reverse); break;
+			case Category.UnicodeCn: EmitUniCat (UnicodeCategory.OtherNotAssigned, negate, reverse); break; 
 			// Unicode block ranges...
 			case Category.UnicodeBasicLatin:
 				EmitRange ('\u0000', '\u007F', negate, false, reverse); break;
@@ -413,7 +434,7 @@ namespace System.Text.RegularExpressions {
 			case Category.UnicodeP:
 			case Category.UnicodeS:
 			case Category.UnicodeC:
-				EmitCatGeneral (cat, offset); break;
+				EmitCatGeneral (cat, negate, reverse); break;
 
 			default:
 				throw new NotImplementedException ("Missing category: " + cat);
@@ -432,19 +453,12 @@ namespace System.Text.RegularExpressions {
 
 		public void EmitRange (char lo, char hi, bool negate, bool ignore, bool reverse)
 		{
-			int offset = 0;
-			if (negate)
-				offset += 1;
-			if (ignore)
-				offset += 2;
-			if (reverse)
-				offset += 4;
 			if (lo < 256 && hi < 256) {
-				Emit ((RxOp)((int)RxOp.Range + offset));
+				EmitOp (RxOp.Range, negate, ignore, reverse);
 				Emit ((byte)lo);
 				Emit ((byte)hi);
 			} else {
-				Emit ((RxOp)((int)RxOp.UnicodeRange + offset));
+				EmitOp (RxOp.UnicodeRange, negate, ignore, reverse);
 				Emit ((ushort)lo);
 				Emit ((ushort)hi);
 			}
@@ -452,20 +466,13 @@ namespace System.Text.RegularExpressions {
 
 		public void EmitSet (char lo, BitArray set, bool negate, bool ignore, bool reverse)
 		{
-			int offset = 0;
-			if (negate)
-				offset += 1;
-			if (ignore)
-				offset += 2;
-			if (reverse)
-				offset += 4;
 			int len = (set.Length + 0x7) >> 3;
 			if (lo < 256 && len < 256) {
-				Emit ((RxOp)((int)RxOp.Bitmap + offset));
+				EmitOp (RxOp.Bitmap, negate, ignore, reverse);
 				Emit ((byte)lo);
 				Emit ((byte)len);
 			} else {
-				Emit ((RxOp)((int)RxOp.UnicodeBitmap + offset));
+				EmitOp (RxOp.UnicodeBitmap, negate, ignore, reverse);
 				Emit ((ushort)lo);
 				Emit ((ushort)len);
 			}
@@ -504,12 +511,12 @@ namespace System.Text.RegularExpressions {
 				}
 			}
 			if (islatin1) {
-				Emit ((RxOp)((int)RxOp.String + offset));
+				EmitOpIgnoreReverse (RxOp.String, ignore, reverse);
 				Emit ((byte)str.Length);
 				for (i = 0; i < str.Length; ++i)
 					Emit ((byte)str [i]);
 			} else {
-				Emit ((RxOp)((int)RxOp.UnicodeString + offset));
+				EmitOpIgnoreReverse (RxOp.UnicodeString, ignore, reverse);
 				if (str.Length > ushort.MaxValue)
 					throw new NotSupportedException ();
 				Emit ((ushort)str.Length);
