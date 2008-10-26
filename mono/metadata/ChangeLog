@@ -1,3 +1,10 @@
+2008-10-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Rewrite the signature 
+	comparison code: instead of comparing the signatures using a custom
+	equals function, transform them to a common signature and compare that. This
+	works better with AOT.
+
 2008-10-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* Reapply r116521 with (!mono_debug_using_mono_debugger ()) checks.
