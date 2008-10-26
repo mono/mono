@@ -1,5 +1,11 @@
 2008-10-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (encode_locals): Use a cache to avoid duplicate entries in the
+	STANDALONESIG table.
+
+	* metadata-internals.h (struct _MonoDynamicImage): Add cache for
+	standalone signatures.
+
 	* marshal.c (mono_marshal_get_runtime_invoke): Rewrite the signature 
 	comparison code: instead of comparing the signatures using a custom
 	equals function, transform them to a common signature and compare that. This
