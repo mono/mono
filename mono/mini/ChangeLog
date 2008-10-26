@@ -1,3 +1,8 @@
+2008-10-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-mini.c (serialize_variable): Handle ADDRESS_MODE_DEAD.
+	(deserialize_variable): Ditto.
+
 2008-10-25  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c (write_variable): Use
