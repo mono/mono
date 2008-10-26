@@ -1,3 +1,15 @@
+2008-10-26  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r117087.
+	
+	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file format version.
+
+	* mini.c (mono_method_to_ir): For MONO_PATCH_INFO_RVA, save field the token
+	instead of the RVA, since the RVA can be changed by tools like the cil 
+	stripper.
+
+	* method-to-ir.c (mono_method_to_ir2): Ditto.
+
 2008-10-13  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r115632.
