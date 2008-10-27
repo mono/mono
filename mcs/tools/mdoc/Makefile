@@ -25,9 +25,7 @@ MDOC_TEST_FILES = \
 	Test/TestEcmaDocs.xml                                     \
 	Test/validate.check.monodocer                             \
 	Test/validate.check.monodocer.importslashdoc              \
-	Test/validate.check.monodocer.since                       \
-	$(shell find Test/en.expected* -name \*.xml)              \
-	$(shell find Test/html.expected* -name \*.html)
+	Test/validate.check.monodocer.since
 
 EXTRA_DISTFILES = \
 	$(MDOC_RESOURCES) \
@@ -53,6 +51,14 @@ MONO = \
 
 monodocer1.exe : Mono.Documentation/monodocer.cs
 	$(CSCOMPILE1) -debug+ -d:NET_1_0 Mono.Documentation/monodocer.cs -out:$@ -r:Mono.GetOptions
+
+dist-local: dist-default dist-tests
+
+dist-tests:
+	find Test/en.expected* -name '*.xml'     > .files
+	find Test/html.expected* -name '*.html' >> .files
+	tar cTf .files - | (cd $(distdir); tar xf -)
+	rm .files ; \
 
 test-local: $(PROGRAM)
 

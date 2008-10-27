@@ -1,5 +1,9 @@
 2008-10-27  Jonathan Pryor <jpryor@novell.com>
 
+	* Makefile: Fix build error caused by filenames containing '`'.
+
+2008-10-27  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/mdoc.cs: TraceLevel.Error messages should go to
 	  Console.Error, as per Unix convention.
 	* Makefile: cehck-mdoc-validate* needs to also capture standard error.
