@@ -1,3 +1,8 @@
+2008-10-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Ping.cs : use privileged mode for non-unix. On Windows there is
+	  no /usr/bin/ping.
+
 2008-10-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* NetworkInterface.cs: detect wireless 802.11 on linux.

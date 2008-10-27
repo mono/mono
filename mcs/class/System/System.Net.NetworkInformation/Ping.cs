@@ -80,6 +80,8 @@ namespace System.Net.NetworkInformation {
 				if (!canSendPrivileged && WindowsIdentity.GetCurrent ().Name == "root")
 					canSendPrivileged = true;
 			}
+			else
+				canSendPrivileged = true;
 		}
 		
 		public Ping ()
