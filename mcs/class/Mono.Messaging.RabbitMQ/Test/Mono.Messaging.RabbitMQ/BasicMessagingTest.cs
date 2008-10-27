@@ -30,6 +30,7 @@
 
 using System;
 using System.Messaging;
+using System.Reflection;
 using System.Threading;
 using System.Text.RegularExpressions;
 
@@ -64,6 +65,178 @@ namespace MonoTests.Mono.Messsaging.RabbitMQ
 			Assert.AreEqual (m.CorrelationId, m2.CorrelationId, "CorrelationId not set properly");
 			Assert.IsTrue (0 != m2.SenderVersion);
 			Assert.IsNotNull (m2.SourceMachine, "SourceMachine is null");
+			Assert.AreEqual (qName, m2.DestinationQueue.QueueName, "Destination Queue not set");
+		}
+		
+		[Test]
+		public void CheckDefaults ()
+		{
+			Message m = new Message ("Test", new BinaryMessageFormatter ());
+			Assert.AreEqual (true, m.AttachSenderId, "AttachSenderId has incorrect default");
+			Assert.AreEqual ("Microsoft Base Cryptographic Provider version 1.0", 
+			                 m.AuthenticationProviderName, 
+			                 "AuthenticationProviderName has incorrect default"); 
+			Assert.AreEqual (0, m.Extension.Length, "Extension has incorrect default");
+			Assert.AreEqual ("", m.Label, "Label has incorrect default");
+			Assert.IsFalse (m.Recoverable, "Recoverable has incorrect default");
+			Assert.AreEqual (MessagePriority.Normal, m.Priority, "MessagePriority has incorrect default");
+		}
+		
+		private static void CheckInvalidOperation (Message m, String property)
+		{
+			PropertyInfo pi = m.GetType ().GetProperty (property);
+			try {
+				Assert.IsNotNull (pi, "Property not defined: " + property);
+				pi.GetValue (m, null);
+				Assert.Fail (property);
+			} catch (InvalidOperationException e) {
+			} catch (TargetInvocationException e) {
+				Assert.AreEqual (typeof (InvalidOperationException), 
+				                 e.InnerException.GetType ());
+			}
+		}
+		
+		[Test]
+		public void CheckInvalidPropertyOperations ()
+		{
+			Message m = new Message ("Test", new BinaryMessageFormatter ());
+			CheckInvalidOperation (m, "Acknowledgment");
+			CheckInvalidOperation (m, "ArrivedTime");
+			CheckInvalidOperation (m, "Authenticated");
+			CheckInvalidOperation (m, "DestinationQueue");
+			CheckInvalidOperation (m, "Id");
+			CheckInvalidOperation (m, "IsFirstInTransaction");
+			CheckInvalidOperation (m, "IsLastInTransaction");
+			// TODO: Support 2.0 features.
+			//CheckInvalidOperation (m, "LookupId");
+			CheckInvalidOperation (m, "MessageType");
+			CheckInvalidOperation (m, "SenderId");
+			CheckInvalidOperation (m, "SenderVersion");
+			CheckInvalidOperation (m, "SentTime");
+			CheckInvalidOperation (m, "SourceMachine");
+			CheckInvalidOperation (m, "TransactionId");
+		}
+		
+		private static void CheckArgumentInvalid (Message m, String property)
+		{
+			PropertyInfo pi = m.GetType ().GetProperty (property);
+			try {
+				Assert.IsNotNull (pi, "Property not defined: " + property);
+				pi.SetValue (m, null, null);
+				Assert.Fail (property);
+			} catch (InvalidOperationException e) {
+			} catch (TargetInvocationException e) {
+				Assert.AreEqual (typeof (ArgumentException), 
+				                 e.InnerException.GetType ());
+			}
+		}
+		
+		[Test]
+		public void CheckArgumentInvalidForProperties ()
+		{
+			Message m = new Message ("Stuff");
+			CheckArgumentInvalid (m, "DestinationSymmetricKey");
+			CheckArgumentInvalid (m, "DigitalSignature");
+			CheckArgumentInvalid (m, "Extension");
+		}
+		
+		[Test]
+		public void SendReceiveBinaryMessageWithAllPropertiesSet ()
+		{			
+			String qName = "testq";
+			MessageQueue mq = new MessageQueue (qName);
+			Assert.AreEqual (mq.QueueName, qName, "Queue name not set properly");
+			
+			MessageQueue adminQ = new MessageQueue ("myAdmin");
+			MessageQueue responseQ = new MessageQueue ("myResponse");
+			Guid connectorType = Guid.NewGuid ();
+			String s = "Test: " + DateTime.Now;
+			
+			Message m = new Message (s, new BinaryMessageFormatter ());
+			m.CorrelationId = "foo";
+			m.AcknowledgeType = AcknowledgeTypes.PositiveArrival;
+			m.AdministrationQueue = adminQ;
+			m.AppSpecific = 5;
+			m.AuthenticationProviderName = "Test Provider Name";
+			m.AuthenticationProviderType = CryptographicProviderType.None;
+			m.ConnectorType = connectorType;
+			m.DestinationSymmetricKey = new byte[] { 0x0A, 0x0B, 0x0C };
+			m.DigitalSignature = new byte[] { 0x0C, 0x0D, 0x0E };
+			m.EncryptionAlgorithm = EncryptionAlgorithm.Rc4;
+			m.Extension = new byte[] { 0x01, 0x02, 0x03 };
+			m.HashAlgorithm = HashAlgorithm.Sha;
+			m.Label = "MyLabel";
+			m.Priority = MessagePriority.AboveNormal;
+			m.Recoverable = true;
+			m.ResponseQueue = responseQ;
+			m.SenderCertificate = new byte[] { 0x04, 0x05, 0x06 };
+			m.TimeToBeReceived = new TimeSpan(0, 0, 5);
+			m.TimeToReachQueue = new TimeSpan(0, 0, 10);
+			m.UseAuthentication = true;
+			m.UseDeadLetterQueue = true;
+			m.UseEncryption = true;
+			
+			mq.Send (m);
+
+			Message m2 = mq.Receive ();
+			m2.Formatter = new BinaryMessageFormatter ();
+			Assert.AreEqual (s, m2.Body);
+			
+			Assert.AreEqual (AcknowledgeTypes.PositiveArrival, m2.AcknowledgeType, 
+			                 "AcknowledgeType not passed correctly");
+			Assert.AreEqual (adminQ.QueueName, m2.AdministrationQueue.QueueName, 
+			                 "AdministrationQueue not passed correctly");
+			Assert.AreEqual (5, m2.AppSpecific, "AppSpecific not passed correctly");
+			Assert.AreEqual (m.AuthenticationProviderName, m2.AuthenticationProviderName,
+			                 "AuthenticationProviderName not passed correctly");
+			Assert.AreEqual (m.AuthenticationProviderType, m2.AuthenticationProviderType,
+			                 "AuthenticationProviderType not passed correctly");
+			Assert.AreEqual (connectorType, m2.ConnectorType, 
+			                 "ConnectorType not passed correctly");
+			Assert.AreEqual (m.CorrelationId, m2.CorrelationId, 
+			                 "CorrelationId not passed correctly");
+			AreEqual (m.DestinationSymmetricKey, m2.DestinationSymmetricKey, 
+			          "DestinationSymmetricKey not passed correctly");
+			AreEqual (m.DigitalSignature, m2.DigitalSignature,
+			          "DigitalSignature not passed properly");
+			Assert.AreEqual (EncryptionAlgorithm.Rc4, m2.EncryptionAlgorithm,
+			                 "EncryptionAlgorithm not passed properly");
+			AreEqual (m.Extension, m2.Extension, "Extension not passed properly");
+			Assert.AreEqual (m.HashAlgorithm, m2.HashAlgorithm,
+			                 "HashAlgorithm not passed properly");
+			Assert.AreEqual (m.Label, m2.Label, "Label not passed correctly");
+			Assert.AreEqual (MessagePriority.AboveNormal, m2.Priority,
+			                 "Priority not passed properly");
+			Assert.AreEqual (true, m2.Recoverable, "Recoverable not passed properly");
+			Assert.AreEqual (responseQ.QueueName, m2.ResponseQueue.QueueName,
+			                 "ResponseQueue not passed properly");
+			AreEqual (m.SenderCertificate, m2.SenderCertificate,
+			               "SenderCertificate not passed properly");
+			Assert.AreEqual (m.TimeToBeReceived, m2.TimeToBeReceived,
+			                 "TimeToBeReceived not passed properly");
+			Assert.AreEqual (m.TimeToReachQueue, m2.TimeToReachQueue,
+			                 "TimeToReachQueue not passed properly");
+			Assert.IsTrue (m2.UseAuthentication,
+			               "UseAuthentication not passed properly");
+			Assert.IsTrue (m2.UseDeadLetterQueue,
+			               "UseDeadLetterQueue not passed properly");
+			Assert.IsTrue (m2.UseEncryption, "UseEncryption not pass properly");
+			//Assert.AreEqual ();
+			
+			Assert.IsTrue (DateTime.MinValue == m.ArrivedTime);
+			Assert.IsNotNull (m2.Id, "Id is null");
+			Assert.IsTrue (Guid.Empty.ToString () !=  m2.Id, "Id is Empty");
+		   	Assert.IsTrue (DateTime.MinValue != m2.ArrivedTime, "Arrived Time is not set");
+			Assert.AreEqual (Acknowledgment.None, m2.Acknowledgment, "Acknowledgment");
+			Assert.IsTrue (0 != m2.SenderVersion);
+			Assert.IsNotNull (m2.SourceMachine, "SourceMachine is null");
+		}
+		
+		private static void AreEqual(byte[] expected, byte[] actual, string message)
+		{
+			Assert.AreEqual (expected.Length, actual.Length, message);
+			for (int i = 0; i < expected.Length; i++)
+				Assert.AreEqual (expected[i], actual[i], message);
 		}
 		
 		[Test]

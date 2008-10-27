@@ -35,6 +35,12 @@ namespace Mono.Messaging {
 	public class ConnectionException : MonoMessagingException {
 		private readonly QueueReference qRef;
 	
+		public ConnectionException (QueueReference qRef, Exception e) 
+			: base ("Unable to connect to Queue", e)
+		{
+			this.qRef = qRef;
+		}
+		
 		public ConnectionException (QueueReference qRef) 
 			: base ("Unable to connect to Queue")
 		{

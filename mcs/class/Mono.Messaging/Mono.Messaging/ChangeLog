@@ -1,3 +1,11 @@
+2008-10-26  Michael Barker  <mike@middlesoft.co.uk>
+
+	* ConnectionException.cs:  Added support for InnerExceptions
+	* MessageBase.cs:  Added check for delivered messages and throwing exceptions
+	for appropriate properties.  Add null argument checks for some byte[]
+	properties.
+	* IMessage.cs:  Added SentTime to the list of delivery properties.
+
 2008-10-12  Michael Barker  <mike@middlesoft.co.uk>
 
 	* IMessageEnumerator.cs: New

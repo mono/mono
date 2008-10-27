@@ -42,12 +42,12 @@ namespace Mono.Messaging {
 		DateTime arrivedTime;
 		bool attachSenderId = true;
 		bool authenticated;
-		string authenticationProviderName = "";
+		string authenticationProviderName = "Microsoft Base Cryptographic Provider version 1.0";
 		CryptographicProviderType authenticationProviderType 
 			= CryptographicProviderType.RsaFull;
 		Stream bodyStream;
 		int bodyType;
-		Guid connectorType;
+		Guid connectorType = Guid.Empty;
 		string correlationId;
 		IMessageQueue destinationQueue;
 		byte[] destinationSymmetricKey = new byte[0];
@@ -78,6 +78,7 @@ namespace Mono.Messaging {
 		bool useEncryption;
 		bool useJournalQueue;
 		bool useTracing;
+		bool isDelivered;
 		
 		public AcknowledgeTypes AcknowledgeType { 
 			get { return acknowledgeType; }
@@ -85,7 +86,10 @@ namespace Mono.Messaging {
 		}
 
 		public Acknowledgment Acknowledgment { 
-			get { return acknowledgment; }
+			get { 
+				CheckDelivered ();
+				return acknowledgment;
+			}
 		}
 		
 		public IMessageQueue AdministrationQueue { 
@@ -99,7 +103,10 @@ namespace Mono.Messaging {
 		}
 		
 		public DateTime ArrivedTime { 
-			get { return arrivedTime; }
+			get { 
+				CheckDelivered ();
+				return arrivedTime;
+			}
 		}
 		
 		public bool AttachSenderId { 
@@ -108,7 +115,10 @@ namespace Mono.Messaging {
 		}
 		
 		public bool Authenticated {
-			get { return authenticated; }
+			get { 
+				CheckDelivered ();
+				return authenticated;
+			}
 		}
 		
 		public string AuthenticationProviderName {
@@ -142,17 +152,28 @@ namespace Mono.Messaging {
 		}
 
 		public IMessageQueue DestinationQueue {
-			get { return destinationQueue; }
+			get { 
+				CheckDelivered ();
+				return destinationQueue;
+			}
 		}
 
 		public byte[] DestinationSymmetricKey {
 			get { return destinationSymmetricKey; }
-			set { destinationSymmetricKey = value; }
+			set { 
+				if (value == null)
+					throw new ArgumentException ("DestinationSymmetricKey can not be null");
+				destinationSymmetricKey = value;
+			}
 		}
 
 		public byte[] DigitalSignature {
 			get { return digitalSignature; }
-			set { digitalSignature = value; }
+			set {
+				if (value == null)
+					throw new ArgumentException ("DigitalSignature can not be null");
+				digitalSignature = value;
+			}
 		}
 
 		public EncryptionAlgorithm EncryptionAlgorithm {
@@ -162,7 +183,11 @@ namespace Mono.Messaging {
 
 		public byte[] Extension {
 			get { return extension; }
-			set { extension = value; }
+			set {
+				if (value == null)
+					throw new ArgumentException ("Extension can not be null");
+				extension = value;
+			}
 		}
 
 		public HashAlgorithm HashAlgorithm {
@@ -171,15 +196,24 @@ namespace Mono.Messaging {
 		}
 
 		public string Id {
-			get { return id; }
+			get { 
+				CheckDelivered ();
+				return id;
+			}
 		}
 
 		public bool IsFirstInTransaction {
-			get { return isFirstInTransaction; }
+			get { 
+				CheckDelivered ();
+				return isFirstInTransaction;
+			}
 		}
 
 		public bool IsLastInTransaction {
-			get { return isLastInTransaction; }
+			get { 
+				CheckDelivered ();
+				return isLastInTransaction;
+			}
 		}
 
 		public string Label {
@@ -188,7 +222,10 @@ namespace Mono.Messaging {
 		}
 
 		public MessageType MessageType {
-			get { return messageType; }
+			get { 
+				CheckDelivered ();
+				return messageType;
+			}
 		}
 
 		public MessagePriority Priority {
@@ -212,19 +249,31 @@ namespace Mono.Messaging {
 		}
 
 		public byte[] SenderId {
-			get { return senderId; }
+			get { 
+				CheckDelivered ();
+				return senderId;
+			}
 		}
 
 		public long SenderVersion {
-			get { return senderVersion; }
+			get { 
+				CheckDelivered ();
+				return senderVersion;
+			}
 		}
 
 		public DateTime SentTime {
-			get { return sentTime; }
+			get {  
+				CheckDelivered ();
+				return sentTime;
+			}
 		}
 
 		public string SourceMachine {
-			get { return sourceMachine; }
+			get {  
+				CheckDelivered ();
+				return sourceMachine;
+			}
 		}
 
 		public TimeSpan TimeToBeReceived {
@@ -238,7 +287,10 @@ namespace Mono.Messaging {
 		}
 
 		public string TransactionId {
-			get { return transactionId; }
+			get {  
+				CheckDelivered ();
+				return transactionId;
+			}
 		}
 
 		public IMessageQueue TransactionStatusQueue {
@@ -271,6 +323,12 @@ namespace Mono.Messaging {
 			set { useTracing = value; }
 		}
 		
+		private void CheckDelivered ()
+		{
+			if (!isDelivered)
+				throw new InvalidOperationException ("Message has not been delivered");
+		}
+		
 		public void SetDeliveryInfo (Acknowledgment acknowledgment,
 		                             DateTime arrivedTime,
 		                             IMessageQueue destinationQueue,
@@ -278,6 +336,7 @@ namespace Mono.Messaging {
 		                             MessageType messageType,
 		                             byte[] senderId,
 									 long senderVersion,
+		                             DateTime sentTime,
 									 string sourceMachine,
 		                             string transactionId)
 		{
@@ -288,8 +347,10 @@ namespace Mono.Messaging {
 			this.messageType = messageType;
 			this.senderId = senderId;
 			this.senderVersion = senderVersion;
+			this.sentTime = sentTime;
 			this.sourceMachine = sourceMachine;
 			this.transactionId = transactionId;
+			this.isDelivered = true;
 		}
 	}
 }

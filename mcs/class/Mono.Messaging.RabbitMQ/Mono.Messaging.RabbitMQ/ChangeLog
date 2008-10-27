@@ -1,3 +1,10 @@
+2008-10-26  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageFactory.cs:  Support all properties defined in the 1.1 version of
+	System.Messaging, including Recoverable and Priority.  Changed Timestamp
+	conversion methods to support .NET 1.1 compilation.
+	* RabbitMQMessageQueue.cs:  Removed unnecessary constants.
+
 2008-10-12  Michael Barker  <mike@middlesoft.co.uk>
 
 	* RabbitMQMessageEnumerator.cs:  New

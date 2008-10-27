@@ -49,6 +49,26 @@ namespace Mono.Messaging.RabbitMQ {
 		private static readonly string SENDER_VERSION_KEY = "SenderVersion";
 		private static readonly string SOURCE_MACHINE_KEY = "SourceMachine";
 		private static readonly string BODY_TYPE_KEY = "BodyType";
+		private static readonly string ACKNOWLEDGE_TYPE_KEY = "AcknowledgeType";
+		private static readonly string ADMINISTRATION_QUEUE_KEY = "AdministrationQueue";
+		private static readonly string APP_SPECIFIC_KEY = "AppSpecific";
+		private static readonly string AUTHENTICATION_PROVIDER_NAME_KEY = "AuthenticationProviderName";
+		private static readonly string AUTHENTICATION_PROVIDER_TYPE_KEY = "AuthenticationProviderType";
+		private static readonly string CONNECTOR_TYPE_KEY = "ConnectorType";
+		private static readonly string DESTINATION_SYMMETRIC_KEY_KEY = "DestinationSymmetricKey";
+		private static readonly string DIGITAL_SIGNATURE_KEY = "DigitalSignature";
+		private static readonly string ENCRYPTION_ALGORITHM_KEY = "EncryptionAlgorithm";
+		private static readonly string EXTENSION_KEY = "Extension";
+		private static readonly string HASH_ALGORITHM_KEY = "HashAlgorithm";
+		private static readonly string LABEL_KEY = "Label";
+		private static readonly string SENDER_CERTIFICATE_KEY = "SenderCertificate";
+		private static readonly string TIME_TO_BE_RECEIVED_KEY = "TimeToBeReceived";
+		private static readonly string TIME_TO_REACH_QUEUE_KEY = "TimeToReachQueue";
+		private static readonly string USE_AUTHENTICATION_KEY = "UseAuthentication";
+		private static readonly string USE_DEAD_LETTER_QUEUE_KEY = "UseDeadLetterQueue";
+		private static readonly string USE_ENCRYPTION_KEY = "UseEncryption";
+		
+		private static readonly int PERSISTENT_DELIVERY_MODE = 2;
 		
 		public static IMessageBuilder WriteMessage (IModel ch, IMessage msg)
 		{
@@ -56,49 +76,116 @@ namespace Mono.Messaging.RabbitMQ {
 			mb.Properties.MessageId = msg.Id;
 			if (msg.CorrelationId != null)
 				mb.Properties.CorrelationId = msg.CorrelationId;
+			// TODO: Change to DateTime.UtcNow??
 			mb.Properties.Timestamp = MessageFactory.DateTimeToAmqpTimestamp (DateTime.Now);
 			Hashtable headers = new Hashtable ();
+			
 			headers[SENDER_VERSION_KEY] = msg.SenderVersion;
 			headers[SOURCE_MACHINE_KEY] = (string) System.Environment.MachineName;
 			headers[BODY_TYPE_KEY] = msg.BodyType;
+			headers[ACKNOWLEDGE_TYPE_KEY] = (int) msg.AcknowledgeType;
+			if (msg.AdministrationQueue != null)
+				headers[ADMINISTRATION_QUEUE_KEY] = msg.AdministrationQueue.QRef.ToString ();
+			headers[APP_SPECIFIC_KEY] = msg.AppSpecific;
+			headers[AUTHENTICATION_PROVIDER_NAME_KEY] = msg.AuthenticationProviderName;
+			headers[AUTHENTICATION_PROVIDER_TYPE_KEY] = (int) msg.AuthenticationProviderType;
+			headers[CONNECTOR_TYPE_KEY] = msg.ConnectorType.ToString ();
+			headers[DESTINATION_SYMMETRIC_KEY_KEY] = msg.DestinationSymmetricKey;
+			headers[DIGITAL_SIGNATURE_KEY] = msg.DigitalSignature;
+			headers[ENCRYPTION_ALGORITHM_KEY] = (int) msg.EncryptionAlgorithm;
+			headers[EXTENSION_KEY] = msg.Extension;
+			headers[HASH_ALGORITHM_KEY] = (int) msg.HashAlgorithm;
+			SetValue (headers, LABEL_KEY, msg.Label);
+			mb.Properties.Priority = (byte) (int) msg.Priority;
+			mb.Properties.SetPersistent (msg.Recoverable);
+			if (msg.ResponseQueue != null)
+				mb.Properties.ReplyTo = msg.ResponseQueue.QRef.ToString ();
+			headers[SENDER_CERTIFICATE_KEY] = msg.SenderCertificate;
+			headers[TIME_TO_BE_RECEIVED_KEY] = msg.TimeToBeReceived.Ticks;
+			headers[TIME_TO_REACH_QUEUE_KEY] = msg.TimeToReachQueue.Ticks;
+			headers[USE_AUTHENTICATION_KEY] = msg.UseAuthentication;
+			headers[USE_DEAD_LETTER_QUEUE_KEY] = msg.UseDeadLetterQueue;
+			headers[USE_ENCRYPTION_KEY] = msg.UseEncryption;
 			
 			mb.Properties.Headers = headers;
 			Stream s = msg.BodyStream;
 			s.Seek (0, SeekOrigin.Begin);
 			byte[] buf = new byte[s.Length];			
-			int numRead = msg.BodyStream.Read (buf, 0, buf.Length);
+			msg.BodyStream.Read (buf, 0, buf.Length);
 			mb.BodyStream.Write (buf, 0, buf.Length);
 			return mb;
-		}		
+		}
 		
-		public static IMessage ReadMessage (BasicDeliverEventArgs result)
+		private static void SetValue (Hashtable headers, string name, object val)
 		{
+			if (val != null)
+				headers[name] = val;
+		}
+		
+		public static IMessage ReadMessage (QueueReference destination, BasicDeliverEventArgs result)
+		{
+			/*
+			if (destination == null)
+				throw new ArgumentException ("destination must not be null");
+			if (result == null)
+				throw new ArgumentException ("result must not be null");
+			*/
 			MessageBase msg = new MessageBase ();
 			Stream s = new MemoryStream ();
 			s.Write (result.Body, 0, result.Body.Length);
 			Console.WriteLine ("Body.Length Out {0}", result.Body.Length);
 			DateTime arrivedTime = DateTime.Now;
-			long senderVersion = (long) result.BasicProperties.Headers[SENDER_VERSION_KEY];
-			string sourceMachine = GetString (result.BasicProperties, SOURCE_MACHINE_KEY);
+			IDictionary headers = result.BasicProperties.Headers;
+			long senderVersion = (long) headers[SENDER_VERSION_KEY];
+			string sourceMachine = GetString (headers, SOURCE_MACHINE_KEY);
 			DateTime sentTime = AmqpTimestampToDateTime (result.BasicProperties.Timestamp);
 			msg.SetDeliveryInfo (Acknowledgment.None,
 			                     arrivedTime,
-			                     null,
+			                     new RabbitMQMessageQueue (destination),
 			                     result.BasicProperties.MessageId,
 			                     MessageType.Normal,
 			                     new byte[0],
 			                     senderVersion,
+			                     sentTime,
 			                     sourceMachine,
 			                     null);
 			msg.CorrelationId = result.BasicProperties.CorrelationId;
 			msg.BodyStream = s;
 			msg.BodyType = (int) result.BasicProperties.Headers[BODY_TYPE_KEY];
+			msg.AcknowledgeType = (AcknowledgeTypes) 
+				Enum.ToObject (typeof (AcknowledgeTypes), 
+				               headers[ACKNOWLEDGE_TYPE_KEY]);
+			string adminQueuePath = GetString (headers, ADMINISTRATION_QUEUE_KEY);
+			if (adminQueuePath != null)
+				msg.AdministrationQueue = new RabbitMQMessageQueue (QueueReference.Parse (adminQueuePath));
+			msg.AppSpecific = (int) headers[APP_SPECIFIC_KEY];
+			msg.AuthenticationProviderName = GetString (headers, AUTHENTICATION_PROVIDER_NAME_KEY);
+			msg.AuthenticationProviderType = (CryptographicProviderType) Enum.ToObject (typeof (CryptographicProviderType), headers[AUTHENTICATION_PROVIDER_TYPE_KEY]);
+			string connectorType = GetString (headers, CONNECTOR_TYPE_KEY);
+			msg.ConnectorType = new Guid(connectorType);
+			msg.DestinationSymmetricKey = (byte[]) headers[DESTINATION_SYMMETRIC_KEY_KEY];
+			msg.DigitalSignature = (byte[]) headers[DIGITAL_SIGNATURE_KEY];
+			msg.EncryptionAlgorithm = (EncryptionAlgorithm) Enum.ToObject (typeof (EncryptionAlgorithm), headers[ENCRYPTION_ALGORITHM_KEY]);
+			msg.Extension = (byte[]) headers[EXTENSION_KEY];
+			msg.HashAlgorithm = (HashAlgorithm) Enum.ToObject (typeof (HashAlgorithm), headers[HASH_ALGORITHM_KEY]);
+			msg.Label = GetString (headers, LABEL_KEY);
+			msg.Priority = (MessagePriority) Enum.ToObject (typeof (MessagePriority), result.BasicProperties.Priority);
+			msg.Recoverable = result.BasicProperties.DeliveryMode == PERSISTENT_DELIVERY_MODE;
+			if (result.BasicProperties.ReplyTo != null)
+				msg.ResponseQueue = new RabbitMQMessageQueue (QueueReference.Parse (result.BasicProperties.ReplyTo));
+			msg.SenderCertificate = (byte[]) headers[SENDER_CERTIFICATE_KEY];
+			msg.TimeToBeReceived = new TimeSpan((long) headers[TIME_TO_BE_RECEIVED_KEY]);
+			msg.TimeToReachQueue = new TimeSpan((long) headers[TIME_TO_REACH_QUEUE_KEY]);
+			msg.UseAuthentication = (bool) headers[USE_AUTHENTICATION_KEY];
+			msg.UseDeadLetterQueue = (bool) headers[USE_DEAD_LETTER_QUEUE_KEY];
+			msg.UseEncryption = (bool) headers[USE_ENCRYPTION_KEY];
+			
 			return msg;
 		}
 		
-		public static string GetString (IBasicProperties properties, String key)
+		public static string GetString (IDictionary properties, String key)
 		{
-			byte[] b = (byte[]) properties.Headers[key];
+			byte[] b = (byte[]) properties[key];
 			if (b == null)
 				return null;
 			
@@ -107,14 +194,14 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		public static AmqpTimestamp DateTimeToAmqpTimestamp (DateTime t)
 		{
-			DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+			DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 			TimeSpan ts = t.ToUniversalTime () - epoch;
 			return new AmqpTimestamp((long) ts.TotalSeconds);
 		}
 		
 		public static DateTime AmqpTimestampToDateTime (AmqpTimestamp ats)
 		{
-			DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+			DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 			return epoch.AddSeconds (ats.UnixTime).ToLocalTime ();
 		}
 		

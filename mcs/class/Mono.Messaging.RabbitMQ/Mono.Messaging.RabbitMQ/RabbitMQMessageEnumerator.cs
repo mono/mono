@@ -142,7 +142,7 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		private IMessage CreateMessage (BasicDeliverEventArgs result)
 		{
-			return MessageFactory.ReadMessage (result);
+			return MessageFactory.ReadMessage (qRef, result);
 		}
 
 	}

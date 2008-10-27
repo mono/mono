@@ -45,10 +45,6 @@ namespace Mono.Messaging.RabbitMQ {
 
 	public class RabbitMQMessageQueue : IMessageQueue {
 		
-		private static readonly string SENDER_VERSION_KEY = "SenderVersion";
-		private static readonly string SOURCE_MACHINE_KEY = "SourceMachine";
-		private static readonly string BODY_TYPE_KEY = "BodyType";
-		
 		private bool authenticate = false;
 		private short basePriority = 0;
 		private Guid category = Guid.Empty;
@@ -169,6 +165,7 @@ namespace Mono.Messaging.RabbitMQ {
 			                     MessageType.Normal,
 			                     new byte[0],
 			                     senderVersion,
+			                     DateTime.UtcNow,
 			                     null,
 			                     null);
 		}
@@ -196,7 +193,7 @@ namespace Mono.Messaging.RabbitMQ {
 					}
 				}
 			} catch (BrokerUnreachableException e) {
-				throw new ConnectionException (QRef);
+				throw new ConnectionException (QRef, e);
 			}
 		}
 		
@@ -216,9 +213,7 @@ namespace Mono.Messaging.RabbitMQ {
 					if (result == null) {
 						throw new MonoMessagingException ("No Message Available");
 					} else {
-						DebugUtil.DumpProperties(result, Console.Out, 0);
-						
-						IMessage m = MessageFactory.ReadMessage (result);
+						IMessage m = MessageFactory.ReadMessage (QRef, result);
 						return m;
 					}
 				}

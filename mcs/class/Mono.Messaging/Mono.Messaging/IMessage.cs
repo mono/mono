@@ -207,6 +207,7 @@ namespace Mono.Messaging {
                               MessageType messageType,
                               byte[] senderId,
 							  long senderVersion,
+		                      DateTime sentTime,
 							  string sourceMachine,
                               string transactionId);
 	}
