@@ -1,3 +1,8 @@
+2008-10-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_generic_instances): Add all methods of generic instances
+	found in the TYPESPEC table.
+
 2008-10-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_get_method): Log not found methods for extra methods
