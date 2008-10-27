@@ -47,7 +47,7 @@ using System.Runtime.InteropServices;
 	//
 	// DO NOT MODIFY THE STRING BELOWS WITOUT UPDATING cecil.pc.in in mono/data
 	//
-	"0.6.8.8607"
+	"0.6.9.0"
 	//
 	// DO NOT MODIFY THE STRING ABOVE WITHOUT UPDATING cecil.pc.in in mono/data
 )]

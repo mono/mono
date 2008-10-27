@@ -1,3 +1,7 @@
+2008-10-27  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/AssemblyInfo.cs: bump version.
+
 2008-10-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* Mono.Cecil/AssemblyStripper.cs: Strip locals info too.
