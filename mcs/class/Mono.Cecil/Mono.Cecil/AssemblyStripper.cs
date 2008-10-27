@@ -86,6 +86,7 @@ namespace Mono.Cecil {
 					continue;
 
 				method.Body.ExceptionHandlers.Clear();
+				method.Body.Variables.Clear ();
 				method.Body.Instructions.Clear ();
 				method.Body.CilWorker.Emit (OpCodes.Ret);
 			}

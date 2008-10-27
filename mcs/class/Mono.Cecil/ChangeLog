@@ -1,3 +1,7 @@
+2008-10-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* Mono.Cecil/AssemblyStripper.cs: Strip locals info too.
+
 2008-10-17  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionWriter.cs: remove dead code.
