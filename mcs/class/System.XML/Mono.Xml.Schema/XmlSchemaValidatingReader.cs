@@ -125,6 +125,8 @@ namespace Mono.Xml.Schema
 				schemas,
 				nsResolver,
 				options);
+			if (reader.BaseURI != String.Empty)
+				v.SourceUri = new Uri (reader.BaseURI);
 
 			readerLineInfo = reader as IXmlLineInfo;
 			getter = delegate () { return Value; };
