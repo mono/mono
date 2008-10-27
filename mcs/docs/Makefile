@@ -7,6 +7,7 @@ DISTFILES = \
 	compiler.txt                \
 	control-flow-analysis.txt   \
 	cs-errors.config            \
+	mono-file-formats.config    \
 	mono-tools.config           \
 	monodoc.xml                 \
 	new-anonymous-design.txt    \

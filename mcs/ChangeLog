@@ -1,3 +1,7 @@
+2008-10-27  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs/Makefile (DISTFILES): Add mono-file-formats.config.
+
 2008-10-22  Jonathan Pryor  <jpryor@novell.com>
 
 	* docs (svn:ignore): Ignore generated files.
