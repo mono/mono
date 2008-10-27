@@ -30,8 +30,7 @@ namespace MonoTests.System.Resources
 		{
 			char ds = Path.DirectorySeparatorChar;
 			if (ds == '/') {
-				FileInfo code_base = new FileInfo (Assembly.GetExecutingAssembly ().Location);
-				string base_path = Path.Combine (code_base.Directory.FullName, Path.Combine ("Test", "resources"));
+				string base_path = Path.Combine (Directory.GetCurrentDirectory (), Path.Combine ("Test", "resources"));
 				m_ResourceFile = Path.Combine (base_path, "MyResources.resources");
 				m_BadResourceFile = Path.Combine (base_path, "Empty.resources");
 			} else {

@@ -1,3 +1,9 @@
+
+2008-10-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ResourceReaderTest.cs: use the current directory to locate the
+	resources.
+
 2008-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResourceManagerTest.cs: Enabled and added ResourceSetType asserts.
