@@ -282,7 +282,7 @@ namespace Mono.Xml.Schema
 				XsdKeyEntryField of = other.KeyFields [i];
 				if (f.IsXsiNil && !of.IsXsiNil || !f.IsXsiNil && of.IsXsiNil)
 					return false;
-				if (!XmlSchemaUtil.IsSchemaDatatypeEquals (
+				if (!XmlSchemaUtil.AreSchemaDatatypeEqual (
 					of.FieldType, of.Identity, f.FieldType, f.Identity))
 					return false;	// does not match
 			}

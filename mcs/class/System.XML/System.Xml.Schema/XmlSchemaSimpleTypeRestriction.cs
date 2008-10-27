@@ -676,7 +676,7 @@ namespace System.Xml.Schema
 					object v = dt.ParseValue (list [l], nt, nsmgr);
 
 					for (int i = 0; i < this.enumarationFacetValues.Length; i++) {
-						if (XmlSchemaUtil.IsSchemaDatatypeEquals (dt, v, dt, dt.ParseValue (this.enumarationFacetValues [i], nt, nsmgr))) {
+						if (XmlSchemaUtil.AreSchemaDatatypeEqual (dt, v, dt, dt.ParseValue (this.enumarationFacetValues [i], nt, nsmgr))) {
 							enumMatched = true;
 							break;
 						}
@@ -753,7 +753,7 @@ namespace System.Xml.Schema
 					edt = (XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace);
 				object v = edt.ParseValue (value, nt, nsmgr);
 				for (int i = 0; i < this.enumarationFacetValues.Length; i++) {
-					if (XmlSchemaUtil.IsSchemaDatatypeEquals (edt, v, edt, edt.ParseValue (this.enumarationFacetValues [i], nt, nsmgr))) {
+					if (XmlSchemaUtil.AreSchemaDatatypeEqual (edt, v, edt, edt.ParseValue (this.enumarationFacetValues [i], nt, nsmgr))) {
 						enumMatched = true;
 						break;
 					}

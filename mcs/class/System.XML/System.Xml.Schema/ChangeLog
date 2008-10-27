@@ -1,3 +1,10 @@
+2008-10-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs : SchemaInfo is only for output, not for
+	  reference. Fixed bug #433374.
+	* XmlSchemaUtil.cs, XmlSchemaSimpleTypeRestriction.cs : I don't like
+	  this bogus name :/
+
 2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : do not try to validate CloseStartElement

@@ -169,7 +169,7 @@ namespace System.Xml.Schema
 			return false;
 		}
 
-		public static bool IsSchemaDatatypeEquals (XsdAnySimpleType st1, object v1,
+		public static bool AreSchemaDatatypeEqual (XsdAnySimpleType st1, object v1,
 			XsdAnySimpleType st2, object v2)
 		{
 			if (v1 == null || v2 == null)

@@ -333,14 +333,7 @@ namespace System.Xml.Schema
 		{
 			if (attributeValue == null)
 				throw new ArgumentNullException ("attributeValue");
-			return ValidateAttribute (localName, ns,
-				delegate () {
-					if (info != null && info.SchemaType != null && info.SchemaType.Datatype != null)
-						return info.SchemaType.Datatype.ParseValue (attributeValue, nameTable, nsResolver);
-					else
-						return attributeValue;
-				},
-				info);
+			return ValidateAttribute (localName, ns, delegate () { return attributeValue; }, info);
 		}
 
 		// I guess this weird XmlValueGetter is for such case that
@@ -832,11 +825,10 @@ namespace System.Xml.Schema
 				if (st != null)
 					ValidateRestrictedSimpleTypeValue (st, ref dt, new XmlAtomicValue (parsedValue, attr.AttributeSchemaType).Value);
 
-				XmlSchemaType type = info != null ? info.SchemaType : null;
 				if (attr.ValidatedFixedValue != null && 
-					!XmlSchemaUtil.IsSchemaDatatypeEquals (
-					attr.AttributeSchemaType.Datatype as XsdAnySimpleType, attr.ValidatedFixedTypedValue, type != null ? type.Datatype as XsdAnySimpleType : null, parsedValue)) {
-					HandleError ("The value of the attribute " + attr.QualifiedName + " does not match with its fixed value.");
+					!XmlSchemaUtil.AreSchemaDatatypeEqual (
+					attr.AttributeSchemaType.Datatype as XsdAnySimpleType, attr.ValidatedFixedTypedValue, dt as XsdAnySimpleType, parsedValue)) {
+					HandleError (String.Format ("The value of the attribute {0} does not match with its fixed value '{1}' in the space of type {2}", attr.QualifiedName, attr.ValidatedFixedValue, dt));
 					parsedValue = attr.ValidatedFixedTypedValue;
 				}
 #region ID Constraints

@@ -81,6 +81,26 @@ namespace MonoTests.System.Xml
 			XmlReader reader = XmlReader.Create ("Test/XmlFiles/xsd/422581.xml", settings);
 			while (reader.Read ());
 		}
+
+		[Test]
+		public void Bug433774 ()
+		{
+			string xsd = @"<xs:schema targetNamespace='urn:foo' xmlns='urn:foo' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element name='Root'>
+    <xs:complexType>
+      <xs:sequence></xs:sequence>
+      <xs:attribute name='version' type='xs:string' fixed='3' />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<Root version='3' xmlns='urn:foo'/>");
+			XmlSchemaSet schemaSet = new XmlSchemaSet();
+			schemaSet.Add (XmlSchema.Read (XmlReader.Create (new StringReader (xsd)), null));
+			doc.Schemas = schemaSet;
+			XmlNode root = doc.DocumentElement;
+			doc.Validate (null, root);
+		}
 	}
 }
 

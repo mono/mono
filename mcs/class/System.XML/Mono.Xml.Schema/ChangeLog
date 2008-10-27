@@ -1,3 +1,12 @@
+2008-10-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdIdentityState.cs : rename.
+
+2008-10-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidatingReader.cs : give SourceUri to
+	  XmlSchemaValidator, which used to be impossible in 2.0 betas.
+
 2008-09-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidatingReader.cs : call EndValidation() only once.
