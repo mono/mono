@@ -1,3 +1,10 @@
+2008-10-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c: shadow-copied assemblies go to CachePath +
+	ApplicationName when both are set. DynamicBase has nothing to do with
+	shadow copies.
+	Bug #406877 fixed.
+
 2008-10-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (encode_locals): Use a cache to avoid duplicate entries in the
