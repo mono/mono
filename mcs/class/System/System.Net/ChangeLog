@@ -1,4 +1,10 @@
 
+2008-10-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ServicePointManager.cs: set the default limit of connections from
+	the configuration file(s) on startup.
+	Bug #339422 fixed.
+
 2008-10-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: don't call ProxyRequest twice.

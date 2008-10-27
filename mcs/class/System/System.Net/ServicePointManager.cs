@@ -128,10 +128,14 @@ namespace System.Net
 				foreach (ConnectionManagementElement e in s.ConnectionManagement)
 					manager.Add (e.Address, e.MaxConnection);
 
+				defaultConnectionLimit = (int) manager.GetMaxConnections ("*");				
 				return;
 			}
 #endif
 			manager = (ConnectionManagementData) ConfigurationSettings.GetConfig (configKey);
+			if (manager != null) {
+				defaultConnectionLimit = (int) manager.GetMaxConnections ("*");				
+			}
 		}
 
 		// Constructors
