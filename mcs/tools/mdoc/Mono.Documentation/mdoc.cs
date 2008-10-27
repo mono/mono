@@ -123,7 +123,11 @@ namespace Mono.Documentation {
 
 		public void Message (TraceLevel level, string format, params object[] args)
 		{
-			if ((int) level <= (int) TraceLevel)
+			if ((int) level > (int) TraceLevel)
+				return;
+			if (level == TraceLevel.Error)
+				Console.Error.WriteLine (format, args);
+			else
 				Console.WriteLine (format, args);
 		}
 	}

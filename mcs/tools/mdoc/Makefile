@@ -165,24 +165,24 @@ check-mdoc-export-msxdoc:
 my_abs_top_srcdir = $(shell cd . && pwd)
 
 check-mdoc-validate-update: mdoc.exe
-	$(MONO) mdoc.exe validate -f ecma Test/en.expected | \
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected 2>&1 | \
 		sed 's#file://$(my_abs_top_srcdir)/##g' > \
 		Test/validate.check.monodocer
-	$(MONO) mdoc.exe validate -f ecma Test/en.expected.importslashdoc | \
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected.importslashdoc 2>&1 | \
 		sed 's#file://$(my_abs_top_srcdir)/##g' > \
 		Test/validate.check.monodocer.importslashdoc
-	$(MONO) mdoc.exe validate -f ecma Test/en.expected.since | \
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected.since 2>&1 | \
 		sed 's#file://$(my_abs_top_srcdir)/##g' > \
 		Test/validate.check.monodocer.since
 
 check-mdoc-validate: mdoc.exe
-	$(MONO) mdoc.exe validate -f ecma Test/en.expected | \
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected 2>&1 | \
 		sed 's#file://$(my_abs_top_srcdir)/##g' | \
 		diff - Test/validate.check.monodocer
-	$(MONO) mdoc.exe validate -f ecma Test/en.expected.importslashdoc | \
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected.importslashdoc 2>&1 | \
 		sed 's#file://$(my_abs_top_srcdir)/##g' | \
 		diff --brief - Test/validate.check.monodocer.importslashdoc
-	$(MONO) mdoc.exe validate -f ecma Test/en.expected.since | \
+	$(MONO) mdoc.exe validate -f ecma Test/en.expected.since 2>&1 | \
 		sed 's#file://$(my_abs_top_srcdir)/##g' | \
 		diff --brief - Test/validate.check.monodocer.since
 
