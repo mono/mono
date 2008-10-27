@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -11,10 +12,8 @@ namespace Mono.Documentation
 {
 	public class MDocValidator : MDocCommand
 	{
-		static XmlValidatingReader reader;
-		static XmlSchema schema;
-		static long errors = 0;
-		static bool IsValid = true;
+		XmlReaderSettings settings;
+		long errors = 0;
 
 		public override void Run (IEnumerable<string> args)
 		{
@@ -22,7 +21,6 @@ namespace Mono.Documentation
 				"ecma",
 			};
 			string format = "ecma";
-			bool showHelp = false;
 			var p = new OptionSet () {
 				{ "f|format=",
 					"The documentation {0:FORMAT} used within PATHS.  " + 
@@ -41,7 +39,7 @@ namespace Mono.Documentation
 			Run (format, files);
 		}
 	
-		public static void Run (string format, IEnumerable<string> files)
+		public void Run (string format, IEnumerable<string> files)
 		{
 			Stream s = null;
 
@@ -57,8 +55,11 @@ namespace Mono.Documentation
 			if (s == null)
 				throw new NotSupportedException (string.Format ("The schema for `{0}' was not found.", format));
 
-			schema = XmlSchema.Read (s, null);
-			schema.Compile (null);
+			settings = new XmlReaderSettings ();
+			settings.Schemas.Add (XmlSchema.Read (s, null));
+			settings.Schemas.Compile ();
+			settings.ValidationType = ValidationType.Schema;
+			settings.ValidationEventHandler += OnValidationEvent;
 
 			// skip args[0] because it is the provider name
 			foreach (string arg in files) {
@@ -71,28 +72,25 @@ namespace Mono.Documentation
 				}
 			}
 
-			Console.WriteLine ("Total validation errors: {0}", errors);
+			Message (errors == 0 ? TraceLevel.Info : TraceLevel.Error, 
+					"Total validation errors: {0}", errors);
 		}
 
-		static void ValidateFile (string file)
+		void ValidateFile (string file)
 		{
-			IsValid = true;
 			try {
-				reader = new XmlValidatingReader (new XmlTextReader (file));
-				reader.ValidationType = ValidationType.Schema;
-				reader.Schemas.Add (schema);
-				reader.ValidationEventHandler += new ValidationEventHandler (OnValidationEvent);
-				while (reader.Read ()) {
-					// do nothing
+				using (var reader = XmlReader.Create (new XmlTextReader (file), settings)) {
+					while (reader.Read ()) {
+						// do nothing
+					}
 				}
-				reader.Close ();
 			}
 			catch (Exception e) {
-				Console.WriteLine ("mdvalidator: error: " + e.ToString ());
+				Message (TraceLevel.Error, "mdoc: {0}", e.ToString ());
 			}
 		}
 
-		static void RecurseDirectory (string dir)
+		void RecurseDirectory (string dir)
 		{
 			string[] files = Directory.GetFiles (dir, "*.xml");
 			foreach (string f in files)
@@ -106,12 +104,10 @@ namespace Mono.Documentation
 				RecurseDirectory (d);
 		}
 
-		static void OnValidationEvent (object sender, ValidationEventArgs a)
+		void OnValidationEvent (object sender, ValidationEventArgs a)
 		{
-			if (IsValid)
-				IsValid = false;
 			errors ++;
-			Console.WriteLine (a.Message);
+			Message (TraceLevel.Error, "mdoc: {0}", a.Message);
 		}
 
 		static bool IsMonodocFile (string file)

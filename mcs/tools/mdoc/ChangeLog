@@ -1,3 +1,11 @@
+2008-10-27  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/validate.cs: Remove warnings
+	* Test/validate.check.monodocer, Test/validate.check.monodocer.since:
+	  Don't generate output if no errors are found.
+	* Test/validate.check.monodocer.importslashdoc: Prefix error messages
+	  with "mdoc:", as per Unix convention.
+
 2008-10-24  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile: Fixup mdoc.exe dependencies so that it's rebuilt if the
