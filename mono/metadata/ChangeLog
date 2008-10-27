@@ -1,3 +1,12 @@
+
+2008-10-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c: translate \ into / for cache_path.
+	* domain-internals.h: new mono_is_shadow_copy_enabled().
+	* icall.c: (fill_reflection_assembly_name) do the same path
+	manipulations that get_code_base does.
+	(get_code_base) use mono_is_shadow_copy_enabled.
+
 2008-10-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* appdomain.c: shadow-copied assemblies go to CachePath +
