@@ -1,5 +1,12 @@
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
+<<<<<<< HEAD:class/Mono.Simd/Mono.Simd/Changelog
+=======
+	* Vector2ul.cs: New vector type.
+
+2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+>>>>>>> stuff:class/Mono.Simd/Mono.Simd/Changelog
 	* Vector2l.cs : Remove useless comments.
 
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>

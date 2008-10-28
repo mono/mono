@@ -1,5 +1,9 @@
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Mono.Simd.dll.sources: Added Vector2ul.cs.
+
+2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Mono.Simd.dll.sources: Added Vector2l.cs.
 
 2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
