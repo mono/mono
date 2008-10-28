@@ -1,5 +1,9 @@
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: New tests for Vector2l.
+
+2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* cpu-x86.md: Add long version of most packed int ops.
 
 	* mini-ops.h: Same.
