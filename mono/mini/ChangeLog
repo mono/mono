@@ -1,5 +1,12 @@
 2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Test for Vector2d.
+
+	* basic-simd.cs (test_vector8s_pack_signed_sat): Fixed broken
+	value.
+
+2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* cpu-x86.md: Add double version of all packed float ops.
 
 	* mini-ops.h: Same.
