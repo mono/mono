@@ -1491,9 +1491,9 @@ namespace Mono.CSharp
 
 		void GenerateCodeChecksumPragma (CodeChecksumPragma pragma)
 		{
-			Output.Write ("#pragma checksum \"");
-			Output.Write (pragma.FileName);
-			Output.Write ("\" \"");
+			Output.Write ("#pragma checksum ");
+			Output.Write (QuoteSnippetString (pragma.FileName));
+			Output.Write (" \"");
 			Output.Write (pragma.ChecksumAlgorithmId.ToString ("B"));
 			Output.Write ("\" \"");
 			if (pragma.ChecksumData != null) {

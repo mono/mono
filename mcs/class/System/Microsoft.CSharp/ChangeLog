@@ -1,3 +1,8 @@
+2008-10-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CSharpCodeGenerator.cs : escape #pragma checksum argument literal
+	  which could contain '\' (must be escaped).
+
 2008-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CSharpCodeGenerator.cs : fixed bug #387878, patch by Ted Unangst.
