@@ -1,3 +1,7 @@
+2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* basic-simd.cs: Test for packing with signed saturation.
+
 2008-10-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_generic_instances): Add all methods of generic instances
