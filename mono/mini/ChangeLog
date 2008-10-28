@@ -1,3 +1,8 @@
+2008-10-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_allocate_stack_slots_full): Align the size of vtypes to their
+	alignment.
+
 2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Test for Vector2d.
