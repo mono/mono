@@ -1,5 +1,9 @@
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector2l.cs (operator ^): Simplify and fix the implementation.
+
+2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector2l.cs: New vector type.
 
 2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>

@@ -88,12 +88,7 @@ namespace Mono.Simd
 
 		public static unsafe Vector2l ShiftRightLogic (Vector2l v1, int amount)
 		{
-			Vector2l res = new Vector2l ();
-			long *a = &v1.x;
-			long *b = &res.x;
-			for (int i = 0; i < 4; ++i)
-				*b++ = (long)((ulong)(*a++) >> amount);
-			return res;
+			return new Vector2l ((long)((ulong)(v1.x) >> amount), (long)((ulong)(v1.y) >> amount));
 		}
 
 		public static unsafe long ExtractByteMask (Vector2l va) {
