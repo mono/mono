@@ -1,3 +1,7 @@
+2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* x86/x86-codegen.h: Add movddup.
+
 2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* x86/x86-codegen.h: Add signed pack with saturation.
