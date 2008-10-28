@@ -1,3 +1,6 @@
+2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_create_from_typedef): Added Vector2d.
 
 2008-10-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
