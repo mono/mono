@@ -153,8 +153,11 @@ namespace System.Xml.Schema
 		int xsiNilDepth = -1;
 		int skipValidationDepth = -1;
 
-//		SOMObject currentType;
-
+		// LAMESPEC: XmlValueGetter is bogus by design because there
+		// is no way to get associated schema type for current value.
+		// Here XmlSchemaValidatingReader needs "current type"
+		// information to validate attribute values.
+		internal XmlSchemaDatatype CurrentAttributeType;
 
 		#endregion
 
@@ -815,6 +818,7 @@ namespace System.Xml.Schema
 			if (dt != SimpleType.AnySimpleType || attr.ValidatedFixedValue != null) {
 				object parsedValue = null;
 				try {
+					CurrentAttributeType = dt;
 					parsedValue = getter ();
 				} catch (Exception ex) { // It is inevitable and bad manner.
 					HandleError (String.Format ("Attribute value is invalid against its data type {0}", dt != null ? dt.TokenizedType : default (XmlTokenizedType)), ex);
@@ -901,8 +905,10 @@ namespace System.Xml.Schema
 			if (xsiNilDepth >= 0 && xsiNilDepth < depth)
 				HandleError ("Element item appeared, while current element context is nil.");
 
-			if (shouldValidateCharacters)
+			if (shouldValidateCharacters) {
+				CurrentAttributeType = null;
 				storedCharacters.Append (getter ());
+			}
 		}
 
 
@@ -1221,6 +1227,7 @@ namespace System.Xml.Schema
 				XsdKeyTable seq  = (XsdKeyTable) keyTables [i];
 				// If possible, create new field entry candidates.
 				for (int j = 0; j < seq.Entries.Count; j++) {
+					CurrentAttributeType = null;
 					try {
 						seq.Entries [j].ProcessMatch (
 							isAttr,

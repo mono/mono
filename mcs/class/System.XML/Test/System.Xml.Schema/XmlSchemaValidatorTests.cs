@@ -101,6 +101,28 @@ namespace MonoTests.System.Xml
 			XmlNode root = doc.DocumentElement;
 			doc.Validate (null, root);
 		}
+
+		[Test]
+		[ExpectedException (typeof (XmlSchemaValidationException))]
+		public void Bug435206 ()
+		{
+			string xsd = @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element name='myDoc'>
+    <xs:complexType>
+      <xs:attribute name='foo' type='xs:unsignedLong' use='required' />
+      <xs:attribute name='bar' type='xs:dateTime' use='required' />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+
+			XmlSchema schema = XmlSchema.Read (new StringReader (xsd), null);
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ValidationType = ValidationType.Schema;
+			settings.Schemas.Add (schema);
+			XmlReader reader = XmlReader.Create (new StringReader (@"<myDoc foo='12' bar='January 1st 1900'/>"), settings);
+			while (reader.Read ())
+				;
+		}
 	}
 }
 

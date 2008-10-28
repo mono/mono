@@ -1,5 +1,11 @@
 2008-10-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaValidator.cs : add internal attribute datatype
+	  information before calling getter() so that
+	  XmlSchemaValidatingReader can retrieve it. It is due to LAMESPEC.
+
+2008-10-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaValidator.cs : SchemaInfo is only for output, not for
 	  reference. Fixed bug #433374.
 	* XmlSchemaUtil.cs, XmlSchemaSimpleTypeRestriction.cs : I don't like

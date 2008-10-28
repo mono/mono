@@ -77,7 +77,7 @@ using ValException = System.Xml.Schema.XmlSchemaValidationException;
 namespace Mono.Xml.Schema
 {
 	internal class XmlSchemaValidatingReader : XmlReader, IXmlLineInfo,
-		IXmlSchemaInfo
+		IXmlSchemaInfo, IXmlNamespaceResolver
 	{
 		static readonly XsAttr [] emptyAttributeArray =
 			new XsAttr [0];
@@ -129,7 +129,12 @@ namespace Mono.Xml.Schema
 				v.SourceUri = new Uri (reader.BaseURI);
 
 			readerLineInfo = reader as IXmlLineInfo;
-			getter = delegate () { return Value; };
+			getter = delegate () {
+				if (v.CurrentAttributeType != null)
+					return v.CurrentAttributeType.ParseValue (Value, NameTable, this);
+				else
+					return Value; 
+				};
 			xsinfo = new XmlSchemaInfo (); // transition cache
 			v.LineInfoProvider = this;
 			v.ValidationEventSender = reader;
@@ -167,6 +172,7 @@ namespace Mono.Xml.Schema
 			defaultAttributeConsumed = false;
 			currentAttrType = null;
 			defaultAttributes = emptyAttributeArray;
+			v.CurrentAttributeType = null;
 		}
 
 		#region Properties
