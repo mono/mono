@@ -1,5 +1,9 @@
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_create_from_typedef): Added Vector2ul.
+
+2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_create_from_typedef): Added Vector2l.
 
 2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
