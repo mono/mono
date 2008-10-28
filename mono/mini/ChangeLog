@@ -1,5 +1,9 @@
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: New tests for Vector2ul.
+
+2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-intrinsics.c: Add new vector type Vector2ul.
 
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
