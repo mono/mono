@@ -1,6 +1,10 @@
+2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Mono.Simd.dll.sources: Added Vector2d.cs.
+
 2008-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* Mono.Simd.dll.sources: Added Vector18s.cs.
+	* Mono.Simd.dll.sources: Added Vector8s.cs.
 
 2008-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
 
