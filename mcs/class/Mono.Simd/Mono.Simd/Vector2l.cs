@@ -44,13 +44,11 @@ namespace Mono.Simd
 			this.y = y;
 		}
 
-		//PADDQ
 		public static Vector2l operator + (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.x + v2.x, v1.y + v2.y);
 		}
 
-		//PSUBQ
 		public static Vector2l operator - (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.x - v2.x, v1.y - v2.y);
