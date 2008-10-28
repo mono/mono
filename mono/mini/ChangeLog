@@ -1,5 +1,19 @@
 2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* cpu-x86.md: Add double version of all packed float ops.
+
+	* mini-ops.h: Same.
+
+	* mini-x86.h: Same.
+
+	* simd-intrinsics.c: Add new vector type Vector2d.
+
+	* simd-intrinsics.c (vector4f_intrinsics): Fix ordering.
+
+	* simd-methods.h: Add Duplicate.
+
+2008-10-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Test for packing with signed saturation.
 
 2008-10-28  Zoltan Varga  <vargaz@gmail.com>
