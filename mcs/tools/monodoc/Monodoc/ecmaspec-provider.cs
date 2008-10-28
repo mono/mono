@@ -65,6 +65,10 @@ public class EcmaSpecHelpSource : HelpSource {
 	{
 	}
 
+	public override string InlineCss {
+		get {return base.InlineCss + css_ecmaspec_code;}
+	}
+
 	public override string GetText (string url, out Node match_node)
 	{
 		string ret = null;

@@ -410,6 +410,14 @@ public class HelpSource {
 		set { css_code = value; }
 	}
 
+	public virtual string InlineCss {
+		get { return CssCode; }
+	}
+
+	public virtual string InlineJavaScript {
+		get { return null; }
+	}
+
 	public static bool FullHtml = true;
 
 	//

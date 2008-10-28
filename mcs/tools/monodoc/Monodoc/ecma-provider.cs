@@ -553,6 +553,11 @@ public class EcmaHelpSource : HelpSource {
 			return css_ecma;
 		}
 	}
+
+	public override string InlineCss {
+		get {return base.InlineCss + css_ecma_code;}
+	}
+
 	static string js;
 	public static string js_code {
 		get {
@@ -567,6 +572,10 @@ public class EcmaHelpSource : HelpSource {
 			}
 			return js;
 		}
+	}
+
+	public override string InlineJavaScript {
+		get {return js_code + base.InlineJavaScript;}
 	}
 
 	public override string GetText (string url, out Node match_node)

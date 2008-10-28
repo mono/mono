@@ -1,3 +1,15 @@
+2008-10-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Monodoc/provider.cs: Add HelpSource.InlineCss and
+	  HelpSource.InlineJavaScript virtual properties, so that the help
+	  source can provide specific CSS and JavaScript to be included into
+	  the generated HTML document.  This is used by the ASP.NET front-end,
+	  as it needs to insert the CSS & JavaScript separately (as it also
+	  inserts its own CSS & JavaScript).
+	* Monodoc/ecma-provider.cs, Monodoc/ecmaspec-provider.cs,
+	  Monodoc/error-provider.cs: Override InlineCss & InlineJavaScript, as
+	  appropriate.
+
 2008-10-24  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Monodoc/addins-provider.cs, Monodoc/ecma-provider.cs,

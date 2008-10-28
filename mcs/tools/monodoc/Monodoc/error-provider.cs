@@ -229,6 +229,10 @@ namespace Monodoc {
 		
 		public ErrorHelpSource (string base_file, bool create) : base (base_file, create) {}
 	
+		public override string InlineCss {
+			get {return base.InlineCss + css_error_code;}
+		}
+
 		public override string GetText (string url, out Node match_node)
 		{
 			match_node = null;
