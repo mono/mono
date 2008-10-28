@@ -177,7 +177,7 @@ namespace System.Web.Services.Description
 				foreach (OperationMessage om in op.Messages) {
 					Message msg = ctx.Services.GetMessage (om.Message);
 					foreach (MessagePart part in msg.Parts)
-						parts.Add (part,part);
+						parts [part] = part; // do not use Add() - there could be the same MessagePart instance.
 				}
 			}
 			
