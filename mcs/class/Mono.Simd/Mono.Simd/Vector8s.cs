@@ -54,6 +54,7 @@ namespace Mono.Simd
 		public short V6 { get { return v6; } set { v6 = value; } }
 		public short V7 { get { return v7; } set { v7 = value; } }
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s operator + (Vector8s va, Vector8s vb)
 		{
 			Vector8s res = new Vector8s ();
@@ -65,6 +66,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s operator - (Vector8s va, Vector8s vb)
 		{
 			Vector8s res = new Vector8s ();
@@ -76,6 +78,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s operator * (Vector8s va, Vector8s vb)
 		{
 			Vector8s res = new Vector8s ();
@@ -87,6 +90,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s operator >> (Vector8s va, int amount)
 		{
 			Vector8s res = new Vector8s ();
@@ -97,7 +101,7 @@ namespace Mono.Simd
 			return res;
 		}
 
-
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s operator << (Vector8s va, int amount)
 		{
 			Vector8s res = new Vector8s ();
@@ -108,6 +112,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s operator & (Vector8s va, Vector8s vb)
 		{
 			Vector8s res = new Vector8s ();
@@ -119,6 +124,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s operator | (Vector8s va, Vector8s vb)
 		{
 			Vector8s res = new Vector8s ();
@@ -130,6 +136,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s operator ^ (Vector8s va, Vector8s vb)
 		{
 			Vector8s res = new Vector8s ();
@@ -141,16 +148,19 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s UnpackLow (Vector8s va, Vector8s vb)
 		{
 			return new Vector8s (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s UnpackHigh (Vector8s va, Vector8s vb)
 		{
 			return new Vector8s (va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s ShiftRightLogic (Vector8s va, int amount)
 		{
 			Vector8s res = new Vector8s ();
@@ -161,6 +171,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s AddWithSaturation (Vector8s va, Vector8s vb) {
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;
@@ -171,6 +182,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s SubWithSaturation (Vector8s va, Vector8s vb) {
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;
@@ -181,6 +193,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s Max (Vector8s va, Vector8s vb) {
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;
@@ -191,6 +204,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s Min (Vector8s va, Vector8s vb) {
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;
@@ -201,6 +215,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe int ExtractByteMask (Vector8s va) {
 			int res = 0;
 			byte *a = (byte*)&va;
@@ -209,6 +224,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s ShuffleHigh (Vector8s va, ShuffleSel sel)
 		{
 			short *ptr = ((short*)&va) + 4;
@@ -216,6 +232,7 @@ namespace Mono.Simd
 			return new Vector8s (va.v0, va.v1, va.v2, va.v3, *(ptr + ((idx >> 0) & 0x3)), *(ptr + ((idx >> 2) & 0x3)), *(ptr + ((idx >> 4) & 0x3)), *(ptr + ((idx >> 6) & 0x3)));
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s ShuffleLow (Vector8s va, ShuffleSel sel)
 		{
 			short *ptr = ((short*)&va);
@@ -223,6 +240,7 @@ namespace Mono.Simd
 			return new Vector8s (*(ptr + ((idx >> 0) & 0x3)), *(ptr + ((idx >> 2) & 0x3)), *(ptr + ((idx >> 4) & 0x3)), *(ptr + ((idx >> 6) & 0x3)), va.v4, va.v5, va.v6, va.v7);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s CompareEqual (Vector8s va, Vector8s vb) {
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;
@@ -233,6 +251,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s CompareGreaterThan (Vector8s va, Vector8s vb) {
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;
@@ -243,6 +262,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s MultiplyStoreHigh (Vector8s va, Vector8s vb) {
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;
@@ -253,6 +273,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16b PackWithUnsignedSaturation (Vector8s va, Vector8s vb) {
 			Vector16b res = new Vector16b ();
 			short *a = (short*)&va;
@@ -266,6 +287,7 @@ namespace Mono.Simd
 		}
 
 		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb PackWithSignedSaturation (Vector8s va, Vector8s vb) {
 			Vector16sb res = new Vector16sb ();
 			short *a = (short*)&va;
@@ -278,6 +300,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector4f(Vector8s v)
 		{
 			Vector4f* p = (Vector4f*)&v;
@@ -285,6 +308,7 @@ namespace Mono.Simd
 		}
 
 		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector4ui(Vector8s v)
 		{
 			Vector4ui* p = (Vector4ui*)&v;
@@ -292,29 +316,34 @@ namespace Mono.Simd
 		}
 
 		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector16b(Vector8s v)
 		{
 			Vector16b* p = (Vector16b*)&v;
 			return *p;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector8s LoadAligned (ref Vector8s v)
 		{
 			return v;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static void StoreAligned (ref Vector8s res, Vector8s val)
 		{
 			res = val;
 		}
 
 		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector8s LoadAligned (Vector8s *v)
 		{
 			return *v;
 		}
 
 		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe void StoreAligned (Vector8s *res, Vector8s val)
 		{
 			*res = val;

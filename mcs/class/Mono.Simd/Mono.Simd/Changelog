@@ -1,5 +1,9 @@
 2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector8s.cs: Add Acceleration attribute to all methods.
+
+2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector2ul.cs: Add Acceleration attribute to all methods.
 
 2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
