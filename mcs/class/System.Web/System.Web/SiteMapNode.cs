@@ -172,7 +172,15 @@ namespace System.Web {
 				parent = value;
 			}
 		}
-		
+
+		internal SiteMapNodeCollection ChildNodesInternal {
+			get {
+				if (childNodes == null)
+					childNodes = new SiteMapNodeCollection ();
+				return childNodes;
+			}
+		}
+
 		public virtual SiteMapNodeCollection ChildNodes {
 			get {
 				if (childNodes != null) return childNodes;
