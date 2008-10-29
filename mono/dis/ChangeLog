@@ -1,3 +1,11 @@
+
+2008-10-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* main.c: when loading the image, use mono_assembly_load_from_full
+	instead of mono_assembly_load_references so that monodis mimics the
+	way the runtime loads assemblies in the real world.
+	Bug #439404 fixed.
+
 2008-06-05  Jb Evain  <jbevain@novell.com>
 
 	* get.c (get_token): properly stringify tokens that
