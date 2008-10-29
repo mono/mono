@@ -299,6 +299,7 @@ namespace MonoTests.System.IO
 				AssertEquals ("#B3", "foo/bar", Path.GetDirectoryName ("foo/bar/"));
 				AssertEquals ("#B4", "/", Path.GetDirectoryName ("/tmp"));
 				AssertNull ("#B5", Path.GetDirectoryName ("/"));
+				AssertEquals ("#B6", "a", Path.GetDirectoryName ("a//b"));
 			}
 		}
 

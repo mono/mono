@@ -1,3 +1,8 @@
+
+2008-10-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* PathTest.cs: add test for bug #439751.
+
 2008-10-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* BinaryReaderTest.cs: Add a test for #434581.
