@@ -1,5 +1,9 @@
 2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector2d.cs: Add Acceleration attribute to all methods.
+
+2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector4f.cs: Fix acceleration attribute of Shuffle.
 
 2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
