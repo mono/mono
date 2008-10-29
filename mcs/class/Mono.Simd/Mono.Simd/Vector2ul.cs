@@ -45,50 +45,61 @@ namespace Mono.Simd
 			this.y = y;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2ul operator + (Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul (v1.x + v2.x, v1.y + v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2ul operator - (Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul (v1.x - v2.x, v1.y - v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector2ul operator << (Vector2ul v1, int amount)
 		{
 			return new Vector2ul (v1.x << amount, v1.y << amount);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector2ul operator >> (Vector2ul v1, int amount)
 		{
 			return new Vector2ul (v1.x >> amount, v1.y >> amount);
 		}
+
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2ul operator & (Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul (v1.x & v2.x, v1.y & v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2ul operator | (Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul (v1.x | v2.x, v1.y | v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2ul operator ^ (Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul (v1.x ^ v2.x, v1.y ^ v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2ul UnpackLow (Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul (v1.x, v2.x);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2ul UnpackHigh (Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul (v1.y, v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe int ExtractByteMask (Vector2ul va) {
 			int res = 0;
 			byte *a = (byte*)&va;
@@ -97,45 +108,52 @@ namespace Mono.Simd
 			return res;
 		}
 
-		/*Requires SSE 4.1*/
+		[Acceleration (AccelMode.SSE41)]
 		public static Vector2ul CompareEqual (Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul ((ulong)(v1.x ==  v2.x ? -1 : 0), (ulong)(v1.y ==  v2.y ? -1 : 0));
 		}
 
+ 		[Acceleration (AccelMode.SSE1)]
   		public static unsafe explicit operator Vector4f (Vector2ul v1)
 		{
 			Vector4f* p = (Vector4f*)&v1;
 			return *p;
 		}
 
+ 		[Acceleration (AccelMode.SSE1)]
  		public static unsafe explicit operator Vector8us (Vector2ul v1)
 		{
 			Vector8us* p = (Vector8us*)&v1;
 			return *p;
 		}
 
+ 		[Acceleration (AccelMode.SSE1)]
   		public static unsafe explicit operator Vector16b (Vector2ul v1)
 		{
 			Vector16b* p = (Vector16b*)&v1;
 			return *p;
 		}
 
+ 		[Acceleration (AccelMode.SSE1)]
 		public static Vector2ul LoadAligned (ref Vector2ul v)
 		{
 			return v;
 		}
 
+ 		[Acceleration (AccelMode.SSE1)]
 		public static void StoreAligned (ref Vector2ul res, Vector2ul val)
 		{
 			res = val;
 		}
 
+ 		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector2ul LoadAligned (Vector2ul *v)
 		{
 			return *v;
 		}
 
+ 		[Acceleration (AccelMode.SSE1)]
 		public static unsafe void StoreAligned (Vector2ul *res, Vector2ul val)
 		{
 			*res = val;
