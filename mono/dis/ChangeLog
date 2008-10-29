@@ -1,6 +1,12 @@
 
 2008-10-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* main.c: don't crash when the method is in an assembly that can't be
+	loaded. Just prints the warnings now instead of 'segfaulting'.
+	Bug #436989 fixed.
+
+2008-10-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* main.c: when loading the image, use mono_assembly_load_from_full
 	instead of mono_assembly_load_references so that monodis mimics the
 	way the runtime loads assemblies in the real world.
