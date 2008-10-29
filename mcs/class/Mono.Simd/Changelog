@@ -1,3 +1,7 @@
+2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Mono.Simd.dll.sources: Added AccelMode.cs, AccelerationAttribute.cs and SimdRuntime.cs.
+
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Mono.Simd.dll.sources: Added Vector2ul.cs.

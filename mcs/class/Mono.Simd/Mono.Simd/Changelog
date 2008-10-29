@@ -1,12 +1,16 @@
+2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* AccelMode.cs: 
+	* AccelerationAttribute.cs: 
+	* SimdRuntime.cs: Support files to provide runtime capabilities querying.
+
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
-<<<<<<< HEAD:class/Mono.Simd/Mono.Simd/Changelog
-=======
 	* Vector2ul.cs: New vector type.
 
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
->>>>>>> stuff:class/Mono.Simd/Mono.Simd/Changelog
+
 	* Vector2l.cs : Remove useless comments.
 
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>

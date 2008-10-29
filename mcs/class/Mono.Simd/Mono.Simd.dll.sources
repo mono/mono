@@ -1,6 +1,9 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 Assembly/AssemblyInfo.cs
+Mono.Simd/AccelMode.cs
+Mono.Simd/AccelerationAttribute.cs
+Mono.Simd/SimdRuntime.cs
 Mono.Simd/Vector2d.cs
 Mono.Simd/Vector2ul.cs
 Mono.Simd/Vector2l.cs
