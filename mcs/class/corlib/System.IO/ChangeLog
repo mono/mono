@@ -1,3 +1,9 @@
+
+2008-10-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Path.cs: clean the path when we're not in windows. 
+	Bug #321706 fixed.
+
 2008-10-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* BinaryReader.cs (Read7BitEncodedInt): Check for an invalid encoding.

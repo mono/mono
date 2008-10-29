@@ -229,7 +229,7 @@ namespace System.IO {
 				string ret = path.Substring (0, nLast);
 				int l = ret.Length;
 
-				if (l >= 2 && ret [l - 1] == VolumeSeparatorChar)
+				if (l >= 2 && DirectorySeparatorChar == '\\' && ret [l - 1] == VolumeSeparatorChar)
 					return ret + DirectorySeparatorChar;
 				else {
 					//
