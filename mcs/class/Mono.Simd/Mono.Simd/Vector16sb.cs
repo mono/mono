@@ -70,6 +70,7 @@ namespace Mono.Simd
 		public sbyte V14 { get { return v14; } set { v14 = value; } }
 		public sbyte V15 { get { return v15; } set { v15 = value; } }
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb operator + (Vector16sb va, Vector16sb vb)
 		{
 			Vector16sb res = new Vector16sb ();
@@ -81,6 +82,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb operator - (Vector16sb va, Vector16sb vb)
 		{
 			Vector16sb res = new Vector16sb ();
@@ -92,6 +94,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb operator & (Vector16sb va, Vector16sb vb)
 		{
 			Vector16sb res = new Vector16sb ();
@@ -103,6 +106,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb operator | (Vector16sb va, Vector16sb vb)
 		{
 			Vector16sb res = new Vector16sb ();
@@ -114,6 +118,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb operator ^ (Vector16sb va, Vector16sb vb)
 		{
 			Vector16sb res = new Vector16sb ();
@@ -125,16 +130,19 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb UnpackLow (Vector16sb va, Vector16sb vb)
 		{
 			return new Vector16sb (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3, va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb UnpackHigh (Vector16sb va, Vector16sb vb)
 		{
 			return new Vector16sb (va.v8, vb.v8, va.v9, vb.v9, va.v10, vb.v10, va.v11, vb.v11, va.v12, vb.v12, va.v13, vb.v13, va.v14, vb.v14, va.v15, vb.v15);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb AddWithSaturation (Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -145,6 +153,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb SubWithSaturation (Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -155,7 +164,7 @@ namespace Mono.Simd
 			return res;
 		}
 
-		/*Requires SSE 4.1*/
+		[Acceleration (AccelMode.SSE41)]
 		public static unsafe Vector16sb Max (Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -166,7 +175,7 @@ namespace Mono.Simd
 			return res;
 		}
 
-		/*Requires SSE 4.1*/
+		[Acceleration (AccelMode.SSE41)]
 		public static unsafe Vector16sb Min (Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -177,6 +186,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe int ExtractByteMask (Vector16sb va) {
 			int res = 0;
 			sbyte *a = (sbyte*)&va;
@@ -185,6 +195,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb CompareEqual (Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -195,6 +206,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb CompareGreaterThan (Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -205,39 +217,46 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector4f(Vector16sb v)
 		{
 			Vector4f* p = (Vector4f*)&v;
 			return *p;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector4ui(Vector16sb v)
 		{
 			Vector4ui* p = (Vector4ui*)&v;
 			return *p;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector8us(Vector16sb v)
 		{
 			Vector8us* p = (Vector8us*)&v;
 			return *p;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector16sb LoadAligned (ref Vector16sb v)
 		{
 			return v;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static void StoreAligned (ref Vector16sb res, Vector16sb val)
 		{
 			res = val;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector16sb LoadAligned (Vector16sb *v)
 		{
 			return *v;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe void StoreAligned (Vector16sb *res, Vector16sb val)
 		{
 			*res = val;

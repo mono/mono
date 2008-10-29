@@ -1,5 +1,9 @@
 2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector16sb.cs: Add Acceleration attribute to all methods.
+
+2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector16b.cs: Add Acceleration attribute to all methods.
 
 2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
