@@ -1,3 +1,8 @@
+2008-10-29  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Monodoc/xhtml-provider.cs: Use HelpSource.Message(), not 
+	  Console.WriteLine().
+
 2008-10-28  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Monodoc/provider.cs: Add HelpSource.InlineCss and

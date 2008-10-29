@@ -15,6 +15,7 @@ namespace Monodoc {
 using System;
 using System.IO;
 using System.Collections;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -391,7 +392,7 @@ public class SimpleHandbookTOCParser
 			XmlAttribute attr = node.Attributes [attrname];
 			if (attr == null) continue;
 				
-	        	Console.WriteLine(spaces + "   " + attr.Value);
+			nodeToAddChildrenTo.tree.HelpSource.Message (TraceLevel.Info, spaces + "   " + attr.Value);
 	               	string linkfilename = attr.Value;
 	                linkfilename = XhtmlHelpSource.GetAbsoluteLink(linkfilename, filename);
 	                if (linkfilename != null) {
@@ -399,8 +400,8 @@ public class SimpleHandbookTOCParser
 					packed_files [linkfilename] = linkfilename;
 					nodeToAddChildrenTo.tree.HelpSource.PackFile (linkfilename, linkfilename);
 				} else
-					Console.WriteLine (spaces + "Warning: file {0} not found", linkfilename);
-					
+					nodeToAddChildrenTo.tree.HelpSource.Message (TraceLevel.Warning, 
+					    spaces + "Warning: file {0} not found", linkfilename);
 			}
 		}
 	}
@@ -416,7 +417,8 @@ public class SimpleHandbookTOCParser
 				string filename = attribs[1];
 				
 				if (i+1 == items.Count || items[i+1].LocalName == "ul"){
-					Console.WriteLine(spaces + "+" + attribs[0] + ": " + filename);
+					monoTreeNode.tree.HelpSource.Message (TraceLevel.Info, 
+							spaces + "+" + attribs[0] + ": " + filename);
 					// Put the node in the monodoc toc.
 					
 					// FIXME: Change this to include the help-source ID?
@@ -459,7 +461,8 @@ public class SimpleHandbookTOCParser
 					nodeToAddChildrenTo = latestNodeAddition.CreateNode (attribs[0].Trim(), "xhtml:" + filename);
 					
 				} else {
-					Console.WriteLine( spaces + attribs[0] + ": " + filename);
+					monoTreeNode.tree.HelpSource.Message (TraceLevel.Info, 
+							spaces + attribs[0] + ": " + filename);
 					// Put the node in the monodoc toc.
 					latestNodeAddition.CreateNode (attribs[0].Trim(), "xhtml:" + filename);
 				}
@@ -481,7 +484,7 @@ public class SimpleHandbookTOCParser
 						IncludeAttribLinks(newdoc.GetElementsByTagName("img"),"src",  filename);
 						IncludeAttribLinks(newdoc.GetElementsByTagName("link"),"href",  filename);
 					} catch {
-						Console.WriteLine(spaces + "-- PARSE ERROR --");
+						monoTreeNode.tree.HelpSource.Error (spaces + "-- PARSE ERROR --");
 						throw;
 					}
 				} 
