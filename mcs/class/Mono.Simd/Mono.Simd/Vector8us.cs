@@ -55,6 +55,7 @@ namespace Mono.Simd
 		public ushort V6 { get { return v6; } set { v6 = value; } }
 		public ushort V7 { get { return v7; } set { v7 = value; } }
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us operator + (Vector8us va, Vector8us vb)
 		{
 			Vector8us res = new Vector8us ();
@@ -66,6 +67,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us operator - (Vector8us va, Vector8us vb)
 		{
 			Vector8us res = new Vector8us ();
@@ -81,6 +83,7 @@ namespace Mono.Simd
 		 * NOTE: Thou pmullw states it does signed multiplication, it works for unsigned numbers
 		 * if only the lower part is considered and the flags disregarded.
 		 */
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us operator * (Vector8us va, Vector8us vb)
 		{
 			Vector8us res = new Vector8us ();
@@ -92,6 +95,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us operator >> (Vector8us va, int amount)
 		{
 			Vector8us res = new Vector8us ();
@@ -102,7 +106,7 @@ namespace Mono.Simd
 			return res;
 		}
 
-
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us operator << (Vector8us va, int amount)
 		{
 			Vector8us res = new Vector8us ();
@@ -113,6 +117,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us operator & (Vector8us va, Vector8us vb)
 		{
 			Vector8us res = new Vector8us ();
@@ -124,6 +129,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us operator | (Vector8us va, Vector8us vb)
 		{
 			Vector8us res = new Vector8us ();
@@ -135,6 +141,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us operator ^ (Vector8us va, Vector8us vb)
 		{
 			Vector8us res = new Vector8us ();
@@ -146,16 +153,19 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us UnpackLow (Vector8us va, Vector8us vb)
 		{
 			return new Vector8us (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us UnpackHigh (Vector8us va, Vector8us vb)
 		{
 			return new Vector8us (va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us ShiftRightArithmetic (Vector8us va, int amount)
 		{
 			Vector8us res = new Vector8us ();
@@ -166,6 +176,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us AddWithSaturation (Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -176,6 +187,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us SubWithSaturation (Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -186,6 +198,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us Average (Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -196,7 +209,7 @@ namespace Mono.Simd
 			return res;
 		}
 
-		/*Requires SSE 4.1*/
+		[Acceleration (AccelMode.SSE41)]
 		public static unsafe Vector8us Max (Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -207,7 +220,7 @@ namespace Mono.Simd
 			return res;
 		}
 
-		/*Requires SSE 4.1*/
+		[Acceleration (AccelMode.SSE41)]
 		public static unsafe Vector8us Min (Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -218,6 +231,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe int ExtractByteMask (Vector8us va) {
 			int res = 0;
 			byte *a = (byte*)&va;
@@ -226,6 +240,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us ShuffleHigh (Vector8us va, ShuffleSel sel)
 		{
 			ushort *ptr = ((ushort*)&va) + 4;
@@ -233,6 +248,7 @@ namespace Mono.Simd
 			return new Vector8us (va.v0, va.v1, va.v2, va.v3, *(ptr + ((idx >> 0) & 0x3)), *(ptr + ((idx >> 2) & 0x3)), *(ptr + ((idx >> 4) & 0x3)), *(ptr + ((idx >> 6) & 0x3)));
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us ShuffleLow (Vector8us va, ShuffleSel sel)
 		{
 			ushort *ptr = ((ushort*)&va);
@@ -240,6 +256,7 @@ namespace Mono.Simd
 			return new Vector8us (*(ptr + ((idx >> 0) & 0x3)), *(ptr + ((idx >> 2) & 0x3)), *(ptr + ((idx >> 4) & 0x3)), *(ptr + ((idx >> 6) & 0x3)), va.v4, va.v5, va.v6, va.v7);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us CompareEqual (Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -250,6 +267,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us MultiplyStoreHigh (Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -261,6 +279,7 @@ namespace Mono.Simd
 		}
 
 		/*This function performs a packuswb, which treats the source as a signed value */
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16b SignedPackWithUnsignedSaturation (Vector8us va, Vector8us vb) {
 			Vector16b res = new Vector16b ();
 			short *a = (short*)&va;
@@ -274,6 +293,7 @@ namespace Mono.Simd
 		}
 
 		/*This function performs a packsswb, which treats the source as a signed value */
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb SignedPackWithSignedSaturation (Vector8us va, Vector8us vb) {
 			Vector16sb res = new Vector16sb ();
 			short *a = (short*)&va;
@@ -286,39 +306,46 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector4f(Vector8us v)
 		{
 			Vector4f* p = (Vector4f*)&v;
 			return *p;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector4ui(Vector8us v)
 		{
 			Vector4ui* p = (Vector4ui*)&v;
 			return *p;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector16b(Vector8us v)
 		{
 			Vector16b* p = (Vector16b*)&v;
 			return *p;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector8us LoadAligned (ref Vector8us v)
 		{
 			return v;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static void StoreAligned (ref Vector8us res, Vector8us val)
 		{
 			res = val;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector8us LoadAligned (Vector8us *v)
 		{
 			return *v;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe void StoreAligned (Vector8us *res, Vector8us val)
 		{
 			*res = val;
