@@ -237,25 +237,69 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE1)]
-		public static unsafe explicit operator Vector4f(Vector16b v)
+		public static unsafe explicit operator Vector2d (Vector16b v)
+		{
+			Vector2d* p = (Vector2d*)&v;
+			return *p;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		public static unsafe explicit operator Vector4f (Vector16b v)
 		{
 			Vector4f* p = (Vector4f*)&v;
 			return *p;
 		}
 
-		[CLSCompliant(false)]
 		[Acceleration (AccelMode.SSE1)]
-		public static unsafe explicit operator Vector4ui(Vector16b v)
+		public static unsafe explicit operator Vector2l (Vector16b v)
+		{
+			Vector2l* p = (Vector2l*)&v;
+			return *p;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe explicit operator Vector2ul (Vector16b v)
+		{
+			Vector2ul* p = (Vector2ul*)&v;
+			return *p;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		public static unsafe explicit operator Vector4i (Vector16b v)
+		{
+			Vector4i* p = (Vector4i*)&v;
+			return *p;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe explicit operator Vector4ui (Vector16b v)
 		{
 			Vector4ui* p = (Vector4ui*)&v;
 			return *p;
 		}
 
-		[CLSCompliant(false)]
 		[Acceleration (AccelMode.SSE1)]
-		public static unsafe explicit operator Vector8us(Vector16b v)
+		public static unsafe explicit operator Vector8s (Vector16b v)
+		{
+			Vector8s* p = (Vector8s*)&v;
+			return *p;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe explicit operator Vector8us (Vector16b v)
 		{
 			Vector8us* p = (Vector8us*)&v;
+			return *p;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe explicit operator Vector16sb (Vector16b v)
+		{
+			Vector16sb* p = (Vector16sb*)&v;
 			return *p;
 		}
 
