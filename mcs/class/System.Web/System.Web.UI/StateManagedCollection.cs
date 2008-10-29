@@ -289,9 +289,10 @@ namespace System.Web.UI {
 			if (value == null)
 				return;
 			OnValidate (value);
-			int i = items.IndexOf (value);
+			IList list = (IList)this;
+			int i = list.IndexOf (value);
 			if (i >= 0)
-				((IList)this).RemoveAt (i);
+				list.RemoveAt (i);
 		}
 
 		void IList.RemoveAt (int index)
