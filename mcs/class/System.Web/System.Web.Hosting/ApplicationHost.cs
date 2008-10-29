@@ -165,7 +165,6 @@ namespace System.Web.Hosting {
 
 			setup.ApplicationBase = physicalDir;
 
-			setup.CachePath = null;
 			setup.ConfigurationFile = FindWebConfig (physicalDir);
 			setup.DisallowCodeDownload = true;
 
@@ -228,6 +227,7 @@ namespace System.Web.Hosting {
 
 			setup.ApplicationName = domain_id;
 			setup.DynamicBase = dynamic_dir;
+			setup.CachePath = dynamic_dir;
 
 			string dynamic_base = setup.DynamicBase;
 			if (CreateDirectory (dynamic_base) && (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") == null))

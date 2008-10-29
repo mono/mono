@@ -1,3 +1,9 @@
+2008-10-29  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: set domain setup CachePath to the same value
+	as DynamicBase, so that shadow-copied assemblies appear under the
+	same location what generated files.
+
 2008-05-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* VirtualPathProvider.cs: Removed debug code.
