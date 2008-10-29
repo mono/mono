@@ -1,5 +1,12 @@
 2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini.h: Add synchronization note for the managed counter-part.
+
+	* simd-intrinsics.c: Add SimdRuntime.get_AccelMode intrinsic that
+	returns the simd caps of the current cpu.
+
+2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Remove Console.WriteLine.
 
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
