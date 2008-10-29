@@ -1,5 +1,9 @@
 2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector4f.cs: Add Acceleration attribute to all methods.
+
+2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* AccelMode.cs: 
 	* AccelerationAttribute.cs: 
 	* SimdRuntime.cs: Support files to provide runtime capabilities querying.
@@ -9,7 +13,6 @@
 	* Vector2ul.cs: New vector type.
 
 2008-10-28  Rodrigo Kumpera  <rkumpera@novell.com>
-
 
 	* Vector2l.cs : Remove useless comments.
 

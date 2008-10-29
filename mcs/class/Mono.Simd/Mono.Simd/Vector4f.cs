@@ -107,6 +107,7 @@ namespace Mono.Simd
 			this.w = w;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector4f operator & (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -120,6 +121,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector4f operator | (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -133,6 +135,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector4f operator ^ (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -146,26 +149,31 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f operator + (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w);
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f operator - (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w);
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f operator * (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.x * v2.x, v1.y * v2.y, v1.z * v2.z, v1.w * v2.w);
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f operator / (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.x / v2.x, v1.y / v2.y, v1.z / v2.z, v1.w / v2.w);
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector4f AndNot (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -179,6 +187,7 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f Sqrt (Vector4f v1)
 		{
 			return new Vector4f ((float)System.Math.Sqrt ((float)v1.x),
@@ -187,6 +196,7 @@ namespace Mono.Simd
 								(float)System.Math.Sqrt ((float)v1.w));
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f InvSqrt (Vector4f v1)
 		{
 			return new Vector4f ((float)(1.0 / System.Math.Sqrt ((float)v1.x)),
@@ -195,11 +205,13 @@ namespace Mono.Simd
 								(float)(1.0 / System.Math.Sqrt ((float)v1.w)));
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f Reciprocal (Vector4f v1)
 		{
 			return new Vector4f (1.0f / v1.x, 1.0f / v1.y, 1.0f / v1.z, 1.0f / v1.w);
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f Max (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (System.Math.Max (v1.x, v2.x),
@@ -208,6 +220,7 @@ namespace Mono.Simd
 								System.Math.Max (v1.w, v2.w));
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f Min (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (System.Math.Min (v1.x, v2.x),
@@ -216,32 +229,38 @@ namespace Mono.Simd
 								System.Math.Min (v1.w, v2.w));
 		}
 
+		[Acceleration (AccelMode.SSE3)]
 		public static Vector4f HorizontalAdd (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.x + v1.y, v1.z + v1.w, v2.x + v2.y, v2.z + v2.w);
 		}
 
+		[Acceleration (AccelMode.SSE3)]
 		public static Vector4f AddSub (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.x - v2.x, v1.y + v2.y, v1.z - v2.z, v1.w + v2.w);
 		}
 
+		[Acceleration (AccelMode.SSE3)]
 		public static Vector4f HorizontalSub (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.x - v1.y, v1.z - v1.w, v2.x - v2.y, v2.z - v2.w);
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f InterleaveHigh (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.z, v2.z, v1.w, v2.w);
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f InterleaveLow (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.x, v2.x, v1.y, v2.y);
 		}
 
 		/*Same as a == b. */
+		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareEqual (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -253,6 +272,7 @@ namespace Mono.Simd
 			return res;		}
 
 		/*Same as a < b. */
+		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareLessThan (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -265,6 +285,7 @@ namespace Mono.Simd
 		}
 
 		/*Same as a <= b. */
+		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareLessEqual (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -276,6 +297,7 @@ namespace Mono.Simd
 			return res;		}
 
 		/*Same float.IsNaN (a) || float.IsNaN (b). */
+		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareUnordered (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -287,6 +309,7 @@ namespace Mono.Simd
 			return res;		}
 
 		/*Same as a != b. */
+		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareNotEqual (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -299,6 +322,7 @@ namespace Mono.Simd
 		}
 
 		/*Same as !(a < b). */
+		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareNotLessThan (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -311,6 +335,7 @@ namespace Mono.Simd
 		}
 
 		/*Same as !(a <= b). */
+		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareNotLessEqual (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -323,6 +348,7 @@ namespace Mono.Simd
 		}
 
 		/*Same !float.IsNaN (a) && !float.IsNaN (b). */
+		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareOrdered (Vector4f v1, Vector4f v2)
 		{
 			Vector4f res = new Vector4f ();
@@ -333,11 +359,13 @@ namespace Mono.Simd
 			*c = !float.IsNaN (v1.w) && !float.IsNaN (v2.w) ? -1 : 0;
 			return res;		}
 
+		[Acceleration (AccelMode.SSE3)]
 		public static Vector4f DuplicateLow (Vector4f v1)
 		{
 			return new Vector4f (v1.x, v1.x, v1.z, v1.z);
 		}
 
+		[Acceleration (AccelMode.SSE3)]
 		public static Vector4f DuplicateHigh (Vector4f v1)
 		{
 			return new Vector4f (v1.y, v1.y, v1.w, v1.w);
@@ -346,6 +374,7 @@ namespace Mono.Simd
 		/*
 		The sel argument must be a value combination of ShuffleSel flags.
 		*/
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector4f Shuffle (Vector4f v1, ShuffleSel sel)
 		{
 			float *ptr = (float*)&v1;
@@ -354,6 +383,7 @@ namespace Mono.Simd
 		}
 
 		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector4ui(Vector4f v)
 		{
 			Vector4ui* p = (Vector4ui*)&v;
@@ -361,6 +391,7 @@ namespace Mono.Simd
 		}
 
 		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector8us(Vector4f v)
 		{
 			Vector8us* p = (Vector8us*)&v;
@@ -368,29 +399,34 @@ namespace Mono.Simd
 		}
 
 		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe explicit operator Vector16b(Vector4f v)
 		{
 			Vector16b* p = (Vector16b*)&v;
 			return *p;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f LoadAligned (ref Vector4f v)
 		{
 			return v;
 		}
 
+		[Acceleration (AccelMode.SSE1)]
 		public static void StoreAligned (ref Vector4f res, Vector4f val)
 		{
 			res = val;
 		}
 
 		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector4f LoadAligned (Vector4f *v)
 		{
 			return *v;
 		}
 
 		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE1)]
 		public static unsafe void StoreAligned (Vector4f *res, Vector4f val)
 		{
 			*res = val;
