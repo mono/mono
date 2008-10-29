@@ -44,51 +44,61 @@ namespace Mono.Simd
 			this.y = y;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l operator + (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.x + v2.x, v1.y + v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l operator - (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.x - v2.x, v1.y - v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector2l operator << (Vector2l v1, int amount)
 		{
 			return new Vector2l (v1.x << amount, v1.y << amount);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l operator & (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.x & v2.x, v1.y & v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l operator | (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.x | v2.x, v1.y | v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l operator ^ (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.x ^ v2.x, v1.y ^ v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l UnpackLow (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.x, v2.x);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l UnpackHigh (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.y, v2.y);
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector2l ShiftRightLogic (Vector2l v1, int amount)
 		{
 			return new Vector2l ((long)((ulong)(v1.x) >> amount), (long)((ulong)(v1.y) >> amount));
 		}
 
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe long ExtractByteMask (Vector2l va) {
 			int res = 0;
 			byte *a = (byte*)&va;
@@ -97,18 +107,19 @@ namespace Mono.Simd
 			return res;
 		}
 
-		/*Requires SSE 4.1*/
+		[Acceleration (AccelMode.SSE41)]
 		public static Vector2l CompareEqual (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l ((long)(v1.x ==  v2.x ? -1 : 0), (long)(v1.y ==  v2.y ? -1 : 0));
 		}
 
-		/*Requires SSE 4.1*/
+		[Acceleration (AccelMode.SSE41)]
 		public static Vector2l CompareGreaterThan (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l ((long)(v1.x > v2.x ? -1 : 0), (long)(v1.y >  v2.y ? -1 : 0));
 		}
 
+ 		[Acceleration (AccelMode.SSE1)]
   		public static unsafe explicit operator Vector4f (Vector2l v1)
 		{
 			Vector4f* p = (Vector4f*)&v1;
@@ -116,6 +127,7 @@ namespace Mono.Simd
 		}
 
  		[CLSCompliant(false)]
+  		[Acceleration (AccelMode.SSE1)]
  		public static unsafe explicit operator Vector8us (Vector2l v1)
 		{
 			Vector8us* p = (Vector8us*)&v1;
@@ -123,29 +135,34 @@ namespace Mono.Simd
 		}
 
 		[CLSCompliant(false)]
+  		[Acceleration (AccelMode.SSE1)]
   		public static unsafe explicit operator Vector16b (Vector2l v1)
 		{
 			Vector16b* p = (Vector16b*)&v1;
 			return *p;
 		}
 
+ 		[Acceleration (AccelMode.SSE1)]
 		public static Vector2l LoadAligned (ref Vector2l v)
 		{
 			return v;
 		}
 
+ 		[Acceleration (AccelMode.SSE1)]
 		public static void StoreAligned (ref Vector2l res, Vector2l val)
 		{
 			res = val;
 		}
 
 		[CLSCompliant(false)]
+ 		[Acceleration (AccelMode.SSE1)]
 		public static unsafe Vector2l LoadAligned (Vector2l *v)
 		{
 			return *v;
 		}
 
 		[CLSCompliant(false)]
+ 		[Acceleration (AccelMode.SSE1)]
 		public static unsafe void StoreAligned (Vector2l *res, Vector2l val)
 		{
 			*res = val;
