@@ -374,7 +374,7 @@ namespace Mono.Simd
 		/*
 		The sel argument must be a value combination of ShuffleSel flags.
 		*/
-		[Acceleration (AccelMode.SSE1)]
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector4f Shuffle (Vector4f v1, ShuffleSel sel)
 		{
 			float *ptr = (float*)&v1;
