@@ -51,7 +51,7 @@ using System.Web.Util;
 
 namespace System.Web.Compilation {
 	public sealed class BuildManager {
-		class BuildItem
+		sealed class BuildItem
 		{
 			public BuildProvider buildProvider;
 			public AssemblyBuilder assemblyBuilder;
@@ -197,21 +197,15 @@ namespace System.Web.Compilation {
 			}
 		}
 
-		class BuildCacheItem
+		sealed class BuildCacheItem
 		{
 			public string compiledCustomString;
 			public Assembly assembly;
 			public Type type;
 			public string virtualPath;
 
-			public bool ValidBuild {
-				get;
-				private set;
-			}
-
 			public BuildCacheItem ()
 			{
-				ValidBuild = false;
 			}
 			
 			public BuildCacheItem (Assembly assembly, BuildProvider bp, CompilerResults results)
@@ -220,7 +214,6 @@ namespace System.Web.Compilation {
 				this.compiledCustomString = bp.GetCustomString (results);
 				this.type = bp.GetGeneratedType (results);
 				this.virtualPath = bp.VirtualPath;
-				ValidBuild = true;
 			}
 			
 			public override string ToString ()
@@ -518,7 +511,7 @@ namespace System.Web.Compilation {
 			
 			if (ret != null)
 				return ret.type;
-			
+				
 			BuildAssembly (vp);
 			ret = GetCachedItem (vp);
 			if (ret != null)

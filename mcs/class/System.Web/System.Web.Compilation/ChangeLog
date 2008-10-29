@@ -1,3 +1,8 @@
+2008-10-29  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: seal the internal classes.
+	Remove unused BuildCacheItem.ValidBuild property.
+
 2008-10-16  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: IsWritablePropertyOrField doesn't
