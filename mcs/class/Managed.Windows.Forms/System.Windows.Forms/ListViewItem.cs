@@ -69,6 +69,35 @@ namespace System.Windows.Forms
 		internal int row;
 		internal int col;
 
+#if NET_2_0
+	
+		#region UIA Framework: Methods, Properties and Events
+
+		internal event EventHandler UIATextChanged;
+	
+		internal event LabelEditEventHandler UIASubItemTextChanged;
+
+		internal void OnUIATextChanged ()
+		{
+			if (UIATextChanged != null)
+				UIATextChanged (this, EventArgs.Empty);
+		}
+
+		internal void OnUIASubItemTextChanged (LabelEditEventArgs args)
+		{
+			//If our index is 0 we also generate TextChanged for the ListViewItem
+			//because ListViewItem.Text is the same as ListViewItem.SubItems [0].Text
+			if (args.Item == 0)
+				OnUIATextChanged ();
+
+			if (UIASubItemTextChanged != null)
+				UIASubItemTextChanged (this, args);
+		}
+
+		#endregion // UIA Framework: Methods, Properties and Events
+
+#endif
+
 		#endregion Instance Variables
 
 		#region Public Constructors
@@ -596,6 +625,12 @@ namespace System.Windows.Forms
 				if (owner != null)
 					Layout ();
 				Invalidate ();
+
+#if NET_2_0
+				//UIA Framework: Generates Text changed
+				OnUIATextChanged ();
+
+#endif 
 			}
 		}
 
@@ -1165,6 +1200,22 @@ namespace System.Windows.Forms
 			private SubItemStyle style;
 			[NonSerialized]
 			internal Rectangle bounds;
+
+#if NET_2_0
+		
+			#region UIA Framework: Methods, Properties and Events
+		
+			internal event EventHandler UIATextChanged;
+
+			private void OnUIATextChanged ()
+			{
+				if (UIATextChanged != null)
+					UIATextChanged (this, EventArgs.Empty);
+			}
+
+			#endregion // UIA Framework: Methods, Properties and Events
+
+#endif
 			
 			#region Public Constructors
 			public ListViewSubItem ()
@@ -1292,6 +1343,11 @@ namespace System.Windows.Forms
 					      	text = value; 
 
 					Invalidate ();
+
+#if NET_2_0
+					// UIA Framework: Generates SubItem TextChanged
+					OnUIATextChanged ();
+#endif
 				    }
 			}
 			#endregion // Public Instance Properties
@@ -1510,6 +1566,11 @@ namespace System.Windows.Forms
 			{
 				subItem.owner = owner;
 				list.Add (subItem);
+
+#if NET_2_0
+				//UIA Framework
+				subItem.UIATextChanged += OnUIASubItemTextChanged;
+#endif
 			}
 
 			public void Clear ()
@@ -1547,6 +1608,10 @@ namespace System.Windows.Forms
 
 				ListViewSubItem sub_item = (ListViewSubItem) item;
 				sub_item.owner = this.owner;
+#if NET_2_0
+				//UIA Framework
+				sub_item.UIATextChanged += OnUIASubItemTextChanged;
+#endif
 				return list.Add (sub_item);
 			}
 
@@ -1613,6 +1678,11 @@ namespace System.Windows.Forms
 				list.Insert (index, item);
 				owner.Layout ();
 				owner.Invalidate ();
+
+#if NET_2_0
+				//UIA Framework
+				item.UIATextChanged += OnUIASubItemTextChanged;
+#endif
 			}
 
 			public void Remove (ListViewSubItem item)
@@ -1620,6 +1690,11 @@ namespace System.Windows.Forms
 				list.Remove (item);
 				owner.Layout ();
 				owner.Invalidate ();
+
+#if NET_2_0
+				//UIA Framework
+				item.UIATextChanged -= OnUIASubItemTextChanged;
+#endif
 			}
 
 #if NET_2_0
@@ -1633,9 +1708,28 @@ namespace System.Windows.Forms
 
 			public void RemoveAt (int index)
 			{
+#if NET_2_0
+				//UIA Framework
+				if (index >= 0 && index < list.Count)
+					((ListViewSubItem) list [index]).UIATextChanged -= OnUIASubItemTextChanged;
+#endif
+
 				list.RemoveAt (index);
+
 			}
 			#endregion // Public Methods
+#if NET_2_0
+			#region UIA Event Handler
+			
+			private void OnUIASubItemTextChanged (object sender, EventArgs args)
+			{
+				owner.OnUIASubItemTextChanged (new LabelEditEventArgs (list.IndexOf (sender)));
+			}
+
+			#endregion
+
+#endif
+
 		}
 		#endregion // Subclasses
 	}

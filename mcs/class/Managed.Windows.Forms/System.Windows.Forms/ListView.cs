@@ -553,6 +553,11 @@ namespace System.Windows.Forms
 
 					check_boxes = value;
 					this.Redraw (true);
+
+#if NET_2_0
+					//UIA Framework: Event used by ListView to set/unset Toggle Pattern
+					OnUIACheckBoxesChanged ();
+#endif
 				}
 			}
 		}
@@ -719,7 +724,17 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		public bool LabelEdit {
 			get { return label_edit; }
-			set { label_edit = value; }
+			set { 
+				if (value != label_edit) {
+					label_edit = value; 
+
+#if NET_2_0
+					// UIA Framework: Event used by Value Pattern in ListView.ListItem provider
+					OnUIALabelEditChanged ();
+#endif
+				}
+
+			}
 		}
 
 		[DefaultValue (true)]
@@ -762,7 +777,16 @@ namespace System.Windows.Forms
 		[DefaultValue (true)]
 		public bool MultiSelect {
 			get { return multiselect; }
-			set { multiselect = value; }
+			set {
+				if (value != multiselect) {
+					multiselect = value; 
+
+#if NET_2_0
+					// UIA Framework: Event used by Selection Pattern in ListView.ListItem provider
+					OnUIAMultiSelectChanged ();
+#endif
+				}
+			}
 		}
 
 
@@ -833,6 +857,9 @@ namespace System.Windows.Forms
 				if (show_groups != value) {
 					show_groups = value;
 					Redraw(true);
+
+					// UIA Framework: Used to update a11y Tree
+					OnUIAShowGroupsChanged ();
 				}
 			}
 		}
@@ -1046,6 +1073,11 @@ namespace System.Windows.Forms
 					h_scroll.Value = v_scroll.Value = 0;
 					view = value; 
 					Redraw (true);
+
+#if NET_2_0
+					// UIA Framework: Event used to update UIA Tree.
+					OnUIAViewChanged ();
+#endif
 				}
 			}
 		}
@@ -4564,6 +4596,40 @@ namespace System.Windows.Forms
 			internal ArrayList list;
 			private ListView owner;
 
+			#region UIA Framework Events 
+#if NET_2_0
+			//NOTE:
+			//	We are using Reflection to add/remove internal events.
+			//	Class ListViewProvider uses the events when View is Details.
+			//
+			//Event used to generate UIA StructureChangedEvent
+			static object UIACollectionChangedEvent = new object ();
+
+			internal event CollectionChangeEventHandler UIACollectionChanged {
+				add { 
+					if (owner != null)
+						owner.Events.AddHandler (UIACollectionChangedEvent, value); 
+				}
+				remove { 
+					if (owner != null)
+						owner.Events.RemoveHandler (UIACollectionChangedEvent, value); 
+				}
+			}
+
+			internal void OnUIACollectionChangedEvent (CollectionChangeEventArgs args)
+			{
+				if (owner == null)
+					return;
+
+				CollectionChangeEventHandler eh
+					= (CollectionChangeEventHandler) owner.Events [UIACollectionChangedEvent];
+				if (eh != null)
+					eh (owner, args);
+			}
+
+#endif
+			#endregion UIA Framework Events 
+
 			#region Public Constructor
 			public ColumnHeaderCollection (ListView owner)
 			{
@@ -4625,6 +4691,12 @@ namespace System.Windows.Forms
 			{
 				int idx = list.Add (value);
 				owner.AddColumn (value, idx, true);
+
+#if NET_2_0
+				//UIA Framework event: Item Added
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
+#endif
+
 				return idx;
 			}
 
@@ -4699,6 +4771,12 @@ namespace System.Windows.Forms
 					col.SetListView (null);
 				list.Clear ();
 				owner.ReorderColumns (new int [0], true);
+
+#if NET_2_0
+				//UIA Framework event: Items cleared
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
+#endif
+
 			}
 
 			public bool Contains (ColumnHeader value)
@@ -4798,6 +4876,11 @@ namespace System.Windows.Forms
 
 				list.Insert (index, value);
 				owner.AddColumn (value, index, true);
+
+#if NET_2_0
+				//UIA Framework event: Item added
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
+#endif
 			}
 
 #if NET_2_0
@@ -4874,6 +4957,11 @@ namespace System.Windows.Forms
 
 				column.InternalDisplayIndex = -1;
 				owner.ReorderColumns (display_indices, true);
+
+#if NET_2_0
+				//UIA Framework event: Item Removed
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, column));
+#endif
 			}
 
 #if NET_2_0
@@ -4908,6 +4996,40 @@ namespace System.Windows.Forms
 #if NET_2_0
 			private ListViewGroup group;
 #endif
+
+			#region UIA Framework Events 
+#if NET_2_0
+			//NOTE:
+			//	We are using Reflection to add/remove internal events.
+			//	Class ListViewProvider uses the events.
+			//
+			//Event used to generate UIA StructureChangedEvent
+			static object UIACollectionChangedEvent = new object ();
+
+			internal event CollectionChangeEventHandler UIACollectionChanged {
+				add { 
+					if (owner != null)
+						owner.Events.AddHandler (UIACollectionChangedEvent, value); 
+				}
+				remove { 
+					if (owner != null)
+						owner.Events.RemoveHandler (UIACollectionChangedEvent, value); 
+				}
+			}
+
+			internal void OnUIACollectionChangedEvent (CollectionChangeEventArgs args)
+			{
+				if (owner == null)
+					return;
+
+				CollectionChangeEventHandler eh
+					= (CollectionChangeEventHandler) owner.Events [UIACollectionChangedEvent];
+				if (eh != null)
+					eh (owner, args);
+			}
+
+#endif
+			#endregion UIA Framework Events 
 
 			// The collection can belong to a ListView (main) or to a ListViewGroup (sub-collection)
 			// In the later case ListViewItem.ListView never gets modified
@@ -4996,8 +5118,20 @@ namespace System.Windows.Forms
 					}
 #endif
 
+#if NET_2_0
+					//UIA Framework event: Item Replaced
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, list [index]));
+#endif
+
 					list [index] = value;
+
 					CollectionChanged (true);
+
+#if NET_2_0
+					//UIA Framework event: Item Replaced
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
+#endif
+
 				}
 			}
 
@@ -5028,11 +5162,21 @@ namespace System.Windows.Forms
 			object IList.this [int index] {
 				get { return this [index]; }
 				set {
+#if NET_2_0
+					//UIA Framework event: Item Replaced
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, this [index]));
+#endif
+
 					if (value is ListViewItem)
 						this [index] = (ListViewItem) value;
 					else
 						this [index] = new ListViewItem (value.ToString ());
+
 					OnChange ();
+#if NET_2_0
+					//UIA Framework event: Item Replaced
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
+#endif
 				}
 			}
 			#endregion	// Public Properties
@@ -5050,6 +5194,11 @@ namespace System.Windows.Forms
 				// Item is ignored until it has been added to the ListView
 				if (is_main_collection || value.ListView != null)
 					CollectionChanged (true);
+
+#if NET_2_0
+				//UIA Framework event: Item Added
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
+#endif
 
 				return value;
 			}
@@ -5105,8 +5254,14 @@ namespace System.Windows.Forms
 
 				owner.BeginUpdate ();
 				
-				foreach (ListViewItem item in items)
+				foreach (ListViewItem item in items) {
 					AddItem (item);
+
+#if NET_2_0
+					//UIA Framework event: Item Added
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
+#endif
+				}
 
 				owner.EndUpdate ();
 				
@@ -5149,6 +5304,12 @@ namespace System.Windows.Forms
 
 				list.Clear ();
 				CollectionChanged (false);
+
+#if NET_2_0
+				//UIA Framework event: Items Removed
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
+#endif
+
 			}
 
 			public bool Contains (ListViewItem item)
@@ -5228,6 +5389,11 @@ namespace System.Windows.Forms
 				result = list.Add (li);
 				CollectionChanged (true);
 
+#if NET_2_0
+				//UIA Framework event: Item Added
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, li));
+#endif
+
 				return result;
 			}
 
@@ -5247,6 +5413,11 @@ namespace System.Windows.Forms
 					this.Insert (index, (ListViewItem) item);
 				else
 					this.Insert (index, item.ToString ());
+
+#if NET_2_0
+				//UIA Framework event: Item Added
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, this [index]));
+#endif
 			}
 
 			void IList.Remove (object item)
@@ -5316,6 +5487,11 @@ namespace System.Windows.Forms
 
 				if (is_main_collection || item.ListView != null)
 					CollectionChanged (true);
+
+#if NET_2_0
+				//UIA Framework event: Item Added
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
+#endif
 
 				return item;
 			}
@@ -5403,6 +5579,12 @@ namespace System.Windows.Forms
 				CollectionChanged (false);
 				if (selection_changed && owner != null)
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
+
+
+#if NET_2_0
+				//UIA Framework event: Item Removed 
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, item));
+#endif
 			}
 
 #if NET_2_0
@@ -5455,6 +5637,7 @@ namespace System.Windows.Forms
 #endif
 
 				list.Add (value);
+
 			}
 
 			void CollectionChanged (bool sort)
@@ -6038,6 +6221,110 @@ namespace System.Windows.Forms
 		void RaiseColumnWidthChanged (int resize_column)
 		{
 		}
+#endif
+
+#if NET_2_0
+		
+		#region UIA Framework: Methods, Properties and Events
+		
+		static object UIALabelEditChangedEvent = new object ();
+		static object UIAShowGroupsChangedEvent = new object ();
+		static object UIAMultiSelectChangedEvent = new object ();
+		static object UIAViewChangedEvent = new object ();
+		static object UIACheckBoxesChangedEvent = new object ();
+
+		internal Rectangle UIAHeaderControl {
+			get { return header_control.Bounds; }
+		}
+
+		internal int UIAColumns {
+			get { return cols; }
+		}
+
+		internal int UIARows {
+			get { return rows; }
+		}
+
+		internal ListViewGroup UIADefaultListViewGroup 
+		{
+			get { return groups.DefaultGroup; }
+		}
+
+		internal ScrollBar UIAHScrollBar {
+			get { return h_scroll; }
+		}
+
+		internal ScrollBar UIAVScrollBar {
+			get { return v_scroll; }
+		}
+
+		internal event EventHandler UIAShowGroupsChanged {
+			add { Events.AddHandler (UIAShowGroupsChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAShowGroupsChangedEvent, value); }
+		}
+
+		internal event EventHandler UIACheckBoxesChanged {
+			add { Events.AddHandler (UIACheckBoxesChangedEvent, value); }
+			remove { Events.RemoveHandler (UIACheckBoxesChangedEvent, value); }
+		}
+
+		internal event EventHandler UIAMultiSelectChanged {
+			add { Events.AddHandler (UIAMultiSelectChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAMultiSelectChangedEvent, value); }
+		}
+
+		internal event EventHandler UIALabelEditChanged {
+			add { Events.AddHandler (UIALabelEditChangedEvent, value); }
+			remove { Events.RemoveHandler (UIALabelEditChangedEvent, value); }
+		}
+
+		internal event EventHandler UIAViewChanged {
+			add { Events.AddHandler (UIAViewChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAViewChangedEvent, value); }
+		}
+
+		internal Rectangle UIAGetHeaderBounds (ListViewGroup group)
+		{
+			return group.HeaderBounds;
+		}
+
+		private void OnUIACheckBoxesChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIACheckBoxesChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		private void OnUIAShowGroupsChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIAShowGroupsChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		private void OnUIAMultiSelectChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIAMultiSelectChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		private void OnUIALabelEditChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIALabelEditChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+		
+		private void OnUIAViewChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIAViewChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		#endregion // UIA Framework: Methods, Properties and Events
+
 #endif
 	}
 }

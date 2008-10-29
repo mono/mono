@@ -1,3 +1,18 @@
+2008-10-29  Mario Carrion <mcarrion@novell.com>
+
+	* ListViewItem.cs: Control enabled to support Accessibility:
+	- Internal events: UIATextChanged, UIASubItemTextChanged.
+	- Internal event UIATextChanged in ListViewSubItem that triggers
+	UIASubItemTextChanged.
+	* ListView.cs: Control enabled to support Accessibility:
+	- Internal events: UIACheckBoxesChanged, UIAMultiSelectChanged, 
+	UIAShowGroupsChanged, UIAViewChanged and UIALabelEditChanged.
+	- Internal event UIACollectionChanged in ColumnHeaderCollection.
+	- Internal event UIACollectionChanged in ListViewItemCollection.
+	- Internal properties: UIAHeaderControl, UIAColumns, UIARows, 
+	UIADefaultListViewGroup, UIAHScrollBar and UIAVScrollBar.
+	- Internal methods: UIAGetHeaderBounds.
+
 2008-10-25  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* ScrollableControl.cs: Actually fire the 2.0 Scroll event when we get
