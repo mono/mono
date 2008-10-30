@@ -31,10 +31,29 @@ The \fI.source\fR file has the following format:
 
   <?xml version="1.0"?>
   <monodoc>
+    <node label="LABEL" name="PATH" parent="PARENT">
+      <node label="LABEL2" name="PATH2" />
+      <!-- ... -->
+    </node>
     <source provider="PROVIDER" basefile="BASEFILE" path="PATH" />
+    <!-- other <source/> elements -->
   </monodoc>
 
 .fi
+The \fI/monodoc/node\fR node is an optional node that specifies where in the
+monodoc tree the documentation should be displayed, and \fI//node\fR elements
+may be nested to any depth to create trees.  \fI//node/@label\fR is the label
+that will be displayed within the monodoc tree.
+.PP
+\fI//node/@name\fR is the name of the monodoc tree node, and may be used as 
+the value of the \fI/monodoc/source/@path\fR value.
+.PP
+\fI//node/@parent\fR is the node name to use as the parent node.  
+\fI$MONO_INSTALL_PREFIX/lib/monodoc/monodoc.xml\fR contains a list of such 
+names, and this can be any \fI//node/@name\fR value.  If the 
+\fI//node/@parent\fR value isn't found, then it's inserted under the
+"Various" tree node.
+.PP
 The \fI/monodoc/source/@provider\fR attribute specifies which format provider
 should be used when reading the \fI.tree\fR and \fI.zip\fR files; this
 \fImust\fR correspond to one of the \fI--format\fR values.
@@ -47,7 +66,8 @@ value.
 The \fI/monodoc/source/@path\fR attribute specifies the parent node in 
 \fBmonodoc\fR(1)'s tree view where the documentation will be inserted.
 See the \fI$MONO_INSTALL_PREFIX/lib/monodoc/monodoc.xml\fR
-file for a list of \fIPATH\fR values (the \fI//node/@name\fR values).
+file for a list of \fIPATH\fR values (the \fI//node/@name\fR values), or it
+may be a \fI//node/@name\fR value in the same \fI.source\fR file.
 .PP
 Once the \fIBASEFILE.source\fR has been written, the documentation can be
 installed so that \fBmonodoc\fR(1) will display the documentation with the
