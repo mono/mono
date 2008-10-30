@@ -143,6 +143,10 @@ namespace System.Threading
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long Add(ref long location1, long value);
+#else
+		/* This is needed by the runtime fast path locking */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static IntPtr CompareExchange(ref IntPtr location1, IntPtr value, IntPtr comparand);
 #endif
 	}
 }
