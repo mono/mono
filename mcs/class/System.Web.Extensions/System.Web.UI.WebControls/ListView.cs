@@ -740,7 +740,7 @@ namespace System.Web.UI.WebControls
 						ICollection ds = dataSource as ICollection;
 						if (ds == null)
 							throw new InvalidOperationException ("dataSource does not implement the ICollection interface.");
-						totalRowCount = ds.Count + _startRowIndex;
+						totalRowCount = ds.Count + StartRowIndex;
 					}
 				}
 
@@ -752,10 +752,10 @@ namespace System.Web.UI.WebControls
 				pagedDataSource.TotalRowCount = 0;
 			}
 
-			pagedDataSource.StartRowIndex = _startRowIndex;
-			pagedDataSource.MaximumRows = _maximumRows;
+			pagedDataSource.StartRowIndex = StartRowIndex;
+			pagedDataSource.MaximumRows = MaximumRows;
 			pagedDataSource.DataSource = dataSource;
-
+			
 			bool emptySet = false;
 			if (dataSource != null) {
 				if (GroupItemCount <= 0)

@@ -1,3 +1,9 @@
+2008-10-31  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: use StartRowIndex and MaximumRows properties when
+	calculating the total row count server paging case and when
+	assigning to corresponding properties of the paged data source.
+
 2008-10-30  Marek Habersack  <mhabersack@novell.com>
 
 	* DataPagerFieldCollection.cs: implemented most of the methods and
