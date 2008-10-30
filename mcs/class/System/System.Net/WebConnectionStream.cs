@@ -76,7 +76,7 @@ namespace System.Net
 
 				try {
 					contentLength = Int32.Parse (clength);
-					if (contentLength == 0) {
+					if (contentLength == 0 && !IsNtlmAuth ()) {
 						ReadAll ();
 					}
 				} catch {
@@ -105,10 +105,19 @@ namespace System.Net
 				pending = new ManualResetEvent (true);
 		}
 
+		bool IsNtlmAuth ()
+		{
+			bool isProxy = (request.Proxy != null && !request.Proxy.IsBypassed (request.Address));
+			string header_name = (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate";
+			string authHeader = cnc.Data.Headers [header_name];
+			return (authHeader != null && authHeader.IndexOf ("NTLM") != -1);
+		}
+
 		internal void CheckResponseInBuffer ()
 		{
 			if (contentLength > 0 && (readBufferSize - readBufferOffset) >= contentLength) {
-				ReadAll ();
+				if (!IsNtlmAuth ())
+					ReadAll ();
 			}
 		}
 

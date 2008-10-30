@@ -1,6 +1,12 @@
 
 2008-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* WebConnectionStream.cs: when there's a NTLM authentication in
+	progress, don't let the connection be used by the next request if we
+	have the entire response in the input buffer.
+
+2008-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpListenerResponse.cs: removed obsolete comment.
 	* ResponseStream.cs: don't read response.SendChunked until after
 	getting the response headers.
