@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -36,14 +36,18 @@ namespace System.Web.UI.WebControls
 	{
 		public PagePropertiesChangingEventArgs (int startRowIndex, int maximumRows)
 		{
+			MaximumRows = maximumRows;
+			StartRowIndex = startRowIndex;
 		}
 		
 		public int MaximumRows {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 		
 		public int StartRowIndex {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 	}
 }

@@ -1,0 +1,9 @@
+2008-10-30  Marek Habersack  <mhabersack@novell.com>
+
+	* DataPagerFieldCollectionTest.cs: created. Some basic tests for
+	DataPagerFieldCollection
+
+	* EventRecorder.cs: created. A helper class for tests.
+
+	* ListViewTest.cs: created. Some basic test for ListView.
+

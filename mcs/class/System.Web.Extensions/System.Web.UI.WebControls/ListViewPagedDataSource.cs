@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -36,6 +36,88 @@ namespace System.Web.UI.WebControls
 {
 	public class ListViewPagedDataSource : ICollection, IEnumerable, ITypedList
 	{
+		sealed class ListEnumerator : IEnumerator
+		{
+			int index;
+			int startIndex;
+			int end;
+			IList list;
+			
+			public object Current {
+				get { return list [startIndex + index]; }
+			}
+			
+			public ListEnumerator (IList list, int startIndex, int end)
+			{
+				this.list = list;
+				this.index = -1;
+				this.startIndex = startIndex;
+				this.end = startIndex + end;
+			}
+			
+			public bool MoveNext ()
+			{
+				index++;
+				return (startIndex + index) < end;
+			}
+
+			// See:
+			// http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.listviewpageddatasource.getenumerator.aspx
+			// (Note 1)
+			public void Reset ()
+			{
+				index = -1;
+			}
+		}
+
+		sealed class CollectionEnumerator : IEnumerator
+		{
+			int index;
+			int startIndex;
+			int end;
+			ICollection collection;
+			IEnumerator enumerator;
+			
+			public object Current {
+				get {
+					if (enumerator != null)
+						return enumerator.Current;
+
+					return null;
+				}
+			}
+			
+			public CollectionEnumerator (ICollection collection, int startIndex, int end)
+			{
+				this.collection = collection;
+				this.index = -1;
+				this.startIndex = startIndex;
+				this.end = end;
+			}
+			
+			public bool MoveNext ()
+			{
+				if (enumerator == null) {
+					enumerator = collection.GetEnumerator ();
+					for (int i = 0; i < startIndex; i++)
+						enumerator.MoveNext ();
+				}
+				
+				index++;
+				enumerator.MoveNext ();
+				return (startIndex + index) < end;
+			}
+
+			// See:
+			// http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.listviewpageddatasource.getenumerator.aspx
+			// (Note 1)
+			public void Reset ()
+			{
+				index = -1;
+				enumerator = null;
+			}
+		}
+		
 		public ListViewPagedDataSource ()
 		{
 			StartRowIndex = 0;
@@ -55,6 +137,14 @@ namespace System.Web.UI.WebControls
 			if (ds == null)
 				return null;
 
+			IList list = ds as IList;
+			if (list != null)
+				return new ListEnumerator (list, StartRowIndex, Count);
+
+			ICollection collection = ds as ICollection;
+			if (collection != null)
+				return new CollectionEnumerator (collection, StartRowIndex, Count);
+			
 			return ds.GetEnumerator ();
 		}
 		
@@ -81,13 +171,11 @@ namespace System.Web.UI.WebControls
 		public int Count {
 			get {
 				IEnumerable ds = DataSource;
-
 				if (ds == null)
 					return 0;
 
 				bool onLastPage = OnLastPage;
 				int maxRows = MaximumRows;
-				
 				if (!onLastPage && maxRows >= 0)
 					return maxRows;
 

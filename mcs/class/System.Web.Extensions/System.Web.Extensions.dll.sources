@@ -105,6 +105,7 @@
 ./System.Web.UI.WebControls/NumericPagerField.cs
 ./System.Web.UI.WebControls/PageEventArgs.cs
 ./System.Web.UI.WebControls/PagePropertiesChangingEventArgs.cs
+./System.Web.UI.WebControls/TemplatePagerField.cs
 ./System.Web.DynamicData/DynamicDataSourceOperation.cs
 ./System.Web.DynamicData/DynamicValidatorEventArgs.cs
 ./System.Web.DynamicData/IDynamicDataSource.cs

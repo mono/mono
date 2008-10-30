@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -42,23 +42,30 @@ namespace System.Web.UI.WebControls
 	{
 		public DataPagerFieldItem (DataPagerField field, DataPager pager)
 		{
+			Pager = pager;
+			PagerField = field;
 		}
 
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
-			throw new NotImplementedException ();
+			CommandEventArgs args = e as CommandEventArgs;
+
+			if (args != null) {
+				RaiseBubbleEvent (this, new DataPagerFieldCommandEventArgs (this, source, args));
+				return true;
+			}
+
+			return false;
 		}
 
 		public DataPager Pager {
-			get {
-				throw new NotImplementedException ();
-			}
+			get;
+			private set;
 		}
 
 		public DataPagerField PagerField {
-			get {
-				throw new NotImplementedException ();
-			}
+			get;
+			private set;
 		}
 
 	}

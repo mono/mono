@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls
 
 		protected override DataPagerField CreateField ()
 		{
-			throw new NotImplementedException ();
+			return new NumericPagerField ();
 		}
 
 		public override bool Equals (object o)

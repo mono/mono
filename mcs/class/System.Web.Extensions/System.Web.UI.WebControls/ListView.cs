@@ -48,6 +48,17 @@ namespace System.Web.UI.WebControls
 	[DefaultPropertyAttribute ("SelectedValue")]
 	public class ListView : DataBoundControl, INamingContainer, IPageableItemContainer
 	{
+		const int CSTATE_BASE_STATE = 0;
+		const int CSTATE_DATAKEYNAMES = 1;
+		const int CSTATE_DATAKEYSSTATE = 2;
+		const int CSTATE_GROUPITEMCOUNT = 3;
+		const int CSTATE_TOTALROWCOUNT = 4;
+		const int CSTATE_EDITINDEX = 5;
+		const int CSTATE_SELECTEDINDEX = 6;
+		const int CSTATE_SORTDIRECTION = 7;
+		const int CSTATE_SORTEXPRESSION = 8;
+		const int CSTATE_COUNT = 9;
+		
 		ITemplate _emptyDataTemplate;
 		ITemplate _emptyItemTemplate;
 		ITemplate _insertItemTemplate;
@@ -60,8 +71,9 @@ namespace System.Web.UI.WebControls
 		ITemplate _editItemTemplate;
 		ITemplate _layoutTemplate;
 
-		int _startRowIndex;
-		int _maximumRows;
+		int _totalRowCount;
+		int _startRowIndex = -1;
+		int _maximumRows = -1;
 		int _selectedIndex;
 		int _editIndex;
 		int _groupItemCount;
@@ -611,15 +623,20 @@ namespace System.Web.UI.WebControls
 		}
 	
 		protected virtual int StartRowIndex {
-			get { return _startRowIndex; }
+			get {
+				if (_startRowIndex < 0)
+					return 0;
+				
+				return _startRowIndex;
+			}
 		}
 	
 		int IPageableItemContainer.MaximumRows {
-			get { return _maximumRows; }
+			get { return MaximumRows; }
 		}
 	
 		int IPageableItemContainer.StartRowIndex {
-			get { return _startRowIndex; }
+			get { return StartRowIndex; }
 		}
 	
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
@@ -650,6 +667,15 @@ namespace System.Web.UI.WebControls
 		public ListView ()
 		{
 			InsertItemPosition = InsertItemPosition.None;
+			ResetDefaults ();
+		}
+
+		void ResetDefaults ()
+		{
+			_totalRowCount = -1;
+			_selectedIndex = -1;
+			_editIndex = -1;
+			_groupItemCount = -1;
 		}
 		
 		protected virtual void AddControlToContainer (Control control, Control container, int addLocation)
@@ -670,8 +696,20 @@ namespace System.Web.UI.WebControls
 	
 		protected internal override void CreateChildControls ()
 		{
-			if (RequiresDataBinding)
-				EnsureDataBound ();
+			object itemCount = ViewState ["_!ItemCount"];
+			if (itemCount != null) {
+				if (RequiresDataBinding)
+					EnsureDataBound ();
+
+				int c = (int)itemCount;
+				if (c >= 0) {
+					// Fake data - we only need to make sure
+					// OnTotalRowCountAvailable is called now - so that any
+					// pagers can create child controls.
+					object[] data = new object [c];
+					CreateChildControls (data, false);
+				}
+			}
 			
 			base.CreateChildControls ();
 		}
@@ -683,7 +721,10 @@ namespace System.Web.UI.WebControls
 			EnsureLayoutTemplate ();
 			RemoveItems ();
 
-			bool haveDataToDisplay = _maximumRows > 0 && _startRowIndex > 0;
+			// If any of the _maximumRows or _startRowIndex is different to their
+			// defaults, it means we are paging - i.e. SetPageProperties has been
+			// called.
+			bool haveDataToPage = _maximumRows > 0 || _startRowIndex > 0;
 			var pagedDataSource = new ListViewPagedDataSource ();
 			
 			if (dataBinding) {
@@ -692,7 +733,7 @@ namespace System.Web.UI.WebControls
 					throw new InvalidOperationException ("dataSource returned a null reference for DataSourceView.");
 
 				int totalRowCount = 0;
-				if (haveDataToDisplay) {
+				if (haveDataToPage && view.CanPage) {
 					if (view.CanRetrieveTotalRowCount)
 						totalRowCount = SelectArguments.TotalRowCount;
 					else {
@@ -702,22 +743,48 @@ namespace System.Web.UI.WebControls
 						totalRowCount = ds.Count + _startRowIndex;
 					}
 				}
-				
-				pagedDataSource.StartRowIndex = _startRowIndex;
-				pagedDataSource.DataSource = dataSource;
+
 				pagedDataSource.TotalRowCount = totalRowCount;
+				DataKeyArray.Clear ();
 			} else {
 				if (!(dataSource is ICollection))
 					throw new InvalidOperationException ("dataSource does not implement the ICollection interface and dataBinding is false.");
+				pagedDataSource.TotalRowCount = 0;
 			}
 
-			if (GroupItemCount <= 0)
-				retList = CreateItemsWithoutGroups (pagedDataSource, dataBinding, InsertItemPosition, DataKeyArray);
+			pagedDataSource.StartRowIndex = _startRowIndex;
+			pagedDataSource.MaximumRows = _maximumRows;
+			pagedDataSource.DataSource = dataSource;
+
+			bool emptySet = false;
+			if (dataSource != null) {
+				if (GroupItemCount <= 0)
+					retList = CreateItemsWithoutGroups (pagedDataSource, dataBinding, InsertItemPosition, DataKeyArray);
+				if (InsertItemPosition != InsertItemPosition.None && (retList == null || (retList != null && retList.Count == 0)))
+					emptySet = true;
+
+				if (haveDataToPage)
+					// Data source has paged data for us, so we must use its total row
+					// count
+					_totalRowCount = pagedDataSource.DataSourceCount;
+				else if (!emptySet)
+					_totalRowCount = retList.Count;
+				else
+					_totalRowCount = 0;
+			
+				OnTotalRowCountAvailable (new PageEventArgs (_startRowIndex, _maximumRows, _totalRowCount));
+			} else
+				emptySet = true;
+
+			if (emptySet) {
+				Controls.Clear ();
+				CreateEmptyItem ();
+			}
 			
 			if (retList == null)
 				return 0;
 
-			return retList.Count;
+			return _totalRowCount;
 		}
 	
 		protected override Style CreateControlStyle ()
@@ -1057,24 +1124,27 @@ namespace System.Web.UI.WebControls
 		
 		protected override void LoadControlState (object savedState)
 		{
+			ResetDefaults ();
 			object[] state = savedState as object[];
-			if (state == null || state.Length != 8)
+			if (state == null || state.Length != CSTATE_COUNT)
 				return;
-
+			
 			object o;
-			base.LoadViewState (state [0]);
-			if ((o = state [1]) != null)
+			base.LoadControlState (state [CSTATE_BASE_STATE]);
+			if ((o = state [CSTATE_DATAKEYNAMES]) != null)
 				DataKeyNames = (string[])o;
-			LoadDataKeysState (state [2]);
-			if ((o = state [3]) != null)
+			LoadDataKeysState (state [CSTATE_DATAKEYSSTATE]);
+			if ((o = state [CSTATE_GROUPITEMCOUNT]) != null)
 				GroupItemCount = (int)o;
-			if ((o = state [4]) != null)
+			if ((o = state [CSTATE_TOTALROWCOUNT]) != null)
+				_totalRowCount = (int)o;
+			if ((o = state [CSTATE_EDITINDEX]) != null)
 				EditIndex = (int)o;
-			if ((o = state [5]) != null)
+			if ((o = state [CSTATE_SELECTEDINDEX]) != null)
 				SelectedIndex = (int)o;
-			if ((o = state [6]) != null)
+			if ((o = state [CSTATE_SORTDIRECTION]) != null)
 				_sortDirection = (SortDirection)o;
-			if ((o = state [7]) != null)
+			if ((o = state [CSTATE_SORTEXPRESSION]) != null)
 				_sortExpression = (string)o;
 		}
 	
@@ -1242,6 +1312,7 @@ namespace System.Web.UI.WebControls
 
 			int childCount = CreateChildControls (data, true);
 			ChildControlsCreated = true;
+			ViewState ["_!ItemCount"] = childCount;
 		}
 	
 		protected override void PerformSelect ()
@@ -1294,18 +1365,19 @@ namespace System.Web.UI.WebControls
 		
 		protected override object SaveControlState ()
 		{
-			object[] ret = new object [8];
+			object[] ret = new object [CSTATE_COUNT];
 			string[] dataKeyNames = DataKeyNames;
 			object dataKeysState = SaveDataKeysState ();
 			
-			ret [0] = base.SaveViewState ();
-			ret [1] = dataKeyNames.Length > 0 ? dataKeyNames : null;
-			ret [2] = dataKeysState != null ? dataKeysState : null;
-			ret [3] = _groupItemCount > 1 ? (object)_groupItemCount : null;
-			ret [4] = _editIndex != -1 ? (object)_editIndex : null;
-			ret [5] = _selectedIndex != -1 ? (object)_selectedIndex : null;
-			ret [6] = _sortDirection != SortDirection.Ascending ? (object)_sortDirection : null;
-			ret [7] = String.IsNullOrEmpty (_sortExpression) ? null : _sortExpression;
+			ret [CSTATE_BASE_STATE] = base.SaveControlState ();
+			ret [CSTATE_DATAKEYNAMES] = dataKeyNames.Length > 0 ? dataKeyNames : null;
+			ret [CSTATE_DATAKEYSSTATE] = dataKeysState != null ? dataKeysState : null;
+			ret [CSTATE_GROUPITEMCOUNT] = _groupItemCount > 1 ? (object)_groupItemCount : null;
+			ret [CSTATE_TOTALROWCOUNT] = _totalRowCount >= 1 ? (object)_totalRowCount : null;
+			ret [CSTATE_EDITINDEX] = _editIndex != -1 ? (object)_editIndex : null;
+			ret [CSTATE_SELECTEDINDEX] = _selectedIndex != -1 ? (object)_selectedIndex : null;
+			ret [CSTATE_SORTDIRECTION] = _sortDirection != SortDirection.Ascending ? (object)_sortDirection : null;
+			ret [CSTATE_SORTEXPRESSION] = String.IsNullOrEmpty (_sortExpression) ? null : _sortExpression;
 			
 			return ret;
 		}
@@ -1322,6 +1394,26 @@ namespace System.Web.UI.WebControls
 	
 		protected virtual void SetPageProperties (int startRowIndex, int maximumRows, bool databind)
 		{
+			if (maximumRows < 1)
+				throw new ArgumentOutOfRangeException ("maximumRows");
+			if (startRowIndex < 0)
+				throw new ArgumentOutOfRangeException ("startRowIndex");
+
+			if (maximumRows != _maximumRows || startRowIndex != _startRowIndex) {
+				if (databind) {
+					var args = new PagePropertiesChangingEventArgs (maximumRows, startRowIndex);
+					OnPagePropertiesChanging (args);
+				}
+				
+				_startRowIndex = startRowIndex;
+				_maximumRows = maximumRows;
+
+				if (databind)
+					OnPagePropertiesChanged (EventArgs.Empty);
+			}
+
+			if (databind)
+				RequiresDataBinding = true;
 		}
 	
 		public virtual void Sort (string sortExpression, SortDirection sortDirection)
@@ -1330,7 +1422,7 @@ namespace System.Web.UI.WebControls
 	
 		void IPageableItemContainer.SetPageProperties (int startRowIndex, int maximumRows, bool databind)
 		{
-			throw new NotImplementedException ();
+			SetPageProperties (startRowIndex, maximumRows, databind);
 		}
 	
 		public virtual void UpdateItem (int itemIndex, bool causesValidation)

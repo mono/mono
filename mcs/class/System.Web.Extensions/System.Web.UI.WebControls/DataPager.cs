@@ -37,6 +37,9 @@ using System.Web.UI;
 namespace System.Web.UI.WebControls
 {
 	[ThemeableAttribute(true)]
+	[ParseChildren (true)]
+	[PersistChildren (false)]
+	[SupportsEventValidation]
 	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DataPager : Control, IAttributeAccessor, INamingContainer, ICompositeControlDesignerAccessor
@@ -47,10 +50,11 @@ namespace System.Web.UI.WebControls
 		const int CONTROL_NOT_PAGEABLE = 3;
 		const int NO_NAMING_CONTAINER = 4;
 
-		const int STATE_BASE_STATE = 0;
-		const int STATE_TOTAL_ROW_COUNT = 1;
-		const int STATE_MAXIMUM_ROWS = 2;
-		const int STATE_START_ROW_INDEX = 3;
+		const int CSTATE_BASE_STATE = 0;
+		const int CSTATE_TOTAL_ROW_COUNT = 1;
+		const int CSTATE_MAXIMUM_ROWS = 2;
+		const int CSTATE_START_ROW_INDEX = 3;
+		const int CSTATE_COUNT = 4;
 		
 		string[] _exceptionMessages = {
 			"No IPageableItemContainer was found. Verify that either the DataPager is inside an IPageableItemContainer or PagedControlID is set to the control ID of an IPageableItemContainer",
@@ -70,6 +74,7 @@ namespace System.Web.UI.WebControls
 		
 		bool _initDone;
 		bool _needNewContainerSetup = true;
+		bool _needSetPageProperties = true;
 		bool _createPagerFieldsRunning;
 		
 		public DataPager()
@@ -122,7 +127,7 @@ namespace System.Web.UI.WebControls
 			_createPagerFieldsRunning = false;
 		}
 
-		public override void DataBind()
+		public override void DataBind ()
 		{
 			OnDataBinding (EventArgs.Empty);
 			EnsureChildControls ();
@@ -133,10 +138,23 @@ namespace System.Web.UI.WebControls
 		{
 			string pagedControlID = PagedControlID;
 			IPageableItemContainer ret = null;
+			Page page = Page;
+			Control container;
 			
-			if (!String.IsNullOrEmpty (pagedControlID)) {
-				Control ctl = FindControl (pagedControlID, 0);
-				if (ret == null)
+			if (page != null && !String.IsNullOrEmpty (pagedControlID)) {
+				Control ctl = null;
+				container = NamingContainer;
+				while (container != null && container != page) {
+					ctl = container.FindControl (pagedControlID);
+					if (ctl != null)
+						break;
+					container = container.NamingContainer;
+				}
+
+				if (container == null)
+					throw new InvalidOperationException (_exceptionMessages [NO_NAMING_CONTAINER]);
+				
+				if (ctl == null)
 					throw new InvalidOperationException (String.Format (_exceptionMessages [NO_PAGED_CONTAINER_ID], pagedControlID));
 
 				ret = ctl as IPageableItemContainer;
@@ -147,9 +165,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			// No ID set, try to find a container that's pageable
-			Control container = NamingContainer;
-			Page page = Page;
-
+			container = NamingContainer;
 			while (container != page) {
 				if (container == null)
 					throw new InvalidOperationException (_exceptionMessages [NO_NAMING_CONTAINER]);
@@ -169,16 +185,16 @@ namespace System.Web.UI.WebControls
 			object[] state = savedState as object[];
 			object tmp;
 			
-			if (state != null) {
-				base.LoadControlState (state [STATE_BASE_STATE]);
+			if (state != null && state.Length == CSTATE_COUNT) {
+				base.LoadControlState (state [CSTATE_BASE_STATE]);
 
-				if ((tmp = state [STATE_TOTAL_ROW_COUNT]) != null)
+				if ((tmp = state [CSTATE_TOTAL_ROW_COUNT]) != null)
 					_totalRowCount = (int) tmp;
 
-				if ((tmp = state [STATE_MAXIMUM_ROWS]) != null)
+				if ((tmp = state [CSTATE_MAXIMUM_ROWS]) != null)
 					_maximumRows = (int) tmp;
 
-				if ((tmp = state [STATE_START_ROW_INDEX]) != null)
+				if ((tmp = state [CSTATE_START_ROW_INDEX]) != null)
 					_startRowIndex = (int) tmp;
 			}
 
@@ -189,7 +205,7 @@ namespace System.Web.UI.WebControls
 				ConnectToEvents (_pageableContainer);
 			}
 			
-			SetUpForNewContainer (false);
+			SetUpForNewContainer (false, false);
 		}
 
 		protected override void LoadViewState (object savedState)
@@ -222,14 +238,17 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
-		void SetUpForNewContainer (bool dataBind)
+		void SetUpForNewContainer (bool dataBind, bool needSetPageProperties)
 		{
-			if (!_needNewContainerSetup)
-				return;
-			
-			ConnectToEvents (_pageableContainer);
-			_pageableContainer.SetPageProperties (_startRowIndex, _maximumRows, false);
-			_needNewContainerSetup = false;
+ 			if (_needNewContainerSetup) {
+				ConnectToEvents (_pageableContainer);
+				_needNewContainerSetup = false;
+			}
+
+			if (_needSetPageProperties) {
+				_pageableContainer.SetPageProperties (_startRowIndex, _maximumRows, dataBind);
+				_needSetPageProperties = needSetPageProperties;
+			}
 		}
 		
 		protected internal override void OnInit (EventArgs e)
@@ -247,7 +266,7 @@ namespace System.Web.UI.WebControls
 			if (_pageableContainer != null)
 				// Do not re-bind the data here - not all the controls might be
 				// initialized (that includes the container may be bound to)
-				SetUpForNewContainer (false);
+				SetUpForNewContainer (false, true);
 
 			_initDone = true;
 		}
@@ -260,7 +279,8 @@ namespace System.Web.UI.WebControls
 			if (_pageableContainer == null)
 				throw new InvalidOperationException (_exceptionMessages [NO_PAGEABLE_ITEM_CONTAINER]);
 
-			SetUpForNewContainer (false);
+			SetUpForNewContainer (false, false);
+			
 			base.OnLoad (e);
 		}
 
@@ -269,7 +289,7 @@ namespace System.Web.UI.WebControls
 			_totalRowCount = e.TotalRowCount;
 			_maximumRows = e.MaximumRows;
 			_startRowIndex = e.StartRowIndex;
-
+			
 			// Sanity checks: if the total row count is less than the current start row
 			// index, we must adjust and rebind the associated container control
 			if (_totalRowCount > 0 && (_totalRowCount <= _startRowIndex)) {
@@ -315,12 +335,12 @@ namespace System.Web.UI.WebControls
 
 		protected internal override object SaveControlState ()
 		{
-			object[] ret = new object [4];
+			object[] ret = new object [CSTATE_COUNT];
 
-			ret [STATE_BASE_STATE] = base.SaveControlState ();
-			ret [STATE_TOTAL_ROW_COUNT] = _totalRowCount <= 0 ? 0 : _totalRowCount;
-			ret [STATE_MAXIMUM_ROWS] = _maximumRows <= 0 ? 0 : _maximumRows;
-			ret [STATE_START_ROW_INDEX] = _startRowIndex <= 0 ? 0 : _startRowIndex;
+			ret [CSTATE_BASE_STATE] = base.SaveControlState ();
+			ret [CSTATE_TOTAL_ROW_COUNT] = _totalRowCount <= 0 ? 0 : _totalRowCount;
+			ret [CSTATE_MAXIMUM_ROWS] = _maximumRows <= 0 ? 0 : _maximumRows;
+			ret [CSTATE_START_ROW_INDEX] = _startRowIndex <= 0 ? 0 : _startRowIndex;
 
 			return ret;
 		}

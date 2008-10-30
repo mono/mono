@@ -1,10 +1,10 @@
 //
-// System.Web.UI.WebControls.TemplatePagerField
+// System.Web.UI.WebControls.ListView
 //
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2008 Novell, Inc
 //
 
 //
@@ -29,32 +29,28 @@
 //
 #if NET_3_5
 using System;
-using System.Security.Permissions;
-using System.Web;
-using System.Web.UI;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
 
-namespace System.Web.UI.WebControls
+namespace Tests.System.Web.UI.WebControls
 {
-	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class TemplatePagerField : DataPagerField
+	internal sealed class EventRecorder : List <string>
 	{
-		public TemplatePagerField ()
-		{
-		}
+		List <string> list;
 
-		public override void CreateDataPagers (DataPagerFieldItem container, int startRowIndex, int maximumRows,
-						       int totalRowCount, int fieldIndex)
+		public EventRecorder ()
 		{
+			list = (List <string>)this;
 		}
-
-		protected override DataPagerField CreateField ()
+		
+		public void Record (string suffix)
 		{
-			throw new NotImplementedException ();
-		}
-
-		public override void HandleEvent (CommandEventArgs e)
-		{
+			var sf = new StackFrame (2);
+			MethodBase mb = sf.GetMethod ();
+			list.Add (mb.Name + ":" + suffix);
+			sf = null;
+			mb = null;
 		}
 	}
 }

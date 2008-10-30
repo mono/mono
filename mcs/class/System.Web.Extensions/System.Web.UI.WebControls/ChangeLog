@@ -1,3 +1,47 @@
+2008-10-30  Marek Habersack  <mhabersack@novell.com>
+
+	* DataPagerFieldCollection.cs: implemented most of the methods and
+	properties, so that using the DataPager is possible now.
+
+	* PagePropertiesChangingEventArgs.cs: implemented all the methods
+	and properties.
+
+	* ListView.cs: {Save,Load}ControlState now uses constants to index
+	state arrays. Total row count is stored in the control state.
+	CreateChildControls () now uses dummy data to initialize child
+	controls if no items were found after postback.
+	CreateChildControls (IEnumerable, bool) now properly calculates
+	total row count, calls OnTotalRowCountAvailable after creating the
+	child controls and returns the total row count instead of the
+	number of created child controls. This makes pager work
+	correctly.
+	Implemented SetPageProperties () to support paging.
+
+	* NextPreviousPagerField.cs: Correctly order the Next/Previous
+	buttons.
+	When creating buttons, cast the new control properly before
+	assigning properties.
+
+	* TemplatePagerField.cs: added (stub)
+
+	* DataPager.cs: added missing class attributes (ParseChildren,
+	PersistChildren and SupportsEventValidation).
+	{Save,Load}ControlState now use constants to index the state
+	arrays.
+	Properly implemented FindPageableItemContainer - it now looks for
+	the container up the parenthood chain, querying all the naming
+	containers for the named control.
+	SetUpForNewContainer now accepts an additional parameter, so that
+	the SetPageProperties method is called on the container whenever
+	necessary.
+
+	* NumericPagerField.cs: implemented the CreateField method.
+
+	* ListViewPagedDataSource.cs: implemented data source
+	enumerators.
+
+	* DataPagerFieldItem.cs: implemented all the methods and properties.
+
 2008-10-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LinqDataSource.cs : set ContextTypeName too when ContextType is set.

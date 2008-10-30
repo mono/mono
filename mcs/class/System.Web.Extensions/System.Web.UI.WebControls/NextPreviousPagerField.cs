@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls
 
 			bool queryMode = !String.IsNullOrEmpty (DataPager.QueryStringField);
 			bool setPagePropertiesNeeded = false;
-			
+
 			if (queryMode && !QueryStringHandled) {
 				QueryStringHandled = true;
 
@@ -110,7 +110,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 			
-			bool enablePrevFirst = _startRowIndex > _maximumRows;
+			bool enablePrevFirst = _startRowIndex >= _maximumRows;
 			bool enableNextLast = (_startRowIndex + _maximumRows) < _totalRowCount;
 			bool addNonBreakingSpace = RenderNonBreakingSpacesBetweenControls;
 
@@ -119,6 +119,13 @@ namespace System.Web.UI.WebControls
 					      queryMode, enablePrevFirst, addNonBreakingSpace);
 			
 			int newPageNum = -1;
+			if (ShowPreviousPageButton) {
+				if (queryMode)
+					newPageNum = (_startRowIndex / _maximumRows) - 1;
+				
+				CreateButton (container, DataControlCommands.PreviousPageCommandArgument, PreviousPageText, PreviousPageImageUrl, newPageNum,
+					      queryMode, enablePrevFirst, addNonBreakingSpace);
+			}
 			
 			if (ShowNextPageButton) {
 				if (queryMode)
@@ -137,14 +144,6 @@ namespace System.Web.UI.WebControls
 				
 				CreateButton (container, DataControlCommands.LastPageCommandArgument, LastPageText, LastPageImageUrl, newPageNum,
 					      queryMode, enableNextLast, addNonBreakingSpace);
-			}
-			
-			if (ShowPreviousPageButton) {
-				if (queryMode)
-					newPageNum = (_startRowIndex / _maximumRows) - 1;
-				
-				CreateButton (container, DataControlCommands.PreviousPageCommandArgument, PreviousPageText, PreviousPageImageUrl, newPageNum,
-					      queryMode, enablePrevFirst, addNonBreakingSpace);
 			}
 			
 			if (setPagePropertiesNeeded)
@@ -174,24 +173,29 @@ namespace System.Web.UI.WebControls
 				} else {
 					switch (ButtonType) {
 						case ButtonType.Button:
-							ctl = new Button ();
+							Button btn = new Button ();
+							btn.CommandName = commandName;
+							btn.Text = text;
 							break;
 
 						case ButtonType.Link:
-							ctl = new LinkButton ();
+							LinkButton lbtn = new LinkButton ();
+							lbtn.CommandName = commandName;
+							lbtn.Text = text;
+							ctl = lbtn;
 							break;
 
 						case ButtonType.Image:
-							ImageButton btn = new ImageButton ();
-							btn.ImageUrl = imageUrl;
-							btn.AlternateText = text;
-							ctl = btn;
+							ImageButton ibtn = new ImageButton ();
+							ibtn.CommandName = commandName;
+							ibtn.ImageUrl = imageUrl;
+							ibtn.AlternateText = text;
+							ctl = ibtn;
 							break;
 					}
 
 					if (ctl != null) {
 						ctl.Enabled = enabled;
-						((Button)ctl).CommandName = commandName;
 						ctl.CssClass = ButtonCssClass;
 					}
 				}
@@ -290,9 +294,9 @@ namespace System.Web.UI.WebControls
 			int newStartIndex = -1;
 			int pageSize = DataPager.PageSize;
 			
-			if (String.Compare (commandName, DataControlCommands.FirstPageCommandArgument, StringComparison.OrdinalIgnoreCase) == 0) {
+			if (String.Compare (commandName, DataControlCommands.FirstPageCommandArgument, StringComparison.OrdinalIgnoreCase) == 0)
 				newStartIndex = 0;
-			} else if (String.Compare (commandName, DataControlCommands.LastPageCommandArgument, StringComparison.OrdinalIgnoreCase) == 0) {
+			else if (String.Compare (commandName, DataControlCommands.LastPageCommandArgument, StringComparison.OrdinalIgnoreCase) == 0) {
 				int lastPageMod = _totalRowCount % pageSize;
 				if (lastPageMod == 0)
 					newStartIndex = _totalRowCount - pageSize;

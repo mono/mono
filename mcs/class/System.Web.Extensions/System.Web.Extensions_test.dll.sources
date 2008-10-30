@@ -3,3 +3,6 @@ System.Web.UI/ScriptBehaviorDescriptorTest.cs
 System.Web.UI/ScriptComponentDescriptorTest.cs
 System.Web.UI/ScriptControlDescriptorTest.cs
 System.Web.UI/UpdateProgressTest.cs
+System.Web.UI.WebControls/EventRecorder.cs
+System.Web.UI.WebControls/ListViewTest.cs
+System.Web.UI.WebControls/DataPagerFieldCollectionTest.cs

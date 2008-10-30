@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -43,13 +43,21 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class DataPagerField : IStateManager
 	{
+		static readonly object FieldChangedEvent = new object ();
+		
+		EventHandlerList events;
 		StateBag _state = new StateBag ();
 		DataPager _dataPager;
 
 		bool _queryStringHandled;
 		bool _isTrackingViewState;
 		string _queryStringNavigateUrl;
-		
+
+		internal event EventHandler FieldChanged {
+			add { AddEventHandler (FieldChangedEvent, value); }
+			remove { RemoveEventHandler (FieldChangedEvent, value); }
+		}
+				
 		protected DataPagerField ()
 		{
 		}
@@ -111,8 +119,7 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual void OnFieldChanged ()
 		{
-			if (FieldChanged != null)
-				FieldChanged (this, EventArgs.Empty);
+			InvokeEvent (FieldChangedEvent, EventArgs.Empty);
 		}
 
 		protected virtual object SaveViewState ()
@@ -190,7 +197,35 @@ namespace System.Web.UI.WebControls
 			LoadViewState (state);
 		}
 
-		internal event EventHandler FieldChanged;
+		internal void SetDataPager (DataPager pager)
+		{
+			_dataPager = pager;
+		}
+
+		void AddEventHandler (object key, EventHandler handler)
+		{
+			if (events == null)
+				events = new EventHandlerList ();
+			events.AddHandler (key, handler);
+		}
+
+		void RemoveEventHandler (object key, EventHandler handler)
+		{
+			if (events == null)
+				return;
+			events.RemoveHandler (key, handler);
+		}
+
+		void InvokeEvent (object key, EventArgs args)
+		{
+			if (events == null)
+				return;
+
+			EventHandler eh = events [key] as EventHandler;
+			if (eh == null)
+				return;
+			eh (this, args);
+		}
 	}
 }
 #endif
