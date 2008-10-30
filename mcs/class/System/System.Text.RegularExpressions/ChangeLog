@@ -1,5 +1,7 @@
 2008-10-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* CILCompiler.cs: Implement SubExpression opcode.
+	
 	* CILCompiler.cs: Save and restore strpos in the Test opcode. Fixes
 	#439947.
 
