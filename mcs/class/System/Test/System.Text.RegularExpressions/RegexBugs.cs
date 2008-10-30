@@ -393,6 +393,17 @@ namespace MonoTests.System.Text.RegularExpressions
 		}
 
 		[Test]
+		public void Bug439947 ()
+		{
+			Regex r;
+			r = new Regex ("(?<=^|/)[^/]*\\.cs$", RegexOptions.None);
+			Assert.IsTrue (r.IsMatch ("z/text2.cs"));
+
+			r = new Regex ("(?<=^|/)[^/]*\\.cs$", RegexOptions.Compiled);
+			Assert.IsTrue (r.IsMatch ("z/text2.cs"));
+		}
+
+		[Test]
 		public void CharClassWithIgnoreCase ()
 		{
 			string str = "Foobar qux";
