@@ -1,5 +1,11 @@
 2008-10-30  Mark Probst  <mark.probst@gmail.com>
 
+	* monitor.c (mono_monitor_get_fast_enter_method): If
+	CompareExchange is not available, don't create the fastpath
+	instead of asserting.  (The method is missing in the 1.1 profile.)
+
+2008-10-30  Mark Probst  <mark.probst@gmail.com>
+
 	* marshal.c, marshal.h: Rename signature_no_pinvoke() and make it non-static.
 
 	* monitor.c, monitor.h: Code for generating Monitor.Enter and
