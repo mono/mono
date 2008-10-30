@@ -533,7 +533,7 @@ namespace MonoTests.System.Net
 		{
 			StringWriter sw = new StringWriter ();
 			sw.NewLine = "\r\n";
-			sw.WriteLine ("HTTP/1.1 200 OK");
+			sw.WriteLine ("HTTP/1.0 200 OK");
 			sw.WriteLine ("Server: Mono/Test");
 			sw.WriteLine ("Last-Modified: Wed, 08 Jan 2003 23:11:55 GMT");
 			sw.WriteLine ("Content-Encoding: " + Encoding.UTF8.WebName);

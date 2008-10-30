@@ -1,3 +1,11 @@
+
+2008-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebResponseTest.cs:
+	* SocketResponder.cs:
+	* HttpWebRequestTest.cs: don't pretend to be a 1.1 server or the
+	socket will stay open. Timeout for Ntlm test is 5s now.
+
 2008-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpWebRequestTest.cs: Fixed test for bug #429200.

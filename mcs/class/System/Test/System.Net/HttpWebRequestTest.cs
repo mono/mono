@@ -307,6 +307,7 @@ namespace MonoTests.System.Net
 #if TARGET_JVM
 		[Category("NotWorking")]
 #endif
+		[Ignore ("This does not timeout any more. That's how MS works when reading small responses")]
 		public void ReadTimeout ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
@@ -659,19 +660,19 @@ namespace MonoTests.System.Net
 
 			StringWriter sw = new StringWriter ();
 			if (statusLine.StartsWith ("POST /original/")) {
-				sw.WriteLine ("HTTP/1.1 302 Found");
+				sw.WriteLine ("HTTP/1.0 302 Found");
 				sw.WriteLine ("Location: " + "http://" + IPAddress.Loopback.ToString () + ":8764/moved/");
 				sw.WriteLine ();
 				sw.Flush ();
 			} else if (statusLine.StartsWith ("GET /moved/")) {
-				sw.WriteLine ("HTTP/1.1 200 OK");
+				sw.WriteLine ("HTTP/1.0 200 OK");
 				sw.WriteLine ("Content-Type: text/plain");
 				sw.WriteLine ("Content-Length: 8");
 				sw.WriteLine ();
 				sw.Write ("LOOKS OK");
 				sw.Flush ();
 			} else {
-				sw.WriteLine ("HTTP/1.1 500 Too Lazy");
+				sw.WriteLine ("HTTP/1.0 500 Too Lazy");
 				sw.WriteLine ();
 				sw.Flush ();
 			}
@@ -708,6 +709,7 @@ namespace MonoTests.System.Net
 
 			string url = String.Format ("http://{0}:{1}/nothing.html", server.IPAddress, server.Port);
 			HttpWebRequest request = (HttpWebRequest) WebRequest.Create (url);
+			request.Timeout = 5000;
 			request.Credentials = new NetworkCredential ("user", "password", "domain");
 			HttpWebResponse resp = (HttpWebResponse) request.GetResponse ();
 			string res = null;
@@ -720,38 +722,46 @@ namespace MonoTests.System.Net
 		}
 
 		class NtlmServer : HttpServer {
+			public string Where = "";
 			protected override void Run ()
 			{
+				Where = "before accept";
 				Socket client = sock.Accept ();
 				NetworkStream ns = new NetworkStream (client, false);
 				StreamReader reader = new StreamReader (ns, Encoding.ASCII);
 				string line;
+				Where = "first read";
 				while ((line = reader.ReadLine ()) != null) {
 					if (line.Trim () == String.Empty) {
 						break;
 					}
 				}
+				Where = "first write";
 				StreamWriter writer = new StreamWriter (ns, Encoding.ASCII);
 				writer.Write (  "HTTP/1.1 401 Unauthorized\r\n" +
 						"WWW-Authenticate: NTLM\r\n" +
 						"Content-Length: 5\r\n\r\nWRONG");
 
 				writer.Flush ();
+				Where = "second read";
 				while ((line = reader.ReadLine ()) != null) {
 					if (line.Trim () == String.Empty) {
 						break;
 					}
 				}
+				Where = "second write";
 				writer.Write (  "HTTP/1.1 401 Unauthorized\r\n" +
 						"WWW-Authenticate: NTLM TlRMTVNTUAACAAAAAAAAADgAAAABggAC8GDhqIONH3sAAAAAAAAAAAAAAAA4AAAABQLODgAAAA8=\r\n" +
 						"Content-Length: 5\r\n\r\nWRONG");
 				writer.Flush ();
 
+				Where = "third read";
 				while ((line = reader.ReadLine ()) != null) {
 					if (line.Trim () == String.Empty) {
 						break;
 					}
 				}
+				Where = "third write";
 				writer.Write (  "HTTP/1.1 200 OK\r\n" +
 						"Keep-Alive: true\r\n" +
 						"Content-Length: 2\r\n\r\nOK");

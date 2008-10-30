@@ -108,6 +108,9 @@ namespace MonoTests.System.Net
 				try {
 					Socket socket = tcpListener.AcceptSocket ();
 					socket.Send (_requestHandler (socket));
+					socket.Shutdown (SocketShutdown.Send);
+					Thread.Sleep (500);
+					socket.Close ();
 				} catch (SocketException ex) {
 					// ignore interruption of blocking call
 					if (ex.ErrorCode != SOCKET_CLOSED)
