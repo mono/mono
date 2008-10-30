@@ -1,3 +1,11 @@
+2008-10-30  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (mini_emit_inst_for_method): Use the IL fastpaths
+	for Monitor.Enter and Monitor.Exit if enabled.
+
+	* mini-x86.h, mini-amd64.h: Enable the IL fastpaths for Linux and
+	Solaris.
+
 2008-10-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (type_from_op): Convert CEE_CONV_U on OP_ICONV_TO_U instead
