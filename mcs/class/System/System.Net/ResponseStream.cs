@@ -79,8 +79,8 @@ namespace System.Net {
 			if (disposed == false) {
 				disposed = true;
 				byte [] bytes = null;
-				bool chunked = response.SendChunked;
 				MemoryStream ms = GetHeaders (true);
+				bool chunked = response.SendChunked;
 				if (ms != null) {
 					long start = ms.Position;
 					if (chunked && !trailer_sent) {
@@ -135,9 +135,9 @@ namespace System.Net {
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			bool chunked = response.SendChunked;
 			byte [] bytes = null;
 			MemoryStream ms = GetHeaders (false);
+			bool chunked = response.SendChunked;
 			if (ms != null) {
 				long start = ms.Position; // After the possible preamble for the encoding
 				ms.Position = ms.Length;
@@ -170,9 +170,9 @@ namespace System.Net {
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			bool chunked = response.SendChunked;
 			byte [] bytes = null;
 			MemoryStream ms = GetHeaders (false);
+			bool chunked = response.SendChunked;
 			if (ms != null) {
 				long start = ms.Position;
 				ms.Position = ms.Length;

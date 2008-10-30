@@ -479,7 +479,6 @@ namespace System.Net {
 			string headers_str = headers.ToString ();
 			writer.Write (headers_str);
 			writer.Flush ();
-			// Perf.: use TCP_CORK if we're writing more?
 			int preamble = encoding.GetPreamble ().Length;
 			if (output_stream == null)
 				output_stream = context.Connection.GetResponseStream ();

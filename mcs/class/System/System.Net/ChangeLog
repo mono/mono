@@ -1,4 +1,10 @@
 
+2008-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpListenerResponse.cs: removed obsolete comment.
+	* ResponseStream.cs: don't read response.SendChunked until after
+	getting the response headers.
+
 2008-10-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ServicePointManager.cs: set the default limit of connections from
