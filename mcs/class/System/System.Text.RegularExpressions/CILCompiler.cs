@@ -1061,6 +1061,11 @@ namespace System.Text.RegularExpressions {
 					if (trace_compile)
 						Console.WriteLine ("\temitting <test_expr>");
 
+					//  old_stros = strpos;
+					LocalBuilder local_old_strpos = ilgen.DeclareLocal (typeof (int));
+					ilgen.Emit (OpCodes.Ldarg_1);
+					ilgen.Emit (OpCodes.Stloc, local_old_strpos);
+
 					Frame new_frame = new Frame (ilgen);
 					m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc + 5, target1 < target2 ? target1 : target2, false, false, out pc);
 					if (m == null)
@@ -1077,10 +1082,16 @@ namespace System.Text.RegularExpressions {
 
 					// Pass
 					ilgen.MarkLabel (new_frame.label_pass);
+					//  strpos = old_strpos;
+					ilgen.Emit (OpCodes.Ldloc, local_old_strpos);
+					ilgen.Emit (OpCodes.Starg, 1);
 					ilgen.Emit (OpCodes.Br, l1);
 						
 					// Fail
 					ilgen.MarkLabel (new_frame.label_fail);
+					//  strpos = old_strpos;
+					ilgen.Emit (OpCodes.Ldloc, local_old_strpos);
+					ilgen.Emit (OpCodes.Starg, 1);
 					ilgen.Emit (OpCodes.Br, l2);
 
 					// Continue at pc, which should equal to target1
