@@ -1,5 +1,9 @@
 2008-10-31  Stephane Delcroix  <sdelcroix@novell.com>
 
+	* TimezoneInfo.cs: add indices for substrings.
+
+2008-10-31  Stephane Delcroix  <sdelcroix@novell.com>
+
 	* TimezoneInfo.cs: double the buffer size, as some tz files grew up
 	recently and failed to load.
 
