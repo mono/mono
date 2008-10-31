@@ -2450,6 +2450,15 @@ namespace System.Windows.Forms {
 #endif
 				shown_raised = true;
 			}
+			
+			if (value && !IsMdiChild) {
+				if (ActiveControl == null)
+					SelectNextControl (null, true, true, true, false);
+				if (ActiveControl != null)
+					SendControlFocus (ActiveControl);
+				else
+					this.Focus ();
+			}
 		}
 
 		protected override void UpdateDefaultButton() {

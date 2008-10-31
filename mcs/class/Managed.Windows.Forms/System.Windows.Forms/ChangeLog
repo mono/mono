@@ -1,5 +1,12 @@
 2008-10-31  Andreia Gaita  <shana@jitted.com>
 
+	* Form.cs (SetVisibleCore): since set_ActiveControl no longer calls focus
+	  if the container is not focused already, we need to specifically set
+	  focus to the first available control, or to the form itself if there
+	  are no controls.
+
+2008-10-31  Andreia Gaita  <shana@jitted.com>
+
 	activate message fix: a call to .Show now waits until both WM_SHOWWINDOW and
 	WM_ACTIVATE have been processed before returning, so it is guaranteed that
 	once it returns and the form is visible, it is actually on the screen on X11
