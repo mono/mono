@@ -108,6 +108,13 @@ namespace System.Configuration {
 		{
 #if (CONFIGURATION_DEP)
 			Context.CurrentSettings = this;
+			CancelEventArgs args = new CancelEventArgs ();
+			OnSettingsSaving (this, args);
+			if (args.Cancel) {
+				Context.CurrentSettings = null;
+				return;
+			}
+
 			/* ew.. this needs to be more efficient */
 			foreach (SettingsProvider provider in Providers) {
 				SettingsPropertyValueCollection cache = new SettingsPropertyValueCollection ();
@@ -152,8 +159,11 @@ namespace System.Configuration {
 		protected virtual void OnSettingsSaving (object sender, 
 							 CancelEventArgs e)
 		{
-			if (SettingsSaving != null)
-				SettingsSaving (sender, e);
+			SettingsSavingEventHandler evt = SettingsSaving;
+			if (evt != null) {
+				// Should we invoke each individual delegate and stop when one wants to cancel?
+				evt (sender, e);
+			}
 		}
 
 		[Browsable (false)]
