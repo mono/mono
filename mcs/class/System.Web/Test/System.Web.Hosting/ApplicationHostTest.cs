@@ -159,7 +159,9 @@ namespace MonoTests.System.Web.Hosting {
 			// Assert.AreEqual (tb + "/", setup.ApplicationBase, "D1");
 			
 			p ("AppDomain's Applicationname is: ", setup.ApplicationName);
-			Assert.AreEqual (null, setup.CachePath, "D2");
+			// IGNORE this test. We are setting CachePath to DynamicBase by now.
+			// Assert.AreEqual (null, setup.CachePath, "D2");
+
 			Assert.AreEqual (tb + Path.DirectorySeparatorChar + "web.config", setup.ConfigurationFile, "D3");
 			Assert.AreEqual (false, setup.DisallowBindingRedirects, "D4");
 			Assert.AreEqual (true, setup.DisallowCodeDownload, "D5");
