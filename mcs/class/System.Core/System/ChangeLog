@@ -1,5 +1,10 @@
 2008-10-31  Stephane Delcroix  <sdelcroix@novell.com>
 
+	* TimezoneInfo.cs: Drop overlapping rules, fix the 3 dst changes in 
+	Tunis in 1943
+
+2008-10-31  Stephane Delcroix  <sdelcroix@novell.com>
+
 	* TimezoneInfo.cs: fix for Argentina
 
 2008-10-31  Stephane Delcroix  <sdelcroix@novell.com>
