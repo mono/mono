@@ -1206,7 +1206,7 @@ namespace System.Web {
 					virtualPath = "~";
 			}
 
-			if (virtualPath.IndexOf (':') != -1)
+			if (!VirtualPathUtility.IsValidVirtualPath (virtualPath))
 				throw new HttpException (String.Format ("'{0}' is not a valid virtual path.", virtualPath));
 
 			string appVirtualPath = HttpRuntime.AppDomainAppVirtualPath;

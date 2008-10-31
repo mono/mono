@@ -424,7 +424,7 @@ namespace System.Web {
 			return str.ToString ();
 		}
 
-		static string Canonize (string path)
+		internal static string Canonize (string path)
 		{
 			int index = -1;
 			for (int i=0; i < path.Length; i++) {
@@ -454,5 +454,14 @@ namespace System.Web {
 			return sb.ToString ();
 		}
 
+		// See: http://support.microsoft.com/kb/932552
+		static readonly char[] invalidVirtualPathChars = {':', '*'};
+		internal static bool IsValidVirtualPath (string path)
+		{
+			if (path == null)
+				return false;
+			
+			return path.IndexOfAny (invalidVirtualPathChars) == -1;
+		}
 	}
 }

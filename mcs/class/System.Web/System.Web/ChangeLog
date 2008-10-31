@@ -1,3 +1,16 @@
+2008-10-31  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: RewritePath correctly rewrites paths for cases
+	when application is running under a virtual directory different to
+	'/'. Fixes bug #371581
+	RewritePath checks the passed virtual path for validity.
+
+	* HttpRequest.cs: MapPath now uses
+	VirtualPathUtility.IsValidVirtualPath.
+
+	* VirtualPathUtility.cs: made Canonize () internal.
+	Added a new method - IsValidVirtualPath () which checks whether a
+	passed path contains only characters allowed for virtual paths.
 
 2008-10-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
