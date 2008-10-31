@@ -1,0 +1,28 @@
+2008-10-30  Jonathan Pryor  <jpryor@novell.com>
+
+	* . (svn:ignore), deploy (svn:ignore): Ignore generated files.
+	* AgilityPack.dll, api-style.css, ChangeLog, check, check-coverage, 
+	  convert.cs, current-api, deploy, documented, exdoc, ignore, 
+	  mono-api-metadata.html, monoapi.source, produce-lists, public, 
+	  public-api, README, sources, toc.xml, TODO, wapi: Copy from
+	  ../mono/docscripts.
+	* exdoc: Use the in-tree mono program to run convert.exe.
+	* Makefile.am: Mention files to clean/distribute; extract
+	  documentation (with exdoc) and then assemble documentation (with
+	  monoapi.make's assemble target) for use by monodoc.
+	* monoapi.make: Added; Makefile to use mcs' buid/rules.make to compile
+	  convert.cs and assemble documentation.  (This is a separate file so
+	  that we can include mcs' build/rules.make, which needs topdir set to
+	  behave properly BUT must be $(mcs_topdir) from Makefile.am's
+	  perspective.)
+	* monoapi.source: Add a /monodoc/node element for use with monodoc 2.2.
+
+2006-11-19  Miguel de Icaza  <miguel@novell.com>
+
+	* exdoc: Move to use CSS instead of tables, this will break
+	GtkHTML rendering.
+
+	* ignore: Updated with more hidden APIs.
+
+	* Bunch of documentation work.
+

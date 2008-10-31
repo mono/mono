@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<monodoc>
+  <node label="Mono Embedding" name="embed" parent="libraries"/>
+  <source provider="xhtml" basefile="monoapi" path="embed"/>
+</monodoc>
