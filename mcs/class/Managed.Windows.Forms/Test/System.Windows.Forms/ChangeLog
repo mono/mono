@@ -1,5 +1,9 @@
 2008-10-31  Andreia Gaita  <shana@jitted.com>
 
+	* TestHelper.cs: Remove extraneous debug message
+	
+2008-10-31  Andreia Gaita  <shana@jitted.com>
+
 	* TestHelper.cs: Add virtual setup and teardown methods. Any forms left
 	  hanging around after a test will be disposed here so that they don't
 	  clutter up the screen while the tests are running.

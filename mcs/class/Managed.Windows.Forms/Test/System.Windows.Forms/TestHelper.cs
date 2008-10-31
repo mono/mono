@@ -67,7 +67,7 @@ namespace MonoTests.System.Windows.Forms
 				this.watches = watches;
 			}
 			protected override void WndProc (ref Message m)
-			{
+			{				
 				foreach (int i in watches) {
 					if ((int)m.Msg == i) {
 						Console.WriteLine ((this.Name != "" && this.Name != null ? this.Name : "ControlWatcher") + " received message " + m.ToString ());
@@ -87,9 +87,9 @@ namespace MonoTests.System.Windows.Forms
 					Console.WriteLine ("Listening to " + Enum.GetName (typeof(Msg), i));
 				}
 			}
+			
 			protected override void WndProc (ref Message m)
 			{
-				Console.WriteLine ("Received " + m.ToString ());
 				foreach (int i in watches) {
 					if ((int)m.Msg == i) {
 						Console.WriteLine ((this.Name != "" && this.Name != null ? this.Name : "ButtonWatcher") + " received message " + m.ToString ());
