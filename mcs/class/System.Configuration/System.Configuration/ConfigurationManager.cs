@@ -32,7 +32,6 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Collections.Specialized;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Xml;
 using System.IO;
 using System.Text;
@@ -41,7 +40,6 @@ using System.Configuration.Internal;
 namespace System.Configuration {
 
 	/*roaming user config path: C:\Documents and Settings\toshok\Application Data\domain-System.Configurati_Url_py3nlovv3wxe21qgacxc3n2b1mph2log\1.0.0.0\user.config */
-	/* local user: c:\Documents and Settings\Gonzalo\Local Settings\Application Data\appname_Url_weird_stuff\1.0.0.0\user.config */
 
 	public static class ConfigurationManager
 	{
@@ -50,6 +48,7 @@ namespace System.Configuration {
 		static IInternalConfigSystem configSystem = new ClientConfigurationSystem ();
 		static object lockobj = new object ();
 		
+		[MonoTODO ("Evidence and version still needs work")]
 		static string GetAssemblyInfo (Assembly a)
 		{
 			object[] attrs;
@@ -67,7 +66,7 @@ namespace System.Configuration {
 
 			sb = new StringBuilder();
 
-			sb.Append (GetEvidenceHash (a));
+			sb.Append ("evidencehere");
 
 			evidence_str = sb.ToString();
 
@@ -78,32 +77,8 @@ namespace System.Configuration {
 				version = "1.0.0.0" /* XXX */;
 
 
-			string company = GetCompanyName (a);
-			string result = Path.Combine (company, String.Format ("{0}_{1}", app_name, evidence_str));
-			return Path.Combine (result, version);
+			return Path.Combine (String.Format ("{0}_{1}", app_name, evidence_str), version);
 		}
-
-		static string GetCompanyName (Assembly assembly)
-		{
-			AssemblyCompanyAttribute [] attrs = (AssemblyCompanyAttribute []) assembly.GetCustomAttributes (typeof (AssemblyCompanyAttribute), true);
-
-			if (attrs != null && attrs.Length > 0)
-				return attrs [0].Company;
-
-			return assembly.GetName ().Name;
-		}
-
-		// copied from System.Configuration/CustomizableSettingsProvider
-		static string GetEvidenceHash (Assembly assembly)
-		{
-			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
-			byte [] hash = SHA1.Create ().ComputeHash (pkt != null ? pkt : Encoding.UTF8.GetBytes (assembly.EscapedCodeBase))    ;
-			StringBuilder sb = new StringBuilder ();
-			foreach (byte b in hash)
-				sb.AppendFormat ("{0:x2}", b);
-			return sb.ToString ();
-		}
-
 
 		internal static Configuration OpenExeConfigurationInternal (ConfigurationUserLevel userLevel, Assembly calling_assembly, string exePath)
 		{
@@ -116,26 +91,34 @@ namespace System.Configuration {
 			  PerUserRoamingAndLocal = \Documents and Settings\<username>\Local Settings\Application Data\...
 			*/
 
-			if (exePath == null || exePath.Length == 0) {
-				if (!systemWebInUse && calling_assembly != null)
-					exePath = calling_assembly.Location;
-				else
-					exePath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-				map.ExeConfigFilename = exePath.EndsWith (".config") ? exePath : exePath + ".config";
-			} else {
-				if (!Path.IsPathRooted (exePath))
-					exePath = Path.GetFullPath (exePath);
-				if (!File.Exists (exePath)) {
-					Exception cause = new ArgumentException ("The specified path does not exist.", "exePath");
-					throw new ConfigurationErrorsException ("Error Initializing the configuration system:", cause);
+			switch (userLevel) {
+			case ConfigurationUserLevel.None:
+				if (exePath == null || exePath.Length == 0) {
+					if (!systemWebInUse && calling_assembly != null)
+					        exePath = calling_assembly.Location;
+					else
+						exePath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+					map.ExeConfigFilename = exePath.EndsWith (".config") ? exePath : exePath + ".config";
+				} else {
+					if (!Path.IsPathRooted (exePath))
+						exePath = Path.GetFullPath (exePath);
+					if (!File.Exists (exePath)) {
+						Exception cause = new ArgumentException ("The specified path does not exist.", "exePath");
+						throw new ConfigurationErrorsException ("Error Initializing the configuration system:", cause);
+					}
+					map.ExeConfigFilename = exePath + ".config";
 				}
-				map.ExeConfigFilename = exePath + ".config";
-			}
-			map.RoamingUserConfigFilename = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), GetAssemblyInfo(calling_assembly));
-			map.RoamingUserConfigFilename = Path.Combine (map.RoamingUserConfigFilename, "user.config");
+				break;
+			case ConfigurationUserLevel.PerUserRoaming:
+				map.RoamingUserConfigFilename = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), GetAssemblyInfo(calling_assembly));
+				map.RoamingUserConfigFilename = Path.Combine (map.RoamingUserConfigFilename, "user.config");
+				goto case ConfigurationUserLevel.PerUserRoamingAndLocal;
 
-			map.LocalUserConfigFilename = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), GetAssemblyInfo(calling_assembly));
-			map.LocalUserConfigFilename = Path.Combine (map.LocalUserConfigFilename, "user.config");
+			case ConfigurationUserLevel.PerUserRoamingAndLocal:
+				map.LocalUserConfigFilename = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), GetAssemblyInfo(calling_assembly));
+				map.LocalUserConfigFilename = Path.Combine (map.LocalUserConfigFilename, "user.config");
+				break;
+			}
 
 			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), map, userLevel);
 		}

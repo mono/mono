@@ -1,11 +1,4 @@
 
-2008-10-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* ClientConfigurationSystem.cs:
-	* ConfigurationManager.cs:
-	Generate the same file name for the local settings file and properly
-	save the configuration to it. Not loading it yet.
-
 2008-07-09  Marek Habersack  <mhabersack@novell.com>
 
 	* ConfigurationManager.cs: implemented a work-around for

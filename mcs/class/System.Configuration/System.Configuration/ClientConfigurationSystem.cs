@@ -49,7 +49,7 @@ namespace System.Configuration
 
 					try {
 						cfg = ConfigurationManager.OpenExeConfigurationInternal (
-							ConfigurationUserLevel.PerUserRoamingAndLocal, a, null);
+							ConfigurationUserLevel.None, a, null);
 					} catch (Exception ex) {
 						throw new ConfigurationErrorsException ("Error Initializing the configuration system.", ex);
 					}
