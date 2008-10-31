@@ -286,7 +286,7 @@ namespace System
 		}
 
 #if LIBC
-		const int BUFFER_SIZE = 8192; //Big enough for any tz file
+		const int BUFFER_SIZE = 16384; //Big enough for any tz file (on Oct 2008, all tz files are under 10k)
 		private static TimeZoneInfo FindSystemTimeZoneByFileName (string id, string filepath)
 		{
 			if (!File.Exists (filepath))
@@ -299,7 +299,7 @@ namespace System
 			}
 
 			if (!ValidTZFile (buffer, length))
-				throw new InvalidTimeZoneException ();
+				throw new InvalidTimeZoneException ("TZ file too big for the buffer");
 
 			try {
 				return ParseTZBuffer (id, buffer, length);
