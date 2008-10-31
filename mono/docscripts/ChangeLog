@@ -1,9 +1,0 @@
-2006-11-19  Miguel de Icaza  <miguel@novell.com>
-
-	* exdoc: Move to use CSS instead of tables, this will break
-	GtkHTML rendering.
-
-	* ignore: Updated with more hidden APIs.
-
-	* Bunch of documentation work.
-
