@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms.Design
 {
 	[TestFixture]
-	public class ControlBindingsConverterTest
+	public class ControlBindingsConverterTest : TestHelper
 	{
 
 		[Test]

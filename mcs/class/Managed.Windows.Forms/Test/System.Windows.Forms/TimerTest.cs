@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TimerTest
+	public class TimerTest : TestHelper
 	{
 		bool Ticked;
 		

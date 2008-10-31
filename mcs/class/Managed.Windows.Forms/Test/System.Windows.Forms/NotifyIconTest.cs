@@ -7,7 +7,7 @@ using System.ComponentModel;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class NotifyIconTest
+	public class NotifyIconTest : TestHelper
 	{
 #if NET_2_0
 		[Test]

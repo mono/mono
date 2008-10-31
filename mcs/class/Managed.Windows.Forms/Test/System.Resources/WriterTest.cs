@@ -20,31 +20,22 @@ using NUnit.Framework;
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
-	public class WriterTest
+	public class WriterTest : MonoTests.System.Windows.Forms.TestHelper
 	{
 		string fileName;
 
 		[SetUp]
-		public void SetUp ()
+		protected override void SetUp ()
 		{
 			fileName = Path.GetTempFileName ();
+			base.SetUp ();
 		}
 
 		[TearDown]
-		public void TearDown ()
+		protected override void TearDown ()
 		{
 			File.Delete (fileName);
-			
-#if NET_2_0
-			// This is totally out of place here, but since this test seem to be the last one run, and since nunit doesn't
-			// offer any global TearDown method, it was the option I found.
-			int c = Application.OpenForms.Count;
-			if (c > 0) {
-				Console.WriteLine ("HEY!");
-				Console.WriteLine ("You created " + c.ToString () + " form(s) and you didn't dispose of them!");
-				Console.WriteLine ("Please modify your test to shut me up.");
-			}
-#endif
+			base.TearDown ();
 		}
 
 		[Test] // ctor (Stream)

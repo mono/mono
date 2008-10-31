@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
-	public class ResXFileRefTest
+	public class ResXFileRefTest : MonoTests.System.Windows.Forms.TestHelper
 	{
 		[Test]
 		public void Constructor1 ()
@@ -135,11 +135,10 @@ namespace MonoTests.System.Resources
 	}
 
 	[TestFixture]
-	public class ResXFileRefConverterTest
+	public class ResXFileRefConverterTest : MonoTests.System.Windows.Forms.TestHelper
 	{
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			_converter = new ResXFileRef.Converter ();
 			_tempDirectory = Path.Combine (Path.GetTempPath (), "ResXResourceReaderTest");
 			if (!Directory.Exists (_tempDirectory)) {
@@ -149,13 +148,15 @@ namespace MonoTests.System.Resources
 			using (StreamWriter sw = new StreamWriter (_tempFileUTF7, false, Encoding.UTF7)) {
 				sw.Write ("\u0021\u0026\u002A\u003B");
 			}
+			base.SetUp ();
 		}
 
 		[TearDown]
-		public void TearDown ()
+		protected override void TearDown ()
 		{
 			if (Directory.Exists (_tempDirectory))
 				Directory.Delete (_tempDirectory, true);
+			base.TearDown ();
 		}
 
 		[Test]

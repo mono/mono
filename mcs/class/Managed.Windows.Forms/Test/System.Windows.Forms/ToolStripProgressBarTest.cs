@@ -37,7 +37,7 @@ using System.ComponentModel;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ToolStripProgressBarTests
+	public class ToolStripProgressBarTests : TestHelper
 	{
 		[Test]
 		public void Constructor ()

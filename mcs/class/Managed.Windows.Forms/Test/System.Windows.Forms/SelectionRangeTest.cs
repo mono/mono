@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class SelectionRangeTest
+	public class SelectionRangeTest : TestHelper
 	{
 
 		[Test]

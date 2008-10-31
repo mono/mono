@@ -36,7 +36,7 @@ using System.Windows.Forms;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ToolStripOverflowTests
+	public class ToolStripOverflowTests : TestHelper
 	{
 		[Test]
 		[Category ("NotWorking")]

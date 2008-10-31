@@ -30,7 +30,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DragEventArgsTest
+	public class DragEventArgsTest : TestHelper
 	{
 		[Test]
 		public void EffectTest ()

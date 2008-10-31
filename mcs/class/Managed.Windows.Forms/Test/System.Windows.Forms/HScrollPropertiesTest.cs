@@ -35,7 +35,7 @@ using System.Windows.Forms;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class HScrollPropertiesTests
+	public class HScrollPropertiesTests : TestHelper
 	{
 		[Test]
 		public void Constructor ()

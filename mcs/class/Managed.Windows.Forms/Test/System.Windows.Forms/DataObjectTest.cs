@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataObjectTest
+	public class DataObjectTest : TestHelper
 	{
 		[Test]
 		public void TestConvertible ()

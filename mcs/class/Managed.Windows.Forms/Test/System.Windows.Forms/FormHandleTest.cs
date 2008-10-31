@@ -20,7 +20,7 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class FormHandleTest
+	public class FormHandleTest : TestHelper
 	{
 		[Test]
 		public void TestConstructors ()

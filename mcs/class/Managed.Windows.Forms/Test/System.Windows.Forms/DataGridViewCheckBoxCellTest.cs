@@ -40,7 +40,7 @@ using System.ComponentModel;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataGridViewCheckBoxCellTest
+	public class DataGridViewCheckBoxCellTest : TestHelper
 	{
 		[Test]
 		public void Defaults ()

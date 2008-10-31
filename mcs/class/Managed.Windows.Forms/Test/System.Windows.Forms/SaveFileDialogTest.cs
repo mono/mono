@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class SaveFileDialogTest
+	public class SaveFileDialogTest : TestHelper
 	{
 		[Test]
 		public void AddExtension ()

@@ -40,7 +40,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class DateTimePickerTest {
+	public class DateTimePickerTest : TestHelper {
 		
 		[DllImport ("kernel32.dll", CallingConvention=CallingConvention.StdCall, EntryPoint="GetUserDefaultLCID")]
 		private extern static int GetUserDefaultLCID ();

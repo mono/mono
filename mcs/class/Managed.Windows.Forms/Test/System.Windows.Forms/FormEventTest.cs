@@ -18,7 +18,7 @@ using System.Globalization;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class FormEvent
+	public class FormEvent : TestHelper
 	{	
 		static bool eventhandled = false;
 		public void New_EventHandler (object sender, EventArgs e)
@@ -29,10 +29,11 @@ namespace MonoTests.System.Windows.Forms
 		private Form _form;
 
 		[TearDown]
-		public void TearDown ()
+		protected override void TearDown ()
 		{
 			if (_form != null)
 				_form.Dispose ();
+			base.TearDown ();
 		}
 
 		[Test]

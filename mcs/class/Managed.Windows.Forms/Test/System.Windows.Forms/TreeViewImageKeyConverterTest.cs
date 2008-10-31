@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TreeViewImageKeyConverterTest
+	public class TreeViewImageKeyConverterTest : TestHelper
 	{
 		[Test]
 		public void ConvertTo ()

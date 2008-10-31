@@ -37,14 +37,14 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ListViewGroupTest
+	public class ListViewGroupTest : TestHelper
 	{
 		ListView lv = null;
 
 		[SetUp]
-		public void SetUp()
-		{
+		protected override void SetUp () {
 			lv = new ListView ();
+			base.SetUp ();
 		}
 
 		[Test]

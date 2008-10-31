@@ -27,7 +27,7 @@ namespace MonoTests.System.Windows.Forms
 
 
 	[TestFixture]
-	public class ApplicationContextTest
+	public class ApplicationContextTest : TestHelper
 	{
 		ApplicationContext ctx;
 		int thread_exit_count;

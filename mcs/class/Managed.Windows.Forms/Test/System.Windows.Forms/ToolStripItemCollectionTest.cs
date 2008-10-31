@@ -36,16 +36,16 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ToolStripItemCollectionTests
+	public class ToolStripItemCollectionTests : TestHelper
 	{
 		private List<ToolStripItem> itemsAdded;
 		private List<ToolStripItem> itemsRemoved;
 
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			itemsAdded = new List<ToolStripItem> ();
 			itemsRemoved = new List<ToolStripItem> ();
+			base.SetUp ();
 		}
 
 		[Test]

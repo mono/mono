@@ -17,7 +17,7 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TextBoxTest
+	public class TextBoxTest : TestHelper
 	{
 		TextBox textBox;
 		int _changed;
@@ -25,13 +25,13 @@ namespace MonoTests.System.Windows.Forms
 		int _paint;
 
 		[SetUp]
-		public void SetUp()
-		{
+		protected override void SetUp () {
 			textBox = new TextBox();
 			textBox.Invalidated += new InvalidateEventHandler (TextBox_Invalidated);
 			textBox.Paint += new PaintEventHandler (TextBox_Paint);
 			textBox.TextChanged += new EventHandler (TextBox_TextChanged);
 			Reset ();
+			base.SetUp ();
 		}
 
 		[Test]
@@ -872,7 +872,7 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 	[TestFixture]
-	public class TextBoxAutoCompleteSourceConverterTest
+	public class TextBoxAutoCompleteSourceConverterTest : TestHelper
 	{
 		[Test]
 		public void One()

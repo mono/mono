@@ -1,3 +1,11 @@
+2008-10-31  Andreia Gaita  <shana@jitted.com>
+
+	* CompatTest.cs, CultureTest.cs, ResXDataNodeTest.cs,
+	  ResXFileRefTest.cs, ResXResourceReaderTest.cs, WriterTest.cs:
+	  All tests now inherit from TestHelper so that the setup and
+	  teardown routines are always called (barring one or two that already
+	  inherit from swf classes that needs to be fixed)
+
 2008-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResXFileRefTest.cs: Fixed/added attributes on SetUp and TearDown

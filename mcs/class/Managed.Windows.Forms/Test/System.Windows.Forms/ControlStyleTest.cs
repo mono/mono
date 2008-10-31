@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms {
 	[TestFixture]
-	public class TestControlStyle {
+	public class TestControlStyle  : TestHelper {
 
 		static Array style_values = Enum.GetValues(typeof(ControlStyles));
 		static string[] style_names = Enum.GetNames(typeof(ControlStyles));

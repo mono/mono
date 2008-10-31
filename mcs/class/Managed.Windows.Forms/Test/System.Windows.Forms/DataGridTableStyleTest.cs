@@ -36,17 +36,9 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataGridTableStyleTest
+	public class DataGridTableStyleTest : TestHelper
 	{
 		private bool eventhandled;
-
-		[TearDown]
-		public void Clean() {}
-
-		[SetUp]
-		public void GetReady ()
-		{
-		}
 
 		[Test]
 		public void TestDefaultValues ()

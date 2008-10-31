@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class RadioButtonTest
+	public class RadioButtonTest : TestHelper
 	{
 		[Test]
 		public void RadioButtonPropertyTest ()
@@ -88,7 +88,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 	
 	[TestFixture]
-	public class RadioButtonEventTestClass
+	public class RadioButtonEventTestClass : TestHelper
 	{
 		static bool eventhandled = false;
 		public static void RadioButton_EventHandler (object sender, EventArgs e)

@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ProgressBarTest
+	public class ProgressBarTest : TestHelper
 	{
 		[Test]
 		public void ProgressBarPropertyTest ()

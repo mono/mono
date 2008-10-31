@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class KeysConverterTest
+	public class KeysConverterTest : TestHelper
 	{
 		[Test]
 		public void CanConvertTo ()

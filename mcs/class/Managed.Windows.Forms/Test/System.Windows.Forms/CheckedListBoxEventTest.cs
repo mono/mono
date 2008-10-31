@@ -13,7 +13,7 @@ using System.Drawing;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class CheckedListBoxItemCheckEvent
+	public class CheckedListBoxItemCheckEvent : TestHelper
 	{	
 		static bool eventhandled = false;
 		public void ItemCheck_EventHandler (object sender,ItemCheckEventArgs e)

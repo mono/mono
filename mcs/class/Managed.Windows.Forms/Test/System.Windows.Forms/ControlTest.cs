@@ -24,7 +24,7 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ControlTest
+	public class ControlTest : TestHelper
 	{
 		[Test] // .ctor ()
 		public void Constructor1 ()
@@ -344,7 +344,7 @@ namespace MonoTests.System.Windows.Forms
 				control.InvokeCreateHandle ();
 				Assert.Fail ("#4");
 			} catch (ObjectDisposedException ex) {
-				Console.WriteLine (ex);
+				//Console.WriteLine (ex);
 			}
 		}
 
@@ -655,6 +655,9 @@ namespace MonoTests.System.Windows.Forms
 			Control.ControlCollection c = new Control.ControlCollection (frm);
 			child.MdiParent = frm;
 			c.Add (child);
+			
+			child.Dispose ();
+			frm.Dispose ();
 		}
 
 		[Test]
@@ -667,6 +670,9 @@ namespace MonoTests.System.Windows.Forms
 			Control.ControlCollection c = new Control.ControlCollection (frm);
 			//child.MdiParent = frm;
 			c.Add (child);
+			
+			child.Dispose ();
+			frm.Dispose ();			
 		}
 		
 		[Test]
@@ -1241,6 +1247,8 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (f, c.TopLevelControl, "T3");
 			Assert.AreEqual (f, f.TopLevelControl, "T4");
+			
+			f.Dispose ();
 		}
 
 		[Test]
@@ -2327,6 +2335,8 @@ namespace MonoTests.System.Windows.Forms
 			form.Controls.Add (l);
 			Assert.AreEqual (0, l.Left, "#A3");
 			Assert.AreEqual (0, l.Top, "#A4");
+			
+			form.Dispose ();
 		}
 
 #if NET_2_0
@@ -2810,6 +2820,8 @@ namespace MonoTests.System.Windows.Forms
 			c.Visible = true;
 			
 			Assert.AreEqual (f.ClientSize.Width, c.Width, "L1");
+			
+			f.Dispose ();
 		}
 		
 		[Test]
@@ -2890,7 +2902,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class ControlSetTopLevelTest
+	public class ControlSetTopLevelTest : TestHelper
 	{
 		class ControlPoker : Control {
 			public void DoSetTopLevel ()
@@ -2940,11 +2952,13 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (f.Visible, "3");
 			f.TopLevel = true;
 			Assert.IsFalse (f.Visible, "4");
+			
+			f.Dispose ();
 		}
 	}
 
 	[TestFixture]
-	public class ControlResizeLayoutTest
+	public class ControlResizeLayoutTest : TestHelper
 	{
 		class ControlPoker : Control {
 			public void DoOnResize ()
@@ -2994,7 +3008,17 @@ namespace MonoTests.System.Windows.Forms
 
 	[TestFixture]
 	[Category ("NotWorking")]
-	public class ControlInvokeTest {
+	public class ControlInvokeTest  : TestHelper {
+
+		[TearDown]
+		protected override void TearDown ()
+		{
+			if (f != null && !f.IsDisposed)			
+				f.Dispose ();
+			base.TearDown ();
+		}
+
+		
 		public delegate void TestDelegate ();
 
 		Form f;
@@ -3076,7 +3100,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class ControlWMTest
+	public class ControlWMTest : TestHelper
 	{
 		[Test]
 		public void WM_PARENTNOTIFY_Test ()
@@ -3181,12 +3205,13 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 	[TestFixture]
-	public class ControlLayoutTest
+	public class ControlLayoutTest : TestHelper
 	{
-		[Test]
-		public void SetUp ()
+		[SetUp]
+		protected override void SetUp ()
 		{
 			_layoutCount = 0;
+			base.SetUp ();
 		}
 
 		[Test] // bug #80456

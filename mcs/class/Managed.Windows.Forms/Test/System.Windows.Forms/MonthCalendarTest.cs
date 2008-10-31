@@ -23,8 +23,7 @@ namespace MonoTests.System.Windows.Forms
 		private bool doubleClickRaised;
 
 		[SetUp]
-		public void SetUp ()
-		{
+		protected void SetUp () {
 			clickRaised = false;
 			doubleClickRaised = false;
 		}
@@ -61,7 +60,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class MonthCalendarTest
+	public class MonthCalendarTest : TestHelper
 	{
 		[Test]
 		public void MonthCalendarPropertyTest ()

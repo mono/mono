@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]	
-	public class MenuTest
+	public class MenuTest : TestHelper
 	{
 		[Test]
 		public void MenuPropertyTest ()

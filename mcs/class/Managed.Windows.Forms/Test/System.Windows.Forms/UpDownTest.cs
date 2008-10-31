@@ -17,12 +17,12 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class UpDownTest
+	public class UpDownTest : TestHelper
 	{
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			Reset ();
+			base.SetUp ();
 		}
 
 		private void Reset ()

@@ -17,7 +17,7 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class StatusBarTest 
+	public class StatusBarTest : TestHelper 
 	{
 		[Test]
 		public void StatusBarTextTest ()
@@ -89,7 +89,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 	
 	[TestFixture]
-	public class StatusBarPanelCollectionTest
+	public class StatusBarPanelCollectionTest : TestHelper
 	{
 		[Test]
 		public void Test ()

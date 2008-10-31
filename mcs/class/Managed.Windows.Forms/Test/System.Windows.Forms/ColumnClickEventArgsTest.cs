@@ -36,7 +36,7 @@ using System.Data;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ColumnClickEventArgsTest
+	public class ColumnClickEventArgsTest : TestHelper
 	{
 		[Test]
 		public void CtorTest ()

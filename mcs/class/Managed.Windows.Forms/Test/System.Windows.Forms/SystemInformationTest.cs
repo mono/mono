@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class SystemInformationTest
+	public class SystemInformationTest : TestHelper
 	{
 
 		[Test]

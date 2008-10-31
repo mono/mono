@@ -14,7 +14,7 @@ namespace MonoTests.System.Windows.Forms
 {
 
 	[TestFixture]
-	public class DataGridTextBoxTest {
+	public class DataGridTextBoxTest  : TestHelper {
 		class DataGridMock : DataGrid {
 			protected override void ColumnStartedEditing (Rectangle bounds)
 			{

@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TreeNodeCollectionTest
+	public class TreeNodeCollectionTest : TestHelper
 	{
 
         [Test]

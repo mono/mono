@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ImageKeyConverterTest
+	public class ImageKeyConverterTest : TestHelper
 	{
 		[Test]
 		public void PropertyIncludeNoneAsStandardValue ()

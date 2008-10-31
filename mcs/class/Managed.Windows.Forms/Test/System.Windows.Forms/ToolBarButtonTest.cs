@@ -16,7 +16,7 @@ using System.Runtime.Remoting;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ToolBarButtonTest 
+	public class ToolBarButtonTest : TestHelper 
 	{
 		[Test]
 		public void CtorTest1 ()

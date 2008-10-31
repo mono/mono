@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TreeViewTest
+	public class TreeViewTest : TestHelper
 	{
 		[Test] // bug #80620
 		public void ClientRectangle_Borders ()
@@ -347,7 +347,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class BeforeSelectEvent
+	public class BeforeSelectEvent : TestHelper
 	{
 		int beforeSelect;
 		TreeViewCancelEventArgs cancelEventArgs;
@@ -362,11 +362,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			beforeSelect = 0;
 			cancelEventArgs = null;
 			cancel = false;
+			base.SetUp ();
 		}
 
 		[Test]
@@ -513,12 +513,12 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class AfterSelectEvent
+	public class AfterSelectEvent : TestHelper
 	{
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			afterSelect = 0;
+			base.SetUp ();
 		}
 
 		[Test] // bug #81319
@@ -607,7 +607,7 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 	[TestFixture]
-	public class TreeViewNodeSorterTest {
+	public class TreeViewNodeSorterTest : TestHelper {
 		static bool node_sorter_called;
 
 		[Test]

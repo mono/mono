@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
-	public class CompatTest
+	public class CompatTest : MonoTests.System.Windows.Forms.TestHelper
 	{
 		class Helper
 		{

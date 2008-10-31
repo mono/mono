@@ -9,7 +9,7 @@ namespace MonoTests.System.Windows.Forms {
 
 	
 	[TestFixture]
-	public class TreeNodeTest {
+	public class TreeNodeTest : TestHelper {
 
 		[Test]
 		public void EmptyCtorTest ()

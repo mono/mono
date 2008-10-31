@@ -16,20 +16,20 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TreeViewEventsTest
+	public class TreeViewEventsTest : TestHelper
 	{
 		Form f;
 		TreeView tv;
 		bool event_fired;
 
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			f = new Form ();
 			tv = new TreeView ();
 			f.Controls.Add (tv);
 
 			event_fired = false;
+			base.SetUp ();
 		}
 
 		[Test]

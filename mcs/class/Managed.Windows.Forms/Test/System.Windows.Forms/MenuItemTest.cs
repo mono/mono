@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class MenuItemTest
+	public class MenuItemTest : TestHelper
 	{
 		[Test]
 		public void MenuItemDefaultValues ()

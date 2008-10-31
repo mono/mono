@@ -31,7 +31,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class RowStyleTest {
+	public class RowStyleTest : TestHelper {
 
 		[Test]
 		public void CtorTest1 ()

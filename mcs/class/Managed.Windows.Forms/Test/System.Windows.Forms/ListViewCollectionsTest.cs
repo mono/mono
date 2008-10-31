@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ListViewCollectionsTest
+	public class ListViewCollectionsTest : TestHelper
 	{
 		/*
 			ColumnHeaderCollection

@@ -63,7 +63,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class DataGridColumnStyleTest
+	public class DataGridColumnStyleTest : TestHelper
 	{
 		//private bool eventhandled;
 

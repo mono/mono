@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class PanelTest
+	public class PanelTest : TestHelper
 	{
 		[Test]
 		public void Constructor ()

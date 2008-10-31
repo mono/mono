@@ -36,7 +36,7 @@ namespace MonoTests.System.Windows.Forms
 {
 
 	[TestFixture]
-	public class DataGridViewBandTest
+	public class DataGridViewBandTest : TestHelper
 	{
 	
 	}

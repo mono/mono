@@ -21,7 +21,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ImageListTest
+	public class ImageListTest : TestHelper
 	{
 		[Test]
 		public void ImageListPropertyTest ()
@@ -206,7 +206,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[TestFixture]
-		public class ImageListRecreateHandleEventClass
+		public class ImageListRecreateHandleEventClass : TestHelper
 		{
 			static bool eventhandled = false;
 			public static void RecreateHandle_EventHandler (object sender, EventArgs e)

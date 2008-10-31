@@ -33,7 +33,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms.DataBinding {
 
 	[TestFixture]
-	public class BindingMemberInfoTest {
+	public class BindingMemberInfoTest : TestHelper {
 
 		[Test]
 		public void CtorNullTest ()

@@ -36,7 +36,7 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Windows.Forms.DataBinding
 {
-	public class DataBindingTest
+	public class DataBindingTest : TestHelper
 	{
 		protected int event_num;
 		protected string event_log = "";

@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class FolderBrowserDialogTest
+	public class FolderBrowserDialogTest : TestHelper
 	{
 		[Test]
 		public void Description ()

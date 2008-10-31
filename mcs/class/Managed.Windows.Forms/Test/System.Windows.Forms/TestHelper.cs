@@ -21,7 +21,85 @@ namespace MonoTests.System.Windows.Forms
 {
 	public class TestHelper
 	{
+		[SetUp]
+		protected virtual void SetUp ()
+		{
+		}
+		
+		[TearDown]
+		protected virtual void TearDown () {
+#if NET_2_0
+			int c = Application.OpenForms.Count;
+			if (c > 0) {
+				Console.WriteLine ("HEY! You created " + c.ToString () + " form(s) and you didn't dispose of them!");
+				Console.WriteLine ("Please modify your test to shut me up.");
+			}
+			for (int i = Application.OpenForms.Count - 1; i >= 0; i--) {
+				Application.OpenForms[i].Dispose ();
+			}
+#endif			
+		}		
+		
+		
+		
+		public class FormWatcher : Form
+		{
+			int[] watches;
+			public FormWatcher (int[] watches) : base () {
+				this.watches = watches;
+			}
+			protected override void WndProc (ref Message m)
+			{
+				foreach (int i in watches) {
+					if ((int)m.Msg == i) {
+						Console.WriteLine ((this.Name != "" && this.Name != null ? this.Name : "FormWatcher") + " received message " + m.ToString ());
+						break;
+					}
+				}
+				base.WndProc (ref m);
+			}
+		}
+		
+		public class ControlWatcher : Control
+		{
+			int[] watches;
+			public ControlWatcher (int[] watches) : base () {
+				this.watches = watches;
+			}
+			protected override void WndProc (ref Message m)
+			{
+				foreach (int i in watches) {
+					if ((int)m.Msg == i) {
+						Console.WriteLine ((this.Name != "" && this.Name != null ? this.Name : "ControlWatcher") + " received message " + m.ToString ());
+						break;
+					}
+				}
+				base.WndProc (ref m);
+			}
+		}
 
+		public class ButtonWatcher : Button
+		{
+			int[] watches;
+			public ButtonWatcher (int[] watches) : base () {
+				this.watches = watches;
+				foreach (int i in this.watches) {
+					Console.WriteLine ("Listening to " + Enum.GetName (typeof(Msg), i));
+				}
+			}
+			protected override void WndProc (ref Message m)
+			{
+				Console.WriteLine ("Received " + m.ToString ());
+				foreach (int i in watches) {
+					if ((int)m.Msg == i) {
+						Console.WriteLine ((this.Name != "" && this.Name != null ? this.Name : "ButtonWatcher") + " received message " + m.ToString ());
+						break;
+					}
+				}
+				base.WndProc (ref m);
+			}
+		}
+		
 		public static void DumpObject (object obj, string objName)
 		{
 			DumpObject (obj, obj.GetType (), objName, "#", int.MaxValue);
@@ -198,7 +276,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			// Call this function with the unused variable as the parameter.
 		}
-
+		
 		public static CreateParams GetCreateParams (Control control)
 		{
 			CreateParams cp = (CreateParams) control.GetType().GetProperty("CreateParams", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(control, null);

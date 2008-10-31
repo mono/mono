@@ -1,3 +1,13 @@
+2008-10-31  Andreia Gaita  <shana@jitted.com>
+
+	* TestHelper.cs: Add virtual setup and teardown methods. Any forms left
+	  hanging around after a test will be disposed here so that they don't
+	  clutter up the screen while the tests are running.
+
+	* *.cs: All tests now inherit from TestHelper so that the setup and
+	  teardown routines are always called (barring one or two that already
+	  inherit from swf classes that needs to be fixed)
+
 2008-10-19  Andreia Gaita  <avidigal@novell.com>
 
 	* tests2.sh: Remove extra echos

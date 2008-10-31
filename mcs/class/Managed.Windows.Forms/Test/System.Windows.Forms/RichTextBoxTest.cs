@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class RichTextBoxTest
+	public class RichTextBoxTest : TestHelper
 	{
 		[Test]
 		public void RichTextBoxPropertyTest ()

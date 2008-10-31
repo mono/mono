@@ -37,7 +37,7 @@ namespace MonoTests.System.Windows.Forms
 {
 
 	[TestFixture]
-	public class DataGridViewRowCollectionTest
+	public class DataGridViewRowCollectionTest : TestHelper
 	{
 		private DataGridView CreateAndFill ()
 		{

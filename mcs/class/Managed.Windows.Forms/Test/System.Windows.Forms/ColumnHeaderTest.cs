@@ -31,13 +31,14 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ColumnHeaderTest
+	public class ColumnHeaderTest : TestHelper
 	{
 #if NET_2_0
 		[SetUp]
-		public void SetUp ()
+		protected override void SetUp ()
 		{
 			columnReordered = 0;
+			base.SetUp ();
 		}
 #endif
 

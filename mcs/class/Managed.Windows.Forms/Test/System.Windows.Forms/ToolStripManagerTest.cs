@@ -36,7 +36,7 @@ using System.Windows.Forms;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ToolStripManagerTest
+	public class ToolStripManagerTest : TestHelper
 	{
 		[Test]
 		[Ignore ("This has to run all by itself.  Toolstrips in other tests register themselves and mess this up.")]

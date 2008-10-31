@@ -151,7 +151,7 @@ namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class ContainerControlTest {
+	public class ContainerControlTest  : TestHelper {
 		[Test]
 		public void RemoveActiveControlTest ()
 		{

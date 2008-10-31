@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ImageListStreamerTest
+	public class ImageListStreamerTest : TestHelper
 	{
 		[Test]
 		[Category ("NotWorking")]

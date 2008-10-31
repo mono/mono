@@ -38,7 +38,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class AutoCompleteStringCollectionTest
+	public class AutoCompleteStringCollectionTest : TestHelper
 	{
 		AutoCompleteStringCollection autoCol = null;
 		private int add_event = 0;
@@ -47,7 +47,7 @@ namespace MonoTests.System.Windows.Forms
 		private string value_event = null;
 
 		[SetUp]
-		public void SetUp ()
+		protected override void SetUp ()
 		{
 			autoCol = new AutoCompleteStringCollection ();
 			autoCol.CollectionChanged += new CollectionChangeEventHandler (AutoColChanged);
@@ -55,6 +55,7 @@ namespace MonoTests.System.Windows.Forms
 			refresh_event = 0;
 			remove_event = 0;
 			value_event = "unknown item";
+			base.SetUp ();
 		}
 
 		private void AutoColChanged(object sender, CollectionChangeEventArgs e)

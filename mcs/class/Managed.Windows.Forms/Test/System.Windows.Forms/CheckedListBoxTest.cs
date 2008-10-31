@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class CheckedListBoxTest
+	public class CheckedListBoxTest : TestHelper
 	{
 		[Test]
 		public void CheckedListBoxPropertyTest () 

@@ -8,7 +8,7 @@ using System.Threading;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class EventClass
+	public class EventClass : TestHelper
 	{
 		static bool eventhandled = false;
 		public static void Event_Handler1 (object sender, EventArgs e)
@@ -330,12 +330,12 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class ControlRefresh
+	public class ControlRefresh : TestHelper
 	{
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			invalidated = 0;
+			base.SetUp ();
 		}
 
 		[Test]

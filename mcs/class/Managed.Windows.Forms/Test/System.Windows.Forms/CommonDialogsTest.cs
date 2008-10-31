@@ -38,7 +38,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class CommonDialogsTest
+	public class CommonDialogsTest : TestHelper
 	{
 		OpenFileDialog ofd;
 		SaveFileDialog sfd;

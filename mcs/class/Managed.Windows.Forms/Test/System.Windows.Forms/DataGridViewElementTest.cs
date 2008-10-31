@@ -36,13 +36,7 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class DataGridViewElementTest {
-		
-		[SetUp]
-		public void GetReady() {}
-
-		[TearDown]
-		public void Clean() {}
+	public class DataGridViewElementTest : TestHelper {
 
 		[Test]
 		public void TestDefaultValues () {

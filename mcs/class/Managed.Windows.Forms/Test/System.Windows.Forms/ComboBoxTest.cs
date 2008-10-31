@@ -45,20 +45,22 @@ using CategoryAttribute=NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ComboBoxTest
+	public class ComboBoxTest : TestHelper
 	{
 		private CultureInfo _originalCulture;
 
 		[SetUp]
-		public void SetUp ()
+		protected override void SetUp ()
 		{
 			_originalCulture = Thread.CurrentThread.CurrentCulture;
+			base.SetUp ();
 		}
 
 		[TearDown]
-		public void TearDown ()
+		protected override void TearDown ()
 		{
 			Thread.CurrentThread.CurrentCulture = _originalCulture;
+			base.TearDown ();
 		}
 
 		[Test] // bug #331144
@@ -776,8 +778,9 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				cmbbox.DropDownWidth = 0;
 				Assert.Fail ("#B1");
+			}
 #if NET_2_0
-			} catch (ArgumentOutOfRangeException ex) {
+			catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
 				Assert.IsNotNull (ex.ParamName, "#B4");
@@ -785,7 +788,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNull (ex.InnerException, "#B6");
 			}
 #else
-			} catch (ArgumentException ex) {
+			catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
 				Assert.IsNull (ex.ParamName, "#B4");
@@ -805,8 +808,9 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				cmbbox.ItemHeight = 0;
 				Assert.Fail ("#B1");
+			}
 #if NET_2_0
-			} catch (ArgumentOutOfRangeException ex) {
+			catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
 				Assert.IsNotNull (ex.ParamName, "#B4");
@@ -814,7 +818,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNull (ex.InnerException, "#B6");
 			}
 #else
-			} catch (ArgumentException ex) {
+			catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
 				Assert.IsNull (ex.ParamName, "#B4");
@@ -1355,7 +1359,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class ComboBoxObjectCollectionTest
+	public class ComboBoxObjectCollectionTest : TestHelper
 	{
 		[Test]
 		public void ComboBoxObjectCollectionPropertyTest ()
@@ -1531,19 +1535,19 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 	[TestFixture]
-	public class ComboBoxTests
+	public class ComboBoxTests : TestHelper
 	{
 		ComboBox comboBox;
 		bool textChanged, layoutUpdated;
 
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			comboBox = new ComboBox ();
 			textChanged = false;
 			layoutUpdated = false;
 			comboBox.TextChanged += new EventHandler (textChangedEventHandler);
 			comboBox.Layout += new LayoutEventHandler (layoutEventHandler);
+			base.SetUp ();
 		}
 
 		private void textChangedEventHandler (object sender, EventArgs e)

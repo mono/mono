@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture()]	
-	public class FlowPanelTests
+	public class FlowPanelTests : TestHelper
 	{
 		[Test]
 		public void TestConstruction()

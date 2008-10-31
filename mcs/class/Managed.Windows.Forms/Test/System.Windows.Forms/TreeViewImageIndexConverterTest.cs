@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TreeViewImageIndexConverterTest
+	public class TreeViewImageIndexConverterTest : TestHelper
 	{
 		[Test]
 		public void PropertyIncludeNoneAsStandardValue ()

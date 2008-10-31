@@ -7,7 +7,7 @@ using System.Drawing;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class SplitContainerTests
+	public class SplitContainerTests : TestHelper
 	{
 		[Test]
 		public void TestSplitContainerConstruction ()

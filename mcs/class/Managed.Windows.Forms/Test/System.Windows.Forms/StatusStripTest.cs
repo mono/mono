@@ -37,7 +37,7 @@ using System.ComponentModel;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class StatusStripTests
+	public class StatusStripTests : TestHelper
 	{
 		[Test]
 		public void Constructor ()

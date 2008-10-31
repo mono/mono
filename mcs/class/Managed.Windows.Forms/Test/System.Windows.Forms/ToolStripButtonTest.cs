@@ -37,7 +37,7 @@ using System.ComponentModel;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ToolStripButtonTests
+	public class ToolStripButtonTests : TestHelper
 	{
 		[Test]
 		public void Constructor ()

@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ApplicationTest
+	public class ApplicationTest : TestHelper
 	{
 		ApplicationContext ctx;
 

@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
-	public class ResXDataNodeTest
+	public class ResXDataNodeTest : MonoTests.System.Windows.Forms.TestHelper
 	{
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]

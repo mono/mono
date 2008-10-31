@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class CursorTest
+	public class CursorTest : TestHelper
 	{
 		[Test]
 		public void LoadCursorKind2 ()

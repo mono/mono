@@ -40,14 +40,14 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ListControlTest
+	public class ListControlTest : TestHelper
 	{
 		private int dataSourceChanged;
 
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			dataSourceChanged = 0;
+			base.SetUp ();
 		}
 
 		[Test]

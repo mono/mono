@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TabControlTest
+	public class TabControlTest : TestHelper
 	{
 		private int _selected_index_changed = 0;
 
@@ -34,9 +34,9 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			_selected_index_changed = 0;
+			base.SetUp ();
 		}
 
 		[Test]
@@ -760,7 +760,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class TabPageCollectionTest
+	public class TabPageCollectionTest : TestHelper
 	{
 		[Test]
 		public void Indexer ()

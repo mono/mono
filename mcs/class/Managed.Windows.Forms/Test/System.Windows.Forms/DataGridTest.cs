@@ -52,17 +52,10 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class DataGridTest
+	public class DataGridTest : TestHelper
 	{
 		private bool eventhandled;
 
-		[TearDown]
-		public void Clean() {}
-
-		[SetUp]
-		public void GetReady ()
-		{
-		}
 
 		[Test]
 		public void TestDefaultValues ()

@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TableLayoutTests
+	public class TableLayoutTests : TestHelper
 	{
 		[Test]
 		public void TestConstruction ()

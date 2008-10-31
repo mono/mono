@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class LinkConverterTest
+	public class LinkConverterTest : TestHelper
 	{
 		[Test]
 		public void CanConvertFrom ()

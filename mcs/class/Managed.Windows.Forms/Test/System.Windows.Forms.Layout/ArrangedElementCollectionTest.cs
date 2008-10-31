@@ -38,7 +38,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms.Layout
 {
 	[TestFixture]
-	public class ArrangedElementCollectionTest
+	public class ArrangedElementCollectionTest : TestHelper
 	{
 		
 		[Test]

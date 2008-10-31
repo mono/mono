@@ -37,12 +37,12 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataGridViewColumnTest
+	public class DataGridViewColumnTest : TestHelper
 	{
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			columnChanged = 0;
+			base.SetUp ();
 		}
 
 		[Test]

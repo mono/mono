@@ -36,17 +36,15 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class DataGridViewAdvancedBorderStyleTest {
+	public class DataGridViewAdvancedBorderStyleTest : TestHelper {
 
 		private DataGridViewAdvancedBorderStyle style;
+
 		
 		[SetUp]
-		public void GetReady() {
+		protected override void SetUp ()	{
 			style = new DataGridViewAdvancedBorderStyle();
-		}
-
-		[TearDown]
-		public void Clean() {
+			base.SetUp ();
 		}
 
 		[Test]

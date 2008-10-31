@@ -37,7 +37,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class PaddingTest
+	public class PaddingTest : TestHelper
 	{
 		[Test]
 		public void PaddingPropertiesTest()

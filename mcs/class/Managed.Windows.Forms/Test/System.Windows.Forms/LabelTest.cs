@@ -15,7 +15,7 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms
 {
    [TestFixture]
-   public class LabelTest
+   public class LabelTest : TestHelper
    {
 		[Test]
 		public void LabelAccessibility ()
@@ -335,7 +335,7 @@ namespace MonoTests.System.Windows.Forms
    }
 
    [TestFixture]
-   public class LabelEventTest
+   public class LabelEventTest : TestHelper
    {
 	   static bool eventhandled = false;
 	   public void Label_EventHandler (object sender,EventArgs e)
@@ -623,7 +623,7 @@ public class MyLabel : Label
 
    [TestFixture]
    [Ignore("Comparisons too strict")]
-   public class LabelTestEventsOrder
+   public class LabelTestEventsOrder : TestHelper
    {
 	   public string [] ArrayListToString (ArrayList arrlist)
 	   {
@@ -1036,7 +1036,7 @@ public class MyLabel2 : Label
 
    [TestFixture]
    [Ignore("Comparisons too strict")]
-   public class LabelTestEventsOrder2
+   public class LabelTestEventsOrder2 : TestHelper
    {
 	   public string [] ArrayListToString (ArrayList arrlist)
 	   {

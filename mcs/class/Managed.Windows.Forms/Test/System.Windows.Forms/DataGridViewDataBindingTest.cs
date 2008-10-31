@@ -38,7 +38,7 @@ namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 {
 
 	[TestFixture]
-	public class DataSetBindingTest
+	public class DataSetBindingTest : TestHelper
 	{
 		[Test]
 		public void TestDataSet ()
@@ -354,7 +354,7 @@ namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 	}
 	
 	[TestFixture]
-	public class BindingListTest
+	public class BindingListTest : TestHelper
 	{
 		[Test]	// bug #325239
 		public void TestNullItemInList ()
@@ -389,7 +389,7 @@ namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 	}
 
 	[TestFixture]
-	public class ArrayTest
+	public class ArrayTest : TestHelper
 	{
 		[Test]	// bug #337470
 		public void TestNestedCollections ()
@@ -421,7 +421,7 @@ namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 	}
 
 	[TestFixture]
-	public class BindingSourceTest
+	public class BindingSourceTest : TestHelper
 	{
 		[Test]	// bug #345483
 		public void TestBindingSource ()

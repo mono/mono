@@ -39,23 +39,25 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ListBoxTest
+	public class ListBoxTest : TestHelper
 	{
 		ListBox listBox;
 		Form form;
 
 		[SetUp]
-		public void SetUp()
+		protected override void SetUp ()
 		{
 			listBox = new ListBox();
 			form = new Form();
 			form.ShowInTaskbar = false;
+			base.SetUp ();
 		}
 
 		[TearDown]
-		public void TearDown()
+		protected override void TearDown ()
 		{
 			form.Dispose ();
+			base.TearDown ();
 		}
 
 		[Test]
@@ -812,12 +814,12 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class ListBoxObjectCollectionTest
+	public class ListBoxObjectCollectionTest : TestHelper
 	{
 		ListBox.ObjectCollection col;
 
 		[SetUp]
-		public void SetUp()
+		protected override void SetUp ()
 		{
 			col = new ListBox.ObjectCollection (new ListBox ());
 		}
@@ -1018,13 +1020,13 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 	[TestFixture]
-	public class ListBoxIntegerCollectionTest
+	public class ListBoxIntegerCollectionTest : TestHelper
 	{
 		ListBox.IntegerCollection col;
 		ListBox listBox;
 
 		[SetUp]
-		public void SetUp ()
+		protected override void SetUp ()
 		{
 			listBox = new ListBox ();
 			col = new ListBox.IntegerCollection (listBox);

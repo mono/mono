@@ -36,7 +36,7 @@ namespace MonoTests.System.Windows.Forms
 {
 
 	[TestFixture]
-	public class BindingNavigatorTest
+	public class BindingNavigatorTest : TestHelper
 	{
 		private bool flag = false;
 		private BindingNavigator navigator;
@@ -47,13 +47,14 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[SetUp]
-		public void Setup()
+		protected override void SetUp ()
 		{
 			IntThing test = new IntThing(50);
 			BindingSource s = new BindingSource();
 			s.DataSource = test;
 			navigator = new BindingNavigator(s);
 			flag = false;
+			base.SetUp ();
 		}
 
 		[Test]

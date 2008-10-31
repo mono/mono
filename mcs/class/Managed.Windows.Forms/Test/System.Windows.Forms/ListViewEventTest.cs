@@ -17,7 +17,7 @@ namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	[Ignore ("Needs Manual Intervention")]
-	public class LabelEditEvent
+	public class LabelEditEvent : TestHelper
 	{
 		static bool eventhandled = false;
 		public void LabelEdit_EventHandler (object sender,LabelEditEventArgs e)
@@ -70,7 +70,7 @@ namespace MonoTests.System.Windows.Forms
 
 	[TestFixture]
 	[Ignore ("Needs Manual Intervention")]
-	public class ColumnClickEvent
+	public class ColumnClickEvent : TestHelper
 	{
 		static bool eventhandled = false;
 		public void ColumnClickEventHandler (object sender, ColumnClickEventArgs e)
@@ -103,7 +103,7 @@ namespace MonoTests.System.Windows.Forms
 
 	[TestFixture]
 	[Ignore ("Needs Manual Intervention")]
-	public class  MyEvent
+	public class  MyEvent : TestHelper
 	{
 		static bool eventhandled = false;
 		public void New_EventHandler (object sender, EventArgs e)
@@ -156,7 +156,7 @@ namespace MonoTests.System.Windows.Forms
 
 	[TestFixture]
 	[Ignore ("Needs Manual Intervention")]
-	public class ItemCheckEvent
+	public class ItemCheckEvent : TestHelper
 	{
 		static bool eventhandled = false;
 		public void ItemCheckEventHandler (object sender, ItemCheckEventArgs e)
@@ -190,7 +190,7 @@ namespace MonoTests.System.Windows.Forms
 
 	[TestFixture]
 	[Ignore ("Needs Manual Intervention")]
-	public class ItemDragEvent
+	public class ItemDragEvent : TestHelper
 	{
 		static bool eventhandled = false;
 		public void ItemDragEventHandler (object sender, ItemDragEventArgs e)
@@ -222,7 +222,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class ListViewSelectedIndexChangedEvent
+	public class ListViewSelectedIndexChangedEvent : TestHelper
 	{
 		int selectedIndexChanged;
 
@@ -232,9 +232,9 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			selectedIndexChanged = 0;
+			base.SetUp ();
 		}
 
 		[Test] // bug #79849

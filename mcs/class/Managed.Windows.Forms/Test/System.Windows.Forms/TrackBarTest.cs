@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TrackBarBaseTest
+	public class TrackBarBaseTest : TestHelper
 	{
 		[Test]
 		public void TrackBarPropertyTest ()

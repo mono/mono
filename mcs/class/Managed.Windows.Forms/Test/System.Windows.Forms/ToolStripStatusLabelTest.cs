@@ -36,7 +36,7 @@ using System.Windows.Forms;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ToolStripStatusLabelTests
+	public class ToolStripStatusLabelTests : TestHelper
 	{
 		//[Test]
 		//public void Constructor ()

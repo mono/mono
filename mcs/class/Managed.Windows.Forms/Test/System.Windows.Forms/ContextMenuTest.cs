@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]	
-	public class ContextMenuTest
+	public class ContextMenuTest : TestHelper
 	{
 		[Test]
 		public void GetContextMenuTest ()

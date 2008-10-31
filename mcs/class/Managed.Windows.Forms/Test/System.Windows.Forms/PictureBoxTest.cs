@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class PictureBoxTest
+	public class PictureBoxTest : TestHelper
 	{
 		[Test]
 		public void PictureBoxPropertyTest ()
@@ -413,7 +413,7 @@ namespace MonoTests.System.Windows.Forms
 #endif
 
 		[TestFixture]
-		public class PictureBoxSizeModeEventClass
+		public class PictureBoxSizeModeEventClass : TestHelper
 		{
 			static bool eventhandled = false;
 			public static void SizeMode_EventHandler (object sender, EventArgs e)

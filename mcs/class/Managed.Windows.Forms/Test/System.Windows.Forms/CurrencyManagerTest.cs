@@ -38,7 +38,7 @@ using System.Collections.ObjectModel;
 namespace MonoTests.System.Windows.Forms.DataBinding
 {
 	[TestFixture]
-	public class CurrencyManagerTest
+	public class CurrencyManagerTest : TestHelper
 	{
 		[Test]
 		public void Defaults ()

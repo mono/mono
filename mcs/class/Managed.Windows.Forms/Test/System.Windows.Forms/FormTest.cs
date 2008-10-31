@@ -21,7 +21,7 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class FormTest
+	public class FormTest : TestHelper
 	{
 		[Test]
 		public void AcceptButton ()

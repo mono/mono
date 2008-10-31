@@ -17,7 +17,7 @@ using System.Runtime.Remoting;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ErrorProviderTest 
+	public class ErrorProviderTest : TestHelper 
 	{
 		[Test]
 		public void ErrorProviderPropertyTest ()

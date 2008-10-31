@@ -18,20 +18,22 @@ using NUnit.Framework;
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
-	public class CultureTest
+	public class CultureTest : MonoTests.System.Windows.Forms.TestHelper
 	{
 		string fileName = null;
 
 		[SetUp]
-		public void SetUp ()
+		protected override void SetUp ()
 		{
 			fileName = Path.GetTempFileName ();
+			base.SetUp ();
 		}
 
 		[TearDown]
-		public void TearDown ()
+		protected override void TearDown ()
 		{
 			File.Delete (fileName);
+			base.TearDown ();
 		}
 
 		[Test]

@@ -31,7 +31,7 @@ namespace MonoTests.System.Windows.Forms
 	[Category("NotDotNet")]
 	[Category("NotWithXvfb")]
 	[Category("Interactive")]
-	public class SendKeysTest {
+	public class SendKeysTest  : TestHelper {
 
 		static Queue keys = new Queue();
 
@@ -119,8 +119,9 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[SetUp]
-		public void SetUp() {
+		protected override void SetUp () {
 			keys.Clear();
+			base.SetUp ();
 		}
 
 

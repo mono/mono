@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class GridTableStylesCollectionTest
+	public class GridTableStylesCollectionTest : TestHelper
 	{
 		private bool eventhandled;
 		private object Element;

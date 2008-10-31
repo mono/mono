@@ -10,7 +10,7 @@ using System.ComponentModel;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ControlPropertyEventsTest
+	public class ControlPropertyEventsTest : TestHelper
 	{
 		[Test]
 		public void PropertyAllowDrop ()

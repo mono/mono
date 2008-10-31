@@ -20,14 +20,14 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class MdiFormHandleTest
+	public class MdiFormHandleTest : TestHelper
 	{
 		private ProtectedForm main;
 		private ProtectedForm child1;
 		private ProtectedForm child2;
 		
 		[TearDown]
-		public void TearDown ()
+		protected override void TearDown ()
 		{
 			if (main != null) {
 				main.Dispose ();
@@ -43,9 +43,10 @@ namespace MonoTests.System.Windows.Forms
 				child2.Dispose ();
 				child2 = null;
 			}
+			base.TearDown ();
 		}
 		
-		public void SetUp ()
+		void SetUp ()
 		{
 			TearDown ();
 			main = new ProtectedForm ();

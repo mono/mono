@@ -6,7 +6,7 @@ using System.Drawing;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class HelpProviderTest
+	public class HelpProviderTest : TestHelper
 	{	
 #if NET_2_0
 		[Test]

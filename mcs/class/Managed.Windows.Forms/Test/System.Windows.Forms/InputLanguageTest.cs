@@ -36,7 +36,7 @@ using System.Windows.Forms;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class InputLanguageTest
+	public class InputLanguageTest : TestHelper
 	{
 		[Test]
 		public void Test ()

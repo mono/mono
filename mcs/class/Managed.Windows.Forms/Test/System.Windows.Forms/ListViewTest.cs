@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ListViewTest
+	public class ListViewTest : TestHelper
 	{
 		[Test]
 		public void ListViewPropertyTest ()

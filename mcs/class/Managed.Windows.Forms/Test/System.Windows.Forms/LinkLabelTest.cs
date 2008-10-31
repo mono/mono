@@ -15,7 +15,7 @@ using System.Drawing;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class LinkLabelTest
+	public class LinkLabelTest : TestHelper
 	{
 		[Test]
 		public void LinkLabelAccessibility ()
@@ -100,7 +100,7 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 	[TestFixture]
-	public class LinkTest
+	public class LinkTest : TestHelper
 	{
 		[Test]
 		public void Constructor ()
@@ -142,7 +142,7 @@ namespace MonoTests.System.Windows.Forms
 #endif
 
 	[TestFixture]
-	public class LinkCollectionTest
+	public class LinkCollectionTest : TestHelper
 	{
 		[Test] // ctor (LinkLabel)
 		public void Constructor1 ()

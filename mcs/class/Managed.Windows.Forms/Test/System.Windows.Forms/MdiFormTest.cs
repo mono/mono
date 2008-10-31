@@ -19,7 +19,7 @@ using System.Threading;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class MdiFormTest
+	public class MdiFormTest : TestHelper
 	{
 		private Form main;
 		private Form child1;
@@ -27,7 +27,7 @@ namespace MonoTests.System.Windows.Forms
 		private Form child3;
 
 		[TearDown]
-		public void TearDown ()
+		protected override void TearDown ()
 		{
 			if (main != null)
 				main.Dispose ();
@@ -41,11 +41,12 @@ namespace MonoTests.System.Windows.Forms
 			child1 = null;
 			child2 = null;
 			child3 = null;
+			base.TearDown ();
 		}
 	
 		// No attribute here since this is supposed to be called from 
 		// each test directly, not by nunit.
-		public void SetUp (bool only_create, bool only_text)
+		void SetUp (bool only_create, bool only_text)
 		{
 			SetUp (only_create, only_text, false);
 		}	

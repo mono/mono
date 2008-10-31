@@ -37,14 +37,14 @@ using System.ComponentModel;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class UserControlTest
+	public class UserControlTest : TestHelper
 	{
 		UserControl uc = null;
 
 		[SetUp]
-		public void SetUp()
-		{
+		protected override void SetUp () {
 			uc = new UserControl();
+			base.SetUp ();
 		}
 
 		[Test]

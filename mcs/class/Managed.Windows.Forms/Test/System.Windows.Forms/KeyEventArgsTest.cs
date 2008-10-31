@@ -18,7 +18,7 @@ namespace MonoTests.System.Windows.Forms
 {
 
 	[TestFixture]
-	public class KeyEventArgsTest
+	public class KeyEventArgsTest : TestHelper
 	{
 #if NET_2_0
 		[Test]

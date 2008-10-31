@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class TreeViewHitTestInfoTest {
+	public class TreeViewHitTestInfoTest : TestHelper {
 
 		[Test]
 		public void TestCtor ()

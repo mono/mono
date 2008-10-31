@@ -38,13 +38,14 @@ using System.Threading;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class DataGridViewCellStyleTest {
+	public class DataGridViewCellStyleTest  : TestHelper {
 
 		DataGridViewCellStyle style;
 		
 		[SetUp]
-		public void GetReady() {
+		protected override void SetUp () {
 			style = new DataGridViewCellStyle();
+			base.SetUp ();
 		}
 
 		[Test]

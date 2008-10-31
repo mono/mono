@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class PaintEventArgsTest {
+	public class PaintEventArgsTest : TestHelper {
 
 		private Graphics default_graphics;
 		private Rectangle default_rect;

@@ -37,7 +37,7 @@ namespace MonoTests.System.Windows.Forms
 {
 
 	[TestFixture]
-	public class DataGridViewColumnHeaderTest
+	public class DataGridViewColumnHeaderTest : TestHelper
 	{
 		
 		[Test]

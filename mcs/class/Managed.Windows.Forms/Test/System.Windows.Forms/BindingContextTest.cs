@@ -36,7 +36,7 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms.DataBinding {
 
 	[TestFixture]
-	public class BindingContextTest {
+	public class BindingContextTest : TestHelper {
 
 		private class BindingContextPoker : BindingContext {
 
@@ -77,16 +77,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 				collection_changed = (int) ce.Action;
 				base.OnCollectionChanged (ce);
 			}
-		}
-
-		[SetUp]
-		protected virtual void SetUp ()
-		{
-		}
-
-		[TearDown]
-		protected virtual void TearDown ()
-		{
 		}
 
 		[Test]

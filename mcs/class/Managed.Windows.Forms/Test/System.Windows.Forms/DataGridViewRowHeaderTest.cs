@@ -36,7 +36,7 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataGridViewRowHeaderTest
+	public class DataGridViewRowHeaderTest : TestHelper
 	{
 
 		[Test]

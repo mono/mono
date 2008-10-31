@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class PrintDialogTest
+	public class PrintDialogTest : TestHelper
 	{
 		[Test]
 		[Category("Printing")]

@@ -36,7 +36,7 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms.DataBinding {
 
 	[TestFixture]
-	public class BindingSourceTest
+	public class BindingSourceTest : TestHelper
 	{
 		[Test]
 		public void DefaultDataSource ()

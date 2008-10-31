@@ -18,7 +18,7 @@ namespace MonoTests.System.Windows.Forms
 {
 
 	[TestFixture]
-	public class MessageTest
+	public class MessageTest : TestHelper
 	{
 		[Test]
 		public void ToStringTest ()

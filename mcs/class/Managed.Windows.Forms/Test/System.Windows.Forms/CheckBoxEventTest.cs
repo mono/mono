@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class CheckBoxEventTest
+	public class CheckBoxEventTest : TestHelper
 	{
 		static bool eventhandled = false;
 		public void CheckBox_EventHandler (object sender,EventArgs e)

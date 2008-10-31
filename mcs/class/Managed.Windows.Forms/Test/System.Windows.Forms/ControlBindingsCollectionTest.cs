@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms.DataBinding {
 
 	[TestFixture]
-	public class ControlBindingsCollectionTest {
+	public class ControlBindingsCollectionTest  : TestHelper {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))] // MS: "This would cause two bindings in the collection to bind to the same property."

@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ButtonBaseTest
+	public class ButtonBaseTest : TestHelper
 	{
 		[Test]
 		public void Constructor ()

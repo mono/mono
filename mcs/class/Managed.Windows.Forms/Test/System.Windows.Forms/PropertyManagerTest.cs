@@ -33,7 +33,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms.DataBinding
 {
 	[TestFixture]
-	public class PropertyManagerTest {
+	public class PropertyManagerTest : TestHelper {
 
 		class TestClass1 {
 			int prop;

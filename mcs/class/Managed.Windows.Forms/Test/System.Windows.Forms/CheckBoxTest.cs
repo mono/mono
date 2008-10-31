@@ -16,7 +16,7 @@ using System.Threading;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class CheckBoxTest
+	public class CheckBoxTest : TestHelper
 	{
 		[Test]
 		public void CheckBoxPropertyTest () 

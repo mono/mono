@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class GroupBoxTest
+	public class GroupBoxTest : TestHelper
 	{
 		[Test]
 		public void Constructor ()

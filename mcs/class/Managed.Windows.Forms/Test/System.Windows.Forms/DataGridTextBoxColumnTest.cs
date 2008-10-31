@@ -41,7 +41,7 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataGridTextBoxColumnTest
+	public class DataGridTextBoxColumnTest : TestHelper
 	{
 		private bool eventhandled;
 		//private object Element;

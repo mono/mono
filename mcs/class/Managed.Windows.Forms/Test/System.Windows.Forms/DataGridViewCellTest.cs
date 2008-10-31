@@ -37,7 +37,7 @@ using System.Threading;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataGridViewCellTest
+	public class DataGridViewCellTest : TestHelper
 	{
 		[Test]
 		public void GetClipboardContentTest ()

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ControlCollectionTest
+	public class ControlCollectionTest : TestHelper
 	{
 		[Test]
 		public void ControlCollectionTests ()

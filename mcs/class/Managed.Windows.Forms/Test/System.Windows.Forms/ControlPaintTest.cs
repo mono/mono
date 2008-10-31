@@ -35,7 +35,7 @@ namespace MonoTests.System.Windows.Forms
 {
 
 	[TestFixture]
-	class ControlPaintTest
+	class ControlPaintTest : TestHelper
 	{
 		[Test]
 		public void DarkTest ()

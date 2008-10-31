@@ -33,18 +33,8 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms.DataBinding {
 
 	[TestFixture]
-	public class BindingsCollectionTest 
+	public class BindingsCollectionTest : TestHelper 
 	{
-		[SetUp]
-		protected virtual void SetUp ()
-		{
-		}
-
-		[TearDown]
-		protected virtual void TearDown ()
-		{
-		}
-
 #if NET_2_0
 		// 
 		// CollectionChanging event test section

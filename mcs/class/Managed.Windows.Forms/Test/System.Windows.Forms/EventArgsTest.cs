@@ -10,7 +10,7 @@ using System.Drawing;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class EventArgsTest
+	public class EventArgsTest : TestHelper
 	{
 		[Test]
 		public void TestBindingCompleteEventArgs ()

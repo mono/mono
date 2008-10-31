@@ -38,16 +38,16 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ListViewGroupCollectionTest
+	public class ListViewGroupCollectionTest : TestHelper
 	{
 		ListViewGroupCollection grpCol = null;
 		ListView lv = null;
 
 		[SetUp]
-		public void SetUp()
-		{
+		protected override void SetUp () {
 			lv = new ListView ();
 			grpCol = lv.Groups;
+			base.SetUp ();
 		}
 
 		[Test]

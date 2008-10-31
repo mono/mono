@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class SplitterTest 
+	public class SplitterTest : TestHelper 
 	{
 
 		/* make sure the Capture setting has nothing to do with SplitPosition (reopened bug #78871) */

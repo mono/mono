@@ -37,7 +37,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ListViewItemTest
+	public class ListViewItemTest : TestHelper
 	{
 		[Test]
 		public void ListViewItemConstructors ()
@@ -694,7 +694,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class ListViewSubItemTest
+	public class ListViewSubItemTest : TestHelper
 	{
 		[Test] // ctor ()
 		public void Constructor1 ()
@@ -1337,7 +1337,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class ListViewSubItemCollectionTest
+	public class ListViewSubItemCollectionTest : TestHelper
 	{
 		[Test]
 		public void Ctor ()

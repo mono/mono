@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DefaultLayoutTest
+	public class DefaultLayoutTest : TestHelper
 	{
 		int event_count;
 		LayoutEventArgs most_recent_args;
@@ -632,7 +632,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]	
-	public class DockingTests
+	public class DockingTests : TestHelper
 	{
 		Form form;
 		Panel panel;
@@ -640,20 +640,20 @@ namespace MonoTests.System.Windows.Forms
 		int event_count;
 
 		[SetUp]
-		public void Init ()
-		{
+		protected override void SetUp () {
 			form = new Form ();
 			form.ShowInTaskbar = false;
 			form.Size = new Size (400, 400);
 			panel = new Panel ();
 			form.Controls.Add (panel);
 			event_count = 0;
+			base.SetUp ();
 		}
 
 		[TearDown]
-		public void Cleanup ()
-		{
+		protected override void TearDown () {
 			form.Dispose ();
+			base.TearDown ();
 		}
 
 		void IncrementEventCount (object o, EventArgs args)
@@ -780,7 +780,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]	
-	public class UndockingTests
+	public class UndockingTests : TestHelper
 	{
 		class TestPanel : Panel {
 
@@ -799,19 +799,20 @@ namespace MonoTests.System.Windows.Forms
 		TestPanel panel;
 
 		[SetUp]
-		public void Init ()
-		{
+		protected override void SetUp () {
 			form = new Form ();
 			form.ShowInTaskbar = false;
 			form.Size = new Size (400, 400);
 			panel = new TestPanel ();
 			form.Controls.Add (panel);
+			base.SetUp ();
 		}
 
 		[TearDown]
-		public void Cleanup ()
+		protected override void TearDown ()
 		{
 			form.Dispose ();
+			base.TearDown ();
 		}
 
 		[Test]

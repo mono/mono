@@ -34,7 +34,7 @@ namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]	
 	[Ignore ("This test has to be completly reviewed")]	
-	public class ImageIndexConverterTest
+	public class ImageIndexConverterTest : TestHelper
 	{
 		ToolBarButton button;
 		PropertyDescriptorCollection pdc;
@@ -46,12 +46,6 @@ namespace MonoTests.System.Windows.Forms
 			pdc = TypeDescriptor.GetProperties (button);
 			ic = (ImageIndexConverter) pdc.Find ("ImageIndex", true).Converter;
 		}
-
-		[TearDown]
-		public void TearDown () { }
-
-		[SetUp]
-		public void SetUp () { }
 
 		[Test]
 		public void TestCanConvertFrom ()

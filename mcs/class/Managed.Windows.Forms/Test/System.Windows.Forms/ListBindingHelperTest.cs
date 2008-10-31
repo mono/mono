@@ -41,7 +41,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ListBindingHelperTest
+	public class ListBindingHelperTest : TestHelper
 	{
 		[Test]
 		public void GetListTest ()

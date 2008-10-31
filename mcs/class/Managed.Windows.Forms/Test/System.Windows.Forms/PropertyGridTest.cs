@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class PropertyGridTest
+	public class PropertyGridTest : TestHelper
 	{
 		[Test]
 		public void PropertySort_Valid ()

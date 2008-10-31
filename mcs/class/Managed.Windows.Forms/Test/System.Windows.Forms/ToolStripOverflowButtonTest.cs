@@ -36,7 +36,7 @@ using System.Windows.Forms;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ToolStripOverflowButtonTests
+	public class ToolStripOverflowButtonTests : TestHelper
 	{
 		[Test]
 		public void Constructor ()

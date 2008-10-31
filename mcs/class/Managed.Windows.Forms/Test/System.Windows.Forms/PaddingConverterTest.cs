@@ -35,7 +35,7 @@ using System.Collections.Generic;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class PaddingConverterTest
+	public class PaddingConverterTest : TestHelper
 	{
 		[Test]
 		public void CanConvertFrom ()

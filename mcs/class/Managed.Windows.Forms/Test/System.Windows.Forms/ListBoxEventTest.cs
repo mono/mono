@@ -14,7 +14,7 @@ namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	[Ignore ("This test has to be completly reviewed")]
-	public class ListBoxDrawItemEvent
+	public class ListBoxDrawItemEvent : TestHelper
 	{	
 		static bool eventhandled = false;
 		public void DrawItem_EventHandler (object sender,DrawItemEventArgs e)
@@ -40,7 +40,7 @@ namespace MonoTests.System.Windows.Forms
 
 		[TestFixture]
 		[Ignore ("This test has to be completly reviewed")]
-		public class ListBoxMeasureItemEvent
+		public class ListBoxMeasureItemEvent : TestHelper
 		{
 			static bool eventhandled = false;
 			public void MeasureItem_EventHandler (object sender,MeasureItemEventArgs e)

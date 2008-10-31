@@ -36,7 +36,7 @@ namespace MonoTests.System.Windows.Forms
 {
 
 	[TestFixture]
-	public class DataGridViewTextBoxColumnTest
+	public class DataGridViewTextBoxColumnTest : TestHelper
 	{
 		[Test]
 		public void InitialValues ()

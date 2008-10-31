@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ScrollableControlTest
+	public class ScrollableControlTest : TestHelper
 	{
 		[Test]
 		public void AutoScrollPositionTest ()

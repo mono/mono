@@ -34,7 +34,7 @@ using System.Collections.Generic;
 namespace MonoTests.System.Windows.Forms.Layout {
 
 	[TestFixture]
-	public class TableLayoutSettingsTypeConverterTest {
+	public class TableLayoutSettingsTypeConverterTest : TestHelper {
 		
 		[Test]
 		public void CanConvertFrom ()

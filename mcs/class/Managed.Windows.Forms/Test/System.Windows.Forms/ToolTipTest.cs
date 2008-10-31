@@ -16,7 +16,7 @@ using System.Runtime.Remoting;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ToolTipTest 
+	public class ToolTipTest : TestHelper 
 	{
 
 		[Test]

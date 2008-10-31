@@ -40,7 +40,7 @@ using System.ComponentModel;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataGridViewImageCellTest
+	public class DataGridViewImageCellTest : TestHelper
 	{
 		[Test]
 		public void Value ()

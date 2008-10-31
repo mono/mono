@@ -22,26 +22,28 @@ using System.Reflection;
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
-	public class ResXResourceReaderTest
+	public class ResXResourceReaderTest : MonoTests.System.Windows.Forms.TestHelper
 	{
 		private string _tempDirectory;
 		private string _otherTempDirectory;
 
 		[SetUp]
-		public void SetUp ()
+		protected override void SetUp ()
 		{
 			_tempDirectory = Path.Combine (Path.GetTempPath (), "ResXResourceReaderTest");
 			_otherTempDirectory = Path.Combine (_tempDirectory, "in");
 			if (!Directory.Exists (_otherTempDirectory)) {
 				Directory.CreateDirectory (_otherTempDirectory);
 			}
+			base.SetUp ();
 		}
 
 		[TearDown]
-		public void TearDown ()
+		protected override void TearDown ()
 		{
 			if (Directory.Exists (_tempDirectory))
 				Directory.Delete (_tempDirectory, true);
+			base.TearDown ();
 		}
 
 		[Test] // ctor (Stream)

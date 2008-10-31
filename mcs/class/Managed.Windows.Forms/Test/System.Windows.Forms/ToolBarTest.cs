@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ToolBarTest 
+	public class ToolBarTest : TestHelper 
 	{
 		[Test] // bug #79863
 		public void TabStop ()

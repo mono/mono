@@ -17,7 +17,7 @@ using System.Diagnostics;
 using System.IO;
 namespace MonoTests.System.Windows.Forms {
 	[TestFixture]
-	public class DataGridViewClipboardTest {
+	public class DataGridViewClipboardTest : TestHelper {
 		[Test]
 		public void Test () {
 			DataObject data;

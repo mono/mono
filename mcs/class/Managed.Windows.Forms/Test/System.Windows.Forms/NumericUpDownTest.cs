@@ -15,7 +15,7 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class NumericUpDownTest
+	public class NumericUpDownTest : TestHelper
 	{
 		[Test]
 		public void DefaultValues ()

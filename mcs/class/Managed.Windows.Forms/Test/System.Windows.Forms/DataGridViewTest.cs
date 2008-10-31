@@ -42,20 +42,22 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataGridViewTest
+	public class DataGridViewTest : TestHelper
 	{
 		private DataGridView grid = null;
 
 		[SetUp]
-		public void GetReady()
+		protected override void SetUp()
 		{
 			grid = new DataGridView();
+			base.SetUp ();
 		}
 
 		[TearDown]
-		public void Clean()
+		protected override void TearDown ()
 		{
 			grid.Dispose ();
+			base.TearDown ();
 		}
 
 		[Test]

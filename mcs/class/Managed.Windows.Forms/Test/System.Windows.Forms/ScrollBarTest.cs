@@ -278,7 +278,7 @@ public class MyScrollBar : HScrollBar
 	     }
     }
    [TestFixture]
-   public class ScrollBarTest
+   public class ScrollBarTest : TestHelper
     {
 	    [Test]
 	    public void PubPropTest ()
@@ -520,7 +520,7 @@ public class MyScrollBar : HScrollBar
     }
 
    [TestFixture]
-   public class ScrollBarEventTest
+   public class ScrollBarEventTest : TestHelper
     {
 	    static bool eventhandled = false;
 	    public void ScrollBar_EventHandler (object sender,EventArgs e)
@@ -734,7 +734,7 @@ public class MyHScrollBar : HScrollBar
     }
 
    [TestFixture]
-   public class MyHScrollBarTest
+   public class MyHScrollBarTest : TestHelper
     {
 	    [Test]
 	    public void ProtectedTest ()
@@ -763,7 +763,7 @@ public class MyVScrollBar : VScrollBar
     }
 
    [TestFixture]
-   public class MyVScrollBarTest
+   public class MyVScrollBarTest : TestHelper
     {
 	    [Test]
 	    public void PubMethodTest ()
@@ -787,7 +787,7 @@ public class MyVScrollBar : VScrollBar
 
    [TestFixture]
    [Ignore("Tests too strict")]
-   public class HScrollBarTestEventsOrder
+   public class HScrollBarTestEventsOrder : TestHelper
     {
 	    public string [] ArrayListToString (ArrayList arrlist)
 	     {
@@ -1342,7 +1342,7 @@ public class MyScrollBar2 : HScrollBar
 
    [TestFixture]
    [Ignore("Tests too strict")]
-   public class HScrollBarTestEventsOrder2
+   public class HScrollBarTestEventsOrder2 : TestHelper
     {
 	    public string [] ArrayListToString (ArrayList arrlist)
 	     {
@@ -1657,7 +1657,7 @@ public class MyScrollBar2 : HScrollBar
     
 #if NET_2_0
     [TestFixture]
-    public class ScrollEventArgsTest
+    public class ScrollEventArgsTest : TestHelper
     {
 	[Test]
 	public void Defaults ()

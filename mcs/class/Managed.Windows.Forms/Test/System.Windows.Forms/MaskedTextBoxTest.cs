@@ -23,12 +23,12 @@ using System.Reflection;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class MaskedTextBoxTest
+	public class MaskedTextBoxTest : TestHelper
 	{
 		[SetUp]
-		public void Setup ()
-		{
+		protected override void SetUp () {
 			Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo ("en-US");
+			base.SetUp ();
 		}
 
 		[Test]

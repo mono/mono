@@ -40,7 +40,7 @@ using System.ComponentModel;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataGridViewLinkCellTest
+	public class DataGridViewLinkCellTest : TestHelper
 	{
 		[Test]
 		public void Defaults ()

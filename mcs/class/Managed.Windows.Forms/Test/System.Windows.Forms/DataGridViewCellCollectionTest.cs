@@ -33,13 +33,12 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class DataGridViewCellCollectionTest
+	public class DataGridViewCellCollectionTest : TestHelper
 	{
 		private DataGridView _dataGridView;
 
 		[SetUp]
-		public void SetUp ()
-		{
+		protected override void SetUp () {
 			DataTable dt = new DataTable ();
 			dt.Columns.Add ("Date", typeof (DateTime));
 			dt.Columns.Add ("Registered", typeof (bool));
@@ -59,6 +58,7 @@ namespace MonoTests.System.Windows.Forms
 
 			_dataGridView = new DataGridView ();
 			_dataGridView.DataSource = dt;
+			base.SetUp ();
 		}
 
 		[Test]

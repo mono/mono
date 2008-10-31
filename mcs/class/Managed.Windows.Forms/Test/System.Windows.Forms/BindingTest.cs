@@ -34,18 +34,8 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms.DataBinding {
 
 	[TestFixture]
-	public class BindingTest {
-
-		[SetUp]
-		protected virtual void SetUp ()
-		{
-		}
-
-		[TearDown]
-		protected virtual void TearDown ()
-		{
-		}
-
+	public class BindingTest : TestHelper {
+		
 		[Test]
 		public void CtorTest ()
 		{
@@ -255,6 +245,9 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			f.Show (); // Need this to init data binding
 
 			Assert.AreEqual (DBNull.Value, c.Tag, "1");
+			
+			f.Dispose ();
+			
 		}
 
 		// For this case to work, the data source property needs
@@ -478,6 +471,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			item.ObjectValue = "C";
 			binding.ReadValue ();
 			Assert.AreEqual ("C", c.Tag, "#D1");
+			
+			c.Dispose();
 		}
 
 		[Test]
