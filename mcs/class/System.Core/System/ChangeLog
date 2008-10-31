@@ -1,5 +1,9 @@
 2008-10-31  Stephane Delcroix  <sdelcroix@novell.com>
 
+	* TimezoneInfo.cs: fix for Argentina
+
+2008-10-31  Stephane Delcroix  <sdelcroix@novell.com>
+
 	* TimezoneInfo.cs: add indices for substrings.
 
 2008-10-31  Stephane Delcroix  <sdelcroix@novell.com>
