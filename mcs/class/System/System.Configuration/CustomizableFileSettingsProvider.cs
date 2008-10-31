@@ -315,6 +315,9 @@ namespace System.Configuration
 
 		private static void CreateUserConfigPath ()
 		{
+			if (userDefine)
+				return;
+
 			if (ProductName == "")
 				ProductName = GetProductName ();
 			if (CompanyName == "")
@@ -325,7 +328,7 @@ namespace System.Configuration
 			// C:\Documents and Settings\(user)\Application Data
 #if !TARGET_JVM
 			if (userRoamingBasePath == "")
-				userRoamingPath = Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData);
+				userRoamingPath = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
 			else
 #endif
 				userRoamingPath = userRoamingBasePath;
@@ -358,6 +361,7 @@ namespace System.Configuration
 				}
 				userRoamingPath = Path.Combine (userRoamingPath, ProductName);
 				userLocalPath = Path.Combine (userLocalPath, ProductName);
+				
 			}
 
 			string versionName;
@@ -589,7 +593,7 @@ namespace System.Configuration
 			Configuration config = ConfigurationManager.OpenMappedExeConfiguration (exeMap, level);
 			
 			UserSettingsGroup userGroup = config.GetSectionGroup ("userSettings") as UserSettingsGroup;
-			bool isRoaming = (level != ConfigurationUserLevel.None);
+			bool isRoaming = (level == ConfigurationUserLevel.PerUserRoaming);
 
 #if true // my reimplementation
 
@@ -609,10 +613,8 @@ namespace System.Configuration
 					continue;
 
 				foreach (SettingsPropertyValue value in collection) {
-					if (checkUserLevel && value.Property.Attributes.Contains (typeof (UserScopedSettingAttribute)) != isRoaming) {
-						Console.WriteLine ("userlevel: {0} Property: {1}", checkUserLevel, value.Property.Name);
+					if (checkUserLevel && value.Property.Attributes.Contains (typeof (SettingsManageabilityAttribute)) != isRoaming)
 						continue;
-					}
 					hasChanges = true;
 					SettingElement element = userSection.Settings.Get (value.Name);
 					if (element == null) {
@@ -636,12 +638,8 @@ namespace System.Configuration
 					}
 				}
 			}
-
-			if (hasChanges) {
-				string path = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), GetAssemblyInfo(Assembly.GetEntryAssembly ()));
-				path = Path.Combine (path, "user.config");
-				config.SaveAs (path, ConfigurationSaveMode.Minimal, true);
-			}
+			if (hasChanges)
+				config.Save (ConfigurationSaveMode.Minimal, true);
 
 #else // original impl. - likely buggy to miss some properties to save
 
@@ -680,60 +678,6 @@ namespace System.Configuration
 			config.Save (ConfigurationSaveMode.Minimal, true);
 #endif
 		}
-
-		static string GetAssemblyInfo (Assembly a)
-		{
-			object[] attrs;
-			StringBuilder sb;
-
-			string app_name;
-			string evidence_str;
-			string version;
-
-			attrs = a.GetCustomAttributes (typeof (AssemblyProductAttribute), false);
-			if (attrs != null && attrs.Length > 0)
-				app_name = ((AssemblyProductAttribute)attrs[0]).Product;
-			else
-				app_name = AppDomain.CurrentDomain.FriendlyName;
-
-			sb = new StringBuilder();
-
-			sb.Append (GetEvidenceHash (a));
-
-			evidence_str = sb.ToString();
-
-			attrs = a.GetCustomAttributes (typeof (AssemblyVersionAttribute), false);
-			if (attrs != null && attrs.Length > 0)
-				version = ((AssemblyVersionAttribute)attrs[0]).Version;
-			else
-				version = "1.0.0.0" /* XXX */;
-
-
-			string company = GetCompanyName (a);
-			string result = Path.Combine (company, String.Format ("{0}_{1}", app_name, evidence_str));
-			return Path.Combine (result, version);
-		}
-
-		static string GetCompanyName (Assembly assembly)
-		{
-			AssemblyCompanyAttribute [] attrs = (AssemblyCompanyAttribute []) assembly.GetCustomAttributes (typeof (AssemblyCompanyAttribute), true);
-
-			if (attrs != null && attrs.Length > 0)
-				return attrs [0].Company;
-
-			return assembly.GetName ().Name;
-		}
-
-		static string GetEvidenceHash (Assembly assembly)
-		{
-			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
-			byte [] hash = SHA1.Create ().ComputeHash (pkt != null ? pkt : Encoding.UTF8.GetBytes (assembly.EscapedCodeBase))    ;
-			StringBuilder sb = new StringBuilder ();
-			foreach (byte b in hash)
-				sb.AppendFormat ("{0:x2}", b);
-			return sb.ToString ();
-		}
-
 
 		private void LoadPropertyValue (SettingsPropertyCollection collection, SettingElement element, bool allowOverwrite)
 		{
@@ -787,7 +731,8 @@ namespace System.Configuration
 		{
 			CreateExeMap ();
 
-			if (UserLocalFullPath == UserRoamingFullPath) {
+			if (UserLocalFullPath == UserRoamingFullPath)
+			{
 				SaveProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, context, false);
 			} else {
 				SaveProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, context, true);
@@ -850,7 +795,12 @@ namespace System.Configuration
 
 		public void Reset (SettingsContext context)
 		{
-			SetPropertyValues (context, GetPropertyValues (context, new SettingsPropertyCollection ()));
+			CreateExeMap ();
+			foreach (SettingsPropertyValue propertyValue in values) {
+				propertyValue.PropertyValue = propertyValue.Property.DefaultValue;
+				propertyValue.IsDirty = true;
+			}
+			SetPropertyValues (context, values);
 		}
 
 		// FIXME: implement
