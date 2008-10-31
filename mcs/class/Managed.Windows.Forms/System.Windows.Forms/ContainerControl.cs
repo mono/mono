@@ -179,9 +179,20 @@ namespace System.Windows.Forms {
 
 				// Scroll control into view
 				ScrollControlIntoView(active_control);
-
+				
+				
+				walk = this;
+				ctl = this;
+				while (walk != null) {
+					if (walk.Parent is ContainerControl) {
+						ctl = walk.Parent;
+					}
+					walk = walk.Parent;
+				}
+				
 				// Let the control know it's selected
-				SendControlFocus (active_control);
+				if (ctl.InternalContainsFocus)
+					SendControlFocus (active_control);
 			}
 		}
 

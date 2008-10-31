@@ -17,6 +17,8 @@ System.Windows.Forms.Design/PropertyTab.cs
 System.Windows.Forms.Design/ToolStripItemDesignerAvailability.cs
 System.Windows.Forms.Design/ToolStripItemDesignerAvailabilityAttribute.cs
 System.Windows.Forms.Design/WindowsFormsComponentEditor.cs
+System.Windows.Forms.Internal/Accessor.cs
+System.Windows.Forms.Internal/DebugHelper.cs
 System.Windows.Forms.PropertyGridInternal/PropertiesTab.cs
 System.Windows.Forms.RTF/Charcode.cs
 System.Windows.Forms.RTF/Charset.cs

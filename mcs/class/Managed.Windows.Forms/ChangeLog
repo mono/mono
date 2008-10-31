@@ -1,3 +1,8 @@
+2008-10-31  Andreia Gaita  <shana@jitted.com>
+
+	* System.Windows.Forms.dll.sources, SWF.csproj, SWF2k5.csproj:
+	  Added internal classes for debugging purposes
+
 2008-10-23  Andreia Gaita  <shana@jitted.com>
 
 	* SWF.csproj, SWF2k5.csproj: Update project files

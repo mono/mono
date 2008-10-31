@@ -229,6 +229,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.Internal\Accessor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Internal\DebugHelper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.PropertyGridInternal\PropertiesTab.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

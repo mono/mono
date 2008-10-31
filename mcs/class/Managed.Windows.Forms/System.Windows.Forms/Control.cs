@@ -1451,6 +1451,8 @@ namespace System.Windows.Forms
 			container = GetContainerControl();
 			if (container != null && (Control)container != control) {
 				container.ActiveControl = control;
+				if (container.ActiveControl == control && !control.has_focus && control.IsHandleCreated)
+					XplatUI.SetFocus(control.window.Handle);
 			}
 			else if (control.IsHandleCreated) {
 				XplatUI.SetFocus(control.window.Handle);

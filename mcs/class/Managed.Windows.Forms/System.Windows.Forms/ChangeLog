@@ -1,3 +1,28 @@
+2008-10-31  Andreia Gaita  <shana@jitted.com>
+
+	activate message fix: a call to .Show now waits until both WM_SHOWWINDOW and
+	WM_ACTIVATE have been processed before returning, so it is guaranteed that
+	once it returns and the form is visible, it is actually on the screen on X11
+
+	* ContainerControl.cs: Only send focus to the control if the top container
+	  is already focused. This is so that, when a form is first shown, all
+	  the enter/leave events are done first before any focus stuff comes in.
+	  If a control has no top container, there's an extra check on Control.Focus
+	  to make sure it gets focused in this particular case.
+
+	* Control.cs: Force focus if the control is active but did not receive
+	  focus after being set as active.
+
+	* MdiClient.cs: Dispose the form when closing
+
+	* XplatUIX11.cs: When mapping and unmapping windows, make sure the call
+	  doesn't return until both WM_SHOWWINDOW and WM_ACTIVATE have come in
+	  if the window is a top Form.
+	  Reset all hwnd properties when the window has been destroyed so that
+	  we don't land in any codepaths that might try to do something with it.
+	  Added a bunch of debugging messages. If TRACE is defined, all X calls
+	  are logged through DebugHelper. Set a few missing EntryPoint attributes.
+
 2008-10-29  Mario Carrion <mcarrion@novell.com>
 
 	* ListViewItem.cs: Control enabled to support Accessibility:

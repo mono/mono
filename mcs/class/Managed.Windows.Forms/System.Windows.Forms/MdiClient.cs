@@ -657,6 +657,7 @@ namespace System.Windows.Forms {
 			}
 			SizeScrollBars ();
 			SetParentText (false);
+			form.Dispose();
 		}
 
 		internal void ActivateNextChild ()

@@ -173,6 +173,8 @@
     <Compile Include="System.Windows.Forms.Design\ToolStripItemDesignerAvailability.cs" />
     <Compile Include="System.Windows.Forms.Design\ToolStripItemDesignerAvailabilityAttribute.cs" />
     <Compile Include="System.Windows.Forms.Design\WindowsFormsComponentEditor.cs" />
+    <Compile Include="System.Windows.Forms.Internal\Accessor.cs" />
+    <Compile Include="System.Windows.Forms.Internal\DebugHelper.cs" />
     <Compile Include="System.Windows.Forms.PropertyGridInternal\PropertiesTab.cs" />
     <Compile Include="System.Windows.Forms.RTF\Charcode.cs" />
     <Compile Include="System.Windows.Forms.RTF\Charset.cs" />

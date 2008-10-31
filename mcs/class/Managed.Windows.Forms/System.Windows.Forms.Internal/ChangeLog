@@ -1,0 +1,7 @@
+2008-10-31  Andreia Gaita  <shana@jitted.com>
+
+	* DebugHelper.cs: Wrapper for Debug.* methods,
+	  with some extras to ease debugging.
+
+	* Accessor.cs: Provides access to various internal properties, for
+	  testing purposes.
