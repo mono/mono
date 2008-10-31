@@ -1,3 +1,8 @@
+2008-10-31  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs/Makefile: Restructure the *.tree/*.zip rules to support
+	  concurrent builds (`make -jN`).
+
 2008-10-27  Jonathan Pryor  <jpryor@novell.com>
 
 	* docs/Makefile (DISTFILES): Add mono-file-formats.config.

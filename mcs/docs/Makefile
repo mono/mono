@@ -98,27 +98,47 @@ NUNIT_DIRS = \
 
 build-documentation: $(ASSEMBLED_DOCS)
 
-netdocs.tree netdocs.zip: Makefile
+# To support `make -jN`, we can't mention multiple targets in the same rule;
+# DO NOT DO THIS:
+#
+#	  foo.tree foo.zip : Makefile
+#     $(MDOC) assemble -o foo $(FOO_DIRS)
+#
+# If you do, make will try to biuld foo.tree & foo.zip concurrently, which
+# breaks things badly... (read: "mdoc: sharing violation on path...foo.zip").
+#
+# The proper solution is to chain the rule dependencies so that only one file
+# is the target of a rule.
+
+netdocs.zip : netdocs.tree
+netdocs.tree: Makefile
 	$(MDOC) assemble -o netdocs $(NETDOCS_DIRS)
 
-Mono.tree Mono.zip: Makefile
+Mono.zip : Mono.tree
+Mono.tree: Makefile
 	$(MDOC) assemble -o Mono $(MONO_DIRS)
 
-Novell.tree Novell.zip: Makefile
+Novell.zip : Novell.tree
+Novell.tree: Makefile
 	$(MDOC) assemble -o Novell $(NOVELL_DIRS)
 
-nunit-docs.tree nunit-docs.zip: Makefile
+nunit-docs.zip : nunit-docs.tree
+nunit-docs.tree: Makefile
 	$(MDOC) assemble -o nunit-docs $(NUNIT_DIRS)
 
-cs-errors.tree cs-errors.zip: cs-errors.config Makefile
+cs-errors.zip : cs-errors.tree
+cs-errors.tree: cs-errors.config Makefile
 	$(MDOC) assemble -o cs-errors -f error $<
 
-ecma334.tree ecma334.zip: Makefile
+ecma334.zip : ecma334.tree
+ecma334.tree: Makefile
 	$(MDOC) assemble -o ecma334 -f ecmaspec ecma334
 
-mono-tools.tree mono-tools.zip: mono-tools.config Makefile
+mono-tools.zip : mono-tools.tree
+mono-tools.tree: mono-tools.config Makefile
 	$(MDOC) assemble -o mono-tools -f man $<
 
-mono-file-formats.tree mono-file-formats.zip: mono-file-formats.config Makefile
+mono-file-formats.zip : mono-file-formats.tree
+mono-file-formats.tree: mono-file-formats.config Makefile
 	$(MDOC) assemble -o mono-file-formats -f man $<
 
