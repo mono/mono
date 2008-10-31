@@ -1,3 +1,14 @@
+2008-10-31  Jonathan Pryor  <jpryor@novell.com>
+
+	* check, Makefile.am (EXTRA_DIST): Rename to check-exports.  This was
+	  needed to fix `make distdir...`, because (1) with a file named
+	  `check` which (2) was listed in $(EXTRA_DIST), while (3) `check` is
+	  ALSO a .PHONY target, this caused make to look for the `check` file,
+	  not find it due to (3), and then proceed to try to build convert.exe
+	  from convert.cs...for reasons I don't care about.  This obviously
+	  can't work during `make distdir`, as mcs hasn't been built yet, thus
+	  leading to pain, suffering, and a broken build.
+
 2008-10-30  Jonathan Pryor  <jpryor@novell.com>
 
 	* . (svn:ignore), deploy (svn:ignore): Ignore generated files.

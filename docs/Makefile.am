@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	aot-compiler.txt	\
 	api-style.css		\
 	assembly-bundle		\
-	check			\
+	check-exports		\
 	check-coverage		\
 	convert.cs		\
 	current-api		\
