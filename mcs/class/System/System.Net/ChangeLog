@@ -1,4 +1,10 @@
 
+2008-10-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebRequest.cs: disable keep-alive connections as the current code 
+	does not deal with keep-alive connections.
+	Workaround for bug #380262.
+
 2008-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnectionStream.cs: when there's a NTLM authentication in

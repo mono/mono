@@ -37,7 +37,7 @@ namespace System.Net
 		bool binary = true;
 		bool enableSsl = false;
 		bool usePassive = true;
-		bool keepAlive = true;
+		bool keepAlive = false;
 		string method = WebRequestMethods.Ftp.DownloadFile;
 		string renameTo;
 		object locker = new object ();
