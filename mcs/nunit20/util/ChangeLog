@@ -1,3 +1,8 @@
+2008-10-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TestDomain.cs: if the TEMP environment variable is not there, make
+	fix this up. Another side-effect of fixing CachePath handling.
+
 2008-01-23  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (install-symlink, uninstall-symlink): New.  In the

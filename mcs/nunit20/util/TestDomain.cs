@@ -498,6 +498,12 @@ namespace NUnit.Util
 			cachePath = String.Format(@"{0}\{1}", 
 				ConfigurationSettings.AppSettings["shadowfiles.path"], DateTime.Now.Ticks);
 			cachePath = Environment.ExpandEnvironmentVariables(cachePath);
+			if(cachePath.IndexOf ("%temp%\\") != -1) {
+				cachePath = cachePath.Replace ("%temp%\\", Path.GetTempPath());
+				if (Path.DirectorySeparatorChar == '/') {
+					cachePath = cachePath.Replace ('\\', '/');
+				}
+			}
 
 			DirectoryInfo dir = new DirectoryInfo(cachePath);
 			if(dir.Exists) dir.Delete(true);
