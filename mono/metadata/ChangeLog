@@ -1,3 +1,10 @@
+
+2008-10-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* assembly.c: when the assembly is loaded from an absolute path, end
+	basedir with a directory separator.
+	Bug #440781 fixed.
+
 2008-10-30  Mark Probst  <mark.probst@gmail.com>
 
 	* monitor.c (mono_monitor_get_fast_enter_method): If
