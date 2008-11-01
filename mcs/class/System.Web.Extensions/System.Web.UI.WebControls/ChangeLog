@@ -1,3 +1,21 @@
+2008-11-01  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: do not instantiate the layout template more than
+	necessary.
+
+	* NextPreviousPagerField.cs: moved some common code to the base
+	class (the GetQueryModeStartRowIndex method)
+
+	* DataPager.cs: do not call SetPageProperties more than
+	necessary.
+
+	* NumericPagerField.cs: implemented
+
+	* DataPagerField.cs: added a helper method,
+	GetQueryModeStartRowIndex, to be used by all the concrete
+	implementations to calculate the starting row index in the query
+	mode.
+
 2008-10-31  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: use StartRowIndex and MaximumRows properties when

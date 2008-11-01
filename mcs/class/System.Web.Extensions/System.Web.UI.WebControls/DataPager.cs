@@ -362,7 +362,8 @@ namespace System.Web.UI.WebControls
 
 			_startRowIndex = startRowIndex;
 			_maximumRows = maximumRows;
-
+			_needSetPageProperties = false;
+			
 			_pageableContainer.SetPageProperties (startRowIndex, maximumRows, databind);
 		}
 

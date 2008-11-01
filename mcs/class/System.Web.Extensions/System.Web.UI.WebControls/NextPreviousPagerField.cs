@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -80,36 +80,8 @@ namespace System.Web.UI.WebControls
 			_totalRowCount = totalRowCount;
 			_fieldIndex = fieldIndex;
 
-			bool queryMode = !String.IsNullOrEmpty (DataPager.QueryStringField);
 			bool setPagePropertiesNeeded = false;
-
-			if (queryMode && !QueryStringHandled) {
-				QueryStringHandled = true;
-
-				// We need to calculate the new start index since it is probably out
-				// of date because the GET parameter with the page number hasn't
-				// been processed yet
-				int pageNumber = -1;
-				try {
-					pageNumber = Int32.Parse (QueryStringValue);
-				} catch {
-					// ignore
-				}
-
-				if (pageNumber >= 0) {
-					pageNumber--; // we're zero-based since we're calculating
-						      // the offset/index
-					if (pageNumber >= 0) {
-						// zero-based calculation again
-						int pageCount = (_totalRowCount - 1) / _maximumRows; 
-						if (pageNumber <= pageCount) {
-							_startRowIndex = pageNumber * _maximumRows;
-							setPagePropertiesNeeded = true;
-						}
-					}
-				}
-			}
-			
+			bool queryMode = GetQueryModeStartRowIndex (_totalRowCount, _maximumRows, ref _startRowIndex, ref setPagePropertiesNeeded);
 			bool enablePrevFirst = _startRowIndex >= _maximumRows;
 			bool enableNextLast = (_startRowIndex + _maximumRows) < _totalRowCount;
 			bool addNonBreakingSpace = RenderNonBreakingSpacesBetweenControls;
@@ -150,8 +122,8 @@ namespace System.Web.UI.WebControls
 				DataPager.SetPageProperties (_startRowIndex, _maximumRows, true);
 		}
 
-		void CreateButton (DataPagerFieldItem container, string commandName, string text, string imageUrl, int pageNum, bool queryMode,
-				   bool enabled, bool addNonBreakingSpace)
+		void CreateButton (DataPagerFieldItem container, string commandName, string text, string imageUrl, int pageNum,
+				   bool queryMode, bool enabled, bool addNonBreakingSpace)
 		{
 			WebControl ctl = null;
 			
@@ -163,7 +135,6 @@ namespace System.Web.UI.WebControls
 				h.Enabled = enabled;
 				h.NavigateUrl = GetQueryStringNavigateUrl (pageNum);
 				h.CssClass = ButtonCssClass;
-
 				ctl = h;
 			} else {
 				if (!enabled && RenderDisabledButtonsAsLabels) {

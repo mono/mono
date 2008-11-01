@@ -202,6 +202,41 @@ namespace System.Web.UI.WebControls
 			_dataPager = pager;
 		}
 
+		internal bool GetQueryModeStartRowIndex (int totalRowCount, int maximumRows, ref int startRowIndex, ref bool setPagePropertiesNeeded)
+		{
+			bool queryMode = !String.IsNullOrEmpty (DataPager.QueryStringField);
+			if (!queryMode || QueryStringHandled)
+				return false;
+
+			QueryStringHandled = true;
+
+			// We need to calculate the new start index since it is probably out
+			// of date because the GET parameter with the page number hasn't
+			// been processed yet
+			int pageNumber;
+			try {
+				pageNumber = Int32.Parse (QueryStringValue);
+			} catch {
+				// ignore
+				pageNumber = -1;
+			}
+
+			if (pageNumber >= 0) {
+				pageNumber--; // we're zero-based since we're calculating
+				// the offset/index
+				if (pageNumber >= 0) {
+					// zero-based calculation again
+					int pageCount = (totalRowCount - 1) / maximumRows; 
+					if (pageNumber <= pageCount) {
+						startRowIndex = pageNumber * maximumRows;
+						setPagePropertiesNeeded = true;
+					}
+				}
+			}
+
+			return false;
+		}
+		
 		void AddEventHandler (object key, EventHandler handler)
 		{
 			if (events == null)

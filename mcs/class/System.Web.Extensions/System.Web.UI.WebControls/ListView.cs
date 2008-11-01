@@ -86,10 +86,9 @@ namespace System.Web.UI.WebControls
 
 		Control _layoutTemplatePlaceholder;
 		Control _nonGroupedItemsContainer;
-		int _nonGroupedItemsContainerFirstItemIndex;
+		int _nonGroupedItemsContainerFirstItemIndex = -1;
 		int _nonGroupedItemsContainerItemCount;
 		IOrderedDictionary _lastInsertValues;
-
 #region Events
 		// Event keys
 		static readonly object ItemCancellingEvent = new object ();
@@ -771,7 +770,7 @@ namespace System.Web.UI.WebControls
 					_totalRowCount = retList.Count;
 				else
 					_totalRowCount = 0;
-			
+
 				OnTotalRowCountAvailable (new PageEventArgs (_startRowIndex, _maximumRows, _totalRowCount));
 			} else
 				emptySet = true;
@@ -868,7 +867,8 @@ namespace System.Web.UI.WebControls
 		protected virtual IList <ListViewDataItem> CreateItemsWithoutGroups (ListViewPagedDataSource dataSource, bool dataBinding,
 										     InsertItemPosition insertPosition, ArrayList keyArray)
 		{
-			_nonGroupedItemsContainer = FindPlaceholder (ItemPlaceholderID, _layoutTemplatePlaceholder);
+			if (_nonGroupedItemsContainer == null)
+				_nonGroupedItemsContainer = FindPlaceholder (ItemPlaceholderID, this);
 			_nonGroupedItemsContainerItemCount = 0;
 			
 			if (_nonGroupedItemsContainer == null)
@@ -876,16 +876,20 @@ namespace System.Web.UI.WebControls
 					String.Format ("An item placeholder must be specified on ListView '{0}'. Specify an item placeholder by setting a control's ID property to \"itemPlaceholder\". The item placeholder control must also specify runat=\"server\".", ID));
 
 			Control parent = _nonGroupedItemsContainer.Parent;
-			int ipos = 0;
-			
-			if (parent != null) {
-				ipos = parent.Controls.IndexOf (_nonGroupedItemsContainer);
-				parent.Controls.Remove (_nonGroupedItemsContainer);
-				_nonGroupedItemsContainer = parent;
-				if (_nonGroupedItemsContainer != _layoutTemplatePlaceholder)
-					AddControlToContainer (_nonGroupedItemsContainer, _layoutTemplatePlaceholder, 0);
-			}
-			_nonGroupedItemsContainerFirstItemIndex = ipos;
+
+			int ipos;
+			if (_nonGroupedItemsContainerFirstItemIndex == -1) {
+				ipos = 0;
+				if (parent != null) {
+					ipos = parent.Controls.IndexOf (_nonGroupedItemsContainer);
+					parent.Controls.Remove (_nonGroupedItemsContainer);
+					_nonGroupedItemsContainer = parent;
+					if (_nonGroupedItemsContainer != _layoutTemplatePlaceholder)
+						AddControlToContainer (_nonGroupedItemsContainer, _layoutTemplatePlaceholder, 0);
+				}
+				_nonGroupedItemsContainerFirstItemIndex = ipos;
+			} else
+				ipos = _nonGroupedItemsContainerFirstItemIndex;
 			
 			List <ListViewDataItem> ret = new List <ListViewDataItem> ();
 			ListViewItem lvi;
@@ -970,7 +974,7 @@ namespace System.Web.UI.WebControls
 			if (_layoutTemplate != null) {
 				_layoutTemplatePlaceholder = new Control ();
 				_layoutTemplate.InstantiateIn (_layoutTemplatePlaceholder);
-				AddControlToContainer (_layoutTemplatePlaceholder, this, 0);
+				Controls.Add (_layoutTemplatePlaceholder);
 			}
 			
 			OnLayoutCreated (EventArgs.Empty);
@@ -982,7 +986,9 @@ namespace System.Web.UI.WebControls
 	
 		protected virtual void EnsureLayoutTemplate ()
 		{
-			Controls.Clear ();
+			if (Controls.Count != 0)
+				return;
+			
 			CreateLayoutTemplate ();
 		}
 	
@@ -994,7 +1000,7 @@ namespace System.Web.UI.WebControls
 			if (!(item is ListViewDataItem))
 				throw new InvalidOperationException ("item is not a ListViewDataItem object.");
 		}
-	
+
 		protected virtual Control FindPlaceholder (string containerID, Control container)
 		{
 			if (container == null || String.IsNullOrEmpty (containerID))
@@ -1404,7 +1410,7 @@ namespace System.Web.UI.WebControls
 					var args = new PagePropertiesChangingEventArgs (maximumRows, startRowIndex);
 					OnPagePropertiesChanging (args);
 				}
-				
+
 				_startRowIndex = startRowIndex;
 				_maximumRows = maximumRows;
 
