@@ -1,6 +1,15 @@
 
 2008-10-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* appdomain.c:
+	* domain-internals.h: made mono_set_private_bin_path_from_config()
+	"internal".
+	* object.c: call the above function after setting the configuration
+	file path for the root domain.
+	Fixes bug #314478.
+
+2008-10-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* assembly.c: when the assembly is loaded from an absolute path, end
 	basedir with a directory separator.
 	Bug #440781 fixed.
