@@ -26,8 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
 namespace Mono.Cecil.Binary {
 
+	[Flags]
 	public enum RuntimeImage : uint {
 		ILOnly = 0x0000001,
 		F32BitsRequired = 0x0000002,
