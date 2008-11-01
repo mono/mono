@@ -1,3 +1,8 @@
+2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrintingServicesUnix.cs: Fix potential crash on 64bit OS. Gendarme
+	rule for checking IntPtr has been updated to cover this case as well
+
 2008-10-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PaperSize.cs, PreviewPrintController.cs, PrinterSettings.cs,

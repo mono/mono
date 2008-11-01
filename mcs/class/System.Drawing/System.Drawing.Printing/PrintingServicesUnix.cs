@@ -225,7 +225,7 @@ namespace System.Drawing.Printing
 				cups_dests_size = Marshal.SizeOf (typeof(CUPS_DESTS));
 				ptr = dests;
 				for (int i = 0; i < ret; i++) {
-					ptr_printer = (IntPtr) Marshal.ReadInt32 (ptr);
+					ptr_printer = (IntPtr) Marshal.ReadIntPtr (ptr);
 					if (Marshal.PtrToStringAnsi (ptr_printer).Equals(printer)) {
 						name = printer;
 						break;
@@ -554,7 +554,7 @@ namespace System.Drawing.Printing
 				ptr_printers = dests;
 
 				for (int i = 0; i < count; i++) {
-					ptr_printer = (IntPtr) Marshal.ReadInt32 (ptr_printers);
+					ptr_printer = (IntPtr) Marshal.ReadIntPtr (ptr_printers);
 					if (Marshal.PtrToStringAnsi (ptr_printer).Equals(printer)) {
 						found = true;
 						break;
