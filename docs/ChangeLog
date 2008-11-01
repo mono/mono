@@ -1,3 +1,9 @@
+2008-11-01  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am: Clean up for srcdir != builddir.
+	(deploy/.stamp): Compute location of 'mono-wrapper' and pass to exdoc.
+	* exdoc (mono-wrapper): Use $runtimedir to look for 'mono-wrapper'.
+
 2008-10-31  Jonathan Pryor  <jpryor@novell.com>
 
 	* check, Makefile.am (EXTRA_DIST): Rename to check-exports.  This was

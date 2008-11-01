@@ -135,7 +135,7 @@ EOF
 </html>
 EOF
 	close OUT;
-	system ("../runtime/mono-wrapper convert.exe $dir/html/$name $dir/html/x-$name");
+	system ("$ENV{runtimedir}/mono-wrapper convert.exe $dir/html/$name $dir/html/x-$name");
 
 	# clean up the mess that AgilityPack does, it CDATAs our CSS
 	open HACK, "$dir/html/x-$name" || die "Could not open $dir/html/x-$name";

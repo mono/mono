@@ -68,26 +68,23 @@ dist-hook:
 	cp sources/*  $(distdir)/sources
 	cp svgs/*     $(distdir)/svgs
 
-CLEANFILES = \
-	convert.exe* \
-	deploy/.stamp \
-	$(wildcard deploy/*) \
-	$(ASSEMBLED_DOCS)
-
 clean-local:
-	-rm -Rf html
+	-rm -Rf $(srcdir)/html
+	-rm -f $(srcdir)/deploy/* $(srcdir)/convert.exe*
+	-cd $(srcdir) && rm -f $(ASSEMBLED_DOCS)
 
-monoapi.tree monoapi.zip: monoapi.make Makefile.am toc.xml deploy/.stamp
-	cp api-style.css deploy
-	$(MAKE) -f $< topdir=$(mcs_topdir) assemble
+monoapi.tree monoapi.zip: monoapi.make Makefile.am toc.xml $(srcdir)/deploy/.stamp
+	cp $(srcdir)/api-style.css $(srcdir)/deploy/
+	cd $(srcdir) && $(MAKE) -f monoapi.make topdir=$(mcs_topdir_from_srcdir) assemble
 
-deploy/.stamp: convert.exe Makefile.am
-	$(mkdir_p) html
-	perl exdoc -h . ../mono/*/*.c
+$(srcdir)/deploy/.stamp: convert.exe Makefile.am
+	$(mkdir_p) $(srcdir)/html
+	runtimedir=`cd ../runtime && pwd`; export runtimedir; \
+	cd $(srcdir) && MONO_PATH=$(mcs_topdir_from_srcdir)/class/lib/net_2_0 perl ./exdoc -h . ../mono/*/*.c
 	touch $@
 
-extract : deply/.stamp
+extract: $(srcdir)/deploy/.stamp
 
 convert.exe: monoapi.make convert.cs Makefile.am
-	$(MAKE) -f $< topdir=$(mcs_topdir) convert.exe
+	cd $(srcdir) && $(MAKE) -f monoapi.make topdir=$(mcs_topdir_from_srcdir) convert.exe
 
