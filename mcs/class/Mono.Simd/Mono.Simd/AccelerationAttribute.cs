@@ -30,7 +30,7 @@ using System;
 
 namespace Mono.Simd
 {
-	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Property, Inherited=false)]
+	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Property, Inherited=false, AllowMultiple=true)]
 	public sealed class AccelerationAttribute : Attribute
 	{
 		public AccelerationAttribute (AccelMode mode) {
