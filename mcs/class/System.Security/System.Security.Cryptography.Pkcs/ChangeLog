@@ -1,3 +1,8 @@
+2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CmsRecipientCollection.cs: Add comment about compatibility-NRE
+	[Found using Gendarme CheckParametersNullityInVisibleMethodsRule]
+
 2008-10-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EnvelopedCms.cs, SignedCms.cs: Remove unneeded field 
