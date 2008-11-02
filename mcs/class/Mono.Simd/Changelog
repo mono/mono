@@ -1,3 +1,7 @@
+2008-11-02  Jonathan Pryor  <jpryor@novell.com>
+
+	* Documentation/**: Added.
+
 2008-10-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Mono.Simd.dll.sources: Added AccelMode.cs, AccelerationAttribute.cs and SimdRuntime.cs.

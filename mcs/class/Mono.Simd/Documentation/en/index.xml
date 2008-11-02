@@ -1,0 +1,56 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Mono.Simd" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Mono.Simd.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO CLI")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("Mono.Simd.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) 2008 Novell, Inc")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Mono.Simd">
+      <Type Name="AccelerationAttribute" Kind="Class" />
+      <Type Name="AccelMode" Kind="Enumeration" />
+      <Type Name="ShuffleSel" Kind="Enumeration" />
+      <Type Name="SimdRuntime" Kind="Class" />
+      <Type Name="Vector16b" Kind="Structure" />
+      <Type Name="Vector16sb" Kind="Structure" />
+      <Type Name="Vector2d" Kind="Structure" />
+      <Type Name="Vector2l" Kind="Structure" />
+      <Type Name="Vector2ul" Kind="Structure" />
+      <Type Name="Vector4f" Kind="Structure" />
+      <Type Name="Vector4i" Kind="Structure" />
+      <Type Name="Vector4ui" Kind="Structure" />
+      <Type Name="Vector8s" Kind="Structure" />
+      <Type Name="Vector8us" Kind="Structure" />
+    </Namespace>
+  </Types>
+  <Title>Mono.Simd</Title>
+</Overview>

@@ -1,0 +1,1025 @@
+<Type Name="Vector16b" FullName="Mono.Simd.Vector16b">
+  <TypeSignature Language="C#" Value="public struct Vector16b" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Simd</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Vector16b (byte v0, byte v1, byte v2, byte v3, byte v4, byte v5, byte v6, byte v7, byte v8, byte v9, byte v10, byte v11, byte v12, byte v13, byte v14, byte v15);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="v0" Type="System.Byte" />
+        <Parameter Name="v1" Type="System.Byte" />
+        <Parameter Name="v2" Type="System.Byte" />
+        <Parameter Name="v3" Type="System.Byte" />
+        <Parameter Name="v4" Type="System.Byte" />
+        <Parameter Name="v5" Type="System.Byte" />
+        <Parameter Name="v6" Type="System.Byte" />
+        <Parameter Name="v7" Type="System.Byte" />
+        <Parameter Name="v8" Type="System.Byte" />
+        <Parameter Name="v9" Type="System.Byte" />
+        <Parameter Name="v10" Type="System.Byte" />
+        <Parameter Name="v11" Type="System.Byte" />
+        <Parameter Name="v12" Type="System.Byte" />
+        <Parameter Name="v13" Type="System.Byte" />
+        <Parameter Name="v14" Type="System.Byte" />
+        <Parameter Name="v15" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="v0">To be added.</param>
+        <param name="v1">To be added.</param>
+        <param name="v2">To be added.</param>
+        <param name="v3">To be added.</param>
+        <param name="v4">To be added.</param>
+        <param name="v5">To be added.</param>
+        <param name="v6">To be added.</param>
+        <param name="v7">To be added.</param>
+        <param name="v8">To be added.</param>
+        <param name="v9">To be added.</param>
+        <param name="v10">To be added.</param>
+        <param name="v11">To be added.</param>
+        <param name="v12">To be added.</param>
+        <param name="v13">To be added.</param>
+        <param name="v14">To be added.</param>
+        <param name="v15">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddWithSaturation">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b AddWithSaturation (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Average">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b Average (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="CompareEqual">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b CompareEqual (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="ExtractByteMask">
+      <MemberSignature Language="C#" Value="public static int ExtractByteMask (Mono.Simd.Vector16b va);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="LoadAligned">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b LoadAligned (ref Mono.Simd.Vector16b v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="LoadAligned">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b LoadAligned (Mono.Simd.Vector16b* v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b*" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b Max (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b Min (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Addition">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b op_Addition (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_BitwiseAnd">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b op_BitwiseAnd (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_BitwiseOr">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b op_BitwiseOr (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_ExclusiveOr">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b op_ExclusiveOr (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16sb op_Explicit (Mono.Simd.Vector16b v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16sb</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector2d op_Explicit (Mono.Simd.Vector16b v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector2d</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector2l op_Explicit (Mono.Simd.Vector16b v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector2l</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector2ul op_Explicit (Mono.Simd.Vector16b v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector2ul</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f op_Explicit (Mono.Simd.Vector16b v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector4f</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4i op_Explicit (Mono.Simd.Vector16b v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector4i</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4ui op_Explicit (Mono.Simd.Vector16b v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector4ui</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector8s op_Explicit (Mono.Simd.Vector16b v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector8s</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector8us op_Explicit (Mono.Simd.Vector16b v);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector8us</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="v">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Subtraction">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b op_Subtraction (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="StoreAligned">
+      <MemberSignature Language="C#" Value="public static void StoreAligned (ref Mono.Simd.Vector16b res, Mono.Simd.Vector16b val);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Simd.Vector16b&amp;" RefType="ref" />
+        <Parameter Name="val" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <param name="val">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="StoreAligned">
+      <MemberSignature Language="C#" Value="public static void StoreAligned (Mono.Simd.Vector16b* res, Mono.Simd.Vector16b val);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Simd.Vector16b*" />
+        <Parameter Name="val" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <param name="val">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SubWithSaturation">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b SubWithSaturation (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="SumOfAbsoluteDifferences">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector8us SumOfAbsoluteDifferences (Mono.Simd.Vector16b va, Mono.Simd.Vector16sb vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector8us</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16sb" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UnpackHigh">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b UnpackHigh (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="UnpackLow">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b UnpackLow (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector16b</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="va" Type="Mono.Simd.Vector16b" />
+        <Parameter Name="vb" Type="Mono.Simd.Vector16b" />
+      </Parameters>
+      <Docs>
+        <param name="va">To be added.</param>
+        <param name="vb">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="V0">
+      <MemberSignature Language="C#" Value="public byte V0 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V1">
+      <MemberSignature Language="C#" Value="public byte V1 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V10">
+      <MemberSignature Language="C#" Value="public byte V10 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V11">
+      <MemberSignature Language="C#" Value="public byte V11 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V12">
+      <MemberSignature Language="C#" Value="public byte V12 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V13">
+      <MemberSignature Language="C#" Value="public byte V13 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V14">
+      <MemberSignature Language="C#" Value="public byte V14 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V15">
+      <MemberSignature Language="C#" Value="public byte V15 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V2">
+      <MemberSignature Language="C#" Value="public byte V2 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V3">
+      <MemberSignature Language="C#" Value="public byte V3 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V4">
+      <MemberSignature Language="C#" Value="public byte V4 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V5">
+      <MemberSignature Language="C#" Value="public byte V5 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V6">
+      <MemberSignature Language="C#" Value="public byte V6 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V7">
+      <MemberSignature Language="C#" Value="public byte V7 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V8">
+      <MemberSignature Language="C#" Value="public byte V8 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V9">
+      <MemberSignature Language="C#" Value="public byte V9 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
