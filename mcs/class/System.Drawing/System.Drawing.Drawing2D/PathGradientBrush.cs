@@ -98,6 +98,7 @@ namespace System.Drawing.Drawing2D {
 				return blend;
 			}
 			set {
+				// no null check, MS throws a NullReferenceException here
 				int count;
 				float [] factors = value.Factors;
 				float [] positions = value.Positions;
@@ -190,6 +191,7 @@ namespace System.Drawing.Drawing2D {
 				return interpolationColors;
 			}
 			set {
+				// no null check, MS throws a NullReferenceException here
 				int count;
 				Color [] colors = value.Colors;
 				float [] positions = value.Positions;
@@ -243,6 +245,7 @@ namespace System.Drawing.Drawing2D {
 				return colors;
 			}
 			set {
+				// no null check, MS throws a NullReferenceException here
 				int count = value.Length;
 				int [] colors = new int [count];
 				for (int i = 0; i < count; i++)

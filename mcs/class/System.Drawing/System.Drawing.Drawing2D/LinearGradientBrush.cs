@@ -119,6 +119,7 @@ namespace System.Drawing.Drawing2D {
 				return blend;
 			}
 			set {
+				// no null check, MS throws a NullReferenceException here
 				int count;
 				float [] factors = value.Factors;
 				float [] positions = value.Positions;
@@ -175,6 +176,8 @@ namespace System.Drawing.Drawing2D {
 				return interpolationColors;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentException ("InterpolationColors is null");
 				int count;
 				Color [] colors = value.Colors;
 				float [] positions = value.Positions;
@@ -213,6 +216,7 @@ namespace System.Drawing.Drawing2D {
 				return linearColors;
 			}
 			set {
+				// no null check, MS throws a NullReferenceException here
 				Status status = GDIPlus.GdipSetLineColors (nativeObject, value [0].ToArgb (), value [1].ToArgb ());
 				GDIPlus.CheckStatus (status);
 			}

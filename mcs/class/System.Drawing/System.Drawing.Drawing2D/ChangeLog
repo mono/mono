@@ -1,3 +1,14 @@
+2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathIterator.cs: Add proper null check that match the same
+	behavior that MS has.
+	* LinearGradientBrush.cs: Add comments to setter that dont do any null
+	check in order to be compatible with MS. Fix InterpolationColors to 
+	throw a ArgumentNullException.
+	* PathGradientBrush.cs: Add comments to setter that dont do any null
+	check in order to be compatible with MS.
+	[Found using Gendarme CheckParametersNullityInVisibleMethodsRule]
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GraphicsPath.cs : AddBeziers(Point[]) arg is "params" in 2.0.

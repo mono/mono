@@ -46,8 +46,10 @@ namespace System.Drawing.Drawing2D
 
 		public GraphicsPathIterator (GraphicsPath path)
 		{
-			Status status = GDIPlus.GdipCreatePathIter (out nativeObject, path.NativeObject);
-			GDIPlus.CheckStatus (status);
+			if (path != null) {
+				Status status = GDIPlus.GdipCreatePathIter (out nativeObject, path.NativeObject);
+				GDIPlus.CheckStatus (status);
+			}
 		}
 
 		internal IntPtr NativeObject {
@@ -63,6 +65,9 @@ namespace System.Drawing.Drawing2D
 
 		public int Count {
 			get {
+				if (nativeObject == IntPtr.Zero)
+					return 0;
+ 
 				int count;
 				Status status = GDIPlus.GdipPathIterGetCount (nativeObject, out count);
 				GDIPlus.CheckStatus (status);
@@ -99,6 +104,7 @@ namespace System.Drawing.Drawing2D
 			Status status;
 			int resultCount;
 
+			// no null checks, MS throws a NullReferenceException here
 			if (points.Length != types.Length)
 				throw new ArgumentException ("Invalid arguments passed. Both arrays should have the same length.");
 
@@ -123,8 +129,8 @@ namespace System.Drawing.Drawing2D
 		{
 			Status status;
 			int resultCount;
+			// no null checks, MS throws a NullReferenceException here
 			int count = points.Length;
-
 			if (count != types.Length)
 				throw new ArgumentException ("Invalid arguments passed. Both arrays should have the same length.");
 
@@ -145,9 +151,9 @@ namespace System.Drawing.Drawing2D
 
 		public int NextMarker (GraphicsPath path)
 		{
-			Status status;
 			int resultCount;
-			status = GDIPlus.GdipPathIterNextMarkerPath (nativeObject, out resultCount, path.NativeObject);
+			IntPtr ptr = (path == null) ? IntPtr.Zero : path.NativeObject;
+			Status status = GDIPlus.GdipPathIterNextMarkerPath (nativeObject, out resultCount, ptr);
 			GDIPlus.CheckStatus (status);
 
 			return resultCount;
@@ -175,9 +181,9 @@ namespace System.Drawing.Drawing2D
 
 		public int NextSubpath (GraphicsPath path, out bool isClosed)
 		{
-			Status status;
 			int resultCount;
-			status = GDIPlus.GdipPathIterNextSubpathPath (nativeObject, out resultCount, path.NativeObject, out isClosed);
+			IntPtr ptr = (path == null) ? IntPtr.Zero : path.NativeObject;
+			Status status = GDIPlus.GdipPathIterNextSubpathPath (nativeObject, out resultCount, ptr, out isClosed);
 			GDIPlus.CheckStatus (status);
 
 			return resultCount;
