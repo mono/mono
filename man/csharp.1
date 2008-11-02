@@ -289,12 +289,15 @@ csharp>
 The return value is a TimeSpan, that you can store in a variable for
 benchmarking purposes. 
 .SH STARTUP FILES
-The C# shell will load all the C# script files and Mono assemblies
-located in the ~/.config/csharp directory on Unix.  C# script files
-are files that have the extension .cs and they should only contain
-statements and expressions, they can not contain full class
-definitions (at least not as of Mono 2.0).   Full class definitions
-should be compiled into dlls and stored in that directory.
+The C# shell will load all the Mono assemblies and C# script files
+located in the ~/.config/csharp directory on Unix.  The assemblies are
+loaded before the source files are loaded. 
+.PP
+C# script files are files
+that have the extension .cs and they should only contain statements
+and expressions, they can not contain full class definitions (at least
+not as of Mono 2.0).  Full class definitions should be compiled into
+dlls and stored in that directory.
 .SH AUTHORS
 The Mono C# Compiler was written by Miguel de Icaza, Ravi Pratap,
 Martin Baulig, Marek Safar and Raja Harinath.  The development was
