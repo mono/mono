@@ -1,3 +1,13 @@
+2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathIteratorTest.cs: New. Add some (incomplete) unit 
+	tests for GraphicsPathIterator. Test cases are mostly to ensure 
+	null check compatibility with MS.
+	* LinearGradientBrushTest.cs: Add test case when setting null
+	on properties.
+	* PathGradientBrushTest.cs: Add test case when setting null
+	on properties.
+
 2008-09-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Add unit test to check for an open curve

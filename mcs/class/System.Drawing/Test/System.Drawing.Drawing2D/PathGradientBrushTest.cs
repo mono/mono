@@ -875,5 +875,41 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				Assert.AreEqual (pgb.Transform, clone, "Reset");
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Blend_Null ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLines (pts_2f);
+				using (PathGradientBrush pgb = new PathGradientBrush (gp)) {
+					pgb.Blend = null;
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void InterpolationColors_Null ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLines (pts_2f);
+				using (PathGradientBrush pgb = new PathGradientBrush (gp)) {
+					pgb.InterpolationColors = null;
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void SurroundColors_Null ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLines (pts_2f);
+				using (PathGradientBrush pgb = new PathGradientBrush (gp)) {
+					pgb.SurroundColors = null;
+				}
+			}
+		}
 	}
 }
