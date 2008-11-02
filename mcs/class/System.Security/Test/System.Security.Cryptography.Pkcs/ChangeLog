@@ -1,3 +1,7 @@
+2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CmsRecipientCollectionTest.cs: Verify NRE behavior of ctor.
+
 2006-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PkitsTest.cs: New. Common test code to use the PKITS test data.
