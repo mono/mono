@@ -110,6 +110,7 @@ namespace System.Security.Cryptography.Xml {
 #if NET_2_0
 		public override byte[] GetDigestedOutput (HashAlgorithm hash)
 		{
+			// no null check, MS throws a NullReferenceException here
 			return hash.ComputeHash ((Stream) GetOutput ());
 		}
 #endif

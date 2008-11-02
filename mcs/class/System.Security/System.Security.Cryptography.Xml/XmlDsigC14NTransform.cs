@@ -92,6 +92,7 @@ namespace System.Security.Cryptography.Xml {
 		[ComVisible (false)]
 		public override byte[] GetDigestedOutput (HashAlgorithm hash)
 		{
+			// no null check, MS throws a NullReferenceException here
 			return hash.ComputeHash ((Stream) GetOutput ());
 		}
 #endif

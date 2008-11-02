@@ -161,6 +161,8 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO ("verify")]
 		protected virtual bool IsTargetElement (XmlElement inputElement, string idValue)
 		{
+			if ((inputElement == null) || (idValue == null))
+				return false;
 			return (inputElement.Attributes ["id"].Value == idValue);
 		}
 

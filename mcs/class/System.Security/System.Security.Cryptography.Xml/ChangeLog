@@ -1,3 +1,17 @@
+2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EncryptedXml.cs: Add proper null check inside methods.
+	* SignedXml.cs: GetIdElement returns null if either of its parameter
+	is null.
+	* Transform.cs: Comment compatibility-NRE in GetDigestedOutput.
+	* XmlDecryptionTransform.cs: IsTargetElement returns null if either
+	of its parameter is null.
+	* XmlDsigC14NTransform.cs: Comment compatibility-NRE in 
+	GetDigestedOutput.
+	* XmlDsigExcC14NTransform.cs: Comment compatibility-NRE in 
+	GetDigestedOutput.
+	[Found using Gendarme CheckParametersNullityInVisibleMethodsRule]
+
 2008-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlDsigBase64Transform.cs: Use constant for Algorithm namespace.

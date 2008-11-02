@@ -698,6 +698,9 @@ namespace System.Security.Cryptography.Xml {
 
 		public virtual XmlElement GetIdElement (XmlDocument document, string idValue) 
 		{
+			if ((document == null) || (idValue == null))
+				return null;
+
 			// this works only if there's a DTD or XSD available to define the ID
 			XmlElement xel = document.GetElementById (idValue);
 			if (xel == null) {

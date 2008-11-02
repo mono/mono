@@ -106,6 +106,7 @@ namespace System.Security.Cryptography.Xml {
 		[ComVisible (false)]
 		public virtual byte[] GetDigestedOutput (HashAlgorithm hash)
 		{
+			// no null check, MS throws a NullReferenceException here
 			return hash.ComputeHash ((Stream) GetOutput (typeof (Stream)));
 		}
 #endif

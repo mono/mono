@@ -141,6 +141,11 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] DecryptData (EncryptedData encryptedData, SymmetricAlgorithm symAlg)
 		{
+			if (encryptedData == null)
+				throw new ArgumentNullException ("encryptedData");
+			if (symAlg == null)
+				throw new ArgumentNullException ("symAlg");
+
 			PaddingMode bak = symAlg.Padding;
 			try {
 				symAlg.Padding = Padding;
@@ -163,6 +168,9 @@ namespace System.Security.Cryptography.Xml {
 
 		public virtual byte[] DecryptEncryptedKey (EncryptedKey encryptedKey)
 		{
+			if (encryptedKey == null)
+				throw new ArgumentNullException ("encryptedKey");
+
 			object keyAlg = null;
 			foreach (KeyInfoClause innerClause in encryptedKey.KeyInfo) {
 				if (innerClause is KeyInfoName) {
@@ -181,6 +189,11 @@ namespace System.Security.Cryptography.Xml {
 
 		public static byte[] DecryptKey (byte[] keyData, SymmetricAlgorithm symAlg)
 		{
+			if (keyData == null)
+				throw new ArgumentNullException ("keyData");
+			if (symAlg == null)
+				throw new ArgumentNullException ("symAlg");
+
 			if (symAlg is TripleDES)
 				return SymmetricKeyWrap.TripleDESKeyWrapDecrypt (symAlg.Key, keyData);
 			if (symAlg is Rijndael)
@@ -244,6 +257,11 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] EncryptData (byte[] plainText, SymmetricAlgorithm symAlg)
 		{
+			if (plainText == null)
+				throw new ArgumentNullException ("plainText");
+			if (symAlg == null)
+				throw new ArgumentNullException ("symAlg");
+
 			PaddingMode bak = symAlg.Padding;
 			try {
 				symAlg.Padding = Padding;
@@ -274,6 +292,9 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] EncryptData (XmlElement inputElement, SymmetricAlgorithm symAlg, bool content)
 		{
+			if (inputElement == null)
+				throw new ArgumentNullException ("inputElement");
+
 			if (content)
 				return EncryptData (Encoding.GetBytes (inputElement.InnerXml), symAlg);
 			else
@@ -282,6 +303,11 @@ namespace System.Security.Cryptography.Xml {
 
 		public static byte[] EncryptKey (byte[] keyData, SymmetricAlgorithm symAlg)
 		{
+			if (keyData == null)
+				throw new ArgumentNullException ("keyData");
+			if (symAlg == null)
+				throw new ArgumentNullException ("symAlg");
+
 			if (symAlg is TripleDES)
 				return SymmetricKeyWrap.TripleDESKeyWrapEncrypt (symAlg.Key, keyData);
 			if (symAlg is Rijndael)
@@ -329,7 +355,7 @@ namespace System.Security.Cryptography.Xml {
 				symAlg = SymmetricAlgorithm.Create ("TripleDES");
 				break;
 			default:
-				throw new ArgumentException ("symAlgUri");
+				throw new CryptographicException ("symAlgUri");
 			}
 
 			return symAlg;
@@ -379,6 +405,9 @@ namespace System.Security.Cryptography.Xml {
 
 		public virtual byte[] GetDecryptionIV (EncryptedData encryptedData, string symAlgUri)
 		{
+			if (encryptedData == null)
+				throw new ArgumentNullException ("encryptedData");
+
 			SymmetricAlgorithm symAlg = GetAlgorithm (symAlgUri);
 			byte[] iv = new Byte [symAlg.BlockSize / 8];
 			Buffer.BlockCopy (encryptedData.CipherData.CipherValue, 0, iv, 0, iv.Length);
@@ -387,6 +416,11 @@ namespace System.Security.Cryptography.Xml {
 
 		public virtual SymmetricAlgorithm GetDecryptionKey (EncryptedData encryptedData, string symAlgUri)
 		{
+			if (encryptedData == null)
+				throw new ArgumentNullException ("encryptedData");
+			if (symAlgUri == null)
+				return null;
+
 			SymmetricAlgorithm symAlg = GetAlgorithm (symAlgUri);
 			symAlg.IV = GetDecryptionIV (encryptedData, encryptedData.EncryptionMethod.KeyAlgorithm);
 			KeyInfo keyInfo = encryptedData.KeyInfo;
@@ -401,6 +435,9 @@ namespace System.Security.Cryptography.Xml {
 
 		public virtual XmlElement GetIdElement (XmlDocument document, string idValue)
 		{
+			if ((document == null) || (idValue == null))
+				return null;
+
                         // this works only if there's a DTD or XSD available to define the ID
 			XmlElement xel = document.GetElementById (idValue);
 			if (xel == null) {
@@ -412,6 +449,11 @@ namespace System.Security.Cryptography.Xml {
 
 		public void ReplaceData (XmlElement inputElement, byte[] decryptedData)
 		{
+			if (inputElement == null)
+				throw new ArgumentNullException ("inputElement");
+			if (decryptedData == null)
+				throw new ArgumentNullException ("decryptedData");
+
 			XmlDocument ownerDocument = inputElement.OwnerDocument;
 			XmlTextReader reader = new XmlTextReader (new StringReader (Encoding.GetString (decryptedData, 0, decryptedData.Length)));
 			reader.MoveToContent ();
@@ -421,6 +463,11 @@ namespace System.Security.Cryptography.Xml {
 
 		public static void ReplaceElement (XmlElement inputElement, EncryptedData encryptedData, bool content)
 		{
+			if (inputElement == null)
+				throw new ArgumentNullException ("inputElement");
+			if (encryptedData == null)
+				throw new ArgumentNullException ("encryptedData");
+
 			XmlDocument ownerDocument = inputElement.OwnerDocument;
 			inputElement.ParentNode.ReplaceChild (encryptedData.GetXml (ownerDocument), inputElement);
 		}
