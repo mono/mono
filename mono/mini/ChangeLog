@@ -1,3 +1,8 @@
+2008-11-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mini_emit_inst_for_method): Use the proper wrapper type
+	when checking for monitor enter/exit.
+
 2008-10-30  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c (mini_emit_inst_for_method): Use the IL fastpaths
