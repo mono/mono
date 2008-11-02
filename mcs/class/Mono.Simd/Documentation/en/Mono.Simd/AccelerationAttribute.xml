@@ -14,8 +14,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Documents the minimal hardware requirements for an operation to be hardware accelerated .</summary>
+    <remarks>
+
+      This attribute is used to decorate methods, constructors and
+      properties to document the minimal hardware requirements for
+      Mono to map the operation to a native hardware operation.
+
+    </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +35,11 @@
       </Parameters>
       <Docs>
         <param name="mode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Initializes the attribute with the specified acceleration mode.</summary>
+
+        <remarks>This value documents the minimal hardware requirement
+        for the feature to be hardware accelerated.</remarks>
+
       </Docs>
     </Member>
     <Member MemberName="Mode">
@@ -43,9 +52,9 @@
         <ReturnType>Mono.Simd.AccelMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The minimum hardware required to accelerate this operation.</summary>
+        <value>The minimum hardware requirements to accelerate this operation.</value>
+        <remarks></remarks>
       </Docs>
     </Member>
   </Members>

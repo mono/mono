@@ -13,8 +13,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Flags to encode SIMD acceleration requirements.</summary>
+
+    <remarks>The AccelMode values are a bitmask that can be used to
+    determine the minimum hardware requirements for an operation to be
+    hardware accelerated.</remarks>
+
   </Docs>
   <Members>
     <Member MemberName="None">
@@ -27,7 +31,7 @@
         <ReturnType>Mono.Simd.AccelMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The value of this enumeration.</summary>
       </Docs>
     </Member>
     <Member MemberName="SSE1">
@@ -40,7 +44,7 @@
         <ReturnType>Mono.Simd.AccelMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>This operation is accelerated on systems supporting SSE 1 and up.</summary>
       </Docs>
     </Member>
     <Member MemberName="SSE2">
@@ -53,7 +57,7 @@
         <ReturnType>Mono.Simd.AccelMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>This operation is accelerated on systems supporting SSE 2 and up.</summary>
       </Docs>
     </Member>
     <Member MemberName="SSE3">
@@ -66,7 +70,7 @@
         <ReturnType>Mono.Simd.AccelMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>This operation is accelerated on systems supporting SSE 3 and up.</summary>
       </Docs>
     </Member>
     <Member MemberName="SSE41">
@@ -79,7 +83,7 @@
         <ReturnType>Mono.Simd.AccelMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>This operation is accelerated on systems supporting SSE 4.1 and up.</summary>
       </Docs>
     </Member>
     <Member MemberName="SSE42">
@@ -92,7 +96,7 @@
         <ReturnType>Mono.Simd.AccelMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>This operation is accelerated on systems supporting SSE 4.2 and up.</summary>
       </Docs>
     </Member>
     <Member MemberName="SSE4A">
@@ -105,7 +109,11 @@
         <ReturnType>Mono.Simd.AccelMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+
+        <summary>This operation is accelerated on systems supporting
+        AMD's SSE 4A.  This is a limited subset of SSE4 with their own
+        operations.</summary>
+
       </Docs>
     </Member>
     <Member MemberName="SSSE3">
@@ -118,7 +126,7 @@
         <ReturnType>Mono.Simd.AccelMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>This operation is accelerated on systems supporting AMD's SSE 3E.</summary>
       </Docs>
     </Member>
   </Members>

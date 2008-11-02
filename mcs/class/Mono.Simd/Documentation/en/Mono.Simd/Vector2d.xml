@@ -49,11 +49,11 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
+        <summary>Computes (v1.X - v2.X, v1.Y + v2.Y).</summary>
+        <returns>The resulting vector.</returns>
+        <remarks>Computes (v1.X - v2.X, v1.Y + v2.Y).</remarks>
       </Docs>
     </Member>
     <Member MemberName="AndNot">
@@ -75,8 +75,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -101,8 +101,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -127,8 +127,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -153,8 +153,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -179,8 +179,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -205,8 +205,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -231,8 +231,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -257,8 +257,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -283,8 +283,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -308,7 +308,7 @@
         <Parameter Name="v1" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -333,8 +333,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -359,8 +359,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -385,8 +385,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -411,8 +411,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -488,8 +488,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -514,8 +514,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -540,8 +540,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -566,8 +566,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -592,8 +592,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -618,8 +618,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -644,8 +644,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -898,8 +898,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -924,8 +924,8 @@
         <Parameter Name="v2" Type="Mono.Simd.Vector2d" />
       </Parameters>
       <Docs>
-        <param name="v1">To be added.</param>
-        <param name="v2">To be added.</param>
+        <param name="v1">First vector.</param>
+        <param name="v2">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>

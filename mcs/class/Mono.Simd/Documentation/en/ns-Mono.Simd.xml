@@ -11,34 +11,35 @@
       </para>
       
       <para>
-        
+        When the Mono runtime's SIMD optimization are active the
+        operations on the structures defined in this namespace are
+        mapped to hardware operations which can improve the
+        performance of your graphics, multimedia or 3D operations
+        significantly. 
       </para>
 
       <para>
+        Code that uses the types defined in the Mono.Simd assembly
+        will work even on systems that do not have hardware SIMD
+        operations, systems where Mono has not added support for the
+        native SIMD operations and even on the Microsoft.NET runtime
+        as it currently does not have support for hardware accelerated
+        SIMD operations.
+      </para>
       
-      </para>
       <para>
+        You can control whether the runtime will map the operations to
+        SIMD primitives by using the -O command line option and
+        specifying -O=simd to enable or -O=-simd to disable.
       </para>
+
       <para>
-      </para>
-      <para>
-      </para>
-      <para>
-      </para>
-      <para>
-      </para>
-      <para>
-      </para>
-      <para>
-      </para>
-      <para>
-      </para>
-      <para>
-      </para>
-      <para>
-      </para>
-      <para>
-         The 
+         The operations that are hardware accelerated are flagged with
+         the Acceleration attribute on each individual method.   The
+         Mode property describes the minimum version of CPU
+         functionality required to use the operation.   Software can
+         use this flag to determine if they want to use the operations
+         implemented in software or not.
       </para>
     </remarks>
   </Docs>
