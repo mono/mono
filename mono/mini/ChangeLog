@@ -1,5 +1,7 @@
 2008-11-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (compile_method): Fix the copying of the cfgs array.
+
 	* mini.h (MonoCompile): Add 'got_offset' field.
 
 	* aot-compiler.c: Store the got offset in MonoCompile, get rid of the
