@@ -1,3 +1,10 @@
+2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Security_test.dll.sources: Add new tests to build
+		System.Security.Cryptography.Pkcs/CmsRecipientCollectionTest.cs
+		System.Security.Cryptography.Xml/TransformTest.cs
+		System.Security.Cryptography.Xml/XmlDecryptionTransformTest.cs
+
 2008-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Security_test.dll.sources: Added XmlLicenseTransformTest.cs
