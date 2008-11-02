@@ -1,5 +1,18 @@
 2008-11-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MonoCompile): Add 'got_offset' field.
+
+	* aot-compiler.c: Store the got offset in MonoCompile, get rid of the
+	method_got_offsets array.
+
+	* aot-compiler.c aot-runtime.c: Add support for the monitor enter/exit
+	wrappers.
+
+	* aot-compiler.c (compile_method): Add generic method instances referenced
+	by the method to the list of methods to be compiled, this is required so if
+	A<T> references B<T>, and another assembly references A<int>, then it will
+	also get a copy of B<int>.
+
 	* method-to-ir.c (mini_emit_inst_for_method): Use the proper wrapper type
 	when checking for monitor enter/exit.
 
