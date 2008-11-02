@@ -1,6 +1,45 @@
 <Namespace Name="Mono.Simd">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      Hardware accelerated SIMD-based primitives.
+    </summary>
+    <remarks>
+      <para>
+        The Mono.Simd namespace provides a number of classes that are
+        hardware accelerated by mapping the classes and the actual
+        operations to native SIMD instructions on a processor. 
+      </para>
+      
+      <para>
+        
+      </para>
+
+      <para>
+      
+      </para>
+      <para>
+      </para>
+      <para>
+      </para>
+      <para>
+      </para>
+      <para>
+      </para>
+      <para>
+      </para>
+      <para>
+      </para>
+      <para>
+      </para>
+      <para>
+      </para>
+      <para>
+      </para>
+      <para>
+      </para>
+      <para>
+         The 
+      </para>
+    </remarks>
   </Docs>
 </Namespace>
