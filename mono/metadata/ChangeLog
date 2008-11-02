@@ -1,3 +1,12 @@
+2008-11-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* monitor.c (mono_monitor_get_fast_enter_method): Add a proper type for the
+	wrapper.
+
+	* class-internals.h (struct _MonoMethod): Increase the size of 'wrapper_type'
+	by 1 bit.
+
+	* wrapper-types.h: Add MONO_WRAPPER_MONITOR_FAST_ENTER/EXIT.
 
 2008-10-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
