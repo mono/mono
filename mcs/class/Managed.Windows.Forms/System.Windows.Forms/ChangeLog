@@ -1,3 +1,10 @@
+2008-11-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs:
+	* ThemeWin32Classic.cs: Don't use groups nor insertion mark in
+	Application.EnableVisualStyles hasn't been called.
+	Fixes part of #437933.
+
 2008-10-31  Andreia Gaita  <shana@jitted.com>
 
 	* Form.cs (SetVisibleCore): since set_ActiveControl no longer calls focus

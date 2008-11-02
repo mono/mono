@@ -2661,7 +2661,7 @@ namespace System.Windows.Forms
 			}	
 
 #if NET_2_0
-			if (control.ShowGroups && control.View != View.List && control.Groups.Count > 0) {
+			if (control.UsingGroups) {
 				// Use InternalCount instead of Count to take into account Default Group as needed
 				for (int i = 0; i < control.Groups.InternalCount; i++) {
 					ListViewGroup group = control.Groups.GetInternalGroup (i);
@@ -2672,7 +2672,7 @@ namespace System.Windows.Forms
 
 			ListViewInsertionMark insertion_mark = control.InsertionMark;
 			int insertion_mark_index = insertion_mark.Index;
-			if (insertion_mark.Bounds != Rectangle.Empty &&
+			if (Application.VisualStylesEnabled && insertion_mark.Bounds != Rectangle.Empty &&
 					(control.View != View.Details && control.View != View.List) &&
 					insertion_mark_index > -1 && insertion_mark_index < control.Items.Count) {
 

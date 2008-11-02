@@ -388,6 +388,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal bool UsingGroups {
+			get {
+				return show_groups && groups.Count > 0 && view != View.List && 
+					Application.VisualStylesEnabled;
+			}
+		}
+
 		internal override bool ScaleChildrenInternal {
 			get { return false; }
 		}
@@ -1801,7 +1808,7 @@ namespace System.Windows.Forms
 
 			Size sz = item_size;
 #if NET_2_0
-			bool using_groups = show_groups && groups.Count > 0 && view != View.List;
+			bool using_groups = UsingGroups;
 #endif
 
 			CalculateRowsAndCols (sz, left_aligned, x_spacing, y_spacing);
