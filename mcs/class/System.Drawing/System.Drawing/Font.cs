@@ -296,10 +296,10 @@ namespace System.Drawing
 
 		public Font (Font prototype, FontStyle newStyle)
 		{
-			Status status;
+			// no null checks, MS throws a NullReferenceException if original is null
 			setProperties (prototype.FontFamily, prototype.Size, newStyle, prototype.Unit, prototype.GdiCharSet, prototype.GdiVerticalFont);
 				
-			status = GDIPlus.GdipCreateFont (_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);
+			Status status = GDIPlus.GdipCreateFont (_fontFamily.NativeObject, Size, Style, Unit, out fontObject);
 			GDIPlus.CheckStatus (status);			
 		}
 
@@ -669,6 +669,9 @@ namespace System.Drawing
 
 		public float GetHeight (Graphics graphics)
 		{
+			if (graphics == null)
+				throw new ArgumentNullException ("graphics");
+
 			float size;
 			Status status = GDIPlus.GdipGetFontHeight (fontObject, graphics.NativeObject, out size);
 			GDIPlus.CheckStatus (status);

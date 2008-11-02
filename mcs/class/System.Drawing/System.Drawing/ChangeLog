@@ -1,3 +1,9 @@
+2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Font.cs: Add comment on .ctor(Font,FontStyle) about the lack of
+	null check (compatibility). Add proper (yet compatible ;-) null check
+	to GetHeight(Graphics)
+
 2008-10-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Color.cs: Fix Color serialization by changing 'value' visibility
