@@ -159,7 +159,7 @@ namespace Mono {
 		void ReadEvalPrintLoopWith (ReadLiner readline)
 		{
 			string expr = null;
-			while (true){
+			while (!InteractiveBase.QuitRequested){
 				string input = readline (expr == null);
 				if (input == null)
 					return;
