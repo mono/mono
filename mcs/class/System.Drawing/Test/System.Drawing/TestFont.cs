@@ -341,6 +341,14 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Font_FontNull_FontStyle ()
+		{
+			Font f = null;
+			new Font (f, FontStyle.Bold);
+		}
+
+		[Test]
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
@@ -601,6 +609,15 @@ namespace MonoTests.System.Drawing{
 						Assert.AreEqual (expected, f.GetHeight (g), 0.01f, "PageScale");
 					}
 				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetHeight_Graphics_Null ()
+		{
+			using (Font f = new Font (name, 12.5f)) {
+				Assert.AreEqual (0, f.GetHeight (null), "0");
 			}
 		}
 

@@ -1,3 +1,8 @@
+2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestFont.cs: Add test cases for null checks to ensure we match
+	MS behavior.
+
 2008-10-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestColor.cs: Add test case, from Gert Driesen, for bug #410693
