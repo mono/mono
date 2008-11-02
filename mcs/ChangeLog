@@ -1,3 +1,7 @@
+2008-11-02  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs/Makefile (MONO_DIRS): Add Mono.Simd.
+
 2008-10-31  Jonathan Pryor  <jpryor@novell.com>
 
 	* docs/Makefile: Restructure the *.tree/*.zip rules to support
