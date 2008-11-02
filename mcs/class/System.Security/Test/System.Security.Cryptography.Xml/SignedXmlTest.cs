@@ -592,6 +592,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			return sw.ToString ();
 		}
 
+		[Test]
+		public void GetIdElement_Null ()
+		{
+			SignedXml sign = new SignedXml ();
+			AssertNull (sign.GetIdElement (null, "value"));
+			AssertNull (sign.GetIdElement (new XmlDocument (), null));
+		}
+
 #if NET_2_0
 		[Test]
 		[Category ("NotWorking")] // bug #79483

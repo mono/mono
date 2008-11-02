@@ -542,6 +542,13 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			AssertEquals ("<f:foo xmlns:f=\"urn:foo\"><b:bar xmlns:b=\"urn:bar\"></b:bar></f:foo>", new StreamReader (s, Encoding.UTF8).ReadToEnd ());
 			AssertEquals ("#2", "urn:foo", doc.DocumentElement.GetAttribute ("xmlns:f"));
 		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void GetDigestedOutput_Null ()
+		{
+			new XmlDsigExcC14NTransform ().GetDigestedOutput (null);
+		}
 #endif
 	}    
 }

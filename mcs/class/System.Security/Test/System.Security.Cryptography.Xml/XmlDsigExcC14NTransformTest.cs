@@ -601,6 +601,13 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Stream s = t.GetOutput () as Stream;
 			AssertEquals (expected, new StreamReader (s, Encoding.UTF8).ReadToEnd ());
 		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void GetDigestedOutput_Null ()
+		{
+			new XmlDsigExcC14NTransform ().GetDigestedOutput (null);
+		}
 	}    
 }
 

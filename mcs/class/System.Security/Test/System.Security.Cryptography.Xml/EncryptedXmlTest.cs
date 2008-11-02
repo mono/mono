@@ -141,6 +141,159 @@ namespace MonoTests.System.Security.Cryptography.Xml
 				encxml.ReplaceData (doc.DocumentElement, encxml.DecryptData (edata, aes));
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ReplaceData_XmlElementNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			ex.ReplaceData (null, new byte[0]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ReplaceData_EncryptedDataNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			XmlDocument doc = new XmlDocument ();
+			ex.ReplaceData (doc.DocumentElement, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ReplaceElement_XmlElementNull ()
+		{
+			EncryptedXml.ReplaceElement (null, new EncryptedData (), true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ReplaceElement_EncryptedDataNull ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			EncryptedXml.ReplaceElement (doc.DocumentElement, null, false);
+		}
+
+		[Test]
+		public void GetIdElement_XmlDocumentNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			Assert.IsNull (ex.GetIdElement (null, "value"));
+		}
+
+		[Test]
+		public void GetIdElement_StringNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			Assert.IsNull (ex.GetIdElement (new XmlDocument (), null));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetDecryptionKey_EncryptedDataNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			ex.GetDecryptionKey (null, EncryptedXml.XmlEncAES128Url);
+		}
+
+		[Test]
+		public void GetDecryptionKey_StringNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			Assert.IsNull (ex.GetDecryptionKey (new EncryptedData (), null));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetDecryptionIV_EncryptedDataNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			ex.GetDecryptionIV (null, EncryptedXml.XmlEncAES128Url);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void GetDecryptionIV_StringNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			Assert.IsNull (ex.GetDecryptionIV (new EncryptedData (), null));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DecryptKey_KeyNull ()
+		{
+			EncryptedXml.DecryptKey (null, Rijndael.Create ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DecryptKey_SymmetricAlgorithmNull ()
+		{
+			EncryptedXml.DecryptKey (new byte [16], null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void EncryptKey_KeyNull ()
+		{
+			EncryptedXml.EncryptKey (null, Rijndael.Create ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void EncryptKey_SymmetricAlgorithmNull ()
+		{
+			EncryptedXml.EncryptKey (new byte [16], null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DecryptData_EncryptedDataNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			ex.DecryptData (null, Rijndael.Create ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DecryptData_SymmetricAlgorithmNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			ex.DecryptData (new EncryptedData (), null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void EncryptData_DataNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			ex.EncryptData (null, Rijndael.Create ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void EncryptData_SymmetricAlgorithmNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			ex.EncryptData (new byte[16], null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void EncryptData_XmlElementNull ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			ex.EncryptData (null, Rijndael.Create (), true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DecryptEncryptedKey_Null ()
+		{
+			EncryptedXml ex = new EncryptedXml ();
+			ex.DecryptEncryptedKey (null);
+		}
 	}
 }
 #endif

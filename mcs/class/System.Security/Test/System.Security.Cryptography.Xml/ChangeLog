@@ -1,3 +1,15 @@
+2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EncryptedXmlTest.cs: Add null check test cases for many methods.
+	* SignedXmlTest.cs: New. Check that GetIdElement returns null when
+	either parameter is null.
+	* TransformTest.cs: New. Check null check behavior.
+	* XmlDecryptionTransformTest.cs: New. Check null check behavior.
+	* XmlDsigC14NTransformTest.cs: Confirm MS.NET NRE behavior inside
+	GetDigestedOutput method.
+	* XmlDsigExcC14NTransformTest.cs: Confirm MS.NET NRE behavior inside
+	GetDigestedOutput method.
+
 2008-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlDsigXsltTranformTest.cs: Added test for .ctor (bool).
