@@ -140,18 +140,28 @@ namespace Mono {
 			if (!Directory.Exists (dir))
 				return;
 
-			foreach (string file in Directory.GetFiles (dir)){
+			ArrayList sources = new ArrayList ();
+			ArrayList libraries = new ArrayList ();
+			
+			foreach (string file in System.IO.Directory.GetFiles (dir)){
 				string l = file.ToLower ();
 				
-				if (l.EndsWith (".cs")){
-					try {
-						using (StreamReader r = File.OpenText (file)){
-							ReadEvalPrintLoopWith (p => r.ReadLine ());
-						}
-					} catch {
+				if (l.EndsWith (".cs"))
+					sources.Add (file);
+				else if (l.EndsWith (".dll"))
+					libraries.Add (file);
+			}
+
+			foreach (string file in libraries){
+				Evaluator.LoadAssembly (file);
+			}
+			
+			foreach (string file in sources){
+				try {
+					using (System.IO.StreamReader r = System.IO.File.OpenText (file)){
+						ReadEvalPrintLoopWith (p => r.ReadLine ());
 					}
-				} else if (l.EndsWith (".dll")){
-					Evaluator.LoadAssembly (file);
+				} catch {
 				}
 			}
 		}
