@@ -1385,6 +1385,10 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			// Because expr is modified
+			if (eclass != ExprClass.Invalid)
+				return this;
+
 			if (resolved_type == null) {
 				resolved_type = base.DoResolve (ec);
 
