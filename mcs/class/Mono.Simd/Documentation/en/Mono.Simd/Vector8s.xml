@@ -9,8 +9,8 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>A vector with eight shorts.</summary>
+    <remarks>This represents a vector that contains 8 short values.</remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,16 +30,16 @@
         <Parameter Name="v7" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="v0">To be added.</param>
-        <param name="v1">First vector.</param>
-        <param name="v2">Second vector.</param>
-        <param name="v3">To be added.</param>
-        <param name="v4">To be added.</param>
-        <param name="v5">To be added.</param>
-        <param name="v6">To be added.</param>
-        <param name="v7">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="v0">v0 component.</param>
+        <param name="v1">v1 component.</param>
+        <param name="v2">v2 component.</param>
+        <param name="v3">v3 component.</param>
+        <param name="v4">v4 component.</param>
+        <param name="v5">v5 component.</param>
+        <param name="v6">v6 component.</param>
+        <param name="v7">v7 component.</param>
+        <summary>Creates a vector with eight shorts.</summary>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="AddWithSaturation">

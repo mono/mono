@@ -14,8 +14,8 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>A vector with four unsigned integers.</summary>
+    <remarks>This represents a vector that contains 4 unsigned integer values.</remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,12 +31,12 @@
         <Parameter Name="w" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <param name="z">To be added.</param>
-        <param name="w">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="x">X component.</param>
+        <param name="y">Y component.</param>
+        <param name="z">Z component.</param>
+        <param name="w">W component.</param>
+        <summary>Creates a vector with four uint values.</summary>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="CompareEqual">

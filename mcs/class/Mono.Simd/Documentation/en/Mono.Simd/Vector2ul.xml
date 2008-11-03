@@ -14,8 +14,8 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>A vector with two unsigned longs.</summary>
+    <remarks>This represents a vector that contains two unsigned long integers (64-bit) values.</remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,10 +29,10 @@
         <Parameter Name="y" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="x">X component.</param>
+        <param name="y">Y component.</param>
+        <summary>Creates a vector with two unsigned long integers (64-bit) values.</summary>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="CompareEqual">

@@ -9,7 +9,7 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>A vetor with four floating point values.</summary>
+    <summary>A vector with four floating point values.</summary>
     <remarks>This represents a vector that contains 4 single precision floating point values.</remarks>
   </Docs>
   <Members>
@@ -30,7 +30,7 @@
         <param name="y">Y component.</param>
         <param name="z">Z component.</param>
         <param name="w">W component.</param>
-        <summary>Creates a vector with four double values.</summary>
+        <summary>Creates a vector with four float values.</summary>
         <remarks></remarks>
       </Docs>
     </Member>
