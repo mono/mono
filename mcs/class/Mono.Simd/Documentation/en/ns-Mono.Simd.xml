@@ -41,6 +41,13 @@
          use this flag to determine if they want to use the operations
          implemented in software or not.
       </para>
+
+      <para>
+	Casting operations are also cheap, converting from one data
+	type to another have a very low cost.  This is useful to move
+	information back and forth from floating point values to
+	integers.
+      </para>
     </remarks>
   </Docs>
 </Namespace>

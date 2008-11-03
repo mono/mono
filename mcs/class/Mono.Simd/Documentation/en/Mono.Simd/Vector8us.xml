@@ -61,11 +61,16 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Adds two vectors with saturation.</summary>
+        <returns>The saturated addition of two vectors.</returns>
+        <remarks>
+	  <para>
+	    The resulting vector contains the saturated sum of the individual components of the vector.
+	  </para>
+	  <para>
+	    If the sum of two of the components would overflow, then the result of the saturated sum is UInt16.MaxValue.
+	  </para>
+	</remarks>
       </Docs>
       <Attributes>
         <Attribute>
@@ -87,11 +92,14 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
+        <summary>Averages the component values in the vectors.</summary>
+        <returns>A new vector with the averaged results.</returns>
+        <remarks>Performs an average computations of the values in the
+        two vectors.  The operation is performed in hardware by adding
+        the two numbers, adding one to the temporary result and then
+        shifting the result one bit to the right.</remarks>
       </Docs>
       <Attributes>
         <Attribute>
@@ -118,8 +126,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>Compares the elements of two vectors for equality.</summary>
 
         <returns>A new vector with the comparison results.</returns>
@@ -140,10 +148,10 @@
         <Parameter Name="va" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="va">Vector.</param>
+        <summary>Extracts a byte mask from the vector.</summary>
+        <returns>An integer with the low 16 bits representing the mask.</returns>
+        <remarks>This returns a 16-bit value where each bit is formed from the most significant bit of each byte.</remarks>
       </Docs>
       <Attributes>
         <Attribute>
@@ -213,8 +221,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -239,8 +247,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -270,8 +278,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -291,8 +299,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -317,8 +325,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -343,8 +351,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -369,8 +377,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -611,7 +619,7 @@
         <Parameter Name="amount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
+        <param name="va">First vector.</param>
         <param name="amount">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
@@ -637,8 +645,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -663,7 +671,7 @@
         <Parameter Name="amount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
+        <param name="va">First vector.</param>
         <param name="amount">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
@@ -689,8 +697,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -715,7 +723,7 @@
         <Parameter Name="amount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
+        <param name="va">First vector.</param>
         <param name="amount">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
@@ -741,7 +749,7 @@
         <Parameter Name="sel" Type="Mono.Simd.ShuffleSel" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
+        <param name="va">First vector.</param>
         <param name="sel">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
@@ -767,7 +775,7 @@
         <Parameter Name="sel" Type="Mono.Simd.ShuffleSel" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
+        <param name="va">First vector.</param>
         <param name="sel">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
@@ -798,8 +806,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -824,8 +832,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -895,8 +903,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -921,8 +929,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -947,8 +955,8 @@
         <Parameter Name="vb" Type="Mono.Simd.Vector8us" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <param name="vb">To be added.</param>
+        <param name="va">First vector.</param>
+        <param name="vb">Second vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>

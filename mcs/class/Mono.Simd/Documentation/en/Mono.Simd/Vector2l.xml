@@ -100,10 +100,10 @@
         <Parameter Name="va" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="va">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="va">Vector.</param>
+        <summary>Extracts a byte mask from the vector.</summary>
+        <returns>An integer with the low 16 bits representing the mask.</returns>
+        <remarks>This returns a 16-bit value where each bit is formed from the most significant bit of each byte.</remarks>
       </Docs>
     </Member>
     <Member MemberName="LoadAligned">
