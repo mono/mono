@@ -32,7 +32,7 @@ namespace Mono.Simd
 	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
 	public struct Vector16b
 	{
-		private byte v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15;
+		private byte v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15;
 		public Vector16b (byte v0, byte v1, byte v2, byte v3, byte v4, byte v5, byte v6, byte v7, byte v8, byte v9, byte v10, byte v11, byte v12, byte v13, byte v14, byte v15)
 		{
 			this.v0 = v0;
@@ -50,7 +50,7 @@ namespace Mono.Simd
 			this.v12 = v12;
 			this.v13 = v13;
 			this.v14 = v14;
-			this.v15 = v15;		}
+			this.v15 = v15;		}
 
 		public byte V0 { get { return v0; } set { v0 = value; } }
 		public byte V1 { get { return v1; } set { v1 = value; } }

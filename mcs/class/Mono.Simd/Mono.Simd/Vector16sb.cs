@@ -33,7 +33,7 @@ namespace Mono.Simd
 	[CLSCompliant(false)]
 	public struct Vector16sb
 	{
-		private sbyte v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15;
+		private sbyte v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15;
 		public Vector16sb (sbyte v0, sbyte v1, sbyte v2, sbyte v3, sbyte v4, sbyte v5, sbyte v6, sbyte v7, sbyte v8, sbyte v9, sbyte v10, sbyte v11, sbyte v12, sbyte v13, sbyte v14, sbyte v15)
 		{
 			this.v0 = v0;
@@ -51,7 +51,7 @@ namespace Mono.Simd
 			this.v12 = v12;
 			this.v13 = v13;
 			this.v14 = v14;
-			this.v15 = v15;		}
+			this.v15 = v15;		}
 
 		public sbyte V0 { get { return v0; } set { v0 = value; } }
 		public sbyte V1 { get { return v1; } set { v1 = value; } }

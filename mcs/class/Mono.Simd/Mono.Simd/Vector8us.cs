@@ -33,7 +33,7 @@ namespace Mono.Simd
 	[CLSCompliant(false)]
 	public struct Vector8us
 	{
-		private ushort v0, v1, v2, v3, v4, v5, v6, v7;
+		private ushort v0, v1, v2, v3, v4, v5, v6, v7;
 		public Vector8us (ushort v0, ushort v1, ushort v2, ushort v3, ushort v4, ushort v5, ushort v6, ushort v7)
 		{
 			this.v0 = v0;

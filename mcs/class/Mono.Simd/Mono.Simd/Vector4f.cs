@@ -269,7 +269,7 @@ namespace Mono.Simd
 			*c++ = v1.y == v2.y ? -1 : 0;
 			*c++ = v1.z == v2.z ? -1 : 0;
 			*c = v1.w == v2.w ? -1 : 0;
-			return res;		}
+			return res;		}
 
 		/*Same as a < b. */
 		[Acceleration (AccelMode.SSE1)]
@@ -294,7 +294,7 @@ namespace Mono.Simd
 			*c++ = v1.y <= v2.y ? -1 : 0;
 			*c++ = v1.z <= v2.z ? -1 : 0;
 			*c = v1.w <= v2.w ? -1 : 0;
-			return res;		}
+			return res;		}
 
 		/*Same float.IsNaN (a) || float.IsNaN (b). */
 		[Acceleration (AccelMode.SSE1)]
@@ -306,7 +306,7 @@ namespace Mono.Simd
 			*c++ = float.IsNaN (v1.y) || float.IsNaN (v2.y) ? -1 : 0;
 			*c++ = float.IsNaN (v1.z) || float.IsNaN (v2.z) ? -1 : 0;
 			*c = float.IsNaN (v1.w) || float.IsNaN (v2.w) ? -1 : 0;
-			return res;		}
+			return res;		}
 
 		/*Same as a != b. */
 		[Acceleration (AccelMode.SSE1)]
@@ -357,7 +357,7 @@ namespace Mono.Simd
 			*c++ = !float.IsNaN (v1.y) && !float.IsNaN (v2.y) ? -1 : 0;
 			*c++ = !float.IsNaN (v1.z) && !float.IsNaN (v2.z) ? -1 : 0;
 			*c = !float.IsNaN (v1.w) && !float.IsNaN (v2.w) ? -1 : 0;
-			return res;		}
+			return res;		}
 
 		[Acceleration (AccelMode.SSE3)]
 		public static Vector4f DuplicateLow (Vector4f v1)
