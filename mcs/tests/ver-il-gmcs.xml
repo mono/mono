@@ -32859,6 +32859,19 @@
       </method>
     </type>
   </test>
+  <test name="test-691.cs">
+    <type name="ConsoleApplication6.Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>23</size>
+      </method>
+      <method name="Void Main()">
+        <size>135</size>
+      </method>
+    </type>
+  </test>
   <test name="test-7.cs">
     <type name="Mine.MyBoolean">
       <method name="Void .ctor()">
