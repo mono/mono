@@ -771,8 +771,12 @@ namespace System.Windows.Forms {
 			} else {
 				RecalculateVisibleOrder (root_node);
 				UpdateScrollBars (true);
-				SetTop (Nodes [Nodes.Count - 1]);
-				SelectedNode = Nodes [Nodes.Count - 1];
+				
+				// Only move the top node if we now have a scrollbar
+				if (vbar.VisibleInternal) {
+					SetTop (Nodes [Nodes.Count - 1]);
+					SelectedNode = Nodes [Nodes.Count - 1];
+				}
 			}
 		}
 
