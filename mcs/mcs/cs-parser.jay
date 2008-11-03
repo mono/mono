@@ -2872,7 +2872,7 @@ base_type_name
 	
 /*
  * replaces all the productions for isolating the various
- * simple types, but we need this to reuse it easily in local_variable_type
+ * simple types, but we need this to reuse it easily in variable_type
  */
 builtin_types
 	: OBJECT	{ $$ = TypeManager.system_object_expr; }
@@ -4355,7 +4355,7 @@ declaration_statement
  * > expressions to prevent reduce/reduce errors in the grammar.
  * > The expressions are converted into types during semantic analysis.
  */
-local_variable_type
+variable_type
 	: primary_expression_no_array_creation opt_rank_specifier_or_nullable
 	  { 
 		// FIXME: Do something smart here regarding the composition of the type.
@@ -4439,6 +4439,23 @@ local_variable_pointer_type
 	  }
 	;
 
+local_variable_type
+	: variable_type
+	| local_variable_pointer_type opt_rank_specifier
+	  {
+		if ($1 != null){
+			string rank = (string)$2;
+
+			if (rank == "")
+				$$ = $1;
+			else
+				$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, rank);
+		} else {
+			$$ = null;
+		}
+	  }
+	;
+
 local_variable_declaration
 	: local_variable_type local_variable_declarators
 	  {
@@ -4451,23 +4468,10 @@ local_variable_declaration
 		} else
 			$$ = null;
 	  }
-	| local_variable_pointer_type opt_rank_specifier local_variable_declarators
-	  {
-		if ($1 != null){
-			Expression t;
-
-			if ((string) $2 == "")
-				t = (Expression) $1;
-			else
-				t = new ComposedCast ((FullNamedExpression) $1, (string) $2);
-			$$ = new DictionaryEntry (t, $3);
-		} else 
-			$$ = null;
-	  }
  	;
 
 local_constant_declaration
-	: CONST local_variable_type constant_declarators
+	: CONST variable_type constant_declarators
 	  {
 		if ($2 != null)
 			$$ = new DictionaryEntry ($2, $3);
