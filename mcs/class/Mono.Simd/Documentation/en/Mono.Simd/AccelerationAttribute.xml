@@ -34,7 +34,7 @@
         <Parameter Name="mode" Type="Mono.Simd.AccelMode" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
+        <param name="mode">The mode to initialize the attribute with.</param>
         <summary>Initializes the attribute with the specified acceleration mode.</summary>
 
         <remarks>This value documents the minimal hardware requirement
