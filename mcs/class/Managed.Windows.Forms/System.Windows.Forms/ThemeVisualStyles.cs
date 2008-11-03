@@ -1160,6 +1160,7 @@ namespace System.Windows.Forms
 #endif
 			default: // Blocks
 				int block_width = renderer.GetInteger (IntegerProperty.ProgressChunkSize);
+				block_width = Math.Max (block_width, 0); // block_width is used to break out the loop below, it must be >= 0!
 				int first_pixel_outside_filled_area = (int)(((double)(ctrl.Value - ctrl.Minimum) * client_area.Width) / (Math.Max (ctrl.Maximum - ctrl.Minimum, 1))) + client_area.X;
 				int block_count = 0;
 				int increment = block_width + renderer.GetInteger (IntegerProperty.ProgressSpaceSize);

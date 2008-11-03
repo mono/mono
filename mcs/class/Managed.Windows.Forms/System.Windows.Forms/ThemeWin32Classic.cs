@@ -51,7 +51,6 @@ namespace System.Windows.Forms
 		/* Hardcoded colour values not exposed in the API constants in all configurations */
 		protected static readonly Color arrow_color = Color.Black;
 		protected static readonly Color pen_ticks_color = Color.Black;
-		protected static readonly Color progressbarblock_color = Color.FromArgb (255, 0, 0, 128);
 		protected static StringFormat string_format_menu_text;
 		protected static StringFormat string_format_menu_shortcut;
 		protected static StringFormat string_format_menu_menubar_text;
@@ -3053,10 +3052,12 @@ namespace System.Windows.Forms
 						width += col.Width;
 					focus_rect = new Rectangle (0, full_rect.Y, width, full_rect.Height);
 				}
-				if (item.Selected)
-					CPDrawFocusRectangle (dc, focus_rect, ColorHighlightText, ColorHighlight);
-				else
-					CPDrawFocusRectangle (dc, focus_rect, control.ForeColor, control.BackColor);
+				if (control.ShowFocusCues) {
+					if (item.Selected)
+						CPDrawFocusRectangle (dc, focus_rect, ColorHighlightText, ColorHighlight);
+					else
+						CPDrawFocusRectangle (dc, focus_rect, control.ForeColor, control.BackColor);
+				}
 			}
 
 			format.Dispose ();
@@ -4251,7 +4252,7 @@ namespace System.Windows.Forms
 			case 1: { // Continuous
 				int pixels_to_draw;
 				pixels_to_draw = (int)(client_area.Width * ((double)(ctrl.Value - ctrl.Minimum) / (double)(Math.Max(ctrl.Maximum - ctrl.Minimum, 1))));
-				dc.FillRectangle (ResPool.GetSolidBrush (progressbarblock_color), new Rectangle (client_area.X, client_area.Y, pixels_to_draw, client_area.Height));
+				dc.FillRectangle (ResPool.GetSolidBrush (ctrl.ForeColor), new Rectangle (client_area.X, client_area.Y, pixels_to_draw, client_area.Height));
 				break;
 			}
 			case 2: // Marquee
@@ -4274,6 +4275,7 @@ namespace System.Windows.Forms
 				int block_count = 0;
 				
 				block_width = ProgressBarGetChunkSize (client_area.Height);
+				block_width = Math.Max (block_width, 0); // block_width is used to break out the loop below, it must be >= 0!
 				barpos_pixels = (int)(((double)(ctrl.Value - ctrl.Minimum) * client_area.Width) / (Math.Max (ctrl.Maximum - ctrl.Minimum, 1)));
 				increment = block_width + space_betweenblocks;
 				
@@ -4290,7 +4292,7 @@ namespace System.Windows.Forms
 					}
 					
 					if (clip_rect.IntersectsWith (block_rect) == true) {				
-						dc.FillRectangle (ResPool.GetSolidBrush (progressbarblock_color), block_rect);
+						dc.FillRectangle (ResPool.GetSolidBrush (ctrl.ForeColor), block_rect);
 					}				
 					
 					block_rect.X  += increment;
@@ -4310,7 +4312,8 @@ namespace System.Windows.Forms
 		
 		static int ProgressBarGetChunkSize (int progressBarClientAreaHeight)
 		{
-			return (progressBarClientAreaHeight * 2) / 3;
+			int size = (progressBarClientAreaHeight * 2) / 3;
+			return size;
 		}
 
 		const int ProgressBarDefaultHeight = 23;

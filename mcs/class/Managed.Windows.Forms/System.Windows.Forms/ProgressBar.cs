@@ -357,10 +357,16 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value < 0)
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("Maximum", 
+#else
 					throw new ArgumentException(
+#endif
 						string.Format("Value '{0}' must be greater than or equal to 0.", value ));
 
 				maximum = value;
+				minimum = Math.Min (minimum, maximum);
+				val = Math.Min (val, maximum);
 				Refresh ();
 			}
 		}
@@ -373,10 +379,16 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value < 0)
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("Minimum", 
+#else
 					throw new ArgumentException(
+#endif
 						string.Format("Value '{0}' must be greater than or equal to 0.", value ));
 
 				minimum = value;
+				maximum = Math.Max (maximum, minimum);
+				val = Math.Max (val, minimum);
 				Refresh ();
 			}
 		}
@@ -434,18 +446,24 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				style = value;
-				
-				if (style == ProgressBarStyle.Marquee) {
-					if (marquee_timer == null) {
-						marquee_timer = new Timer ();
-						marquee_timer.Interval = 10;
-						marquee_timer.Tick += new EventHandler (marquee_timer_Tick);
-					}
-					marquee_timer.Start ();
-				} else {
-					if (marquee_timer != null) {
-						marquee_timer.Stop ();
+				if (value != ProgressBarStyle.Blocks && value != ProgressBarStyle.Continuous
+						&& value != ProgressBarStyle.Marquee)
+					throw new InvalidEnumArgumentException ("value", unchecked((int)value), typeof (ProgressBarStyle));
+				if (style != value) {
+					style = value;
+
+					if (style == ProgressBarStyle.Marquee) {
+						if (marquee_timer == null) {
+							marquee_timer = new Timer ();
+							marquee_timer.Interval = 10;
+							marquee_timer.Tick += new EventHandler (marquee_timer_Tick);
+						}
+						marquee_timer.Start ();
+					} else {
+						if (marquee_timer != null) {
+							marquee_timer.Stop ();
+						}
+						Refresh ();
 					}
 				}
 			}
@@ -517,6 +535,10 @@ namespace System.Windows.Forms
 
 		public void Increment (int value)
 		{
+#if NET_2_0
+			if (Style == ProgressBarStyle.Marquee)
+				throw new InvalidOperationException ("Increment should not be called if the style is Marquee.");
+#endif
 			int newValue = Value + value;
 
 			if (newValue < Minimum)
@@ -563,11 +585,11 @@ namespace System.Windows.Forms
 			
 		public void PerformStep ()
 		{
-			if (Value >= Maximum)
-				return;
-
-			Value = Maximum < Value + Step ? Maximum : Value + Step;
-			Refresh ();	// FIXME - calculate delta and only expose that
+#if NET_2_0
+			if (Style == ProgressBarStyle.Marquee)
+				throw new InvalidOperationException ("PerformStep should not be called if the style is Marquee.");
+#endif
+			Increment (Step);
 		}
 
 #if NET_2_0

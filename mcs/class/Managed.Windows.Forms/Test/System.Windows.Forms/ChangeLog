@@ -1,5 +1,10 @@
 2008-11-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ProgressBarTest.cs: Add new tests provided by Andy Hume. See
+	bug #440220.
+
+2008-11-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* FormTest.cs: Add test for bug #438866.
 
 2008-10-31  Andreia Gaita  <shana@jitted.com>
