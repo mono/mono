@@ -120,9 +120,11 @@
       <Docs>
         <param name="va">To be added.</param>
         <param name="vb">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Compares the elements of two vectors for equality.</summary>
+
+        <returns>A new vector with the comparison results.</returns>
+
+        <remarks>Equal components get the UInt16.MaxValue, unequal components get the zero value.</remarks>
       </Docs>
     </Member>
     <Member MemberName="ExtractByteMask">

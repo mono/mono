@@ -51,9 +51,9 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Compares the elements of two vectors for equality.</summary>
+        <returns>A new vector with the comparison results.</returns>
+        <remarks>Equal components get the -1, unequal components get the zero value.</remarks>
       </Docs>
     </Member>
     <Member MemberName="CompareGreaterThan">

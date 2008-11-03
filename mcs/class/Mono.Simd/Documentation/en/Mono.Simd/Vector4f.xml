@@ -107,9 +107,14 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Compares the elements of two vectors for equality.</summary>
+
+        <returns>A new vector with the comparison results.</returns>
+
+        <remarks>Equal components get all their bits set to 1;
+        Unequeal gets the value set to zero.  You can cast the result
+        into a Vector4i and compare the integer properties to
+        -1.</remarks>
       </Docs>
     </Member>
     <Member MemberName="CompareLessEqual">

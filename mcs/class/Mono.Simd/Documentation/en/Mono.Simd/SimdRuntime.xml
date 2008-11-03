@@ -9,8 +9,8 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Methods to probe for SIMD support.</summary>
+    <remarks>Helper methods used to probe for features in the SIMD runtime.</remarks>
   </Docs>
   <Members>
     <Member MemberName="AccelMode">

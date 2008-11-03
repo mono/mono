@@ -33,6 +33,10 @@ namespace Mono.Simd
 {
 	public static class SimdRuntime
 	{
+		//
+		// Mono replaces the method below at JIT time on platforms that support
+		// SIMD with the actual acceleration mode
+		//
 		public static AccelMode AccelMode
 		{
 			get
