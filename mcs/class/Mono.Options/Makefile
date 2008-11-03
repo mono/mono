@@ -10,7 +10,7 @@ NO_INSTALL = yes
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll
 TEST_MCS_FLAGS = /r:Mono.Posix.dll /r:System.dll
 
-mono_options_DIR  = $(DESTDIR)$(mono_libdir)/mono-options
+mono_sourcelibs_DIR  = $(DESTDIR)$(mono_libdir)/mono-source-libs
 mono_options_DATA = Mono.Options/Options.cs
 
 include ../../build/library.make
@@ -20,8 +20,8 @@ install-local: install-source
 uninstall-local: uninstall-source
 
 install-source:
-	-$(MKINSTALLDIRS) $(mono_options_DIR)
-	$(INSTALL) -m 644 $(mono_options_DATA) $(mono_options_DIR)
+	-$(MKINSTALLDIRS) $(mono_sourcelibs_DIR)
+	$(INSTALL) -m 644 $(mono_options_DATA) $(mono_sourcelibs_DIR)
 
 uninstall-source:
 	-rm -f $(mono_options_DIR)/Options.cs
