@@ -20,4 +20,4 @@ install-local: install-source
 
 install-source:
 	-$(MKINSTALLDIRS) $(mono_sourcelibs_DIR)
-	$(INSTALL) -m 644 repl.cs $(mono_sourcelibs_DIR)
+	$(INSTALL) -m 644 getline.cs $(mono_sourcelibs_DIR)
