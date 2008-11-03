@@ -5,6 +5,13 @@
     </summary>
     <remarks>
       <para>
+	Important: the Mono.Simd assembly is a work-in-progress API
+	and has not been finalized.  We are publishing the assembly
+	and the documentation hoping to get input and feedback from
+	the community.   
+      </para>
+
+      <para>
         The Mono.Simd namespace provides a number of classes that are
         hardware accelerated by mapping the classes and the actual
         operations to native SIMD instructions on a processor. 
