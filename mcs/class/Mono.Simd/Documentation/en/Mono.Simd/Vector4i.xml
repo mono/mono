@@ -658,9 +658,9 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Substracts the values from the second vector from the first.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector elements contain the substraction of the elements in the second vector from the elements in the first vector.</remarks>
       </Docs>
     </Member>
     <Member MemberName="PackWithSignedSaturation">
@@ -844,9 +844,9 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Unpacks the high components of the input vectors into a new vector.</summary>
+        <returns>A new vector that contains (v1.Z, v2.Z, v1.W, v2.W).</returns>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="UnpackLow">
@@ -870,24 +870,9 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="W">
-      <MemberSignature Language="C#" Value="public int W { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Unpacks the low components of the input vectors into a new vector.</summary>
+        <returns>A new vector that contains (v1.X, v2.X, v1.Y, v2.Y).</returns>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="X">
@@ -900,9 +885,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The X component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="Y">
@@ -915,9 +900,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The Y component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="Z">
@@ -930,9 +915,24 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The Z component.</summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="W">
+      <MemberSignature Language="C#" Value="public int W { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The W component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
   </Members>

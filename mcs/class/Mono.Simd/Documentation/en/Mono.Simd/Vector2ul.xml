@@ -608,9 +608,9 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Unpacks the high components of the input vectors into a new vector.</summary>
+        <returns>A new vector that contains (v1.Y, v2.Y).</returns>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="UnpackLow">
@@ -634,9 +634,9 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Unpacks the low components of the input vectors into a new vector.</summary>
+        <returns>A new vector that contains (v1.X, v1.X).</returns>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="X">
@@ -649,9 +649,9 @@
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The X component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="Y">
@@ -664,9 +664,9 @@
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The Y component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
   </Members>

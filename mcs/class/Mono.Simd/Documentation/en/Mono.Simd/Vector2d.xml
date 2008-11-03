@@ -944,9 +944,9 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Substracts the values from the second vector from the first.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector elements contain the substraction of the elements in the second vector from the elements in the first vector.</remarks>
       </Docs>
     </Member>
     <Member MemberName="StoreAligned">
@@ -1012,9 +1012,9 @@
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The X component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="Y">
@@ -1027,9 +1027,9 @@
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The Y component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
   </Members>

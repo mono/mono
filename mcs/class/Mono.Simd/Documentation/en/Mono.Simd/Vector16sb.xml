@@ -623,9 +623,9 @@
       <Docs>
         <param name="va">First vector.</param>
         <param name="vb">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Substracts the values from the second vector from the first.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector elements contain the substraction of the elements in the second vector from the elements in the first vector.</remarks>
       </Docs>
     </Member>
     <Member MemberName="StoreAligned">
@@ -699,9 +699,16 @@
       <Docs>
         <param name="va">First vector.</param>
         <param name="vb">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Substracts two vectors with saturation.</summary>
+        <returns>The saturated substraction of two vectors.</returns>
+        <remarks>
+	  <para>
+	    The resulting vector contains the saturated substraction of the individual components of the vector.
+	  </para>
+	  <para>
+	    If the result of substracting a value underflows, the value is set to SByte.MinValue, if the value overflows then the value is set to SByte.MaxValue.
+	  </para>
+	</remarks>
       </Docs>
     </Member>
     <Member MemberName="UnpackHigh">
@@ -725,9 +732,9 @@
       <Docs>
         <param name="va">First vector.</param>
         <param name="vb">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Unpacks the high components of the input vectors into a new vector.</summary>
+        <returns>A new vector that contains (va.V4, vb.V4, va.V5, vb.V5, va.V6, vb.V6, va.V7, vb.V7).</returns>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="UnpackLow">
@@ -751,9 +758,9 @@
       <Docs>
         <param name="va">First vector.</param>
         <param name="vb">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Unpacks the low components of the input vectors into a new vector.</summary>
+        <returns>A new vector that contains (va.V0, vb.V0, va.V1, vb.V1, va.V2, vb.V2, va.V3, vb.V3).</returns>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="V0">
@@ -766,9 +773,9 @@
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The V0 component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="V1">
@@ -781,99 +788,9 @@
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="V10">
-      <MemberSignature Language="C#" Value="public sbyte V10 { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.SByte</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="V11">
-      <MemberSignature Language="C#" Value="public sbyte V11 { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.SByte</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="V12">
-      <MemberSignature Language="C#" Value="public sbyte V12 { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.SByte</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="V13">
-      <MemberSignature Language="C#" Value="public sbyte V13 { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.SByte</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="V14">
-      <MemberSignature Language="C#" Value="public sbyte V14 { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.SByte</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="V15">
-      <MemberSignature Language="C#" Value="public sbyte V15 { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.SByte</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The V1 component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="V2">
@@ -886,9 +803,9 @@
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The V2 component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="V3">
@@ -901,9 +818,9 @@
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The V3 component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="V4">
@@ -916,9 +833,9 @@
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The V4 component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="V5">
@@ -931,9 +848,9 @@
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The V5 component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="V6">
@@ -946,9 +863,9 @@
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The V6 component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="V7">
@@ -961,9 +878,9 @@
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The V7 component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="V8">
@@ -976,9 +893,9 @@
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The V8 component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="V9">
@@ -991,9 +908,99 @@
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The V9 component.</summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V10">
+      <MemberSignature Language="C#" Value="public sbyte V10 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The V10 component.</summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V11">
+      <MemberSignature Language="C#" Value="public sbyte V11 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The V11 component.</summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V12">
+      <MemberSignature Language="C#" Value="public sbyte V12 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The V12 component.</summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V13">
+      <MemberSignature Language="C#" Value="public sbyte V13 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The V13 component.</summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V14">
+      <MemberSignature Language="C#" Value="public sbyte V14 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The V14 component.</summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="V15">
+      <MemberSignature Language="C#" Value="public sbyte V15 { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.SByte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The V15 component.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
   </Members>
