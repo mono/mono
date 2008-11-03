@@ -115,10 +115,11 @@ net_2_0_dirs := \
 	System.IdentityModel		\
 	System.IdentityModel.Selectors	\
 	System.ServiceModel		\
-	System.ServiceModel.Web	\
-	Mono.Management	\
-	Mono.Options \
-	Mono.Simd
+	System.ServiceModel.Web		\
+	Mono.Management			\
+	Mono.Options 			\
+	Mono.Simd			\
+	WindowsBase
 
 net_2_1_dirs := \
 	corlib			\
