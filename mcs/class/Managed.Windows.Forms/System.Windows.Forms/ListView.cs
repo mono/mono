@@ -3309,6 +3309,9 @@ namespace System.Windows.Forms
 			else if (focused_item_index != -1 && focused_item_index < items.Count) // Previous focused item
 				GetItemAtDisplayIndex (focused_item_index).Focused = false;
 
+			if (focused_item_index != display_index)
+				OnUIAFocusedItemChanged ();
+
 			focused_item_index = display_index;
 		}
 
@@ -6241,6 +6244,7 @@ namespace System.Windows.Forms
 		static object UIAMultiSelectChangedEvent = new object ();
 		static object UIAViewChangedEvent = new object ();
 		static object UIACheckBoxesChangedEvent = new object ();
+		static object UIAFocusedItemChangedEvent = new object ();
 
 		internal Rectangle UIAHeaderControl {
 			get { return header_control.Bounds; }
@@ -6292,6 +6296,11 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (UIAViewChangedEvent, value); }
 		}
 
+		internal event EventHandler UIAFocusedItemChanged {
+			add { Events.AddHandler (UIAFocusedItemChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAFocusedItemChangedEvent, value); }
+		}
+
 		internal Rectangle UIAGetHeaderBounds (ListViewGroup group)
 		{
 			return group.HeaderBounds;
@@ -6328,6 +6337,13 @@ namespace System.Windows.Forms
 		private void OnUIAViewChanged ()
 		{
 			EventHandler eh = (EventHandler) Events [UIAViewChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		private void OnUIAFocusedItemChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIAFocusedItemChangedEvent];
 			if (eh != null)
 				eh (this, EventArgs.Empty);
 		}
