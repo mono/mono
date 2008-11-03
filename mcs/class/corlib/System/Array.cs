@@ -181,6 +181,11 @@ namespace System
 			if (unchecked ((uint) index) >= unchecked ((uint) Length))
 				throw new ArgumentOutOfRangeException ("index");
 
+			object[] oarray = this as object [];
+			if (oarray != null) {
+				oarray [index] = (object)item;
+				return;
+			}
 			SetGenericValueImpl (index, ref item);
 		}
 

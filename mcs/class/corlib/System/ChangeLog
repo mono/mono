@@ -1,4 +1,9 @@
 
+Mon Nov 3 16:39:37 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Array.cs: in the IList set_Item, ensure the array
+	element is set using the proper type checks (bug #440819).
+
 Mon Oct 13 16:40:56 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* Environment.cs, OperatingSystem.cs: complete support for
