@@ -388,12 +388,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
 		internal bool UsingGroups {
 			get {
 				return show_groups && groups.Count > 0 && view != View.List && 
 					Application.VisualStylesEnabled;
 			}
 		}
+#endif
 
 		internal override bool ScaleChildrenInternal {
 			get { return false; }
