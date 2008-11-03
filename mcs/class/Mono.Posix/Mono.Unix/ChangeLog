@@ -1,3 +1,9 @@
+2008-11-03  Miguel de Icaza  <miguel@novell.com>
+
+	* UnixClient.cs (Client): Make this property public when using the
+	Mono 2.0 profile, based on a discussion with Vlad Hociota and Joe
+	Shaw. 
+
 2008-02-11  Jonathan Pryor  <jpryor@novell.com>
 
 	* UnixSignal.cs: Improve argument checking to match docs.

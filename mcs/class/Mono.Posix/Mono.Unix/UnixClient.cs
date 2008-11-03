@@ -72,7 +72,12 @@ namespace Mono.Unix {
 			Client = sock;
 		}
 
-		protected Socket Client {
+#if NET_2_0
+		public
+#else
+		protected
+#endif
+		Socket Client {
 			get { return client; }
 			set {
 				client = value;
