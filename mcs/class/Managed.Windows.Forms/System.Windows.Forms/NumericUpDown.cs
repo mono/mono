@@ -386,6 +386,11 @@ namespace System.Windows.Forms {
 			}
 
 			Value = Math.Max (minimum, unchecked (dvalue - increment));
+
+#if NET_2_0
+			// UIA Framework Event: DownButton Click
+			OnUIADownButtonClick (EventArgs.Empty);
+#endif
 		}
 
 		public override void UpButton() {
@@ -394,6 +399,11 @@ namespace System.Windows.Forms {
 			}
 
 			Value = Math.Min (maximum, unchecked (dvalue + increment));
+
+#if NET_2_0
+			// UIA Framework Event: UpButton Click
+			OnUIAUpButtonClick (EventArgs.Empty);
+#endif
 		}
 		#endregion	// Public Instance Methods
 

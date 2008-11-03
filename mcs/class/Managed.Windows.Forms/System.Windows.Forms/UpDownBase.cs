@@ -397,6 +397,38 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
+		#region UIA Framework Events
+#if NET_2_0
+		static object UIAUpButtonClickEvent = new object ();
+
+		internal event EventHandler UIAUpButtonClick {
+			add { Events.AddHandler (UIAUpButtonClickEvent, value); }
+			remove { Events.RemoveHandler (UIAUpButtonClickEvent, value); }
+		}
+
+		internal void OnUIAUpButtonClick (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIAUpButtonClickEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+
+		static object UIADownButtonClickEvent = new object ();
+
+		internal event EventHandler UIADownButtonClick {
+			add { Events.AddHandler (UIADownButtonClickEvent, value); }
+			remove { Events.RemoveHandler (UIADownButtonClickEvent, value); }
+		}
+
+		internal void OnUIADownButtonClick (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIADownButtonClickEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+		#endregion
+
 		#region Private Methods
 		private void TabIndexChangedHandler (object sender, EventArgs e)
 		{

@@ -523,6 +523,11 @@ namespace System.Windows.Forms
 			}
 
 			SelectedIndex = new_index;
+
+#if NET_2_0
+			// UIA Framework Event: DownButton Click
+			OnUIADownButtonClick (EventArgs.Empty);
+#endif
 		}
 
 		public override string ToString() {
@@ -544,6 +549,11 @@ namespace System.Windows.Forms
 			}
 
 			SelectedIndex = new_index;
+
+#if NET_2_0
+			// UIA Framework Event: UpButton Click
+			OnUIAUpButtonClick (EventArgs.Empty);
+#endif
 		}
 		#endregion	// Public Instance Methods
 
