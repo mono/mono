@@ -2308,6 +2308,25 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A4");
 		}
 #endif
+
+		[Test]  // bug #438866
+		public void MinMaxSize ()
+		{
+			Form f = new Form ();
+			
+			f.MinimumSize = new Size (200, 200);
+			f.MaximumSize = new Size (150, 150);
+
+			Assert.AreEqual (new Size (150, 150), f.MinimumSize, "A1");
+			Assert.AreEqual (new Size (150, 150), f.MaximumSize, "A2");
+			
+			f.MinimumSize = new Size (200, 200);
+
+			Assert.AreEqual (new Size (200, 200), f.MinimumSize, "A3");
+			Assert.AreEqual (new Size (200, 200), f.MaximumSize, "A4");
+			
+			f.Dispose ();
+		}
 		
 		[Test]  // Bug #81582
 		[Category ("NotWorking")]
