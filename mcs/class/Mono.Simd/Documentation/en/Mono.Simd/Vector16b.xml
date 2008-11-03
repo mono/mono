@@ -183,7 +183,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b&amp;" RefType="ref" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -215,7 +215,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b*" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -237,9 +237,12 @@
       <Docs>
         <param name="va">First vector.</param>
         <param name="vb">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Returns a vector with the components set to the largest components of each vector.</summary>
+        <returns></returns>
+        <remarks>Each individual component of the resulting vector is
+        the largest component of each vector.  This is equivalent to
+        using System.Math.Max on each element and returning the
+        resulting vector.</remarks>
       </Docs>
       <Attributes>
         <Attribute>
@@ -263,9 +266,12 @@
       <Docs>
         <param name="va">First vector.</param>
         <param name="vb">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Returns a vector with the components set to the largest components of each vector.</summary>
+        <returns></returns>
+        <remarks>Each individual component of the resulting vector is
+        the largest component of each vector.  This is equivalent to
+        using System.Math.Max on each element and returning the
+        resulting vector.</remarks>
       </Docs>
       <Attributes>
         <Attribute>
@@ -289,9 +295,9 @@
       <Docs>
         <param name="va">First vector.</param>
         <param name="vb">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Computes the sum of two vectors.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector returned is the sum of the individual components in the two vectors.</remarks>
       </Docs>
       <Attributes>
         <Attribute>
@@ -315,9 +321,11 @@
       <Docs>
         <param name="va">First vector.</param>
         <param name="vb">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Computes the bitwise and of two vectors.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector returned contains the result of doing a
+        bitwise and operation on the individual components of the two
+        vectors.</remarks>
       </Docs>
       <Attributes>
         <Attribute>
@@ -341,9 +349,11 @@
       <Docs>
         <param name="va">First vector.</param>
         <param name="vb">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Computes the bitwise or of two vectors.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector returned contains the result of doing a
+        bitwise or operation on the individual components of the two
+        vectors.</remarks>
       </Docs>
       <Attributes>
         <Attribute>
@@ -367,9 +377,11 @@
       <Docs>
         <param name="va">First vector.</param>
         <param name="vb">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Computes the bitwise xor of two vectors.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector returned contains the result of doing a
+        bitwise xor operation on the individual components of the two
+        vectors.</remarks>
       </Docs>
       <Attributes>
         <Attribute>
@@ -398,10 +410,10 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="v">Vector to operate on.</param>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -422,10 +434,10 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="v">Vector to operate on.</param>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -446,10 +458,10 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="v">Vector to operate on.</param>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -473,10 +485,10 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="v">Vector to operate on.</param>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -492,10 +504,10 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="v">Vector to operate on.</param>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
       <Attributes>
         <Attribute>
@@ -521,10 +533,10 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="v">Vector to operate on.</param>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -548,7 +560,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -572,10 +584,10 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="v">Vector to operate on.</param>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -599,10 +611,10 @@
         <Parameter Name="v" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="v">Vector to operate on.</param>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Subtraction">
@@ -645,8 +657,8 @@
         <Parameter Name="val" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="res">To be added.</param>
-        <param name="val">To be added.</param>
+        <param name="res">Resulting vector.</param>
+        <param name="val">Vector to operate on.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -678,8 +690,8 @@
         <Parameter Name="val" Type="Mono.Simd.Vector16b" />
       </Parameters>
       <Docs>
-        <param name="res">To be added.</param>
-        <param name="val">To be added.</param>
+        <param name="res">Resulting vector.</param>
+        <param name="val">Vector to operate on.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>

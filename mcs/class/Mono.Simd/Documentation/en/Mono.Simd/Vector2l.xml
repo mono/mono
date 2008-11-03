@@ -124,7 +124,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l&amp;" RefType="ref" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -151,7 +151,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l*" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -178,9 +178,9 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Computes the sum of two vectors.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector returned is the sum of the individual components in the two vectors.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_BitwiseAnd">
@@ -204,9 +204,11 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Computes the bitwise and of two vectors.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector returned contains the result of doing a
+        bitwise and operation on the individual components of the two
+        vectors.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_BitwiseOr">
@@ -230,9 +232,11 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Computes the bitwise and of two vectors.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector returned contains the result of doing a
+        bitwise and operation on the individual components of the two
+        vectors.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_ExclusiveOr">
@@ -256,9 +260,11 @@
       <Docs>
         <param name="v1">First vector.</param>
         <param name="v2">Second vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Computes the bitwise xor of two vectors.</summary>
+        <returns>A new vector.</returns>
+        <remarks>The vector returned contains the result of doing a
+        bitwise xor operation on the individual components of the two
+        vectors.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -279,7 +285,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -306,7 +312,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -330,7 +336,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -357,7 +363,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -381,7 +387,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -405,7 +411,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -432,7 +438,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -456,7 +462,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -483,7 +489,7 @@
         <Parameter Name="v" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
+        <param name="v">Vector to operate on.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -509,7 +515,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="amount">To be added.</param>
+        <param name="amount">Number of bits to shift.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -561,7 +567,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="amount">To be added.</param>
+        <param name="amount">Number of bits to shift.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -586,8 +592,8 @@
         <Parameter Name="val" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="res">To be added.</param>
-        <param name="val">To be added.</param>
+        <param name="res">Resulting vector.</param>
+        <param name="val">Vector to operate on.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -614,8 +620,8 @@
         <Parameter Name="val" Type="Mono.Simd.Vector2l" />
       </Parameters>
       <Docs>
-        <param name="res">To be added.</param>
-        <param name="val">To be added.</param>
+        <param name="res">Resulting vector.</param>
+        <param name="val">Vector to operate on.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
