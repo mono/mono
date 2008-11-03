@@ -1,5 +1,10 @@
 2008-11-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #436792
+	* cs-parser.jay: Use GetLocation to access location.
+
+2008-11-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #440774
 	* cs-parser.jay: Also set current_array_type when parsing local
 	variables types.

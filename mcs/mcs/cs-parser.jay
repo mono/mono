@@ -1738,7 +1738,7 @@ get_accessor_declaration
 	  accessor_body
 	  {
 		if (has_get) {
-			Report.Error (1007, (Location) $3, "Property accessor already defined");
+			Report.Error (1007, GetLocation ($3), "Property accessor already defined");
 			break;
 		}
 		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, current_local_parameters, (Location) $3);
@@ -1773,7 +1773,7 @@ set_accessor_declaration
 	  accessor_body
 	  {
 		if (has_set) {
-			Report.Error (1007, ((LocatedToken) $3).Location, "Property accessor already defined");
+			Report.Error (1007, GetLocation ($3), "Property accessor already defined");
 			break;
 		}
 		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, current_local_parameters, (Location) $3);
