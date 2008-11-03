@@ -1540,17 +1540,25 @@ namespace Mono.CSharp
 				c = get_char ();
 
 			static_cmd_arg.Length = 0;
+			int has_identifier_argument = 0;
+
 			while (c != -1 && c != '\n' && c != '\r') {
-				if (c == '\\') {
-					int peek = peek_char ();
-					if (peek == 'U' || peek == 'u') {
-						int surrogate;
-						c = EscapeUnicode (c, out surrogate);
-						if (surrogate != 0) {
-							if (is_identifier_part_character ((char) c))
-								static_cmd_arg.Append ((char) c);
-							c = surrogate;
+				if (c == '\\' && has_identifier_argument >= 0) {
+					if (has_identifier_argument != 0 || (cmd == "define" || cmd == "if" || cmd == "elif" || cmd == "undef")) {
+						has_identifier_argument = 1;
+
+						int peek = peek_char ();
+						if (peek == 'U' || peek == 'u') {
+							int surrogate;
+							c = EscapeUnicode (c, out surrogate);
+							if (surrogate != 0) {
+								if (is_identifier_part_character ((char) c))
+									static_cmd_arg.Append ((char) c);
+								c = surrogate;
+							}
 						}
+					} else {
+						has_identifier_argument = -1;
 					}
 				}
 				static_cmd_arg.Append ((char) c);
