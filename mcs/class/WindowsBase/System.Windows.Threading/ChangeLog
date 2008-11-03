@@ -1,0 +1,54 @@
+2007-01-25  Miguel de Icaza  <miguel@novell.com>
+
+	* DispatcherTimer.cs: Add new class.
+
+	* Dispatcher.cs (ExitAllframes): Implement. 
+	(everywhere): Add support for hooks.
+
+	* DispatcherHooks: Implement
+	
+	* DispatcherOperation.cs: Store result. 
+
+	* Dispatcher.cs: 
+	Check frame.Continue for early termination.
+
+	PokableQueue: new class used so we can move DispatcherOperation
+	tasks from one thread to another. 
+
+2007-01-24  Miguel de Icaza  <miguel@novell.com>
+
+	* Dispatcher.cs: Implement reprioritization.
+
+	We now take locks instead of using a separate async queue, as
+	things like DispatcherOperation.Priority (reprioritization) can be
+	called from a separate thread without crashing.
+
+2007-01-23  Miguel de Icaza  <miguel@novell.com>
+
+	* Dispatcher.cs: Start with the Async methods.
+
+2007-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* Dispatcher.cs: Move all tasks, not only the first one from the
+	async queue into the proper priority queues.
+
+	Eliminate the `Task' class, it is mostly redundant, instead move
+	all the data into DispatcherOperation.
+	
+	* DispatcherOperation.cs, DispatcherOperationStatus.cs: Add new
+	files. 
+
+	* Dispatcher.cs: Make our class `Task' internal, so we can pass
+	that to DispatcherOperation.
+
+	* Dispatcher.cs: Queue will now queue
+	locally (if same thread) or post to the dispatcher queue if
+	invoked from a different thread. 
+
+2007-01-13  Miguel de Icaza  <miguel@novell.com>
+
+	* Dispatcher.cs: Initially I thought this
+	was a stroke of genius.   Looking at the actual results, it does
+	not seem as brilliant as I had hoped.
+
+
