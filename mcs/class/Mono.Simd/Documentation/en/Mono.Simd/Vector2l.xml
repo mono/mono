@@ -286,9 +286,9 @@
       </Parameters>
       <Docs>
         <param name="v">Vector to operate on.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -313,9 +313,9 @@
       </Parameters>
       <Docs>
         <param name="v">Vector to operate on.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -337,9 +337,9 @@
       </Parameters>
       <Docs>
         <param name="v">Vector to operate on.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -364,9 +364,9 @@
       </Parameters>
       <Docs>
         <param name="v">Vector to operate on.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -388,9 +388,9 @@
       </Parameters>
       <Docs>
         <param name="v">Vector to operate on.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -412,9 +412,9 @@
       </Parameters>
       <Docs>
         <param name="v">Vector to operate on.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -439,9 +439,9 @@
       </Parameters>
       <Docs>
         <param name="v">Vector to operate on.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -463,9 +463,9 @@
       </Parameters>
       <Docs>
         <param name="v">Vector to operate on.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -490,9 +490,9 @@
       </Parameters>
       <Docs>
         <param name="v">Vector to operate on.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Convertion operator.</summary>
+        <returns>The casted vector.</returns>
+        <remarks>This operator provides explicit casting support.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_LeftShift">
