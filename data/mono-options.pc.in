@@ -1,5 +1,5 @@
 prefix=${pcfiledir}/../..
-assemblies_dir=${prefix}/lib/mono-options
+assemblies_dir=${prefix}/lib/mono-source-libs
 Sources=${assemblies_dir}/Options.cs
 
 Name: Mono.Options
