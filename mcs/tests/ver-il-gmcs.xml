@@ -11023,6 +11023,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-421.cs">
+    <type name="OneOff">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>75</size>
+      </method>
+      <method name="T[] Clone[T](T[])">
+        <size>166</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
