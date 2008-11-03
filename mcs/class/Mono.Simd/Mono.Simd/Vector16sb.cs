@@ -303,5 +303,53 @@ namespace Mono.Simd
 		{
 			*res = val;
 		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void Prefetch0 (ref Vector16sb res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void Prefetch1 (ref Vector16sb res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void Prefetch2 (ref Vector16sb res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void PrefetchNTA (ref Vector16sb res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe void Prefetch0 (Vector16sb *res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe void Prefetch1 (Vector16sb *res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe void Prefetch2 (Vector16sb *res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe void PrefetchNTA (Vector16sb *res)
+		{
+		}
 	}
 }

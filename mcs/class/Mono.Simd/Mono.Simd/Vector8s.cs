@@ -393,5 +393,53 @@ namespace Mono.Simd
 		{
 			*res = val;
 		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void Prefetch0 (ref Vector8s res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void Prefetch1 (ref Vector8s res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void Prefetch2 (ref Vector8s res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void PrefetchNTA (ref Vector8s res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe void Prefetch0 (Vector8s *res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe void Prefetch1 (Vector8s *res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe void Prefetch2 (Vector8s *res)
+		{
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static unsafe void PrefetchNTA (Vector8s *res)
+		{
+		}
 	}
 }
