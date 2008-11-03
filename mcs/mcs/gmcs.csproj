@@ -107,6 +107,9 @@
     </Compile>
     <Compile Include="nullable.cs">
     </Compile>
+    <Compile Include="..\tools\monop\outline.cs">
+      <Link>outline.cs</Link>
+    </Compile>
     <Compile Include="parameter.cs">
     </Compile>
     <Compile Include="pending.cs">
