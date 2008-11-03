@@ -43,6 +43,24 @@ namespace System.Windows.Forms
 		private bool link_visited;
 		private Color visited_link_color;
 
+		#region UIA FrameWork Events
+#if NET_2_0
+		static object UIAIsLinkChangedEvent = new object ();
+
+		internal event EventHandler UIAIsLinkChanged {
+			add { Events.AddHandler (UIAIsLinkChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAIsLinkChangedEvent, value); }
+		}
+
+		internal void OnUIAIsLinkChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIAIsLinkChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+		#endregion
+
 		#region Public Constructors
 		public ToolStripLabel ()
 			: this (null, null, false, null, String.Empty)
@@ -103,6 +121,10 @@ namespace System.Windows.Forms
 			set {
 				this.is_link = value; 
 				this.Invalidate ();
+#if NET_2_0
+				// UIA Framework Event: IsLink Changed
+				OnUIAIsLinkChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
