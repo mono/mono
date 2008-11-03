@@ -49,7 +49,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>Computes (v1.X - v2.X, v1.Y + v2.Y, v1.Z - v2.Z, v1.W + v2.W).</summary>
         <returns>The resulting vector.</returns>
         <remarks>Computes (v1.X - v2.X, v1.Y + v2.Y, v1.Z - v2.Z, v1.W + v2.W).</remarks>
@@ -75,7 +75,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -106,7 +106,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -127,7 +127,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -153,7 +153,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -179,7 +179,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -205,7 +205,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -231,7 +231,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -257,7 +257,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -283,7 +283,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -357,7 +357,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -383,7 +383,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -409,7 +409,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -435,7 +435,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -536,7 +536,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -562,7 +562,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -588,7 +588,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -614,7 +614,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -640,7 +640,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -666,7 +666,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -692,7 +692,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -946,7 +946,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -972,7 +972,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
-        <param name="v1">Second vector.</param>
+        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
