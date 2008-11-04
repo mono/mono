@@ -331,49 +331,49 @@ namespace Mono.Simd
 
 		[Acceleration (AccelMode.SSE1)]
 		[CLSCompliant(false)]
-		public static void Prefetch0 (ref Vector16b res)
+		public static void PrefetchTemporalAllCacheLevels (ref Vector16b res)
 		{
 		}
 
 		[Acceleration (AccelMode.SSE1)]
 		[CLSCompliant(false)]
-		public static void Prefetch1 (ref Vector16b res)
+		public static void PrefetchTemporal1stLevelCache (ref Vector16b res)
 		{
 		}
 
 		[Acceleration (AccelMode.SSE1)]
 		[CLSCompliant(false)]
-		public static void Prefetch2 (ref Vector16b res)
+		public static void PrefetchTemporal2ndLevelCache (ref Vector16b res)
 		{
 		}
 
 		[Acceleration (AccelMode.SSE1)]
 		[CLSCompliant(false)]
-		public static void PrefetchNTA (ref Vector16b res)
+		public static void PrefetchNonTemporal (ref Vector16b res)
 		{
 		}
 
 		[Acceleration (AccelMode.SSE1)]
 		[CLSCompliant(false)]
-		public static unsafe void Prefetch0 (Vector16b *res)
+		public static unsafe void PrefetchTemporalAllCacheLevels (Vector16b *res)
 		{
 		}
 
 		[Acceleration (AccelMode.SSE1)]
 		[CLSCompliant(false)]
-		public static unsafe void Prefetch1 (Vector16b *res)
+		public static unsafe void PrefetchTemporal1stLevelCache (Vector16b *res)
 		{
 		}
 
 		[Acceleration (AccelMode.SSE1)]
 		[CLSCompliant(false)]
-		public static unsafe void Prefetch2 (Vector16b *res)
+		public static unsafe void PrefetchTemporal2ndLevelCache (Vector16b *res)
 		{
 		}
 
 		[Acceleration (AccelMode.SSE1)]
 		[CLSCompliant(false)]
-		public static unsafe void PrefetchNTA (Vector16b *res)
+		public static unsafe void PrefetchNonTemporal (Vector16b *res)
 		{
 		}
 	}

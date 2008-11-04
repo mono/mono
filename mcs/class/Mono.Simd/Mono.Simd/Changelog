@@ -1,3 +1,8 @@
+2008-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector*.cs: Use a better name for the prefetch
+	instructions.
+
 2008-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector*.cs: Added prefetch operations.
