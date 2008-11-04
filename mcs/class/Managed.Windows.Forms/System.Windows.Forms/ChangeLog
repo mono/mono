@@ -1,3 +1,9 @@
+2008-11-04  Mike Gorse  <mgorse@novell.com>
+
+	* ListView.cs: Call OnUIAFocusedItemChanged after completing the
+	  focus change, and always call in SetFocusedItem.
+	* ListBox.cs: Add UIAFocusedItemChanged as in ListView.
+
 2008-11-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: Only call OnDrawItem when we are using an OwnerDraw

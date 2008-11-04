@@ -3315,11 +3315,10 @@ namespace System.Windows.Forms
 				GetItemAtDisplayIndex (display_index).Focused = true;
 			else if (focused_item_index != -1 && focused_item_index < items.Count) // Previous focused item
 				GetItemAtDisplayIndex (focused_item_index).Focused = false;
-#if NET_2_0
-			if (focused_item_index != display_index)
-				OnUIAFocusedItemChanged ();
-#endif
 			focused_item_index = display_index;
+#if NET_2_0
+			OnUIAFocusedItemChanged ();
+#endif
 		}
 
 		private void HorizontalScroller (object sender, EventArgs e)

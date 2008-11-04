@@ -247,6 +247,20 @@ namespace System.Windows.Forms
 				eh (this, EventArgs.Empty);
 		}
 
+		static object UIAFocusedItemChangedEvent = new object ();
+
+		internal event EventHandler UIAFocusedItemChanged {
+			add { Events.AddHandler (UIAFocusedItemChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAFocusedItemChangedEvent, value); }
+		}
+
+		internal void OnUIAFocusedItemChangedEvent ()
+		{
+			EventHandler eh = (EventHandler) Events [UIAFocusedItemChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
 #endif
 		#endregion UIA Framework Events 
 
@@ -2061,6 +2075,11 @@ namespace System.Windows.Forms
 			
 				if (value != -1)
 					InvalidateItem (value);
+
+#if NET_2_0
+				// UIA Framework: Generates FocusedItemChanged event.
+				OnUIAFocusedItemChangedEvent ();
+#endif
 			}
 		}
 
