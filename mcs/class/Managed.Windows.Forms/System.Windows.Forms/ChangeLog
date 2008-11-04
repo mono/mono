@@ -1,3 +1,8 @@
+2008-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ListView.cs: Use the UsingGroups property where needed, instead of
+	duplicating the check in other places.
+
 2008-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When calculating layout, refresh the count of items

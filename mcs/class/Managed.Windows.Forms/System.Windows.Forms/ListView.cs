@@ -1730,7 +1730,7 @@ namespace System.Windows.Forms
 			if (UseCustomColumnWidth)
 				CalculateCustomColumnWidth ();
 #if NET_2_0
-			if (show_groups && groups.Count > 0 && view != View.List) {
+			if (UsingGroups) {
 				// When groups are used the alignment is always top-aligned
 				rows = 0;
 				cols = 0;
@@ -1983,7 +1983,7 @@ namespace System.Windows.Forms
 			ItemSize = new Size (0, item_height); // We only cache Height for details view
 			int y = header_control.Height;
 #if NET_2_0
-			bool using_groups = show_groups && groups.Count > 0 && view != View.List;
+			bool using_groups = UsingGroups;
 			if (using_groups) {
 				CalculateDetailsGroupItemsCount ();
 				CalculateGroupsLayout (ItemSize, 2, y);
