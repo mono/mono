@@ -1,3 +1,10 @@
+2008-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When calculating layout, refresh the count of items
+	belonging to the default item, insteas of doing it only one time. This
+	was already working fine for icon views, not not for details.
+	Fixes #438948.
+
 2008-11-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs:

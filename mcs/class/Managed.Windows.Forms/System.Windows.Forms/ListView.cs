@@ -1922,6 +1922,7 @@ namespace System.Windows.Forms
 		{
 			int items = 0;
 
+			groups.DefaultGroup.ItemCount = GetDefaultGroupItems ();
 			for (int i = 0; i < groups.InternalCount; i++) {
 				ListViewGroup group = groups.GetInternalGroup (i);
 				int items_in_group = group.GetActualItemCount ();
