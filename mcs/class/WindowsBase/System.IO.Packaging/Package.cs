@@ -37,9 +37,22 @@ namespace System.IO.Packaging {
 		internal static readonly Uri RelationshipUri = new Uri ("/_rels/.rels", UriKind.Relative);
 		
 		PackagePartCollection partsCollection = new PackagePartCollection ();
-		PackageRelationshipCollection relationshipsCollection = new PackageRelationshipCollection ();
-		
 		Dictionary<string, PackageRelationship> relationships;
+		PackageRelationshipCollection relationshipsCollection = new PackageRelationshipCollection ();
+		Uri Uri = new Uri ("/", UriKind.Relative);
+		
+
+		public FileAccess FileOpenAccess {
+			get; private set;
+		}
+
+		public PackageProperties PackageProperties {
+			get; private set;
+		}
+
+		int RelationshipId {
+			get; set;
+		}
 		
 		Dictionary<string, PackageRelationship> Relationships {
 			get {
@@ -53,8 +66,11 @@ namespace System.IO.Packaging {
 				return relationships;
 			}
 		}
+
+		bool Streaming {
+			get; set;
+		}
 		
-		Uri Uri = new Uri ("/", UriKind.Relative);
 		
 		protected Package (FileAccess fileOpenAccess)
 			: this (fileOpenAccess, false)
@@ -68,54 +84,19 @@ namespace System.IO.Packaging {
 			Streaming = streaming;
 		}
 
-		void IDisposable.Dispose ()
-		{
-			Flush ();
-			Dispose (true);
-		}
-
-		protected virtual void Dispose (bool disposing)
-		{
-			// Nothing here needs to be disposed of
-		}
-
-		public FileAccess FileOpenAccess {
-			get; private set;
-		}
-
-		public PackageProperties PackageProperties {
-			get; private set;
-		}
-
-		private int RelationshipId {
-			get; set;
-		}
-
-		private bool Streaming {
-			get; set;
-		}
 
 		internal void CheckIsReadOnly ()
 		{
 			if (FileOpenAccess == FileAccess.Read)
 				throw new IOException ("Operation not valid when package is read-only");
 		}
-		
+
 		public void Close ()
 		{
 			// FIXME: Ensure that Flush is actually called before dispose
 			Flush ();
 			Dispose (true);
 		}
-
-		public void Flush ()
-		{
-			// I should have a dirty boolean
-			if (FileOpenAccess != FileAccess.Read)
-				FlushCore ();
-		}
-
-		protected abstract void FlushCore ();
 
 		public PackagePart CreatePart (Uri partUri, string contentType)
 		{
@@ -135,31 +116,8 @@ namespace System.IO.Packaging {
 			partsCollection.Parts.Add (part);
 			return part;
 		}
-
-		public void DeletePart (Uri partUri)
-		{
-			CheckIsReadOnly ();
-			Check.PartUri (partUri);
-
-			PackagePart part = GetPart (partUri);
-			if (part != null)
-			{
-				if (part.Package == null)
-					throw new InvalidOperationException ("This part has already been removed");
-				
-				// FIXME: MS.NET doesn't remove the relationship part
-				// Instead it throws an exception if you try to use it
-				if (PartExists (part.RelationshipsPartUri))
-					GetPart (part.RelationshipsPartUri).Package = null;
-
-				part.Package = null;
-				DeletePartCore (partUri);
-				partsCollection.Parts.RemoveAll (p => p.Uri == partUri);
-			}
-		}
-
+		
 		protected abstract PackagePart CreatePartCore (Uri parentUri, string contentType, CompressionOption compressionOption);
-		protected abstract void DeletePartCore (Uri partUri);
 
 		public PackageRelationship CreateRelationship (Uri targetUri, TargetMode targetMode, string relationshipType)
 		{
@@ -198,6 +156,31 @@ namespace System.IO.Packaging {
 			return r;
 		}
 
+		
+		public void DeletePart (Uri partUri)
+		{
+			CheckIsReadOnly ();
+			Check.PartUri (partUri);
+
+			PackagePart part = GetPart (partUri);
+			if (part != null)
+			{
+				if (part.Package == null)
+					throw new InvalidOperationException ("This part has already been removed");
+				
+				// FIXME: MS.NET doesn't remove the relationship part
+				// Instead it throws an exception if you try to use it
+				if (PartExists (part.RelationshipsPartUri))
+					GetPart (part.RelationshipsPartUri).Package = null;
+
+				part.Package = null;
+				DeletePartCore (partUri);
+				partsCollection.Parts.RemoveAll (p => p.Uri == partUri);
+			}
+		}
+		
+		protected abstract void DeletePartCore (Uri partUri);
+
 		public void DeleteRelationship (string id)
 		{
 			Check.Id (id);
@@ -212,6 +195,26 @@ namespace System.IO.Packaging {
 			else
 				DeletePart (RelationshipUri);
 		}
+		
+		void IDisposable.Dispose ()
+		{
+			Flush ();
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			// Nothing here needs to be disposed of
+		}
+
+		public void Flush ()
+		{
+			// I should have a dirty boolean
+			if (FileOpenAccess != FileAccess.Read)
+				FlushCore ();
+		}
+
+		protected abstract void FlushCore ();
 
 		public PackagePart GetPart (Uri partUri)
 		{
@@ -229,12 +232,6 @@ namespace System.IO.Packaging {
 		}
 
 		protected abstract PackagePart [] GetPartsCore ();
-
-
-		public virtual bool PartExists (Uri partUri)
-		{
-			return GetPart (partUri) != null;
-		}
 
 		public PackageRelationship GetRelationship (string id)
 		{
@@ -256,11 +253,6 @@ namespace System.IO.Packaging {
 					collection.Relationships.Add (r);
 			
 			return collection;
-		}
-
-		public bool RelationshipExists (string id)
-		{
-			return Relationships.ContainsKey (id);
 		}
 
 		void LoadRelationships (Dictionary<string, PackageRelationship> relationships, Stream stream)
@@ -285,7 +277,7 @@ namespace System.IO.Packaging {
 			}
 		}
 		
-		private string NextId ()
+		string NextId ()
 		{
 			while (true)
 			{
@@ -296,7 +288,7 @@ namespace System.IO.Packaging {
 				RelationshipId++;
 			}
 		}
-
+		
 		public static Package Open (Stream stream)
 		{
 			return Open (stream, FileMode.Open);
@@ -347,7 +339,7 @@ namespace System.IO.Packaging {
 			return Open (s, packageMode, packageAccess);
 		}
 
-		private static Package OpenCore (Stream stream, FileMode packageMode, FileAccess packageAccess)
+		static Package OpenCore (Stream stream, FileMode packageMode, FileAccess packageAccess)
 		{
 			if ((packageAccess & FileAccess.Read) == FileAccess.Read && !stream.CanRead)
 				throw new IOException ("Stream does not support reading");
@@ -395,6 +387,16 @@ namespace System.IO.Packaging {
 			package.GetRelationships();
 			package.FileOpenAccess = packageAccess;
 			return package;
+		}
+		
+		public virtual bool PartExists (Uri partUri)
+		{
+			return GetPart (partUri) != null;
+		}
+		
+		public bool RelationshipExists (string id)
+		{
+			return Relationships.ContainsKey (id);
 		}
 
 		internal static void WriteRelationships (Dictionary <string, PackageRelationship> relationships, Stream stream)

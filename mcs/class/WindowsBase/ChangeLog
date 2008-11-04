@@ -1,3 +1,8 @@
+2008-11-04  Alan McGovern  <amcgovern@novell.com>
+
+	* System.IO.Packaging/Package.cs: Cosmetic - Make methods alphabetical
+	and group methods/properties together.
+
 2008-11-03  Alan McGovern  <alan.mcgovern@gmail.com>
 
 	* System.Windows/WeakEventManager.cs:
