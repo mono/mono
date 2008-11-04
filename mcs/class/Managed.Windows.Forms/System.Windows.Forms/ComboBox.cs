@@ -1051,16 +1051,22 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
+			DrawItemEventHandler eh = (DrawItemEventHandler)(Events [DrawItemEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		internal void HandleDrawItem (DrawItemEventArgs e)
+		{
+			// Only raise OnDrawItem if we are in an OwnerDraw mode
 			switch (DrawMode) {
-			case DrawMode.OwnerDrawFixed:
-			case DrawMode.OwnerDrawVariable:
-				DrawItemEventHandler eh = (DrawItemEventHandler)(Events [DrawItemEvent]);
-				if (eh != null)
-					eh (this, e);
-				break;
-			default:
-				ThemeEngine.Current.DrawComboBoxItem (this, e);
-				break;
+				case DrawMode.OwnerDrawFixed:
+				case DrawMode.OwnerDrawVariable:
+					OnDrawItem (e);
+					break;
+				default:
+					ThemeEngine.Current.DrawComboBoxItem (this, e);
+					break;
 			}
 		}
 
@@ -1516,7 +1522,7 @@ namespace System.Windows.Forms
 				}
 				
 				state |= DrawItemState.ComboBoxEdit;
-				OnDrawItem (new DrawItemEventArgs (dc, Font, item_rect, SelectedIndex, state, ForeColor, BackColor));
+				HandleDrawItem (new DrawItemEventArgs (dc, Font, item_rect, SelectedIndex, state, ForeColor, BackColor));
 			}
 			
 			if (show_dropdown_button) {
@@ -2522,8 +2528,8 @@ namespace System.Windows.Forms
 								state |= DrawItemState.Focus;
 							}
 						}
-						
-						owner.OnDrawItem (new DrawItemEventArgs (dc, owner.Font, item_rect,
+
+						owner.HandleDrawItem (new DrawItemEventArgs (dc, owner.Font, item_rect,
 							i, state, owner.ForeColor, owner.BackColor));
 					}
 				}

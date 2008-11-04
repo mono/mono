@@ -1,3 +1,9 @@
+2008-11-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: Only call OnDrawItem when we are using an OwnerDraw
+	mode.  Based on a patch by John Mortlock.
+	[Fixes bug #436790]
+
 2008-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* ListView.cs: Use the UsingGroups property where needed, instead of
