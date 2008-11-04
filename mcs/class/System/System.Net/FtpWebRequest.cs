@@ -23,6 +23,7 @@ namespace System.Net
 	public sealed class FtpWebRequest : WebRequest
 	{
 		Uri requestUri;
+		string file_name; // By now, used for upload
 		ServicePoint servicePoint;
 		Socket dataSocket;
 		NetworkStream controlStream;
@@ -46,6 +47,7 @@ namespace System.Net
 		FtpAsyncResult asyncResult;
 		FtpWebResponse ftpResponse;
 		Stream requestStream;
+		string initial_path;
 
 		const string ChangeDir = "CWD";
 		const string UserCommand = "USER";
@@ -525,7 +527,16 @@ namespace System.Net
 				asyncResult.SetCompleted (false, ftpResponse);
 			}
 		}
-		
+
+		void SetType ()
+		{
+			if (binary) {
+				FtpStatus status = SendCommand (TypeCommand, DataType);
+				if ((int) status.StatusCode < 200 || (int) status.StatusCode >= 300)
+					throw CreateExceptionFromResponse (status);
+			}
+		}
+
 		void ProcessMethod ()
 		{
 			State = RequestState.Connecting;
@@ -539,12 +550,26 @@ namespace System.Net
 			case WebRequestMethods.Ftp.DownloadFile:
 			case WebRequestMethods.Ftp.ListDirectory:
 			case WebRequestMethods.Ftp.ListDirectoryDetails:
+				SetType ();
 				DownloadData ();
 				break;
 			// Open data connection and send data
 			case WebRequestMethods.Ftp.AppendFile:
 			case WebRequestMethods.Ftp.UploadFile:
 			case WebRequestMethods.Ftp.UploadFileWithUniqueName:
+				string remote_folder = GetRemoteFolderPath (requestUri);
+				FtpStatus status;
+				if (remote_folder != null) {
+					status = SendCommand (ChangeDir, remote_folder);
+
+					if ((int) status.StatusCode < 200 || (int) status.StatusCode >= 300)
+						throw CreateExceptionFromResponse (status);
+					int last = requestUri.LocalPath.LastIndexOf ('/');
+					if (last >= 0) {
+						file_name = Uri.UnescapeDataString (requestUri.LocalPath.Substring (last + 1));
+					}
+				}
+				SetType ();
 				UploadData ();
 				break;
 			// Get info from control connection
@@ -723,6 +748,23 @@ namespace System.Net
 			State = RequestState.Authenticating;
 
 			Authenticate ();
+			FtpStatus status = SendCommand (WebRequestMethods.Ftp.PrintWorkingDirectory);
+			initial_path = GetInitialPath (status);
+		}
+
+		static string GetInitialPath (FtpStatus status)
+		{
+			int s = (int) status.StatusCode;
+			if (s < 200 || s > 300 || status.StatusDescription.Length <= 4)
+				return null;
+
+			string msg = status.StatusDescription.Substring (4);
+			if (msg [0] == '"')
+				msg = msg.Substring (1, msg.Length - 2);
+
+			if (!msg.EndsWith ("/"))
+				msg += "/";
+			return msg;
 		}
 
 		// Probably we could do better having here a regex
@@ -855,24 +897,36 @@ namespace System.Net
 			return sock;
 		}
 
+		string GetRemoteFolderPath (Uri uri)
+		{
+			string result;
+			string local_path = Uri.UnescapeDataString (uri.LocalPath);
+			if (initial_path == null) {
+				result = local_path;
+			} else {
+				if (local_path [0] == '/')
+					local_path = local_path.Substring (1);
+				Uri initial = new Uri (initial_path);
+				result = new Uri (initial, local_path).LocalPath;
+			}
+
+			int last = result.LastIndexOf ('/');
+			if (last == -1)
+				return null;
+			return result.Substring (0, last + 1);
+		}
+
 		void OpenDataConnection ()
 		{
 			FtpStatus status;
 			
 			Socket s = InitDataConnection ();
 
-			// TODO - Check that this command is only used for data connection based commands
-			if (method != WebRequestMethods.Ftp.ListDirectory && method != WebRequestMethods.Ftp.ListDirectoryDetails) {
-				status = SendCommand (TypeCommand, DataType);
-				
-				if (status.StatusCode != FtpStatusCode.CommandOK)
-					throw CreateExceptionFromResponse (status);
-			}
-
-			if(method != WebRequestMethods.Ftp.UploadFileWithUniqueName)
-				status = SendCommand (method, Uri.UnescapeDataString (requestUri.LocalPath));
-			else
+			if(method != WebRequestMethods.Ftp.UploadFileWithUniqueName) {
+				status = SendCommand (method, file_name);
+			} else {
 				status = SendCommand (method);
+			}
 
 			if (status.StatusCode != FtpStatusCode.OpeningData && status.StatusCode != FtpStatusCode.DataAlreadyOpen)
 				throw CreateExceptionFromResponse (status);
