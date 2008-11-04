@@ -36,18 +36,44 @@ namespace System.Collections.Specialized {
 
 		public static void AddListener (INotifyCollectionChanged source, IWeakEventListener listener)
 		{
+			CurrentManager.ProtectedAddListener (source, listener);
 		}
 
 		public static void RemoveListener (INotifyCollectionChanged source, IWeakEventListener listener)
 		{
+			CurrentManager.ProtectedAddListener (source, listener);
 		}
 
 		protected override void StartListening (object source)
 		{
+			INotifyCollectionChanged inotify = (INotifyCollectionChanged) source;
+			inotify.CollectionChanged += OnCollectionChanged;
 		}
 
 		protected override void StopListening (object source)
 		{
+			INotifyCollectionChanged inotify = (INotifyCollectionChanged) source;
+			inotify.CollectionChanged -= OnCollectionChanged;
+		}
+
+		private void OnCollectionChanged (object sender, NotifyCollectionChangedEventArgs e)
+		{
+			DeliverEvent (sender, e);
+		}
+
+		private static object CurrentManagerLock = new object ();
+
+		private static CollectionChangedEventManager CurrentManager {
+			get {
+				lock (CurrentManagerLock) {
+					CollectionChangedEventManager manager = GetCurrentManager (typeof (CollectionChangedEventManager));
+					if (manager == null) {
+						manager = new CollectionChangedEventManager ();
+						SetCurrentManager (typeof (CollectionChangedEventManager), manager);
+					}
+					return manager;
+				}
+			}
 		}
 	}
 }
