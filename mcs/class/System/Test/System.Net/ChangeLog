@@ -1,4 +1,8 @@
 
+2008-11-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebRequestTest.cs: add test for bug 333985.
+
 2008-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebResponseTest.cs:
