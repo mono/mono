@@ -1,5 +1,10 @@
 2008-11-04  Alan McGovern  <amcgovern@novell.com>
 
+	* WindowsBase.sln:
+	* WindowsBase.csproj: Add solution files to allow working inside MD.
+
+2008-11-04  Alan McGovern  <amcgovern@novell.com>
+
 	* System.IO.Packaging/PackageProperties.cs:
 	* Test/System.IO.Packaging/PackagePartTest.cs:
 	* System.IO.Packaging/PackagePropertiesPart.cs:
