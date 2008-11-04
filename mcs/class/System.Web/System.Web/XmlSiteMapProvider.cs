@@ -38,7 +38,6 @@ using System.Configuration;
 using System.Configuration.Provider;
 using System.Globalization;
 using System.Text;
-using System.Threading;
 using System.Xml;
 using System.Web.Util;
 using System.IO;
@@ -56,7 +55,6 @@ namespace System.Web
 		FileSystemWatcher watcher;
 		Dictionary <string, bool> _childProvidersPresent;
 		List <SiteMapProvider> _childProviders;
-		int init_done;
 		
 		Dictionary <string, bool> ChildProvidersPresent {
 			get {
@@ -93,7 +91,7 @@ namespace System.Web
 			if (smp == null)
 				throw new ProviderException ("Provider with name [" + providerName + "] was not found.");
 
-			AddNodeInternal (smp.GetRootNodeCore (), null, false);
+			AddNode (smp.GetRootNodeCore ());
 			RegisterChildProvider (providerName, smp);
 		}
 
@@ -133,23 +131,31 @@ namespace System.Web
 		
 		public override SiteMapNode BuildSiteMap ()
 		{
-			if (Interlocked.CompareExchange (ref init_done, 0, 0) == 1)
+			if (root != null)
 				return root;
-
+			// Whenever you call AddNode, it tries to find dups, and will call this method
+			// Is this a bug in MS??
+			if (building)
+				return null;
+			
 			lock (this_lock) {
-				if (root != null)
-					return root;
+				try {
+					building = true;
+					if (root != null)
+						return root;
 
-				bool enableLocalization;
-				XmlNode node = FindStartingNode (file, out enableLocalization);
-				EnableLocalization = enableLocalization;
-				SiteMapNode builtRoot = BuildSiteMapRecursive (node, EnableLocalization);
+					bool enableLocalization;
+					XmlNode node = FindStartingNode (file, out enableLocalization);
+					EnableLocalization = enableLocalization;
+					SiteMapNode builtRoot = BuildSiteMapRecursive (node, EnableLocalization);
 
-				if (builtRoot != root) {
-					AddNodeInternal (builtRoot, null, false);
-					root = builtRoot;
+					if (builtRoot != root) {
+						root = builtRoot;
+						AddNode (root);
+					}
+				} finally {
+					building = false;
 				}
-				Interlocked.CompareExchange (ref init_done, 1, 0);
 				
 				return root;
 			}
@@ -310,8 +316,7 @@ namespace System.Web
 				foreach (XmlNode child in xmlNode.ChildNodes) {
 					if (child.NodeType != XmlNodeType.Element)
 						continue;
-					SiteMapNode n = BuildSiteMapRecursive (child, EnableLocalization);
-					node.ChildNodesInternal.Add (n);
+					AddNode (BuildSiteMapRecursive (child, EnableLocalization), node);
 				}
 				
 				return node;
@@ -419,7 +424,6 @@ namespace System.Web
 		
 		protected internal override SiteMapNode GetRootNodeCore ()
 		{
-
 			return BuildSiteMap ();
 		}
 	}

@@ -12,13 +12,6 @@
 	Added a new method - IsValidVirtualPath () which checks whether a
 	passed path contains only characters allowed for virtual paths.
 
-2008-10-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* SiteMapNode.cs:
-	* XmlSiteMapProvider.cs:
-	* StaticSiteMapProvider.cs: first stab at getting rid of a race
-	condition.
-
 2008-10-22  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: use only the first matching method in

@@ -51,19 +51,19 @@ namespace System.Web
 			urlToNode = new Dictionary<string, SiteMapNode> (StringComparer.InvariantCultureIgnoreCase);
 		}
 
-		internal void AddNodeInternal (SiteMapNode node, SiteMapNode parentNode, bool callFind)
+		internal protected override void AddNode (SiteMapNode node, SiteMapNode parentNode)
 		{
 			if (node == null)
 				throw new ArgumentNullException ("node");
 
 			lock (this_lock) {
-				if (callFind && node.Provider == this && FindSiteMapNodeFromKey (node.Key) != null)
+				if (FindSiteMapNodeFromKey (node.Key) != null && node.Provider == this)
 					throw new InvalidOperationException (string.Format ("A node with key '{0}' already exists.",node.Key));
 
 				if (!String.IsNullOrEmpty (node.Url)) {
 					string url = MapUrl (node.Url);
 					
-					if (callFind && FindSiteMapNode (url) != null)
+					if (FindSiteMapNode (url) != null)
 						throw new InvalidOperationException (String.Format (
 							"Multiple nodes with the same URL '{0}' were found. " + 
 							"StaticSiteMapProvider requires that sitemap nodes have unique URLs.",
@@ -72,11 +72,13 @@ namespace System.Web
 				
 					urlToNode.Add (url, node);
 				}
-
 				keyToNode.Add (node.Key, node);
 
-				if (parentNode == null)
+				if (node == RootNode)
 					return;
+
+				if (parentNode == null)
+					parentNode = RootNode;
 
 				nodeToParent.Add (node, parentNode);
 
@@ -86,11 +88,6 @@ namespace System.Web
 
 				children.Add (node);
 			}
-		}
-
-		internal protected override void AddNode (SiteMapNode node, SiteMapNode parentNode)
-		{
-			AddNodeInternal (node, parentNode, true);
 		}
 		
 		protected virtual void Clear ()
