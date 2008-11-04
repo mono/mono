@@ -1,3 +1,9 @@
+2008-11-04  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* UnixStream.cs: Do not check offset against int.MaxValue 
+	(System.IO doesn't have it). Reviewed by Jonathan Pryor.
+	Bug reported by Siro Blanco <siro.blanco@gmail.com>.
+
 2008-11-03  Miguel de Icaza  <miguel@novell.com>
 
 	* UnixClient.cs (Client): Make this property public when using the

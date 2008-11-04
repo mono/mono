@@ -259,8 +259,6 @@ namespace Mono.Unix {
 			AssertNotDisposed ();
 			if (!CanSeek)
 				throw new NotSupportedException ("The File Descriptor does not support seeking");
-			if (offset > int.MaxValue)
-				throw new ArgumentOutOfRangeException ("offset", "too large");
 					
 			Native.SeekFlags sf = Native.SeekFlags.SEEK_CUR;
 			switch (origin) {
