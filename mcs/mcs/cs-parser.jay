@@ -2040,11 +2040,13 @@ conversion_operator_declarator
 	  }
 	| IMPLICIT error 
 	  {
-		syntax_error ((Location) $1, "'operator' expected");
+	  	Error_SyntaxError (yyToken);
+		$$ = new OperatorDeclaration (Operator.OpType.Implicit, null, GetLocation ($1));
 	  }
 	| EXPLICIT error 
 	  {
-		syntax_error ((Location) $1, "'operator' expected");
+	  	Error_SyntaxError (yyToken);
+	  	$$ = new OperatorDeclaration (Operator.OpType.Explicit, null, GetLocation ($1));
 	  }
 	;
 
