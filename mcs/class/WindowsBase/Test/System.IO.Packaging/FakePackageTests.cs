@@ -122,5 +122,16 @@ namespace System.IO.Packaging.Tests {
                 
             }
         }
+
+		[Test]
+        public void TestProperties ()
+        {
+            Assert.IsNotNull (package.PackageProperties, "#1");
+            package.PackageProperties.Title = "Title";
+            package.Flush ();
+
+            // the relationship part and packageproperties part
+            Assert.AreEqual (2, package.CreatedParts.Count, "#2");
+        }
     }
 }

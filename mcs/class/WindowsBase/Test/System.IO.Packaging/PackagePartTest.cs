@@ -36,6 +36,8 @@ namespace System.IO.Packaging.Tests {
     [TestFixture]
     public class PackagePartTest : TestBase {
 
+		const string PackagePropertiesType = "application/vnd.openxmlformats-package.core-properties+xml";
+		
         //static void Main (string [] args)
         //{
         //    PackagePartTest t = new PackagePartTest ();
@@ -211,6 +213,61 @@ namespace System.IO.Packaging.Tests {
             PackagePart part = package.CreatePart (new Uri ("file1.bmp", UriKind.Relative), "bmp");
         }
 
+        [Test]
+        public void PackagePropertiesTest ()
+        {
+            package.PackageProperties.Category = "category";
+            package.PackageProperties.ContentStatus = "status";
+            package.PackageProperties.ContentType = "contentttype";
+            package.PackageProperties.Created = new DateTime (2008, 12, 12, 2, 3, 4);
+            package.PackageProperties.Creator = "mono";
+            package.PackageProperties.Description = "description";
+            package.PackageProperties.Identifier = "id";
+            package.PackageProperties.Keywords = "key words";
+            package.PackageProperties.Language = "english";
+            package.PackageProperties.LastModifiedBy = "modified";
+            package.PackageProperties.LastPrinted = new DateTime (2007, 12, 12, 2, 3, 4);
+            package.PackageProperties.Modified = new DateTime (2008, 12, 12, 3, 4, 5);
+            package.PackageProperties.Revision = "reviison";
+            package.PackageProperties.Subject = "subject";
+            package.PackageProperties.Title = "title";
+            package.PackageProperties.Version = "version";
+            Assert.AreEqual (0, package.GetParts ().Count (), "#1");
+            package.Flush ();
+            Assert.AreEqual (2, package.GetParts ().Count (), "#2");
+            var part = package.GetParts ().Where (p => p.ContentType == PackagePropertiesType).ToList ().First ();
+            Assert.IsNotNull (part);
+            Assert.IsTrue (part.Uri.OriginalString.StartsWith ("/package/services/metadata/core-properties/"), "#3");
+            Assert.IsTrue (part.Uri.OriginalString.EndsWith (".psmdcp"), "#4");
+            package.Close ();
+            package = Package.Open (new MemoryStream (stream.ToArray ()));
+
+            Assert.AreEqual (package.PackageProperties.Category, "category", "#5");
+            Assert.AreEqual (package.PackageProperties.ContentStatus, "status", "#6");
+            Assert.AreEqual (package.PackageProperties.ContentType, "contentttype", "#7");
+            Assert.AreEqual (package.PackageProperties.Created, new DateTime (2008, 12, 12, 2, 3, 4), "#8");
+            Assert.AreEqual (package.PackageProperties.Creator, "mono", "#9");
+            Assert.AreEqual (package.PackageProperties.Description, "description", "#10");
+            Assert.AreEqual (package.PackageProperties.Identifier, "id", "#11");
+            Assert.AreEqual (package.PackageProperties.Keywords, "key words", "#12");
+            Assert.AreEqual (package.PackageProperties.Language, "english", "#13");
+            Assert.AreEqual (package.PackageProperties.LastModifiedBy, "modified", "#14");
+            Assert.AreEqual (package.PackageProperties.LastPrinted, new DateTime (2007, 12, 12, 2, 3, 4), "#15");
+            Assert.AreEqual (package.PackageProperties.Modified, new DateTime (2008, 12, 12, 3, 4, 5), "#16");
+            Assert.AreEqual (package.PackageProperties.Revision, "reviison", "#17");
+            Assert.AreEqual (package.PackageProperties.Subject, "subject", "#18");
+            Assert.AreEqual (package.PackageProperties.Title, "title", "#19");
+            Assert.AreEqual (package.PackageProperties.Version, "version", "#20");
+        }
+
+        [Test]
+        [ExpectedException (typeof (IOException))]
+        public void PackagePropertiesReadonly ()
+        {
+            PackagePropertiesTest ();
+            package.PackageProperties.Title = "Title";
+        }
+		
         [Test]
         public void PartExists ()
         {
