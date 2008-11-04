@@ -1,3 +1,7 @@
+2008-11-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : simply call ClearValueBuffer() on each Read().
+
 2008-09-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDocument.cs : it returns non-null Schemas by default (and

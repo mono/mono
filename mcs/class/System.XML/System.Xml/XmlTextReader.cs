@@ -566,6 +566,7 @@ namespace System.Xml
 			curNodePeekIndex = peekCharsIndex;
 			preserveCurrentTag = true;
 			nestLevel = 0;
+			ClearValueBuffer ();
 
 			if (startNodeType == XmlNodeType.Attribute) {
 				if (currentAttribute == 0)
