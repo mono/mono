@@ -11036,6 +11036,33 @@
       </method>
     </type>
   </test>
+  <test name="gtest-422.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean op_GreaterThan(A, System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Boolean op_LessThan(A, System.Object)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>23</size>
+      </method>
+      <method name="Nullable`1 get_Id()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Test()">
+        <size>51</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
