@@ -1,5 +1,11 @@
 2008-11-04  Alan McGovern  <amcgovern@novell.com>
 
+	* Test/System.IO.Packaging/PackagePartTest.cs:
+	* System.IO.Packaging/PackagePropertiesPart.cs: Properties which are
+	null should not be serialized.
+
+2008-11-04  Alan McGovern  <amcgovern@novell.com>
+
 	* WindowsBase.dll.sources:
 	* System.IO.Packaging/Package.cs:
 	* System.IO.Packaging/ZipPackage.cs:

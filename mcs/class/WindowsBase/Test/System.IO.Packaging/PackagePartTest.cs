@@ -260,6 +260,15 @@ namespace System.IO.Packaging.Tests {
             Assert.AreEqual (package.PackageProperties.Version, "version", "#20");
         }
 
+		[Test]
+		public void PackagePropertiestest2 ()
+		{
+			package.PackageProperties.Title = "TITLE";
+			package.Close ();
+			package = Package.Open (new MemoryStream (stream.ToArray ()));
+			Assert.AreEqual (null, package.PackageProperties.Category, "#1");
+		}
+		
         [Test]
         [ExpectedException (typeof (IOException))]
         public void PackagePropertiesReadonly ()

@@ -247,23 +247,36 @@ namespace System.IO.Packaging
 			coreProperties.Attributes.Append (doc.CreateAttribute ("xmlns:xsi")).Value = NSXsi;
 
 			// Create the children
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "category", NSPackageProperties)).InnerXml = Category ?? "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentStatus", NSPackageProperties)).InnerXml = ContentStatus ?? "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentType", NSPackageProperties)).InnerXml = ContentType ?? "";
+			if (Category != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "category", NSPackageProperties)).InnerXml = Category;
+			if (ContentStatus != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentStatus", NSPackageProperties)).InnerXml = ContentStatus;
+			if (ContentType != null)
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentType", NSPackageProperties)).InnerXml = ContentType;
 			if (Created.HasValue)
 				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dcterms", "created", NSDcTerms)).InnerXml = Created.Value.ToString ();
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "creator", NSDc)).InnerXml = Creator ?? "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "description", NSDc)).InnerXml = Description ?? "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "identifier", NSDc)).InnerXml = Identifier ?? "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "keywords", NSPackageProperties)).InnerXml = Keywords ?? "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "language", NSDc)).InnerXml = Language ?? "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastModifiedBy", NSPackageProperties)).InnerXml = LastModifiedBy ?? "";
+			if (Creator != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "creator", NSDc)).InnerXml = Creator;
+			if (Description != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "description", NSDc)).InnerXml = Description;
+			if (Identifier != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "identifier", NSDc)).InnerXml = Identifier;
+			if (Keywords != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "keywords", NSPackageProperties)).InnerXml = Keywords;
+			if (Language != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "language", NSDc)).InnerXml = Language;
+			if (LastModifiedBy != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastModifiedBy", NSPackageProperties)).InnerXml = LastModifiedBy;
 			if (LastPrinted.HasValue)
 				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastPrinted", NSPackageProperties)).InnerXml = LastPrinted.Value.ToString ();
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "revision", NSPackageProperties)).InnerXml = Revision ?? "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "subject", NSDc)).InnerXml = Subject ?? "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "title", NSDc)).InnerXml = Title ?? "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "version", NSPackageProperties)).InnerXml = Version ?? "";
+			if (Revision != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "revision", NSPackageProperties)).InnerXml = Revision;
+			if (Subject != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "subject", NSDc)).InnerXml = Subject;
+			if (Title != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "title", NSDc)).InnerXml = Title;
+			if (Version != null)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "version", NSPackageProperties)).InnerXml = Version;
 
 			if (Modified.HasValue)
 			{
