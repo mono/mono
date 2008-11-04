@@ -73,10 +73,5 @@ namespace System.IO.Packaging
 		public override string Version {
 			get; set;
 		}
-		
-		public override void Dispose (bool disposing)
-		{
-			base.Dispose(disposing);
-		}
 	}
 }

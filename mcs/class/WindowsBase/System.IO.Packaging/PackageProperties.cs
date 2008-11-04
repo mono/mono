@@ -20,7 +20,8 @@
 // Copyright (c) 2007 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
-//	Chris Toshok (toshok@ximian.com)
+//  Chris Toshok (toshok@ximian.com)
+//  Alan McGovern (amcgovern@novell.com)
 //
 
 using System;

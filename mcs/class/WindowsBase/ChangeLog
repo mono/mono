@@ -1,5 +1,12 @@
 2008-11-04  Alan McGovern  <amcgovern@novell.com>
 
+	* System.IO.Packaging/PackagePropertiesPart.cs: No need to override
+	here.
+
+	* System.IO.Packaging/PackageProperties.cs: Add myself to authors
+
+2008-11-04  Alan McGovern  <amcgovern@novell.com>
+
 	* WindowsBase.sln:
 	* WindowsBase.csproj: Add solution files to allow working inside MD.
 
