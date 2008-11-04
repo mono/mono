@@ -1,3 +1,8 @@
+2008-11-04  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c:
+	Make sure that stack sections can be fully reconstructed even reading
+	only one block.
+
 2008-10-10  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c:
 	Added "aci" option to emit the object "id" at each allocation. 
