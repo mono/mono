@@ -2580,8 +2580,10 @@ namespace Mono.CSharp {
 			}
 
 			if (RootContext.Version >= LanguageVersion.ISO_2 &&
-				(TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type) ||
-				(left is NullLiteral && right.Type.IsValueType) || (right is NullLiteral && left.Type.IsValueType)))
+				((TypeManager.IsNullableType (left.Type) && (right is NullLiteral || TypeManager.IsNullableType (right.Type) || TypeManager.IsValueType (right.Type))) ||
+				(left.Type.IsValueType && right is NullLiteral) ||
+				(TypeManager.IsNullableType (right.Type) && (left is NullLiteral || TypeManager.IsNullableType (left.Type) || TypeManager.IsValueType (left.Type))) ||
+				(right.Type.IsValueType && left is NullLiteral)))
 				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 			return DoResolveCore (ec, left, right);

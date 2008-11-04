@@ -1,5 +1,11 @@
 2008-11-04  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #434589
+	* expression.cs (Binary): Ignore lifted conversions when at least
+	one operand is of reference type.
+
+2008-11-04  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay: Better syntax error report.
 
 2008-11-03  Marek Safar  <marek.safar@gmail.com>
