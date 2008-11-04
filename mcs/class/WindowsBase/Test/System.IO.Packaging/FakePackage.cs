@@ -58,7 +58,7 @@ namespace System.IO.Packaging.Tests {
 
         protected override void FlushCore ()
         {
-            throw new NotImplementedException ();
+            // Flush...
         }
         
         protected override PackagePart GetPartCore (Uri partUri)

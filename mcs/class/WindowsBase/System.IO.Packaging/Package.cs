@@ -35,7 +35,8 @@ namespace System.IO.Packaging {
 		internal const string RelationshipContentType = "application/vnd.openxmlformats-package.relationships+xml";
 		internal const string RelationshipNamespace = "http://schemas.openxmlformats.org/package/2006/relationships";
 		internal static readonly Uri RelationshipUri = new Uri ("/_rels/.rels", UriKind.Relative);
-		
+
+		PackageProperties packageProperties;
 		PackagePartCollection partsCollection = new PackagePartCollection ();
 		Dictionary<string, PackageRelationship> relationships;
 		PackageRelationshipCollection relationshipsCollection = new PackageRelationshipCollection ();
@@ -47,7 +48,13 @@ namespace System.IO.Packaging {
 		}
 
 		public PackageProperties PackageProperties {
-			get; private set;
+			get {
+				if (packageProperties == null) {
+					packageProperties = new PackagePropertiesPart ();
+					packageProperties.Package = this;
+				}
+				return packageProperties;
+			}
 		}
 
 		int RelationshipId {
@@ -207,11 +214,20 @@ namespace System.IO.Packaging {
 			// Nothing here needs to be disposed of
 		}
 
+		bool flushing = false;
 		public void Flush ()
 		{
-			// I should have a dirty boolean
-			if (FileOpenAccess != FileAccess.Read)
-				FlushCore ();
+			if (FileOpenAccess == FileAccess.Read || flushing)
+				return;
+
+			flushing = true;
+			
+			if (packageProperties != null)
+				packageProperties.Flush ();
+			
+			FlushCore ();
+
+			flushing = false;
 		}
 
 		protected abstract void FlushCore ();
@@ -275,12 +291,21 @@ namespace System.IO.Packaging {
 				                    node.Attributes["Id"].Value.ToString (),
 				                    true);
 			}
+
+			foreach (PackageRelationship r in Relationships.Values) {
+				if (r.RelationshipType == System.IO.Packaging.PackageProperties.NSPackageProperties) {
+					PackagePart part = GetPart (r.TargetUri);
+					packageProperties = new PackagePropertiesPart ();
+					packageProperties.Package = this;
+					packageProperties.Part = part;
+					packageProperties.LoadFrom (part.GetStream ());
+				}
+			}
 		}
 		
 		string NextId ()
 		{
-			while (true)
-			{
+			while (true) {
 				string s = RelationshipId.ToString ();
 				if (!Relationships.ContainsKey (s))
 					return s;

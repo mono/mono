@@ -1,5 +1,17 @@
 2008-11-04  Alan McGovern  <amcgovern@novell.com>
 
+	* WindowsBase.dll.sources:
+	* System.IO.Packaging/Package.cs:
+	* System.IO.Packaging/ZipPackage.cs:
+	* System.IO.Packaging/PackUriHelper.cs:
+	* Test/System.IO.Packaging/FakePackage.cs:
+	* System.IO.Packaging/PackageProperties.cs:
+	* System.IO.Packaging/PackagePropertiesPart.cs: Complete the
+	implementation of loading/saving PackageProperties. NUnit tests now
+	pass.
+
+2008-11-04  Alan McGovern  <amcgovern@novell.com>
+
 	* System.IO.Packaging/PackagePropertiesPart.cs: No need to override
 	here.
 

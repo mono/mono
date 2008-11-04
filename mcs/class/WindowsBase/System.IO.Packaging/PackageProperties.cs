@@ -31,24 +31,15 @@ namespace System.IO.Packaging {
 
 	public abstract class PackageProperties : IDisposable
 	{
-		internal const string NSProperties = "application/vnd.openxmlformats-package.core-properties+xml";
-		const string NSDc = "http://purl.org/dc/elements/1.1/";
-		const string NSDcTerms = "http://purl.org/dc/terms/";
-		const string NSXsi = "http://www.w3.org/2001/XMLSchema-instance";
+		internal const string NSPackageProperties = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties";
+		internal const string PackagePropertiesContentType = "application/vnd.openxmlformats-package.core-properties+xml";
+
+
+		static int uuid;
 		
 		protected PackageProperties ()
 		{
-			// Nothing
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-		}
-
-		protected virtual void Dispose (bool disposing)
-		{
-			// Nothing
+			
 		}
 
 		public abstract string Category { get; set; }
@@ -63,93 +54,50 @@ namespace System.IO.Packaging {
 		public abstract string LastModifiedBy { get; set; }
 		public abstract DateTime? LastPrinted { get; set; }
 		public abstract DateTime? Modified { get; set; }
+		internal Package Package { get; set; }
+		internal PackagePart Part { get; set; }
 		public abstract string Revision { get; set; }
 		public abstract string Subject { get; set; }
 		public abstract string Title { get; set; }
 		public abstract string Version { get; set; }
-
-		internal void LoadFrom (Stream stream)
+				
+		
+		public void Dispose ()
 		{
-			XmlDocument doc = new XmlDocument ();
-			XmlNamespaceManager manager = new XmlNamespaceManager (doc.NameTable);
-			doc.Load (stream);
-
-			XmlNode node;
-			if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:category", manager)) != null)
-				Category = node.InnerXml;
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:contentStatus", manager)) != null)
-				ContentStatus = node.InnerXml;
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:contentType", manager)) != null)
-				ContentType = node.InnerXml;
-			if ((node = doc.SelectSingleNode ("prop:coreProperties/dcterms:created", manager)) != null)
-				Created = DateTime.Parse (node.InnerXml);
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:creator", manager)) != null)
-				Creator = node.InnerXml;
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:description", manager)) != null)
-				Description = node.InnerXml;
-			if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:identifier", manager)) != null)
-				Identifier = node.InnerXml;
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:keywords", manager)) != null)
-				Keywords = node.InnerXml;
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:language", manager)) != null)
-				Language = node.InnerXml;
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:lastModifiedBy", manager)) != null)
-				LastModifiedBy = node.InnerXml;
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:lastPrinted", manager)) != null)
-				LastPrinted = DateTime.Parse (node.InnerXml);
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/dcterms:modified", manager)) != null)
-				Modified = DateTime.Parse (node.InnerXml);
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:revision", manager)) != null)
-				Revision = node.InnerXml;
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:subject", manager)) != null)
-				Subject = node.InnerXml;
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:title", manager)) != null)
-				Title = node.InnerXml;
-            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:version", manager)) != null)
-				Version = node.InnerXml;
+			Dispose (true);
 		}
 
-		internal void WriteTo (Stream stream)
+		protected virtual void Dispose (bool disposing)
 		{
-			XmlDocument doc = new XmlDocument ();
-			XmlNamespaceManager manager = new XmlNamespaceManager (doc.NameTable);
-			manager.AddNamespace ("prop", NSProperties);
-			manager.AddNamespace ("dc", NSDc);
-			manager.AddNamespace ("dcterms", NSDcTerms);
-			manager.AddNamespace ("xsi", NSXsi);
+			// Nothing
+		}
+
+		internal void Flush ()
+		{
+			if (Part == null)
+			{
+				int id = System.Threading.Interlocked.Increment (ref uuid);
+				Uri uri = new Uri (string.Format ("/package/services/metadata/core-properties/{0}.psmdcp", id), UriKind.Relative);
+				Part = Package.CreatePart (uri, PackagePropertiesContentType);
+				PackageRelationship rel = Package.CreateRelationship (uri, TargetMode.Internal, NSPackageProperties);
+			}
 			
-			// Create XML declaration
-			doc.AppendChild (doc.CreateXmlDeclaration ("1.0", "UTF-8", null));
+			using (Stream s = Part.GetStream ()) {
+				s.SetLength (0);
+				
+				using (XmlTextWriter writer = new XmlTextWriter (s, System.Text.Encoding.UTF8))
+					WriteTo (writer);
+			}
+		}
+		
+		internal virtual void LoadFrom (Stream stream)
+		{
 
-			// Create root node with required namespace declarations
-			XmlNode coreProperties = doc.AppendChild (doc.CreateNode (XmlNodeType.Element, "coreProperties", NSProperties));
-			coreProperties.Attributes.Append (doc.CreateAttribute ("xmlns:dc")).Value = NSDc;
-			coreProperties.Attributes.Append (doc.CreateAttribute ("xmlns:dcterms")).Value = NSDcTerms;
-			coreProperties.Attributes.Append (doc.CreateAttribute ("xmlns:xsi")).Value = NSXsi;
+		}
 
-			// Create the children
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "category", NSProperties)).InnerXml = "category";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentStatus", NSProperties)).InnerXml = "Version";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentType", NSProperties)).InnerXml = "";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dcterms", "created", NSDcTerms)).InnerXml = "Version";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "creator", NSDc)).InnerXml = "Version";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "description", NSDc)).InnerXml = "Version";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "identifier", NSDc)).InnerXml = "Version";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "keywords", NSProperties)).InnerXml = "Version";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "language", NSDc)).InnerXml = "Version";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastModifiedBy", NSProperties)).InnerXml = "Version";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastPrinted", NSProperties)).InnerXml = "Version";
-			XmlNode modified = coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dcterms", "modified", NSDcTerms));
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "revision", NSProperties)).InnerXml = "Title";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "subject", NSDc)).InnerXml = "Title";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "title", NSDc)).InnerXml = "Title";
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "version", NSProperties)).InnerXml = "Title";
+		internal virtual void WriteTo (XmlTextWriter writer)
+		{
 			
-			XmlAttribute att = doc.CreateAttribute("xsi", "type", NSXsi);
-			att.Value = "dcterms:W3CDTF";
-			modified.Attributes.Append (att);
-
-			doc.WriteContentTo (new XmlTextWriter (stream, System.Text.Encoding.UTF8));
 		}
 	}
 }

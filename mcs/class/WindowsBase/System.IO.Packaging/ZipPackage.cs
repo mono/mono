@@ -151,7 +151,6 @@ namespace System.IO.Packaging {
 					using (Stream s = archive.GetStream (ContentUri))
 						doc.Load (s);
 
-					doc.WriteContentTo (new XmlTextWriter (Console.Out));
 					XmlNamespaceManager manager = new XmlNamespaceManager (doc.NameTable);
 					manager.AddNamespace ("content", ContentNamespace);
 

@@ -34,6 +34,7 @@ System.IO.Packaging/PackageDigitalSignatureManager.cs
 System.IO.Packaging/PackagePart.cs
 System.IO.Packaging/PackagePartCollection.cs
 System.IO.Packaging/PackageProperties.cs
+System.IO.Packaging/PackagePropertiesPart.cs
 System.IO.Packaging/PackageRelationship.cs
 System.IO.Packaging/PackageRelationshipCollection.cs
 System.IO.Packaging/PackageRelationshipSelector.cs

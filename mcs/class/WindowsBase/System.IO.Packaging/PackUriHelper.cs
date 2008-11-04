@@ -167,7 +167,7 @@ namespace System.IO.Packaging {
 			Check.PartUriIsValid (sourcePartUri);
 			Check.PartUriIsValid (targetUri);
 
-			Console.WriteLine ("Merged to: {0}", new Uri (sourcePartUri, targetUri).OriginalString.Substring(7));
+			// Need to trim first 7 chars as they are: "file://"
 			return new Uri (new Uri(sourcePartUri, targetUri).OriginalString.Substring(7), UriKind.Relative);
 		}
 	}

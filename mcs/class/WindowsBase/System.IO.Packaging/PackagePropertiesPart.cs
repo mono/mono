@@ -5,73 +5,277 @@
 //
 
 using System;
+using System.Xml;
 
 namespace System.IO.Packaging
 {
 	class PackagePropertiesPart : PackageProperties
 	{
+		const string NSDc = "http://purl.org/dc/elements/1.1/";
+		const string NSDcTerms = "http://purl.org/dc/terms/";
+		const string NSXsi = "http://www.w3.org/2001/XMLSchema-instance";
+		
+		string category;
+		string contentStatus;
+		string contentType;
+		DateTime? created;
+		string creator;
+		string description;
+		string identifier;
+		string keywords;
+		string language;
+		string lastModifiedBy;
+		DateTime? lastPrinted;
+		DateTime? modified;
+		string revision;
+		string subject;
+		string title;
+		string version;
+
+		public PackagePropertiesPart ()
+		{
+			
+		}
+
 		public override string Category {
-			get; set;
+			get {
+				return category;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				category = value;
+			}
 		}
-		
 		public override string ContentStatus {
-			get; set;
+			get {
+				return contentStatus;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				contentStatus = value;
+			}
 		}
-		
 		public override string ContentType {
-			get; set;
+			get {
+				return contentType;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				contentType = value;
+			}
 		}
-		
-		public override Nullable<DateTime> Created {
-			get; set;
+		public override DateTime? Created {
+			get {
+				return created;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				created = value;
+			}
 		}
-		
 		public override string Creator {
-			get; set;
+			get {
+				return creator;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				creator = value;
+			}
 		}
-		
 		public override string Description {
-			get; set;
+			get {
+				return description;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				description = value;
+			}
 		}
-		
 		public override string Identifier {
-			get; set;
+			get {
+				return identifier;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				identifier = value;
+			}
 		}
-		
 		public override string Keywords {
-			get; set;
+			get {
+				return keywords;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				keywords = value;
+			}
 		}
-		
 		public override string Language {
-			get; set;
+			get {
+				return language;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				language = value;
+			}
 		}
-		
 		public override string LastModifiedBy {
-			get; set;
+			get {
+				return lastModifiedBy;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				lastModifiedBy = value;
+			}
 		}
-
-		public override Nullable<DateTime> LastPrinted {
-			get; set;
+		public override DateTime? LastPrinted {
+			get {
+				return lastPrinted;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				lastPrinted = value;
+			}
 		}
-		
-		public override Nullable<DateTime> Modified {
-			get; set;
+		public override DateTime? Modified {
+			get {
+				return modified;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				modified = value;
+			}
 		}
-		
 		public override string Revision {
-			get; set;
+			get {
+				return revision;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				revision = value;
+			}
 		}
-
 		public override string Subject {
-			get; set;
+			get {
+				return subject;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				subject = value;
+			}
+		}
+		public override string Title {
+			get {
+				return title;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				title = value;
+			}
+		}
+		public override string Version {
+			get {
+				return version;
+			}
+			set {
+				Package.CheckIsReadOnly ();
+				version = value;
+			}
 		}
 		
-		public override string Title {
-			get; set;
+		internal override void LoadFrom (Stream stream)
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.Load (stream);
+			
+			XmlNamespaceManager manager = new XmlNamespaceManager (doc.NameTable);
+			manager.AddNamespace ("prop", NSPackageProperties);
+			manager.AddNamespace ("dc", NSDc);
+			manager.AddNamespace ("dcterms", NSDcTerms);
+			manager.AddNamespace ("xsi", NSXsi);
+
+			XmlNode node;
+			if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:category", manager)) != null)
+				category = node.InnerXml;
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:contentStatus", manager)) != null)
+				ContentStatus = node.InnerXml;
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:contentType", manager)) != null)
+				ContentType = node.InnerXml;
+			if ((node = doc.SelectSingleNode ("prop:coreProperties/dcterms:created", manager)) != null)
+				Created = DateTime.Parse (node.InnerXml);
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:creator", manager)) != null)
+				Creator = node.InnerXml;
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:description", manager)) != null)
+				Description = node.InnerXml;
+			if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:identifier", manager)) != null)
+				Identifier = node.InnerXml;
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:keywords", manager)) != null)
+				Keywords = node.InnerXml;
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:language", manager)) != null)
+				Language = node.InnerXml;
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:lastModifiedBy", manager)) != null)
+				LastModifiedBy = node.InnerXml;
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:lastPrinted", manager)) != null)
+				LastPrinted = DateTime.Parse (node.InnerXml);
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/dcterms:modified", manager)) != null)
+				Modified = DateTime.Parse (node.InnerXml);
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:revision", manager)) != null)
+				Revision = node.InnerXml;
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:subject", manager)) != null)
+				Subject = node.InnerXml;
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:title", manager)) != null)
+				Title = node.InnerXml;
+            if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:version", manager)) != null)
+				Version = node.InnerXml;
 		}
 
-		public override string Version {
-			get; set;
+		internal override void WriteTo(XmlTextWriter writer)
+		{
+			XmlDocument doc = new XmlDocument ();
+			XmlNamespaceManager manager = new XmlNamespaceManager (doc.NameTable);
+			manager.AddNamespace ("prop", NSPackageProperties);
+			manager.AddNamespace ("dc", NSDc);
+			manager.AddNamespace ("dcterms", NSDcTerms);
+			manager.AddNamespace ("xsi", NSXsi);
+			
+			// Create XML declaration
+			doc.AppendChild (doc.CreateXmlDeclaration ("1.0", "UTF-8", null));
+
+			// Create root node with required namespace declarations
+			XmlNode coreProperties = doc.AppendChild (doc.CreateNode (XmlNodeType.Element, "coreProperties", NSPackageProperties));
+			coreProperties.Attributes.Append (doc.CreateAttribute ("xmlns:dc")).Value = NSDc;
+			coreProperties.Attributes.Append (doc.CreateAttribute ("xmlns:dcterms")).Value = NSDcTerms;
+			coreProperties.Attributes.Append (doc.CreateAttribute ("xmlns:xsi")).Value = NSXsi;
+
+			// Create the children
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "category", NSPackageProperties)).InnerXml = Category ?? "";
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentStatus", NSPackageProperties)).InnerXml = ContentStatus ?? "";
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentType", NSPackageProperties)).InnerXml = ContentType ?? "";
+			if (Created.HasValue)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dcterms", "created", NSDcTerms)).InnerXml = Created.Value.ToString ();
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "creator", NSDc)).InnerXml = Creator ?? "";
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "description", NSDc)).InnerXml = Description ?? "";
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "identifier", NSDc)).InnerXml = Identifier ?? "";
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "keywords", NSPackageProperties)).InnerXml = Keywords ?? "";
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "language", NSDc)).InnerXml = Language ?? "";
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastModifiedBy", NSPackageProperties)).InnerXml = LastModifiedBy ?? "";
+			if (LastPrinted.HasValue)
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastPrinted", NSPackageProperties)).InnerXml = LastPrinted.Value.ToString ();
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "revision", NSPackageProperties)).InnerXml = Revision ?? "";
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "subject", NSDc)).InnerXml = Subject ?? "";
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "title", NSDc)).InnerXml = Title ?? "";
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "version", NSPackageProperties)).InnerXml = Version ?? "";
+
+			if (Modified.HasValue)
+			{
+				XmlAttribute att = doc.CreateAttribute("xsi", "type", NSXsi);
+				att.Value = "dcterms:W3CDTF";
+				
+				XmlNode modified = coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dcterms", "modified", NSDcTerms));
+				modified.Attributes.Append (att);
+				modified.InnerXml = Modified.Value.ToString ();
+			}
+			
+			doc.WriteContentTo (writer);
 		}
 	}
 }
