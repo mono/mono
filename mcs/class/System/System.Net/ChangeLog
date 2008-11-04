@@ -1,4 +1,9 @@
 
+2008-11-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebRequest.cs: if the cache level is NoCacheNoStore, don't throw
+	when setting the CachePolicy.
+
 2008-11-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebRequest.cs: take the server current directory into account
