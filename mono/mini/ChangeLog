@@ -1,3 +1,18 @@
+2008-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* cpu-x86.md: Add store nta ops.
+
+	* mini-ops.h: Same.
+
+	* mini-x86.c: Same.
+
+	* mini.h: Add an enum for simd prefetch modes.
+
+	* simd-methods.h: Refactor the store_aligned code to handle multiple kinds
+	of store. Use the changed code to support store nta.
+
+	* simd-intrinsics.c: Add prefetch ops for all vector types.
+
 2008-11-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Add an option for JIT compiling the methods by multiple 
