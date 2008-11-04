@@ -2076,6 +2076,9 @@ namespace System.Windows.Forms
 				break;
 #if NET_2_0
 			case View.Tile:
+				if (!Application.VisualStylesEnabled)
+					goto case View.LargeIcon;
+
 				LayoutIcons (TileItemSize, alignment == ListViewAlignment.Left, 
 						ThemeEngine.Current.ListViewHorizontalSpacing,
 						ThemeEngine.Current.ListViewVerticalSpacing);
@@ -3291,6 +3294,9 @@ namespace System.Windows.Forms
 				break;
 #if NET_2_0
 			case View.Tile:
+				if (!Application.VisualStylesEnabled)
+					goto case View.LargeIcon;
+
 				Scroll (v_scroll, -(ItemSize.Height + ThemeEngine.Current.ListViewVerticalSpacing) * 2 * lines);
 				break;
 #endif

@@ -3014,7 +3014,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 			// Tile view renders its Text in a different fashion
-			if (control.View == View.Tile) {
+			if (control.View == View.Tile && Application.VisualStylesEnabled) {
 				// Item.Text is drawn using its first subitem's bounds
 				dc.DrawString (item.Text, item.Font, textBrush, item.SubItems [0].Bounds, format);
 

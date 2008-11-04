@@ -1117,6 +1117,9 @@ namespace System.Windows.Forms
 				break;
 #if NET_2_0
 			case View.Tile:
+				if (!Application.VisualStylesEnabled)
+					goto case View.LargeIcon;
+
 				label_rect = icon_rect = Rectangle.Empty;
 
 				if (owner.LargeImageList != null) {
