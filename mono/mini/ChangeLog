@@ -1,3 +1,19 @@
+2008-11-04  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-trampolines.c, mini.h: Two new trampolines: MONITOR_ENTER
+	and MONITOR_EXIT, for the ASM fastpaths.
+
+	* method-to-ir.c: Use the ASM fastpath for Monitor.Enter/Exit if
+	available.
+
+	* mini.c, patch-info.h: Signature and patch infos for
+	Monitor.Enter/Exit trampolines.
+
+	* mini-amd64.c, mini-x86.c: Make emit_tls_get() non-static.
+
+	* tramp-amd64.c, tramp-x86.c, mini-amd64.h, mini-amd64.h:
+	Monitor.Enter/Exit ASM fastpath for Linux.
+
 2008-11-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Fix soft-float support in Array.Get/Set.

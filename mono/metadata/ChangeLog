@@ -1,3 +1,8 @@
+2008-11-04  Mark Probst  <mark.probst@gmail.com>
+
+	* monitor.c, monitor.h: New function for querying offsets of
+	members of MonoThreadsSync.
+
 2008-11-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Use runtime_invoke_direct_cache
