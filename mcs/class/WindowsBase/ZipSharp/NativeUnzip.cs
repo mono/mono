@@ -154,8 +154,8 @@ namespace zipsharp
 		                                              byte* buf, // voidp
 		                                              uint len);
 
-		[DllImport ("libminizip.dll")]
-		static extern int unzSetOffset (UnzipHandle handle, IntPtr pos); // uLong
+		//[DllImport ("libminizip.dll")]
+		//static extern int unzSetOffset (UnzipHandle handle, IntPtr pos); // uLong
 		
 		[DllImport ("libminizip.dll")]
 		static extern int unzClose (UnzipHandle handle);
