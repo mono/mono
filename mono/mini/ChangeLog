@@ -1,5 +1,7 @@
 2008-11-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_plt): Make the arm code work with the binary writer.
+
 	* aot-compiler.c aot-runtime.c mini-trampolines.c tramp-amd64.c: Implement
 	most of the full-aot support for monitor enter/exit trampolines.
 
