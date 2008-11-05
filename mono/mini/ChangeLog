@@ -31,6 +31,10 @@ Wed Nov 5 16:28:53 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 2008-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c: Fix bug when using getters and byref args.	
+
+2008-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-methods.h: Rename prefetch methods.
 
 	* simd-intrinsics.c: Same.	
