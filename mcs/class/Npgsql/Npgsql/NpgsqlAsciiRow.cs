@@ -9,216 +9,232 @@
 //	npgsql-general@gborg.postgresql.org
 //	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// Permission to use, copy, modify, and distribute this software and its
+// documentation for any purpose, without fee, and without a written
+// agreement is hereby granted, provided that the above copyright notice
+// and this paragraph and the following two paragraphs appear in all copies.
+// 
+// IN NO EVENT SHALL THE NPGSQL DEVELOPMENT TEAM BE LIABLE TO ANY PARTY
+// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+// INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
+// DOCUMENTATION, EVEN IF THE NPGSQL DEVELOPMENT TEAM HAS BEEN ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
+// THE NPGSQL DEVELOPMENT TEAM SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+// AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS
+// ON AN "AS IS" BASIS, AND THE NPGSQL DEVELOPMENT TEAM HAS NO OBLIGATIONS
+// TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 using System;
-using System.Collections;
+using System.Data;
 using System.IO;
-using System.Text;
-using System.Net;
-
 using NpgsqlTypes;
 
 namespace Npgsql
 {
+	/// <summary>
+	/// Implements <see cref="RowReader"/> for version 3 of the protocol.
+	/// </summary>
+	internal sealed class StringRowReaderV3 : RowReader
+	{
+		private readonly int _messageSize;
+		private int? _nextFieldSize = null;
 
-    /// <summary>
-    /// This class represents the AsciiRow (version 2) and DataRow (version 3+)
-    /// message sent from the PostgreSQL server.
-    /// </summary>
-    internal sealed class NpgsqlAsciiRow : NpgsqlRow
-    {
-        // Logging related values
-        private static readonly String CLASSNAME = "NpgsqlAsciiRow";
-
-        private readonly Int16        READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
-        private byte[] _inputBuffer;
-        private char[] _chars;
-
-        public NpgsqlAsciiRow(NpgsqlRowDescription rowDesc, ProtocolVersion protocolVersion, byte[] inputBuffer, char[] chars)
-                : base(rowDesc, protocolVersion)
-        {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
-            _inputBuffer = inputBuffer;
-            _chars = chars;
-        }
-
-        public override void ReadFromStream(Stream inputStream, Encoding encoding)
-        {
-            switch (protocol_version)
-            {
-            case ProtocolVersion.Version2 :
-                ReadFromStream_Ver_2(inputStream, encoding);
-                break;
-
-            case ProtocolVersion.Version3 :
-                ReadFromStream_Ver_3(inputStream, encoding);
-                break;
-
-            }
-        }
-
-        private void ReadFromStream_Ver_2(Stream inputStream, Encoding encoding)
-        {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_2");
-
-            Byte[]       null_map_array = new Byte[(row_desc.NumFields + 7)/8];
-
-            Array.Clear(null_map_array, 0, null_map_array.Length);
-
-
-            // Decoders used to get decoded chars when using unicode like encodings which may have chars crossing the byte buffer bounds.
-
-            Decoder decoder = encoding.GetDecoder();
-
-            // Read the null fields bitmap.
-            PGUtil.CheckedStreamRead(inputStream, null_map_array, 0, null_map_array.Length );
-
-            // Get the data.
-            for (Int16 field_count = 0; field_count < row_desc.NumFields; field_count++)
-            {
-                // Check if this field is null
-                if (IsBackendNull(null_map_array, field_count))
-                {
-                    data.Add(DBNull.Value);
-                    continue;
-                }
-
-                // Read the first data of the first row.
-
-                PGUtil.CheckedStreamRead(inputStream, _inputBuffer, 0, 4);
-
-                NpgsqlRowDescriptionFieldData field_descr = row_desc[field_count];
-                Int32 field_value_size = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(_inputBuffer, 0));
-                field_value_size -= 4;
-
-				string result = ReadStringFromStream(inputStream, field_value_size, decoder);
-                // Add them to the AsciiRow data.
-                data.Add(NpgsqlTypesHelper.ConvertBackendStringToSystemType(field_descr.type_info, result, field_descr.type_size, field_descr.type_modifier));
-
-            }
-        }
-
-        private void ReadFromStream_Ver_3(Stream inputStream, Encoding encoding)
-        {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_3");
-
-            PGUtil.ReadInt32(inputStream, _inputBuffer);
-            Int16 numCols = PGUtil.ReadInt16(inputStream, _inputBuffer);
-
-            Decoder decoder = encoding.GetDecoder();
-
-			for (Int16 field_count = 0; field_count < numCols; field_count++)
+		public StringRowReaderV3(NpgsqlRowDescription rowDesc, Stream inputStream)
+			: base(rowDesc, inputStream)
+		{
+			_messageSize = PGUtil.ReadInt32(inputStream);
+			if (PGUtil.ReadInt16(inputStream) != rowDesc.NumFields)
 			{
-				Int32 field_value_size = PGUtil.ReadInt32(inputStream, _inputBuffer);
+				throw new DataException();
+			}
+		}
 
-				// Check if this field is null
-				if (field_value_size == -1) // Null value
-				{
-					data.Add(DBNull.Value);
-					continue;
-				}
+		protected override object ReadNext()
+		{
+			int fieldSize = GetThisFieldCount();
+			if (fieldSize >= _messageSize)
+			{
+				AbandonShip();
+			}
+			_nextFieldSize = null;
 
-				NpgsqlRowDescriptionFieldData field_descr = row_desc[field_count];
-    
-				if (row_desc[field_count].format_code == FormatCode.Text)
+			// Check if this field is null
+			if (fieldSize == -1) // Null value
+			{
+				return DBNull.Value;
+			}
+
+			NpgsqlRowDescription.FieldData field_descr = FieldData;
+
+			byte[] buffer = new byte[fieldSize];
+			PGUtil.CheckedStreamRead(Stream, buffer, 0, fieldSize);
+
+			try
+			{
+				if (field_descr.FormatCode == FormatCode.Text)
 				{
-					string result = ReadStringFromStream(inputStream, field_value_size, decoder);
-					// Add them to the AsciiRow data.
-					data.Add(NpgsqlTypesHelper.ConvertBackendStringToSystemType(field_descr.type_info, result, field_descr.type_size, field_descr.type_modifier));
+					char[] charBuffer = new char[UTF8Encoding.GetCharCount(buffer, 0, buffer.Length)];
+					UTF8Encoding.GetChars(buffer, 0, buffer.Length, charBuffer, 0);
+					return
+						NpgsqlTypesHelper.ConvertBackendStringToSystemType(field_descr.TypeInfo, new string(charBuffer),
+						                                                   field_descr.TypeSize, field_descr.TypeModifier);
 				}
 				else
 				{
-                    Byte[] binary_data = ReadBytesFromStream(inputStream, field_value_size);
-
-                    data.Add(NpgsqlTypesHelper.ConvertBackendBytesToSystemType(field_descr.type_info, binary_data, encoding,field_value_size, field_descr.type_modifier));
+					return
+						NpgsqlTypesHelper.ConvertBackendBytesToSystemType(field_descr.TypeInfo, buffer, fieldSize,
+						                                                  field_descr.TypeModifier);
 				}
-            }
-        }
-
-        // Using the given null field map (provided by the backend),
-        // determine if the given field index is mapped null by the backend.
-        // We only need to do this for version 2 protocol.
-        private static Boolean IsBackendNull(Byte[] null_map_array, Int32 index)
-        {
-            // Get the byte that holds the bit index position.
-            Byte test_byte = null_map_array[index/8];
-
-            // Now, check if index bit is set.
-            // To do this, get its position in the byte, shift to
-            // MSB and test it with the byte 10000000.
-            return (((test_byte << (index%8)) & 0x80) == 0);
-        }
-
-		private int GetCharsFromStream(Stream inputStream, int count, Decoder decoder, char[] chars)
-		{
-			// Now, read just the field value.
-			PGUtil.CheckedStreamRead(inputStream, _inputBuffer, 0, count);
-			int charCount = decoder.GetCharCount(_inputBuffer, 0, count);
-			decoder.GetChars(_inputBuffer, 0, count, chars, 0);
-			return charCount;
-		}
-
-		private string ReadStringFromStream(Stream inputStream, int field_value_size, Decoder decoder)
-		{
-			int bytes_left = field_value_size;
-			int charCount;
-
-			if (field_value_size > _inputBuffer.Length)
-			{
-				StringBuilder   result = new StringBuilder();
-
-				while (bytes_left > READ_BUFFER_SIZE)
-				{
-					charCount = GetCharsFromStream(inputStream, READ_BUFFER_SIZE, decoder, _chars);
-					result.Append(_chars, 0,charCount);
-					bytes_left -= READ_BUFFER_SIZE;
-				}
-
-				charCount = GetCharsFromStream(inputStream, bytes_left, decoder, _chars);
-				result.Append(_chars, 0,charCount);
-
-				return result.ToString();
 			}
-			else
+			catch (InvalidCastException ice)
 			{
-				charCount = GetCharsFromStream(inputStream, bytes_left, decoder, _chars);
-
-				return new String(_chars, 0,charCount);
+				return ice;
+			}
+			catch (Exception ex)
+			{
+				return new InvalidCastException(ex.Message, ex);
 			}
 		}
-  
-        private byte[] ReadBytesFromStream(Stream inputStream, int field_value_size)
-        {
-            byte[] binary_data = new byte[field_value_size];
-            int bytes_left = field_value_size;
-            if (field_value_size > _inputBuffer.Length)
-            {
-                int i=0;
-                while (bytes_left > READ_BUFFER_SIZE)
-                {
-                    PGUtil.CheckedStreamRead(inputStream, _inputBuffer, 0, READ_BUFFER_SIZE);
-                    _inputBuffer.CopyTo(binary_data, i*READ_BUFFER_SIZE);
-                    i++;
-                    bytes_left -= READ_BUFFER_SIZE;
-                }
-            }
-            PGUtil.CheckedStreamRead(inputStream, _inputBuffer, 0, bytes_left);
-            Int32 offset = field_value_size - bytes_left;
-            Array.Copy(_inputBuffer, 0, binary_data, offset, bytes_left);
-            return binary_data;
-        }
-    }
+
+		private void AbandonShip()
+		{
+			//field size will always be smaller than message size
+			//but if we fall out of sync with the stream due to an error then we will probably hit
+			//such a situation soon as bytes from elsewhere in the stream get interpreted as a size.
+			//so if we see this happens, we know we've lost the stream - our best option is to just give up on it,
+			//and have the connector recovered later.
+			try
+			{
+				Stream.WriteByte((byte) FrontEndMessageCode.Termination);
+				PGUtil.WriteInt32(Stream, 4);
+				Stream.Flush();
+			}
+			catch
+			{
+			}
+			try
+			{
+				Stream.Close();
+			}
+			catch
+			{
+			}
+			throw new DataException();
+		}
+
+		protected override void SkipOne()
+		{
+			int fieldSize = GetThisFieldCount();
+			if (fieldSize >= _messageSize)
+			{
+				AbandonShip();
+			}
+			_nextFieldSize = null;
+			PGUtil.EatStreamBytes(Stream, fieldSize);
+		}
+
+		public override bool IsNextDBNull
+		{
+			get { return GetThisFieldCount() == -1; }
+		}
+
+		private int GetThisFieldCount()
+		{
+			return (_nextFieldSize = _nextFieldSize ?? PGUtil.ReadInt32(Stream)).Value;
+		}
+
+		protected override int GetNextFieldCount()
+		{
+			int ret = GetThisFieldCount();
+			_nextFieldSize = null;
+			return ret;
+		}
+	}
+
+	/// <summary>
+	/// Implements <see cref="RowReader"/> for version 2 of the protocol.
+	/// </summary>
+	internal sealed class StringRowReaderV2 : RowReader
+	{
+		/// <summary>
+		/// Encapsulates the null mapping bytes sent at the start of a version 2
+		/// datarow message, and the process of identifying the nullity of the data
+		/// at a particular index
+		/// </summary>
+		private sealed class NullMap
+		{
+			private readonly byte[] _map;
+
+			public NullMap(NpgsqlRowDescription desc, Stream inputStream)
+			{
+				_map = new byte[(desc.NumFields + 7)/8];
+				PGUtil.CheckedStreamRead(inputStream, _map, 0, _map.Length);
+			}
+
+			public bool IsNull(int index)
+			{
+				// Get the byte that holds the bit index position.
+				// Then check the bit that in MSB order corresponds
+				// to the index position.
+				return (_map[index/8] & (0x80 >> (index%8))) == 0;
+			}
+		}
+
+		private readonly NullMap _nullMap;
+
+		public StringRowReaderV2(NpgsqlRowDescription rowDesc, Stream inputStream)
+			: base(rowDesc, inputStream)
+		{
+			_nullMap = new NullMap(rowDesc, inputStream);
+		}
+
+		protected override object ReadNext()
+		{
+			if (_nullMap.IsNull(CurrentField))
+			{
+				return DBNull.Value;
+			}
+
+			NpgsqlRowDescription.FieldData field_descr = FieldData;
+			Int32 field_value_size = PGUtil.ReadInt32(Stream) - 4;
+			byte[] buffer = new byte[field_value_size];
+			PGUtil.CheckedStreamRead(Stream, buffer, 0, field_value_size);
+			char[] charBuffer = new char[UTF8Encoding.GetCharCount(buffer, 0, buffer.Length)];
+			UTF8Encoding.GetChars(buffer, 0, buffer.Length, charBuffer, 0);
+			try
+			{
+				return
+					NpgsqlTypesHelper.ConvertBackendStringToSystemType(field_descr.TypeInfo, new string(charBuffer),
+					                                                   field_descr.TypeSize, field_descr.TypeModifier);
+			}
+			catch (InvalidCastException ice)
+			{
+				return ice;
+			}
+			catch (Exception ex)
+			{
+				return new InvalidCastException(ex.Message, ex);
+			}
+		}
+
+		public override bool IsNextDBNull
+		{
+			get { return _nullMap.IsNull(CurrentField + 1); }
+		}
+
+		protected override void SkipOne()
+		{
+			if (!_nullMap.IsNull(CurrentField))
+			{
+				PGUtil.EatStreamBytes(Stream, PGUtil.ReadInt32(Stream) - 4);
+			}
+		}
+
+		protected override int GetNextFieldCount()
+		{
+			return _nullMap.IsNull(CurrentField) ? -1 : PGUtil.ReadInt32(Stream) - 4;
+		}
+	}
 }

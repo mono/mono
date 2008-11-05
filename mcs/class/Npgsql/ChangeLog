@@ -1,3 +1,7 @@
+2008-11-05  Francisco Figueiredo Jr.  <francisco@npgsql.org>
+	
+	Updated Npgsql to Npgsql2 2.0.1. Now Npgsql requires .Net 2.0 or above
+
 2008-05-05  Francisco Figueiredo Jr.  <francisco@npgsql.org>
 
         Fixed problems when notification thread throws exception. Not is

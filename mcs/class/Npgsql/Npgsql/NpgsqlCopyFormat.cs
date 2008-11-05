@@ -1,24 +1,25 @@
-// Npgsql.NpgsqlNotificationEventArgs.cs
+// Npgsql.NpgsqlCopyFormat.cs
 //
 // Author:
-//  Wojtek Wierzbicki
+// 	Kalle Hallivuori <kato@iki.fi>
 //
-//	Copyright (C) 2002 The Npgsql Development Team
+//	Copyright (C) 2007 The Npgsql Development Team
 //	npgsql-general@gborg.postgresql.org
 //	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
+//  Copyright (c) 2002-2007, The Npgsql Development Team
 //
 // Permission to use, copy, modify, and distribute this software and its
 // documentation for any purpose, without fee, and without a written
 // agreement is hereby granted, provided that the above copyright notice
 // and this paragraph and the following two paragraphs appear in all copies.
-// 
+//
 // IN NO EVENT SHALL THE NPGSQL DEVELOPMENT TEAM BE LIABLE TO ANY PARTY
 // FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
 // INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
 // DOCUMENTATION, EVEN IF THE NPGSQL DEVELOPMENT TEAM HAS BEEN ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
-// 
+//
 // THE NPGSQL DEVELOPMENT TEAM SPECIFICALLY DISCLAIMS ANY WARRANTIES,
 // INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 // AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS
@@ -27,35 +28,48 @@
 
 
 using System;
-using System.IO;
 
 namespace Npgsql
 {
 	/// <summary>
-	/// EventArgs class to send Notification parameters.
+	/// Represents information about COPY operation data transfer format as returned by server.
 	/// </summary>
-	public class NpgsqlNotificationEventArgs : EventArgs
+	public sealed class NpgsqlCopyFormat
 	{
-		/// <summary>
-		/// Process ID of the PostgreSQL backend that sent this notification.
-		/// </summary>
-		public readonly int PID;
+		private readonly byte _copyFormat;
+		private readonly Int16[] _copyFieldFormats;
 
 		/// <summary>
-		/// Condition that triggered that notification.
+		/// Only created when a CopyInResponse or CopyOutResponse is received by NpgsqlState.ProcessBackendResponses()
 		/// </summary>
-		public readonly string Condition;
-
-		/// <summary>
-		/// Additional Information From Notifiying Process (for future use, currently postgres always sets this to an empty string)
-		/// </summary>
-		public readonly string AdditionalInformation;
-
-		internal NpgsqlNotificationEventArgs(Stream stream, bool readAdditional)
+		internal NpgsqlCopyFormat(byte copyFormat, Int16[] fieldFormats)
 		{
-			PID = PGUtil.ReadInt32(stream);
-			Condition = PGUtil.ReadString(stream);
-			AdditionalInformation = readAdditional ? PGUtil.ReadString(stream) : string.Empty;
+			_copyFormat = copyFormat;
+			_copyFieldFormats = fieldFormats;
+		}
+
+		/// <summary>
+		/// Returns true if this operation is currently active and in binary format.
+		/// </summary>
+		public bool IsBinary
+		{
+			get { return _copyFormat != 0; }
+		}
+
+		/// <summary>
+		/// Returns true if this operation is currently active and field at given location is in binary format.
+		/// </summary>
+		public bool FieldIsBinary(int fieldNumber)
+		{
+			return _copyFieldFormats[fieldNumber] != 0;
+		}
+
+		/// <summary>
+		/// Returns number of fields if this operation is currently active, otherwise -1
+		/// </summary>
+		public int FieldCount
+		{
+			get { return _copyFieldFormats.Length; }
 		}
 	}
 }

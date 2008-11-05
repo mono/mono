@@ -9,6 +9,7 @@ LIBRARY_SNK = Npgsql/Npgsql.snk
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
 		/r:System.Data.dll  \
 		/r:Mono.Security.dll \
+		/r:System.Transactions.dll \
 		@Npgsql.dll.resources
 
 TEST_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \

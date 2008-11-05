@@ -7,58 +7,47 @@
 //	npgsql-general@gborg.postgresql.org
 //	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// Permission to use, copy, modify, and distribute this software and its
+// documentation for any purpose, without fee, and without a written
+// agreement is hereby granted, provided that the above copyright notice
+// and this paragraph and the following two paragraphs appear in all copies.
+// 
+// IN NO EVENT SHALL THE NPGSQL DEVELOPMENT TEAM BE LIABLE TO ANY PARTY
+// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+// INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
+// DOCUMENTATION, EVEN IF THE NPGSQL DEVELOPMENT TEAM HAS BEEN ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
+// THE NPGSQL DEVELOPMENT TEAM SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+// AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS
+// ON AN "AS IS" BASIS, AND THE NPGSQL DEVELOPMENT TEAM HAS NO OBLIGATIONS
+// TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 using System;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
 
 namespace Npgsql
 {
+	internal sealed class NpgsqlStartupState : NpgsqlState
+	{
+		public static readonly NpgsqlStartupState Instance = new NpgsqlStartupState();
 
+		private readonly String CLASSNAME = "NpgsqlStartupState";
 
-    internal sealed class NpgsqlStartupState : NpgsqlState
-    {
-        private static NpgsqlStartupState _instance = null;
+		private NpgsqlStartupState()
+			: base()
+		{
+		}
 
-        private readonly String CLASSNAME = "NpgsqlStartupState";
-
-        private NpgsqlStartupState() : base()
-        { }
-
-        public static NpgsqlStartupState Instance
-        {
-            get
-            {
-                if ( _instance == null )
-                {
-                    _instance = new NpgsqlStartupState();
-                }
-                return _instance;
-            }
-        }
-        public override void Authenticate( NpgsqlConnector context, string password)
-        {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Authenticate");
-            NpgsqlPasswordPacket pwpck = new NpgsqlPasswordPacket(password, context.BackendProtocolVersion);
-            BufferedStream stream = new BufferedStream(context.Stream);
-            pwpck.WriteToStream(stream, context.Encoding);
-            stream.Flush();
-
-        }
-    }
+		public override void Authenticate(NpgsqlConnector context, string password)
+		{
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Authenticate");
+			NpgsqlPasswordPacket pwpck = new NpgsqlPasswordPacket(password, context.BackendProtocolVersion);
+			BufferedStream stream = new BufferedStream(context.Stream);
+			pwpck.WriteToStream(stream);
+			stream.Flush();
+		}
+	}
 }
