@@ -67,11 +67,7 @@ namespace System.Configuration
 		[MonoTODO]
 		protected override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
-			reader.ReadStartElement ();
-			reader.MoveToContent ();
 			node = new XmlDocument ().ReadNode (reader);
-			reader.MoveToContent ();
-			reader.ReadEndElement ();
 		}
 #endif
 #endif

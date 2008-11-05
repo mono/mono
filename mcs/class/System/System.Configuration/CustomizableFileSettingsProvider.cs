@@ -689,7 +689,7 @@ namespace System.Configuration
 
 			SettingsPropertyValue value = new SettingsPropertyValue (prop);
 			value.IsDirty = false;
-			value.SerializedValue = element.Value.ValueXml != null ? element.Value.ValueXml.InnerXml : prop.DefaultValue;
+			value.SerializedValue = element.Value.ValueXml != null ? element.Value.ValueXml.InnerText : prop.DefaultValue;
 			try
 			{
 				if (allowOverwrite)
