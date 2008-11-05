@@ -1,5 +1,8 @@
 2008-11-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-x86.c tramp_amd64.c: Add AOT compatible variants of the monitor
+	enter/exit trampoline creation functions.
+
 	* Makefile.am: Fix the generation of buildver.h so it is not invoked during
 	make dist.
 
