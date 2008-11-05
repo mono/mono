@@ -1,3 +1,7 @@
+2008-11-05  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (net_2_0_dirs): Npgsql requires .NET 2.0+ now.
+
 2008-10-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Malefile: ... and Sys.ComponentModel.DataAnnotations.dll.

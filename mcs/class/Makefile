@@ -68,7 +68,6 @@ common_dirs := \
 	Cscompmgd			\
 	System.Design			\
 	PEAPI				\
-	Npgsql				\
 	Compat.ICSharpCode.SharpZipLib	\
 	ICSharpCode.SharpZipLib		\
 	Compat.ICSharpCode.SharpZipLib	\
@@ -99,6 +98,7 @@ net_2_0_dirs := \
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
 	Microsoft.Build.Tasks		\
+	Npgsql				\
 	System.Core			\
 	System.Xml.Linq			\
 	System.Data.DataSetExtensions	\
