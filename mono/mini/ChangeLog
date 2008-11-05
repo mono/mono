@@ -1,3 +1,20 @@
+2008-11-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_build_date): New global version holding the build date in
+	string format.
+	
+	* Makefile.am (buildver.c): Generate a file containing the build date.
+
+	* main.c: Set the build date from the generated file.
+
+	* mini.c (mono_get_runtime_build_info): New helper function returning build
+	information in a string format.
+	
+	* driver.c (mono_main): Print the build date in --version.
+
+	* aot-compiler.c aot-runtime.c: Embed the build information into the AOT
+	file when the bind-to-runtime-version option is used.
+
 2008-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-methods.h: Rename prefetch methods.
