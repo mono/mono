@@ -1,3 +1,14 @@
+2008-11-05  Brian O'Keefe  <zer0keefie@gmail.com>
+ 
+	* System.Collections.ObjectModel/ObservableCollection.cs:
+	* System.Collections.ObjectModel/ReadOnlyObservableCollection.cs: 
+	* System.Collections.ObjectModel/INotifyCollectionChanged.cs:
+	* System.Collections.ObjectModel/INotifyCollectionChanged.cs:
+	* System.Collections.ObjectModel/NotifyCollectionChangedAction.cs:
+	* System.Collections.ObjectModel/NotifyCollectionChangedEventArgs.cs:
+	* System.Collections.ObjectModel/NotifyCollectionChangedEventHandler.cs:
+	Add implementations for ObservableCollection and expand documentation
+
 2008-11-04  Alan McGovern  <amcgovern@novell.com>
 
 	* Test/System.IO.Packaging/PackagePartTest.cs:

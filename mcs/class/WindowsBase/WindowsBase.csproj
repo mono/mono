@@ -266,5 +266,8 @@
     <Compile Include="ZipSharp\ZipTime.cs" />
     <Compile Include="ZipSharp\ZipWriteStream.cs" />
     <Compile Include="System.IO.Packaging\PackagePropertiesPart.cs" />
+    <Compile Include="Test\System.Collections.Specialized\CollectionChangedEventValidators.cs" />
+    <Compile Include="Test\System.Collections.Specialized\NotifyCollectionChangedEventArgsTest.cs" />
+    <Compile Include="Test\System.Collections.ObjectModel\ReadOnlyObservableCollectionTest.cs" />
   </ItemGroup>
 </Project>

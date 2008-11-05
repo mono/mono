@@ -1,4 +1,7 @@
 System.Collections.ObjectModel/ObservableCollectionTest.cs
+System.Collections.ObjectModel/ReadOnlyObservableCollectionTest.cs
+System.Collections.Specialized/NotifyCollectionChangedEventArgsTest.cs
+System.Collections.Specialized/CollectionChangedEventValidators.cs
 System.IO.Packaging/FakePackage.cs
 System.IO.Packaging/FakePackagePart.cs
 System.IO.Packaging/FakePackagePartTests.cs
