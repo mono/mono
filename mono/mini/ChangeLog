@@ -7,6 +7,9 @@ Wed Nov 5 16:28:53 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 2008-11-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_create_monitor_enter_trampoline): Fix the
+	non-x86 builds.
+
 	* mini.c (mono_build_date): New global version holding the build date in
 	string format.
 	
