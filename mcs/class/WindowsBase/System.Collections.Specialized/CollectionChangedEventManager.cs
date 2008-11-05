@@ -66,7 +66,7 @@ namespace System.Collections.Specialized {
 		private static CollectionChangedEventManager CurrentManager {
 			get {
 				lock (CurrentManagerLock) {
-					CollectionChangedEventManager manager = GetCurrentManager (typeof (CollectionChangedEventManager));
+					CollectionChangedEventManager manager = (CollectionChangedEventManager)GetCurrentManager (typeof (CollectionChangedEventManager));
 					if (manager == null) {
 						manager = new CollectionChangedEventManager ();
 						SetCurrentManager (typeof (CollectionChangedEventManager), manager);
