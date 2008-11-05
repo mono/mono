@@ -285,12 +285,14 @@ namespace System.Xml.Serialization
 
 				if (listItemType != null) return listItemType;
 
+				Type genericArgument = null;
+
 				if (SchemaType != SchemaTypes.Array)
 					throw new InvalidOperationException (Type.FullName + " is not a collection");
 				else if (type.IsArray) 
 					listItemType = type.GetElementType ();
 #if NET_2_0
-				else if (typeof (ICollection).IsAssignableFrom (type) || IsGenericList (type))
+				else if (typeof (ICollection).IsAssignableFrom (type) || (genericArgument = GetGenericListItemType (type)) != null)
 #else
 				else if (typeof (ICollection).IsAssignableFrom (type))
 #endif
@@ -300,11 +302,14 @@ namespace System.Xml.Serialization
 							"The type {0} is not supported because it implements" +
 							" IDictionary.", type.FullName));
 
-					PropertyInfo prop = GetIndexerProperty (type);
-					if (prop == null) 
-						throw new InvalidOperationException ("You must implement a default accessor on " + type.FullName + " because it inherits from ICollection");
-
-					listItemType = prop.PropertyType;
+					if (genericArgument != null)
+						listItemType = genericArgument;
+					else {
+						PropertyInfo prop = GetIndexerProperty (type);
+						if (prop == null) 
+							throw new InvalidOperationException ("You must implement a default accessor on " + type.FullName + " because it inherits from ICollection");
+						listItemType = prop.PropertyType;
+					}
 
 					MethodInfo addMethod = type.GetMethod ("Add", new Type[] { listItemType });
 					if (addMethod == null)
@@ -413,14 +418,15 @@ namespace System.Xml.Serialization
 		};
 
 #if NET_2_0
-		private bool IsGenericList (Type type)
+		private Type GetGenericListItemType (Type type)
 		{
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (ICollection<>))
-				return true;
+				return type.GetGenericArguments () [0];
+			Type t = null;
 			foreach (Type i in type.GetInterfaces ())
-				if (IsGenericList (i))
-					return true;
-			return false;
+				if ((t = GetGenericListItemType (i)) != null)
+					return t;
+			return null;
 		}
 #endif
 	}

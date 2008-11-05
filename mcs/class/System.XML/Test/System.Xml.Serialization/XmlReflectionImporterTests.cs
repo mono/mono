@@ -1621,6 +1621,12 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("urn:bar", tm.Namespace, "#3");
 			Assert.AreEqual ("urn:foo", tm.XsdTypeNamespace);
 		}
+
+		[Test]
+		public void ImportGenericICollectionWrapped ()
+		{
+			new XmlSerializer (typeof (MyCollection));
+		}
 #endif
 
 		public class Employee : IXmlSerializable
@@ -2199,6 +2205,45 @@ namespace MonoTests.System.XmlSerialization
 			public XmlSchema GetSchema ()
 			{
 				return null;
+			}
+		}
+
+		public class MyCollection : ICollection<string>
+		{
+			public int Count { get { return 0; } }
+
+			public bool IsReadOnly { get { return false; } }
+
+			public void Add (string s)
+			{
+			}
+
+			public void Clear ()
+			{
+			}
+
+			public bool Contains (string item)
+			{
+				return false;
+			}
+
+			public void CopyTo (string [] array, int arrayIndex)
+			{
+			}
+
+			public IEnumerator<string> GetEnumerator ()
+			{
+				throw new Exception ();
+			}
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return GetEnumerator ();
+			}
+
+			public bool Remove (string item)
+			{
+				return false;
 			}
 		}
 #endif

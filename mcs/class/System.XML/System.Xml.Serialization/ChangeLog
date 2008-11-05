@@ -1,3 +1,8 @@
+2008-11-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeData.cs : do not reject ICollection<T> for not implementing
+	  Item[T]. Fixed bug #430759.
+
 2008-09-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializer.cs : revert previous change and fix sys.data tests.

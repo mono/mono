@@ -1,3 +1,7 @@
+2008-11-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReflectionImporterTests.cs : added test for #430759.
+
 2008-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTestClasses.cs, XmlSerializerTests.cs:
