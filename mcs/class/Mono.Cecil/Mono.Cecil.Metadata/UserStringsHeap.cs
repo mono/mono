@@ -61,6 +61,9 @@ namespace Mono.Cecil.Metadata {
 			if (length < 1)
 				return string.Empty;
 
+			if ((length & 1) != 0)
+				length--;
+
 			char [] chars = new char [length / 2];
 
 			for (int i = offset, j = 0; i < offset + length; i += 2)
