@@ -1002,27 +1002,21 @@ namespace Mono.CSharp.Nullable
 				args.Add (new Argument (conversion));
 			
 			return CreateExpressionFactoryCall ("Coalesce", args);
-		}			
+		}
 
-		public override Expression DoResolve (EmitContext ec)
+		Expression ConvertExpression (EmitContext ec)
 		{
-			if (type != null)
-				return this;
-
-			left = left.Resolve (ec);
-			right = right.Resolve (ec);
-
-			if (left == null || right == null)
+			// TODO: ImplicitConversionExists should take care of this
+			if (left.eclass == ExprClass.MethodGroup)
 				return null;
 
-			eclass = ExprClass.Value;
-			Type ltype = left.Type, rtype = right.Type;
+			Type ltype = left.Type;
 
 			//
 			// If left is a nullable type and an implicit conversion exists from right to underlying type of left,
 			// the result is underlying type of left
 			//
-			if (TypeManager.IsNullableType (ltype) && left.eclass != ExprClass.MethodGroup) {
+			if (TypeManager.IsNullableType (ltype)) {
 				unwrap = Unwrap.Create (left, ec);
 				if (unwrap == null)
 					return null;
@@ -1032,8 +1026,8 @@ namespace Mono.CSharp.Nullable
 					type = left.Type;
 					right = Convert.ImplicitConversion (ec, right, type, loc);
 					return this;
-				}			
-			} else if (TypeManager.IsReferenceType (ltype) && right.eclass != ExprClass.MethodGroup) {
+				}
+			} else if (TypeManager.IsReferenceType (ltype)) {
 				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
 					//
 					// Reduce (constant ?? expr) to constant
@@ -1053,14 +1047,12 @@ namespace Mono.CSharp.Nullable
 					return this;
 				}
 			} else {
-				Binary.Error_OperatorCannotBeApplied (left, right, "??", loc);
 				return null;
 			}
 
-			if (!Convert.ImplicitConversionExists (ec, unwrap != null ? unwrap : left, rtype)) {
-				Binary.Error_OperatorCannotBeApplied (left, right, "??", loc);
+			Type rtype = right.Type;
+			if (!Convert.ImplicitConversionExists (ec, unwrap != null ? unwrap : left, rtype) || right.eclass == ExprClass.MethodGroup)
 				return null;
-			}
 
 			//
 			// Reduce (null ?? right) to right
@@ -1071,6 +1063,28 @@ namespace Mono.CSharp.Nullable
 			left = Convert.ImplicitConversion (ec, unwrap != null ? unwrap : left, rtype, loc);
 			type = rtype;
 			return this;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (eclass != ExprClass.Invalid)
+				return this;
+
+			left = left.Resolve (ec);
+			right = right.Resolve (ec);
+
+			if (left == null || right == null)
+				return null;
+
+			eclass = ExprClass.Value;
+
+			Expression e = ConvertExpression (ec);
+			if (e == null) {
+				Binary.Error_OperatorCannotBeApplied (left, right, "??", loc);
+				return null;
+			}
+
+			return e;
 		}
 
 		public override void Emit (EmitContext ec)
