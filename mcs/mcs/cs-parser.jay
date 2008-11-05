@@ -327,10 +327,13 @@ namespace Mono.CSharp
 %token EVAL_USING_DECLARATIONS_UNIT_PARSER
 
 /* Add precedence rules to solve dangling else s/r conflict */
-%nonassoc LOWPREC
 %nonassoc IF
 %nonassoc ELSE
+
+/* Define the operator tokens and their precedences */
 %right ASSIGN
+%right OP_COALESCING
+%right INTERR
 %left OP_OR
 %left OP_AND
 %left BITWISE_OR
@@ -343,7 +346,6 @@ namespace Mono.CSharp
 %left OPEN_PARENS
 %left OPEN_BRACKET OPEN_BRACE
 %left DOT
-%nonassoc HIGHPREC
 
 %start compilation_unit
 %%
@@ -3826,29 +3828,23 @@ conditional_or_expression
 			         (Expression) $1, (Expression) $3);
 	  }
 	;
-
-conditional_expression
+	
+null_coalescing_expression
 	: conditional_or_expression
-	| conditional_or_expression INTERR expression COLON expression 
-	  {
-		$$ = new Conditional ((Expression) $1, (Expression) $3, (Expression) $5);
-	  }
-	| conditional_or_expression OP_COALESCING expression
+	| conditional_or_expression OP_COALESCING null_coalescing_expression
 	  {
 		if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($2), "null coalescing operator");
 			
 		$$ = new Nullable.NullCoalescingOperator ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| primary_expression INTERR_NULLABLE opt_rank_specifier
+	;
+
+conditional_expression
+	: null_coalescing_expression
+	| null_coalescing_expression INTERR expression COLON expression 
 	  {
-	  	//
-	  	// TODO: Is this the best place to handle `= (foo?)a;' ?
-	  	//
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "nullable types");
-	  	
-		$$ = new ComposedCast ((FullNamedExpression) $1, "?" + (string)$3, lexer.Location);
+		$$ = new Conditional ((Expression) $1, (Expression) $3, (Expression) $5);
 	  }
 	;
 
@@ -6408,7 +6404,6 @@ static string GetTokenName (int token)
 	case Token.EVAL_COMPILATION_UNIT_PARSER:
 	case Token.EVAL_USING_DECLARATIONS_UNIT_PARSER:
 	case Token.EVAL_STATEMENT_PARSER:
-	case Token.LOWPREC:
 	case Token.LAST_KEYWORD:	
 		return "<internal>";
 

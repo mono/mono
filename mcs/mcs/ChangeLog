@@ -1,5 +1,11 @@
 2008-11-05  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #421839
+	* cs-parser.jay: Remove expression from coalesce rule to force lower
+	priority than the assignment operator.
+
+2008-11-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #437875
 	* nullable.cs: Compile correctly method group operand used with null
 	coalescing operator.
