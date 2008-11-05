@@ -1208,6 +1208,7 @@ namespace System.Windows.Forms
 		
 			#region UIA Framework: Methods, Properties and Events
 		
+			[field:NonSerialized]
 			internal event EventHandler UIATextChanged;
 
 			private void OnUIATextChanged ()

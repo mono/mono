@@ -1,3 +1,8 @@
+2008-11-05  Sandy Armstrong  <sanfordarmstrong@gmail.com>
+
+	* ListViewItem.cs: Mark ListViewSubItem.UIATextChanged event as
+	NonSerialized to fix serialization of ListViewItem.
+
 2008-11-04  Mike Gorse  <mgorse@novell.com>
 
 	* ListView.cs: Call OnUIAFocusedItemChanged after completing the
