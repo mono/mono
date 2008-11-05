@@ -11063,6 +11063,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-423.cs">
+    <type name="App">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>33</size>
+      </method>
+      <method name="Void Test(System.Object, System.EventArgs)">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
