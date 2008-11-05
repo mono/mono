@@ -1034,7 +1034,7 @@ namespace TestRunner {
 			is_warning = false;
 			if (compiler_options != null) {
 				foreach (string s in compiler_options) {
-					if (s.EndsWith ("warnaserror"))
+					if (s.StartsWith ("-warnaserror") || s.StartsWith ("/warnaserror"))
 						is_warning = true;
 				}
 			}

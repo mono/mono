@@ -1,3 +1,7 @@
+2008-11-05  Marek Safar  <marek.safar@gmail.com>
+
+	* compiler-tester.cs: Better -warnaserror detection.
+
 2008-10-01  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: Fixed broken value type test.
