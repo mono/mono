@@ -1,3 +1,9 @@
+2008-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* simd-methods.h: Rename prefetch methods.
+
+	* simd-intrinsics.c: Same.	
+
 2008-11-05  Mark Probst  <mark.probst@gmail.com>
 
 	* tramp-amd64.c: Enlarge the Monitor.Enter/Exit trampoline code
