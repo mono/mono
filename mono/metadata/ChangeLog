@@ -1,3 +1,9 @@
+
+Wed Nov 5 16:33:41 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* monitor.c, class-internals.h, wrapper-types.h: revert incorrect
+	change r117650.
+
 2008-11-04  Mark Probst  <mark.probst@gmail.com>
 
 	* monitor.c, monitor.h: New function for querying offsets of
