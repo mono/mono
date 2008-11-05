@@ -202,8 +202,13 @@ namespace Mono.CSharp {
 				
 				object parser_result = parser.InteractiveResult;
 				
-				if (!(parser_result is Class))
-					parser.CurrentNamespace.Extract (using_alias_list, using_list);
+				if (!(parser_result is Class)){
+					int errors = Report.Errors;
+					
+					NamespaceEntry.VerifyAllUsing ();
+					if (errors == Report.Errors)
+						parser.CurrentNamespace.Extract (using_alias_list, using_list);
+				}
 
 				compiled = CompileBlock (parser_result as Class, parser.undo);
 			}

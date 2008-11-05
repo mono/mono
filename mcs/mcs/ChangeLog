@@ -1,3 +1,15 @@
+2008-11-05  Miguel de Icaza  <miguel@novell.com>
+
+	* namespace.cs: Turns out that it was a really bad idea to hide
+	the errors for namespaces not found here in eval mode.    
+
+	* eval.cs: When we process using clauses, only enter those into
+	the list of valid using clauses after they have been validated.   
+
+	The above change gives the proper semantics: it does not
+	senselessly report the same errors with broken using statements by
+	never storing them in the first place when they are invalid.
+
 2008-11-05  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #421839
