@@ -1,3 +1,7 @@
+2008-11-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Fix the generation of buildver.h so it is not invoked during
+	make dist.
 
 Wed Nov 5 16:28:53 CET 2008 Paolo Molaro <lupus@ximian.com>
 
