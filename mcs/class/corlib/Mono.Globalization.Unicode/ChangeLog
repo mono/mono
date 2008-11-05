@@ -1,6 +1,11 @@
+2008-11-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ucd.cs : Write type for *_count. Add notice to not edit
+	  unicode-data.h directly.
+
 2008-11-04  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* ucs.cs : new code to generate unicode table for eglib.
+	* ucd.cs : new code to generate unicode table for eglib.
 
 2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
