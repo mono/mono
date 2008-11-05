@@ -93,6 +93,8 @@ namespace Mono.CSharp
 		//
 		Encoding encoding;
 
+		static readonly char[] argument_value_separator = new char [] { ';', ',' };
+
 		static public void Reset ()
 		{
 			embedded_resources = null;
@@ -225,38 +227,39 @@ namespace Mono.CSharp
 			Console.WriteLine (
 				"Mono C# compiler, Copyright 2001 - 2008 Novell, Inc.\n" +
 				"mcs [options] source-files\n" +
-				"   --about            About the Mono C# compiler\n" +
-				"   -addmodule:M1[,Mn] Adds the module to the generated assembly\n" + 
-				"   -checked[+|-]      Sets default aritmetic overflow context\n" +
-				"   -codepage:ID       Sets code page to the one in ID (number, utf8, reset)\n" +
-				"   -clscheck[+|-]     Disables CLS Compliance verifications\n" +
-				"   -define:S1[;S2]    Defines one or more conditional symbols (short: -d)\n" +
-				"   -debug[+|-], -g    Generate debugging information\n" + 
-				"   -delaysign[+|-]    Only insert the public key into the assembly (no signing)\n" +
-				"   -doc:FILE          Process documentation comments to XML file\n" + 
-				"   -help              Lists all compiler options (short: -?)\n" + 
-				"   -keycontainer:NAME The key pair container used to sign the output assembly\n" +
-				"   -keyfile:FILE      The key file used to strongname the ouput assembly\n" +
-				"   -langversion:TEXT  Specifies language version modes: ISO-1, ISO-2, or Default\n" + 
-				"   -lib:PATH1[,PATHn] Specifies the location of referenced assemblies\n" +
-				"   -main:CLASS        Specifies the class with the Main method (short: -m)\n" +
-				"   -noconfig          Disables implicitly referenced assemblies\n" +
-				"   -nostdlib[+|-]     Does not reference mscorlib.dll library\n" +
-				"   -nowarn:W1[,Wn]    Suppress one or more compiler warnings\n" + 
-				"   -optimize[+|-]     Enables advanced compiler optimizations (short: -o)\n" + 
-				"   -out:FILE          Specifies output assembly name\n" +
+				"   --about              About the Mono C# compiler\n" +
+				"   -addmodule:M1[,Mn]   Adds the module to the generated assembly\n" + 
+				"   -checked[+|-]        Sets default aritmetic overflow context\n" +
+				"   -codepage:ID         Sets code page to the one in ID (number, utf8, reset)\n" +
+				"   -clscheck[+|-]       Disables CLS Compliance verifications\n" +
+				"   -define:S1[;S2]      Defines one or more conditional symbols (short: -d)\n" +
+				"   -debug[+|-], -g      Generate debugging information\n" + 
+				"   -delaysign[+|-]      Only insert the public key into the assembly (no signing)\n" +
+				"   -doc:FILE            Process documentation comments to XML file\n" + 
+				"   -help                Lists all compiler options (short: -?)\n" + 
+				"   -keycontainer:NAME   The key pair container used to sign the output assembly\n" +
+				"   -keyfile:FILE        The key file used to strongname the ouput assembly\n" +
+				"   -langversion:TEXT    Specifies language version modes: ISO-1, ISO-2, or Default\n" + 
+				"   -lib:PATH1[,PATHn]   Specifies the location of referenced assemblies\n" +
+				"   -main:CLASS          Specifies the class with the Main method (short: -m)\n" +
+				"   -noconfig            Disables implicitly referenced assemblies\n" +
+				"   -nostdlib[+|-]       Does not reference mscorlib.dll library\n" +
+				"   -nowarn:W1[,Wn]      Suppress one or more compiler warnings\n" + 
+				"   -optimize[+|-]       Enables advanced compiler optimizations (short: -o)\n" + 
+				"   -out:FILE            Specifies output assembly name\n" +
 #if !SMCS_SOURCE
-				"   -pkg:P1[,Pn]       References packages P1..Pn\n" + 
+				"   -pkg:P1[,Pn]         References packages P1..Pn\n" + 
 #endif
-				"   -recurse:SPEC      Recursively compiles files according to SPEC pattern\n" + 
-				"   -reference:A1[,An] Imports metadata from the specified assembly (short: -r)\n" +
-				"   -reference:ALIAS=A Imports metadata using specified extern alias (short: -r)\n" +				
-				"   -target:KIND       Specifies the format of the output assembly (short: -t)\n" +
-				"                      KIND can be one of: exe, winexe, library, module\n" +
-				"   -unsafe[+|-]       Allows to compile code which uses unsafe keyword\n" +
-				"   -warnaserror[+|-]  Treats all warnings as errors\n" +
-				"   -warn:0-4          Sets warning level, the default is 4 (short -w:)\n" +
-				"   -help2             Shows internal compiler options\n" + 
+				"   -recurse:SPEC        Recursively compiles files according to SPEC pattern\n" + 
+				"   -reference:A1[,An]   Imports metadata from the specified assembly (short: -r)\n" +
+				"   -reference:ALIAS=A   Imports metadata using specified extern alias (short: -r)\n" +				
+				"   -target:KIND         Specifies the format of the output assembly (short: -t)\n" +
+				"                        KIND can be one of: exe, winexe, library, module\n" +
+				"   -unsafe[+|-]         Allows to compile code which uses unsafe keyword\n" +
+				"   -warnaserror[+|-]    Treats all warnings as errors\n" +
+				"   -warnaserror:W1[,Wn] Treats one or more compiler warnings as errors\n" +
+				"   -warn:0-4            Sets warning level, the default is 4 (short -w:)\n" +
+				"   -help2               Shows internal compiler options\n" + 
 				"\n" +
 				"Resources:\n" +
 				"   -linkresource:FILE[,ID] Links FILE as a resource (short: -linkres)\n" +
@@ -1182,7 +1185,7 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 
-				foreach (string d in value.Split (';', ',')){
+				foreach (string d in value.Split (argument_value_separator)) {
 					if (!Tokenizer.IsValidIdentifier (d)) {
 						Report.Warning (2029, 1, "Invalid conditional define symbol `{0}'", d);
 						continue;
@@ -1226,7 +1229,7 @@ namespace Mono.CSharp
 					embedded_resources = new Resources ();
 
 				bool embeded = arg.StartsWith ("/r");
-				string[] s = value.Split (',');
+				string[] s = value.Split (argument_value_separator);
 				switch (s.Length) {
 				case 1:
 					if (s[0].Length == 0)
@@ -1265,7 +1268,7 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 
-				string [] refs = value.Split (new char [] { ';', ',' });
+				string[] refs = value.Split (argument_value_separator);
 				foreach (string r in refs){
 					string val = r;
 					int index = val.IndexOf ('=');
@@ -1287,7 +1290,7 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 
-				string [] refs = value.Split (new char [] { ';', ',' });
+				string[] refs = value.Split (argument_value_separator);
 				foreach (string r in refs){
 					modules.Add (r);
 				}
@@ -1333,7 +1336,7 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 
-				libdirs = value.Split (new Char [] { ',' });
+				libdirs = value.Split (argument_value_separator);
 				foreach (string dir in libdirs)
 					link_paths.Add (dir);
 				return true;
@@ -1375,6 +1378,14 @@ namespace Mono.CSharp
 				return true;
 
 			case "/warnaserror":
+				if (value.Length == 0) {
+					Report.WarningsAreErrors = true;
+				} else {
+					foreach (string wid in value.Split (argument_value_separator))
+						Report.AddWarningAsError (wid);
+				}
+				return true;
+
 			case "/warnaserror+":
 				Report.WarningsAreErrors = true;
 				return true;
@@ -1394,8 +1405,8 @@ namespace Mono.CSharp
 					Report.Error (5, "/nowarn requires an argument");
 					Environment.Exit (1);
 				}
-				
-				warns = value.Split (new Char [] {','});
+
+				warns = value.Split (argument_value_separator);
 				foreach (string wc in warns){
 					try {
 						int warn = Int32.Parse (wc);

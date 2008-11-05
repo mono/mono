@@ -1,3 +1,8 @@
+2008-11-05  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #436318
+	* driver.cs, report.cs: Add -warnaserror:Wn to command line options.
+
 2008-11-05  Miguel de Icaza  <miguel@novell.com>
 
 	* namespace.cs: Turns out that it was a really bad idea to hide
