@@ -1,3 +1,10 @@
+
+Wed Nov 5 16:28:53 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, aot-compiler.c, method-to-ir.c, aot-runtime.c: remove the
+	incorrectly added MONO_WRAPPER_MONITOR_* (in r117651-r117652) and
+	implement the needed functionality without adding crap to the runtime.
+
 2008-11-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_build_date): New global version holding the build date in
