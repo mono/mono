@@ -1,5 +1,8 @@
 2008-11-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c mini-trampolines.c tramp-amd64.c: Implement
+	most of the full-aot support for monitor enter/exit trampolines.
+
 	* tramp-x86.c tramp_amd64.c: Add AOT compatible variants of the monitor
 	enter/exit trampoline creation functions.
 
