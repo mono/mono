@@ -1,3 +1,13 @@
+2008-11-05  Bill Holmes  <billholmes54@gmail.com>
+
+	* Makefile.am : For generation of map.c adding preprocessor
+	  checks for sys/time.h, unistd.h, dirent.h and utime.h.
+
+	* map.c : Re-run 'make refresh' to add preprocessor checks
+	  for sys/time.h, unistd.h, dirent.h and utime.h.
+
+	Code is contributed under MIT/X11 license.
+
 2008-10-15  Jonathan Pryor  <jpryor@novell.com>
 
 	* time.c: Add Mono_Posix_Syscall_nanosleep().

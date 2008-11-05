@@ -123,21 +123,21 @@ refresh:
 	--impl-macro=_GNU_SOURCE --impl-macro=_XOPEN_SOURCE   \
 	--impl-header="<sys/types.h>"                         \
 	--impl-header="<sys/stat.h>"                          \
-	--impl-header="<sys/time.h>"                          \
+	--autoconf-header="<sys/time.h>"                      \
 	--autoconf-header="<sys/poll.h>"                      \
 	--autoconf-header="<sys/wait.h>"                      \
 	--autoconf-header="<sys/statvfs.h>"                   \
 	--autoconf-header="<sys/xattr.h>"                     \
 	--autoconf-header="<sys/mman.h>"                      \
-	--impl-header="<unistd.h>"                            \
+	--autoconf-header="<unistd.h>"                        \
 	--impl-header="<fcntl.h>"                             \
 	--impl-header="<signal.h>"                            \
 	--autoconf-header="<poll.h>"                          \
 	--autoconf-header="<grp.h>"                           \
 	--impl-header="<errno.h>"                             \
 	--autoconf-header="<syslog.h>"                        \
-	--impl-header="<dirent.h>"                            \
-	--impl-header="<utime.h>"                             \
+	--autoconf-header="<dirent.h>"                        \
+	--autoconf-header="<utime.h>"                         \
 	--impl-header="<time.h>"                              \
 	--impl-header="\"mph.h\""                             \
 	--rename-member=st_atime=st_atime_                    \

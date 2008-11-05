@@ -27,7 +27,9 @@
  */
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif /* ndef HAVE_SYS_TIME_H */
 #ifdef HAVE_SYS_POLL_H
 #include <sys/poll.h>
 #endif /* ndef HAVE_SYS_POLL_H */
@@ -43,7 +45,9 @@
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
 #endif /* ndef HAVE_SYS_MMAN_H */
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif /* ndef HAVE_UNISTD_H */
 #include <fcntl.h>
 #include <signal.h>
 #ifdef HAVE_POLL_H
@@ -56,8 +60,12 @@
 #ifdef HAVE_SYSLOG_H
 #include <syslog.h>
 #endif /* ndef HAVE_SYSLOG_H */
+#ifdef HAVE_DIRENT_H
 #include <dirent.h>
+#endif /* ndef HAVE_DIRENT_H */
+#ifdef HAVE_UTIME_H
 #include <utime.h>
+#endif /* ndef HAVE_UTIME_H */
 #include <time.h>
 #include "mph.h"
 
