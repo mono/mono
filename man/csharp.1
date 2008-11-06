@@ -4,22 +4,44 @@
 ..
 .TH csharp 1 "4 September 2008"
 .SH NAME 
-csharp \- Interactive C# Shell 
+csharp, gsharp \- Interactive C# Shell 
 .SH SYNOPSIS
-.B csharp 
+.B csharp [--attach PID] 
 [options] 
+.P
+.B gsharp [file1 [file2]]
 .SH DESCRIPTION
 The 
 .I csharp
 is an interactive C# shell that allows the user to enter and evaluate
-C# statements and expressions from the command line.
+C# statements and expressions from the command line.   The regular 
+.I mcs
+command line options can be used in this version of the compiler. 
 .PP
-This command is a shortcut to invoke the 
-.I gmcs
-command with the 
-.I \-\- shell 
-command line option.   All of the regular compiler options available
-to gmcs are available in the interactive shell.
+The 
+.I gsharp
+command is a GUI version of the C# interpreter that uses Gtk# and
+provides an area to attach widgets as well.      This version can be
+attached to other Gtk# applications in a safe way as it injects itself
+into the main loop of a Gtk# application, avoiding any problems
+arising from the multi-threaded nature of injecting itself into a
+target process.
+.PP
+This version allows a number of scripts to be specified in the command
+line. 
+.SH OPTIONS
+.TP 
+.I "\-\-attach"
+This is an advanced option and should only be used if you have a deep
+understanding of multi-threading.     This option is availble on the 
+.I csharp
+command and allows the compiler to be injected into other processes.
+This is done by injecting the C# shell in a separate thread that runs
+concurrently with your application.  This means that you must take
+special measures to avoid crashing the target application while using
+it.  For example, you might have to take the proper locks before
+issuing any commands that might affect the target process state, or
+sending commands through a method dispatcher.     
 .SH OPERATION
 Once you launch the csharp command, you will be greeted with the
 interactive prompt:
@@ -179,7 +201,8 @@ csharp>
 .SH INTERACTIVE EDITING
 The C# interactive shell contains a line-editor that provides a more
 advanced command line editing functionality than the operating system
-provides.     
+provides.   These are available in the command line version, the GUI
+versions uses the standard Gtk# key bindings.
 .PP
 The command set is similar to many other applications (cursor keys)
 and incorporates some of the Emacs commands for editing as well as a
@@ -288,6 +311,12 @@ csharp>
 .PP
 The return value is a TimeSpan, that you can store in a variable for
 benchmarking purposes. 
+.SH GUI METHODS AND PROPERTIES
+In addition to the methods and properties available in the console
+version there are a handful of extra properties available on the GUI
+version.   For example a "PaneContainer" Gtk.Container is exposed that
+you can use to host Gtk# widgets while prototyping or the "MainWindow"
+property that gives you access to the current toplevel window. 
 .SH STARTUP FILES
 The C# shell will load all the Mono assemblies and C# script files
 located in the ~/.config/csharp directory on Unix.  The assemblies are
