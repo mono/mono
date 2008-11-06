@@ -37,7 +37,7 @@ namespace System.IO.Packaging {
 		internal static readonly Uri RelationshipUri = new Uri ("/_rels/.rels", UriKind.Relative);
 
 		PackageProperties packageProperties;
-		PackagePartCollection partsCollection = new PackagePartCollection ();
+		PackagePartCollection partsCollection;
 		Dictionary<string, PackageRelationship> relationships;
 		PackageRelationshipCollection relationshipsCollection = new PackageRelationshipCollection ();
 		Uri Uri = new Uri ("/", UriKind.Relative);
@@ -49,6 +49,10 @@ namespace System.IO.Packaging {
 
 		public PackageProperties PackageProperties {
 			get {
+				// PackageProperties are loaded when the relationships are loaded.
+				// Therefore ensure we've already loaded the relationships.
+				int count = Relationships.Count;
+				
 				if (packageProperties == null) {
 					packageProperties = new PackagePropertiesPart ();
 					packageProperties.Package = this;
@@ -57,6 +61,16 @@ namespace System.IO.Packaging {
 			}
 		}
 
+		PackagePartCollection PartsCollection {
+			get {
+				if (partsCollection == null) {
+					partsCollection = new PackagePartCollection ();
+					partsCollection.Parts.AddRange (GetPartsCore ());
+				}
+				return partsCollection;
+			}
+		}
+		
 		int RelationshipId {
 			get; set;
 		}
@@ -64,11 +78,7 @@ namespace System.IO.Packaging {
 		Dictionary<string, PackageRelationship> Relationships {
 			get {
 				if (relationships == null) {
-					relationships = new Dictionary<string, PackageRelationship> ();
-					
-					if (PartExists (RelationshipUri))
-						using (Stream stream = GetPart (RelationshipUri).GetStream ())
-							LoadRelationships (relationships, stream);
+					LoadRelationships ();
 				}
 				return relationships;
 			}
@@ -120,7 +130,7 @@ namespace System.IO.Packaging {
 				throw new InvalidOperationException ("This partUri is already contained in the package");
 			
 			PackagePart part = CreatePartCore (partUri, contentType, compressionOption);
-			partsCollection.Parts.Add (part);
+			PartsCollection.Parts.Add (part);
 			return part;
 		}
 		
@@ -138,7 +148,9 @@ namespace System.IO.Packaging {
 
 		internal PackageRelationship CreateRelationship (Uri targetUri, TargetMode targetMode, string relationshipType, string id, bool loading)
 		{
-			CheckIsReadOnly ();
+			if (!loading)
+				CheckIsReadOnly ();
+			
 			Check.TargetUri (targetUri);
 			
 			Check.RelationshipTypeIsValid (relationshipType);
@@ -150,7 +162,7 @@ namespace System.IO.Packaging {
 			PackageRelationship r = new PackageRelationship (id, this, relationshipType, Uri, targetMode, targetUri);
 
 			if (!PartExists (RelationshipUri))
-				CreatePart (RelationshipUri, RelationshipContentType).IsRelationship = true;
+				CreatePartCore (RelationshipUri, RelationshipContentType, CompressionOption.NotCompressed).IsRelationship = true;
 			
 			Relationships.Add (r.Id, r);
 			relationshipsCollection.Relationships.Add (r);
@@ -182,7 +194,7 @@ namespace System.IO.Packaging {
 
 				part.Package = null;
 				DeletePartCore (partUri);
-				partsCollection.Parts.RemoveAll (p => p.Uri == partUri);
+				PartsCollection.Parts.RemoveAll (p => p.Uri == partUri);
 			}
 		}
 		
@@ -221,6 +233,9 @@ namespace System.IO.Packaging {
 				return;
 
 			flushing = true;
+
+			// Ensure we've loaded the relationships, parts and properties
+			int count = Relationships.Count;
 			
 			if (packageProperties != null)
 				packageProperties.Flush ();
@@ -242,9 +257,9 @@ namespace System.IO.Packaging {
 
 		public PackagePartCollection GetParts ()
 		{
-			partsCollection.Parts.Clear ();
-			partsCollection.Parts.AddRange (GetPartsCore());
-			return partsCollection;
+			PartsCollection.Parts.Clear ();
+			PartsCollection.Parts.AddRange (GetPartsCore());
+			return PartsCollection;
 		}
 
 		protected abstract PackagePart [] GetPartsCore ();
@@ -271,34 +286,43 @@ namespace System.IO.Packaging {
 			return collection;
 		}
 
-		void LoadRelationships (Dictionary<string, PackageRelationship> relationships, Stream stream)
+		void LoadRelationships ()
 		{
-			XmlDocument doc = new XmlDocument ();
-			doc.Load (stream);
-			XmlNamespaceManager manager = new XmlNamespaceManager (doc.NameTable);
-			manager.AddNamespace ("rel", RelationshipNamespace);
+			relationships = new Dictionary<string, PackageRelationship> ();
 
-			foreach (XmlNode node in doc.SelectNodes ("/rel:Relationships/*", manager))
-			{
-				
-				TargetMode mode = TargetMode.Internal;
-				if (node.Attributes["TargetMode"] != null)
-					mode = (TargetMode) Enum.Parse (typeof(TargetMode), node.Attributes ["TargetMode"].Value);
-				
-				CreateRelationship (new Uri (node.Attributes ["Target"].Value.ToString(), UriKind.Relative),
-				                    mode,
-				                    node.Attributes["Type"].Value.ToString (),
-				                    node.Attributes["Id"].Value.ToString (),
-				                    true);
-			}
+			if (!PartExists (RelationshipUri))
+				return;
+			
+			using (Stream stream = GetPart (RelationshipUri).GetStream ()) {
+				XmlDocument doc = new XmlDocument ();
+				doc.Load (stream);
+				XmlNamespaceManager manager = new XmlNamespaceManager (doc.NameTable);
+				manager.AddNamespace ("rel", RelationshipNamespace);
 
-			foreach (PackageRelationship r in Relationships.Values) {
-				if (r.RelationshipType == System.IO.Packaging.PackageProperties.NSPackageProperties) {
-					PackagePart part = GetPart (r.TargetUri);
-					packageProperties = new PackagePropertiesPart ();
-					packageProperties.Package = this;
-					packageProperties.Part = part;
-					packageProperties.LoadFrom (part.GetStream ());
+				doc.WriteTo (new XmlTextWriter (Console.Out));
+				
+				foreach (XmlNode node in doc.SelectNodes ("/rel:Relationships/*", manager))
+				{
+					
+					TargetMode mode = TargetMode.Internal;
+					if (node.Attributes["TargetMode"] != null)
+						mode = (TargetMode) Enum.Parse (typeof(TargetMode), node.Attributes ["TargetMode"].Value);
+
+					CreateRelationship (new Uri (node.Attributes ["Target"].Value.ToString(), UriKind.Relative),
+					                    mode,
+					                    node.Attributes["Type"].Value.ToString (),
+					                    node.Attributes["Id"].Value.ToString (),
+					                    true);
+				}
+	
+				foreach (PackageRelationship r in Relationships.Values) {
+					if (r.RelationshipType == System.IO.Packaging.PackageProperties.NSPackageProperties) {
+						PackagePart part = GetPart (r.TargetUri);
+						packageProperties = new PackagePropertiesPart ();
+						packageProperties.Package = this;
+						packageProperties.Part = part;
+						packageProperties.LoadFrom (part.GetStream ());
+					}
 				}
 			}
 		}
@@ -401,17 +425,7 @@ namespace System.IO.Packaging {
 			
 			// FIXME: MS docs say that a ZipPackage is returned by default.
 			// It looks like if you create a custom package, you cannot use Package.Open.
-
-			// FIXME: This is a horrible hack. If a package is opened in readonly mode, i
-			// need to pretend i have read/write mode so i can load the PackageParts
-			// and PackageRelations. I think the 'streaming' boolean might be used for this.
-			ZipPackage package = new ZipPackage (packageAccess);
-			package.PackageStream = stream;
-			package.FileOpenAccess = FileAccess.ReadWrite;
-			package.GetParts ();
-			package.GetRelationships();
-			package.FileOpenAccess = packageAccess;
-			return package;
+			return new ZipPackage (packageAccess, stream);
 		}
 		
 		public virtual bool PartExists (Uri partUri)

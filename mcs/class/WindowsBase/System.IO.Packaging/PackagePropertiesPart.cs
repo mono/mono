@@ -197,35 +197,35 @@ namespace System.IO.Packaging
 			if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:category", manager)) != null)
 				category = node.InnerXml;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:contentStatus", manager)) != null)
-				ContentStatus = node.InnerXml;
+				contentStatus = node.InnerXml;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:contentType", manager)) != null)
-				ContentType = node.InnerXml;
+				contentType = node.InnerXml;
 			if ((node = doc.SelectSingleNode ("prop:coreProperties/dcterms:created", manager)) != null)
-				Created = DateTime.Parse (node.InnerXml);
+				created = DateTime.Parse (node.InnerXml);
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:creator", manager)) != null)
-				Creator = node.InnerXml;
+				creator = node.InnerXml;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:description", manager)) != null)
-				Description = node.InnerXml;
+				description = node.InnerXml;
 			if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:identifier", manager)) != null)
-				Identifier = node.InnerXml;
+				identifier = node.InnerXml;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:keywords", manager)) != null)
-				Keywords = node.InnerXml;
+				keywords = node.InnerXml;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:language", manager)) != null)
-				Language = node.InnerXml;
+				language = node.InnerXml;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:lastModifiedBy", manager)) != null)
-				LastModifiedBy = node.InnerXml;
+				lastModifiedBy = node.InnerXml;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:lastPrinted", manager)) != null)
-				LastPrinted = DateTime.Parse (node.InnerXml);
+				lastPrinted = DateTime.Parse (node.InnerXml);
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dcterms:modified", manager)) != null)
-				Modified = DateTime.Parse (node.InnerXml);
+				modified = DateTime.Parse (node.InnerXml);
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:revision", manager)) != null)
-				Revision = node.InnerXml;
+				revision = node.InnerXml;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:subject", manager)) != null)
-				Subject = node.InnerXml;
+				subject = node.InnerXml;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:title", manager)) != null)
-				Title = node.InnerXml;
+				title = node.InnerXml;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:version", manager)) != null)
-				Version = node.InnerXml;
+				version = node.InnerXml;
 		}
 
 		internal override void WriteTo(XmlTextWriter writer)

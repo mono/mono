@@ -61,16 +61,17 @@ namespace System.IO.Packaging {
 				return parts;
 			}
 		}
-		internal ZipPackage (FileAccess access)
+		
+		internal ZipPackage (FileAccess access, Stream stream)
 			: base (access)
 		{
-
+			PackageStream = stream;
 		}
 
-		internal ZipPackage (FileAccess access, bool streaming)
+		internal ZipPackage (FileAccess access, Stream stream, bool streaming)
 			: base (access, streaming)
 		{
-
+			PackageStream = stream;
 		}
 		
 		protected override void Dispose (bool disposing)
@@ -87,7 +88,7 @@ namespace System.IO.Packaging {
 			// stream already. Otherwise we'll lose data when we recreate the zip
 			foreach (ZipPackagePart part in Parts.Values)
 				part.GetStream ().Dispose ();
-
+			
 			// Empty the package stream
 			PackageStream.Position = 0;
 			PackageStream.SetLength (0);
@@ -159,7 +160,8 @@ namespace System.IO.Packaging {
 
 						if (file == RelationshipUri.ToString ().Substring (1))
 						{
-							CreatePart (RelationshipUri, RelationshipContentType);
+							// FIXME: I shouldn't use CompressionOption.NotCompressed - i should read it from the zip archive
+							CreatePartCore (RelationshipUri, RelationshipContentType, CompressionOption.NotCompressed);
 							continue;
 						}
 
@@ -177,8 +179,10 @@ namespace System.IO.Packaging {
 
 						// What do i do if the node is null? This means some has tampered with the
 						// package file manually
+						
+						// FIXME: I shouldn't use CompressionOption.NotCompressed - i should read it from the zip archive
 						if (node != null)
-							CreatePart (new Uri ("/" + file, UriKind.Relative), node.Attributes["ContentType"].Value);
+							CreatePartCore (new Uri ("/" + file, UriKind.Relative), node.Attributes["ContentType"].Value, CompressionOption.NotCompressed);
 					}
 				}
 			} catch {
