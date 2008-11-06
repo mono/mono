@@ -1,3 +1,8 @@
+2008-11-06  Alan McGovern  <amcgovern@novell.com>
+
+	* minizip/*.am :
+	* Makefile.am: Merged minizip build into the support code.
+
 2008-11-05  Bill Holmes  <billholmes54@gmail.com>
 
 	* Makefile.am : For generation of map.c adding preprocessor
