@@ -7,58 +7,65 @@
 //	npgsql-general@gborg.postgresql.org
 //	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-using System;
-using Npgsql;
+// Permission to use, copy, modify, and distribute this software and its
+// documentation for any purpose, without fee, and without a written
+// agreement is hereby granted, provided that the above copyright notice
+// and this paragraph and the following two paragraphs appear in all copies.
+// 
+// IN NO EVENT SHALL THE NPGSQL DEVELOPMENT TEAM BE LIABLE TO ANY PARTY
+// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+// INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
+// DOCUMENTATION, EVEN IF THE NPGSQL DEVELOPMENT TEAM HAS BEEN ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
+// THE NPGSQL DEVELOPMENT TEAM SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+// AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS
+// ON AN "AS IS" BASIS, AND THE NPGSQL DEVELOPMENT TEAM HAS NO OBLIGATIONS
+// TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 namespace NpgsqlTypes
 {
-    public enum NpgsqlDbType
-    {
+	public enum NpgsqlDbType
+	{
+		// This list used to be ordered. But this ordering would break compiled applications
+		// as enum values would change after each insertion. Now, just append new types.
 
-    	// This list used to be ordered. But this ordering would break compiled applications
-	// as enum values would change after each insertion. Now, just append new types.
-	
-        Bigint,
-        Boolean,
-        Box,
-        Bytea,
-        Circle,
-        Char,
-        Date,
-        Double,
-        Integer,
-        Line,
-        LSeg,
-        Money,
-        Numeric,
-        Path,
-        Point,
-        Polygon,
-        Real,
-        Smallint,
-        Text,
-        Time,
-        Timestamp,
-        Varchar,
-        Refcursor,
-        Inet,
-        Bit,
-        TimestampTZ
+		// Binary or with other values. E.g. Array of Box is NpgsqlDbType.Array | NpgsqlDbType.Box
 
-    }
+		Array = int.MinValue,
 
+		Bigint = 1,
+
+		Boolean,
+		Box,
+		Bytea,
+		Circle,
+		Char,
+		Date,
+		Double,
+		Integer,
+		Line,
+		LSeg,
+		Money,
+		Numeric,
+		Path,
+		Point,
+		Polygon,
+		Real,
+		Smallint,
+		Text,
+		Time,
+		Timestamp,
+		Varchar,
+		Refcursor,
+		Inet,
+		Bit,
+		TimestampTZ,
+		Uuid,
+		Xml,
+		Oidvector,
+		Interval,
+		TimeTZ
+	}
 }

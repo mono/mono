@@ -3,65 +3,71 @@
 // Npgsql.NpgsqlTransaction.cs
 //
 // Author:
-//	Francisco Jr. (fxjrlists@yahoo.com.br)
+//    Francisco Jr. (fxjrlists@yahoo.com.br)
 //
-//	Copyright (C) 2002 The Npgsql Development Team
-//	npgsql-general@gborg.postgresql.org
-//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
+//    Copyright (C) 2002 The Npgsql Development Team
+//    npgsql-general@gborg.postgresql.org
+//    http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// Permission to use, copy, modify, and distribute this software and its
+// documentation for any purpose, without fee, and without a written
+// agreement is hereby granted, provided that the above copyright notice
+// and this paragraph and the following two paragraphs appear in all copies.
+// 
+// IN NO EVENT SHALL THE NPGSQL DEVELOPMENT TEAM BE LIABLE TO ANY PARTY
+// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+// INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
+// DOCUMENTATION, EVEN IF THE NPGSQL DEVELOPMENT TEAM HAS BEEN ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
+// THE NPGSQL DEVELOPMENT TEAM SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+// AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS
+// ON AN "AS IS" BASIS, AND THE NPGSQL DEVELOPMENT TEAM HAS NO OBLIGATIONS
+// TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 using System;
-using System.Text;
-using System.Resources;
 using System.Data;
-
+using System.Data.Common;
+using System.Resources;
+using System.Text;
+using System.Threading;
 
 namespace Npgsql
 {
     /// <summary>
     /// Represents a transaction to be made in a PostgreSQL database. This class cannot be inherited.
     /// </summary>
-    public sealed class NpgsqlTransaction : MarshalByRefObject, IDbTransaction
+    public sealed class NpgsqlTransaction : DbTransaction
     {
         private static readonly String CLASSNAME = "NpgsqlTransaction";
-        private static ResourceManager resman = new ResourceManager(typeof(NpgsqlTransaction));
+        private static ResourceManager resman = new ResourceManager(typeof (NpgsqlTransaction));
 
-        private NpgsqlConnection    _conn = null;
-        private IsolationLevel      _isolation = IsolationLevel.ReadCommitted;
-        private bool                _disposed = false;
+        private NpgsqlConnection _conn = null;
+        private readonly IsolationLevel _isolation = IsolationLevel.ReadCommitted;
+        private bool _disposed = false;
 
-        internal NpgsqlTransaction(NpgsqlConnection conn) : this(conn, IsolationLevel.ReadCommitted)
-        {}
+        internal NpgsqlTransaction(NpgsqlConnection conn)
+            : this(conn, IsolationLevel.ReadCommitted)
+        {
+        }
 
         internal NpgsqlTransaction(NpgsqlConnection conn, IsolationLevel isolation)
         {
-            resman = new System.Resources.ResourceManager(this.GetType());
+            resman = new ResourceManager(this.GetType());
 
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
-            
+
             _conn = conn;
             _isolation = isolation;
 
             StringBuilder commandText = new StringBuilder("BEGIN; SET TRANSACTION ISOLATION LEVEL ");
 
-            if ( (isolation == IsolationLevel.RepeatableRead) || 
-                 (isolation == IsolationLevel.Serializable)
-               )
+            if ((isolation == IsolationLevel.RepeatableRead) || (isolation == IsolationLevel.Serializable))
+            {
                 commandText.Append("SERIALIZABLE");
+            }
             else
             {
                 // Set isolation level default to read committed.
@@ -72,7 +78,7 @@ namespace Npgsql
             commandText.Append(";");
 
             NpgsqlCommand command = new NpgsqlCommand(commandText.ToString(), conn.Connector);
-            command.ExecuteNonQuery();
+            command.ExecuteBlind();
             _conn.Connector.Transaction = this;
         }
 
@@ -83,21 +89,14 @@ namespace Npgsql
         /// </summary>
         /// <value>The <see cref="Npgsql.NpgsqlConnection">NpgsqlConnection</see>
         /// object associated with the transaction.</value>
-        public NpgsqlConnection Connection
+        public new NpgsqlConnection Connection
         {
-            get
-            {
-                return _conn;
-            }
+            get { return _conn; }
         }
 
-
-        IDbConnection IDbTransaction.Connection
+        protected override DbConnection DbConnection
         {
-            get
-            {
-                return Connection;
-            }
+            get { return Connection; }
         }
 
         /// <summary>
@@ -105,7 +104,7 @@ namespace Npgsql
         /// </summary>
         /// <value>The <see cref="System.Data.IsolationLevel">IsolationLevel</see> for this transaction.
         /// The default is <b>ReadCommitted</b>.</value>
-        public IsolationLevel IsolationLevel
+        public override IsolationLevel IsolationLevel
         {
             get
             {
@@ -118,33 +117,36 @@ namespace Npgsql
             }
         }
 
-        /// <summary>
-        /// Releases the unmanaged resources used by the
-        /// <see cref="Npgsql.NpgsqlTransaction">NpgsqlTransaction</see>
-        /// and optionally releases the managed resources.
-        /// </summary>
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            GC.SuppressFinalize(this);
-
-            this.Dispose(true);
-        }
-
-        private void Dispose(Boolean disposing)
-        {
-            if(disposing && this._conn != null)
+            if (disposing && this._conn != null)
             {
                 if (_conn.Connector.Transaction != null)
-                    this.Rollback();
+                {
+                    if ((Thread.CurrentThread.ThreadState & (ThreadState.Aborted | ThreadState.AbortRequested)) != 0)
+                    {
+                        // can't count on Rollback working if the thread has been aborted
+                        // need to copy since Cancel will set it to null
+                        NpgsqlConnection conn = _conn;
+                        Cancel();
+                        // must close connection since transaction hasn't been rolled back
+                        conn.Close();
+                    }
+                    else
+                    {
+                        this.Rollback();
+                    }
+                }
 
                 this._disposed = true;
             }
+            base.Dispose(disposing);
         }
 
         /// <summary>
         /// Commits the database transaction.
         /// </summary>
-        public void Commit()
+        public override void Commit()
         {
             CheckDisposed();
 
@@ -156,7 +158,7 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Commit");
 
             NpgsqlCommand command = new NpgsqlCommand("COMMIT", _conn.Connector);
-            command.ExecuteNonQuery();
+            command.ExecuteBlind();
             _conn.Connector.Transaction = null;
             _conn = null;
         }
@@ -164,7 +166,7 @@ namespace Npgsql
         /// <summary>
         /// Rolls back a transaction from a pending state.
         /// </summary>
-        public void Rollback()
+        public override void Rollback()
         {
             CheckDisposed();
 
@@ -176,11 +178,74 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Rollback");
 
             NpgsqlCommand command = new NpgsqlCommand("ROLLBACK", _conn.Connector);
-            command.ExecuteNonQuery();
+            command.ExecuteBlind();
             _conn.Connector.Transaction = null;
             _conn = null;
         }
+        
+        /// <summary>
+        /// Rolls back a transaction from a pending savepoint state.
+        /// </summary>
+        public void Rollback(String savePointName)
+        {
+            
+            CheckDisposed();
 
+            if (_conn == null)
+            {
+                throw new InvalidOperationException(resman.GetString("Exception_NoTransaction"));
+            }
+            
+            if (!_conn.Connector.SupportsSavepoint)
+            {
+                throw new InvalidOperationException(resman.GetString("Exception_SavePointNotSupported"));
+            }
+                
+            
+            
+            if (savePointName.Contains(";"))
+            {
+                throw new InvalidOperationException(resman.GetString("Exception_SavePointWithSemicolon"));
+                      
+            }
+            
+            
+            NpgsqlCommand command = new NpgsqlCommand("ROLLBACK TO SAVEPOINT " + savePointName, _conn.Connector);
+            command.ExecuteBlind();
+            
+        }
+        
+        /// <summary>
+        /// Creates a transaction save point.
+        /// </summary>
+
+        public void Save(String savePointName)
+        {
+            
+            CheckDisposed();
+
+            if (_conn == null)
+            {
+                throw new InvalidOperationException(resman.GetString("Exception_NoTransaction"));
+            }
+            
+            if (!_conn.Connector.SupportsSavepoint)
+            {
+                throw new InvalidOperationException(resman.GetString("Exception_SavePointNotSupported"));
+            }
+                
+            
+            if (savePointName.Contains(";"))
+            {
+                throw new InvalidOperationException(resman.GetString("Exception_SavePointWithSemicolon"));
+                      
+            }
+            
+            
+            NpgsqlCommand command = new NpgsqlCommand("SAVEPOINT " + savePointName, _conn.Connector);
+            command.ExecuteBlind();
+            
+        }
         /// <summary>
         /// Cancel the transaction without telling the backend about it.  This is
         /// used to make the transaction go away when closing a connection.
@@ -196,25 +261,18 @@ namespace Npgsql
             }
         }
 
-        internal bool Disposed{
-            get
-            {
-                return _disposed;
-            }
+        internal bool Disposed
+        {
+            get { return _disposed; }
         }
 
 
         internal void CheckDisposed()
         {
             if (_disposed)
+            {
                 throw new ObjectDisposedException(CLASSNAME);
-
+            }
         }
-
-        ~NpgsqlTransaction()
-        {
-            Dispose(false);
-        }
-
     }
 }

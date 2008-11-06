@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <root>
 	<!-- 
     Microsoft ResX Schema 
@@ -140,5 +140,19 @@
     <data name="Exception_ConnectionTimeout">
                 <value>Connection establishment timeout. Increase Timeout value in ConnectionString.</value>
     </data>    
+    <data name="Exception_ConnectionOrCommandTimeout">
+                <value>A timeout has occured. If you were establishing a connection, increase Timeout value in ConnectionString. If you were executing a command, increate the CommandTimeout value in ConnectionString or in your NpgsqlCommand object.</value>
+    </data>    
+    <data name="Log_ConnectingTo">
+        <value>Attempt to connect to '{0}'.</value>
+    </data>
+    <data name="Log_FailedConnection">
+        <value>Failed to establish a connection to  '{0}'.</value>
+    </data>
+
+    <data name="Exception_FailedConnection">
+        <value>Failed to establish a connection to '{0}'.</value>
+    </data>
+
         
 </root>

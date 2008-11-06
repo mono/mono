@@ -1,8 +1,4 @@
 2008-11-05  Francisco Figueiredo Jr.  <francisco@npgsql.org>
-
-	Undone update as it breaks the svn tree. 
-
-2008-11-05  Francisco Figueiredo Jr.  <francisco@npgsql.org>
 	
 	Updated Npgsql to Npgsql2 2.0.1. Now Npgsql requires .Net 2.0 or above
 
