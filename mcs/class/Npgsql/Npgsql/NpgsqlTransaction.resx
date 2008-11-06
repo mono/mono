@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <root>
 	<!-- 
     Microsoft ResX Schema 
@@ -99,11 +99,5 @@
 	</resheader>
 	<data name="Exception_NoTransaction">
 		<value>No transaction in progress.</value>
-	</data>
-	<data name="Exception_SavePointWithSemicolon">
-		<value>Savepoint name cannot have semicolon.</value>
-	</data>
-	<data name="Exception_SavePointNotSupported">
-		<value>Savepoint is not supported by backend.</value>
 	</data>
 </root>

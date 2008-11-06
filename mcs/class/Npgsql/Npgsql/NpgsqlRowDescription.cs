@@ -9,207 +9,230 @@
 //	npgsql-general@gborg.postgresql.org
 //	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-// Permission to use, copy, modify, and distribute this software and its
-// documentation for any purpose, without fee, and without a written
-// agreement is hereby granted, provided that the above copyright notice
-// and this paragraph and the following two paragraphs appear in all copies.
-// 
-// IN NO EVENT SHALL THE NPGSQL DEVELOPMENT TEAM BE LIABLE TO ANY PARTY
-// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
-// INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
-// DOCUMENTATION, EVEN IF THE NPGSQL DEVELOPMENT TEAM HAS BEEN ADVISED OF
-// THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// THE NPGSQL DEVELOPMENT TEAM SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-// AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS
-// ON AN "AS IS" BASIS, AND THE NPGSQL DEVELOPMENT TEAM HAS NO OBLIGATIONS
-// TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.IO;
+using System.Text;
+using System.Net;
+using System.Globalization;
+
 using NpgsqlTypes;
 
 namespace Npgsql
 {
-	/// <summary>
-	/// This class represents a RowDescription message sent from
-	/// the PostgreSQL.
-	/// </summary>
-	///
-	internal abstract class NpgsqlRowDescription : IServerResponseObject
-	{
-		/// <summary>
-		/// This struct represents the internal data of the RowDescription message.
-		/// </summary>
-		public abstract class FieldData
-		{
-			private string _name; // Protocol 2/3
-			private int _typeOID; // Protocol 2/3
-			private short _typeSize; // Protocol 2/3
-			private int _typeModifier; // Protocol 2/3
-			private int _tableOID; // Protocol 3
-			private short _columnAttributeNumber; // Protocol 3
-			private FormatCode _formatCode; // Protocol 3. 0 text, 1 binary
-			private NpgsqlBackendTypeInfo _typeInfo; // everything we know about this field type
 
-			public string Name
-			{
-				get { return _name; }
-				protected set { _name = value; }
-			}
 
-			public int TypeOID
-			{
-				get { return _typeOID; }
-				protected set { _typeOID = value; }
-			}
+    /// <summary>
+    /// This struct represents the internal data of the RowDescription message.
+    /// </summary>
+    ///
+    // [FIXME] Is this name OK? Does it represent well the struct intent?
+    // Should it be a struct or a class?
+    internal struct NpgsqlRowDescriptionFieldData
+    {
+        public String                   name;                      // Protocol 2/3
+        public Int32                    table_oid;                 // Protocol 3
+        public Int16                    column_attribute_number;   // Protocol 3
+        public Int32                    type_oid;                  // Protocol 2/3
+        public Int16                    type_size;                 // Protocol 2/3
+        public Int32                    type_modifier;		       // Protocol 2/3
+        public FormatCode               format_code;               // Protocol 3. 0 text, 1 binary
+        public NpgsqlBackendTypeInfo    type_info;                 // everything we know about this field type
+    }
 
-			public short TypeSize
-			{
-				get { return _typeSize; }
-				protected set { _typeSize = value; }
-			}
+    /// <summary>
+    /// This class represents a RowDescription message sent from
+    /// the PostgreSQL.
+    /// </summary>
+    ///
+    internal sealed class NpgsqlRowDescription
+    {
+        // Logging related values
+        private static readonly String CLASSNAME = "NpgsqlRowDescription";
 
-			public int TypeModifier
-			{
-				get { return _typeModifier; }
-				protected set { _typeModifier = value; }
-			}
 
-			public int TableOID
-			{
-				get { return _tableOID; }
-				protected set { _tableOID = value; }
-			}
+        private NpgsqlRowDescriptionFieldData[]  fields_data;
+        private string[]                fields_index;
+        private Hashtable               field_name_index_table;
 
-			public short ColumnAttributeNumber
-			{
-				get { return _columnAttributeNumber; }
-				protected set { _columnAttributeNumber = value; }
-			}
+        private ProtocolVersion          protocol_version;
 
-			public FormatCode FormatCode
-			{
-				get { return _formatCode; }
-				protected set { _formatCode = value; }
-			}
+        public NpgsqlRowDescription(ProtocolVersion protocolVersion)
+        {
+            protocol_version = protocolVersion;
+        }
 
-			public NpgsqlBackendTypeInfo TypeInfo
-			{
-				get { return _typeInfo; }
-				protected set { _typeInfo = value; }
-			}
-		}
+        public void ReadFromStream(Stream input_stream, Encoding encoding, NpgsqlBackendTypeMapping type_mapping)
+        {
+            switch (protocol_version)
+            {
+            case ProtocolVersion.Version2 :
+                ReadFromStream_Ver_2(input_stream, encoding, type_mapping);
+                break;
 
-		private readonly FieldData[] fields_data;
-		private readonly Dictionary<string, int> field_name_index_table;
-		private readonly Dictionary<string, int> caseInsensitiveNameIndexTable;
+            case ProtocolVersion.Version3 :
+                ReadFromStream_Ver_3(input_stream, encoding, type_mapping);
+                break;
 
-		protected NpgsqlRowDescription(Stream stream, NpgsqlBackendTypeMapping type_mapping)
-		{
-			int num = ReadNumFields(stream);
-			fields_data = new FieldData[num];
-			field_name_index_table = new Dictionary<string, int>(num, StringComparer.InvariantCulture);
-			caseInsensitiveNameIndexTable = new Dictionary<string, int>(num, StringComparer.InvariantCultureIgnoreCase);
-			for (int i = 0; i != num; ++i)
-			{
-				FieldData fd = BuildFieldData(stream, type_mapping);
-				fields_data[i] = fd;
-				if (!field_name_index_table.ContainsKey(fd.Name))
-				{
-					field_name_index_table.Add(fd.Name, i);
-					if (!caseInsensitiveNameIndexTable.ContainsKey(fd.Name))
-					{
-						caseInsensitiveNameIndexTable.Add(fd.Name, i);
-					}
-				}
-			}
-		}
+            }
+        }
 
-		protected abstract FieldData BuildFieldData(Stream stream, NpgsqlBackendTypeMapping typeMapping);
-		protected abstract int ReadNumFields(Stream stream);
+        private void ReadFromStream_Ver_2(Stream input_stream, Encoding encoding, NpgsqlBackendTypeMapping type_mapping)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_2");
 
-		public FieldData this[int index]
-		{
-			get { return fields_data[index]; }
-		}
+            Byte[] input_buffer = new Byte[10]; // Max read will be 4 + 2 + 4
 
-		public int NumFields
-		{
-			get { return (Int16) fields_data.Length; }
-		}
+            // Read the number of fields.
+            input_stream.Read(input_buffer, 0, 2);
+            Int16 num_fields = IPAddress.NetworkToHostOrder(BitConverter.ToInt16(input_buffer, 0));
 
-		public int FieldIndex(String fieldName)
-		{
-			int ret = -1;
-			return
-				field_name_index_table.TryGetValue(fieldName, out ret)
-					? ret
-					: (caseInsensitiveNameIndexTable.TryGetValue(fieldName, out ret) ? ret : -1);
-		}
-	}
 
-	internal sealed class NpgsqlRowDescriptionV2 : NpgsqlRowDescription
-	{
-		public NpgsqlRowDescriptionV2(Stream stream, NpgsqlBackendTypeMapping typeMapping)
-			: base(stream, typeMapping)
-		{
-		}
+            // Temporary FieldData object to get data from stream and put in array.
+            NpgsqlRowDescriptionFieldData fd;
 
-		private sealed class FieldDataV2 : FieldData
-		{
-			public FieldDataV2(Stream stream, NpgsqlBackendTypeMapping typeMapping)
-			{
-				Name = PGUtil.ReadString(stream);
-				TypeInfo = typeMapping[TypeOID = PGUtil.ReadInt32(stream)];
-				TypeSize = PGUtil.ReadInt16(stream);
-				TypeModifier = PGUtil.ReadInt32(stream);
-			}
-		}
+            fields_data = new NpgsqlRowDescriptionFieldData[num_fields];
+            fields_index = new string[num_fields];
+            
+            field_name_index_table = new Hashtable(num_fields);
+            
+            
+            // Now, iterate through each field getting its data.
+            for (Int16 i = 0; i < num_fields; i++)
+            {
+                fd = new NpgsqlRowDescriptionFieldData();
 
-		protected override FieldData BuildFieldData(Stream stream, NpgsqlBackendTypeMapping type_mapping)
-		{
-			return new FieldDataV2(stream, type_mapping);
-		}
+                // Set field name.
+                fd.name = PGUtil.ReadString(input_stream, encoding);
 
-		protected override int ReadNumFields(Stream stream)
-		{
-			return PGUtil.ReadInt16(stream);
-		}
-	}
+                // Read type_oid(Int32), type_size(Int16), type_modifier(Int32)
+                input_stream.Read(input_buffer, 0, 4 + 2 + 4);
 
-	internal sealed class NpgsqlRowDescriptionV3 : NpgsqlRowDescription
-	{
-		private sealed class FieldDataV3 : FieldData
-		{
-			public FieldDataV3(Stream stream, NpgsqlBackendTypeMapping typeMapping)
-			{
-				Name = PGUtil.ReadString(stream);
-				TableOID = PGUtil.ReadInt32(stream);
-				ColumnAttributeNumber = PGUtil.ReadInt16(stream);
-				TypeInfo = typeMapping[TypeOID = PGUtil.ReadInt32(stream)];
-				TypeSize = PGUtil.ReadInt16(stream);
-				TypeModifier = PGUtil.ReadInt32(stream);
-				FormatCode = (FormatCode) PGUtil.ReadInt16(stream);
-			}
-		}
+                fd.type_oid = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 0));
+                fd.type_info = type_mapping[fd.type_oid];
+                fd.type_size = IPAddress.NetworkToHostOrder(BitConverter.ToInt16(input_buffer, 4));
+                fd.type_modifier = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 6));
 
-		public NpgsqlRowDescriptionV3(Stream stream, NpgsqlBackendTypeMapping typeMapping)
-			: base(stream, typeMapping)
-		{
-		}
+                // Add field data to array.
+                fields_data[i] = fd;
 
-		protected override FieldData BuildFieldData(Stream stream, NpgsqlBackendTypeMapping typeMapping)
-		{
-			return new FieldDataV3(stream, typeMapping);
-		}
+                fields_index[i] = fd.name;
+                
+                if (!field_name_index_table.ContainsKey(fd.name))
+                    field_name_index_table.Add(fd.name, i);
+            }
+        }
 
-		protected override int ReadNumFields(Stream stream)
-		{
-			PGUtil.EatStreamBytes(stream, 4);
-			return PGUtil.ReadInt16(stream);
-		}
-	}
+        private void ReadFromStream_Ver_3(Stream input_stream, Encoding encoding, NpgsqlBackendTypeMapping type_mapping)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_3");
+
+            Byte[] input_buffer = new Byte[4]; // Max read will be 4 + 2 + 4 + 2 + 4 + 2
+
+            // Read the length of message.
+            // [TODO] Any use for now?
+            PGUtil.ReadInt32(input_stream, input_buffer);
+            Int16 num_fields = PGUtil.ReadInt16(input_stream, input_buffer);
+
+            // Temporary FieldData object to get data from stream and put in array.
+            NpgsqlRowDescriptionFieldData fd;
+
+            fields_data = new NpgsqlRowDescriptionFieldData[num_fields];
+            fields_index = new string[num_fields];
+            field_name_index_table = new Hashtable(num_fields);
+            
+            for (Int16 i = 0; i < num_fields; i++)
+            {
+                fd = new NpgsqlRowDescriptionFieldData();
+
+                fd.name = PGUtil.ReadString(input_stream, encoding);
+                fd.table_oid = PGUtil.ReadInt32(input_stream, input_buffer);
+                fd.column_attribute_number = PGUtil.ReadInt16(input_stream, input_buffer);
+                fd.type_oid = PGUtil.ReadInt32(input_stream, input_buffer);
+                fd.type_info = type_mapping[fd.type_oid];
+                fd.type_size = PGUtil.ReadInt16(input_stream, input_buffer);
+                fd.type_modifier = PGUtil.ReadInt32(input_stream, input_buffer);
+                fd.format_code = (FormatCode)PGUtil.ReadInt16(input_stream, input_buffer);
+
+                fields_data[i] = fd;
+                fields_index[i] = fd.name;
+                
+                if (!field_name_index_table.ContainsKey(fd.name))
+                    field_name_index_table.Add(fd.name, i);
+            }
+        }
+
+        public NpgsqlRowDescriptionFieldData this[Int32 index]
+        {
+            get
+            {
+                return fields_data[index];
+            }
+        }
+
+        public Int16 NumFields
+        {
+            get
+            {
+                return (Int16)fields_data.Length;
+            }
+        }
+
+        public Int16 FieldIndex(String fieldName)
+        {
+            
+            
+            // First try to find with hashtable, case sensitive.
+            
+            Object result1 = field_name_index_table[fieldName];
+            
+            if (result1 != null)
+                return (Int16)result1;
+            
+
+            result1 = field_name_index_table[fieldName.ToLower(CultureInfo.InvariantCulture)];
+
+            if (result1 != null)
+                return (Int16)result1;
+
+            // Then the index with IndexOf (case-sensitive)
+
+            
+            Int16 result = (Int16)Array.IndexOf(fields_index, fieldName, 0, fields_index.Length);
+
+            if (result != -1)
+            {
+                return result;
+            }
+            else
+            {
+            
+                foreach(string name in fields_index)
+                {
+                    ++result;
+                    if (string.Compare(name, fieldName, true, CultureInfo.InvariantCulture) == 0)
+                        return result;
+                }
+            }
+            
+            return -1;
+            
+
+        }
+
+    }
 }

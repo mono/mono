@@ -100,7 +100,4 @@
 	<data name="Exception_ImpossibleToCast">
 		<value>Can't cast {0} into any valid DbType.</value>
 	</data>
-	<data name="Exception_ParameterTypeIsOnlyArray">
-		<value>Cannot set NpgsqlDbType to just Array, Binary-Or with the element type (e.g. Array of Box is NpgsqlDbType.Array | NpgsqlDbType.Box).</value>
-	</data>
 </root>
