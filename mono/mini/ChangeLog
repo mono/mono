@@ -1,3 +1,7 @@
+2008-11-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Implement ARM support in the binary writer.
+
 2008-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Add test for getter with byref arg.
