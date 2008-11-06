@@ -1,3 +1,7 @@
+2008-11-05  Geoff Norton  <gnorton@novell.com>
+
+	* attach.c: Default the attacher to enabled for all cases including
+	embedded.
 
 Wed Nov 5 16:33:41 CET 2008 Paolo Molaro <lupus@ximian.com>
 
