@@ -31,7 +31,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows {
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class RectTest
 	{
 		[Test]
@@ -262,6 +261,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Parse ()
 		{
 			Rect r = Rect.Parse ("1 , 2, 3, 4");
@@ -269,6 +269,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Parse2 ()
 		{
 			Rect r = Rect.Parse ("1 2 3 4");
@@ -276,6 +277,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Parse3 ()
 		{
 			Rect r = Rect.Parse ("  1 2 3 4  ");
@@ -283,12 +285,14 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ParseWithBothSeparators ()
 		{
 			Rect.Parse ("1.0, 3 2.0, 5.0");
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ParseNegative ()
 		{
@@ -296,6 +300,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))] // "Premature string termination encountered."
 		public void Parse3Doubles ()
 		{
@@ -303,6 +308,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (FormatException))]
 		public void ParseInvalidString1 ()
 		{
@@ -310,6 +316,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ParseInvalidString3 ()
 		{
@@ -317,6 +324,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (FormatException))]
 		public void ParseInvalidString4 ()
 		{
@@ -324,6 +332,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ParseInvalidString5 ()
 		{
@@ -331,12 +340,14 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ParseInvalidString6 ()
 		{
 			Rect.Parse ("\n1.0, 2.0, 5.0, 2");
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ParseInvalidString7 ()
 		{

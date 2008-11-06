@@ -31,7 +31,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows {
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class VectorTest
 	{
 		[Test]
@@ -59,6 +58,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Parse ()
 		{
 			Vector v = Vector.Parse ("4,5");

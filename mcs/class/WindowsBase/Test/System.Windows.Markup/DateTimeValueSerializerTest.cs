@@ -33,7 +33,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Markup {
 
 	[TestFixture]
-	[NUnit.Framework.CategoryAttribute ("NotWorking")]
 	public class DateTimeValueSerializerTest
 	{
 		class Context : IValueSerializerContext {
@@ -153,6 +152,7 @@ namespace MonoTests.System.Windows.Markup {
 		}
 
 		[Test]
+		[CategoryAttribute ("NotWorking")]
 		public void ConvertToString1 ()
 		{
 			ValueSerializer serializer = (ValueSerializer)ValueSerializer.GetSerializerFor (typeof (DateTime));

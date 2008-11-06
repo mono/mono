@@ -31,7 +31,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows {
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class SizeConverterTest
 	{
 		[Test]
@@ -53,6 +52,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ConvertFrom ()
 		{
 			SizeConverter r = new SizeConverter ();
@@ -73,6 +73,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFrom_negative ()
 		{
@@ -81,6 +82,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ConvertTo ()
 		{
 			SizeConverter r = new SizeConverter ();

@@ -60,9 +60,9 @@ namespace MonoTests.System.Windows {
 	}
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class DependencyObjectTest {
 		[Test]
+		[Category ("NotWorking")]
 		public void TestAttachedProperty()
 		{
 			Y y1 = new Y();
@@ -71,6 +71,7 @@ namespace MonoTests.System.Windows {
 		}
 	
 		[Test]
+		[Category ("NotWorking")]
 		public void Test2AttachedProperties()
 		{
 			Y y1 = new Y();
@@ -82,6 +83,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestEnumerationOfAttachedProperties()
 		{
 			int count = 0;

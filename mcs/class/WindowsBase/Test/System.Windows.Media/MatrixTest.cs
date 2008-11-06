@@ -31,7 +31,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Media {
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class MatrixTest {
 
 		void CheckMatrix (Matrix expected, Matrix actual)
@@ -158,6 +157,7 @@ namespace MonoTests.System.Windows.Media {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Parse ()
 		{
 			CheckMatrix (Matrix.Identity, Matrix.Parse ("Identity"));

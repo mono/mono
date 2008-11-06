@@ -31,7 +31,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows {
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class SizeTest
 	{
 		[Test]
@@ -121,6 +120,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Parse ()
 		{
 			Assert.AreEqual (new Size (1, 2), Size.Parse ("1, 2"));

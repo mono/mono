@@ -1,5 +1,21 @@
 2008-11-06  Alan McGovern  <amcgovern@novell.com>
 
+	* Test/System.Windows/RectTest.cs:
+	* Test/System.Windows/SizeTest.cs:
+	* Test/System.Windows/VectorTest.cs:
+	* Test/System.Windows/Int32RectTest.cs:
+	* Test/System.Windows.Media/MatrixTest.cs:
+	* Test/System.Windows/SizeConverterTest.cs:
+	* Test/System.Windows/RectConverterTest.cs:
+	* Test/System.Windows/PointConverterTest.cs:
+	* Test/System.Windows/VectorConverterTest.cs:
+	* Test/System.Windows/DependencyObjectTest.cs:
+	* Test/System.Windows/Int32RectConverterTest.cs:
+	* Test/System.Windows.Markup/DateTimeValueSerializerTest.cs: Only
+	disable the tests which do not work.
+
+2008-11-06  Alan McGovern  <amcgovern@novell.com>
+
 	
 
 

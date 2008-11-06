@@ -31,7 +31,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows {
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class VectorConverterTest
 	{
 		[Test]
@@ -53,6 +52,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ConvertFrom ()
 		{
 			VectorConverter r = new VectorConverter ();
@@ -77,6 +77,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ConvertTo ()
 		{
 			VectorConverter r = new VectorConverter ();
