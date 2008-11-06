@@ -1,3 +1,7 @@
+2008-11-06  Jonathan Chambers  <joncham@gmail.com>
+
+	* Process.cs : Use DuplicateHandle when redirecting
+	StdInput and StdOutput. Fixes bug #436291.
 
 Mon Oct 13 14:39:52 CEST 2008 Paolo Molaro <lupus@ximian.com>
 

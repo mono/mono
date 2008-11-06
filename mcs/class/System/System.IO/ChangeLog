@@ -1,3 +1,7 @@
+2008-11-06  Jonathan Chambers  <joncham@gmail.com>
+
+	* MonoIO.cs : Add DuplicateHandle.
+
 2008-10-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* InotifyWatcher.cs: IN_CLOSE_WRITE is triggered when a writable file is

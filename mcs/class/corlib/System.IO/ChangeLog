@@ -1,3 +1,6 @@
+2008-11-06  Jonathan Chambers  <joncham@gmail.com>
+
+	* MonoIO.cs : Add DuplicateHandle.
 
 2008-10-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

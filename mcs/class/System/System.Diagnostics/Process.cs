@@ -968,7 +968,7 @@ namespace System.Diagnostics {
 						   Process process)
 		{
 			ProcInfo proc_info=new ProcInfo();
-			IntPtr stdin_rd, stdin_wr;
+			IntPtr stdin_rd = IntPtr.Zero, stdin_wr = IntPtr.Zero;
 			IntPtr stdout_wr;
 			IntPtr stderr_wr;
 			bool ret;
@@ -985,8 +985,23 @@ namespace System.Diagnostics {
 			}
 
 			if (startInfo.RedirectStandardInput == true) {
-				ret = MonoIO.CreatePipe (out stdin_rd,
-						         out stdin_wr);
+				if (IsWindows) {
+					int DUPLICATE_SAME_ACCESS = 0x00000002;
+					IntPtr stdin_wr_tmp;
+
+					ret = MonoIO.CreatePipe (out stdin_rd,
+									 out stdin_wr_tmp);
+					if (ret) {
+						ret = MonoIO.DuplicateHandle (Process.GetCurrentProcess ().Handle, stdin_wr_tmp,
+						Process.GetCurrentProcess ().Handle, out stdin_wr, 0, 0, DUPLICATE_SAME_ACCESS);
+						MonoIO.Close (stdin_wr_tmp, out error);
+					}
+				}
+				else
+				{
+					ret = MonoIO.CreatePipe (out stdin_rd,
+									 out stdin_wr);
+				}
 				if (ret == false) {
 					throw new IOException ("Error creating standard input pipe");
 				}
@@ -1000,9 +1015,23 @@ namespace System.Diagnostics {
 			}
 
 			if (startInfo.RedirectStandardOutput == true) {
-				IntPtr out_rd;
-				ret = MonoIO.CreatePipe (out out_rd,
-						         out stdout_wr);
+				IntPtr out_rd = IntPtr.Zero;
+				if (IsWindows) {
+					IntPtr out_rd_tmp;
+					int DUPLICATE_SAME_ACCESS = 0x00000002;
+
+					ret = MonoIO.CreatePipe (out out_rd_tmp,
+									 out stdout_wr);
+					if (ret) {
+						MonoIO.DuplicateHandle (Process.GetCurrentProcess ().Handle, out_rd_tmp,
+						Process.GetCurrentProcess ().Handle, out out_rd, 0, 0, DUPLICATE_SAME_ACCESS);
+						MonoIO.Close (out_rd_tmp, out error);
+					}
+				}
+				else {
+					ret = MonoIO.CreatePipe (out out_rd,
+									 out stdout_wr);
+				}
 
 				process.stdout_rd = out_rd;
 				if (ret == false) {
@@ -1019,9 +1048,23 @@ namespace System.Diagnostics {
 			}
 
 			if (startInfo.RedirectStandardError == true) {
-				IntPtr err_rd;
-				ret = MonoIO.CreatePipe (out err_rd,
-						         out stderr_wr);
+				IntPtr err_rd = IntPtr.Zero;
+				if (IsWindows) {
+					IntPtr err_rd_tmp;
+					int DUPLICATE_SAME_ACCESS = 0x00000002;
+
+					ret = MonoIO.CreatePipe (out err_rd_tmp,
+									 out stderr_wr);
+					if (ret) {
+						MonoIO.DuplicateHandle (Process.GetCurrentProcess ().Handle, err_rd_tmp,
+						Process.GetCurrentProcess ().Handle, out err_rd, 0, 0, DUPLICATE_SAME_ACCESS);
+						MonoIO.Close (err_rd_tmp, out error);
+					}
+				}
+				else {
+					ret = MonoIO.CreatePipe (out err_rd,
+									 out stderr_wr);
+				}
 
 				process.stderr_rd = err_rd;
 				if (ret == false) {
@@ -1577,6 +1620,21 @@ namespace System.Diagnostics {
 			
 			object [] args = new object [] {this, EventArgs.Empty};
 			synchronizingObject.BeginInvoke (exited_event, args);
+		}
+
+		static bool IsWindows
+		{
+			get
+			{
+				PlatformID platform = Environment.OSVersion.Platform;
+				if (platform == PlatformID.Win32S ||
+					platform == PlatformID.Win32Windows ||
+					platform == PlatformID.Win32NT ||
+					platform == PlatformID.WinCE) {
+					return true;
+				}
+				return false;
+			}
 		}
 
 		class ProcessWaitHandle : WaitHandle

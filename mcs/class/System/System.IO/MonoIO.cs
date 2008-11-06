@@ -70,6 +70,10 @@ namespace System.IO
 		public extern static bool CreatePipe (out IntPtr read_handle, out IntPtr write_handle);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static bool DuplicateHandle (IntPtr source_process_handle, IntPtr source_handle,
+			IntPtr target_process_handle, out IntPtr target_handle, int access, int inherit, int options);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static int GetTempPath(out string path);
 	}
 }
