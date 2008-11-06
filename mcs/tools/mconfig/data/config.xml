@@ -49,6 +49,7 @@
       <block name="DynamicData controls registration" />
       <block name="DynamicData compilation" />
       <block name="DynamicData HTTP modules" />
+    </blocks>
   </feature>
 
   <feature name="SettingsMapProtection" target="web">
