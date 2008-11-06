@@ -1,3 +1,13 @@
+2008-11-06  Jonathan Chambers  <joncham@gmail.com>
+
+	* async_read.cs: Open file with Read access to avoid
+	file access exception on Windows.
+
+	* bug-349190.2.cs: Use different name for dynamic executable
+	to avoid file access exception on Windows.
+
+	Code is contributed under MIT/X11 license.
+
 2008-10-03  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-virtual-invoke.2.cs: Use different instantiations and
