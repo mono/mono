@@ -57,25 +57,25 @@ namespace zipsharp
 				zipWriteInFileInZip (handle, b, count);
 		}
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern unsafe int zipWriteInFileInZip (ZipHandle handle,
 		                                               byte* buffer,
 		                                               uint len);
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern int zipCloseFileInZip (ZipHandle handle);
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern ZipHandle zipOpen2 (string pathname,
 		                                  int append,
 		                                  IntPtr globalcomment, // zipcharpc*
 		                                  ref ZlibFileFuncDef pzlib_filefunc_def); // zlib_filefunc_def*
 
 		
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern int zipClose (ZipHandle handle, string globalComment);
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern int zipOpenNewFileInZip (ZipHandle handle,
 		                                       string filename,
 		                                       ref ZipFileInfo zipfi,

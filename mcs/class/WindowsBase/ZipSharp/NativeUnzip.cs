@@ -115,31 +115,31 @@ namespace zipsharp
 				return unzReadCurrentFile (handle, b, (uint)count);
 		}
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern int unzCloseCurrentFile (UnzipHandle handle);
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern IntPtr unztell (UnzipHandle handle);
 		
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern int unzGoToFirstFile (UnzipHandle handle);
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern UnzipHandle unzOpen2 (string path,
 		                                            ref ZlibFileFuncDef pzlib_filefunc_def);
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern int unzGoToNextFile (UnzipHandle handle);
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern int unzLocateFile (UnzipHandle handle,
 		                                         string szFileName,
 		                                         int iCaseSensitivity);
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern int unzOpenCurrentFile (UnzipHandle handle);
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern int unzGetCurrentFileInfo (UnzipHandle handle,
 		                                                 out UnzipFileInfo pfile_info,
 		                                                 StringBuilder szFileName,
@@ -149,15 +149,15 @@ namespace zipsharp
 		                                                 StringBuilder szComment,
 		                                                 IntPtr commentBufferSize);   // uLong
 
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static unsafe extern int unzReadCurrentFile (UnzipHandle handle,
 		                                              byte* buf, // voidp
 		                                              uint len);
 
-		//[DllImport ("libminizip.dll")]
+		//[DllImport ("MonoPosixHelper")]
 		//static extern int unzSetOffset (UnzipHandle handle, IntPtr pos); // uLong
 		
-		[DllImport ("libminizip.dll")]
+		[DllImport ("MonoPosixHelper")]
 		static extern int unzClose (UnzipHandle handle);
 	}
 }
