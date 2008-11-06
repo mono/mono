@@ -28,6 +28,7 @@ using System.ComponentModel;
 using System.Windows.Converters;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Globalization;
 
 namespace System.Windows {
 
@@ -66,7 +67,7 @@ namespace System.Windows {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+		    return (x.GetHashCode() ^ y.GetHashCode());
 		}
 
 
@@ -146,22 +147,46 @@ namespace System.Windows {
 
 		public static Point Parse (string source)
 		{
-			throw new NotImplementedException ();
+			string[] points = source.Split(',');
+
+			if (points.Length<2)
+				throw new InvalidOperationException ("source does not contain two numbers");
+			if (points.Length > 2)
+				throw new InvalidOperationException ("source contains too many delimiters");
+
+			CultureInfo ci = CultureInfo.InvariantCulture;
+			return new Point (Convert.ToDouble(points[0],ci), Convert.ToDouble(points[1],ci));	
 		}
 
 		public override string ToString ()
 		{
-			return String.Format ("{0},{1}", x, y);
+			return this.ToString(null, null);
 		}
 
 		public string ToString (IFormatProvider formatProvider)
 		{
-			throw new NotImplementedException ();
+			return this.ToString(null,formatProvider);
+		}
+
+		private string ToString(string format,IFormatProvider formatProvider)
+		{
+			CultureInfo ci = (CultureInfo)formatProvider;
+
+			if (ci == null)
+				ci = CultureInfo.CurrentCulture;
+			string seperator = ci.NumberFormat.NumberDecimalSeparator;
+			if (seperator.Equals(","))
+				seperator = ";";
+			else
+				seperator = ",";
+			object[] ob = { this.x, seperator, this.y };
+
+			return string.Format(formatProvider, "{0:" + format + "}{1}{2:" + format + "}", ob);
 		}
 
 		string IFormattable.ToString (string format, IFormatProvider formatProvider)
 		{
-			throw new NotImplementedException ();
+			return this.ToString(format, formatProvider);
 		}
 
 		double x;

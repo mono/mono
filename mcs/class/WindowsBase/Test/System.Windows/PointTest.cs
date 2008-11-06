@@ -23,7 +23,8 @@
 //	Chris Toshok (toshok@ximian.com)
 //
 
-using System;
+using System.Globalization;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using NUnit.Framework;
@@ -31,7 +32,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows {
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class PointTest {
 
 		[Test]
@@ -51,16 +51,42 @@ namespace MonoTests.System.Windows {
 			Assert.IsFalse (p.Equals (new object()));
 		}
 
+        [Test]
+        public void getHashCodeTest()
+        {
+			Point p1 = new Point(-5, -4);
+			Point p2 = new Point(5, 4);
+			Point p3 = new Point(5, 4);
+
+			Assert.AreEqual(p2.GetHashCode(), p3.GetHashCode());
+			Assert.AreEqual(p1.GetHashCode(),p2.GetHashCode());
+        }
+
 		[Test]
 		public void ToStringTest ()
 		{
+			Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-us");
 			Point p = new Point (4, 5);
 			Assert.AreEqual ("4,5", p.ToString());
+			Point p2 = new Point(4.1, 5.1);
+			Assert.AreEqual("4.1,5.1",p2.ToString());
+			Point p3 = new Point(0, 0);
+			Assert.AreEqual("0,0", p3.ToString());
+
+			Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("de-de");
+			Point p4 = new Point(4, 5);
+			Assert.AreEqual("4;5", p4.ToString());
+			Point p5 = new Point(4.1, 5.1);
+			Assert.AreEqual("4,1;5,1", p5.ToString());
+			Point p6 = new Point(0, 0);
+			Assert.AreEqual("0;0", p6.ToString());
 		}
 
 		[Test]
 		public void Parse ()
 		{
+			Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("fr-fr");
+
 			Point p = Point.Parse ("4,5");
 			Assert.AreEqual (new Point (4, 5), p);
 
@@ -69,6 +95,12 @@ namespace MonoTests.System.Windows {
 
 			p = Point.Parse ("-4.4,-5.5");
 			Assert.AreEqual (new Point (-4.4, -5.5), p);
+
+			p = Point.Parse("4.4,5.5");
+			Assert.AreEqual(new Point(4.4, 5.5), p);
+
+			Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-us");
+			Assert.AreEqual(new Point(4.4, 5.5), p);
 		}
 
 		[Test]
