@@ -1,5 +1,9 @@
 2008-11-05  Miguel de Icaza  <miguel@novell.com>
 
+	* codegen.cs (InitDynamic): also setup Assembly.Name like we do in
+	Init, otherwise we would crash later on when checking for friend
+	assemblies. 
+
 	* eval.cs: Do not hide errors from invalid calls to LoadAssembly.
 	Otherwise we never get any meaningful information as to what
 	failed. 
