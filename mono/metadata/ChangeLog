@@ -1,3 +1,16 @@
+2008-11-06  Jonathan Chambers  <joncham@gmail.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_DuplicateHandle): 
+	Add support for DuplicateHandle.
+	
+	* file-io.h (ves_icall_System_IO_MonoIO_DuplicateHandle): 
+	Add support for DuplicateHandle.
+	
+	* icall-def.h (ves_icall_System_IO_MonoIO_DuplicateHandle): 
+	Add support for DuplicateHandle.
+
+	Code is contributed under MIT/X11 license.
+
 2008-11-06  Mark Probst  <mark.probst@gmail.com>
 
 	* class-internals.h: Make min_align into a whole byte.
@@ -353,6 +366,7 @@ Thu Oct 16 20:59:11 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.c: check for NULL setup before it's referenced.
 
+p
 Thu Oct 16 16:12:23 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: remove the unused old vtable setup code.
