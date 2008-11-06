@@ -1,3 +1,9 @@
+2008-11-05  Miguel de Icaza  <miguel@novell.com>
+
+	* eval.cs: Do not hide errors from invalid calls to LoadAssembly.
+	Otherwise we never get any meaningful information as to what
+	failed. 
+
 2008-11-05  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #436318

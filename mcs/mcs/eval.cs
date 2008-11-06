@@ -738,7 +738,7 @@ namespace Mono.CSharp {
 		static public void LoadAssembly (string file)
 		{
 			lock (evaluator_lock){
-				Driver.LoadAssembly (file, true);
+				Driver.LoadAssembly (file, false);
 				RootNamespace.ComputeNamespaces ();
 			}
 		}
