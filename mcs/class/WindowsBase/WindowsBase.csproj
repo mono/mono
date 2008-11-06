@@ -269,5 +269,12 @@
     <Compile Include="Test\System.Collections.Specialized\CollectionChangedEventValidators.cs" />
     <Compile Include="Test\System.Collections.Specialized\NotifyCollectionChangedEventArgsTest.cs" />
     <Compile Include="Test\System.Collections.ObjectModel\ReadOnlyObservableCollectionTest.cs" />
+    <Compile Include="Test\System.Windows.Markup\ConstructorArgumentAttributeTest.cs" />
+    <Compile Include="Test\System.Windows.Markup\ContentPropertyAttributeTest.cs" />
+    <Compile Include="Test\System.Windows.Markup\ContentWrapperAttributeTest.cs" />
+    <Compile Include="Test\System.Windows.Markup\DateTimeValueSerializerTest.cs" />
+    <Compile Include="Test\System.Windows.Markup\DependsOnAttributeTest.cs" />
+    <Compile Include="Test\System.Windows.Markup\MarkupExtensionReturnTypeAttributeTest.cs" />
+    <Compile Include="Test\System.Windows.Markup\ValueSerializerTest.cs" />
   </ItemGroup>
 </Project>
