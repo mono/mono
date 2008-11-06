@@ -1611,13 +1611,27 @@ namespace System.Windows.Forms {
 
 			public override void Remove (Control value)
 			{
+				bool change_index = false;
+				
 				TabPage page = value as TabPage;
 				if (page != null && owner.Controls.Contains (page)) {
 					int index = owner.IndexForTabPage (page);
 					if (index < owner.SelectedIndex || owner.SelectedIndex == Count - 1)
-						owner.SelectedIndex--;
+						change_index = true;
 				}
+				
 				base.Remove (value);
+				
+				// We don't want to raise SelectedIndexChanged until after we
+				// have removed from the collection, so TabCount will be
+				// correct for the user.
+				if (change_index && Count > 0)
+					owner.SelectedIndex--;
+				else if (change_index) {
+					owner.selected_index = -1;
+					owner.OnSelectedIndexChanged (EventArgs.Empty);
+				} else
+					owner.Redraw ();
 			}
 		}
 		#endregion	// Class TabControl.ControlCollection

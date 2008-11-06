@@ -1,3 +1,9 @@
+2008-11-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TabControl.cs: Don't raise SelectedIndexChanged until we have
+	actually modified the tab collection, so TabCount will be correct.
+	[Fixes bug #441896]
+
 2008-11-05  Sandy Armstrong  <sanfordarmstrong@gmail.com>
 
 	* ListViewItem.cs: Mark ListViewSubItem.UIATextChanged event as
