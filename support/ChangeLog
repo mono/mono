@@ -1,5 +1,9 @@
 2008-11-06  Alan McGovern  <amcgovern@novell.com>
 
+	* Makefile.am: Missed out on a header file for minizip
+
+2008-11-06  Alan McGovern  <amcgovern@novell.com>
+
 	* minizip/minizip/miniunz.c :
 	* Makefile.am: Removed unnecessary file from build and svn.
 

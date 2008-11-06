@@ -58,12 +58,13 @@ MPH_LIBS   = $(GLIB_LIBS)
 endif
 
 MINIZIP_SOURCE = \
-	minizip/zip.c	\
-	minizip/zip.h	\
+	minizip/crypt.h \
+	minizip/ioapi.c	\
+	minizip/ioapi.h \
 	minizip/unzip.c	\
 	minizip/unzip.h	\
-	minizip/ioapi.c	\
-	minizip/ioapi.h
+	minizip/zip.c	\
+	minizip/zip.h
 
 ZLIB_SOURCES = \
 	adler32.c	\
