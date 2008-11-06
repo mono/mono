@@ -1,3 +1,8 @@
+2008-11-06  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Metadata/MetadataWriter.cs: properly clean
+	the runtime image in case we're unsigning an assembly.
+
 2008-11-01  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Binary/RuntimeImage.cs: add [Flags] attribute.

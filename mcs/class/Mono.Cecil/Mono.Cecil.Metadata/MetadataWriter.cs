@@ -496,6 +496,9 @@ namespace Mono.Cecil.Metadata {
 
 			img.CLIHeader.EntryPointToken = m_entryPointToken;
 
+			if ((m_assembly.Name.Flags & AssemblyFlags.PublicKey) == 0)
+				img.CLIHeader.Flags &= ~RuntimeImage.StrongNameSigned;
+
 			if (m_mdSize > 0)
 				img.CLIHeader.Metadata = new DataDirectory (
 					img.TextSection.VirtualAddress + m_mdStart, m_imporTableStart - m_mdStart);
