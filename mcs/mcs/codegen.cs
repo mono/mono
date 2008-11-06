@@ -100,7 +100,9 @@ namespace Mono.CSharp {
 			
 			Assembly.Builder = current_domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run | COMPILER_ACCESS);
 			Module.Builder = Assembly.Builder.DefineDynamicModule (Basename (name), false);
+#if GMCS_SOURCE
 			Assembly.Name = Assembly.Builder.GetName ();
+#endif
 		}
 		
 		//
