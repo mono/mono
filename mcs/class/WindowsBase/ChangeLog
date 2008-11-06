@@ -1,3 +1,11 @@
+2008-11-06  Sandy Armstrong  <sanfordarmstrong@gmail.com>
+
+	* Assembly/AssemblyInfo.cs: AssemblyFileVersion now uses
+	Consts.FxFileVersion, which is "3.0.4506.648".
+
+	* Makefile: Define NET_3_0 so that Consts will have the correct values
+	for this assembly.
+
 2008-11-06  Alan McGovern  <amcgovern@novell.com>
 
 	

@@ -45,7 +45,7 @@ using System.Windows.Markup;
 [assembly: AssemblyProduct (Consts.MonoProduct)]
 [assembly: AssemblyCopyright (Consts.MonoCopyright)]
 [assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: AssemblyFileVersion ("6.0.6001.17014")]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 
 [assembly: NeutralResourcesLanguage ("en")]
 [assembly: CLSCompliant (true)]
