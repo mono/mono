@@ -943,6 +943,17 @@ namespace Mono.CSharp {
 		Expression ResolveOperator (EmitContext ec)
 		{
 			type = expr.Type;
+			
+			//
+			// The operand of the prefix/postfix increment decrement operators
+			// should be an expression that is classified as a variable,
+			// a property access or an indexer access
+			//
+			if (expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess) {
+				expr = expr.ResolveLValue (ec, expr, Location);
+			} else {
+				Report.Error (1059, loc, "The operand of an increment or decrement operator must be a variable, property or indexer");
+			}
 
 			//
 			// Step 1: Perform Operator Overload location
@@ -973,17 +984,6 @@ namespace Mono.CSharp {
 				Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
 					   TypeManager.CSharpName (type) + "'");
 				return null;
-			}
-
-			//
-			// The operand of the prefix/postfix increment decrement operators
-			// should be an expression that is classified as a variable,
-			// a property access or an indexer access
-			//
-			if (expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess) {
-				expr = expr.ResolveLValue (ec, expr, Location);
-			} else {
-				Report.Error (1059, loc, "The operand of an increment or decrement operator must be a variable, property or indexer");
 			}
 
 			return this;
