@@ -1,3 +1,9 @@
+2008-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* basic-simd.cs: Add test for getter with byref arg.
+	Fix the naming of a few tests.
+	Add missing checks to a test.
+
 2008-11-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_plt): Make the arm code work with the binary writer.
