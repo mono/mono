@@ -58,8 +58,6 @@ MPH_LIBS   = $(GLIB_LIBS)
 endif
 
 MINIZIP_SOURCE = \
-	minizip/miniunz.c \
-	minizip/miniunz.h \
 	minizip/zip.c	\
 	minizip/zip.h	\
 	minizip/unzip.c	\
