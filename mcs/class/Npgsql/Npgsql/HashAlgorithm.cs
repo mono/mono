@@ -16,95 +16,98 @@
 using System;
 using System.IO;
 
+
 namespace Npgsql
 {
-	// Comment: Removed the ICryptoTransform implementation as this interface may be not supported by
-	// all platforms.
 
-	internal abstract class HashAlgorithm : IDisposable
-	{
-		protected byte[] HashValue; // Caches the hash after it is calculated.  Accessed through the Hash property.
-		protected int HashSizeValue; // The size of the hash in bits.
-		protected int State; // nonzero when in use;  zero when not in use
-		private bool disposed;
 
-		/// <summary>
-		/// Called from constructor of derived class.
-		/// </summary>
-		protected HashAlgorithm()
-		{
-			disposed = false;
-		}
+    // Comment: Removed the ICryptoTransform implementation as this interface may be not supported by
+    // all platforms.
 
-		/// <summary>
-		/// Finalizer for HashAlgorithm
-		/// </summary>
-		~HashAlgorithm()
-		{
-			Dispose(false);
-		}
+    internal abstract class HashAlgorithm : IDisposable
+    {
+        protected byte[] HashValue; // Caches the hash after it is calculated.  Accessed through the Hash property.
+        protected int HashSizeValue; // The size of the hash in bits.
+        protected int State;  // nonzero when in use;  zero when not in use
+        private bool disposed;
 
-		/// <summary>
-		/// Get whether or not the hash can transform multiple blocks at a time.
-		/// Note: MUST be overriden if descendant can transform multiple block
-		/// on a single call!
-		/// </summary>
-		public virtual bool CanTransformMultipleBlocks
-		{
-			get { return true; }
-		}
+        /// <summary>
+        /// Called from constructor of derived class.
+        /// </summary>
+        protected HashAlgorithm ()
+        {
+            disposed = false;
+        }
 
-		public virtual bool CanReuseTransform
-		{
-			get { return true; }
-		}
+        /// <summary>
+        /// Finalizer for HashAlgorithm
+        /// </summary>
+        ~HashAlgorithm ()
+        {
+            Dispose(false);
+        }
 
-		public void Clear()
-		{
-			// same as System.IDisposable.Dispose() which is documented
-			Dispose(true);
-		}
+        /// <summary>
+        /// Get whether or not the hash can transform multiple blocks at a time.
+        /// Note: MUST be overriden if descendant can transform multiple block
+        /// on a single call!
+        /// </summary>
+        public virtual bool CanTransformMultipleBlocks {
+            get
+            {
+                return true;
+            }
+        }
 
-		/// <summary>
-		/// Computes the entire hash of all the bytes in the byte array.
-		/// </summary>
-		public byte[] ComputeHash(byte[] input)
-		{
-			return ComputeHash(input, 0, input.Length);
-		}
+        public virtual bool CanReuseTransform {
+            get
+            {
+                return true;
+            }
+        }
 
-		public byte[] ComputeHash(byte[] buffer, int offset, int count)
-		{
-			if (disposed)
-			{
-				throw new ObjectDisposedException("HashAlgorithm");
-			}
+        public void Clear()
+        {
+            // same as System.IDisposable.Dispose() which is documented
+            Dispose (true);
+        }
 
-			HashCore(buffer, offset, count);
-			HashValue = HashFinal();
-			Initialize();
+        /// <summary>
+        /// Computes the entire hash of all the bytes in the byte array.
+        /// </summary>
+        public byte[] ComputeHash (byte[] input)
+        {
+            return ComputeHash (input, 0, input.Length);
+        }
 
-			return HashValue;
-		}
+        public byte[] ComputeHash (byte[] buffer, int offset, int count)
+        {
+            if (disposed)
+                throw new ObjectDisposedException ("HashAlgorithm");
 
-		public byte[] ComputeHash(Stream inputStream)
-		{
-			// don't read stream unless object is ready to use
-			if (disposed)
-			{
-				throw new ObjectDisposedException("HashAlgorithm");
-			}
+            HashCore (buffer, offset, count);
+            HashValue = HashFinal ();
+            Initialize ();
 
-			int l = (int) (inputStream.Length - inputStream.Position);
-			byte[] buffer = new byte[l];
-			inputStream.Read(buffer, 0, l);
+            return HashValue;
+        }
 
-			return ComputeHash(buffer, 0, l);
-		}
+        public byte[] ComputeHash (Stream inputStream)
+        {
+            // don't read stream unless object is ready to use
+            if (disposed)
+                throw new ObjectDisposedException ("HashAlgorithm");
 
-		// Commented out because it uses the CryptoConfig which can't be available in all platforms
+            int l = (int) (inputStream.Length - inputStream.Position);
+            byte[] buffer = new byte [l];
+            inputStream.Read (buffer, 0, l);
 
-		/*
+            return ComputeHash (buffer, 0, l);
+        }
+
+        // Commented out because it uses the CryptoConfig which can't be available in all platforms
+
+        /*
         /// <summary>
         /// Creates the default implementation of the default hash algorithm (SHA1).
         /// </summary>
@@ -113,7 +116,7 @@ namespace Npgsql
         	return Create ("System.Security.Cryptography.HashAlgorithm");
         }*/
 
-		/*
+        /*
         /// <summary>
         /// Creates a specific implementation of the general hash idea.
         /// </summary>
@@ -124,109 +127,114 @@ namespace Npgsql
         }*/
 
 
-		// Changed Exception type because it uses the CryptographicUnexpectedOperationException
-		// which can't be available in all platforms.
-		/// <summary>
-		/// Gets the previously computed hash.
-		/// </summary>
-		public virtual byte[] Hash
-		{
-			get
-			{
-				if (HashValue == null)
-				{
-					throw new NullReferenceException("HashValue is null");
-				}
-				return HashValue;
-			}
-		}
 
-		/// <summary>
-		/// When overridden in a derived class, drives the hashing function.
-		/// </summary>
-		/// <param name="rgb"></param>
-		/// <param name="start"></param>
-		/// <param name="size"></param>
-		protected abstract void HashCore(byte[] rgb, int start, int size);
+        // Changed Exception type because it uses the CryptographicUnexpectedOperationException
+        // which can't be available in all platforms.
+        /// <summary>
+        /// Gets the previously computed hash.
+        /// </summary>
+        public virtual byte[] Hash {
+            get
+            {
+                if (HashValue == null)
+                    throw new NullReferenceException("HashValue is null");
+                return HashValue;
+            }
+        }
 
-		/// <summary>
-		/// When overridden in a derived class, this pads and hashes whatever data might be left in the buffers and then returns the hash created.
-		/// </summary>
-		protected abstract byte[] HashFinal();
+        /// <summary>
+        /// When overridden in a derived class, drives the hashing function.
+        /// </summary>
+        /// <param name="rgb"></param>
+        /// <param name="start"></param>
+        /// <param name="size"></param>
+        protected abstract void HashCore (byte[] rgb, int start, int size);
 
-		/// <summary>
-		/// Returns the size in bits of the hash.
-		/// </summary>
-		public virtual int HashSize
-		{
-			get { return HashSizeValue; }
-		}
+        /// <summary>
+        /// When overridden in a derived class, this pads and hashes whatever data might be left in the buffers and then returns the hash created.
+        /// </summary>
+        protected abstract byte[] HashFinal ();
 
-		/// <summary>
-		/// When overridden in a derived class, initializes the object to prepare for hashing.
-		/// </summary>
-		public abstract void Initialize();
+        /// <summary>
+        /// Returns the size in bits of the hash.
+        /// </summary>
+        public virtual int HashSize {
+            get
+            {
+                return HashSizeValue;
+            }
+        }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			disposed = true;
-		}
+        /// <summary>
+        /// When overridden in a derived class, initializes the object to prepare for hashing.
+        /// </summary>
+        public abstract void Initialize ();
 
-		/// <summary>
-		/// Must be overriden if not 1
-		/// </summary>
-		public virtual int InputBlockSize
-		{
-			get { return 1; }
-		}
+        protected virtual void Dispose (bool disposing)
+        {
+            disposed = true;
+        }
 
-		/// <summary>
-		/// Must be overriden if not 1
-		/// </summary>
-		public virtual int OutputBlockSize
-		{
-			get { return 1; }
-		}
+        /// <summary>
+        /// Must be overriden if not 1
+        /// </summary>
+        public virtual int InputBlockSize {
+            get
+            {
+                return 1;
+            }
+        }
 
-		void IDisposable.Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this); // Finalization is now unnecessary
-		}
+        /// <summary>
+        /// Must be overriden if not 1
+        /// </summary>
+        public virtual int OutputBlockSize {
+            get
+            {
+                return 1;
+            }
+        }
 
-		/// <summary>
-		/// Used for stream chaining.  Computes hash as data passes through it.
-		/// </summary>
-		/// <param name="inputBuffer">The buffer from which to grab the data to be copied.</param>
-		/// <param name="inputOffset">The offset into the input buffer to start reading at.</param>
-		/// <param name="inputCount">The number of bytes to be copied.</param>
-		/// <param name="outputBuffer">The buffer to write the copied data to.</param>
-		/// <param name="outputOffset">At what point in the outputBuffer to write the data at.</param>
-		public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
-		{
-			Buffer.BlockCopy(inputBuffer, inputOffset, outputBuffer, outputOffset, inputCount);
-			HashCore(inputBuffer, inputOffset, inputCount);
+        void IDisposable.Dispose ()
+        {
+            Dispose (true);
+            GC.SuppressFinalize (this);  // Finalization is now unnecessary
+        }
 
-			return inputCount;
-		}
+        /// <summary>
+        /// Used for stream chaining.  Computes hash as data passes through it.
+        /// </summary>
+        /// <param name="inputBuffer">The buffer from which to grab the data to be copied.</param>
+        /// <param name="inputOffset">The offset into the input buffer to start reading at.</param>
+        /// <param name="inputCount">The number of bytes to be copied.</param>
+        /// <param name="outputBuffer">The buffer to write the copied data to.</param>
+        /// <param name="outputOffset">At what point in the outputBuffer to write the data at.</param>
+        public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+        {
+            Buffer.BlockCopy (inputBuffer, inputOffset, outputBuffer, outputOffset, inputCount);
+            HashCore (inputBuffer, inputOffset, inputCount);
 
-		/// <summary>
-		/// Used for stream chaining.  Computes hash as data passes through it.  Finishes off the hash.
-		/// </summary>
-		/// <param name="inputBuffer">The buffer from which to grab the data to be copied.</param>
-		/// <param name="inputOffset">The offset into the input buffer to start reading at.</param>
-		/// <param name="inputCount">The number of bytes to be copied.</param>
-		public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
-		{
-			byte[] outputBuffer = new byte[inputCount];
+            return inputCount;
+        }
 
-			Buffer.BlockCopy(inputBuffer, inputOffset, outputBuffer, 0, inputCount);
+        /// <summary>
+        /// Used for stream chaining.  Computes hash as data passes through it.  Finishes off the hash.
+        /// </summary>
+        /// <param name="inputBuffer">The buffer from which to grab the data to be copied.</param>
+        /// <param name="inputOffset">The offset into the input buffer to start reading at.</param>
+        /// <param name="inputCount">The number of bytes to be copied.</param>
+        public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
+        {
+            byte[] outputBuffer = new byte[inputCount];
 
-			HashCore(inputBuffer, inputOffset, inputCount);
-			HashValue = HashFinal();
-			Initialize();
+            Buffer.BlockCopy (inputBuffer, inputOffset, outputBuffer, 0, inputCount);
 
-			return outputBuffer;
-		}
-	}
+            HashCore (inputBuffer, inputOffset, inputCount);
+            HashValue = HashFinal ();
+            Initialize ();
+
+            return outputBuffer;
+        }
+    }
+
 }
