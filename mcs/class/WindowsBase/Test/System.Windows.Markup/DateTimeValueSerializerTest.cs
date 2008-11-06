@@ -152,7 +152,7 @@ namespace MonoTests.System.Windows.Markup {
 		}
 
 		[Test]
-		[CategoryAttribute ("NotWorking")]
+		[NUnit.Framework.CategoryAttribute ("NotWorking")]
 		public void ConvertToString1 ()
 		{
 			ValueSerializer serializer = (ValueSerializer)ValueSerializer.GetSerializerFor (typeof (DateTime));
