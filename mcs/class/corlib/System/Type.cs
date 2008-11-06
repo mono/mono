@@ -1105,7 +1105,31 @@ namespace System {
 					l.AddRange (c);
 				}
 			}
-			result = new MemberInfo [l.Count];
+
+			switch (memberType) {
+			case MemberTypes.Constructor :
+				result = new ConstructorInfo [l.Count];
+				break;
+			case MemberTypes.Event :
+				result = new EventInfo [l.Count];
+				break;
+			case MemberTypes.Field :
+				result = new FieldInfo [l.Count];
+				break;
+			case MemberTypes.Method :
+				result = new MethodInfo [l.Count];
+				break;
+			case MemberTypes.NestedType :
+			case MemberTypes.TypeInfo :
+				result = new Type [l.Count];
+				break;
+			case MemberTypes.Property :
+				result = new PropertyInfo [l.Count];
+				break;
+			default :
+				result = new MemberInfo [l.Count];
+				break;
+			}
 			l.CopyTo (result);
 			return result;
 		}

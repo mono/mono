@@ -1,3 +1,11 @@
+2008-11-06  Bill Holmes  <billholmes54@gmail.com>
+
+	* TypeTest.cs: TypeGetMemberReturnTypeTest added to check that the
+	  instantiated type of the returned MemberInfo array matches the
+	  MemberTypes flag passed in.
+
+	Contributed under MIT/X11 license.
+
 2008-10-07  Marek Habersack  <mhabersack@novell.com>
 
 	* MathTest.cs: added tests for rounding doubles with truncation in

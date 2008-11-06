@@ -3064,6 +3064,34 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 #endif
 
+		[Test]
+		public void TypeGetMemberReturnTypeTest ()
+		{
+			object obj;
+			MemberTypes memtype;
+			Type testtype;
+			object [] flagsandtypes = new object [] {
+				MemberTypes.All, typeof (MemberInfo []),
+				MemberTypes.Constructor, typeof (ConstructorInfo []),
+				MemberTypes.Custom, typeof (MemberInfo []),
+				MemberTypes.Event, typeof (EventInfo []),
+				MemberTypes.Field, typeof (FieldInfo []),
+				MemberTypes.Method, typeof (MethodInfo []),
+				MemberTypes.NestedType, typeof (Type []),
+				MemberTypes.Property, typeof (PropertyInfo []),
+				MemberTypes.TypeInfo, typeof (Type [])};
+
+			for (int i=0; i < flagsandtypes.Length; i+=2) {
+				memtype = (MemberTypes)flagsandtypes [i];
+				testtype = (Type)flagsandtypes [i+1];
+				obj = GetType ().GetMember ("DummyMember", memtype,
+						BindingFlags.Public | BindingFlags.Instance);
+				Assert.AreEqual (testtype.GetHashCode (), obj.GetType ().GetHashCode (),
+						"Expected " + testtype.FullName);
+			}
+
+		}
+
 		static bool ContainsProperty (PropertyInfo [] props, string name)
 		{
 			foreach (PropertyInfo p in props)
