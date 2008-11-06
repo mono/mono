@@ -1,3 +1,9 @@
+2008-11-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: Apply patch from Jonathan Anderson that better
+	handles AutoSize controls when docked.
+	[Fixes bug #439443]
+
 2008-10-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayout.cs: My previous fix broke a test, tweak it a bit.

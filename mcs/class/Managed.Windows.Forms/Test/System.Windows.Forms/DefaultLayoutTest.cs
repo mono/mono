@@ -3,7 +3,9 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -1035,5 +1037,74 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (37, panel.Top, "Top");
 			Assert.AreEqual (37, panel.Width, "Width");
 		}
+
+#if NET_2_0
+		[Test]
+		public void AutoSizeGrowOnlyControls_ShrinkWhenDocked ()
+		{
+			// For most controls that are AutoSized and support the
+			// AutoSizeMode property, if they are set to GrowOnly,
+			// they should not shrink.  However, they will shrink 
+			// even in GrowOnly mode if they are docked.
+			// Button is one exception to this rule.
+			Form f = new Form ();
+			f.ClientSize = new Size (300, 300);
+			f.ShowInTaskbar = false;
+			f.Show ();
+
+			List<Type> types = new List<Type> ();
+			types.Add (typeof (TableLayoutPanel));
+			types.Add (typeof (FlowLayoutPanel));
+			types.Add (typeof (ToolStripContentPanel));
+			types.Add (typeof (Panel));
+			types.Add (typeof (GroupBox));
+			types.Add (typeof (UserControl));
+			foreach (Type t in types) {
+				Control c = t.GetConstructor (Type.EmptyTypes).Invoke (null) as Control;
+				c.AutoSize = true;
+				t.GetProperty ("AutoSizeMode").SetValue (c, AutoSizeMode.GrowOnly, null);
+				c.Bounds = new Rectangle (5, 5, 100, 100);
+				f.Controls.Add (c);
+				Assert.AreEqual (100, c.Height, "1 " + t.Name);
+				c.Dock = DockStyle.Top;
+				Assert.IsFalse (100 == c.Height, "2 " + t.Name);
+				f.Controls.Remove (c);
+				c.Dispose ();
+			}
+
+			f.Dispose ();
+		}
+
+		[Test]
+		public void AutoSizeGrowOnlyButtons_DoNotShrinkWhenDocked ()
+		{
+			// For most controls that are AutoSized and support the
+			// AutoSizeMode property, if they are set to GrowOnly,
+			// they should not shrink.  However, they will shrink 
+			// even in GrowOnly mode if they are docked.
+			// Button is one exception to this rule.
+			Form f = new Form ();
+			f.ClientSize = new Size (300, 300);
+			f.ShowInTaskbar = false;
+			f.Show ();
+
+			List<Type> types = new List<Type> ();
+			types.Add (typeof (Button));
+			foreach (Type t in types) {
+				Control c = t.GetConstructor (Type.EmptyTypes).Invoke (null) as Control;
+				c.AutoSize = true;
+				t.GetProperty ("AutoSizeMode").SetValue (c, AutoSizeMode.GrowOnly, null);
+				c.Bounds = new Rectangle (5, 5, 100, 100);
+				f.Controls.Add (c);
+				Assert.AreEqual (100, c.Height, "1 " + t.Name);
+				c.Dock = DockStyle.Top;
+				Assert.AreEqual (100, c.Height, "2 " + t.Name);
+				f.Controls.Remove (c);
+				c.Dispose ();
+			}
+
+			f.Dispose ();
+		}
+#endif
 	}
 }

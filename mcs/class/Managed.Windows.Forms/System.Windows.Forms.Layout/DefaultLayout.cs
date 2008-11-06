@@ -247,7 +247,7 @@ namespace System.Windows.Forms.Layout
 			int height;
 			Size preferredsize = child.PreferredSize;
 
-			if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink || child is TableLayoutPanel) {
+			if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink || (child.Dock != DockStyle.None && !(child is Button))) {
 				width = preferredsize.Width;
 				height = preferredsize.Height;
 			} else {

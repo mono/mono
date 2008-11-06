@@ -1,3 +1,8 @@
+2008-11-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayoutTest.cs: Add some tests from Jonathan Anderson
+	for bug #439443.
+
 2008-11-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ProgressBarTest.cs: Add new tests provided by Andy Hume. See
