@@ -1,3 +1,11 @@
+2008-11-06  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-x86.c (mono_arch_allocate_vars): Make sure locals that need
+	alignment larger than 8 bytes are aligned correctly, too.
+
+	* mini.c: Honor the min_align field of MonoClass when laying out
+	the stack.
+
 2008-11-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Fix AOT support for CEE_SWITCH on arm.

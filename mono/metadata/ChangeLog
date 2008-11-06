@@ -1,3 +1,9 @@
+2008-11-06  Mark Probst  <mark.probst@gmail.com>
+
+	* class-internals.h: Make min_align into a whole byte.
+
+	* class.c: Set min_align for SIMD types to 16.
+
 2008-11-05  Geoff Norton  <gnorton@novell.com>
 
 	* attach.c: Default the attacher to enabled for all cases including
