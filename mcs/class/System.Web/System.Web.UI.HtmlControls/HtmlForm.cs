@@ -47,6 +47,25 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
+		// LAMESPEC: This is undocumented on MSDN, but apparently it does exist on MS.NET.
+		// See https://bugzilla.novell.com/show_bug.cgi?id=442104
+		public string Action {
+			get {
+				string action = Attributes ["action"];
+				if (String.IsNullOrEmpty (action))
+					return String.Empty;
+
+				return action;
+			}
+
+			set {
+				if (String.IsNullOrEmpty (value))
+					Attributes ["action"] = null;
+				else
+					Attributes ["action"] = value;
+			}
+		}
+		
 		string _defaultbutton;
 		[DefaultValue ("")]
 		public string DefaultButton
@@ -242,24 +261,33 @@ namespace System.Web.UI.HtmlControls
 			*/
 			
 			string action;
+#if NET_2_0
+			string customAction = Attributes ["action"];
+#endif
+			
 #if !TARGET_J2EE
-			string file_path = Page.Request.FilePath;
-			string current_path = Page.Request.CurrentExecutionFilePath;
-			if (file_path == current_path) {
-				// Just the filename will do
-				action = UrlUtils.GetFile (file_path);
-			} else {
-				// Fun. We need to make cookieless sessions work, so no
-				// absolute paths here.
-				Uri current_uri = new Uri ("http://host" + current_path);
-				Uri fp_uri = new Uri ("http://host" + file_path);
-				action = fp_uri.MakeRelative (current_uri);
-			}
-
+#if NET_2_0
+			if (String.IsNullOrEmpty (customAction)) {
+#endif
+				string file_path = Page.Request.FilePath;
+				string current_path = Page.Request.CurrentExecutionFilePath;
+				if (file_path == current_path) {
+					// Just the filename will do
+					action = UrlUtils.GetFile (file_path);
+				} else {
+					// Fun. We need to make cookieless sessions work, so no
+					// absolute paths here.
+					Uri current_uri = new Uri ("http://host" + current_path);
+					Uri fp_uri = new Uri ("http://host" + file_path);
+					action = fp_uri.MakeRelative (current_uri);
+				}
+#if NET_2_0
+			} else
+				action = customAction;
+#endif
 			action += Page.Request.QueryStringRaw;
 #else
 			// Allow the page to transform action to a portlet action url
-			string customAction = Attributes ["action"];
 			if (String.IsNullOrEmpty (customAction)) {
 				string queryString = Page.Request.QueryStringRaw;
 				action = CreateActionUrl (VirtualPathUtility.ToAppRelative (Page.Request.CurrentExecutionFilePath) +
@@ -279,7 +307,10 @@ namespace System.Web.UI.HtmlControls
 				w.WriteAttribute ("name", Name);
 
 			w.WriteAttribute ("method", Method);
-			w.WriteAttribute ("action", action, true);
+#if NET_2_0
+			if (String.IsNullOrEmpty (customAction))
+#endif
+				w.WriteAttribute ("action", action, true);
 
 			/*
 			 * This is a hack that guarantees the ID is set properly for HtmlControl to
