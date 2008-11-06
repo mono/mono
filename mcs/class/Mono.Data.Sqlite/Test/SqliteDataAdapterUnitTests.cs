@@ -66,6 +66,7 @@ namespace MonoTests.Mono.Data.Sqlite
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void GetSchemaTable()
 		{
 			_conn.ConnectionString = _connectionString;
@@ -92,6 +93,7 @@ namespace MonoTests.Mono.Data.Sqlite
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void DataAdapterRandomValues()
 		{
 			SqliteDataAdapter da = PrepareDataAdapter();
