@@ -1,3 +1,10 @@
+2008-11-06  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: implemented the sorting capability.
+
+	* ListViewSortEventArgs.cs: implemented all the methods and
+	properties. 
+
 2008-11-01  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: do not instantiate the layout template more than

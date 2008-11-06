@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -37,16 +37,18 @@ namespace System.Web.UI.WebControls
 	{
 		public ListViewSortEventArgs (string sortExpression, SortDirection sortDirection)
 		{
+			this.SortExpression = sortExpression;
+			this.SortDirection = sortDirection;
 		}
 		
 		public SortDirection SortDirection {
-			get { throw new NotImplementedException (); }
-			set { }
+			get;
+			set;
 		}
 		
 		public string SortExpression {
-			get { throw new NotImplementedException (); }
-			set { }
+			get;
+			set;
 		}
 	}
 }

@@ -1168,6 +1168,9 @@ namespace System.Web.UI.WebControls
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
 			ListViewCommandEventArgs args = e as ListViewCommandEventArgs;
+			if (args == null)
+				args = new ListViewCommandEventArgs (CreateItem (ListViewItemType.EmptyItem), source, e as CommandEventArgs);
+			
 			if (args != null) {
 				bool causesValidation = false;
 				IButtonControl button = args.CommandSource as IButtonControl;
@@ -1186,6 +1189,27 @@ namespace System.Web.UI.WebControls
 		void ProcessCommand (ListViewCommandEventArgs args, bool causesValidation)
 		{
 			OnItemCommand (args);
+
+			string commandName = args.CommandName;
+			string commandArgument = args.CommandArgument as string;
+			
+			if (String.Compare (commandName, DataControlCommands.SortCommandName, StringComparison.OrdinalIgnoreCase) == 0)
+				Sort (commandArgument, DetermineSortDirection (commandArgument));
+		}
+
+		SortDirection DetermineSortDirection (string sortExpression)
+		{
+			SortDirection ret;
+
+			if (sortExpression != SortExpression)
+				return SortDirection.Ascending;
+
+			if (SortDirection == SortDirection.Ascending)
+				ret = SortDirection.Descending;
+			else
+				ret = SortDirection.Ascending;
+
+			return ret;
 		}
 		
 		protected override void OnInit (EventArgs e)
@@ -1424,6 +1448,25 @@ namespace System.Web.UI.WebControls
 	
 		public virtual void Sort (string sortExpression, SortDirection sortDirection)
 		{
+			ListViewSortEventArgs args = new ListViewSortEventArgs (sortExpression, sortDirection);
+			OnSorting (args);
+
+			if (args.Cancel)
+				return;
+			
+			if (IsBoundUsingDataSourceID) {
+				DataSourceView dsv = GetData ();
+				if (dsv == null)
+					throw new InvalidOperationException ("Missing data.");
+				
+				_sortDirection = args.SortDirection;
+				_sortExpression = args.SortExpression;
+				_startRowIndex = 0;
+				EditIndex = -1;
+			}
+			
+			OnSorted (EventArgs.Empty);
+			RequiresDataBinding = true;
 		}
 	
 		void IPageableItemContainer.SetPageProperties (int startRowIndex, int maximumRows, bool databind)
