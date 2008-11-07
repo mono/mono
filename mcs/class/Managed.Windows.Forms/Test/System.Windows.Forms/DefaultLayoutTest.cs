@@ -750,6 +750,53 @@ namespace MonoTests.System.Windows.Forms
 				get { return new Rectangle (20, 20, this.Width - 40, this.Height - 40); }
 			}
 		}
+
+#if NET_2_0
+		[Test]
+		public void DockingPreferredSize ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.ClientSize = new Size (300, 300);
+
+			C1 c1 = new C1 ();
+			c1.Size = new Size (100, 100);
+			c1.Dock = DockStyle.Left;
+
+			f.Controls.Add (c1);
+			f.Show ();
+
+			Assert.AreEqual (new Size (100, 300), c1.Size, "A1");
+
+			f.Controls.Clear ();
+			C2 c2 = new C2 ();
+			c2.Size = new Size (100, 100);
+			c2.Dock = DockStyle.Left;
+
+			f.Controls.Add (c2);
+			Assert.AreEqual (new Size (100, 300), c1.Size, "A2");
+
+			f.Dispose ();
+		}
+
+		private class C1 : Panel
+		{
+			public override Size GetPreferredSize (Size proposedSize)
+			{
+				Console.WriteLine ("HOYO!");
+				return new Size (200, 200);
+			}
+		}
+
+		private class C2 : Panel
+		{
+			public override Size GetPreferredSize (Size proposedSize)
+			{
+				return Size.Empty;
+			}
+		}
+#endif
+
 		[Test]
 		public void ResettingDockToNone ()
 		{
@@ -1106,5 +1153,56 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 #endif
+
+		[Test]
+		public void AnchoredAutoSizedControls_SizeInCorrectDirection ()
+		{
+			Form f = new Form ();
+			f.ClientSize = new Size (300, 300);
+			f.ShowInTaskbar = false;
+
+			Panel p1 = new Panel ();
+			p1.Bounds = new Rectangle (150, 150, 0, 0);
+			p1.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+			p1.AutoSize = true;
+			f.Controls.Add (p1);
+
+			Panel p2 = new Panel ();
+			p2.Bounds = new Rectangle (150, 150, 0, 0);
+			p2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			p2.AutoSize = true;
+			f.Controls.Add (p2);
+
+			Panel p3 = new Panel ();
+			p3.Bounds = new Rectangle (150, 150, 0, 0);
+			p3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;
+			p3.AutoSize = true;
+			f.Controls.Add (p3);
+
+			Panel p4 = new Panel ();
+			p4.Bounds = new Rectangle (150, 150, 0, 0);
+			p4.Anchor = AnchorStyles.None;
+			p4.AutoSize = true;
+			f.Controls.Add (p4);
+
+			f.Show ();
+			// cause the panels to grow
+			p1.Controls.Add (new TextBox ());
+			p2.Controls.Add (new TextBox ());
+			p3.Controls.Add (new TextBox ());
+			p4.Controls.Add (new TextBox ());
+			f.PerformLayout ();
+
+			Assert.AreEqual (150, p1.Top, "1");
+			Assert.AreEqual (150, p1.Left, "2");
+			Assert.AreEqual (150, p2.Bottom, "3");
+			Assert.AreEqual (150, p2.Right, "4");
+			Assert.AreEqual (150, p3.Top, "5");
+			Assert.AreEqual (150, p3.Left, "6");
+			Assert.AreEqual (150, p4.Top, "7");
+			Assert.AreEqual (150, p4.Left, "8");
+
+			f.Dispose ();
+		}
 	}
 }

@@ -1,3 +1,9 @@
+2008-11-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: Apply patch from Jonathan Anderson that keeps
+	undocked autosize controls from moving when resized.
+	[Fixes bug #439479]
+
 2008-11-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: Apply patch from Jonathan Anderson that better

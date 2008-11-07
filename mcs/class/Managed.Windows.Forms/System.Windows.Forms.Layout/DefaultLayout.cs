@@ -171,10 +171,16 @@ namespace System.Windows.Forms.Layout
 				    || !child.AutoSize)
 					continue;
 
+				AnchorStyles anchor = child.Anchor;
 				left = child.Left;
 				top = child.Top;
 				
 				Size preferredsize = GetPreferredControlSize (child);
+
+				if (((anchor & AnchorStyles.Left) != 0) || ((anchor & AnchorStyles.Right) == 0))
+					child.dist_right += child.Width - preferredsize.Width;
+				if (((anchor & AnchorStyles.Top) != 0) || ((anchor & AnchorStyles.Bottom) == 0))
+					child.dist_bottom += child.Height - preferredsize.Height;
 
 				child.SetBoundsInternal (left, top, preferredsize.Width, preferredsize.Height, BoundsSpecified.None);
 			}
