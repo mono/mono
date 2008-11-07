@@ -1,3 +1,8 @@
+2008-11-07  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlFormTest.cs: added a test for the undocumented Action
+	property.
+
 2008-10-07  Christian Hergert  <christian.hergert@gmail.com>
 
 	* HtmlImageTest.cs: Add test to make sure the src attribute is not

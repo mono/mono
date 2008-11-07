@@ -216,6 +216,19 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.AreEqual (" method=\"post\" action=\"?q=1&amp;q2=2\"", attrs, "A1");
 		}
 #endif
+
+		[Test]
+		public void Undocumented_ActionProperty ()
+		{
+			TestPage p = new TestPage ();
+			p.SetContext ();
+			FormPoker form = new FormPoker ();
+			form.Page = p;
+			form.Action = "someactionfile.aspx";
+			string attrs = form.RenderAttributes ();
+
+			Assert.AreEqual (" method=\"post\" action=\"someactionfile.aspx\"", attrs, "A1");
+		}
 #endif
 		
 		[Test]
