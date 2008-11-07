@@ -324,7 +324,7 @@ namespace System.Windows.Forms
 					addNewItem.Enabled = isNull ? addNewItem.Enabled : this.bindingSource.AllowNew;
 
 				if (moveFirstItem != null)
-					moveFirstItem.Enabled = isNull ? moveFirstItem.Enabled : bindingSource.Position != 0;
+					moveFirstItem.Enabled = isNull ? moveFirstItem.Enabled : bindingSource.Position > 0;
 
 				if (moveLastItem != null)
 					moveLastItem.Enabled = isNull ? moveLastItem.Enabled : bindingSource.Position < (bindingSource.Count - 1);
@@ -338,11 +338,15 @@ namespace System.Windows.Forms
 				if (deleteItem != null)
 					deleteItem.Enabled = isNull ? deleteItem.Enabled : (bindingSource.Count != 0 && bindingSource.AllowRemove);
 
-				if (countItem != null)
+				if (countItem != null) {
 					countItem.Text = string.Format(countItemFormat, isNull ? 0 : bindingSource.Count);
+					countItem.Enabled = !isNull && bindingSource.Count > 0;
+				}
 
-				if (positionItem != null)
+				if (positionItem != null) {
 					positionItem.Text = string.Format("{0}", isNull ? 0 : bindingSource.Position + 1);
+					positionItem.Enabled = !isNull && bindingSource.Count > 0;
+				}
 			}
 			finally
 			{

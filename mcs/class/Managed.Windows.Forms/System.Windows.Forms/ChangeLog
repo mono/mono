@@ -1,3 +1,11 @@
+2008-11-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingNavigator.cs: MoveFirstItem should be enabled only if
+	position is larger than 0, not only different than 0. Also Position
+	and Count items should be enabled if the BindingSource is non null and
+	non empty.
+	Fixes #439961.
+
 2008-11-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TabControl.cs: Don't raise SelectedIndexChanged until we have
