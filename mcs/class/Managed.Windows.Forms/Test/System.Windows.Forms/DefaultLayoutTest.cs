@@ -1152,7 +1152,6 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
-#endif
 
 		[Test]
 		public void AnchoredAutoSizedControls_SizeInCorrectDirection ()
@@ -1204,5 +1203,6 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
+#endif
 	}
 }
