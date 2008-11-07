@@ -1,3 +1,7 @@
+2008-11-07  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Fixed a funny commit error.
+
 2008-11-06  Bill Holmes  <billholmes54@gmail.com>
 
 	* main.c Fix MSVC build.
