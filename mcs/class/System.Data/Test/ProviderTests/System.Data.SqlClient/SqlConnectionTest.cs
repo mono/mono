@@ -28,11 +28,13 @@
 //
 
 using System;
+using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
 using System.Net;
+using System.Threading;
+
 using NUnit.Framework;
-using System.Collections;
 
 namespace MonoTests.System.Data
 {
@@ -41,13 +43,14 @@ namespace MonoTests.System.Data
 	public class SqlConnectionTest
 	{
 		SqlConnection conn;
-		String connectionString = ConnectionManager.Singleton.ConnectionString;
+		String connectionString;
 		ArrayList events;
 
 		[SetUp]
 		public void SetUp ()
 		{
 			events = new ArrayList ();
+			connectionString = ConnectionManager.Singleton.ConnectionString;
 		}
 
 		[TearDown]
@@ -203,6 +206,55 @@ namespace MonoTests.System.Data
 			} finally {
 				conn.Close ();
 			}
+		}
+
+		[Test] // bug #383061
+		public void Open_MaxPoolSize_Reached ()
+		{
+			SqlCommand cmd;
+
+			connectionString += "Pooling=true;Connection Lifetime=6;"
+				+ "Connect Timeout=3;Max Pool Size=2";
+
+			SqlConnection conn1 = new SqlConnection (connectionString);
+			conn1.Open ();
+
+			SqlConnection conn2 = new SqlConnection (connectionString);
+			conn2.Open ();
+
+			DateTime start = DateTime.Now;
+
+			try {
+				using (SqlConnection sqlConnection = new SqlConnection (connectionString)) {
+					sqlConnection.Open ();
+				}
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// System.InvalidOperationException: Timeout expired.
+				// The timeout period elapsed prior to obtaining a
+				// connection from the pool. This may have occurred
+				// because all pooled connections were in use and max
+				// pool size was reached.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			TimeSpan elapsed = DateTime.Now - start;
+
+			Assert.IsTrue (elapsed.TotalSeconds >= 3, "#B1:" + elapsed.TotalSeconds);
+			Assert.IsTrue (elapsed.TotalSeconds < 4, "#B2:" + elapsed.TotalSeconds);
+
+			conn2.Close ();
+
+			// as the second connection is closed, we should now be
+			// able to open a new connection (which essentially
+			// uses the pooled connection from conn2)
+			SqlConnection conn3 = new SqlConnection (connectionString);
+			conn3.Open ();
+			conn3.Close ();
+
+			conn1.Close ();
 		}
 
 		[Test] // bug #412574

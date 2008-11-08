@@ -1,3 +1,7 @@
+2008-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlConnectionTest.cs: Added test for bug #383061.
+
 2008-09-17  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlCommandBuilderTest.cs: Added test for DeriverParameters.
