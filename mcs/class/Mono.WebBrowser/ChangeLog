@@ -1,3 +1,8 @@
+2008-11-08  Andreia Gaita <shana@jitted.com> 
+
+	* Mono.WebBrowser/Manager.cs: Use new webkit backend if requested. If it
+	  doesn't load or blows up, revert to default gecko backend.
+
 2008-10-23  Andreia Gaita  <shana@jitted.com>
 
 	* Mono.Mozilla/DOM/Node.cs,

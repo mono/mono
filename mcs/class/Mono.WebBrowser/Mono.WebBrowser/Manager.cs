@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Reflection;
 
 namespace Mono.WebBrowser
 {
@@ -38,9 +39,21 @@ namespace Mono.WebBrowser
 		{
 			string browserEngine = Environment.GetEnvironmentVariable ("MONO_BROWSER_ENGINE");
 
+#if NET_2_0			
+			if (browserEngine == "webkit") {
+				Assembly ass;
+				try {
+					ass = Assembly.LoadWithPartialName ("mono-webkit");
+					IWebBrowser ret = (IWebBrowser) ass.CreateInstance ("Mono.WebKit.WebBrowser");
+					return ret;
+				} catch {
+					//throw new Exception (Mono.WebBrowser.Exception.ErrorCodes.EngineNotSupported, browserEngine);
+					browserEngine = null;
+				}
+			}
+#endif
 			if (browserEngine == null || browserEngine == "mozilla")
 				return new Mono.Mozilla.WebBrowser (platform);
-
 			throw new Exception (Mono.WebBrowser.Exception.ErrorCodes.EngineNotSupported, browserEngine);
 		}
 
