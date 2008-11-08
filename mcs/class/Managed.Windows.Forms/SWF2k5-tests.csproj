@@ -29,13 +29,13 @@
     </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>.\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_1_1 ONLY_1_1 __MonoCS__ DEBUG</DefineConstants>
+    <DefineConstants>NET_1_1,NET_2_0,__MonoCS__,DEBUG</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -50,6 +50,10 @@
     <WarningLevel>3</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+    <AssemblyName>System.Windows.Forms_test_net_2_0</AssemblyName>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug 2.0|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -73,6 +77,10 @@
     <WarningLevel>3</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+    <AssemblyName>System.Windows.Forms_test</AssemblyName>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -96,6 +104,10 @@
     <WarningLevel>3</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+    <AssemblyName>System.Windows.Forms_test</AssemblyName>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 2.0|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -119,6 +131,37 @@
     <WarningLevel>3</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+    <AssemblyName>System.Windows.Forms_test</AssemblyName>
+    <RootNamespace>
+    </RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0|AnyCPU' ">
+    <OutputPath>.\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>NET_1_1,NET_2_0,__MonoCS__,DEBUG</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <AssemblyName>System.Windows.Forms_test_net_2_0</AssemblyName>
+    <OutputType>Library</OutputType>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
@@ -148,7 +191,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="common\Consts.cs" />
     <Compile Include="Test\System.Windows.Forms\ApplicationTest.cs" />
     <Compile Include="Test\System.Windows.Forms\AutoCompleteStringCollectionTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ApplicationContextTest.cs" />
@@ -224,6 +266,7 @@
     <Compile Include="Test\System.Windows.Forms\FlowPanelTests.cs" />
     <Compile Include="Test\System.Windows.Forms\FocusTest.cs" />
     <Compile Include="Test\System.Windows.Forms\FolderBrowserDialogTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\FormEventTest.cs" />
     <Compile Include="Test\System.Windows.Forms\FormHandleTest.cs" />
     <Compile Include="Test\System.Windows.Forms\FormTest.cs" />
     <Compile Include="Test\System.Windows.Forms\EventArgsTest.cs" />
@@ -333,6 +376,9 @@
     <Compile Include="Test\System.Resources\ResXFileRefTest.cs" />
     <Compile Include="Test\System.Resources\ResXResourceReaderTest.cs" />
     <Compile Include="Test\System.Resources\WriterTest.cs" />
+    <Compile Include="..\..\build\common\Consts.cs">
+      <Link>Consts.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Test\System.Windows.Forms\ChangeLog" />
@@ -349,5 +395,8 @@
     </PreBuildEvent>
     <PostBuildEvent>
     </PostBuildEvent>
+    <ProjectGuid>{5E6430B2-6B9F-4E76-802E-20207EF80391}</ProjectGuid>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
 </Project>
