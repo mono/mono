@@ -40,9 +40,6 @@ namespace System.Windows.Forms
 		
 		internal HtmlElement (WebBrowser owner, Mono.WebBrowser.IWebBrowser webHost, IElement element)
 		{
-#if DEBUG
-			Console.WriteLine ("---Creating new HtmlElement " + (element == null ? "" : element.LocalName));
-#endif
 			this.webHost = webHost;
 			this.element = element;
 			this.owner = owner;
@@ -154,9 +151,6 @@ namespace System.Windows.Forms
 
 		public HtmlElement FirstChild {
 			get {
-#if DEBUG
-				Console.WriteLine (this.TagName + ": Fetching first child");
-#endif
 				return new HtmlElement (owner, webHost, (IElement)element.FirstChild); 
 			}
 		}
