@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -36,12 +36,13 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	[ThemeableAttribute(true)]
-	[ParseChildren (true)]
-	[PersistChildren (false)]
+//	[ToolboxBitmap (typeof (System.Web.UI.WebControls.DataPager), "DataPager.ico")]
+	[ToolboxItemFilter ("System.Web.Extensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35", ToolboxItemFilterType.Require)]
 	[SupportsEventValidation]
-	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[Themeable (true)]
+	[ParseChildren (true)]
+	[Designer ("System.Web.UI.Design.WebControls.DataPagerDesigner, System.Web.Extensions.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")]
+	[PersistChildren (false)]
 	public class DataPager : Control, IAttributeAccessor, INamingContainer, ICompositeControlDesignerAccessor
 	{
 		const int NO_PAGEABLE_ITEM_CONTAINER = 0;
@@ -374,7 +375,8 @@ namespace System.Web.UI.WebControls
 				((IStateManager) _fields).TrackViewState ();
 		}
 
-		[BrowsableAttribute(false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public AttributeCollection Attributes {
 			get {
 				if (_attributes == null)
@@ -391,17 +393,25 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[PersistenceModeAttribute(PersistenceMode.InnerProperty)]
+		[Category ("Default")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DefaultValue ("")]
+		[Editor ("System.Web.UI.Design.WebControls.DataPagerFieldTypeEditor, System.Web.Extensions.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35", typeof (System.Drawing.Design.UITypeEditor))]
+		[MergableProperty (false)]
 		public virtual DataPagerFieldCollection Fields {
 			get { return _fields; }
 		}
 
-		[BrowsableAttribute(false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int MaximumRows {
 			get { return _maximumRows; }
 		}
 
-		[ThemeableAttribute(false)]
+		[WebCategory ("Paging")]
+		[IDReferenceProperty (typeof (System.Web.UI.WebControls.IPageableItemContainer))]
+		[DefaultValue ("")]
+		[Themeable (false)]
 		public virtual string PagedControlID {
 			get {
 				string ret = ViewState ["PagedControlID"] as string;
@@ -414,6 +424,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["PagedControlID"] = value; }
 		}
 
+		[DefaultValue (10)]
+		[WebCategory ("Paging")]
 		public int PageSize {
 			get { return _maximumRows; }
 			set {
@@ -435,7 +447,9 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-
+		
+		[DefaultValue ("")]
+		[WebCategory ("Paging")]
 		public string QueryStringField {
 			get {
 				string ret = ViewState ["QueryStringField"] as string;
@@ -448,17 +462,20 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["QueryStringField"] = value; }
 		}
 
-		[BrowsableAttribute(false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int StartRowIndex {
 			get { return _startRowIndex; }
 		}
 
-		[BrowsableAttribute(false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		protected virtual HtmlTextWriterTag TagKey {
 			get { return HtmlTextWriterTag.Span; }
 		}
 
-		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public int TotalRowCount {
 			get { return _totalRowCount; }
 		}

@@ -40,12 +40,13 @@ using System.Web.UI.HtmlControls;
 
 namespace System.Web.UI.WebControls
 {
-	[DefaultEventAttribute ("SelectedIndexChanged")]
-	[ControlValuePropertyAttribute ("SelectedValue")]
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.ListViewDesigner, System.Web.Extensions.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")]
-	[SupportsEventValidationAttribute ()]
-	[ToolboxBitmapAttribute (typeof (ListView), "ListView.ico")]
-	[DefaultPropertyAttribute ("SelectedValue")]
+	[DefaultEvent ("SelectedIndexChanged")]
+	[DefaultProperty ("SelectedValue")]
+	[SupportsEventValidation]
+	[ControlValueProperty ("SelectedValue")]
+	[ToolboxBitmap (typeof (System.Web.UI.WebControls.ListView), "ListView.ico")]
+	[ToolboxItemFilter ("System.Web.Extensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35", ToolboxItemFilterType.Require)]
+	[Designer ("System.Web.UI.Design.WebControls.ListViewDesigner, System.Web.Extensions.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")]
 	public class ListView : DataBoundControl, INamingContainer, IPageableItemContainer
 	{
 		const int CSTATE_BASE_STATE = 0;
@@ -78,6 +79,7 @@ namespace System.Web.UI.WebControls
 		int _editIndex;
 		int _groupItemCount;
 
+		List <ListViewDataItem> _items;
 		string [] _dataKeyNames;
 		DataKeyArray _dataKeys;
 		ArrayList _dataKeyArray;
@@ -111,109 +113,109 @@ namespace System.Web.UI.WebControls
 		static readonly object SortingEvent = new object ();
 		static readonly object TotalRowCountAvailableEvent = new object ();
 		
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewCancelEventArgs> ItemCanceling {
 			add { Events.AddHandler (ItemCancellingEvent, value); }
 			remove { Events.RemoveHandler (ItemCancellingEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewCommandEventArgs> ItemCommand {
 			add { Events.AddHandler (ItemCommandEvent, value); }
 			remove { Events.RemoveHandler (ItemCommandEvent, value); }
 		}
 	
-		[CategoryAttribute ("Behavior")]
+		[Category ("Behavior")]
 		public event EventHandler <ListViewItemEventArgs> ItemCreated {
 			add { Events.AddHandler (ItemCreatedEvent, value); }
 			remove { Events.RemoveHandler (ItemCreatedEvent, value); }
 		}
 	
-		[CategoryAttribute ("Data")]
+		[Category ("Data")]
 		public event EventHandler <ListViewItemEventArgs> ItemDataBound {
 			add { Events.AddHandler (ItemDataBoundEvent, value); }
 			remove { Events.RemoveHandler (ItemDataBoundEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewDeletedEventArgs> ItemDeleted {
 			add { Events.AddHandler (ItemDeletedEvent, value); }
 			remove { Events.RemoveHandler (ItemDeletedEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewDeleteEventArgs> ItemDeleting {
 			add { Events.AddHandler (ItemDeletingEvent, value); }
 			remove { Events.RemoveHandler (ItemDeletingEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewEditEventArgs> ItemEditing {
 			add { Events.AddHandler (ItemEditingEvent, value); }
 			remove { Events.RemoveHandler (ItemEditingEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewInsertedEventArgs> ItemInserted {
 			add { Events.AddHandler (ItemInsertedEvent, value); }
 			remove { Events.RemoveHandler (ItemInsertedEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewInsertEventArgs> ItemInserting {
 			add { Events.AddHandler (ItemInsertingEvent, value); }
 			remove { Events.RemoveHandler (ItemInsertingEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewUpdatedEventArgs> ItemUpdated {
 			add { Events.AddHandler (ItemUpdatedEvent, value); }
 			remove { Events.RemoveHandler (ItemUpdatedEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewUpdateEventArgs> ItemUpdating {
 			add { Events.AddHandler (ItemUpdatingEvent, value); }
 			remove { Events.RemoveHandler (ItemUpdatingEvent, value); }
 		}
 	
-		[CategoryAttribute ("Behavior")]
+		[Category ("Behavior")]
 		public event EventHandler LayoutCreated {
 			add { Events.AddHandler (LayoutCreatedEvent, value); }
 			remove { Events.RemoveHandler (LayoutCreatedEvent, value); }
 		}
 	
-		[CategoryAttribute ("Behavior")]
+		[Category ("Behavior")]
 		public event EventHandler PagePropertiesChanged {
 			add { Events.AddHandler (PagePropertiesChangedEvent, value); }
 			remove { Events.RemoveHandler (PagePropertiesChangedEvent, value); }
 		}
 	
-		[CategoryAttribute ("Behavior")]
+		[Category ("Behavior")]
 		public event EventHandler <PagePropertiesChangingEventArgs> PagePropertiesChanging {
 			add { Events.AddHandler (PagePropertiesChangingEvent, value); }
 			remove { Events.RemoveHandler (PagePropertiesChangingEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler SelectedIndexChanged {
 			add { Events.AddHandler (SelectedIndexChangedEvent, value); }
 			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewSelectEventArgs> SelectedIndexChanging {
 			add { Events.AddHandler (SelectedIndexChangingEvent, value); }
 			remove { Events.RemoveHandler (SelectedIndexChangingEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler Sorted {
 			add { Events.AddHandler (SortedEvent, value); }
 			remove { Events.RemoveHandler (SortedEvent, value); }
 		}
 	
-		[CategoryAttribute ("Action")]
+		[Category ("Action")]
 		public event EventHandler <ListViewSortEventArgs> Sorting {
 			add { Events.AddHandler (SortingEvent, value); }
 			remove { Events.RemoveHandler (SortingEvent, value); }
@@ -226,50 +228,50 @@ namespace System.Web.UI.WebControls
 #endregion
 
 #region Properties
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override string AccessKey {
 			get { return base.AccessKey; }
 			set { throw StylingNotSupported (); }
 		}
-	
-		[TemplateContainerAttribute (typeof (ListViewDataItem), BindingDirection.TwoWay)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[DefaultValue (null)]
-		[BrowsableAttribute (false)]
+
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DefaultValue ("")]
+		[Browsable (false)]
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListViewDataItem), BindingDirection.TwoWay)]
 		public virtual ITemplate AlternatingItemTemplate {
 			get { return _alternatingItemTemplate; }
 			set { _alternatingItemTemplate = value; }
 		}
 	
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override Color BackColor {
 			get { return base.BackColor; }
 			set { throw StylingNotSupported (); }
 		}
 	
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[BrowsableAttribute (false)]
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color BorderColor {
 			get { return base.BorderColor; }
 			set { throw StylingNotSupported (); }
 		}
 	
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override BorderStyle BorderStyle {
 			get { return base.BorderStyle; }
 			set { throw StylingNotSupported (); }
 		}
 	
-		[BrowsableAttribute (false)]
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override Unit BorderWidth {
 			get { return base.BorderWidth; }
 			set { throw StylingNotSupported (); }
@@ -282,7 +284,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-		[CategoryAttribute ("Behavior")]
+		[Category ("Behavior")]
 		[DefaultValue (true)]
 		public virtual bool ConvertEmptyStringToNull {
 			get {
@@ -295,15 +297,20 @@ namespace System.Web.UI.WebControls
 			
 			set { ViewState ["ConvertEmptyStringToNull"] = value; }
 		}
-	
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[CssClassProperty]
 		public override string CssClass {
 			get { return base.CssClass; }
 			set { throw StylingNotSupported (); }
 		}
-	
-		[DefaultValue (null)]
-		[TypeConverterAttribute (typeof (StringArrayConverter))]
-		[CategoryAttribute ("Data")]
+		
+		[Editor ("System.Web.UI.Design.WebControls.DataFieldEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (System.Drawing.Design.UITypeEditor))]
+		[DefaultValue ("")]
+		[TypeConverter (typeof (System.Web.UI.WebControls.StringArrayConverter))]
+		[Category ("Data")]	
 		public virtual string [] DataKeyNames {
 			get {
 				if (_dataKeyNames != null)
@@ -326,8 +333,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-		[BrowsableAttribute (false)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual DataKeyArray DataKeys {
 			get {
 				if (_dataKeys == null) {
@@ -350,7 +357,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 		[DefaultValue (-1)]
-		[CategoryAttribute ("Misc")]
+		[Category ("Default")]	
 		public virtual int EditIndex {
 			get { return _editIndex; }
 			set {
@@ -365,55 +372,73 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-		[BrowsableAttribute (false)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual ListViewItem EditItem {
 			get { throw new NotImplementedException (); }
 		}
 	
-		[DefaultValue (null)]
-		[BrowsableAttribute (false)]
-		[TemplateContainerAttribute (typeof (ListViewDataItem), BindingDirection.TwoWay)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListViewDataItem), BindingDirection.TwoWay)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Browsable (false)]
+		[DefaultValue ("")]
 		public virtual ITemplate EditItemTemplate {
 			get { return _editItemTemplate; }
 			set { _editItemTemplate = value; }
-		}
-	
-		[DefaultValue (null)]
-		[TemplateContainerAttribute (typeof (ListView))]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[BrowsableAttribute (false)]
+		}	
+
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListView))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DefaultValue ("")]
+		[Browsable (false)]
 		public virtual ITemplate EmptyDataTemplate {
 			get { return _emptyDataTemplate; }
 			set { _emptyDataTemplate = value; }
 		}
 	
-		[TemplateContainerAttribute (typeof (ListViewItem))]
-		[DefaultValue (null)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[BrowsableAttribute (false)]
+
+		[Browsable (false)]
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListViewItem))]
+		[DefaultValue ("")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public virtual ITemplate EmptyItemTemplate {
 			get { return _emptyItemTemplate; }
 			set { _emptyItemTemplate = value; }
 		}
-	
-		[BrowsableAttribute (false)]
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+
+		[WebCategory ("Behavior")]
+		[DefaultValue (false)]
+		public virtual bool EnableModelValidation {
+			get {
+				object o = ViewState ["EnableModelValidation"];
+				if (o == null)
+					return false;
+
+				return (bool)o;
+			}
+			
+			set {
+				if (value)
+					ViewState ["EnableModelValidation"] = value;
+			}
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override FontInfo Font {
 			get { throw StylingNotSupported (); }
 		}
 	
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override Color ForeColor {
 			get { return base.ForeColor; }
 			set { throw StylingNotSupported (); }
 		}
 	
-		[CategoryAttribute ("Misc")]
+		[Category ("Default")]
 		[DefaultValue (1)]
 		public virtual int GroupItemCount {
 			get { return _groupItemCount; }
@@ -430,7 +455,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-		[CategoryAttribute ("Behavior")]
+		[Category ("Behavior")]
 		[DefaultValue ("groupPlaceholder")]
 		public virtual string GroupPlaceholderID {
 			get {
@@ -447,59 +472,59 @@ namespace System.Web.UI.WebControls
 
 				ViewState ["GroupPlaceholderID"] = value;
 			}
-		}
-	
-		[BrowsableAttribute (false)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[DefaultValue (null)]
-		[TemplateContainerAttribute (typeof (ListViewItem))]
+		}	
+
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListViewItem))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Browsable (false)]
+		[DefaultValue ("")]
 		public virtual ITemplate GroupSeparatorTemplate {
 			get { return _groupSeparatorTemplate; }
 			set { _groupSeparatorTemplate = value; }
 		}
-	
-		[TemplateContainerAttribute (typeof (ListViewItem))]
-		[DefaultValue (null)]
-		[BrowsableAttribute (false)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListViewItem))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DefaultValue ("")]
+		[Browsable (false)]
 		public virtual ITemplate GroupTemplate {
 			get { return _groupTemplate; }
 			set { _groupTemplate = value; }
 		}
 	
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		[BrowsableAttribute (false)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override Unit Height {
 			get { return base.Height; }
 			set { throw StylingNotSupported (); }
 		}
 	
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public virtual ListViewItem InsertItem {
 			get;
 			private set;
 		}
 	
-		[CategoryAttribute ("Misc")]
+		[Category ("Default")]
 		[DefaultValue (InsertItemPosition.None)]
 		public virtual InsertItemPosition InsertItemPosition {
 			get;
 			set;
 		}
 	
-		[TemplateContainerAttribute (typeof (ListViewItem), BindingDirection.TwoWay)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[DefaultValue (null)]
-		[BrowsableAttribute (false)]
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListViewItem), BindingDirection.TwoWay)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DefaultValue ("")]
+		[Browsable (false)]
 		public virtual ITemplate InsertItemTemplate {
 			get { return _insertItemTemplate; }
 			set { _insertItemTemplate = value; }
 		}
 	
 		[DefaultValue ("itemPlaceholder")]
-		[CategoryAttribute ("Behavior")]
+		[Category ("Behavior")]
 		public virtual string ItemPlaceholderID {
 			get {
 				string s = ViewState ["ItemPlaceHolderID"] as string;
@@ -517,34 +542,39 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public virtual IList <ListViewDataItem> Items {
-			get { throw new NotImplementedException (); }
+			get {
+				if (_items == null)
+					_items = new List <ListViewDataItem> ();
+
+				return _items;
+			}
 		}
 	
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[BrowsableAttribute (false)]
-		[TemplateContainerAttribute (typeof (ListViewItem))]
-		[DefaultValue (null)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DefaultValue ("")]
+		[Browsable (false)]
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListViewItem))]
 		public virtual ITemplate ItemSeparatorTemplate {
 			get { return _itemSeparatorTemplate; }
 			set { _itemSeparatorTemplate = value; }
 		}
-	
-		[TemplateContainerAttribute (typeof (ListViewDataItem), BindingDirection.TwoWay)]
-		[DefaultValue (null)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[BrowsableAttribute (false)]
+
+		[Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListViewDataItem), BindingDirection.TwoWay)]
+		[DefaultValue ("")]
 		public virtual ITemplate ItemTemplate {
 			get { return _itemTemplate; }
 			set { _itemTemplate = value; }
 		}
 	
-		[TemplateContainerAttribute (typeof (ListView))]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[DefaultValue (null)]
-		[BrowsableAttribute (false)]
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListView))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DefaultValue ("")]
+		[Browsable (false)]
 		public virtual ITemplate LayoutTemplate {
 			get { return _layoutTemplate; }
 			set { _layoutTemplate = value; }
@@ -554,8 +584,8 @@ namespace System.Web.UI.WebControls
 			get { return _maximumRows; }
 		}
 	
-		[BrowsableAttribute (false)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual DataKey SelectedDataKey {
 			get {
 				if (_dataKeyNames == null || _dataKeyNames.Length == 0)
@@ -569,8 +599,14 @@ namespace System.Web.UI.WebControls
 				return null;
 			}
 		}
-	
-		[CategoryAttribute ("Misc")]
+
+		[Browsable (false)]
+		public virtual DataKey SelectedPersistedDataKey {
+			get;
+			set;
+		}
+
+		[Category ("Default")]
 		[DefaultValue (-1)]
 		public virtual int SelectedIndex {
 			get { return _selectedIndex; }
@@ -586,17 +622,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-		[BrowsableAttribute (false)]
-		[DefaultValue (null)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[TemplateContainerAttribute (typeof (ListViewDataItem), BindingDirection.TwoWay)]
+
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DefaultValue ("")]
+		[Browsable (false)]
+		[TemplateContainer (typeof (System.Web.UI.WebControls.ListViewDataItem), BindingDirection.TwoWay)]
 		public virtual ITemplate SelectedItemTemplate {
 			get { return _selectedItemTemplate; }
 			set { _selectedItemTemplate = value; }
 		}
 	
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public object SelectedValue {
 			get {
 				DataKey dk = SelectedDataKey;
@@ -607,16 +644,17 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
+		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		[DefaultValue (SortDirection.Ascending)]
-		[BrowsableAttribute (false)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public virtual SortDirection SortDirection {
 			get { return _sortDirection; }
 		}
 	
-		[BrowsableAttribute (false)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual string SortExpression {
 			get { return _sortExpression; }
 		}
@@ -638,25 +676,25 @@ namespace System.Web.UI.WebControls
 			get { return StartRowIndex; }
 		}
 	
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		[BrowsableAttribute (false)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override short TabIndex {
 			get { return 0; }
 			set { throw new NotSupportedException ("ListView does not allow setting this property."); }
 		}
 	
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		[BrowsableAttribute (false)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override string ToolTip {
 			get { return base.ToolTip; }
 			set { throw StylingNotSupported (); }
 		}
 	
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[BrowsableAttribute (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public override Unit Width {
 			get { return base.Width; }
 			set { throw StylingNotSupported (); }
@@ -715,7 +753,7 @@ namespace System.Web.UI.WebControls
 	
 		protected virtual int CreateChildControls (IEnumerable dataSource, bool dataBinding)
 		{
-			IList <ListViewDataItem> retList = null;
+			IList <ListViewDataItem> retList = Items;
 
 			EnsureLayoutTemplate ();
 			RemoveItems ();

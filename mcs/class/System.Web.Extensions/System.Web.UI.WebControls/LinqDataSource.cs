@@ -39,10 +39,12 @@ using System.Web.UI;
 namespace System.Web.UI.WebControls
 {
 //	[ToolboxBitmap (typeof (LinqDataSource), "LinqDataSource.ico")]
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[ParseChildren (true)]
 	[PersistChildren (false)]
+	[ParseChildren (true)]
+	[Designer ("System.Web.UI.Design.WebControls.LinqDataSourceDesigner, System.Web.Extensions.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")]
+	[DefaultEvent ("Selecting")]
+	[ToolboxItemFilter ("System.Web.Extensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35", ToolboxItemFilterType.Require)]
+	[DefaultProperty ("ContextTypeName")]
 	public class LinqDataSource : DataSourceControl, IDynamicDataSource
 	{
 		static readonly string [] empty_names = new string [] { "DefaultView" };
