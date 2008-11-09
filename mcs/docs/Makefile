@@ -86,7 +86,8 @@ MONO_DIRS = \
 	$(topdir)/class/Mono.Posix/Documentation/en                   \
 	$(topdir)/class/Mono.Security.Win32/Documentation/en          \
 	$(topdir)/class/Mono.Security/Documentation/en                \
-	$(topdir)/class/Mono.Simd/Documentation/en
+	$(topdir)/class/Mono.Simd/Documentation/en		      \
+	$(topdir)/tools/csharplib/en
 
 NOVELL_DIRS = \
 	$(topdir)/class/Novell.Directory.Ldap/Documentation/en
