@@ -43,6 +43,11 @@ namespace System.IO {
 #else
 	public abstract class TextReader : MarshalByRefObject, IDisposable {
 #endif
+		static TextReader ()
+		{
+			Null = new NullTextReader ();
+		}
+
 		protected TextReader() { }
 		
 		public static readonly TextReader Null;
@@ -128,6 +133,14 @@ namespace System.IO {
 
 			return new SynchronizedReader (reader);
 		}	
+
+		private class NullTextReader : System.IO.TextReader {
+
+			public override string ReadLine ()
+			{
+				return null;
+			}
+		}
 	}
 
 	//

@@ -1,3 +1,10 @@
+2008-11-09  William Holmes  <billholmes54@gmail.com>
+
+	* TextReader.cs : Adding the NullTextReader as a private class to
+	  the TestReader class for the Null field of the TestReader.
+
+	Code is contributed under MIT/X11 license.
+
 2008-11-06  Jonathan Chambers  <joncham@gmail.com>
 
 	* MonoIO.cs : Add DuplicateHandle.

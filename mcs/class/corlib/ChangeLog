@@ -1,3 +1,7 @@
+2008-11-09  William Holmes  <billholmes54@gmail.com>
+
+	* corlib_test.dll.sources: Add TextReaderTest.cs.
+
 2008-09-04  Robert Jordan  <robertj@gmx.net>
 
 	* corlib_test.dll: Add S.R.S/SerializationTest2.cs
