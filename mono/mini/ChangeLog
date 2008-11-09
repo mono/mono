@@ -1,3 +1,15 @@
+2008-11-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-arm.c: Use 'code' as the runnning pointer in code generation for
+	consistency.
+	(mono_arch_create_rgctx_lazy_fetch_trampoline_full): Implement aot support.
+
+	* aot-runtime.c (load_named_code): Decode the offset of lazy fetch
+	trampolines using sscanf since atoi doesn't work on large unsigned values.
+
+	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline_full): 
+	Initialize code_size.
+
 2008-11-08  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c (mini_emit_inst_for_method): Make
