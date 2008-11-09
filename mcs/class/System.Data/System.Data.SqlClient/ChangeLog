@@ -1,3 +1,12 @@
+2008-11-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlConnection.cs: In Close, also remove reference to pool. In Open,
+	set TdsConnection.Pooling to false for a non-pooled connection.
+	Fixed ClearAllPools to no longer create a new connection for each
+	pool. In ClearPool, perform a lookup of the pool to clear using
+	the connectionstring as the pool field may refer to another pool
+	(as the connectionstring may have changed).
+
 2008-09-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlDataReader.cs (GetSqlXml): Handle the scenario when Sql

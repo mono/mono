@@ -423,11 +423,14 @@ namespace System.Data.SqlClient
 
 			if (tds != null && tds.IsConnected) {
 				if (pooling && tds.Pooling) {
+					if (pool != null) {
 #if NET_2_0
-					if(pool != null) pool.ReleaseConnection (ref tds);
+						pool.ReleaseConnection (ref tds);
 #else
-					if(pool != null) pool.ReleaseConnection (tds);
+						pool.ReleaseConnection (tds);
 #endif
+						pool = null;
+					}
 				}else
 					if(tds != null) tds.Disconnect ();
 			}
@@ -527,6 +530,7 @@ namespace System.Data.SqlClient
 					if(!ParseDataSource (dataSource, out port, out serverName))
 						throw new SqlException(20, 0, "SQL Server does not exist or access denied.",  17, "ConnectionOpen (Connect()).", dataSource, parms.ApplicationName, 0);
 					tds = new Tds70 (serverName, port, PacketSize, ConnectionTimeout);
+					tds.Pooling = false;
 				}
 				else {
 					if(!ParseDataSource (dataSource, out port, out serverName))
@@ -1691,20 +1695,18 @@ namespace System.Data.SqlClient
 			Hashtable pools = SqlConnection.sqlConnectionPools.GetConnectionPool ();
 #endif
 			foreach (TdsConnectionPool pool in pools.Values) {
-				if (pool != null) {
+				if (pool != null)
 					pool.ResetConnectionPool ();
-					Tds tds = pool.GetConnection ();
-					tds.Pooling = false;
-				}
 			}
 		}
 
 		public static void ClearPool (SqlConnection connection)
 		{
 			if (connection.pooling) {
-				connection.pooling = false;
-				if (connection.pool != null)
-					connection.pool.ResetConnectionPool (connection.Tds);
+				TdsConnectionPool pool = sqlConnectionPools.GetConnectionPool (
+					connection.ConnectionString);
+				if (pool != null)
+					pool.ResetConnectionPool ();
 			}
 		}
 

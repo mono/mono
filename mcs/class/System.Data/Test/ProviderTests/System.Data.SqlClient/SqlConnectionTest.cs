@@ -58,6 +58,9 @@ namespace MonoTests.System.Data
 		{
 			if (conn != null)
 				conn.Dispose ();
+#if NET_2_0
+			SqlConnection.ClearAllPools ();
+#endif
 		}
 
 		[Test]
@@ -211,8 +214,6 @@ namespace MonoTests.System.Data
 		[Test] // bug #383061
 		public void Open_MaxPoolSize_Reached ()
 		{
-			SqlCommand cmd;
-
 			connectionString += "Pooling=true;Connection Lifetime=6;"
 				+ "Connect Timeout=3;Max Pool Size=2";
 
@@ -388,6 +389,159 @@ namespace MonoTests.System.Data
 			}
 #endif
 		}
+
+#if NET_2_0
+		[Test]
+		public void ClearAllPools ()
+		{
+			SqlConnection conn1 = new SqlConnection (connectionString + ";Pooling=false");
+			conn1.Open ();
+
+			int initial_connection_count = GetConnectionCount (conn1);
+
+			SqlConnection conn2 = new SqlConnection (connectionString + ";App=A");
+			conn2.Open ();
+			conn2.Close ();
+
+			SqlConnection conn3 = new SqlConnection (connectionString + ";App=B");
+			conn3.Open ();
+			conn3.Close ();
+
+			Assert.AreEqual (initial_connection_count + 2, GetConnectionCount (conn1), "#1");
+
+			SqlConnection.ClearAllPools ();
+
+			Assert.AreEqual (initial_connection_count, GetConnectionCount (conn1), "#2");
+			conn1.Close ();
+		}
+
+		[Test] // bug #443131
+		public void ClearPool ()
+		{
+			SqlConnection conn1 = new SqlConnection (connectionString);
+			conn1.Open ();
+
+			int initial_connection_count = GetConnectionCount (conn1);
+
+			SqlConnection conn2 = new SqlConnection (connectionString);
+			conn2.Open ();
+
+			SqlConnection conn3 = new SqlConnection (connectionString);
+			conn3.Open ();
+			conn3.Close ();
+
+			Assert.AreEqual (initial_connection_count + 2, GetConnectionCount (conn1), "#1");
+
+			SqlConnection.ClearPool (conn1);
+
+			// check if pooled connections that were not in use are
+			// actually closed
+			Assert.AreEqual (initial_connection_count + 1, GetConnectionCount (conn1), "#2");
+
+			conn2.Close ();
+
+			// check if connections that were in use when the pool
+			// was cleared will not be returned to the pool when
+			// closed (and are closed instead)
+			Assert.AreEqual (initial_connection_count, GetConnectionCount (conn1), "#3");
+
+			SqlConnection conn4 = new SqlConnection (connectionString);
+			conn4.Open ();
+
+			SqlConnection conn5 = new SqlConnection (connectionString);
+			conn5.Open ();
+
+			SqlConnection conn6 = new SqlConnection (connectionString);
+			conn6.Open ();
+
+			Assert.AreEqual (initial_connection_count + 3, GetConnectionCount (conn1), "#4");
+
+			conn5.Close ();
+			conn6.Close ();
+
+			// check if new connections are stored in the pool again
+			Assert.AreEqual (initial_connection_count + 3, GetConnectionCount (conn1), "#5");
+
+			conn1.Close ();
+
+			Assert.AreEqual (initial_connection_count + 2, GetConnectionCount (conn4), "#6");
+
+			SqlConnection.ClearPool (conn3);
+
+			// the connection passed to ClearPool does not have to
+			// be open
+			Assert.AreEqual (initial_connection_count, GetConnectionCount (conn4), "#7");
+
+			SqlConnection conn7 = new SqlConnection (connectionString);
+			conn7.Open ();
+			conn7.Close ();
+
+			Assert.AreEqual (initial_connection_count + 1, GetConnectionCount (conn4), "#8");
+
+			conn3.ConnectionString += ";App=B";
+			SqlConnection.ClearPool (conn3);
+
+			// check if a pool is identified by its connection string
+			Assert.AreEqual (initial_connection_count + 1, GetConnectionCount (conn4), "#9");
+
+			SqlConnection conn8 = new SqlConnection (connectionString);
+			SqlConnection.ClearPool (conn8);
+
+			// connection should not have been opened before to
+			// clear the corresponding pool
+			Assert.AreEqual (initial_connection_count, GetConnectionCount (conn4), "#10");
+
+			SqlConnection conn9 = new SqlConnection (connectionString);
+			conn9.Open ();
+			conn9.Close ();
+
+			Assert.AreEqual (initial_connection_count + 1, GetConnectionCount (conn4), "#11");
+
+			conn3.ConnectionString = connectionString;
+			SqlConnection.ClearPool (conn3);
+
+			Assert.AreEqual (initial_connection_count, GetConnectionCount (conn4), "#12");
+
+			SqlConnection conn10 = new SqlConnection (connectionString);
+			conn10.Open ();
+
+			SqlConnection conn11 = new SqlConnection (connectionString + ";App=B");
+			conn11.Open ();
+
+			SqlConnection conn12 = new SqlConnection (connectionString + ";App=B");
+			conn12.Open ();
+
+			SqlConnection conn13 = new SqlConnection (connectionString + ";App=B");
+			conn13.Open ();
+
+			conn10.Close ();
+			conn11.Close ();
+			conn12.Close ();
+			conn13.Close ();
+
+			Assert.AreEqual (initial_connection_count + 4, GetConnectionCount (conn4), "#13");
+
+			// check that other connection pools are not affected
+			SqlConnection.ClearPool (conn13);
+
+			Assert.AreEqual (initial_connection_count + 1, GetConnectionCount (conn4), "#14");
+
+			SqlConnection conn14 = new SqlConnection (connectionString);
+			conn14.Open ();
+			conn14.Dispose ();
+
+			// a disposed connection cannot be used to clear a pool
+			SqlConnection.ClearPool (conn14);
+
+			Assert.AreEqual (initial_connection_count + 1, GetConnectionCount (conn4), "#15");
+
+			SqlConnection.ClearPool (conn4);
+
+			Assert.AreEqual (initial_connection_count, GetConnectionCount (conn4), "#16");
+
+			conn4.Close ();
+		}
+#endif
 
 		[Test]
 		public void InterfaceTransactionTest ()
@@ -626,6 +780,19 @@ namespace MonoTests.System.Data
 			string oldPassword = connBuilder.Password;
 			connBuilder.Password = tmpPassword;
 			SqlConnection.ChangePassword (connBuilder.ConnectionString, oldPassword); // Modify to the original password
+		}
+
+		static int GetConnectionCount (SqlConnection conn)
+		{
+			Thread.Sleep (200);
+
+			SqlCommand cmd = conn.CreateCommand ();
+			cmd.CommandText = "select count(*) from master..sysprocesses where db_name(dbid) = @dbname";
+			cmd.Parameters.Add (new SqlParameter ("@dbname", conn.Database));
+			int connection_count = (int) cmd.ExecuteScalar ();
+			cmd.Dispose ();
+
+			return connection_count;
 		}
 #endif
 	}

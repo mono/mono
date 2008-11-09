@@ -70,7 +70,18 @@ namespace Mono.Data.Tds.Protocol
 				return pool;
 			}
 		}
-		
+
+		public TdsConnectionPool GetConnectionPool (string connectionString)
+		{
+			TdsConnectionPool pool = null;
+#if NET_2_0
+			pools.TryGetValue (connectionString, out pool);
+#else
+			pool = (TdsConnectionPool) pools [connectionString];
+#endif
+			return pool;
+		}
+
 #if NET_2_0
 		public IDictionary <string, TdsConnectionPool> GetConnectionPool ()
 #else
@@ -261,13 +272,18 @@ namespace Mono.Data.Tds.Protocol
 			{
 				connection = list [index];
 
-				if (Interlocked.CompareExchange (ref connection.poolStatus, 1, 0) == 0) {
-					if (!connection.Reset ()) {
-						ThreadPool.QueueUserWorkItem (new WaitCallback (DestroyConnection), connection);
-						list [index] = connection = null;
-						connAvailable.Set ();
-					}
+				// skip free slots
+				if (connection == null) {
+					index--;
+					continue;
 				}
+
+				if (Interlocked.CompareExchange (ref connection.poolStatus, 1, 0) == 0)
+					ThreadPool.QueueUserWorkItem (new WaitCallback (DestroyConnection), connection);
+				connection.Pooling = false;
+
+				list [index] = connection = null;
+				connAvailable.Set ();
 
 				index--;
 			}
@@ -286,7 +302,7 @@ namespace Mono.Data.Tds.Protocol
 			}
 		}
 #endif
-		
+
 		Tds CreateConnection ()
 		{
 			return manager.CreateConnection (info);
