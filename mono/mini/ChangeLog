@@ -1,5 +1,8 @@
 2008-11-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (inline_method): Merge more basic blocks to help the AOT
+	case.
+
 	* aot-runtime.c: Remove some dead code.
 
 	* tramp-arm.c: Use 'code' as the runnning pointer in code generation for
