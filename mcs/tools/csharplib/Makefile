@@ -13,7 +13,18 @@ LIBRARY_NEEDS_POSTPROCESSING = yes
 
 LIBRARY = Mono.CSharp.dll
 
-EXTRA_DISTFILES = compiler.info link.xml
+docs = \
+	en/ns-Mono.CSharp.xml				\
+	en/index.xml					\
+	en/Mono.CSharp					\
+	en/Mono.CSharp/Evaluator.xml			\
+	en/Mono.CSharp/Evaluator+NoValueSet.xml		\
+	en/Mono.CSharp/InteractiveBase.xml		\
+	en/Mono.CSharp/Report.xml			\
+	en/Mono.CSharp/CompiledMethod.xml		\
+	en/Mono.CSharp/InteractiveBase+Simple.xml
+
+EXTRA_DISTFILES = compiler.info link.xml $(docs)
 
 include ../../build/library.make
 

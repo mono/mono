@@ -1,0 +1,39 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Mono.CSharp" Version="2.1.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("Novell, Inc.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyConfiguration("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("2001 - 2008 Novell, Inc.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("Mono")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Embedded C# Compiler and Library")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Mono.CSharp">
+      <Type Name="CompiledMethod" Kind="Delegate" />
+      <Type Name="Evaluator" Kind="Class" />
+      <Type Name="Evaluator+NoValueSet" Kind="Class" />
+      <Type Name="InteractiveBase" Kind="Class" />
+      <Type Name="InteractiveBase+Simple" Kind="Delegate" />
+      <Type Name="Report" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>Mono.CSharp</Title>
+</Overview>

@@ -1,0 +1,271 @@
+<Type Name="InteractiveBase" FullName="Mono.CSharp.InteractiveBase">
+  <TypeSignature Language="C#" Value="public class InteractiveBase" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.CSharp</AssemblyName>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            The default base class for every interaction line
+            </summary>
+    <remarks>
+            The expressions and statements behave as if they were
+            a static method of this class.   The InteractiveBase class
+            contains a number of useful methods, but can be overwritten
+            by setting the InteractiveBaseType property in the Evaluator
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ContinuationPrompt">
+      <MemberSignature Language="C#" Value="public static string ContinuationPrompt;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The secondary prompt.
+            </summary>
+        <remarks>The secondary prompt is used for interactive use
+        (used when an expression is incomplete).</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Describe">
+      <MemberSignature Language="C#" Value="public static string Describe (object x);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="x">An object or a type.</param>
+        <summary>
+            Describes an object or a type.
+            </summary>
+        <returns>A user friendly rendering of the type.</returns>
+        <remarks>
+            This method will show a textual representation
+            of the object's type.  If the object is a
+            System.Type it renders the type directly,
+            otherwise it renders the type returned by
+            invoking GetType on the object.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Error">
+      <MemberSignature Language="C#" Value="public static System.IO.TextWriter Error;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.TextWriter</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Determines where the standard error of methods in this class will go.
+            </summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="help">
+      <MemberSignature Language="C#" Value="public static string help { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Returns a list of available static methods.
+            </summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadAssembly">
+      <MemberSignature Language="C#" Value="public static void LoadAssembly (string assembly);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assembly" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="assembly">The file to load.</param>
+        <summary>
+            Loads the assembly
+            </summary>
+        <remarks>
+            Loads the specified assembly and makes its types
+            available to the evaluator.  This is equivalent
+            to passing the -pkg: command line flag to the C#
+            compiler on the command line.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadPackage">
+      <MemberSignature Language="C#" Value="public static void LoadPackage (string pkg);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pkg" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="pkg">The name of the package to load.</param>
+        <summary>
+            Loads the assemblies from a package
+            </summary>
+        <remarks>
+            Loads the assemblies from a package.   This is equivalent
+            to passing the -pkg: command line flag to the C# compiler
+            on the command line.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Output">
+      <MemberSignature Language="C#" Value="public static System.IO.TextWriter Output;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.TextWriter</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Determines where the standard output of methods in this class will go.
+            </summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Prompt">
+      <MemberSignature Language="C#" Value="public static string Prompt;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The primary prompt used for interactive use.
+            </summary>
+        <remarks>This is the primary prompt to be used by
+        read-eval-print-loop implementations. </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="quit">
+      <MemberSignature Language="C#" Value="public static object quit { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Indicates to the read-eval-print-loop that the interaction should be finished.
+            </summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="QuitRequested">
+      <MemberSignature Language="C#" Value="public static bool QuitRequested;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Used to signal that the user has invoked the  `quit' statement.
+            </summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ShowUsing">
+      <MemberSignature Language="C#" Value="public static void ShowUsing ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Displays the using statements in effect at this point.
+            </summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ShowVars">
+      <MemberSignature Language="C#" Value="public static void ShowVars ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Shows all the variables defined so far.
+            </summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Time">
+      <MemberSignature Language="C#" Value="public static TimeSpan Time (Mono.CSharp.InteractiveBase.Simple a);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="Mono.CSharp.InteractiveBase+Simple" />
+      </Parameters>
+      <Docs>
+        <param name="a">The method to time.</param>
+        <summary>
+            Times the execution of the given delegate
+            </summary>
+        <returns>The time it took for the method passed to execute.</returns>
+        <remarks>This is a very simple benchmarking tool.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

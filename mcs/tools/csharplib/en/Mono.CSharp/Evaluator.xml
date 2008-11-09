@@ -1,0 +1,360 @@
+<Type Name="Evaluator" FullName="Mono.CSharp.Evaluator">
+  <TypeSignature Language="C#" Value="public class Evaluator" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.CSharp</AssemblyName>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            Evaluator: provides an API to evaluate C# statements and
+            expressions dynamically.
+            </summary>
+    <remarks>
+            This class exposes static methods to evaluate expressions in the
+            current program.
+            To initialize the evaluator with a number of compiler
+            options call the Init(string[]args) method with a set of
+            command line options that the compiler recognizes.
+            To interrupt execution of a statement, you can invoke the
+            Evaluator.Interrupt method.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Compile">
+      <MemberSignature Language="C#" Value="public static Mono.CSharp.CompiledMethod Compile (string input);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CSharp.CompiledMethod</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="input">The expression or statement to compile.</param>
+        <summary>
+            Compiles the input string and returns a delegate that represents the compiled code.
+            </summary>
+        <returns></returns>
+        <remarks>
+            Compiles the input string as a C# expression or
+            statement, unlike the Evaluate method, the
+            resulting delegate can be invoked multiple times
+            without incurring in the compilation overhead.
+            This method can only deal with fully formed input
+            strings and does not provide a completion mechanism.
+            If you must deal with partial input (for example for
+            interactive use) use the other overload.
+            On success, a delegate is returned that can be used
+            to invoke the method.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Compile">
+      <MemberSignature Language="C#" Value="public static string Compile (string input, out Mono.CSharp.CompiledMethod compiled);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.String" />
+        <Parameter Name="compiled" Type="Mono.CSharp.CompiledMethod&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="input">The expression or statement to compile.</param>
+        <param name="compiled">The compiled code will be returned in this delegate.</param>
+        <summary>
+            Compiles the input string and returns a delegate that represents the compiled code.
+            </summary>
+        <returns>On success, a delegate that can be used to invoke the compiled code repeatedly.</returns>
+        <remarks>
+	  <para>
+            Compiles the input string as a C# expression or
+            statement, unlike the Evaluate method, the
+            resulting delegate can be invoked multiple times
+            without incurring in the compilation overhead.
+	  </para>
+	  <para>
+            If the return value of this function is null,
+            this indicates that the parsing was complete.
+	  </para>
+	  <para>
+            If the return value is a string it indicates
+            that the input string was partial and that the
+            invoking code should provide more code before
+            the code can be successfully compiled.
+	  </para>
+	  <para>
+            If you know that you will always get full expressions or
+            statements and do not care about partial input, you can use
+            the other Compile overload.
+	  </para>
+	  <para>
+            On success, in addition to returning null, the
+            compiled parameter will be set to the delegate
+            that can be invoked to execute the code.
+	  </para>
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Evaluate">
+      <MemberSignature Language="C#" Value="public static object Evaluate (string input);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="input">The expression to evaluate.</param>
+        <summary>
+            Evaluates and expression or statement and returns the result.
+            </summary>
+        <returns>The result of computing the expression.</returns>
+        <remarks>
+            Evaluates the input string as a C# expression or
+            statement and returns the value.
+            This method will throw an exception if there is a syntax error,
+            of if the provided input is not an expression but a statement.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Evaluate">
+      <MemberSignature Language="C#" Value="public static string Evaluate (string input, out object result, out bool result_set);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.String" />
+        <Parameter Name="result" Type="System.Object&amp;" RefType="out" />
+        <Parameter Name="result_set" Type="System.Boolean&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="input">The expression to evaluate.</param>
+        <param name="result">The result will be stored here.</param>
+        <param name="result_set">If this value is true, the result was set and can be used, otherwise it was not set.</param>
+        <summary>
+            Evaluates and expression or statement and returns any result values.
+            </summary>
+        <returns>If null, the parsing was successful, if not, it means that the input is partial.</returns>
+        <remarks>
+	  <para>
+            Evaluates the input string as a C# expression or
+            statement.  If the input string is an expression
+            the result will be stored in the result variable
+            and the result_set variable will be set to true.
+            It is necessary to use the result/result_set
+            pair to identify when a result was set (for
+            example, execution of user-provided input can be
+            an expression, a statement or others, and
+            result_set would only be set if the input was an
+            expression.
+	  </para>
+	  <para>
+            If the return value of this function is null,
+            this indicates that the parsing was complete.
+            If the return value is a string, it indicates
+            that the input is partial and that the user
+            should provide an updated string.
+	  </para>
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetUsing">
+      <MemberSignature Language="C#" Value="public static string GetUsing ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns a list of the active using statements.</summary>
+        <returns>A list of active using statements.</returns>
+        <remarks>This result can be shown to the user.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetVars">
+      <MemberSignature Language="C#" Value="public static string GetVars ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns a list of all local variables.</summary>
+        <returns>A user-visible list of all local variables defined when invoking the evaluator.</returns>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Init">
+      <MemberSignature Language="C#" Value="public static void Init (string[] args);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="args">Compiler options.</param>
+        <summary>
+            Optional initialization for the Evaluator.
+            </summary>
+        <remarks>
+	  <para>
+            Initializes the Evaluator with the command line options
+            that would be processed by the command line compiler.  Only
+            the first call to Init will work, any future invocations are
+            ignored.
+	  </para>
+	  <para>
+            You can safely avoid calling this method if your application
+            does not need any of the features exposed by the command line
+            interface.
+	  </para>
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InteractiveBaseClass">
+      <MemberSignature Language="C#" Value="public static Type InteractiveBaseClass { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The base class for the classes that host the user generated code
+            </summary>
+        <value></value>
+        <remarks>
+	  <para>
+            This is the base class that will host the code
+            executed by the Evaluator.  By default
+            this is the Mono.CSharp.InteractiveBase class
+            which is useful for interactive use.
+	  </para>
+	  <para>
+            By changing this property you can control the
+            base class and the static members that are
+            available to your evaluated code.
+	  </para>
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Interrupt">
+      <MemberSignature Language="C#" Value="public static void Interrupt ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Interrupts the evaluation of an expression executing in Evaluate.
+            </summary>
+        <remarks>
+            Use this method to interrupt long-running invocations.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadAssembly">
+      <MemberSignature Language="C#" Value="public static void LoadAssembly (string file);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="file" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="file">The filename that holds the assembly.</param>
+        <summary>
+            Loads the given assembly and exposes the API to the user.
+            </summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReferenceAssembly">
+      <MemberSignature Language="C#" Value="public static void ReferenceAssembly (System.Reflection.Assembly a);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Reflection.Assembly" />
+      </Parameters>
+      <Docs>
+        <param name="a">The assembly to expose to the evaluated expressions.</param>
+        <summary>
+            Exposes the API of the given assembly to the Evaluator
+            </summary>
+        <remarks>After this invocation, the types from the referenced
+        assembly will be accessible to code executed by the
+        evaluator.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Run">
+      <MemberSignature Language="C#" Value="public static bool Run (string statement);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="statement" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="statement">A statement to execute.</param>
+        <summary>
+            Executes the given expression or statement.
+            </summary>
+        <returns>True if the code was succesfully parsed.</returns>
+        <remarks>
+            Executes the provided statement, returns true
+            on success, false on parsing errors.  Exceptions
+            might be thrown by the called code.
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

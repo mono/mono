@@ -1,0 +1,36 @@
+<Type Name="Evaluator+NoValueSet" FullName="Mono.CSharp.Evaluator+NoValueSet">
+  <TypeSignature Language="C#" Value="public class Evaluator.NoValueSet" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.CSharp</AssemblyName>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      Sentinel value used to indicate that no value was returned.
+    </summary>
+    <remarks>
+      A sentinel value used to indicate that no value was
+      was set by the compiled function.   This is used to
+      differentiate between a function not returning a
+      value and null.
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NoValueSet ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary></summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

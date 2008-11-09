@@ -1,0 +1,18 @@
+<Type Name="InteractiveBase+Simple" FullName="Mono.CSharp.InteractiveBase+Simple">
+  <TypeSignature Language="C#" Value="public delegate void InteractiveBase.Simple();" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.CSharp</AssemblyName>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters />
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <summary>A helper delegate to a void method.</summary>
+    <remarks>Equivalent to a System.Action.</remarks>
+  </Docs>
+</Type>

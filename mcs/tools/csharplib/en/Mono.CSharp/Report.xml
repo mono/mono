@@ -1,0 +1,96 @@
+<Type Name="Report" FullName="Mono.CSharp.Report">
+  <TypeSignature Language="C#" Value="public class Report" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.CSharp</AssemblyName>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            This class is used to report errors and warnings to te user.
+            </summary>
+    <remarks></remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Errors">
+      <MemberSignature Language="C#" Value="public static int Errors;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Errors encountered so far
+            </summary>
+        <remarks>The number of errors reported</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Stderr">
+      <MemberSignature Language="C#" Value="public static System.IO.TextWriter Stderr;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.TextWriter</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The TextWriter used to report errors.</summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WarningLevel">
+      <MemberSignature Language="C#" Value="public static int WarningLevel { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The warning level for reporting errors.</summary>
+        <value></value>
+        <remarks>See the compiler manual page for the possible values for the this variable.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Warnings">
+      <MemberSignature Language="C#" Value="public static int Warnings;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Warnings encountered so far
+            </summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WarningsAreErrors">
+      <MemberSignature Language="C#" Value="public static bool WarningsAreErrors;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Whether warnings should be considered errors
+            </summary>
+        <remarks>Equivalent to passing -warnaserror to the compiler.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

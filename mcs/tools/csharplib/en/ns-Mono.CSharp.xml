@@ -1,0 +1,63 @@
+<Namespace Name="Mono.CSharp">
+  <Docs>
+    <summary>C# Compiler Service and Runtime Evaulator.</summary>
+    <remarks>
+      <para>
+	The Mono.CSharp.dll assembly is a repackaging of Mono's C#
+	compiler and provides access to the C# compiler as a service.
+	It implements a C# eval.  It allows applications to compile
+	and execute C# statements and expressions at runtime.
+      </para>
+      <para>
+	This API is not yet final and will likely change as we get a
+	better understanding of how developers will like to use the
+	Mono C# Compiler Service.  You can make a local copy of the
+	Mono.CSharp.dll assembly and reference that locally as we are
+	not commiting to the stability of this API yet. 
+      </para>
+      <para>
+	The evaluator currently exposes a statement and expression API
+	and will allow the consumer to execute statements or compute
+	the value of expressions and get the results back.  Support
+	for compiling classes will appear in a future version.  The
+	<see cref="M:Mono.CSharp.Evaluator.Run(string)"/> method is a
+	convenient way of executing expressions and stamtements and
+	discarding the result.  If you want to get the results of
+	executing an expression use the <see
+	cref="M:Mono.CSharp.Evaluator.Evaluate(string)"/> method
+	instead.
+      </para>
+      <para>
+	Variables declared during evaluation will continue to be made
+	available on upcoming invocations.  This allows variables to
+	be declared and reused later.  
+      </para>
+      <para>
+	The evaluator does not have direct access to any assemblies
+	that are not explicitly referenced through the Evaluator's
+	<see
+	cref="M:Mono.CSharp.Evaluator.ReferenceAssembly(System.Reflection.Assembly)"/>
+	method.
+      </para>
+      <para>
+	The API exposes similar entry points, some are used for
+	read-eval-print loops where more control over partial-input is
+	required.  Another set of entry points are provided when this
+	functionality is not required.
+      </para>
+      <para>
+	The following are limitations in the Mono 2.2 API and will change in the future:
+      </para>
+      <para>
+	Using statements are currently global, once the using
+	statement has been issued, it remains active.
+      </para>
+      <para>
+	If you want to create local variables that are not visible
+	across multiple evaluations, you will have to create a new
+	<see cref="T:System.AppDomain"/> and invoke the compiler
+	there.
+      </para>
+    </remarks>
+  </Docs>
+</Namespace>
