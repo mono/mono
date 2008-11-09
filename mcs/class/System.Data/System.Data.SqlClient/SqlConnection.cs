@@ -1702,6 +1702,9 @@ namespace System.Data.SqlClient
 
 		public static void ClearPool (SqlConnection connection)
 		{
+			if (connection == null)
+				throw new ArgumentNullException ("connection");
+
 			if (connection.pooling) {
 				TdsConnectionPool pool = sqlConnectionPools.GetConnectionPool (
 					connection.ConnectionString);

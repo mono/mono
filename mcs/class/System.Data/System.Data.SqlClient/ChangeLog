@@ -1,5 +1,9 @@
 2008-11-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlConnection.cs (ClearPool): Added null check.
+
+2008-11-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlConnection.cs: In Close, also remove reference to pool. In Open,
 	set TdsConnection.Pooling to false for a non-pooled connection.
 	Fixed ClearAllPools to no longer create a new connection for each

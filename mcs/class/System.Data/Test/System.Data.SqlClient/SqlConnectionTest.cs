@@ -360,6 +360,20 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsTrue (ex.ParamName.IndexOf ("'newPassword'") != -1, "#6");
 			}
 		}
+
+		[Test]
+		public void ClearPool_Connection_Null ()
+		{
+			try {
+				SqlConnection.ClearPool ((SqlConnection) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("connection", ex.ParamName, "#5");
+			}
+		}
 #endif
 
 		[Test]
