@@ -770,22 +770,55 @@ namespace Mono.CSharp {
 	/// </remarks>
 	
 	public delegate void CompiledMethod (ref object retvalue);
+
 	/// <summary>
 	///   The default base class for every interaction line
 	/// </summary>
+	/// <remarks>
+	///   The expressions and statements behave as if they were
+	///   a static method of this class.   The InteractiveBase class
+	///   contains a number of useful methods, but can be overwritten
+	///   by setting the InteractiveBaseType property in the Evaluator
+	/// </remarks>
 	public class InteractiveBase {
+		/// <summary>
+		///   Determines where the standard output of methods in this class will go. 
+		/// </summary>
 		public static TextWriter Output = Console.Out;
+
+		/// <summary>
+		///   Determines where the standard error of methods in this class will go. 
+		/// </summary>
 		public static TextWriter Error = Console.Error;
+
+		/// <summary>
+		///   The primary prompt used for interactive use.
+		/// </summary>
 		public static string Prompt             = "csharp> ";
+
+		/// <summary>
+		///   The secondary prompt used for interactive use (used when
+		///   an expression is incomplete).
+		/// </summary>
 		public static string ContinuationPrompt = "      > ";
+
+		/// <summary>
+		///   Used to signal that the user has invoked the  `quit' statement.
+		/// </summary>
 		public static bool QuitRequested;
 		
+		/// <summary>
+		///   Shows all the variables defined so far.
+		/// </summary>
 		static public void ShowVars ()
 		{
 			Output.Write (Evaluator.GetVars ());
 			Output.Flush ();
 		}
 
+		/// <summary>
+		///   Displays the using statements in effect at this point. 
+		/// </summary>
 		static public void ShowUsing ()
 		{
 			Output.Write (Evaluator.GetUsing ());
@@ -794,6 +827,9 @@ namespace Mono.CSharp {
 
 		public delegate void Simple ();
 		
+		/// <summary>
+		///   Times the execution of the given delegate
+		/// </summary>
 		static public TimeSpan Time (Simple a)
 		{
 			DateTime start = DateTime.Now;
@@ -802,6 +838,14 @@ namespace Mono.CSharp {
 		}
 		
 #if !SMCS_SOURCE
+		/// <summary>
+		///   Loads the assemblies from a package
+		/// </summary>
+		/// <remarks>
+		///   Loads the assemblies from a package.   This is equivalent
+		///   to passing the -pkg: command line flag to the C# compiler
+		///   on the command line. 
+		/// </remarks>
 		static public void LoadPackage (string pkg)
 		{
 			if (pkg == null){
@@ -827,11 +871,23 @@ namespace Mono.CSharp {
 		}
 #endif
 
+		/// <summary>
+		///   Loads the assembly
+		/// </summary>
+		/// <remarks>
+		///   Loads the specified assembly and makes its types
+		///   available to the evaluator.  This is equivalent
+		///   to passing the -pkg: command line flag to the C#
+		///   compiler on the command line.
+		/// </remarks>
 		static public void LoadAssembly (string assembly)
 		{
 			Evaluator.LoadAssembly (assembly);
 		}
 		
+		/// <summary>
+		///   Returns a list of available static methods. 
+		/// </summary>
 		static public string help {
 			get {
 				return  "Static methods:\n"+
@@ -848,6 +904,9 @@ namespace Mono.CSharp {
 			}
 		}
 
+		/// <summary>
+		///   Indicates to the read-eval-print-loop that the interaction should be finished. 
+		/// </summary>
 		static public object quit {
 			get {
 				QuitRequested = true;
@@ -856,6 +915,16 @@ namespace Mono.CSharp {
 		}
 
 #if !NET_2_1
+		/// <summary>
+		///   Describes an object or a type.
+		/// </summary>
+		/// <remarks>
+		///   This method will show a textual representation
+		///   of the object's type.  If the object is a
+		///   System.Type it renders the type directly,
+		///   otherwise it renders the type returned by
+		///   invoking GetType on the object.
+		/// </remarks>
 		static public string Describe (object x)
 		{
 			if (x == null)
