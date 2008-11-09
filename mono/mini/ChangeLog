@@ -1,5 +1,7 @@
 2008-11-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c: Remove some dead code.
+
 	* tramp-arm.c: Use 'code' as the runnning pointer in code generation for
 	consistency.
 	(mono_arch_create_rgctx_lazy_fetch_trampoline_full): Implement aot support.
