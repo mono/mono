@@ -253,6 +253,7 @@ namespace System.Runtime.Remoting.Channels.Http
 				port = listener.AssignedPort;
 			
 			channelData.ChannelUris = new string [] { GetChannelUri () };
+			wantsToListen = false;
 		}
 
 		public void StopListening (object data)
