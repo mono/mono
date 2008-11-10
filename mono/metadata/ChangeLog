@@ -1,3 +1,32 @@
+2008-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* appdomain.c (unload_thread_main): Clean up threadpool by
+	calling mono_thread_pool_remove_domain_jobs.
+
+	* domain-internals.h (struct _MonoDomain): Add new fields to
+	help coordinate the cleanup of the threadpool.
+
+	* threadpool.c (mono_thread_pool_remove_domain_jobs): New fuction
+	that cleans up the threadpool of all jobs associated with an appdomain.
+	It does that by cleaning up the queues and making sure all active
+	threads are accounted.
+
+	* threadpool.c (async_invoke_io_thread): Ignore job if its domain is
+	unloaded or in the process of. Take this is such way that there is
+	no race condition between another thread starting the unload and the
+	current thread acknowledging it.
+
+	* threadpool.c (async_invoke_thread): Same.
+
+	* threadpool.c (start_io_thread_or_queue): Increment threadpool_jobs before
+	firing the new thread.
+
+	* threadpool.c (start_tpthread): Same.
+
+	* theadpool.c (append_job): Increment threadpool_jobs before queueing.
+
+	* threadpool.h: Add mono_thread_pool_remove_domain_jobs.
+
 2008-11-06  Jonathan Chambers  <joncham@gmail.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_DuplicateHandle): 
