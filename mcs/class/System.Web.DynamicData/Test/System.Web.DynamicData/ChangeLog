@@ -1,3 +1,8 @@
+2008-11-10  Raja R Harinath  <harinath@hurrynot.org>
+
+	* MetaModelTest.cs: Remove 'using System.ComponentModel' to avoid
+	ambiguities with the CategoryAttribute.
+
 2008-10-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DynamicDataRouteTest.cs, MetaModelTest.cs : added NotWorking mark.
