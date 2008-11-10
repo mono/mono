@@ -163,10 +163,13 @@ namespace System.Runtime.Remoting.Channels.Http
 				}
 			}
 			
-			//we need a stream with a length, so if it's not a MemeoryStream we copy it
+			//we need a stream with a length, so if it's not a MemoryStream we copy it
 			MemoryStream ms;
 			if (responseStream is MemoryStream) {
 				ms = (MemoryStream) responseStream;
+				//this seems to be necessary for some third-party formatters
+				//even though my testing suggested .NET doesn't seem to seek incoming streams
+				ms.Position = 0;
 			} else {
 				ms = new MemoryStream ();
 				HttpClientTransportSink.CopyStream (responseStream, ms, 1024);
@@ -175,7 +178,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 			
 			//FIXME: WHY DOES CHUNKING BREAK THE TESTS?
-			//now we can set the content length so that the server doesn't use chunking
+			//for now, we set the content length so that the server doesn't use chunking
 			context.Response.ContentLength64 = ms.Length;
 			HttpClientTransportSink.CopyStream (ms, context.Response.OutputStream, 1024);
 			ms.Close ();

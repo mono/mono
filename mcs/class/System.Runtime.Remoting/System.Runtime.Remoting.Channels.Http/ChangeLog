@@ -1,3 +1,9 @@
+2008-11-10  Michael Hutchinson  <mhutchinson@novell.com>
+
+	* HttpServerTransportSink.cs: Seek to beginning of server response 
+	  stream. Fixes Bug 436995 - Xml-Rpc.net does not work since 
+	  Mono 1.9.x.
+
 2008-09-30  Michael Hutchinson  <mhutchinson@novell.com>
 
 	* HttpServerChannel.cs: make sure the channel data object is set 
