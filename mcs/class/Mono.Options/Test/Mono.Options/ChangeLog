@@ -1,3 +1,10 @@
+2008-11-10  Raja R Harinath  <harinath@hurrynot.org>
+
+	* OptionContextTest.cs: Fix syntax error.
+	* OptionTest.cs: Likewise.
+	* OptionSetTest.cs: Likewise.
+	(OptionalValues, CombinationPlatter, Exceptions): Disable for now.
+
 2008-10-23  Jonathan Pryor  <jpryor@novell.com>
 
 	* OptionSetTest.cs:  Add a test for the underlying target type within 
