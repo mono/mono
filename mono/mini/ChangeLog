@@ -1,3 +1,12 @@
+2008-11-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* local-propagation.c (mono_local_deadce): Avoid a call to
+	MONO_DELETE_INS which would screw up the instruction linking.
+
+	* mini.c (mono_decompose_op_imm): Make this work with globalra.
+
+	* regalloc2.c: Upgrade to work the current JIT code.
+
 2008-11-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (inline_method): Merge more basic blocks to help the AOT
