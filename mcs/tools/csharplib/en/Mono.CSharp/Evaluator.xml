@@ -14,14 +14,23 @@
             expressions dynamically.
             </summary>
     <remarks>
-            This class exposes static methods to evaluate expressions in the
-            current program.
-            To initialize the evaluator with a number of compiler
-            options call the Init(string[]args) method with a set of
-            command line options that the compiler recognizes.
-            To interrupt execution of a statement, you can invoke the
-            Evaluator.Interrupt method.
-            </remarks>
+      <para>
+	This class exposes static methods to execute C# statements and
+	evaluate C# expressions in the current program.  Expressions
+	and statements should be fully formed, so they need to end
+	with a semicolon as they would in a regular C# file.
+      </para>
+      <para>
+	To initialize the evaluator with a number of compiler
+	options call the Init(string[]args) method with a set of
+	command line options that the compiler recognizes.
+      </para>
+      <para>
+	To interrupt execution of a statement, you can invoke the
+	Evaluator.Interrupt method.  This comes in handy if you want
+	to implement a handler for Control-C for example.
+      </para>
+    </remarks>
   </Docs>
   <Members>
     <Member MemberName="Compile">
@@ -125,11 +134,30 @@
             </summary>
         <returns>The result of computing the expression.</returns>
         <remarks>
+	  <para>
             Evaluates the input string as a C# expression or
             statement and returns the value.
+	  </para>
+	  <para>
             This method will throw an exception if there is a syntax error,
             of if the provided input is not an expression but a statement.
-            </remarks>
+	  </para>
+	  <para>
+	    <example>
+	      // First setup the active using statements:
+	      Evaluator.Run ("using System;");
+
+	      int sum = (int) Evaluator.Evaluate ("1+2");
+
+	      // A more interesting sample
+	      Evaluator.Run ("using System.Linq");
+	      Evaluator.Run ("var numbers = new int [] {1,2,3,4,5};");
+
+	      // We know the result is an IEnumerator, cast it.
+	      IEnumerator even = (IEnumerator) Evaluator.Evaluate ("from x in numbers where (x % 2) == 0 select x");
+	    </example>
+	  </para>
+	</remarks>
       </Docs>
     </Member>
     <Member MemberName="Evaluate">
@@ -174,7 +202,7 @@
             that the input is partial and that the user
             should provide an updated string.
 	  </para>
-            </remarks>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetUsing">
@@ -350,9 +378,19 @@
             </summary>
         <returns>True if the code was succesfully parsed.</returns>
         <remarks>
+	  <para>
             Executes the provided statement, returns true
             on success, false on parsing errors.  Exceptions
             might be thrown by the called code.
+	  </para>
+	  <para>
+	    <example>
+	      // First setup the active using statements:
+	      Evaluator.Run ("using System;");
+
+	      Evaluator.Run ("Console.WriteLine (\"Hello, World\");
+	    </example>
+	  </para>
         </remarks>
       </Docs>
     </Member>
