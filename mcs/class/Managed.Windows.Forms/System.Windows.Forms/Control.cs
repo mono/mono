@@ -6158,9 +6158,8 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 
-			for (int i=0; i<child_controls.Count; i++) {
-				child_controls[i].OnParentEnabledChanged(e);
-			}
+			foreach (Control c in Controls.GetAllControls ())
+				c.OnParentEnabledChanged (e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
