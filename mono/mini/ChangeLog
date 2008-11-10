@@ -1,5 +1,9 @@
 2008-11-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* regalloc2.c (handle_reg_constraints): Avoid adding code to unreachable
+	bblocks.
+	(linear_scan): Remove an assert which doesn't seem to be needed.
+
 	* local-propagation.c (mono_local_deadce): Avoid a call to
 	MONO_DELETE_INS which would screw up the instruction linking.
 
