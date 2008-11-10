@@ -1,4 +1,9 @@
 
+Mon Nov 10 17:38:41 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-proclib.c: adapt code for FreeBSD and hopefully other BSD
+	systems.
+
 Mon Nov 10 17:27:01 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mono-proclib.c, mono-proclib.h: added elapsed time and parent pid.
