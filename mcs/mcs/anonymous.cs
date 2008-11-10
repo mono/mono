@@ -510,8 +510,11 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericType (ctor.DeclaringType)) {
 				Type t = MutateGenericType (ctor.DeclaringType);
 				if (t != ctor.DeclaringType) {
-					// TODO: It should throw on imported types
-					return TypeBuilder.GetConstructor (t, ctor);
+					ctor = (ConstructorInfo) TypeManager.DropGenericMethodArguments (ctor);
+					if (ctor.Module == CodeGen.Module.Builder)
+						return TypeBuilder.GetConstructor (t, ctor);
+						
+					return (ConstructorInfo) ConstructorInfo.GetMethodFromHandle (ctor.MethodHandle, t.TypeHandle);
 				}
 			}
 #endif

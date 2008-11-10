@@ -1,5 +1,10 @@
 2008-11-10  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #442610
+	* anonymous.cs (MutateConstructor): More SRE hacking.
+
+2008-11-10  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #442579
 	* ecore.cs: Also initialize expanded form of a method with 1 params
 	parameter.
