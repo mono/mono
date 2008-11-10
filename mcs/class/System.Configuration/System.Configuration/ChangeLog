@@ -1,4 +1,11 @@
 
+2008-11-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ConfigurationManager.cs: when we're dealing with an EXE hosted
+	application, the configuration file is the one for the AppDomain,
+	otherwise we might try to get a config file for a dll. Fixes the
+	regression in 2.0 sys.config.
+
 2008-07-09  Marek Habersack  <mhabersack@novell.com>
 
 	* ConfigurationManager.cs: implemented a work-around for

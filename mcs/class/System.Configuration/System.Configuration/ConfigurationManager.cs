@@ -94,10 +94,7 @@ namespace System.Configuration {
 			switch (userLevel) {
 			case ConfigurationUserLevel.None:
 				if (exePath == null || exePath.Length == 0) {
-					if (!systemWebInUse && calling_assembly != null)
-					        exePath = calling_assembly.Location;
-					else
-						exePath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+					exePath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 					map.ExeConfigFilename = exePath.EndsWith (".config") ? exePath : exePath + ".config";
 				} else {
 					if (!Path.IsPathRooted (exePath))
