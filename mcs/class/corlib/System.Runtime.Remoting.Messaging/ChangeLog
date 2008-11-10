@@ -1,3 +1,9 @@
+2008-11-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* CADMessages.cs: when the method is generic, return a constructed
+	method instead of the generic one. Fixes regression in
+	System.Runtime.Remoting.GenericTest::TestCrossAppDomainChannel.
+
 2008-07-06  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* MethodCallMessageWrapper.cs: Fix signatures

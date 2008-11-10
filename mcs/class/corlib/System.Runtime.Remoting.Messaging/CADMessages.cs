@@ -342,21 +342,68 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 		}
 		
+		static Type [] GetSignature (MethodBase methodBase, bool load)
+		{
+			ParameterInfo[] pars = methodBase.GetParameters ();
+			Type[] signature = new Type [pars.Length];
+			for (int n=0; n<pars.Length; n++) {
+				// The parameter types may also be loaded from a different assembly, so we need
+				// to load them again
+				if (load)
+					signature [n] = Type.GetType (pars [n].ParameterType.AssemblyQualifiedName, true);
+				else
+					signature [n] = pars [n].ParameterType;
+			}
+			return signature;
+		}
+
 		internal MethodBase GetMethod ()
 		{
-			MethodBase methodBase = MethodBase.GetMethodFromHandle (MethodHandle);
+			MethodBase methodBase = null;
 			Type tt = Type.GetType (FullTypeName);
+#if NET_2_0
+			if (tt.IsGenericType || tt.IsGenericTypeDefinition) {
+				methodBase = MethodBase.GetMethodFromHandleNoGenericCheck (MethodHandle);
+			} else
+#endif
+			{
+				methodBase = MethodBase.GetMethodFromHandle (MethodHandle);
+			}
 			
 			if (tt != methodBase.DeclaringType) {
 				// The target domain has loaded the type from a different assembly.
 				// We need to locate the correct type and get the method from it
-				ParameterInfo[] pars = methodBase.GetParameters ();
-				Type[] signature = new Type [pars.Length];
-				for (int n=0; n<pars.Length; n++) {
-					// The parameter types may also be loaded from a different assembly, so we need
-					// to load them again
-					signature [n] = Type.GetType (pars [n].ParameterType.AssemblyQualifiedName, true);
+				Type [] signature = GetSignature (methodBase, true);
+#if NET_2_0
+				if (methodBase.IsGenericMethod) {
+					MethodBase [] methods = tt.GetMethods (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
+					Type [] base_args = methodBase.GetGenericArguments ();
+					foreach (MethodBase method in methods) {
+						if (!method.IsGenericMethod || method.Name != methodBase.Name)
+							continue;
+						Type [] method_args = method.GetGenericArguments ();
+						if (base_args.Length != method_args.Length)
+							continue;
+
+						MethodInfo method_instance = ((MethodInfo) method).MakeGenericMethod (base_args);
+						Type [] base_sig = GetSignature (method_instance, false);
+						if (base_sig.Length != signature.Length) {
+							continue;
+						}
+						bool dont = false;
+						for (int i = base_sig.Length - 1; i >= 0; i--) {
+							if (base_sig [i] != signature [i]) {
+								dont = true;
+								break;
+							}
+						}
+						if (dont)
+							continue;
+						return method_instance;
+					}
+					return methodBase;
 				}
+#endif
 				MethodBase mb = tt.GetMethod (methodBase.Name, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, signature, null);
 				if (mb == null)
 					throw new RemotingException ("Method '" + methodBase.Name + "' not found in type '" + tt + "'");
