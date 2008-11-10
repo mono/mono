@@ -16,7 +16,6 @@ LIBRARY = Mono.CSharp.dll
 docs = \
 	en/ns-Mono.CSharp.xml				\
 	en/index.xml					\
-	en/Mono.CSharp					\
 	en/Mono.CSharp/Evaluator.xml			\
 	en/Mono.CSharp/Evaluator+NoValueSet.xml		\
 	en/Mono.CSharp/InteractiveBase.xml		\
