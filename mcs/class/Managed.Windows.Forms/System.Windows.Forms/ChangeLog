@@ -1,5 +1,11 @@
 2008-11-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextControl.cs: Add some order of operation to our math so
+	we don't end up with a negative height for our invalidate rect.
+	[Fixes bug #381889]
+
+2008-11-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: When our enabled changes, notify our implicit children
 	controls as well as our regular controls.
 	[Fixes bug #441523]
