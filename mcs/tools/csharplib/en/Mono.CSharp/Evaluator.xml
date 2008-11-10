@@ -10,9 +10,9 @@
   <Interfaces />
   <Docs>
     <summary>
-            Evaluator: provides an API to evaluate C# statements and
-            expressions dynamically.
-            </summary>
+      Evaluator: provides an API to evaluate C# statements and
+      expressions dynamically.
+    </summary>
     <remarks>
       <para>
 	This class exposes static methods to execute C# statements and
