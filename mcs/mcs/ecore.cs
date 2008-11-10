@@ -3867,6 +3867,9 @@ namespace Mono.CSharp {
 					return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
 				if (arg_count < param_count - 1)
 					return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
+					
+				// Initialize expanded form of a method with 1 params parameter
+				params_expanded_form = param_count == 1 && pd.HasParams;
 			}
 
 #if GMCS_SOURCE
@@ -5050,7 +5053,7 @@ namespace Mono.CSharp {
 			prepared = prepare_for_load;
 			EmitInstance (ec, prepared);
 
-			source.Emit (ec);			
+			source.Emit (ec);
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
 				if (!FieldInfo.IsStatic) {
