@@ -1,3 +1,7 @@
+2008-11-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* regalloc2.c (assign_spill_slots): Set cfg->rgctx_var.
+
 2008-11-10  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-x86.c (mono_arch_get_argument_info): Don't align argument
