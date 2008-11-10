@@ -70,6 +70,7 @@
 	  <para>
             On success, a delegate is returned that can be used
             to invoke the method.
+	  </para>
 	  </remarks>
       </Docs>
     </Member>
