@@ -52,17 +52,25 @@
             </summary>
         <returns></returns>
         <remarks>
+	  <para>
             Compiles the input string as a C# expression or
-            statement, unlike the Evaluate method, the
+            statement.
+	  </para>
+	  <para>
+	    Unlike the Evaluate method, the
             resulting delegate can be invoked multiple times
             without incurring in the compilation overhead.
+	  </para>
+	  <para>
             This method can only deal with fully formed input
             strings and does not provide a completion mechanism.
             If you must deal with partial input (for example for
             interactive use) use the other overload.
+	  </para>
+	  <para>
             On success, a delegate is returned that can be used
             to invoke the method.
-            </remarks>
+	  </remarks>
       </Docs>
     </Member>
     <Member MemberName="Compile">
@@ -144,6 +152,7 @@
 	  </para>
 	  <para>
 	    <example>
+	      <code lang="C#">
 	      // First setup the active using statements:
 	      Evaluator.Run ("using System;");
 
@@ -155,6 +164,7 @@
 
 	      // We know the result is an IEnumerator, cast it.
 	      IEnumerator even = (IEnumerator) Evaluator.Evaluate ("from x in numbers where (x % 2) == 0 select x");
+	      </code>
 	    </example>
 	  </para>
 	</remarks>
@@ -188,6 +198,8 @@
             statement.  If the input string is an expression
             the result will be stored in the result variable
             and the result_set variable will be set to true.
+	  </para>
+	  <para>
             It is necessary to use the result/result_set
             pair to identify when a result was set (for
             example, execution of user-provided input can be
@@ -198,6 +210,8 @@
 	  <para>
             If the return value of this function is null,
             this indicates that the parsing was complete.
+	  </para>
+	  <para>
             If the return value is a string, it indicates
             that the input is partial and that the user
             should provide an updated string.
@@ -385,10 +399,12 @@
 	  </para>
 	  <para>
 	    <example>
+	      <code lang="C#">
 	      // First setup the active using statements:
 	      Evaluator.Run ("using System;");
 
 	      Evaluator.Run ("Console.WriteLine (\"Hello, World\");
+	      </code>
 	    </example>
 	  </para>
         </remarks>
