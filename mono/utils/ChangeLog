@@ -1,3 +1,8 @@
+
+Mon Nov 10 17:27:01 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-proclib.c, mono-proclib.h: added elapsed time and parent pid.
+
 2008-11-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (libmonoutils_la_SOURCES): Add the freebsd-elf*.h files to
