@@ -33,9 +33,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Mono.Security.Protocol.Ntlm;
 using System;
+using System.Globalization;
 using System.Text;
+
+using Mono.Security.Protocol.Ntlm;
 
 namespace Mono.Data.Tds.Protocol
 {
@@ -44,6 +46,8 @@ namespace Mono.Data.Tds.Protocol
 		#region Fields
 
 		public readonly static TdsVersion Version = TdsVersion.tds70;
+		static readonly decimal SMALLMONEY_MIN = -214748.3648m;
+		static readonly decimal SMALLMONEY_MAX = 214748.3647m;
 
 		#endregion // Fields
 
@@ -463,13 +467,30 @@ namespace Mono.Data.Tds.Protocol
 				case "money" : {
 					Decimal val = (decimal) param.Value;
 					int[] arr = Decimal.GetBits (val);
-					int sign = (val>0 ? 1: -1);
-					Comm.Append (sign * arr[1]);
-					Comm.Append (sign * arr[0]);
+
+					if (val >= 0) {
+						Comm.Append (arr[1]);
+						Comm.Append (arr[0]);
+					} else {
+						Comm.Append (~arr[1]);
+						Comm.Append (~arr[0] + 1);
+					}
 					break;
 				}
 				case "smallmoney": {
 					Decimal val = (decimal) param.Value;
+					if (val < SMALLMONEY_MIN || val > SMALLMONEY_MAX)
+						throw new OverflowException (string.Format (
+							CultureInfo.InvariantCulture,
+							"Value '{0}' is not valid for SmallMoney."
+							+ "  Must be between {1:N4} and {2:N4}.",
+#if NET_2_0
+							val,
+#else
+							val.ToString (CultureInfo.CurrentCulture),
+#endif
+							SMALLMONEY_MIN, SMALLMONEY_MAX));
+
 					int[] arr = Decimal.GetBits (val);
 					int sign = (val>0 ? 1: -1);
 					Comm.Append (sign * arr[0]);

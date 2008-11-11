@@ -1139,12 +1139,23 @@ namespace Mono.Data.Tds.Protocol
 			}
 
 			switch (len) {
-			case 4:
-				return new Decimal (Comm.GetTdsInt (), 0, 0, false, 4);
+			case 4: {
+				int val = Comm.GetTdsInt ();
+				bool negative = val < 0;
+				if (negative)
+					val = ~(val - 1);
+				return new Decimal (val, 0, 0, negative, 4);
+			}
 			case 8:
 				int hi = Comm.GetTdsInt ();
 				int lo = Comm.GetTdsInt ();
-				return new Decimal (lo, hi, 0, false, 4);
+				bool negative = hi < 0;
+
+				if (negative) {
+					hi = ~hi;
+					lo = ~(lo - 1);
+				}
+				return new Decimal (lo, hi, 0, negative, 4);
 			default:
 				return DBNull.Value;
 			}
