@@ -1,3 +1,8 @@
+2008-11-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ConstructorOnTypeBuilderInstTest.cs: Add test for
+	MetadataToken under compilation context.
+	
 2008-09-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Fix the 1.0 build.

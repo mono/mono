@@ -46,17 +46,23 @@ namespace MonoTests.System.Reflection.Emit
 		private AssemblyBuilder assembly;
 		private ModuleBuilder module;
 		private Type typeBarOfInt32;
+		private ConstructorBuilder cb;
 		private ConstructorInfo ci;
 		private TypeBuilder tb;
 
 		[SetUp]
 		public void SetUp ()
 		{
+			SetUp (AssemblyBuilderAccess.RunAndSave);
+		}
+		
+		void SetUp (AssemblyBuilderAccess access)
+		{
 			AssemblyName assemblyName = new AssemblyName ();
 			assemblyName.Name = ASSEMBLY_NAME;
 
 			assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				assemblyName, AssemblyBuilderAccess.RunAndSave,
+				assemblyName, access,
 				Path.GetTempPath ());
 
 			module = assembly.DefineDynamicModule ("module1");
@@ -64,7 +70,7 @@ namespace MonoTests.System.Reflection.Emit
 			tb = module.DefineType ("Bar");
 			GenericTypeParameterBuilder [] typeParams = tb.DefineGenericParameters ("T");
 
-			ConstructorBuilder cb = tb.DefineConstructor (MethodAttributes.Public,
+			cb = tb.DefineConstructor (MethodAttributes.Public,
 				CallingConventions.Standard,
 				new Type [] { typeof (string), typeof (int) });
 			ILGenerator ig = cb.GetILGenerator ();
@@ -442,6 +448,16 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreSame (typeBarOfInt32, ci.ReflectedType, "#1");
 			tb.CreateType ();
 			Assert.AreSame (typeBarOfInt32, ci.ReflectedType, "#2");
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void MetadataTokenWorksUnderCompilerContext  ()
+		{
+			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
+			int cb_token = cb.MetadataToken;
+			int inst_token = ci.MetadataToken;
+			Assert.AreEqual (cb_token, inst_token, "#1");
 		}
 	}
 }
