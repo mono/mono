@@ -99,9 +99,9 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void ControlSelectNextFlatTest ()
 		{
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
-			}
+//			if (TestHelper.RunningOnUnix) {
+//				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
+//			}
 
 			Form form = new Form ();
 			form.ShowInTaskbar = false;
@@ -827,9 +827,9 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void ActiveControl ()
 		{
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
-			}
+//			if (TestHelper.RunningOnUnix) {
+//				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
+//			}
 
 			Form form = new Form ();
 			form.ShowInTaskbar = false;
