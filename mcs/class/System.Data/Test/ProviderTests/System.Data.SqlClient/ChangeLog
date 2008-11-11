@@ -1,3 +1,9 @@
+2008-11-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandTest.cs: Added tests for bug #428139. Added test for
+	SMALLMONEY overflows. Added workaround for Assert.AreEqual bug in
+	NUnit v2.2.0. 
+
 2008-11-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlConnectionTest.cs: Added tests for ClearPool and ClearAllPools.
