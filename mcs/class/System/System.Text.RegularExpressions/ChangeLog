@@ -1,3 +1,9 @@
+2008-11-11  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport r118484 from HEAD.
+	
+	* CILCompiler.cs: Implement Reference opcode.
+
 2008-10-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* CILCompiler.cs: Implement SubExpression opcode.

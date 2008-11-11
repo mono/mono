@@ -46,10 +46,12 @@ namespace System.Text.RegularExpressions {
 		static FieldInfo fi_stack = typeof (RxInterpreter).GetField ("stack", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 		static FieldInfo fi_mark_start = typeof (Mark).GetField ("Start", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 		static FieldInfo fi_mark_end = typeof (Mark).GetField ("End", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+		static FieldInfo fi_mark_index = typeof (Mark).GetField ("Index", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 
 		static MethodInfo mi_stack_get_count, mi_stack_set_count, mi_stack_push, mi_stack_pop;
 		static MethodInfo mi_set_start_of_match, mi_is_word_char, mi_reset_groups;
 		static MethodInfo mi_checkpoint, mi_backtrack, mi_open, mi_close;
+		static MethodInfo mi_get_last_defined, mi_mark_get_index, mi_mark_get_length;
 
 		public static readonly bool trace_compile = Environment.GetEnvironmentVariable ("MONO_TRACE_RX_COMPILE") != null;
 
@@ -1660,6 +1662,84 @@ namespace System.Text.RegularExpressions {
 						pc++;
 					break;
 				}
+				case RxOp.Reference:
+					//length = GetLastDefined (program [pc + 1] | ((int)program [pc + 2] << 8));
+					LocalBuilder loc_length = ilgen.DeclareLocal (typeof (int));
+					ilgen.Emit (OpCodes.Ldarg_0);
+					ilgen.Emit (OpCodes.Ldc_I4, ReadShort (program, pc + 1)); 
+					ilgen.Emit (OpCodes.Call, GetMethod (typeof (RxInterpreter), "GetLastDefined", ref mi_get_last_defined));					
+					ilgen.Emit (OpCodes.Stloc, loc_length);
+					//if (length < 0)
+					//  return false;
+					ilgen.Emit (OpCodes.Ldloc, loc_length);
+					ilgen.Emit (OpCodes.Ldc_I4_0);
+					ilgen.Emit (OpCodes.Blt, frame.label_fail);
+					//start = marks [length].Index;
+					LocalBuilder loc_start = ilgen.DeclareLocal (typeof (int));
+					ilgen.Emit (OpCodes.Ldarg_0);
+					ilgen.Emit (OpCodes.Ldfld, fi_marks);
+					ilgen.Emit (OpCodes.Ldloc, loc_length);
+					ilgen.Emit (OpCodes.Ldelema, typeof (Mark));
+					ilgen.Emit (OpCodes.Call, GetMethod (typeof (Mark), "get_Index", ref mi_mark_get_index));
+					ilgen.Emit (OpCodes.Stloc, loc_start);
+					// length = marks [length].Length;
+					ilgen.Emit (OpCodes.Ldarg_0);
+					ilgen.Emit (OpCodes.Ldfld, fi_marks);
+					ilgen.Emit (OpCodes.Ldloc, loc_length);
+					ilgen.Emit (OpCodes.Ldelema, typeof (Mark));
+					ilgen.Emit (OpCodes.Call, GetMethod (typeof (Mark), "get_Length", ref mi_mark_get_length));
+					ilgen.Emit (OpCodes.Stloc, loc_length);
+					//if (strpos + length > string_end)
+					//  return false;
+					ilgen.Emit (OpCodes.Ldarg_1);
+					ilgen.Emit (OpCodes.Ldloc, loc_length);
+					ilgen.Emit (OpCodes.Add);
+					ilgen.Emit (OpCodes.Ldarg_0);
+					ilgen.Emit (OpCodes.Ldfld, fi_string_end);
+					ilgen.Emit (OpCodes.Bgt, frame.label_fail);
+
+					LocalBuilder local_str = ilgen.DeclareLocal (typeof (string));
+					ilgen.Emit (OpCodes.Ldarg_0);
+					ilgen.Emit (OpCodes.Ldfld, fi_str);
+					ilgen.Emit (OpCodes.Stloc, local_str);
+
+					// end = start + length;
+					LocalBuilder loc_end = ilgen.DeclareLocal (typeof (int));
+					ilgen.Emit (OpCodes.Ldloc, loc_start);
+					ilgen.Emit (OpCodes.Ldloc, loc_length);
+					ilgen.Emit (OpCodes.Add);
+					ilgen.Emit (OpCodes.Stloc, loc_end);
+					//for (; start < end; ++start) {
+					Label l_loop_footer = ilgen.DefineLabel ();
+					ilgen.Emit (OpCodes.Br, l_loop_footer);
+					Label l_loop_body = ilgen.DefineLabel ();
+					ilgen.MarkLabel (l_loop_body);
+					//if (str [strpos] != str [start])
+					//return false;
+					ilgen.Emit (OpCodes.Ldloc, local_str);
+					ilgen.Emit (OpCodes.Ldarg_1);
+					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
+					ilgen.Emit (OpCodes.Ldloc, local_str);
+					ilgen.Emit (OpCodes.Ldloc, loc_start);
+					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
+					ilgen.Emit (OpCodes.Bne_Un, frame.label_fail);
+					// strpos++;
+					ilgen.Emit (OpCodes.Ldarg_1);
+					ilgen.Emit (OpCodes.Ldc_I4_1);
+					ilgen.Emit (OpCodes.Add);
+					ilgen.Emit (OpCodes.Starg, 1);
+					// start++
+					ilgen.Emit (OpCodes.Ldloc, loc_start);
+					ilgen.Emit (OpCodes.Ldc_I4_1);
+					ilgen.Emit (OpCodes.Add);
+					ilgen.Emit (OpCodes.Stloc, loc_start);
+					// Loop footer
+					ilgen.MarkLabel (l_loop_footer);
+					ilgen.Emit (OpCodes.Ldloc, loc_start);
+					ilgen.Emit (OpCodes.Ldloc, loc_end);
+					ilgen.Emit (OpCodes.Blt, l_loop_body);
+					pc += 3;
+					break;
 				case RxOp.Repeat:
 				case RxOp.RepeatLazy:
 					// FIXME:
