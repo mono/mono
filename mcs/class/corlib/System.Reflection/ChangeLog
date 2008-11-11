@@ -1,3 +1,13 @@
+2008-11-11  Rodrigo Kumpera  <rkumpera@novell.com>
+ 
+	* Module.cs (ResolveMethod): Use internal method 
+	GetMethodFromHandleNoGenericCheck to avoid the generic type
+	limitation of GetMethodFromHandle.
+ 
+	Fixes #443763.
+
+	Backported from trunk.
+
 2008-07-11  Marek Safar  <marek.safar@gmail.com>
 
 	* MonoGenericClass.cs (GetField): Put back removed code.
