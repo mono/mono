@@ -467,6 +467,12 @@ namespace MonoTests.System.Text.RegularExpressions
 			bug80554_trials [3].Execute ();
 		}
 
+		[Test]
+		public void Bug432172 ()
+		{
+			new Regex ("^(else|elif|except|finally)([^a-zA-Z_0-9]).*", RegexOptions.Compiled);
+		}
+
 		void Kill65535_1 (int length)
 		{
 			StringBuilder sb = new StringBuilder ("x");

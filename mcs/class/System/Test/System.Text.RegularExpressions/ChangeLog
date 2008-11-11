@@ -1,4 +1,8 @@
 
+2008-11-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* RegexBugs.cs: test from bug 432172.
+
 2008-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* RegexBugs.cs: added test from bug #439947.
