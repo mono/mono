@@ -223,7 +223,9 @@ namespace System.Windows.Forms
 					if (init_method != null)
 						init_method.Invoke (null, new object [] {});
 				}
-			} catch { }
+			} catch (Exception ex) {
+				Console.Error.WriteLine ("Error setting up UIA: " + ex);
+			}
 
 
 		}
