@@ -1,3 +1,9 @@
+2008-11-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.Mdb/MdbFactory.cs: Wrap any MonoSymbolFileException
+	into a FormatException since callers can't catch the former (at least
+	not without catching Exception).
+
 2008-10-17  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Mdb/MdbWriter.cs: Adjust to Cecil changes.

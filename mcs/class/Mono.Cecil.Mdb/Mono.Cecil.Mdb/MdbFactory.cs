@@ -38,7 +38,14 @@ namespace Mono.Cecil.Mdb {
 
 		public ISymbolReader CreateReader (ModuleDefinition module, string assembly)
 		{
-			return new MdbReader (MonoSymbolFile.ReadSymbolFile (module.Assembly, assembly));
+			try {
+				return new MdbReader (MonoSymbolFile.ReadSymbolFile (module.Assembly, assembly));
+			}
+			catch (MonoSymbolFileException e) {
+				// callers may not be able to catch this exception since they, likely,
+				// don't link with Mono.CompilerServices.SymbolWriter
+				throw new FormatException ("Invalid MDB symbol file.", e);
+			}
 		}
 
 		public ISymbolWriter CreateWriter (ModuleDefinition module, string assembly)
