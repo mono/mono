@@ -10,7 +10,62 @@
   <Interfaces />
   <Docs>
     <summary>Methods to probe for SIMD support.</summary>
-    <remarks>Helper methods used to probe for features in the SIMD runtime.</remarks>
+    <remarks>
+    	<para>Helper methods used to probe for features in the SIMD runtime.</para>
+    	<para>Sometimes it is desirable to write code in more than way to take advantage
+    	or features available only on recent machines. This class provides the required introspection
+    	capabilities to have such thing detected at runtime.</para>
+    </remarks>
+	 <example>
+      <para> The following example shows how to detect the feature set and conditionally generate the right code.</para>
+      <code lang="C#"><![CDATA[using System;
+using Mono.Simd;
+
+public class SampleRuntimeDetection {
+
+	static bool MinimalSimdSupport ()
+	{
+		return SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "op_Addition") &&
+			   SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "op_Multiply") &&
+			   SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "Shuffle");
+	}
+
+	static bool EnhancedSimdSupport ()
+	{
+		return SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "HorizontalAdd") &&
+			   SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "op_Multiply");
+	}
+
+	static readonly bool basic_support = MinimalSimdSupport ();
+	static readonly bool enhanced_support = EnhancedSimdSupport ();
+
+	public static float DotProduct (ref Vector4f a, ref Vector4f b)
+	{
+		if (enhanced_support) {
+			Vector4f prod = a * b;
+			prod = Vector4f.HorizontalAdd (prod, prod);
+			prod = Vector4f.HorizontalAdd (prod, prod);
+			return prod.X;
+		} else if (basic_support) {
+			Vector4f prod = a * b;
+			prod += Vector4f.Shuffle (prod, ShuffleSel.XFromZ | ShuffleSel.YFromW);
+			prod += Vector4f.Shuffle (prod, ShuffleSel.XFromY);
+			return prod.X;
+		} else {
+			return a.X * b.X + a.Y * b.Y + a.Z * b.Z  + a.W * b.W;
+		}
+	}
+
+	public static void Main () {
+		Vector4f x = new Vector4f (1, 2, 3, 1);
+		Vector4f y = new Vector4f (5, 6, 7, 1);
+		float res = DotProduct (ref x, ref y);
+		Console.WriteLine (res);
+	}
+}
+
+		]]></code>
+	</example>
   </Docs>
   <Members>
     <Member MemberName="AccelMode">
@@ -51,7 +106,7 @@
         <param name="type">The type to lookup, a Type from Mono.Simd.</param>
         <param name="method">The name of the method.</param>
         <summary>Returns true if the specified method is accelerated on this platform.</summary>
-        <returns>True if the method is acceelrated.</returns>
+        <returns>True if the method is accelerated.</returns>
 
         <remarks> The method name must be the full name, for example
 	   the C# operator + is actually encoded as op_Addition.  You
@@ -80,7 +135,7 @@
         <param name="method">The name of the method.</param>
         <param name="signature">The signature for the method.</param>
         <summary>Returns true if the specified method is accelerated on this platform.</summary>
-        <returns>True if the method is acceelrated.</returns>
+        <returns>True if the method is accelerated.</returns>
 
         <remarks> The method name must be the full name, for example
 	   the C# operator + is actually encoded as op_Addition.  You
