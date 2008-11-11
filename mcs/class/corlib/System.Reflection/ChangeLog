@@ -1,3 +1,11 @@
+2008-11-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Module.cs (ResolveMethod): Use internal method 
+	GetMethodFromHandleNoGenericCheck to avoid the generic type
+	limitation of GetMethodFromHandle.
+
+	Fixes #443763.
+
 2008-10-02 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* MonoMethod.cs: throw a MemberAccessException when

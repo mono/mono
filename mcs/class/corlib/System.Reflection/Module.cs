@@ -376,7 +376,7 @@ namespace System.Reflection {
 			if (handle == IntPtr.Zero)
 				throw resolve_token_exception (metadataToken, error, "MethodBase");
 			else
-				return MethodBase.GetMethodFromHandle (new RuntimeMethodHandle (handle));
+				return MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (handle));
 		}
 
 		public string ResolveString (int metadataToken) {
