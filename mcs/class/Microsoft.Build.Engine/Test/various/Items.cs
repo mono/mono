@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
 using System.Xml;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
@@ -151,7 +152,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.AreEqual ("AA;BB;CC", GetItems (proj, "ItemT2"), "A2");
 			Assert.AreEqual ("(-A-);(-B-);(-C-)", GetItems (proj, "ItemT3"), "A3");
 			Assert.AreEqual (".txt;.txt;.zip;.zip", GetItems (proj, "ItemT4"), "A4");
-			Assert.AreEqual ("B/.txt;C/.txt;B/.zip;C/.zip", GetItems (proj, "ItemT5"), "A5");
+			Assert.AreEqual (string.Format ("B{0}.txt;C{0}.txt;B{0}.zip;C{0}.zip", Path.DirectorySeparatorChar), GetItems (proj, "ItemT5"), "A5");
 		}
 		[Test]
 		[Category ("NotWorking")]

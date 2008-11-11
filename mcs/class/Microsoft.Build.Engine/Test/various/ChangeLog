@@ -1,3 +1,8 @@
+2008-11-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* Items.cs: Use Path.DirectorySeparatorChar instead of 
+	hardcoded '/' to fix test on Windows.
+
 2007-01-23  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* EvaluationOrder.cs: Removed NotWorking from test that started to
