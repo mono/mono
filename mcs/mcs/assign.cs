@@ -253,13 +253,6 @@ namespace Mono.CSharp {
 
 			source.Emit (ec);
 
-			// HACK: variable is already emitted when source is an initializer 
-			if (source is NewInitialize) {
-				if (leave_copy)
-					Emit (ec);
-				return;
-			}
-
 			Store (ec);
 
 			if (leave_copy)
@@ -380,20 +373,7 @@ namespace Mono.CSharp {
 				if (resolved != this)
 					return resolved;
 			}
-			
-			if (target.eclass == ExprClass.Variable) {
-				New n = source as New;
-				if (n == null)
-					return this;
-				
-				if (n.HasInitializer) {
-					n.SetTargetVariable (target);
-				} else if (target_type.IsValueType) {
-					n.SetTargetVariable (target);
-					return n;
-				}
-			}
-			
+
 			return this;
 		}
 
@@ -415,7 +395,8 @@ namespace Mono.CSharp {
 
 		void Emit (EmitContext ec, bool is_statement)
 		{
-			((IAssignMethod) target).EmitAssign (ec, source, !is_statement, this is CompoundAssign);
+			IAssignMethod t = (IAssignMethod) target;
+			t.EmitAssign (ec, source, !is_statement, this is CompoundAssign);
 		}
 
 		public override void Emit (EmitContext ec)

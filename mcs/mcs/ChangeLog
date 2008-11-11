@@ -1,3 +1,9 @@
+2008-11-11  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #435747
+	* assign.cs, expression.cs: Cleanup New assignment to emit correcly
+	compound value types assignment. Few micro optimizations added.
+
 2008-11-10  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #442610

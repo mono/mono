@@ -4113,25 +4113,23 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy,
 					bool prepare_for_load)
 		{
-			Report.Debug (64, "VARIABLE EMIT ASSIGN", this, Variable, type, IsRef,
-				      source, loc);
-
 			if (IsHoistedEmitRequired (ec)) {
 				HoistedVariable.EmitAssign (ec, source, leave_copy, prepare_for_load);
 				return;
 			}
 
-			if (IsRef)
-				Variable.Emit (ec);
-
-			source.Emit (ec);
-
-			// HACK: variable is already emitted when source is an initializer 
-			if (source is NewInitialize) {
-				if (leave_copy) {
-					Variable.Emit (ec);
+			New n_source = source as New;
+			if (n_source != null) {
+				if (!n_source.Emit (ec, this)) {
+					if (leave_copy)
+						EmitLoad (ec);
+					return;
 				}
-				return;
+			} else {
+				if (IsRef)
+					EmitLoad (ec);
+
+				source.Emit (ec);
 			}
 
 			if (leave_copy) {
@@ -5239,17 +5237,6 @@ namespace Mono.CSharp {
 	}
 */
 
-	//
-	// This class is used to "disable" the code generation for the
-	// temporary variable when initializing value types.
-	//
-	sealed class EmptyAddressOf : EmptyExpression, IMemoryLocation {
-		public void AddressOf (EmitContext ec, AddressOp Mode)
-		{
-			// nothing
-		}
-	}
-	
 	/// <summary>
 	///    Implements the new expression 
 	/// </summary>
@@ -5261,17 +5248,11 @@ namespace Mono.CSharp {
 		// but if `type' is not null, it *might* contain a NewDelegate
 		// (because of field multi-initialization)
 		//
-		public Expression RequestedType;
+		Expression RequestedType;
 
 		MethodGroupExpr method;
 
-		//
-		// If set, the new expression is for a value_target, and
-		// we will not leave anything on the stack.
-		//
-		protected Expression value_target;
-		protected bool value_target_set;
-		bool is_type_parameter = false;
+		bool is_type_parameter;
 		
 		public New (Expression requested_type, ArrayList arguments, Location l)
 		{
@@ -5279,45 +5260,6 @@ namespace Mono.CSharp {
 			Arguments = arguments;
 			loc = l;
 		}
-
-		public bool SetTargetVariable (Expression value)
-		{
-			value_target = value;
-			value_target_set = true;
-			if (!(value_target is IMemoryLocation)){
-				Error_UnexpectedKind (null, "variable", loc);
-				return false;
-			}
-			return true;
-		}
-
-		//
-		// This function is used to disable the following code sequence for
-		// value type initialization:
-		//
-		// AddressOf (temporary)
-		// Construct/Init
-		// LoadTemporary
-		//
-		// Instead the provide will have provided us with the address on the
-		// stack to store the results.
-		//
-		static Expression MyEmptyExpression;
-		
-		public void DisableTemporaryValueType ()
-		{
-			if (MyEmptyExpression == null)
-				MyEmptyExpression = new EmptyAddressOf ();
-
-			//
-			// To enable this, look into:
-			// test-34 and test-89 and self bootstrapping.
-			//
-			// For instance, we can avoid a copy by using `newobj'
-			// instead of Call + Push-temp on value types.
-//			value_target = MyEmptyExpression;
-		}
-
 
 		/// <summary>
 		/// Converts complex core type syntax like 'new int ()' to simple constant
@@ -5575,13 +5517,9 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// This DoEmit can be invoked in two contexts:
+		// This Emit can be invoked in two contexts:
 		//    * As a mechanism that will leave a value on the stack (new object)
 		//    * As one that wont (init struct)
-		//
-		// You can control whether a value is required on the stack by passing
-		// need_value_on_stack.  The code *might* leave a value on the stack
-		// so it must be popped manually
 		//
 		// If we are dealing with a ValueType, we have a few
 		// situations to deal with:
@@ -5598,68 +5536,75 @@ namespace Mono.CSharp {
 		//
 		// Returns whether a value is left on the stack
 		//
-		bool DoEmit (EmitContext ec, bool need_value_on_stack)
+		// *** Implementation note ***
+		//
+		// To benefit from this optimization, each assignable expression
+		// has to manually cast to New and call this Emit.
+		//
+		// TODO: It's worth to implement it for arrays and fields
+		//
+		public virtual bool Emit (EmitContext ec, IMemoryLocation target)
 		{
+			if (is_type_parameter)
+				return DoEmitTypeParameter (ec);
+
 			bool is_value_type = TypeManager.IsValueType (type);
 			ILGenerator ig = ec.ig;
+			VariableReference vr = target as VariableReference;
 
-			if (is_value_type){
-				IMemoryLocation ml;
-
-				// Allow DoEmit() to be called multiple times.
-				// We need to create a new LocalTemporary each time since
-				// you can't share LocalBuilders among ILGeneators.
-				if (!value_target_set)
-					value_target = new LocalTemporary (type);
-
-				ml = (IMemoryLocation) value_target;
-				ml.AddressOf (ec, AddressOp.Store);
+			if (target != null && is_value_type && (vr != null || method == null)) {
+				target.AddressOf (ec, AddressOp.Store);
+			} else if (vr != null && vr.IsRef) {
+				vr.EmitLoad (ec);
 			}
 
 			if (method != null)
 				method.EmitArguments (ec, Arguments);
 
-			if (is_value_type){
-				if (method == null)
+			if (is_value_type) {
+				if (method == null) {
 					ig.Emit (OpCodes.Initobj, type);
-				else
+					return false;
+				}
+
+				if (vr != null) {
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-                                if (need_value_on_stack){
-                                        value_target.Emit (ec);
-                                        return true;
-                                }
-                                return false;
-			} else {
-				ConstructorInfo ci = (ConstructorInfo) method;
-#if MS_COMPATIBLE
-				if (TypeManager.IsGenericType (type))
-					ci = TypeBuilder.GetConstructor (type, ci);
-#endif
-				ig.Emit (OpCodes.Newobj, ci);
-				return true;
+					return false;
+				}
 			}
+
+			ConstructorInfo ci = (ConstructorInfo) method;
+#if MS_COMPATIBLE
+			if (TypeManager.IsGenericType (type))
+				ci = TypeBuilder.GetConstructor (type, ci);
+#endif
+
+			ig.Emit (OpCodes.Newobj, ci);
+			return true;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			if (is_type_parameter)
-				DoEmitTypeParameter (ec);
-			else
-				DoEmit (ec, true);
+			LocalTemporary v = null;
+			if (method == null && TypeManager.IsValueType (type)) {
+				// TODO: Use temporary variable from pool
+				v = new LocalTemporary (type);
+			}
+
+			if (!Emit (ec, v))
+				v.Emit (ec);
 		}
 		
 		public override void EmitStatement (EmitContext ec)
 		{
-			bool value_on_stack;
+			LocalTemporary v = null;
+			if (method == null && TypeManager.IsValueType (type)) {
+				// TODO: Use temporary variable from pool
+				v = new LocalTemporary (type);
+			}
 
-			if (is_type_parameter)
-				value_on_stack = DoEmitTypeParameter (ec);
-			else
-				value_on_stack = DoEmit (ec, false);
-
-			if (value_on_stack)
+			if (Emit (ec, v))
 				ec.ig.Emit (OpCodes.Pop);
-
 		}
 
 		public virtual bool HasInitializer {
@@ -5688,8 +5633,7 @@ namespace Mono.CSharp {
 				throw new Exception ("AddressOf should not be used for classes");
 			}
 
-			if (!value_target_set)
-				value_target = new LocalTemporary (type);
+			LocalTemporary	value_target = new LocalTemporary (type);
 			IMemoryLocation ml = (IMemoryLocation) value_target;
 
 			ml.AddressOf (ec, AddressOp.Store);
@@ -6329,15 +6273,6 @@ namespace Mono.CSharp {
 					if ((dims == 1) && etype.IsValueType &&
 					    (!TypeManager.IsBuiltinOrEnum (etype) ||
 					     etype == TypeManager.decimal_type)) {
-						if (e is New){
-							New n = (New) e;
-
-							//
-							// Let new know that we are providing
-							// the address where to store the results
-							//
-							n.DisableTemporaryValueType ();
-						}
 
 						ig.Emit (OpCodes.Ldelema, etype);
 					}
@@ -8244,6 +8179,18 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void EmitNew (EmitContext ec, New source, bool leave_copy)
+		{
+			if (!source.Emit (ec, this)) {
+				if (leave_copy)
+					throw new NotImplementedException ();
+
+				return;
+			}
+
+			throw new NotImplementedException ();
+		}
+
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			int rank = ea.Expr.Type.GetArrayRank ();
@@ -9583,20 +9530,22 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
-				new_instance.value_target.Emit (ec);
+				Expression e = (Expression) new_instance.instance;
+				e.Emit (ec);
 			}
 
 			#region IMemoryLocation Members
 
 			public void AddressOf (EmitContext ec, AddressOp mode)
 			{
-				((IMemoryLocation)new_instance.value_target).AddressOf (ec, mode);
+				new_instance.instance.AddressOf (ec, mode);
 			}
 
 			#endregion
 		}
 
 		CollectionOrObjectInitializers initializers;
+		IMemoryLocation instance;
 
 		public NewInitialize (Expression requested_type, ArrayList arguments, CollectionOrObjectInitializers initializers, Location l)
 			: base (requested_type, arguments, l)
@@ -9646,51 +9595,52 @@ namespace Mono.CSharp {
 			return e;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec, IMemoryLocation target)
 		{
-			base.Emit (ec);
+			bool left_on_stack = base.Emit (ec, target);
+
+			if (initializers.IsEmpty)
+				return left_on_stack;
+
+			LocalTemporary temp = null;
 
 			//
 			// If target is non-hoisted variable, let's use it
 			//
-			VariableReference variable = value_target as VariableReference;
-			if (variable != null && variable.HoistedVariable == null) {
-				if (variable.IsRef)
-					StoreFromPtr (ec.ig, type);
-				else
-					variable.EmitAssign (ec, EmptyExpression.Null, false, false);
-			} else {
-				variable = null;
-				if (value_target == null || value_target_set)
-					value_target = new LocalTemporary (type);
+			VariableReference variable = target as VariableReference;
+			if (variable != null) {
+				instance = target;
 
-				((LocalTemporary) value_target).Store (ec);
+				if (left_on_stack) {
+					if (variable.IsRef)
+						StoreFromPtr (ec.ig, type);
+					else
+						variable.EmitAssign (ec, EmptyExpression.Null, false, false);
+
+					left_on_stack = false;
+				}
+			} else {
+				temp = target as LocalTemporary;
+				if (temp == null) {
+					if (!left_on_stack)
+						throw new NotImplementedException ();
+
+					temp = new LocalTemporary (type);
+				}
+
+				instance = temp;
+				if (left_on_stack)
+					temp.Store (ec);
 			}
 
 			initializers.Emit (ec);
 
-			if (variable == null) {
-				value_target.Emit (ec);
-				value_target = null;
-			}
-		}
-
-		public override void EmitStatement (EmitContext ec)
-		{
-			if (initializers.IsEmpty) {
-				base.EmitStatement (ec);
-				return;
+			if (left_on_stack) {
+				temp.Emit (ec);
+				temp.Release (ec);
 			}
 
-			base.Emit (ec);
-
-			if (value_target == null) {
-				LocalTemporary variable = new LocalTemporary (type);
-				variable.Store (ec);
-				value_target = variable;
-			}
-
-			initializers.EmitStatement (ec);
+			return left_on_stack;
 		}
 
 		public override bool HasInitializer {
