@@ -1,5 +1,9 @@
 2008-11-11  Andreia Gaita <shana@jitted.com> 
 
+	* TestHelper.cs: Inconsistent eol fixes and eol-style
+
+2008-11-11  Andreia Gaita <shana@jitted.com> 
+
 	* FocusTest.cs, FormTest.cs, FormEventTest.cs: Enable tests that depend on
 	  synchronous WM_ACTIVATE messages and are now working with the latest
 	  message fixes

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Everaldo Canuto (ecanuto@novell.com)
+//   Andreia Gaita (avidigal@novell.com)
 //
 // (C) 2006 Novell, Inc. (http://www.novell.com)
 //
