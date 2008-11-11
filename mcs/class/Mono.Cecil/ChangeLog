@@ -1,3 +1,8 @@
+2008-11-11  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Cil/CodeWriter.cs: fix writing of catch handlers
+	of a generic exception type.
+
 2008-11-06  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Metadata/MetadataWriter.cs: properly clean

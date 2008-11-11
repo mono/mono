@@ -181,8 +181,7 @@ namespace Mono.Cecil.Cil {
 				case OperandType.InlineType :
 				case OperandType.InlineTok :
 					if (instr.Operand is TypeReference)
-						WriteToken (m_reflectWriter.GetTypeDefOrRefToken (
-								instr.Operand as TypeReference));
+						WriteToken (GetTypeToken ((TypeReference) instr.Operand));
 					else if (instr.Operand is GenericInstanceMethod)
 						WriteToken (m_reflectWriter.GetMethodSpecToken (instr.Operand as GenericInstanceMethod));
 					else if (instr.Operand is MemberReference)
@@ -225,6 +224,11 @@ namespace Mono.Cecil.Cil {
 			}
 
 			m_codeWriter.BaseStream.Position = pos;
+		}
+
+		MetadataToken GetTypeToken (TypeReference type)
+		{
+			return m_reflectWriter.GetTypeDefOrRefToken (type);
 		}
 
 		MetadataToken GetCallSiteToken (CallSite cs)
@@ -326,7 +330,7 @@ namespace Mono.Cecil.Cil {
 		{
 			switch (eh.Type) {
 			case ExceptionHandlerType.Catch :
-				WriteToken (eh.CatchType.MetadataToken);
+				WriteToken (GetTypeToken (eh.CatchType));
 				break;
 			case ExceptionHandlerType.Filter :
 				m_codeWriter.Write ((uint) eh.FilterStart.Offset);
