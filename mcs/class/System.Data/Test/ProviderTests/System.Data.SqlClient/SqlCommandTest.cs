@@ -1765,13 +1765,40 @@ namespace MonoTests.System.Data.SqlClient
 
 							// rounding tests
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-200000000.23455m, -200000000.2346m, -200000000.2346m);
+								-200000000.234561m, -200000000.2346m, -200000000.2346m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-200000000.23454m, -200000000.2345m, -200000000.2345m);
+								-200000000.234551m, -200000000.2346m, -200000000.2346m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								200000000.23455m, 200000000.2346m, 200000000.2346m);
+								-200000000.234541m, -200000000.2345m, -200000000.2345m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								200000000.23454m, 200000000.2345m, 200000000.2345m);
+								200000000.234561m, 200000000.2346m, 200000000.2346m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234551m, 200000000.2346m, 200000000.2346m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234541m, 200000000.2345m, 200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234461m, -200000000.2345m, -200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234451m, -200000000.2345m, -200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234441m, -200000000.2344m, -200000000.2344m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234461m, 200000000.2345m, 200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234451m, 200000000.2345m, 200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234441m, 200000000.2344m, 200000000.2344m);
+							// FIXME: we round toward even in SqlParameter.ConvertToFrameworkType
+							/*
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234550m, -200000000.2346m, -200000000.2346m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234550m, 200000000.2346m, 200000000.2346m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234450m, -200000000.2345m, -200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234450m, 200000000.2345m, 200000000.2345m);
+							*/
 							break;
 						case 23 :
 							// Test NChar Param
@@ -1900,15 +1927,40 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value, DBNull.Value);
 
 							// rounding tests
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543361m, -4.5434m, -4.5434m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543351m, -4.5434m, -4.5434m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543341m, -4.5433m, -4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543361m, 4.5434m, 4.5434m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543351m, 4.5434m, 4.5434m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543341m, 4.5433m, 4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543261m, -4.5433m, -4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543251m, -4.5433m, -4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543241m, -4.5432m, -4.5432m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543261m, 4.5433m, 4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543251m, 4.5433m, 4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543241m, 4.5432m, 4.5432m);
+							// FIXME: we round toward even in SqlParameter.ConvertToFrameworkType
 							/*
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								-4.54325m, -4.5433m, -4.5433m);
+								-4.543350m, -4.5434m, -4.5434m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								-4.54324m, -4.5432m, -4.5432m);
+								4.543350m, 4.5434m, 4.5434m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								4.54325m, 4.5433m, 4.5433m);
+								-4.543250m, -4.5433m, -4.5433m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								4.54324m, 4.5432m, 4.5432m);
+								4.543250m, 4.5433m, 4.5433m);
 							*/
 							break;
 						case 16 :
