@@ -1,5 +1,10 @@
 2008-11-11  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/ReflectionReader.cs (AddTypeRef):
+	protect against invalid token.
+
+2008-11-11  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil.Cil/CodeWriter.cs: fix writing of catch handlers
 	of a generic exception type.
 

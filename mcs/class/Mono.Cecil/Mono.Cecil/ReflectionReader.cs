@@ -525,6 +525,9 @@ namespace Mono.Cecil {
 
 		void AddTypeRef (TypeRefTable typesRef, int i)
 		{
+			if (i >= typesRef.Rows.Count)
+				return;
+
 			// Check if index has been already added.
 			if (m_typeRefs [i] != null)
 				return;
@@ -548,7 +551,8 @@ namespace Mono.Cecil {
 				case TokenType.TypeRef:
 					AddTypeRef (typesRef, rid);
 					parent = GetTypeRefAt (type.ResolutionScope.RID);
-					scope = parent.Scope;
+					if (parent != null)
+						scope = parent.Scope;
 					break;
 				}
 			}
