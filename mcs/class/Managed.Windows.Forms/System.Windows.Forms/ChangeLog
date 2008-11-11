@@ -1,5 +1,12 @@
 2008-11-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Add internal to OnAutoSizeColumnModeChanged.
+	* DataGridViewColumn.cs: Recalculate columns when AutoSizeMode changes.  Raise
+	AutoSizeColumnModeChanged.
+	[Fixes bug #443609]
+
+2008-11-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewRowCollection.cs: Guard against the user deleting the
 	NewRow.  Add an internal delete so we can still delete it.
 	* DataGridView.cs: Use the new internal delete when deleting the NewRow.

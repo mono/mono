@@ -82,7 +82,17 @@ namespace System.Windows.Forms {
 		[RefreshProperties (RefreshProperties.Repaint)]
 		public DataGridViewAutoSizeColumnMode AutoSizeMode {
 			get { return autoSizeMode; }
-			set { autoSizeMode = value; }
+			set {
+				if (autoSizeMode != value) {
+					DataGridViewAutoSizeColumnMode old_value = autoSizeMode;
+					autoSizeMode = value;
+					
+					if (DataGridView != null) {
+						DataGridView.OnAutoSizeColumnModeChanged (new DataGridViewAutoSizeColumnModeEventArgs (this, old_value));
+						DataGridView.AutoResizeColumnsInternal ();
+					}
+				}
+			}
 		}
 
 		[Browsable (false)]
