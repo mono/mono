@@ -240,7 +240,15 @@ namespace System.Windows.Forms
 
 		public virtual void Clear ()
 		{
-			list.Clear();
+			for (int i = 0; i < list.Count; i++) {
+				DataGridViewRow row = (DataGridViewRow)list[0];
+				
+				// We can exit because the NewRow is always last
+				if (row.IsNewRow)
+					break;
+					
+				list.Remove (row);
+			}
 		}
 
 		bool IList.Contains (object value)
@@ -442,19 +450,28 @@ namespace System.Windows.Forms
 
 		public virtual void Remove (DataGridViewRow dataGridViewRow)
 		{
+			if (dataGridViewRow.IsNewRow)
+				throw new InvalidOperationException ("Cannot delete the new row");
+				
 			list.Remove (dataGridViewRow);
 			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));
 			DataGridView.OnRowsRemoved (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
 		}
 
+		internal virtual void RemoveInternal (DataGridViewRow dataGridViewRow)
+		{
+			list.Remove (dataGridViewRow);
+			ReIndex ();
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));
+			DataGridView.OnRowsRemoved (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
+		}
+		
 		public virtual void RemoveAt (int index)
 		{
 			DataGridViewRow row = this [index];
-			list.RemoveAt (index);
-			ReIndex ();
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, row));
-			DataGridView.OnRowsRemoved (new DataGridViewRowsRemovedEventArgs (index, 1));
+			
+			Remove (row);
 		}
 
 		public DataGridViewRow SharedRow (int rowIndex)

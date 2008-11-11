@@ -2297,7 +2297,7 @@ namespace System.Windows.Forms {
 				// the new row we added.
 				if (!new_row_commited) {
 					DataGridViewRow delete_row = EditingRow;
-					Rows.Remove (delete_row);
+					Rows.RemoveInternal (delete_row);
 					editing_row = Rows[currentCell.RowIndex];
 					OnUserDeletedRow (new DataGridViewRowEventArgs (delete_row));
 					new_row_commited = true;
@@ -5662,7 +5662,7 @@ namespace System.Windows.Forms {
 			show = ColumnCount > 0 && AllowUserToAddRows;
 
 			if (!show && editing_row != null) {
-				Rows.Remove (editing_row);
+				Rows.RemoveInternal (editing_row);
 				editing_row = null;
 			} else if (show) {
 				if (editing_row != null) {
@@ -5671,7 +5671,7 @@ namespace System.Windows.Forms {
 						editing_row = null;
 					} else if (column_changed) {
 						// The number of columns has changed, we need a new editing row.
-						Rows.Remove (editing_row);
+						Rows.RemoveInternal (editing_row);
 						editing_row = null;
 					}
 				}

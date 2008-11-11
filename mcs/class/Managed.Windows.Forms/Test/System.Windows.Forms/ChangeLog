@@ -1,3 +1,7 @@
+2008-11-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewRowCollectionTest.cs: Add some tests for bug #442181.
+
 2008-11-11  Andreia Gaita <shana@jitted.com> 
 
 	* TestHelper.cs: Inconsistent eol fixes and eol-style

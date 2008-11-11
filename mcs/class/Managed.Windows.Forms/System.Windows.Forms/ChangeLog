@@ -1,3 +1,10 @@
+2008-11-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewRowCollection.cs: Guard against the user deleting the
+	NewRow.  Add an internal delete so we can still delete it.
+	* DataGridView.cs: Use the new internal delete when deleting the NewRow.
+	[Fixes bug #442181]
+
 2008-11-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextControl.cs: Add some order of operation to our math so
