@@ -83,7 +83,7 @@ namespace Commons.Xml.Relaxng
 			RelaxngGrammar g = null;
 			try {
 				if (grammar.IsSourceCompactSyntax) {
-					return RncParser.ParseRnc (new StreamReader ((Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream))), null, BaseUri);
+					return RncParser.ParseRnc (new StreamReader ((Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream))), null, BaseUri, nsContext);
 				} else {
 					xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
 					RelaxngReader r = new RelaxngReader (xtr, nsContext, grammar.Resolver);
@@ -343,15 +343,16 @@ namespace Commons.Xml.Relaxng
 				if (BaseUri != null && BaseUri != String.Empty)
 					baseUri = new Uri (BaseUri);
 			} catch (UriFormatException) {
-				if (Path.IsPathRooted (BaseUri))
+				if (File.Exists (BaseUri))
 					baseUri = new Uri (Path.GetFullPath (BaseUri));
 			}
 			Uri uri = grammar.Resolver.ResolveUri (baseUri, Href);
 
-			RelaxngGrammar g = ReadExternalResource (grammar, uri, ns) as RelaxngGrammar;
+			RelaxngGrammar g = ReadExternalResource (grammar, uri, (ns != null && ns.Length != 0) || !grammar.IsSourceCompactSyntax ? ns : grammar.DefaultNamespace) as RelaxngGrammar;
 			if (g == null)
 				throw new RelaxngException (this, "Included syntax must start with \"grammar\" element.");
 			g.DataProvider = grammar.Provider;
+			g.IsSourceCompactSyntax = grammar.IsSourceCompactSyntax;
 
 			// process recursive inclusions.
 			foreach (RelaxngInclude inc in g.Includes)

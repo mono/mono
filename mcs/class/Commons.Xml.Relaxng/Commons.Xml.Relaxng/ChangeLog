@@ -1,3 +1,8 @@
+2008-11-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngPattern.cs : handle inherited default namespace in compact 
+	  syntax as expected.
+
 2008-08-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngPattern.cs : unlike "include" element, "external" element

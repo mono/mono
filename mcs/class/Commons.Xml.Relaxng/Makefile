@@ -14,18 +14,10 @@ EXTRA_DISTFILES = \
 	Commons.Xml.Relaxng.Rnc/RncParser.jay	\
 	Test/ChangeLog		\
 	Test/XmlFiles/ChangeLog	\
-	Test/XmlFiles/SimpleElementPattern1.xml	\
-	Test/XmlFiles/SimpleElementPattern1.rng	\
-	Test/XmlFiles/SimpleElementPattern2.xml	\
-	Test/XmlFiles/SimpleElementPattern2.rng	\
-	Test/XmlFiles/team.xml	\
-	Test/XmlFiles/team.rng	\
-	Test/XmlFiles/relaxng.rng	\
-	Test/XmlFiles/relaxng.rnc	\
-	Test/XmlFiles/atom.rnc		\
-	Test/XmlFiles/schemas-xmlsoap-or-ws-2005-05-identity.rnc	\
-	Test/XmlFiles/nvdl.nvdl		\
-	Test/XmlFiles/nvdl.rng		\
+	$(wildcard Test/XmlFiles/*.rng) \
+	$(wildcard Test/XmlFiles/*.rnc) \
+	$(wildcard Test/XmlFiles/*.nvdl) \
+	$(wildcard Test/XmlFiles/*.xml) \
 	$(wildcard Test/standalone_tests/*.cs) \
 	$(RESOURCE_FILES)
 

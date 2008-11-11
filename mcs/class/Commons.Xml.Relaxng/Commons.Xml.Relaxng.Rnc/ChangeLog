@@ -1,3 +1,8 @@
+2008-11-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncParser.jay : handle inherited default namespace as expected.
+	  This should fix HTML5 compact syntax grammar.
+
 2007-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncParser.jay, RncTokenizer.cs : some changes to fill element

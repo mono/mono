@@ -1,3 +1,7 @@
+2008-11-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Makefile: what a messy EXTRA_DISTFILES.
+
 2007-04-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Makefile (EXTRA_DISTFILES) :

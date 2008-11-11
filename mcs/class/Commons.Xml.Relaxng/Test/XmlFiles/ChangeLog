@@ -1,3 +1,9 @@
+2008-11-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* include-default-namespace.rnc,
+	  include-default-namespace-included.rnc,
+	  include-default-namespace.xml : new test files.
+
 2007-04-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* schemas-xmlsoap-or-ws-2005-05-identity.rnc : new test schema.

@@ -20,18 +20,24 @@ namespace MonoTests.Commons.Xml.Relaxng
 	[TestFixture]
 	public class RncTests
 	{
-		void Compile (string file)
+		RelaxngPattern Compile (string file)
 		{
 			using (StreamReader sr = new StreamReader (file)) {
-				Compile (sr);
+				return Compile (sr, file);
 			}
 		}
 
-		void Compile (TextReader reader)
+		RelaxngPattern Compile (TextReader reader)
+		{
+			return Compile (reader, null);
+		}
+
+		RelaxngPattern Compile (TextReader reader, string baseUri)
 		{
 			RncParser parser = new RncParser (new NameTable ());
-			RelaxngPattern g = parser.Parse (reader);
+			RelaxngPattern g = parser.Parse (reader, baseUri);
 			g.Compile ();
+			return g;
 		}
 
 		[Test]
@@ -74,6 +80,20 @@ start = mine";
 		public void SurrogateLiteral ()
 		{
 			Compile (new StringReader ("element foo { \"\\x{10FFFF}\" }"));
+		}
+
+		[Test]
+		public void InheritDefaultNamespace ()
+		{
+			RelaxngPattern g = Compile ("Test/XmlFiles/include-default-namespace.rnc");
+			XmlReader xtr = new XmlTextReader ("Test/XmlFiles/include-default-namespace.xml");
+			RelaxngValidatingReader r = new RelaxngValidatingReader (xtr, g);
+			try {
+				while (!r.EOF)
+					r.Read ();
+			} finally {
+				r.Close ();
+			}
 		}
 	}
 }

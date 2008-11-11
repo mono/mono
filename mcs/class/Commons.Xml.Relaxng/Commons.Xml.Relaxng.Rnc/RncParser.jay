@@ -56,12 +56,17 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public static RelaxngPattern ParseRnc (TextReader reader, XmlNameTable nameTable, string baseUri)
 		{
-			return new RncParser (nameTable).Parse (reader, baseUri);
+			return ParseRnc (reader, nameTable, baseUri, null);
+		}
+
+		public static RelaxngPattern ParseRnc (TextReader reader, XmlNameTable nameTable, string baseUri, string defaultNamespace)
+		{
+			return new RncParser (nameTable).Parse (reader, baseUri, defaultNamespace);
 		}
 
 		XmlNamespaceManager nsmgr;
 		XmlNamespaceManager dtnsmgr;
-		string defaultNamespace = String.Empty;
+		string defaultNamespace;
 		static int yacc_verbose_flag;
 
 		RncTokenizer tokenizer;
@@ -89,9 +94,6 @@ namespace Commons.Xml.Relaxng.Rnc
 		}
 
 		// note that this is different notion than that of xmlns.
-		public string DefaultNamespace {
-			get { return defaultNamespace; }
-		}
 
 		public RelaxngPattern Parse (TextReader source)
 		{
@@ -100,6 +102,14 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public RelaxngPattern Parse (TextReader source, string baseUri)
 		{
+			return Parse (source, baseUri, null);
+		}
+
+		public RelaxngPattern Parse (TextReader source, string baseUri, string defaultNamespace)
+		{
+			this.defaultNamespace = defaultNamespace;
+			if (defaultNamespace != null && defaultNamespace.Length != 0)
+				nsmgr.AddNamespace (String.Empty, defaultNamespace);
 			try {
 				if (Environment.GetEnvironmentVariable ("MONO_RELAXNG_COMPACT_DEBUG") == "yes")
 					debug = new yydebug.yyDebugSimple ();
@@ -151,7 +161,7 @@ namespace Commons.Xml.Relaxng.Rnc
 			RelaxngName name = nc as RelaxngName;
 			if (name != null) {
 				if (name.Namespace == null)
-					name.Namespace = this.DefaultNamespace;
+					name.Namespace = defaultNamespace;
 				return;
 			}
 			RelaxngNameChoice choice = nc as RelaxngNameChoice;
@@ -272,6 +282,7 @@ Decl /* returns null */
 		// TODO: constraints
 		string ns = (string) $4;
 		defaultNamespace = ns;
+		nsmgr.AddNamespace (String.Empty, ns);
 		$$ = null;
 	}
 	| KeywordDefault KeywordNamespace NamespacePrefix Equal NamespaceURILiteral
@@ -280,6 +291,7 @@ Decl /* returns null */
 		string prefix = (string) $3;
 		string ns = (string) $5;
 		defaultNamespace = ns;
+		nsmgr.AddNamespace (String.Empty, ns);
 		nsmgr.AddNamespace (prefix, ns);
 		$$ = null;
 	}
@@ -314,7 +326,7 @@ NamespaceURILiteral /* returns string */
 	}
 	| KeywordInherit
 	{
-		$$ = (string) $1;
+		$$ = defaultNamespace;
 	}
 	;
 
@@ -332,8 +344,8 @@ TopLevelBody /* returns RelaxngPattern */
 	{
 		RelaxngGrammar g = new RelaxngGrammar ();
 		FillLocation (g);
-		if (nsmgr.DefaultNamespace != String.Empty)
-			g.DefaultNamespace = nsmgr.DefaultNamespace;
+		if (defaultNamespace != null)
+			g.DefaultNamespace = defaultNamespace;
 		RelaxngGrammarContentList list = (RelaxngGrammarContentList) $1;
 		FillGrammarContent (list, g.Starts, g.Defines, g.Divs, g.Includes);
 		$$ = g;
@@ -452,11 +464,11 @@ AnyURILiteral /* returns string */
 	;
 
 OptInherit /* returns string */
-	/* FIXME: It is not handled properly. */
+	/* The empty value will be handled at Compile() time. */
 	: /* empty */
 	{
 		// MakeNsAttribute (LookupDefault (environment));
-		$$ = nsmgr.DefaultNamespace;
+		$$ = defaultNamespace;
 	}
 	| KeywordInherit Equal IdentifierOrKeyword
 	{
