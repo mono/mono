@@ -287,6 +287,20 @@ public class ModuleTest
 		} catch (ArgumentException) {
 		}
 	}
+
+	public class Foo<T>  {
+		public void Bar(T t) {}
+	}
+
+	[Test]
+	public void ResolveMethodOfGenericClass ()
+	{
+		Type type = typeof (Foo<>);
+		Module mod = type.Module;
+		MethodInfo method = type.GetMethod ("Bar");
+		MethodBase res = mod.ResolveMethod (method.MetadataToken);
+		Assert.AreEqual (method, res, "#1");
+	}
 #endif
 
 	[Test]

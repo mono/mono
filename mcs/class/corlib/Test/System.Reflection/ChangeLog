@@ -1,3 +1,10 @@
+2008-11-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ModuleTest.cs : Add test for ResolveMethod with a methodspec
+	token.
+
+	Backported from trunk.
+
 2008-10-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyTest.cs (LoadWithPartialName): Fix this test after the
