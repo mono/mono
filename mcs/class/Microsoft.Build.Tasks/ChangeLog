@@ -1,3 +1,7 @@
+2008-11-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* Microsoft.Build.Tasks_test.dll.sources: Added DeleteTest.cs.
+
 2007-05-11  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (Test/resources/test.dll): Use full name, not just test.dll.

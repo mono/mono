@@ -4,6 +4,7 @@ Microsoft.Build.Tasks/Consts.cs
 Microsoft.Build.Tasks/CreateItemTest.cs
 Microsoft.Build.Tasks/CreatePropertyTest.cs
 Microsoft.Build.Tasks/CscTest.cs
+Microsoft.Build.Tasks/DeleteTest.cs
 Microsoft.Build.Tasks/ErrorTest.cs
 Microsoft.Build.Tasks/GetFrameworkPathTest.cs
 Microsoft.Build.Tasks/GetFrameworkSdkPathTest.cs

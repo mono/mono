@@ -1,3 +1,7 @@
+2008-11-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* DeleteTest.cs: Added tests for Delete task.
+
 2008-10-09  Ankit Jain  <jankit@novell.com>
 
 	* CreateItemTest.cs (TestExcludeAndCondition): New. NotWorking.
