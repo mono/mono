@@ -1,5 +1,8 @@
 2008-11-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): In the box+brtrue optimization, only
+	do the bblock linking hack if it is actually needed.
+
 	* Makefile.am (patch-libtool): New helper target to patch libtool to speed
 	up linking.
 
