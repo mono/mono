@@ -1,3 +1,8 @@
+2008-11-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* regalloc2.c (INS_POS_INTERVAL): Decrease this to 8 to avoid overflows.
+	(update_liveness): Avoid holes in the liveness ranges of hregs if they are
+	both the source an destination of an instruction.
 
 Tue Nov 11 18:56:33 CET 2008 Paolo Molaro <lupus@ximian.com>
 
