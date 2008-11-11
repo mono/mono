@@ -1,3 +1,8 @@
+2008-11-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* */Makefile.am: Dont compile with --security as this fails under 
+	Win32 and this is *not* what we want to test here anyway
+
 2008-10-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* */Makefile.am: Use 'net_1_1' instead of 'default'.
