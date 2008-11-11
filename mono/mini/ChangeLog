@@ -1,5 +1,16 @@
 2008-11-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* branch-opts.c (mono_remove_critical_edges): Link up newly added
+	bblocks.
+
+	* mini.c (mini_method_compile): Compute unreachable bblocks properly even
+	for catch clauses.
+	(mini_method_compile): Set the starting value of next_vreg to 
+	MAX_IREGS + MAX_FREGS when using globalra.
+
+	* method-to-ir.c (mono_method_to_ir2): Mark bblocks starting
+	filter clauses with BB_EXCEPTION_HANDLER.
+
 	* regalloc2.c (assign_spill_slots): Set cfg->rgctx_var.
 
 2008-11-10  Mark Probst  <mark.probst@gmail.com>
