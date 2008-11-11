@@ -102,6 +102,14 @@ namespace System.Reflection.Emit
 			return cb.GetParameters ();
 		}
 
+		public override int MetadataToken {
+			get {
+				if (!((ModuleBuilder)cb.Module).assemblyb.IsCompilerContext)
+					return base.MetadataToken;
+				return cb.MetadataToken;
+			}
+		}
+
 		internal override int GetParameterCount ()
 		{
 			return cb.GetParameterCount ();

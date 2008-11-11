@@ -1,3 +1,11 @@
+2008-11-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ConstructorOnTypeBuilderInst.cs (MetadataToken): Make this property
+	work under compiler context. Same hack as the one applied to
+	MethodOnTypeBuilderInst.
+
+	Fixes #442610.
+
 2008-09-23  Marek Safar  <marek.safar@gmail.com>
 
 	* ModuleBuilder.cs: Fixed NRE when default symbol writer cannot be
