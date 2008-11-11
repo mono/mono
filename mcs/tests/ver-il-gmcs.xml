@@ -12743,6 +12743,70 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-48.cs">
+    <type name="GeneratorEnumerable`1[T]">
+      <method name="Void .ctor(Func`1)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="GeneratorExpression">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="GeneratorInvoker">
+      <method name="Void .ctor(GeneratorExpression)">
+        <size>7</size>
+      </method>
+      <method name="Void Invoke[T](T ByRef)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Interpreter">
+      <method name="System.Object InterpretGenerator[T](GeneratorExpression)">
+        <size>31</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Func`1[TResult]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="TResult Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="TResult EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="GeneratorNext`1[T]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(T ByRef)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T ByRef, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(T ByRef, IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Interpreter+&lt;InterpretGenerator&gt;c__AnonStorey0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="GeneratorNext`1[T] &lt;&gt;m__0()">
+        <size>23</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-5.cs">
     <type name="X">
       <method name="Void .ctor()">
