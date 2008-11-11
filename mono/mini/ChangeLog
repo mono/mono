@@ -1,5 +1,8 @@
 2008-11-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* liveness.c (ENABLE_LIVENESS2): Reenable this for 64 bit archs as the
+	crash problem is fixed.
+
 	* branch-opts.c (mono_remove_critical_edges): Link up newly added
 	bblocks.
 
