@@ -709,6 +709,7 @@ namespace Mono.Cecil.Signatures {
 				t.DeclaringType = decType;
 				decType = t;
 			}
+			decType.Module = m_reflectReader.Module;
 			decType.IsValueType = true;
 
 			return decType;
