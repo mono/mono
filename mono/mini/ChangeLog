@@ -1,3 +1,9 @@
+2008-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* ratests.cs: Add more tests.
+
+	* regalloc2.c (add_spill_code): Handle more corner cases.
+
 2008-11-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* regalloc2.c (INS_POS_INTERVAL): Decrease this to 8 to avoid overflows.
