@@ -1,5 +1,9 @@
 2008-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* updated to DbLinq r946 (quick fix for vendor loading).
+
+2008-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* updated to DbLinq r945.
 	  It is not working well wrt connectionString yet.
 

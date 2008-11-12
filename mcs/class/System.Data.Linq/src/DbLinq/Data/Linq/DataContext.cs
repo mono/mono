@@ -173,8 +173,12 @@ namespace DbLinq.Data.Linq
             Assembly assy;
             try
             {
+#if MONO_STRICT
+		assy = typeof (DataContext).Assembly; // System.Data.Linq.dll
+#else
                 //TODO: check if DLL is already loaded?
                 assy = Assembly.LoadFrom(assemblyToLoad);
+#endif
             }
             catch (Exception ex)
             {
