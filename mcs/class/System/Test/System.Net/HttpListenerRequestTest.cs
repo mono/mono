@@ -158,7 +158,6 @@ namespace MonoTests.System.Net
 			HttpListenerContext ctx = listener.GetContext ();
 			HttpListenerRequest request = ctx.Request;
 			Assert.AreEqual ("pOsT", request.HttpMethod);
-			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
 			listener.Close ();
 		}
 		
