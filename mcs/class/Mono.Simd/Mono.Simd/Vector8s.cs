@@ -54,6 +54,25 @@ namespace Mono.Simd
 		public short V6 { get { return v6; } set { v6 = value; } }
 		public short V7 { get { return v7; } set { v7 = value; } }
 
+		[System.Runtime.CompilerServices.IndexerName ("Component")]
+		public unsafe short this [int index]
+		{
+			get {
+				if ((index | 0x7) != 0x7) //index < 0 || index > 7
+					throw new ArgumentOutOfRangeException ("index");
+				fixed (short *v = &v0) {
+					return * (v + index);
+				}
+			}
+			set {
+				if ( (index | 0x7) != 0x7) //index < 0 || index > 7
+					throw new ArgumentOutOfRangeException ("index");
+				fixed (short *v = &v0) {
+					* (v + index) = value;
+				}
+			}
+		}
+
 		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s operator + (Vector8s va, Vector8s vb)
 		{

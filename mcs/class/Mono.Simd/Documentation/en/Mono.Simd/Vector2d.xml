@@ -30,6 +30,23 @@
         <remarks></remarks>
       </Docs>
     </Member>
+    <Member MemberName="Component">
+      <MemberSignature Language="C#" Value="public double this[int index] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the component.</param>
+        <summary>Gets/Sets the component's value.</summary>
+      </Docs>
+    </Member>
     <Member MemberName="AddSub">
       <MemberSignature Language="C#" Value="public static Mono.Simd.Vector2d AddSub (Mono.Simd.Vector2d v1, Mono.Simd.Vector2d v2);" />
       <MemberType>Method</MemberType>

@@ -34,6 +34,23 @@
         <remarks></remarks>
       </Docs>
     </Member>
+    <Member MemberName="Component">
+      <MemberSignature Language="C#" Value="public float this[int index] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the component.</param>
+        <summary>Gets/Sets the component's value.</summary>
+      </Docs>
+    </Member>
     <Member MemberName="AddSub">
       <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f AddSub (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
       <MemberType>Method</MemberType>

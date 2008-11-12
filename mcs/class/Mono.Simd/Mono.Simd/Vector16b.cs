@@ -69,6 +69,25 @@ namespace Mono.Simd
 		public byte V14 { get { return v14; } set { v14 = value; } }
 		public byte V15 { get { return v15; } set { v15 = value; } }
 
+		[System.Runtime.CompilerServices.IndexerName ("Component")]
+		public unsafe byte this [int index]
+		{
+			get {
+				if ((index | 0xF) != 0xF) //index < 0 || index > 15
+					throw new ArgumentOutOfRangeException ("index");
+				fixed (byte *v = &v0) {
+					return * (v + index);
+				}
+			}
+			set {
+				if ( (index | 0xF) != 0xF) //index < 0 || index > 15
+					throw new ArgumentOutOfRangeException ("index");
+				fixed (byte *v = &v0) {
+					* (v + index) = value;
+				}
+			}
+		}
+
 		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16b operator + (Vector16b va, Vector16b vb)
 		{

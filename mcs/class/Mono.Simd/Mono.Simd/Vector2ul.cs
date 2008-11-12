@@ -39,6 +39,25 @@ namespace Mono.Simd
 		public ulong X { get { return x; } set { x = value; } }
 		public ulong Y { get { return y; } set { y = value; } }
 
+		[System.Runtime.CompilerServices.IndexerName ("Component")]
+		public unsafe ulong this [int index]
+		{
+			get {
+				if ((index | 0x1) != 0x1) //index < 0 || index > 1
+					throw new ArgumentOutOfRangeException ("index");
+				fixed (ulong *v = &x) {
+					return * (v + index);
+				}
+			}
+			set {
+				if ( (index | 0x1) != 0x1) //index < 0 || index > 1
+					throw new ArgumentOutOfRangeException ("index");
+				fixed (ulong *v = &x) {
+					* (v + index) = value;
+				}
+			}
+		}
+
 		public Vector2ul (ulong x, ulong y)
 		{
 			this.x = x;

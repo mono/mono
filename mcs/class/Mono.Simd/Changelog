@@ -1,3 +1,7 @@
+2008-11-12  Cedric Vivier  <cedricv@neonux.com>
+
+	* Documentation/en/Mono.Simd/Vector*.xml: Added Member entry for indexer (Component).
+
 2008-11-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Documentation/en/Mono.Simd/SimdRuntime.xml: Fixed some typos.

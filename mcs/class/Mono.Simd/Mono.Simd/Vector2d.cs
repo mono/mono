@@ -40,6 +40,25 @@ namespace Mono.Simd
 		public double X { get { return x; } set { x = value; } }
 		public double Y { get { return y; } set { y = value; } }
 
+		[System.Runtime.CompilerServices.IndexerName ("Component")]
+		public unsafe double this [int index]
+		{
+			get {
+				if ((index | 0x1) != 0x1) //index < 0 || index > 1
+					throw new ArgumentOutOfRangeException ("index");
+				fixed (double *v = &x) {
+					return * (v + index);
+				}
+			}
+			set {
+				if ( (index | 0x1) != 0x1) //index < 0 || index > 1
+					throw new ArgumentOutOfRangeException ("index");
+				fixed (double *v = &x) {
+					* (v + index) = value;
+				}
+			}
+		}
+
 		public Vector2d (double x, double y)
 		{
 			this.x = x;

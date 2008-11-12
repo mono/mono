@@ -99,6 +99,25 @@ namespace Mono.Simd
 		public float Z { get { return z; } set { z = value; } }
 		public float W { get { return w; } set { w = value; } }
 
+		[System.Runtime.CompilerServices.IndexerName ("Component")]
+		public unsafe float this [int index]
+		{
+			get {
+				if ((index | 0x3) != 0x3) //index < 0 || index > 3
+					throw new ArgumentOutOfRangeException ("index");
+				fixed (float *v = &x) {
+					return * (v + index);
+				}
+			}
+			set {
+				if ( (index | 0x3) != 0x3) //index < 0 || index > 3
+					throw new ArgumentOutOfRangeException ("index");
+				fixed (float *v = &x) {
+					* (v + index) = value;
+				}
+			}
+		}
+
 		public Vector4f (float x, float y, float z, float w)
 		{
 			this.x = x;
