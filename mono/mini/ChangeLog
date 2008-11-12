@@ -10,6 +10,20 @@
 
 2008-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-ops.h: Remove OP_PUSH_R4 and OP_LOADX_STACK.
+
+	* cpu-x86.md: Same.
+
+	* mini-x86.c: Same.
+
+	* mini.h (struct MonoCompile): Add simd_ctor_var to be used as storage
+	for simd ctor values. 
+
+	* simd-intrinsics.c (simd_intrinsic_emit_ctor): Use simd_ctor_var for the constructor
+	instead of directly pushing the values on stack. This saves about 15 bytes of generated code.
+
+2008-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-methods.h: Rename SubWithSaturation, ArithmeticRightShift and
 	LogicalRightShift.
 
