@@ -1,3 +1,9 @@
+2008-11-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCellStyle.cs: Allow SelectionBackColor to have
+	an alpha value.
+	[Fixes bug #444348]
+
 2008-11-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Add internal to OnAutoSizeColumnModeChanged.

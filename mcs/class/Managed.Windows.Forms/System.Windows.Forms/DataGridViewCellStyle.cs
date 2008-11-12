@@ -219,9 +219,6 @@ namespace System.Windows.Forms {
 		public Color SelectionBackColor {
 			get { return selectionBackColor; }
 			set {
-				if (value != Color.Empty && (int) value.A != 255) {
-					throw new ArgumentException("BackColor can't have alpha transparency component.");
-				}
 				if (selectionBackColor != value) {
 					selectionBackColor = value;
 					OnStyleChanged();
