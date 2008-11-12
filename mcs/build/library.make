@@ -49,7 +49,7 @@ the_libdir = $(topdir)/class/$(lib_dir)/$(PROFILE)/
 the_lib = $(the_libdir)$(LIBRARY_NAME)
 the_pdb = $(the_lib:.dll=.pdb)
 the_mdb = $(the_lib).mdb
-library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_mdb)
+library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_lib).so $(the_pdb) $(the_mdb)
 
 ifdef LIBRARY_NEEDS_POSTPROCESSING
 build_libdir = fixup/$(PROFILE)/
@@ -293,6 +293,8 @@ BUILT_SOURCES_cmdline = `echo $(BUILT_SOURCES) | $(PLATFORM_CHANGE_SEPARATOR_CMD
 endif
 endif
 
+Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
+
 # The library
 
 $(the_lib): $(the_libdir)/.stamp
@@ -307,6 +309,11 @@ ifdef LIBRARY_USE_INTERMEDIATE_FILE
 else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
+endif
+ifdef ENABLE_AOT
+ifneq (,$(filter $(AOT_IN_PROFILES), $(PROFILE)))
+	$(Q_AOT) MONO_PATH=$(the_libdir) $(RUNTIME) --aot=bind-to-runtime-version $@ > $(PROFILE)_aot.log 2>&1
+endif
 endif
 
 $(makefrag): $(sourcefile)
