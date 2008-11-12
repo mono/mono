@@ -13,7 +13,7 @@
         <title>
           <xsl:value-of select="Title" />
         </title>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <xsl:call-template name="create-default-style" />
         <xsl:call-template name="create-default-script" />
       </head>
