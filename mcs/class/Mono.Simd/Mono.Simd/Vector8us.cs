@@ -185,7 +185,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector8us ShiftRightArithmetic (Vector8us va, int amount)
+		public static unsafe Vector8us ArithmeticRightShift (Vector8us va, int amount)
 		{
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;

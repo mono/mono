@@ -112,7 +112,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector2l ShiftRightLogic (Vector2l v1, int amount)
+		public static unsafe Vector2l LogicalRightShift (Vector2l v1, int amount)
 		{
 			return new Vector2l ((long)((ulong)(v1.x) >> amount), (long)((ulong)(v1.y) >> amount));
 		}

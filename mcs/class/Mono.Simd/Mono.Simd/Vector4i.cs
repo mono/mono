@@ -148,7 +148,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector4i ShiftRightLogic (Vector4i v1, int amount)
+		public static unsafe Vector4i LogicalRightShift (Vector4i v1, int amount)
 		{
 			Vector4i res = new Vector4i ();
 			int *a = &v1.x;

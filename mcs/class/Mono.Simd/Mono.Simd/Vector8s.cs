@@ -180,7 +180,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector8s ShiftRightLogic (Vector8s va, int amount)
+		public static unsafe Vector8s LogicalRightShift (Vector8s va, int amount)
 		{
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;

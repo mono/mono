@@ -738,8 +738,8 @@
         </Attribute>
       </Attributes>
     </Member>
-    <Member MemberName="ShiftRightArithmetic">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector8us ShiftRightArithmetic (Mono.Simd.Vector8us va, int amount);" />
+    <Member MemberName="ArithmeticRightShift">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector8us ArithmeticRightShift (Mono.Simd.Vector8us va, int amount);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,5 +1,10 @@
 2008-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector*.cs: Renamed ShiftRightLogic to LogicalRightShift and
+	ShiftRightArithmetic to ArithmeticRightShift.
+	
+2008-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector*.cs: Renamed SubWithSaturation	to SubtractWithSaturation.
 
 2008-11-12  Cedric vivier  <cedricv@neonux.com>
@@ -209,11 +214,11 @@
 	* Vector4ui.cs: Added common operations found in 
 	other unsigned int vector types.
 
-	* Vector8us.cs (ShiftRightArithmetic): Do proper sign extention.
+	* Vector8us.cs (ArithmeticRightShift): Do proper sign extention.
 
 	* Vector8us.cs: Fix conversion operators.
 
-	* Vector16b.cs (ShiftRightArithmetic): Do proper sign extention.
+	* Vector16b.cs (ArithmeticRightShift): Do proper sign extention.
 
 	* Vector16b.cs: Fix conversion operators.
 

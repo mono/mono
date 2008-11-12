@@ -149,7 +149,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector4ui ShiftRightArithmetic (Vector4ui v1, int amount)
+		public static unsafe Vector4ui ArithmeticRightShift (Vector4ui v1, int amount)
 		{
 			Vector4ui res = new Vector4ui ();
 			uint *a = &v1.x;

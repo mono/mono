@@ -644,8 +644,8 @@
         </Attribute>
       </Attributes>
     </Member>
-    <Member MemberName="ShiftRightArithmetic">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4ui ShiftRightArithmetic (Mono.Simd.Vector4ui v1, int amount);" />
+    <Member MemberName="ArithmeticRightShift">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4ui ArithmeticRightShift (Mono.Simd.Vector4ui v1, int amount);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -564,8 +564,8 @@
         <remarks>The vector elements contain the substraction of the elements in the second vector from the elements in the first vector.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="ShiftRightLogic">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector2l ShiftRightLogic (Mono.Simd.Vector2l v1, int amount);" />
+    <Member MemberName="LogicalRightShift">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector2l LogicalRightShift (Mono.Simd.Vector2l v1, int amount);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

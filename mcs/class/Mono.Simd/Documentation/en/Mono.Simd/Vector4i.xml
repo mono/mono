@@ -735,8 +735,8 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="ShiftRightLogic">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4i ShiftRightLogic (Mono.Simd.Vector4i v1, int amount);" />
+    <Member MemberName="LogicalRightShift">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4i LogicalRightShift (Mono.Simd.Vector4i v1, int amount);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
