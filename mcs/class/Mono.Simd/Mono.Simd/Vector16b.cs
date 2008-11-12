@@ -172,7 +172,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector16b SubWithSaturation (Vector16b va, Vector16b vb) {
+		public static unsafe Vector16b SubtractWithSaturation (Vector16b va, Vector16b vb) {
 			Vector16b res = new Vector16b ();
 			byte *a = &va.v0;
 			byte *b = &vb.v0;

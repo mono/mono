@@ -931,8 +931,8 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="SubWithSaturation">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector8s SubWithSaturation (Mono.Simd.Vector8s va, Mono.Simd.Vector8s vb);" />
+    <Member MemberName="SubtractWithSaturation">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector8s SubtractWithSaturation (Mono.Simd.Vector8s va, Mono.Simd.Vector8s vb);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

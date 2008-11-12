@@ -1,3 +1,7 @@
+2008-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector*.cs: Renamed SubWithSaturation	to SubtractWithSaturation.
+
 2008-11-12  Cedric vivier  <cedricv@neonux.com>
 
 	* Vector*.cs: Add indexer to all Vector types to get/set an individual component's value.

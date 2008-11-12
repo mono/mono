@@ -202,7 +202,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector8s SubWithSaturation (Vector8s va, Vector8s vb) {
+		public static unsafe Vector8s SubtractWithSaturation (Vector8s va, Vector8s vb) {
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;
 			short *b = &vb.v0;

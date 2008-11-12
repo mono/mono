@@ -713,8 +713,8 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="SubWithSaturation">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b SubWithSaturation (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
+    <Member MemberName="SubtractWithSaturation">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector16b SubtractWithSaturation (Mono.Simd.Vector16b va, Mono.Simd.Vector16b vb);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
